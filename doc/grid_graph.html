@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <!--
    Copyright &copy; 2009 Trustees of Indiana University
-   
+
    Distributed under the Boost Software License, Version 1.0.
    (See accompanying file LICENSE_1_0.txt or copy at
    http://www.boost.org/LICENSE_1_0.txt)
@@ -26,9 +26,9 @@
 
       .code
       {
-        border-left-style: groove; 
-        border-left-width: 1px; 
-        padding-left: 2em; 
+        border-left-style: groove;
+        border-left-width: 1px;
+        padding-left: 2em;
       }
 
     -->
@@ -48,7 +48,7 @@
       <li><a href="#member">Grid Graph Member Functions</a></li>
     </ul>
 
-    <h3 id="overview">Overview</h3>  
+    <h3 id="overview">Overview</h3>
     <p>
       A <tt>grid_graph</tt> represents a multi-dimensional,
       rectangular grid of vertices with user-defined dimension lengths
@@ -130,7 +130,7 @@
       <img src="figs/grid_graph_wrapped.png" />
       <br />
       <em style="font-size: 0.8em"><b>Figure 2:</b> A 3x3 two-dimensional, wrapped grid graph</em>
-    </p> 
+    </p>
     <br />
 
     <h3 id="indexing">Indexing</h3>
@@ -243,7 +243,7 @@ in_edge_at(<span class="name">Traits</span>::<span class="type">vertex_descripto
 // dimension is unwrapped, previous will stop at the beginning vertex in the dimension.
 </span><span class="name">Traits</span>::<span class="type">vertex_descriptor</span> previous(<span class="name">Traits</span>::<span class="type">vertex_descriptor</span> vertex,
                                    <span class="name">std</span>::<span class="type">size_t</span> dimension,
-                                   <span class="name">Traits</span>::<span class="type">vertices_size_type</span> distance = <span class="literal">1</span>); 
+                                   <span class="name">Traits</span>::<span class="type">vertices_size_type</span> distance = <span class="literal">1</span>);
     </pre>
 
     <h4>Example</h4>
@@ -301,4 +301,4 @@ print_vertex(graph.previous(first_vertex, <span class="literal">2</span>, <span 
     Copyright &copy; 2009 Trustees of Indiana University
 
   </body>
-</html> 
+</html>

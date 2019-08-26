@@ -19,15 +19,15 @@
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/graph_archetypes.hpp>
 
-int main(int,char*[])
+int main(int, char*[])
 {
-  using namespace boost;
-  // Check "vector as graph"
-  {
-    typedef std::vector< std::list<int> > Graph;
-    BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph> ));
-    BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept<Graph> ));
-    BOOST_CONCEPT_ASSERT(( AdjacencyGraphConcept<Graph> ));
-  }
-  return 0;
+    using namespace boost;
+    // Check "vector as graph"
+    {
+        typedef std::vector< std::list< int > > Graph;
+        BOOST_CONCEPT_ASSERT((VertexListGraphConcept< Graph >));
+        BOOST_CONCEPT_ASSERT((IncidenceGraphConcept< Graph >));
+        BOOST_CONCEPT_ASSERT((AdjacencyGraphConcept< Graph >));
+    }
+    return 0;
 }

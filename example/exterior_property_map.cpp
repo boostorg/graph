@@ -53,42 +53,41 @@ using namespace boost;
 
  */
 
-template <class EdgeIter, class Graph, class Name>
-void who_owes_who(EdgeIter first, EdgeIter last, const Graph& G,
-                  Name name)
+template < class EdgeIter, class Graph, class Name >
+void who_owes_who(EdgeIter first, EdgeIter last, const Graph& G, Name name)
 {
-  while (first != last) {
+    while (first != last)
+    {
 
-    cout << name[source(*first,G)] << " owes " 
-         << name[target(*first,G)] << " some money" << endl;
-    ++first;
-  }
+        cout << name[source(*first, G)] << " owes " << name[target(*first, G)]
+             << " some money" << endl;
+        ++first;
+    }
 }
 
-int
-main(int, char*[])
+int main(int, char*[])
 {
-  /* The property will be "names" attached to the vertices */ 
+    /* The property will be "names" attached to the vertices */
 
-  string* names = new string[5];
-  names[0] = "Jeremy";
-  names[1] = "Rich";
-  names[2] = "Andrew";
-  names[3] = "Jeff";
-  names[4] = "Kinis";
-  
-  typedef adjacency_list<> MyGraphType;
+    string* names = new string[5];
+    names[0] = "Jeremy";
+    names[1] = "Rich";
+    names[2] = "Andrew";
+    names[3] = "Jeff";
+    names[4] = "Kinis";
 
-  typedef pair<int,int> Pair;
-  Pair edge_array[11] = { Pair(0,1), Pair(0,2), Pair(0,3), Pair(0,4), 
-                          Pair(2,0), Pair(3,0), Pair(2,4), Pair(3,1), 
-                          Pair(3,4), Pair(4,0), Pair(4,1) };
+    typedef adjacency_list<> MyGraphType;
+
+    typedef pair< int, int > Pair;
+    Pair edge_array[11] = { Pair(0, 1), Pair(0, 2), Pair(0, 3), Pair(0, 4),
+        Pair(2, 0), Pair(3, 0), Pair(2, 4), Pair(3, 1), Pair(3, 4), Pair(4, 0),
+        Pair(4, 1) };
 
     MyGraphType G(5);
-    for (int i=0; i<11; ++i)
-      add_edge(edge_array[i].first, edge_array[i].second, G);
+    for (int i = 0; i < 11; ++i)
+        add_edge(edge_array[i].first, edge_array[i].second, G);
 
-  who_owes_who(edges(G).first, edges(G).second, G, names);
+    who_owes_who(edges(G).first, edges(G).second, G, names);
 
-  return 0;
+    return 0;
 }

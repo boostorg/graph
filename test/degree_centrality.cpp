@@ -18,12 +18,13 @@ using namespace boost;
 // number of vertices in the graph
 static const unsigned N = 5;
 
-template <typename Graph>
-void build_graph(Graph& g,
-                 vector<typename graph_traits<Graph>::vertex_descriptor>& v)
+template < typename Graph >
+void build_graph(
+    Graph& g, vector< typename graph_traits< Graph >::vertex_descriptor >& v)
 {
     // add vertices
-    for(size_t i = 0; i < N; ++i) {
+    for (size_t i = 0; i < N; ++i)
+    {
         v[i] = add_vertex(g);
     }
 
@@ -35,17 +36,16 @@ void build_graph(Graph& g,
     add_edge(v[4], v[0], g);
 }
 
-template <typename Graph>
-void test_undirected()
+template < typename Graph > void test_undirected()
 {
-    typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+    typedef typename graph_traits< Graph >::vertex_descriptor Vertex;
 
-    typedef exterior_vertex_property<Graph, unsigned> CentralityProperty;
+    typedef exterior_vertex_property< Graph, unsigned > CentralityProperty;
     typedef typename CentralityProperty::container_type CentralityContainer;
     typedef typename CentralityProperty::map_type CentralityMap;
 
     Graph g;
-    vector<Vertex> v(N);
+    vector< Vertex > v(N);
     build_graph(g, v);
 
     CentralityContainer cents(num_vertices(g));
@@ -59,18 +59,17 @@ void test_undirected()
     BOOST_ASSERT(cm[v[4]] == 2);
 }
 
-template <typename Graph>
-void test_influence()
+template < typename Graph > void test_influence()
 {
-    typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+    typedef typename graph_traits< Graph >::vertex_descriptor Vertex;
 
-    typedef exterior_vertex_property<Graph, unsigned> CentralityProperty;
+    typedef exterior_vertex_property< Graph, unsigned > CentralityProperty;
     typedef typename CentralityProperty::container_type CentralityContainer;
     typedef typename CentralityProperty::map_type CentralityMap;
 
     Graph g;
 
-    vector<Vertex> v(N);
+    vector< Vertex > v(N);
     build_graph(g, v);
 
     CentralityContainer cents(num_vertices(g));
@@ -84,18 +83,17 @@ void test_influence()
     BOOST_ASSERT(cm[v[4]] == 1);
 }
 
-template <typename Graph>
-void test_prestige()
+template < typename Graph > void test_prestige()
 {
-    typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+    typedef typename graph_traits< Graph >::vertex_descriptor Vertex;
 
-    typedef exterior_vertex_property<Graph, unsigned> CentralityProperty;
+    typedef exterior_vertex_property< Graph, unsigned > CentralityProperty;
     typedef typename CentralityProperty::container_type CentralityContainer;
     typedef typename CentralityProperty::map_type CentralityMap;
 
     Graph g;
 
-    vector<Vertex> v(N);
+    vector< Vertex > v(N);
     build_graph(g, v);
 
     CentralityContainer cents(num_vertices(g));
@@ -109,13 +107,12 @@ void test_prestige()
     BOOST_ASSERT(cm[v[4]] == 1);
 }
 
-int
-main(int, char *[])
+int main(int, char*[])
 {
     typedef undirected_graph<> Graph;
     typedef directed_graph<> Digraph;
 
-    test_undirected<Graph>();
-    test_influence<Digraph>();
-    test_prestige<Digraph>();
+    test_undirected< Graph >();
+    test_influence< Digraph >();
+    test_prestige< Digraph >();
 }

@@ -21,18 +21,18 @@ using namespace boost;
 // number of vertices in the graph
 static const unsigned N = 5;
 
-template <typename Graph>
-struct vertex_vector
+template < typename Graph > struct vertex_vector
 {
-    typedef graph_traits<Graph> traits;
-    typedef vector<typename traits::vertex_descriptor> type;
+    typedef graph_traits< Graph > traits;
+    typedef vector< typename traits::vertex_descriptor > type;
 };
 
-template <typename Graph>
-void build_graph(Graph& g, typename vertex_vector<Graph>::type& v)
+template < typename Graph >
+void build_graph(Graph& g, typename vertex_vector< Graph >::type& v)
 {
     // add vertices
-    for(size_t i = 0; i < N; ++i) {
+    for (size_t i = 0; i < N; ++i)
+    {
         v[i] = add_vertex(g);
     }
 
@@ -44,25 +44,23 @@ void build_graph(Graph& g, typename vertex_vector<Graph>::type& v)
     add_edge(v[4], v[0], g);
 }
 
-
-template <typename Graph>
-void test_undirected()
+template < typename Graph > void test_undirected()
 {
-    typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-    typedef typename graph_traits<Graph>::edge_descriptor Edge;
+    typedef typename graph_traits< Graph >::vertex_descriptor Vertex;
+    typedef typename graph_traits< Graph >::edge_descriptor Edge;
 
-    typedef exterior_vertex_property<Graph, double> CentralityProperty;
+    typedef exterior_vertex_property< Graph, double > CentralityProperty;
     typedef typename CentralityProperty::container_type CentralityContainer;
     typedef typename CentralityProperty::map_type CentralityMap;
 
-    typedef exterior_vertex_property<Graph, int> DistanceProperty;
+    typedef exterior_vertex_property< Graph, int > DistanceProperty;
     typedef typename DistanceProperty::matrix_type DistanceMatrix;
     typedef typename DistanceProperty::matrix_map_type DistanceMatrixMap;
 
-    typedef constant_property_map<Edge, int> WeightMap;
+    typedef constant_property_map< Edge, int > WeightMap;
 
     Graph g;
-    vector<Vertex> v(N);
+    vector< Vertex > v(N);
     build_graph(g, v);
 
     CentralityContainer centralities(num_vertices(g));
@@ -77,33 +75,32 @@ void test_undirected()
     double geo1 = all_mean_geodesics(g, dm, cm);
     double geo2 = small_world_distance(g, cm);
 
-    BOOST_ASSERT(cm[v[0]] == double(5)/4);
-    BOOST_ASSERT(cm[v[1]] == double(7)/4);
-    BOOST_ASSERT(cm[v[2]] == double(7)/4);
-    BOOST_ASSERT(cm[v[3]] == double(9)/4);
-    BOOST_ASSERT(cm[v[4]] == double(6)/4);
-    BOOST_ASSERT(geo1 == double(34)/20);
+    BOOST_ASSERT(cm[v[0]] == double(5) / 4);
+    BOOST_ASSERT(cm[v[1]] == double(7) / 4);
+    BOOST_ASSERT(cm[v[2]] == double(7) / 4);
+    BOOST_ASSERT(cm[v[3]] == double(9) / 4);
+    BOOST_ASSERT(cm[v[4]] == double(6) / 4);
+    BOOST_ASSERT(geo1 == double(34) / 20);
     BOOST_ASSERT(geo1 == geo2);
 }
 
-template <typename Graph>
-void test_directed()
+template < typename Graph > void test_directed()
 {
-    typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-    typedef typename graph_traits<Graph>::edge_descriptor Edge;
+    typedef typename graph_traits< Graph >::vertex_descriptor Vertex;
+    typedef typename graph_traits< Graph >::edge_descriptor Edge;
 
-    typedef exterior_vertex_property<Graph, double> CentralityProperty;
+    typedef exterior_vertex_property< Graph, double > CentralityProperty;
     typedef typename CentralityProperty::container_type CentralityContainer;
     typedef typename CentralityProperty::map_type CentralityMap;
 
-    typedef exterior_vertex_property<Graph, int> DistanceProperty;
+    typedef exterior_vertex_property< Graph, int > DistanceProperty;
     typedef typename DistanceProperty::matrix_type DistanceMatrix;
     typedef typename DistanceProperty::matrix_map_type DistanceMatrixMap;
 
-    typedef constant_property_map<Edge, int> WeightMap;
+    typedef constant_property_map< Edge, int > WeightMap;
 
     Graph g;
-    vector<Vertex> v(N);
+    vector< Vertex > v(N);
     build_graph(g, v);
 
     CentralityContainer centralities(num_vertices(g));
@@ -118,23 +115,21 @@ void test_directed()
     double geo1 = all_mean_geodesics(g, dm, cm);
     double geo2 = small_world_distance(g, cm);
 
-    double inf = numeric_values<double>::infinity();
+    double inf = numeric_values< double >::infinity();
     BOOST_ASSERT(cm[v[0]] == inf);
     BOOST_ASSERT(cm[v[1]] == inf);
     BOOST_ASSERT(cm[v[2]] == inf);
-    BOOST_ASSERT(cm[v[3]] == double(10)/4);
+    BOOST_ASSERT(cm[v[3]] == double(10) / 4);
     BOOST_ASSERT(cm[v[4]] == inf);
     BOOST_ASSERT(geo1 == inf);
     BOOST_ASSERT(geo1 == geo2);
 }
 
-
-int
-main(int, char *[])
+int main(int, char*[])
 {
     typedef undirected_graph<> Graph;
     typedef directed_graph<> Digraph;
 
-    test_undirected<Graph>();
-    test_directed<Digraph>();
+    test_undirected< Graph >();
+    test_directed< Digraph >();
 }

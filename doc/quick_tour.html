@@ -2,7 +2,7 @@
 
 <!--
      Copyright (c) Jeremy Siek 2000
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
@@ -93,7 +93,7 @@ convenient way to explicitly create the edges for this example.
   #include &lt;boost/graph/dijkstra_shortest_paths.hpp&gt;
 
   using namespace boost;
-  
+
   int main(int,char*[])
   {
     // create a typedef for the Graph type
@@ -106,7 +106,7 @@ convenient way to explicitly create the edges for this example.
 
     // writing out the edges in the graph
     typedef std::pair&lt;int, int&gt; Edge;
-    Edge edge_array[] = 
+    Edge edge_array[] =
     { Edge(A,B), Edge(A,D), Edge(C,A), Edge(D,C),
       Edge(C,E), Edge(B,D), Edge(D,E) };
     const int num_edges = sizeof(edge_array)/sizeof(edge_array[0]);
@@ -205,7 +205,7 @@ choice for the BGL.
     std::cout &lt;&lt; &quot;edges(g) = &quot;;
     graph_traits&lt;Graph&gt;::edge_iterator ei, ei_end;
     for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
-        std::cout &lt;&lt; &quot;(&quot; &lt;&lt; index[source(*ei, g)] 
+        std::cout &lt;&lt; &quot;(&quot; &lt;&lt; index[source(*ei, g)]
                   &lt;&lt; &quot;,&quot; &lt;&lt; index[target(*ei, g)] &lt;&lt; &quot;) &quot;;
     std::cout &lt;&lt; std::endl;
     // ...
@@ -301,17 +301,17 @@ out-edge of vertex <tt>v</tt>.
     void operator()(const Vertex&amp; v) const
     {
       typedef graph_traits&lt;Graph&gt; GraphTraits;
-      typename property_map&lt;Graph, vertex_index_t&gt;::type 
+      typename property_map&lt;Graph, vertex_index_t&gt;::type
         index = get(vertex_index, g);
 
       std::cout &lt;&lt; &quot;out-edges: &quot;;
       typename GraphTraits::out_edge_iterator out_i, out_end;
       typename GraphTraits::edge_descriptor e;
-      for (boost::tie(out_i, out_end) = out_edges(v, g); 
+      for (boost::tie(out_i, out_end) = out_edges(v, g);
            out_i != out_end; ++out_i) {
         e = *out_i;
         Vertex src = source(e, g), targ = target(e, g);
-        std::cout &lt;&lt; &quot;(&quot; &lt;&lt; index[src] &lt;&lt; &quot;,&quot; 
+        std::cout &lt;&lt; &quot;(&quot; &lt;&lt; index[src] &lt;&lt; &quot;,&quot;
                   &lt;&lt; index[targ] &lt;&lt; &quot;) &quot;;
       }
       std::cout &lt;&lt; std::endl;
@@ -341,7 +341,7 @@ specified instead of <tt>directedS</tt>.
       std::cout &lt;&lt; &quot;in-edges: &quot;;
       typedef typename graph_traits&lt;Graph&gt; GraphTraits;
       typename GraphTraits::in_edge_iterator in_i, in_end;
-      for (boost::tie(in_i, in_end) = in_edges(v,g); 
+      for (boost::tie(in_i, in_end) = in_edges(v,g);
            in_i != in_end; ++in_i) {
         e = *in_i;
         Vertex src = source(e, g), targ = target(e, g);
@@ -436,15 +436,15 @@ the graph. The edges and weights are passed to the graph constructor in the form
 of iterators (a pointer qualifies as a <a href="http://www.boost.org/sgi/stl/RandomAccessIterator.html">RandomAccessIterator</a>).
 <p>&nbsp;
 <pre>
-  typedef adjacency_list&lt;listS, vecS, directedS, 
+  typedef adjacency_list&lt;listS, vecS, directedS,
                          no_property, property&lt;edge_weight_t, int&gt; &gt; Graph;
   typedef graph_traits&lt;Graph&gt;::vertex_descriptor Vertex;
   typedef std::pair&lt;int,int&gt; E;
 
   const int num_nodes = 5;
-  E edges[] = { E(0,2), 
+  E edges[] = { E(0,2),
                 E(1,1), E(1,3), E(1,4),
-                E(2,1), E(2,3), 
+                E(2,1), E(2,3),
                 E(3,4),
                 E(4,0), E(4,1) };
   int weights[] = { 1, 2, 1, 2, 7, 3, 1, 1, 1};
@@ -470,7 +470,7 @@ internal edge weight property), and then the output of the results.
   std::cout &lt;&lt; &quot;distances from start vertex:&quot; &lt;&lt; std::endl;
   graph_traits&lt;Graph&gt;::vertex_iterator vi;
   for(vi = vertices(G).first; vi != vertices(G).second; ++vi)
-    std::cout &lt;&lt; &quot;distance(&quot; &lt;&lt; index(*vi) &lt;&lt; &quot;) = &quot; 
+    std::cout &lt;&lt; &quot;distance(&quot; &lt;&lt; index(*vi) &lt;&lt; &quot;) = &quot;
               &lt;&lt; d[*vi] &lt;&lt; std::endl;
   std::cout &lt;&lt; std::endl;
 </pre>
@@ -562,15 +562,15 @@ equipped to handle the use of multiple visitors in the same algorithm
   using std::cout;
   using std::endl;
   vector&lt;Vertex&gt; p(num_vertices(G), graph_traits&lt;G&gt;::null_vertex()); //the predecessor array
-  dijkstra_shortest_paths(G, s, distance_map(&amp;d[0]). 
+  dijkstra_shortest_paths(G, s, distance_map(&amp;d[0]).
                           visitor(make_predecessor_recorder(&amp;p[0])));
 
   cout &lt;&lt; &quot;parents in the tree of shortest paths:&quot; &lt;&lt; endl;
   for(vi = vertices(G).first; vi != vertices(G).second; ++vi) {
     cout &lt;&lt; &quot;parent(&quot; &lt;&lt; *vi;
     if (p[*vi] == graph_traits&lt;G&gt;::null_vertex())
-      cout &lt;&lt; &quot;) = no parent&quot; &lt;&lt; endl; 
-    else 
+      cout &lt;&lt; &quot;) = no parent&quot; &lt;&lt; endl;
+    else
       cout &lt;&lt; &quot;) = &quot; &lt;&lt; p[*vi] &lt;&lt; endl;
   }
 </pre>

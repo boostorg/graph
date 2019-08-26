@@ -33,7 +33,7 @@
   Sample output:
 
   An undirected graph (edge list):
-  (0,1) (1,4) (4,0) (2,5) 
+  (0,1) (1,4) (4,0) (2,5)
   Total number of components: 3
   Vertex 0 is in the component who's representative is 1
   Vertex 1 is in the component who's representative is 1
@@ -42,53 +42,52 @@
   Vertex 4 is in the component who's representative is 1
   Vertex 5 is in the component who's representative is 5
 
-  component 0 contains: 4 1 0 
-  component 1 contains: 3 
-  component 2 contains: 5 2 
-  
- */
+  component 0 contains: 4 1 0
+  component 1 contains: 3
+  component 2 contains: 5 2
 
+ */
 
 using namespace std;
 using boost::tie;
 
-int main(int , char* []) 
+int main(int, char*[])
 {
-  using namespace boost;
-  typedef int Index; // ID of a Vertex
-  typedef pair<Index,Index> Edge;
-  const int N = 6;
-  const int E = 4;
-  Edge edgelist[] = { Edge(0, 1), Edge(1, 4), Edge(4, 0), Edge(2, 5) };
-  
+    using namespace boost;
+    typedef int Index; // ID of a Vertex
+    typedef pair< Index, Index > Edge;
+    const int N = 6;
+    const int E = 4;
+    Edge edgelist[] = { Edge(0, 1), Edge(1, 4), Edge(4, 0), Edge(2, 5) };
 
-
-  edge_list<Edge*,Edge,ptrdiff_t,std::random_access_iterator_tag> g(edgelist, edgelist + E);
-  cout << "An undirected graph (edge list):" << endl;
-  print_edges(g, identity_property_map());
-  cout << endl;
-
-  disjoint_sets_with_storage<> ds(N);
-  incremental_components(g, ds);
-  
-  component_index<int> components(&ds.parents()[0], 
-                                  &ds.parents()[0] + ds.parents().size());
-
-  cout << "Total number of components: " << components.size() << endl;
-  for (int k = 0; k != N; ++k)
-    cout << "Vertex " << k << " is in the component who's representative is "
-         << ds.find_set(k) << endl;
-  cout << endl;
-
-  for (std::size_t i = 0; i < components.size(); ++i) {
-    cout << "component " << i << " contains: ";
-    component_index<int>::component_iterator
-      j = components[i].first,
-      jend = components[i].second;
-    for ( ; j != jend; ++j)
-      cout << *j << " ";
+    edge_list< Edge*, Edge, ptrdiff_t, std::random_access_iterator_tag > g(
+        edgelist, edgelist + E);
+    cout << "An undirected graph (edge list):" << endl;
+    print_edges(g, identity_property_map());
     cout << endl;
-  }
 
-  return 0;
+    disjoint_sets_with_storage<> ds(N);
+    incremental_components(g, ds);
+
+    component_index< int > components(
+        &ds.parents()[0], &ds.parents()[0] + ds.parents().size());
+
+    cout << "Total number of components: " << components.size() << endl;
+    for (int k = 0; k != N; ++k)
+        cout << "Vertex " << k
+             << " is in the component who's representative is "
+             << ds.find_set(k) << endl;
+    cout << endl;
+
+    for (std::size_t i = 0; i < components.size(); ++i)
+    {
+        cout << "component " << i << " contains: ";
+        component_index< int >::component_iterator j = components[i].first,
+                                                   jend = components[i].second;
+        for (; j != jend; ++j)
+            cout << *j << " ";
+        cout << endl;
+    }
+
+    return 0;
 }

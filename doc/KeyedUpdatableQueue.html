@@ -9,7 +9,7 @@
 <head>
 <title>KeyedUpdatableQueue</title>
 </head>
-<body> 
+<body>
 <img src="../../../boost.png"  alt="C++ Boost">
 
 <h2><a name="concept:KeyedUpdatableQueue">KeyedUpdatableQueue</a></h2>
@@ -28,7 +28,7 @@ values are mapped via a read/write key map.
 
 <h3>Members</h3>
 
-For a type to model the KeyedUpdatableQueue concept it must have the following members 
+For a type to model the KeyedUpdatableQueue concept it must have the following members
 in addition to the members that are required of types that model <a href="./UpdatableQueue.html">UpdatableQueue</a>:
 
 <p>
@@ -61,17 +61,17 @@ in addition to the members that are required of types that model <a href="./Upda
   {
     typedef typename Q::key_type key_type;
     typedef typename Q::key_map key_map;
-    
+
     void constraints() {
       BOOST_CONCEPT_ASSERT(( UpdatableQueue&lt;Q&gt; ));
       BOOST_CONCEPT_ASSERT(( ReadWritePropertyMap&lt; key_map, typename Buffer&lt;Q&gt;::value_type &gt; ));
     }
-    
+
     void const_constraints(const Q&amp; cq) {
       km = cq.keys();
       k = get(km, g_ct);
     }
-    
+
     static const typename Buffer&lt;Q&gt;::value_type g_ct;
     key_type k;
     key_map km;

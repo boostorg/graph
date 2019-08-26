@@ -1,17 +1,17 @@
 <HTML>
 <!--
      Copyright (c) Jeremy Siek 2000
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Boost Graph Library: Isomorphism</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -28,8 +28,8 @@ bool isomorphism(const Graph1&amp; g1, const Graph2&amp; g2,
                  const bgl_named_params&lt;P,T,R&gt;&amp; params = <i>all defaults</i>)
 
 <i>// non-named parameter version</i>
-template &lt;typename Graph1, typename Graph2, typename IsoMap, 
-          typename VertexInvariant1, typename VertexInvariant2, 
+template &lt;typename Graph1, typename Graph2, typename IsoMap,
+          typename VertexInvariant1, typename VertexInvariant2,
           typename V1Map, typename V2Map&gt;
 bool isomorphism(const Graph1&amp; g1, const Graph2&amp; g2,
 		 IsoMap f, VertexInvariant1 invariant2, VertexInvariant2 invariant2,
@@ -124,13 +124,13 @@ result types.  The values returned by these two functions must be in the range
 
 IN: <tt>vertex_max_invariant(std::size_t max_invariant)</tt>
 <blockquote>
-An upper bound on the possible values returned from either 
+An upper bound on the possible values returned from either
 vertex_invariant1 or vertex_invariant2.
 <br>
 <b>Default:</b> <tt>vertex_invariant2.max()</tt>. The default
-<tt>vertex_invariant2</tt> parameter, an instance of 
+<tt>vertex_invariant2</tt> parameter, an instance of
 <tt>degree_vertex_invariant</tt>, defines this function to
-return <tt>num_vertices(g2) * (num_vertices(g2)+1)</tt>.<br> 
+return <tt>num_vertices(g2) * (num_vertices(g2)+1)</tt>.<br>
 <b>Python</b>: Unsupported parameter.
 </blockquote>
 
@@ -190,4 +190,4 @@ See <a href="../example/isomorphism.cpp"><tt>libs/graph/example/isomorphism.cpp<
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>

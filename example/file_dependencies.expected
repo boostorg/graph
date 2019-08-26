@@ -1,6 +1,6 @@
-make ordering: zow.h boz.h zig.cpp zig.o dax.h yow.h zag.cpp zag.o bar.cpp bar.o foo.cpp foo.o libfoobar.a libzigzag.a killerapp 
+make ordering: zow.h boz.h zig.cpp zig.o dax.h yow.h zag.cpp zag.o bar.cpp bar.o foo.cpp foo.o libfoobar.a libzigzag.a killerapp
 
-parallel make ordering, 
+parallel make ordering,
 vertices with same group number can be made in parallel
 time_slot[dax.h] = 0
 time_slot[yow.h] = 1
@@ -19,7 +19,7 @@ time_slot[libzigzag.a] = 5
 time_slot[killerapp] = 6
 
 A change to yow.h will cause what to be re-made?
-yow.h bar.cpp zag.cpp bar.o zag.o libfoobar.a libzigzag.a killerapp 
+yow.h bar.cpp zag.cpp bar.o zag.o libfoobar.a libzigzag.a killerapp
 
 The graph has a cycle? 0
 

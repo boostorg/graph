@@ -4,7 +4,6 @@
 // Boost Software License, Version 1.0 (See accompanying file
 // LICENSE_1_0.txt or http://www.boost.org/LICENSE_1_0.txt)
 
-
 //[degree_centrality_example
 #include <iostream>
 #include <iomanip>
@@ -25,22 +24,21 @@ struct Actor
 };
 
 // Declare the graph type and its vertex and edge types.
-typedef undirected_graph<Actor> Graph;
-typedef graph_traits<Graph>::vertex_descriptor Vertex;
-typedef graph_traits<Graph>::edge_descriptor Edge;
+typedef undirected_graph< Actor > Graph;
+typedef graph_traits< Graph >::vertex_descriptor Vertex;
+typedef graph_traits< Graph >::edge_descriptor Edge;
 
 // The name map provides an abstract accessor for the names of
 // each vertex. This is used during graph creation.
-typedef property_map<Graph, string Actor::*>::type NameMap;
+typedef property_map< Graph, string Actor::* >::type NameMap;
 
 // Declare a container type for degree centralities and its
 // corresponding property map.
-typedef exterior_vertex_property<Graph, unsigned> CentralityProperty;
+typedef exterior_vertex_property< Graph, unsigned > CentralityProperty;
 typedef CentralityProperty::container_type CentralityContainer;
 typedef CentralityProperty::map_type CentralityMap;
 
-int
-main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     // Create the graph and a property map that provides access
     // to the actor names.
@@ -56,10 +54,11 @@ main(int argc, char *argv[])
     all_degree_centralities(g, cm);
 
     // Print the degree centrality of each vertex.
-    graph_traits<Graph>::vertex_iterator i, end;
-    for(boost::tie(i, end) = vertices(g); i != end; ++i) {
-        cout << setiosflags(ios::left) << setw(12)
-             << g[*i].name << cm[*i] << endl;
+    graph_traits< Graph >::vertex_iterator i, end;
+    for (boost::tie(i, end) = vertices(g); i != end; ++i)
+    {
+        cout << setiosflags(ios::left) << setw(12) << g[*i].name << cm[*i]
+             << endl;
     }
 
     return 0;

@@ -19,14 +19,15 @@ int test_main(int argc, char* argv[])
     typedef int Vertex;
     typedef int Edge;
 
-    typedef boost::adjacency_list<boost::setS, // Container type for edges
-                                      boost::vecS, // Container type for vertices
-                                      boost::directedS, // Param for
-                                      // directed/undirected/bidirectional
-                                      // graph
-                                      Vertex, // Type for the vertices
-                                      Edge    // Type for the edges
-                                      > Graph_t;
+    typedef boost::adjacency_list< boost::setS, // Container type for edges
+        boost::vecS, // Container type for vertices
+        boost::directedS, // Param for
+        // directed/undirected/bidirectional
+        // graph
+        Vertex, // Type for the vertices
+        Edge // Type for the edges
+        >
+        Graph_t;
 
     typedef Graph_t::edge_descriptor EdgeDesc;
     typedef Graph_t::vertex_descriptor VertexType;

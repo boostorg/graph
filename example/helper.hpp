@@ -14,24 +14,26 @@
 
 #include <boost/graph/properties.hpp>
 
-template <typename Graph, typename NameMap, typename VertexMap>
-typename boost::graph_traits<Graph>::vertex_descriptor
-add_named_vertex(Graph& g, NameMap nm, const std::string& name, VertexMap& vm)
+template < typename Graph, typename NameMap, typename VertexMap >
+typename boost::graph_traits< Graph >::vertex_descriptor add_named_vertex(
+    Graph& g, NameMap nm, const std::string& name, VertexMap& vm)
 {
-    typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
+    typedef typename boost::graph_traits< Graph >::vertex_descriptor Vertex;
     typedef typename VertexMap::iterator Iterator;
 
     Vertex v;
     Iterator iter;
     bool inserted;
     boost::tie(iter, inserted) = vm.insert(make_pair(name, Vertex()));
-    if(inserted) {
+    if (inserted)
+    {
         // The name was unique so we need to add a vertex to the graph
         v = add_vertex(g);
         iter->second = v;
-        put(nm, v, name);      // store the name in the name map
+        put(nm, v, name); // store the name in the name map
     }
-    else {
+    else
+    {
         // We had alread inserted this name so we can return the
         // associated vertex.
         v = iter->second;
@@ -39,14 +41,17 @@ add_named_vertex(Graph& g, NameMap nm, const std::string& name, VertexMap& vm)
     return v;
 }
 
-template <typename Graph, typename NameMap, typename InputStream>
-inline std::map<std::string, typename boost::graph_traits<Graph>::vertex_descriptor>
+template < typename Graph, typename NameMap, typename InputStream >
+inline std::map< std::string,
+    typename boost::graph_traits< Graph >::vertex_descriptor >
 read_graph(Graph& g, NameMap nm, InputStream& is)
 {
-    typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
-    std::map<std::string, Vertex> verts;
-    for(std::string line; std::getline(is, line); ) {
-        if(line.empty()) continue;
+    typedef typename boost::graph_traits< Graph >::vertex_descriptor Vertex;
+    std::map< std::string, Vertex > verts;
+    for (std::string line; std::getline(is, line);)
+    {
+        if (line.empty())
+            continue;
         std::size_t index = line.find_first_of(',');
         std::string first(line, 0, index);
         std::string second(line, index + 1);
@@ -58,24 +63,29 @@ read_graph(Graph& g, NameMap nm, InputStream& is)
     return verts;
 }
 
-template <typename Graph, typename InputStream>
-inline std::map<std::string, typename boost::graph_traits<Graph>::vertex_descriptor>
+template < typename Graph, typename InputStream >
+inline std::map< std::string,
+    typename boost::graph_traits< Graph >::vertex_descriptor >
 read_graph(Graph& g, InputStream& is)
 {
-    typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
-    typedef boost::null_property_map<Vertex, std::string> NameMap;
+    typedef typename boost::graph_traits< Graph >::vertex_descriptor Vertex;
+    typedef boost::null_property_map< Vertex, std::string > NameMap;
     return read_graph(g, NameMap(), is);
 }
 
-template <typename Graph, typename NameMap, typename WeightMap, typename InputStream>
-inline std::map<std::string, typename boost::graph_traits<Graph>::vertex_descriptor>
+template < typename Graph, typename NameMap, typename WeightMap,
+    typename InputStream >
+inline std::map< std::string,
+    typename boost::graph_traits< Graph >::vertex_descriptor >
 read_weighted_graph(Graph& g, NameMap nm, WeightMap wm, InputStream& is)
 {
-    typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
-    typedef typename boost::graph_traits<Graph>::edge_descriptor Edge;
-    std::map<std::string, Vertex> verts;
-    for(std::string line; std::getline(is, line); ) {
-        if(line.empty()) continue;
+    typedef typename boost::graph_traits< Graph >::vertex_descriptor Vertex;
+    typedef typename boost::graph_traits< Graph >::edge_descriptor Edge;
+    std::map< std::string, Vertex > verts;
+    for (std::string line; std::getline(is, line);)
+    {
+        if (line.empty())
+            continue;
         std::size_t i = line.find_first_of(',');
         std::size_t j = line.find_first_of(',', i + 1);
         std::string first(line, 0, i);
@@ -98,16 +108,15 @@ read_weighted_graph(Graph& g, NameMap nm, WeightMap wm, InputStream& is)
     return verts;
 }
 
-
-template <typename Graph, typename WeightMap, typename InputStream>
-inline std::map<std::string, typename boost::graph_traits<Graph>::vertex_descriptor>
+template < typename Graph, typename WeightMap, typename InputStream >
+inline std::map< std::string,
+    typename boost::graph_traits< Graph >::vertex_descriptor >
 read_weighted_graph(Graph& g, WeightMap wm, InputStream& is)
 {
-    typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
-    typedef boost::null_property_map<Vertex, std::string> NameMap;
+    typedef typename boost::graph_traits< Graph >::vertex_descriptor Vertex;
+    typedef boost::null_property_map< Vertex, std::string > NameMap;
 
     return read_weighted_graph(g, NameMap(), wm, is);
 }
-
 
 #endif

@@ -1,17 +1,17 @@
 <HTML>
 <!--
      Copyright (c) Jeremy Siek 2001
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Vertex Mutable Graph</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -37,7 +37,7 @@ No additional associated types.
 <h3>Valid Expressions</h3>
 
 <ul>
-<li><a name="sec:add_vertex"><TT>add_vertex(g)</TT></a> 
+<li><a name="sec:add_vertex"><TT>add_vertex(g)</TT></a>
 <b>returns</b> <TT>vertex_descriptor</TT>
 <br><br>
 
@@ -56,7 +56,7 @@ No additional associated types.
 <br>
 <b> Postconditions: </b> <TT>num_vertices(g)</TT> is one less; <i>u</i>
       no longer appears in the vertex set of the graph and it
-      is no longer a valid vertex descriptor. 
+      is no longer a valid vertex descriptor.
 </li>
 
 </ul>
@@ -64,7 +64,7 @@ No additional associated types.
 <H3>Complexity guarantees</H3>
 <ul>
   <li> Vertex insertion is guaranteed to be amortized constant time.
- 
+
   <li> Vertex removal is at most <TT>O(|E| + |V|)</TT>.
 </ul>
 
@@ -79,5 +79,5 @@ No additional associated types.
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>
 
