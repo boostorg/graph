@@ -8,21 +8,21 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 //
-#ifndef BOOST_LINK_CUT_TREE_HPP
-#define BOOST_LINK_CUT_TREE_HPP
+#ifndef BOOST_LINK_CUT_TREES_HPP
+#define BOOST_LINK_CUT_TREES_HPP
 
 #include <boost/graph/properties.hpp>
-#include <unordered_map>
+#include <boost/unordered_map.hpp>
 
 namespace boost
 {
     template<class ElementParentMap, class ElementChildMap = ElementParentMap>
-    class link_cut_tree
+    class link_cut_trees
     {
     public:
-        inline link_cut_tree(ElementParentMap p, ElementChildMap l, ElementChildMap r) : parent(p), left(l), right(r) {}
+        inline link_cut_trees(ElementParentMap p, ElementChildMap l, ElementChildMap r) : parent(p), left(l), right(r) {}
         
-        inline link_cut_tree(const link_cut_tree<ElementParentMap, ElementChildMap> &c)
+        inline link_cut_trees(const link_cut_trees<ElementParentMap, ElementChildMap> &c)
             : parent(c.parent), left(c.left), right(c.right) {}
 
         template <class Element>
@@ -222,20 +222,21 @@ namespace boost
     };
     
     
-    template <class ID = identity_property_map>
-    class link_cut_tree_with_storage :
-    public link_cut_tree<associative_property_map<std::unordered_map<typename property_traits<ID>::value_type, typename property_traits<ID>::value_type> > >
+    template <class ID = identity_property_map, class InverseID = boost::unordered_map<typename property_traits<ID>::value_type, typename property_traits<ID>::key_type> >
+    class link_cut_trees_with_storage :
+    public link_cut_trees<associative_property_map<boost::unordered_map<typename property_traits<ID>::value_type, typename property_traits<ID>::value_type> > >
     {
     public:
         typedef typename property_traits<ID>::key_type Vertex;
         typedef typename property_traits<ID>::value_type Index;
-        typedef std::unordered_map<Index, Index> IndexMapContainer;
+        typedef boost::unordered_map<Index, Index> IndexMapContainer;
         typedef associative_property_map<IndexMapContainer> IndexMap;
-        typedef link_cut_tree<IndexMap> LCT;
+        typedef link_cut_trees<IndexMap> LCT;
         
-        link_cut_tree_with_storage(ID id_ = ID()) :
+        link_cut_trees_with_storage(ID id_ = ID(), InverseID inverse_id = InverseID()) :
         LCT(IndexMap(parent_map), IndexMap(left_map), IndexMap(right_map)),
-        id(id_) {}
+        id(id_),
+        id_to_vertex(inverse_id) {}
         
         template <class Vertex>
         inline void make_tree(Vertex x)
@@ -271,9 +272,9 @@ namespace boost
         
     private:
         ID id;
-        std::unordered_map<Index, Vertex> id_to_vertex;
+        InverseID id_to_vertex;
         IndexMapContainer parent_map, left_map, right_map;
     };
 }
 
-#endif // BOOST_LINK_CUT_TREE_HPP
+#endif // BOOST_LINK_CUT_TREES_HPP
