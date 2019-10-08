@@ -16,13 +16,17 @@
 #include <boost/bind.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/range/algorithm_ext.hpp>
+#include <boost/range/algorithm/transform.hpp>
 #include <boost/range/adaptor/reversed.hpp>
+#include <deque>
+#include <algorithm>
+#include <iterator>
 
 using namespace boost;
 
 std::size_t lowest_common_ancestor(std::size_t N, std::size_t u, std::size_t w)
 {
-    const std::size_t size = std::max(u, w) + 1;
+    const std::size_t size = std::max<std::size_t>(u, w) + 1;
     std::vector<bool> ancester_of_u(size, false), ancester_of_w(size, false);
     while (u > 0 || w > 0)
     {
@@ -140,10 +144,7 @@ BOOST_AUTO_TEST_CASE(link_cut_trees_test3)
     std::vector<std::string> elements;
     std::vector<int> numbers(100);
     boost::range::iota(numbers, -49);
-    std::transform(numbers.begin(),
-                    numbers.end(),
-                    std::back_inserter(elements),
-                    boost::bind(lexical_cast<std::string, int>, _1));
+    boost::range::transform(numbers, std::back_inserter(elements), boost::bind(lexical_cast<std::string, int>, _1));
     link_cut_trees_t lct;
     test_link_cut_trees<link_cut_trees_t, std::string>(lct, elements);
 }
