@@ -103,12 +103,12 @@ Example of a directed graph.</CAPTION>
 Next we have a similar graph, though this time it is undirected.  <A
 HREF="#fig:undirected-graph">Figure 2</A> gives the pictorial view.
 Self loops are not allowed in undirected graphs. This graph is the <a
-name="def:undirected-version"><I>undirected version</i></a> of the the
+name="def:undirected-version"><i>undirected version</i></a> of the the
 previous graph (minus the parallel edge <i>(b,y)</i>), meaning it has
 the same vertices and the same edges with their directions removed.
 Also the self edge has been removed, and edges such as <i>(a,z)</i>
 and <i>(z,a)</i> are collapsed into one edge. One can go the other
-way, and make a <a name="def:directed-version"><I>directed version</i>
+way, and make a <a name="def:directed-version"><i>directed version</i>
 of an undirected graph be replacing each edge by two edges, one
 pointing in each direction.
 
@@ -175,7 +175,7 @@ name="def:simple-path"><I>simple</I></a> if none of the vertices in
 the sequence are repeated. The path &lt;(b,x), (x,v)&gt; is simple,
 while the path &lt;(a,z), (z,a)&gt; is not. Also, the path &lt;(a,z),
 (z,a)&gt; is called a <a name="def:cycle"><I>cycle</I></a> because the
-first and last vertex in the path are the same. A graph with no cycles
+first and last vertices in the path are the same. A graph with no cycles
 is <a name="def:acyclic"><I>acyclic</I></a>.
 
 <P>
@@ -353,7 +353,7 @@ Breadth-first search spreading through a graph.</CAPTION>
 <P>
 <PRE>
   order of discovery: s r w v t x u y
-  order of finish: s r w v t x u y
+  order of finish:    s r w v t x u y
 </PRE>
 
 <P>
@@ -404,7 +404,8 @@ properly nested set of parenthesis.  <A
 HREF="#fig:dfs-example">Figure 7</A> shows
 DFS applied to an undirected graph, with the edges labeled in the
 order they were explored.  Below we list the vertices of the graph
-ordered by discover and finish time, as well as show the parenthesis structure.  DFS is used as the kernel for several other graph
+ordered by discover and finish time, as well as show the parenthesis
+structure.  DFS is used as the kernel for several other graph
 algorithms, including topological sort and two of the connected
 component algorithms. It can also be used to detect cycles (see the <A
 HREF="file_dependency_example.html#sec:cycles">Cylic Dependencies </a>
@@ -424,7 +425,7 @@ Depth-first search on an undirected graph.</CAPTION>
 <P>
 <PRE>
   order of discovery: a b e d c f g h i
-  order of finish: d f c e b a
+  order of finish:    d f c e b a
   parenthesis: (a (b (e (d d) (c (f f) c) e) b) a) (g (h (i i) h) g)
 </PRE>
 
@@ -480,7 +481,7 @@ of a path</I><BR>
 
 <p></p>
 <DIV ALIGN="left">
-<i>w(p) = sum from i=1..k of w(v<sub>i-1</sub>,v<sub>i</sub>)</i>
+<i>w(p) = sum of w(v<sub>i-1</sub>,v<sub>i</sub>) for i=1..k</i>
 </DIV>
 <BR CLEAR="ALL"><P></P>
 
@@ -495,7 +496,7 @@ The <I>shortest path weight</I> from vertex <i>u</i> to <i>v</i> is then
 </DIV>
 <BR CLEAR="ALL"><P></P>
 
-A <I>shortest path</I> is any path who's path weight is equal to the
+A <I>shortest path</I> is any path whose path weight is equal to the
 <I>shortest path weight</I>.
 
 <P>
@@ -553,7 +554,8 @@ The <b><i>maximum flow problem</i></b> is to determine the maximum
 possible value for <i>|f|</i> and the corresponding flow values for
 every vertex pair in the graph.
 <p>
-The <b><i>minimum cost maximum flow problem</i></b> is to determine the maximum flow which minimizes <i> sum<sub>(u,v) in E</sub>
+The <b><i>minimum cost maximum flow problem</i></b> is to determine
+the maximum flow which minimizes <i> sum<sub>(u,v) in E</sub>
 cost(u,v) * f(u,v) </i>.
 
 <p>
