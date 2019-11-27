@@ -136,7 +136,7 @@ Example of an undirected graph.</CAPTION>
 
 <P>
 Now for some more graph terminology. If some edge <i>(u,v)</i> is in
-graph , then vertex <i>v</i> is <a
+graph <i>G</i>, then vertex <i>v</i> is <a
 name="def:adjacent"><I>adjacent</I></a> to vertex <i>u</i>.  In a
 directed graph, edge <i>(u,v)</i> is an <a
 name="def:out-edge"><I>out-edge</I></a> of vertex <i>u</i> and an <a
@@ -358,7 +358,7 @@ Breadth-first search spreading through a graph.</CAPTION>
 
 <P>
 We start at vertex <i>s</i>, and first visit <i>r</i> and <i>w</i> (the two
-neighbors of <i>s</i>). Once both neighbors of are visited, we visit the
+neighbors of <i>s</i>). Once both neighbors of <i>s</i> are visited, we visit the
 neighbor of <i>r</i> (vertex <i>v</i>), then the neighbors of <i>w</i>
 (the discovery order between <i>r</i> and <i>w</i> does not matter)
 which are <i>t</i> and <i>x</i>. Finally we visit the neighbors of
@@ -509,12 +509,12 @@ problem that are asymptotically faster than algorithms that solve the
 single-source problem.
 
 <P>
-A <I>shortest-paths tree</I> rooted at vertex in graph <i>G=(V,E)</i>
-is a directed subgraph <I>G'</I> where <i>V'</i> is a subset
+A <I>shortest-paths tree</I> rooted at vertex <i>r</i> in graph <i>G=(V,E)</i>
+is a directed subgraph <I>G'=(V',E')</I> where <i>V'</i> is a subset
 of <i>V</i> and <i>E'</i> is a subset of <i>E</i>, <i>V'</i> is the
-set of vertices reachable from , <i>G'</i> forms a rooted tree with
-root , and for all <i>v</i> in <i>V'</i> the unique simple path from
-to <i>v</i> in <i>G'</i> is a shortest path from to <i>v</i> in . The
+set of vertices reachable from <i>r</i>, <i>G'</i> forms a rooted tree with
+root <i>r</i>, and for all <i>v</i> in <i>V'</i> the unique simple path from <i>r</i>
+to <i>v</i> in <i>G'</i> is a shortest path from <i>r</i> to <i>v</i> in <i>G</i>. The
 result of a single-source algorithm is a shortest-paths tree.
 
 <P>
