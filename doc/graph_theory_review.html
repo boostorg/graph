@@ -69,7 +69,6 @@ pair of letters. Now we can write down an example of a directed graph
 as follows:
 
 <P>
-<BR>
 <DIV ALIGN="center">
 <table><tr><td><tt>
 V = {v, b, x, z, a, y } <br>
@@ -113,7 +112,6 @@ of an undirected graph be replacing each edge by two edges, one
 pointing in each direction.
 
 <P>
-<BR>
 <DIV ALIGN="CENTER">
 <table><tr><td><tt>
 V = {v, b, x, z, a, y }<br>
@@ -443,8 +441,7 @@ total weight is given by
 <i>w(T)</i> = sum of <i>w(u,v)</i> over all <i>(u,v)</i> in <i>T</i>,
 where <i>w(u,v)</i> is the weight on the edge <i>(u,v)</i>
 </DIV>
-<BR CLEAR="ALL">
-<P></P>
+<BR CLEAR="ALL"><P></P>
 <i>T</i> is called the <I>spanning tree</I>.
 
 <!--
@@ -533,7 +530,7 @@ constraints:
 <p>
 <i>f(u,v) <= c(u,v) for all (u,v) in V x V</i> (Capacity constraint) <br>
 <i>f(u,v) = - f(v,u) for all (u,v) in V x V</i> (Skew symmetry)<br>
-<i>sum<sub>v in V</sub> f(u,v) = 0 for all u in V - {s,t}</i> (Flow conservation)
+<i>sum<sub>v in V</sub> f(u,v) = 0 for all v in V - {s,t}</i> (Flow conservation)
 
 <p>
 The <b><i>flow</i></b> of the network is the net flow entering the
