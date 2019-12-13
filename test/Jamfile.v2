@@ -48,6 +48,7 @@ alias graph_test_regular :
     [ compile dijkstra_cc.cpp ]
     [ run dijkstra_heap_performance.cpp : 10000 ]
     [ run dijkstra_no_color_map_compare.cpp : 10000 ]
+    [ run disjoint_set_test.cpp ]
     [ run dominator_tree_test.cpp ]
 
     # Unused and deprecated.
