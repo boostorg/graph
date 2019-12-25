@@ -8,8 +8,8 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 //
-#ifndef MINIMUM_DEGREE_ORDERING_HPP
-#define MINIMUM_DEGREE_ORDERING_HPP
+#ifndef BOOST_GRAPH_MINIMUM_DEGREE_ORDERING_HPP
+#define BOOST_GRAPH_MINIMUM_DEGREE_ORDERING_HPP
 
 #include <vector>
 #include <boost/assert.hpp>
@@ -757,4 +757,4 @@ void minimum_degree_ordering(Graph& G, DegreeMap degree,
 
 } // namespace boost
 
-#endif // MINIMUM_DEGREE_ORDERING_HPP
+#endif // BOOST_GRAPH_MINIMUM_DEGREE_ORDERING_HPP

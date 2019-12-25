@@ -7,8 +7,8 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 
-#ifndef EDMONDS_KARP_MAX_FLOW_HPP
-#define EDMONDS_KARP_MAX_FLOW_HPP
+#ifndef BOOST_GRAPH_EDMONDS_KARP_MAX_FLOW_HPP
+#define BOOST_GRAPH_EDMONDS_KARP_MAX_FLOW_HPP
 
 #include <boost/config.hpp>
 #include <vector>
@@ -242,4 +242,4 @@ edmonds_karp_max_flow(Graph& g,
 
 } // namespace boost
 
-#endif // EDMONDS_KARP_MAX_FLOW_HPP
+#endif // BOOST_GRAPH_EDMONDS_KARP_MAX_FLOW_HPP

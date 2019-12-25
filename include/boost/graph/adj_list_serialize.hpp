@@ -6,8 +6,8 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
-#ifndef ADJ_LIST_SERIALIZE_HPP
-#define ADJ_LIST_SERIALIZE_HPP
+#ifndef BOOST_GRAPH_ADJ_LIST_SERIALIZE_HPP
+#define BOOST_GRAPH_ADJ_LIST_SERIALIZE_HPP
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/iteration_macros.hpp>
@@ -127,4 +127,4 @@ namespace serialization
 } // serialization
 } // boost
 
-#endif // ADJ_LIST_SERIALIZE_HPP
+#endif // BOOST_GRAPH_ADJ_LIST_SERIALIZE_HPP
