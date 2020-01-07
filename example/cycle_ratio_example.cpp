@@ -27,7 +27,7 @@ template < typename TG > void gen_rand_graph(TG& g, size_t nV, size_t nE)
 {
     g.clear();
     mt19937 rng;
-    rng.seed(uint32_t(time(0)));
+    rng.seed(0 /*uint32_t(time(0))*/);  // Reproducable seed.
     boost::generate_random_graph(g, nV, nE, rng, true, true);
     boost::uniform_real<> ur(-1, 10);
     boost::variate_generator< boost::mt19937&, boost::uniform_real<> > ew1rg(
