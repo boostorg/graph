@@ -1,17 +1,17 @@
 <HTML>
 <!--
       (C) Copyright David Abrahams and Jeremy Siek 2000.
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Boost Graph Library: Reverse Graph Adaptor</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -39,10 +39,10 @@ href="../example/reverse-graph-eg.cpp"><tt>examples/reverse-graph-eg.cpp</tt></a
 int
 main()
 {
-  typedef boost::adjacency_list&lt; 
+  typedef boost::adjacency_list&lt;
     boost::vecS, boost::vecS, boost::bidirectionalS,
   &gt; Graph;
-  
+
   Graph G(5);
   boost::add_edge(0, 2, G);
   boost::add_edge(1, 1, G);
@@ -60,7 +60,7 @@ main()
   boost::print_graph(G, boost::get(boost::vertex_index, G));
 
   std::cout &lt;&lt; std::endl &lt;&lt; &quot;reversed graph:&quot; &lt;&lt; std::endl;
-  boost::print_graph(boost::make_reverse_graph(G), 
+  boost::print_graph(boost::make_reverse_graph(G),
                      boost::get(boost::vertex_index, G));
 
 
@@ -70,18 +70,18 @@ main()
 The output is:
 <pre>
 original graph:
-0 --&gt; 2 
-1 --&gt; 1 3 4 
-2 --&gt; 1 3 4 
-3 --&gt; 1 4 
-4 --&gt; 0 1 
+0 --&gt; 2
+1 --&gt; 1 3 4
+2 --&gt; 1 3 4
+3 --&gt; 1 4
+4 --&gt; 0 1
 
 reversed graph:
-0 --&gt; 4 
-1 --&gt; 1 2 3 4 
-2 --&gt; 0 
-3 --&gt; 1 2 
-4 --&gt; 1 2 3 
+0 --&gt; 4
+1 --&gt; 1 2 3 4
+2 --&gt; 0
+3 --&gt; 1 2
+4 --&gt; 1 2 3
 </pre>
 
 <H3>Template Parameters</H3>
@@ -443,4 +443,4 @@ HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)<br>
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>

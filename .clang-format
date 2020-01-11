@@ -1,5 +1,5 @@
 BasedOnStyle: WebKit
-Standard: Cpp11
+Standard: Cpp03
 AlignAfterOpenBracket: false
 AlignEscapedNewlinesLeft: true
 AlwaysBreakAfterDefinitionReturnType: None
@@ -13,4 +13,3 @@ SortIncludes: false
 AlignTrailingComments: false
 
 SpacesInAngles: true
-

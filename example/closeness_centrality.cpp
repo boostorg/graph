@@ -25,32 +25,31 @@ struct Actor
 };
 
 // Declare the graph type and its vertex and edge types.
-typedef undirected_graph<Actor> Graph;
-typedef graph_traits<Graph>::vertex_descriptor Vertex;
-typedef graph_traits<Graph>::edge_descriptor Edge;
+typedef undirected_graph< Actor > Graph;
+typedef graph_traits< Graph >::vertex_descriptor Vertex;
+typedef graph_traits< Graph >::edge_descriptor Edge;
 
 // The name map provides an abstract accessor for the names of
 // each vertex. This is used during graph creation.
-typedef property_map<Graph, string Actor::*>::type NameMap;
+typedef property_map< Graph, string Actor::* >::type NameMap;
 
 // Declare a matrix type and its corresponding property map that
 // will contain the distances between each pair of vertices.
-typedef exterior_vertex_property<Graph, int> DistanceProperty;
+typedef exterior_vertex_property< Graph, int > DistanceProperty;
 typedef DistanceProperty::matrix_type DistanceMatrix;
 typedef DistanceProperty::matrix_map_type DistanceMatrixMap;
 
 // Declare the weight map so that each edge returns the same value.
-typedef constant_property_map<Edge, int> WeightMap;
+typedef constant_property_map< Edge, int > WeightMap;
 
 // Declare a container and its corresponding property map that
 // will contain the resulting closeness centralities of each
 // vertex in the graph.
-typedef boost::exterior_vertex_property<Graph, float> ClosenessProperty;
+typedef boost::exterior_vertex_property< Graph, float > ClosenessProperty;
 typedef ClosenessProperty::container_type ClosenessContainer;
 typedef ClosenessProperty::map_type ClosenessMap;
 
-int
-main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     // Create the graph and a property map that provides access to[
     // tha actor names.
@@ -74,10 +73,11 @@ main(int argc, char *argv[])
     all_closeness_centralities(g, dm, cm);
 
     // Print the closeness centrality of each vertex.
-    graph_traits<Graph>::vertex_iterator i, end;
-    for(boost::tie(i, end) = vertices(g); i != end; ++i) {
-        cout << setw(12) << setiosflags(ios::left)
-             << g[*i].name << get(cm, *i) << endl;
+    graph_traits< Graph >::vertex_iterator i, end;
+    for (boost::tie(i, end) = vertices(g); i != end; ++i)
+    {
+        cout << setw(12) << setiosflags(ios::left) << g[*i].name << get(cm, *i)
+             << endl;
     }
 
     return 0;

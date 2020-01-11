@@ -1,17 +1,17 @@
 <HTML>
 <!--
      Copyright (c) Piotr Wygocki 2013
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Boost Graph Library: Successive Shortest Path for  Min Cost Max Flow</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -23,34 +23,34 @@
 <i>// named parameter version</i>
 template &lt;class <a href="./Graph.html">Graph</a>, class P, class T, class R&gt;
 void successive_shortest_path_nonnegative_weights(
-        Graph &amp;g, 
-        typename graph_traits&lt;Graph&gt;::vertex_descriptor s, 
+        Graph &amp;g,
+        typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
         typename graph_traits&lt;Graph&gt;::vertex_descriptor t,
         const bgl_named_params&lt;P, T, R&gt; &amp; params  = <i>all defaults</i>)
 
 <i>// non-named parameter version</i>
 template &lt;class <a href="./Graph.html">Graph</a>, class Capacity, class ResidualCapacity, class Reversed, class Pred, class Weight, class Distance, class Distance2, class VertexIndex&gt;
 void successive_shortest_path_nonnegative_weights(
-        const Graph &amp; g, 
-        typename graph_traits&lt;Graph&gt;::vertex_descriptor s, 
+        const Graph &amp; g,
+        typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
         typename graph_traits&lt;Graph&gt;::vertex_descriptor t,
         Capacity capacity,
         ResidualCapacity residual_capacity,
-        Weight weight, 
+        Weight weight,
         Reversed rev,
         VertexIndex index,
-        Pred pred, 
+        Pred pred,
         Distance distance,
-        Distance2 distance_prev) 
+        Distance2 distance_prev)
 </PRE>
 
 <P>
 The <tt>successive_shortest_path_nonnegative_weights()</tt> function calculates the minimum cost maximum flow of a network. See Section <a
 href="./graph_theory_review.html#sec:network-flow-algorithms">Network
-Flow Algorithms</a> for a description of maximum flow.  
+Flow Algorithms</a> for a description of maximum flow.
  The function calculates the flow values <i>f(u,v)</i> for all <i>(u,v)</i> in
 <i>E</i>, which are returned in the form of the residual capacity
-<i>r(u,v) = c(u,v) - f(u,v)</i>. 
+<i>r(u,v) = c(u,v) - f(u,v)</i>.
 
 <p>
 There are several special requirements on the input graph and property
@@ -72,7 +72,7 @@ href="./bibliography.html#ahuja93:_network_flows">Network Flows</a>.
 <p>
 This algorithm starts with empty flow and in each round augments the shortest path (in terms of weight) in the residual graph.
 
-<p> 
+<p>
 In order to find the cost of the result flow use:
 <a href="./find_flow_cost.html"><tt>find_flow_cost()</tt></a>.
 
@@ -98,12 +98,12 @@ IN: <tt>vertex_descriptor s</tt>
 <blockquote>
   The source vertex for the flow network graph.
 </blockquote>
-  
+
 IN: <tt>vertex_descriptor t</tt>
 <blockquote>
   The sink vertex for the flow network graph.
 </blockquote>
-  
+
 <h3>Named Parameters</h3>
 
 
@@ -115,7 +115,7 @@ IN: <tt>capacity_map(CapacityEdgeMap cap)</tt>
   key type of the map must be the graph's edge descriptor type.<br>
   <b>Default:</b> <tt>get(edge_capacity, g)</tt>
 </blockquote>
-  
+
 OUT: <tt>residual_capacity_map(ResidualCapacityEdgeMap res)</tt>
 <blockquote>
   This maps edges to their residual capacity. The type must be a model
@@ -136,11 +136,11 @@ IN: <tt>reverse_edge_map(ReverseEdgeMap rev)</tt>
   <b>Default:</b> <tt>get(edge_reverse, g)</tt>
 </blockquote>
 
-IN: <tt>weight_map(WeightMap w_map)</tt>   
+IN: <tt>weight_map(WeightMap w_map)</tt>
 <blockquote>
   The weight or ``cost'' of each edge in the graph. The weights
   must all be non-negative, and the algorithm will throw a
-  <a href="./exception.html#negative_edge"><tt>negative_edge</tt></a> 
+  <a href="./exception.html#negative_edge"><tt>negative_edge</tt></a>
   exception if one of the edges is negative.
   The type <tt>WeightMap</tt> must be a model of
   <a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property Map</a>. The edge descriptor type of
@@ -166,7 +166,7 @@ UTIL: <tt>predecessor_map(PredEdgeMap pred)</tt>
   using the <tt>i_map</tt> for the index map.
 </blockquote>
 
-UTIL: <tt>distance_map(DistanceMap d_map)</tt> 
+UTIL: <tt>distance_map(DistanceMap d_map)</tt>
 <blockquote>
   The shortest path weight from the source vertex <tt>s</tt> to each
   vertex in the graph <tt>g</tt> is recorded in this property map. The
@@ -174,7 +174,7 @@ UTIL: <tt>distance_map(DistanceMap d_map)</tt>
   shortest path.  The type <tt>DistanceMap</tt> must be a model of <a
   href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
   Property Map</a>. The vertex descriptor type of the graph needs to
-  be usable as the key type of the distance map. 
+  be usable as the key type of the distance map.
 
   <b>Default:</b> <a
   href="../../property_map/doc/iterator_property_map.html">
@@ -185,13 +185,13 @@ UTIL: <tt>distance_map(DistanceMap d_map)</tt>
 
 </blockquote>
 
-UTIL: <tt>distance_map2(DistanceMap2 d_map2)</tt> 
+UTIL: <tt>distance_map2(DistanceMap2 d_map2)</tt>
 <blockquote>
   The shortest path computation in iteration nr <i>k</i> uses distances computed in iteration <i>k</i>.
   The type <tt>DistanceMap2</tt> must be a model of <a
   href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
   Property Map</a>. The vertex descriptor type of the graph needs to
-  be usable as the key type of the distance map. 
+  be usable as the key type of the distance map.
 
   <b>Default:</b> <a
   href="../../property_map/doc/iterator_property_map.html">
@@ -220,7 +220,7 @@ IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
 
 
 <h3>Complexity</h3>
-In the integer capacity case, if <i>U</i> is the value of the max flow, then the complexity is <i> O(U * (|E| + |V|*log|V|))</i>, 
+In the integer capacity case, if <i>U</i> is the value of the max flow, then the complexity is <i> O(U * (|E| + |V|*log|V|))</i>,
 where <i>O(|E| + |V|*log|V|)</i> is the complexity of the dijkstra algorithm and <i>U</i> is upper bound on number of iteration.
 In many real world cases number of iterations is much smaller than <i>U</i>.
 
@@ -244,7 +244,7 @@ Piotr Wygocki, University of Warsaw (<A HREF="mailto:wygos@mimuw.edu.pl">wygos a
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>
 <!--  LocalWords:  HTML Siek Edmonds BGCOLOR ffffff ee VLINK ALINK ff IMG SRC
  -->
 <!--  LocalWords:  gif ALT BR sec edmonds karp TT DIV CELLPADDING TR TD PRE lt

@@ -10,29 +10,28 @@
 #include <boost/graph/leda_graph.hpp>
 #include <boost/concept/assert.hpp>
 
-int
-main(int,char*[])
+int main(int, char*[])
 {
-  using namespace boost;
-  {
-    typedef leda::GRAPH<int,int> Graph;
-    typedef graph_traits<Graph>::vertex_descriptor Vertex;
-    typedef graph_traits<Graph>::edge_descriptor Edge;
-    BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph> ));
-    BOOST_CONCEPT_ASSERT(( BidirectionalGraphConcept<Graph> ));
-    BOOST_CONCEPT_ASSERT(( AdjacencyGraphConcept<Graph> ));
-    BOOST_CONCEPT_ASSERT(( VertexMutableGraphConcept<Graph> ));
-    BOOST_CONCEPT_ASSERT(( EdgeMutableGraphConcept<Graph> ));
-    BOOST_CONCEPT_ASSERT(( VertexMutablePropertyGraphConcept<Graph> ));
-    BOOST_CONCEPT_ASSERT(( EdgeMutablePropertyGraphConcept<Graph> ));
-    BOOST_CONCEPT_ASSERT((
-      ReadablePropertyGraphConcept<Graph, Vertex, vertex_index_t> ));
-    BOOST_CONCEPT_ASSERT((
-      ReadablePropertyGraphConcept<Graph, Edge, edge_index_t> ));
-    BOOST_CONCEPT_ASSERT((
-      LvaluePropertyGraphConcept<Graph, Vertex, vertex_all_t> ));
-    BOOST_CONCEPT_ASSERT((
-      LvaluePropertyGraphConcept<Graph, Vertex, edge_all_t> ));
-  }
-  return 0;
+    using namespace boost;
+    {
+        typedef leda::GRAPH< int, int > Graph;
+        typedef graph_traits< Graph >::vertex_descriptor Vertex;
+        typedef graph_traits< Graph >::edge_descriptor Edge;
+        BOOST_CONCEPT_ASSERT((VertexListGraphConcept< Graph >));
+        BOOST_CONCEPT_ASSERT((BidirectionalGraphConcept< Graph >));
+        BOOST_CONCEPT_ASSERT((AdjacencyGraphConcept< Graph >));
+        BOOST_CONCEPT_ASSERT((VertexMutableGraphConcept< Graph >));
+        BOOST_CONCEPT_ASSERT((EdgeMutableGraphConcept< Graph >));
+        BOOST_CONCEPT_ASSERT((VertexMutablePropertyGraphConcept< Graph >));
+        BOOST_CONCEPT_ASSERT((EdgeMutablePropertyGraphConcept< Graph >));
+        BOOST_CONCEPT_ASSERT(
+            (ReadablePropertyGraphConcept< Graph, Vertex, vertex_index_t >));
+        BOOST_CONCEPT_ASSERT(
+            (ReadablePropertyGraphConcept< Graph, Edge, edge_index_t >));
+        BOOST_CONCEPT_ASSERT(
+            (LvaluePropertyGraphConcept< Graph, Vertex, vertex_all_t >));
+        BOOST_CONCEPT_ASSERT(
+            (LvaluePropertyGraphConcept< Graph, Vertex, edge_all_t >));
+    }
+    return 0;
 }

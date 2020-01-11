@@ -1,21 +1,21 @@
 <HTML>
 <!--
      Copyright 2001-2004 The Trustees of Indiana University.
-    
+
      Use, modification and distribution is subject to the Boost Software
      License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
-    
+
       Authors: Douglas Gregor
                Jeremy Siek
                Andrew Lumsdaine
   -->
 <Head>
 <Title>Boost Graph Library: Biconnected Components and Articulation Points</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -25,7 +25,7 @@
 <A NAME="sec:biconnected-components">biconnected_components
 </A>
 </TT>
-and 
+and
 <tt>articulation_points</tt>
 </h1>
 
@@ -34,25 +34,25 @@ and
 template &lt;typename Graph, typename ComponentMap, typename OutputIterator,
           typename P, typename T, typename R&gt;
 std::pair&lt;std::size_t, OutputIterator&gt;
-biconnected_components(const Graph& g, ComponentMap comp, OutputIterator out, 
+biconnected_components(const Graph& g, ComponentMap comp, OutputIterator out,
                        const bgl_named_params&lt;P, T, R&gt;&amp; params)
 
 template &lt;typename Graph, typename ComponentMap,
           typename P, typename T, typename R&gt;
 std::size_t
-biconnected_components(const Graph& g, ComponentMap comp, 
+biconnected_components(const Graph& g, ComponentMap comp,
                        const bgl_named_params&lt;P, T, R&gt;&amp; params)
 
-template &lt;typename Graph, typename OutputIterator, 
+template &lt;typename Graph, typename OutputIterator,
           typename P, typename T, typename R&gt;
-OutputIterator articulation_points(const Graph& g, OutputIterator out, 
+OutputIterator articulation_points(const Graph& g, OutputIterator out,
                                    const bgl_named_params&lt;P, T, R&gt;&amp; params)
 
 <i>// non-named parameter version</i>
 template &lt;typename Graph, typename ComponentMap, typename OutputIterator,
           typename DiscoverTimeMap, typename LowPointMap&gt;
 std::pair&lt;std::size_t, OutputIterator&gt;
-biconnected_components(const Graph& g, ComponentMap comp, OutputIterator out, 
+biconnected_components(const Graph& g, ComponentMap comp, OutputIterator out,
                        DiscoverTimeMap discover_time, LowPointMap lowpt);
 
 template &lt;typename Graph, typename ComponentMap, typename OutputIterator&gt;
@@ -142,10 +142,10 @@ points.
 
 <h3>Named Parameters</h3>
 
-IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt> 
+IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
 <blockquote>
   This maps each vertex to an integer in the range <tt>[0,
-    num_vertices(g))</tt>. The type 
+    num_vertices(g))</tt>. The type
   <tt>VertexIndexMap</tt> must be a model of
   <a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property Map</a>. The value type of the map must be an
   integer type. The vertex descriptor type of the graph needs to be
@@ -192,9 +192,9 @@ UTIL/OUT: <tt>lowpoint_map(LowPointMap lowpt)</tt>
   <b>Python</b>: Unsupported parameter.
 </blockquote>
 
-UTIL/OUT: <tt>predecessor_map(PredecessorMap p_map)</tt> 
+UTIL/OUT: <tt>predecessor_map(PredecessorMap p_map)</tt>
 <blockquote>
-  The predecessor map records the depth first search tree. 
+  The predecessor map records the depth first search tree.
   The <tt>PredecessorMap</tt> type
   must be a <a
   href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
@@ -241,7 +241,7 @@ articulation points of an undirected graph.
 
 <h3>Notes</h3>
 
-<p><a name="1">[1]</a> 
+<p><a name="1">[1]</a>
   Since the visitor parameter is passed by value, if your visitor
   contains state then any changes to the state during the algorithm
   will be made to a copy of the visitor object, not the visitor object
@@ -260,4 +260,4 @@ HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)<br>
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>

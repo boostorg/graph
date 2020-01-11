@@ -16,8 +16,7 @@ using namespace boost;
 
 struct NotMuchOfAFilter
 {
-    template<class Vertex> bool operator()(Vertex key)
-    const { return true; }
+    template < class Vertex > bool operator()(Vertex key) const { return true; }
 };
 
 int main()

@@ -1,17 +1,17 @@
 <HTML>
 <!--
      Copyright (c) Jeremy Siek 2000
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Using the Boost Graph Library</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -134,11 +134,11 @@ out-edges for the whole graph.
 vertex()
 </PRE>
 This operation is constant time for <TT>vecS</TT> and  for
-<TT>listS</TT>. 
+<TT>listS</TT>.
 
 </ul>
 
- 
+
 <P>
 
 <H3><A NAME="SECTION00831200000000000000">
@@ -163,7 +163,7 @@ then use the <TT>setS</TT> or <TT>hash_setS</TT> selectors.  If you
 want to represent a multi-graph, or know that you will not be
 inserting parallel edges into the graph, then choose one of the <a
 href="http://www.boost.org/sgi/stl/Sequence.html">Sequence</a>
-types: <TT>vecS</TT>, <TT>listS</TT>, or <TT>slistS</TT>. 
+types: <TT>vecS</TT>, <TT>listS</TT>, or <TT>slistS</TT>.
 You will also want to take into account the differences in time and space
 complexity for the various graph operations. Below we use <i>V</i> for
 the total number of vertices in the graph and <i>E</i> for the total
@@ -194,7 +194,7 @@ vertex is <i>V</i> (unless it is a multi-graph). For sparse graphs
 considered a constant.
 
 <P>
- 
+
 <P> <P>
 <UL>
 <LI>
@@ -312,7 +312,7 @@ the <TT>OutEdgeList</TT> selection.
 </ul>
 
 <P>
- 
+
 <P>
 
 <H2><a name="sec:directed-and-undirected">Directed and Undirected Adjacency Lists</H2>
@@ -344,16 +344,16 @@ parameters <TT>VertexProperty</TT> and <TT>EdgeProperty</TT> of the
 <TT>adjacency_list</TT> class are meant to be filled by these interior
  properties.
 
-<p><b>NOTE</b>: The Boost Graph Library supports two interchangeable methods for 
-specifying interior properties: <a href="bundles.html">bundled properties</a> 
-and property lists. The former is easier to use and requires less effort, 
-whereas the latter is compatible with older, broken compilers and is 
+<p><b>NOTE</b>: The Boost Graph Library supports two interchangeable methods for
+specifying interior properties: <a href="bundles.html">bundled properties</a>
+and property lists. The former is easier to use and requires less effort,
+whereas the latter is compatible with older, broken compilers and is
 backward-compatible with Boost versions prior to 1.32.0. If you absolutely
-require these compatibility features, read on to learn about property lists. 
+require these compatibility features, read on to learn about property lists.
 Otherwise, we strongly suggest that you read about the <a href="bundles.html">bundled
 properties</a> mechanism.
 
-<p>One may specify internal properties via property lists, which are build from instances of the 
+<p>One may specify internal properties via property lists, which are build from instances of the
 property class declared as follows.
 
 <P>
@@ -427,11 +427,11 @@ the edges of the graph.
 
 <P>
 <PRE>
-  typedef property&lt;vertex_distance_t, float, 
+  typedef property&lt;vertex_distance_t, float,
             property&lt;vertex_name_t, std::string&gt; &gt; VertexProperty;
   typedef property&lt;edge_weight_t, float&gt; EdgeProperty;
 
-  typedef adjacency_list&lt;mapS, vecS, undirectedS, 
+  typedef adjacency_list&lt;mapS, vecS, undirectedS,
                          VertexProperty, EdgeProperty&gt; Graph;
 
   Graph g(num_vertices); // construct a graph object
@@ -464,7 +464,7 @@ struct flow_t {
   typedef edge_property_tag kind;
 };
 
-struct capacity_t { 
+struct capacity_t {
   typedef edge_property_tag kind;
 };
 </PRE>
@@ -545,28 +545,28 @@ owes who''.
 <P>
 <PRE>
   typedef property&lt;first_name_t, std::string&gt; FirstNameProperty;
-  typedef adjacency_list&lt;vecS, vecS, directedS, 
+  typedef adjacency_list&lt;vecS, vecS, directedS,
                          FirstNameProperty&gt; MyGraphType;
 
   typedef pair&lt;int,int&gt; Pair;
-  Pair edge_array[11] = { Pair(0,1), Pair(0,2), Pair(0,3), 
-                          Pair(0,4), Pair(2,0), Pair(3,0), 
-                          Pair(2,4), Pair(3,1), Pair(3,4), 
+  Pair edge_array[11] = { Pair(0,1), Pair(0,2), Pair(0,3),
+                          Pair(0,4), Pair(2,0), Pair(3,0),
+                          Pair(2,4), Pair(3,1), Pair(3,4),
                           Pair(4,0), Pair(4,1) };
-    
+
   MyGraphType G(5);
   for (int i = 0; i &lt; 11; ++i)
     add_edge(edge_array[i].first, edge_array[i].second, G);
 
   property_map&lt;MyGraphType, first_name_t&gt;::type
     name = get(first_name_t(), G);
-    
+
   boost::put(name, 0, "Jeremy");
   boost::put(name, 1, "Rich");
   boost::put(name, 2, "Andrew");
   boost::put(name, 3, "Jeff");
   name[4] = "Kinis"; // you can use operator[] too
-    
+
   who_owes_who(edges(G).first, edges(G).second, G);
 </PRE>
 
@@ -589,7 +589,7 @@ other property value types.
   void who_owes_who(EdgeIter first, EdgeIter last, const Graph&amp; G)
   {
     // Access the propety acessor type for this graph
-    typedef typename property_map&lt;Graph, 
+    typedef typename property_map&lt;Graph,
       first_name_t&gt;::const_type NameMap;
     NameMap name = get(first_name, G);
 
@@ -601,7 +601,7 @@ other property value types.
     while (first != last) {
       src_name = boost::get(name, source(*first, G));
       targ_name = boost::get(name, target(*first, G));
-      cout &lt;&lt; src_name &lt;&lt; " owes " 
+      cout &lt;&lt; src_name &lt;&lt; " owes "
            &lt;&lt; targ_name &lt;&lt; " some money" &lt;&lt; endl;
       ++first;
     }
@@ -712,8 +712,8 @@ to be used with the <TT>std::list</TT>.
     };
   }
 
-  // now you can define a graph using std::list 
-  //   and a specific allocator  
+  // now you can define a graph using std::list
+  //   and a specific allocator
   typedef adjacency_list&lt; list_with_allocatorS&lt; std::allocator&lt;int&gt; &gt;, vecS, directedS&gt; MyGraph;
 </PRE>
 
@@ -769,7 +769,7 @@ href="http://www.boost.org/sgi/stl/AssociativeContainer.html">AssociativeContain
 <P>
 <PRE>
   template &lt;&gt;
-  struct parallel_edge_traits&lt;custom_containerS&gt; { 
+  struct parallel_edge_traits&lt;custom_containerS&gt; {
     typedef allow_parallel_edge_tag type;
   };
 </PRE>
@@ -784,4 +784,4 @@ href="http://www.boost.org/sgi/stl/AssociativeContainer.html">AssociativeContain
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>

@@ -8,9 +8,9 @@
 // LICENSE_1_0.txt or http://www.boost.org/LICENSE_1_0.txt)
 
 #if defined BOOST_GRAPH_USE_MPI
-#  define BOOST_GRAPH_MPI_INCLUDE(x) x
+#define BOOST_GRAPH_MPI_INCLUDE(x) x
 #else
-#  define BOOST_GRAPH_MPI_INCLUDE(x) <boost/graph/detail/empty_header.hpp>
+#define BOOST_GRAPH_MPI_INCLUDE(x) <boost/graph/detail/empty_header.hpp>
 #endif
 
 #endif // #ifndef BOOST_GRAPH_DETAIL_MPI_INCLUDE_HPP_INCLUDED

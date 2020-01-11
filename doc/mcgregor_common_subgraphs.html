@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <!--
    Copyright (c) Michael Hansen 2009
-   
+
    Distributed under the Boost Software License, Version 1.0.
    (See accompanying file LICENSE_1_0.txt or copy at
    http://www.boost.org/LICENSE_1_0.txt)
@@ -123,7 +123,7 @@ template &lt;typename GraphFirst,
 
     <h3>Parameters</h3>
 
-    IN: <tt>const GraphFirst&amp; graph1</tt> 
+    IN: <tt>const GraphFirst&amp; graph1</tt>
     <blockquote>
       The first graph of the pair to be searched.  The
       type <tt>GraphFirst</tt> must be a model of
@@ -134,7 +134,7 @@ template &lt;typename GraphFirst,
       use this graph's vertices as keys.
     </blockquote>
 
-    IN: <tt>const GraphSecond&amp; graph2</tt> 
+    IN: <tt>const GraphSecond&amp; graph2</tt>
     <blockquote>
       The second graph of the pair to be searched.  The
       type <tt>Graphsecond</tt> must be a model of
@@ -151,7 +151,7 @@ template &lt;typename GraphFirst,
       have at least one edge connecting them to the existing subgraph.
     </blockquote>
 
-    OUT: <tt>SubGraphCallback user_callback</tt> 
+    OUT: <tt>SubGraphCallback user_callback</tt>
     <blockquote>
       A function object that will be invoked when a subgraph has been discovered.  The operator() must have the following form:
       <pre>
@@ -190,7 +190,7 @@ bool operator()(CorrespondenceMapFirstToSecond correspondence_map_1_to_2,
 
     <h3>Named Parameters</h3>
 
-    IN: <tt>vertex_index1(VertexIndexMapFirst vindex_map1)</tt>   
+    IN: <tt>vertex_index1(VertexIndexMapFirst vindex_map1)</tt>
     <blockquote>
       This maps each vertex to an integer in the range <tt>[0,
         num_vertices(graph1)]</tt>.  This is necessary for efficient storage
@@ -200,7 +200,7 @@ bool operator()(CorrespondenceMapFirstToSecond correspondence_map_1_to_2,
       <b>Default:</b> <tt>get(vertex_index, graph1)</tt>
     </blockquote>
 
-    IN: <tt>vertex_index2(VertexIndexMapsecond vindex_map2)</tt>   
+    IN: <tt>vertex_index2(VertexIndexMapsecond vindex_map2)</tt>
     <blockquote>
       This maps each vertex to an integer in the range <tt>[0,
         num_vertices(graph2)]</tt>.  This is necessary for efficient storage
@@ -210,7 +210,7 @@ bool operator()(CorrespondenceMapFirstToSecond correspondence_map_1_to_2,
       <b>Default:</b> <tt>get(vertex_index, graph2)</tt>
     </blockquote>
 
-    IN: <tt>edges_equivalent(EdgeEquivalencePredicate edges_equivalent)</tt> 
+    IN: <tt>edges_equivalent(EdgeEquivalencePredicate edges_equivalent)</tt>
     <blockquote>
       This function is used to determine if edges
       between <tt>graph1</tt> and <tt>graph2</tt> are equivalent.
@@ -224,7 +224,7 @@ bool operator()(CorrespondenceMapFirstToSecond correspondence_map_1_to_2,
       <b>Default:</b> <tt><a href="#always_equivalent">always_equivalent</a></tt>
     </blockquote>
 
-    IN: <tt>vertices_equivalent(VertexEquivalencePredicate vertices_equivalent)</tt> 
+    IN: <tt>vertices_equivalent(VertexEquivalencePredicate vertices_equivalent)</tt>
     <blockquote>
       This function is used to determine if vertices
       between <tt>graph1</tt> and <tt>graph2</tt> are equivalent.
@@ -285,7 +285,7 @@ property_map_equivalent&lt;PropertyMapFirst, PropertyMapSecond&gt;<br />
       the <tt>operator()</tt> is effectively:
       <tt>return (get(m_property_map1, vertex1) == get(m_property_map2, vertex2));</tt>
     </blockquote>
-    
+
     <tt id="always_equivalent">struct always_equivalent</tt>
     <blockquote>
       A binary function object that returns true for any pair of items.
@@ -417,7 +417,7 @@ mcgregor_common_subgraphs(graph1, graph2, true, my_callback,
 // ...</em>
 
 <em class="comment">// Step 1: Transform a correspondence map into a membership map. Any vertex -> bool property map will work</em>
-typedef shared_array_property_map<bool, VertexIndexMap> MembershipMap;      
+typedef shared_array_property_map<bool, VertexIndexMap> MembershipMap;
 MembershipMap membership_map1(num_vertices(m_graph1), get(vertex_index, m_graph1));
 
 <em class="comment">// Fill the membership map for m_graph1. GraphSecond is the type of the second graph given to mcgregor_common_subgraphs.</em>
@@ -448,4 +448,4 @@ BGL_FORALL_VERTICES_T(vertex1, subgraph1, MembershipFilteredGraph) {
     Copyright &copy; 2009 Trustees of Indiana University
 
   </body>
-</html> 
+</html>

@@ -41,7 +41,7 @@ RESULT		= pdf
 	epstopdf $*.eps
 
 .dot.eps:
-	dot -Tps -o $*.eps $*.dot 
+	dot -Tps -o $*.eps $*.dot
 
 .w.tex: /afs/nd.edu/user11/jsiek/.jweb
 	jweb -np $*.w

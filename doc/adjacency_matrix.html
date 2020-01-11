@@ -1,23 +1,23 @@
 <HTML>
 <!--
      Copyright (c) Jeremy Siek 2000
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Boost Graph Library: Adjacency Matrix</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
 <H1><A NAME="sec:adjacency-matrix-class"></A>
 <pre>
-adjacency_matrix&lt;Directed, VertexProperty, 
+adjacency_matrix&lt;Directed, VertexProperty,
                  EdgeProperty, GraphProperty,
                  Allocator&gt;
 </pre>
@@ -61,7 +61,7 @@ href="adjacency_list.html"><tt>adjacency_list</tt></a>. These may be
 <a
 href="using_adjacency_list.html#sec:adjacency-list-properties">interior
 properties</a>. The types of all property values must be
-Copy Constructible, Assignable and Default Constructible. 
+Copy Constructible, Assignable and Default Constructible.
 
 In the case of an undirected graph, the
 <tt>adjacency_matrix</tt>. class does not use a full <i>V x V</i>
@@ -83,11 +83,11 @@ matrix representation of an undirected graph.
 
 <h3>Example</h3>
 
-Creating the graph of <a href="#fig:adj-matrix-graph">Figure 1</a>. 
+Creating the graph of <a href="#fig:adj-matrix-graph">Figure 1</a>.
 <pre>
   enum { A, B, C, D, E, F, N };
   const char* name = "ABCDEF";
-  
+
   typedef boost::adjacency_matrix&lt;boost::directedS> Graph;
   Graph g(N);
   add_edge(B, C, g);
@@ -112,17 +112,17 @@ Creating the graph of <a href="#fig:adj-matrix-graph">Figure 1</a>.
 </pre>
 The output is:
 <pre>
-  vertex set: A B C D E F 
+  vertex set: A B C D E F
 
-  edge set: (B,C) (B,F) (C,A) (C,C) (D,E) (E,D) (F,A) 
+  edge set: (B,C) (B,F) (C,A) (C,C) (D,E) (E,D) (F,A)
 
-  out-edges: 
-  A --> 
-  B --> C F 
-  C --> A C 
-  D --> E 
-  E --> D 
-  F --> A 
+  out-edges:
+  A -->
+  B --> C F
+  C --> A C
+  D --> E
+  E --> D
+  F --> A
 </pre>
 
 Creating the graph of <a href="#fig:undir-adj-matrix-graph">Figure 2</a>.
@@ -152,17 +152,17 @@ Creating the graph of <a href="#fig:undir-adj-matrix-graph">Figure 2</a>.
 </pre>
 The output is:
 <pre>
-  vertex set: A B C D E F 
+  vertex set: A B C D E F
 
-  edge set: (C,A) (C,B) (E,D) (F,A) (F,B) 
+  edge set: (C,A) (C,B) (E,D) (F,A) (F,B)
 
-  incident edges: 
-  A &lt;--> C F 
-  B &lt;--> C F 
-  C &lt;--> A B 
-  D &lt;--> E 
-  E &lt;--> D 
-  F &lt;--> A B 
+  incident edges:
+  A &lt;--> C F
+  B &lt;--> C F
+  C &lt;--> A B
+  D &lt;--> E
+  E &lt;--> D
+  F &lt;--> A B
 </pre>
 
 
@@ -205,7 +205,7 @@ The output is:
 
 <h3>Model Of</h3>
 
-<a href="./VertexAndEdgeListGraph.html">VertexAndEdgeListGraph</a>, 
+<a href="./VertexAndEdgeListGraph.html">VertexAndEdgeListGraph</a>,
 <a href="./IncidenceGraph.html">Incidence Graph</a>,
 <a href="./BidirectionalGraph.html">Bidirectional Graph</a>,
 <a
@@ -236,7 +236,7 @@ The type for the edge descriptors associated with the
 <hr>
 <tt>graph_traits&lt;adjacency_matrix&gt;::vertex_iterator</tt>
 <br><br>
-  The type for the iterators returned by <tt>vertices()</tt>.  
+  The type for the iterators returned by <tt>vertices()</tt>.
   The vertex iterator models <a href="http://www.boost.org/sgi/stl/RandomAccessIterator.html">RandomAccessIterator</a>. <br>
  (Required by <a href="VertexListGraph.html">VertexListGraph</a>.)
 
@@ -420,7 +420,7 @@ degree_size_type
 out_degree(vertex_descriptor u, const adjacency_matrix&amp; g)
 </pre>
 Returns the number of edges leaving vertex <tt>u</tt>.<br>
-(Required by <a href="IncidenceGraph.html">IncidenceGraph</a>.) 
+(Required by <a href="IncidenceGraph.html">IncidenceGraph</a>.)
 <hr>
 
 <hr>
@@ -440,7 +440,7 @@ degree_size_type
 in_degree(vertex_descriptor u, const adjacency_matrix&amp; g)
 </pre>
 Returns the number of edges entering vertex <tt>u</tt>.<br>
-(Required by <a href="BidirectionalGraph.html">BidirectionalGraph</a>.) 
+(Required by <a href="BidirectionalGraph.html">BidirectionalGraph</a>.)
 <hr>
 
 <hr>

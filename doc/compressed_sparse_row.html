@@ -2,7 +2,7 @@
 <html>
 <!--
      Copyright (c) 2005-2009 Trustees of Indiana University
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
@@ -32,12 +32,12 @@ function address(host, user) {
 </script>
 
   </head>
-  
+
   <body>
-    <IMG SRC="../../../boost.png" 
+    <IMG SRC="../../../boost.png"
       ALT="C++ Boost" width="277" height="86"></img>
     <h1>Compressed Sparse Row Graph</h1>
-          
+
     <p>The class template <code>compressed_sparse_row_graph</code> is
     a graph class that uses the compact Compressed Sparse Row (CSR)
     format to store directed (and bidirectional) graphs. While CSR graphs have
@@ -101,8 +101,8 @@ function address(host, user) {
     <pre>
 namespace boost {
 
-template&lt;typename <a href="#Directed">Directed</a> = directedS, typename <a href="#VertexProperty">VertexProperty</a> = no_property, 
-         typename <a href="#EdgeProperty">EdgeProperty</a> = no_property, typename <a href="#GraphProperty">GraphProperty</a> = no_property, 
+template&lt;typename <a href="#Directed">Directed</a> = directedS, typename <a href="#VertexProperty">VertexProperty</a> = no_property,
+         typename <a href="#EdgeProperty">EdgeProperty</a> = no_property, typename <a href="#GraphProperty">GraphProperty</a> = no_property,
          typename <a href="#Vertex">Vertex</a> = std::size_t, typename <a href="#EdgeIndex">EdgeIndex</a> = Vertex&gt;
 class compressed_sparse_row_graph
 {
@@ -173,7 +173,7 @@ public:
   template&lt;typename Graph, typename VertexIndexMap&gt;
   <a href="#graph-const">compressed_sparse_row_graph</a>(const Graph&amp; g, const VertexIndexMap&amp; vi,
                               vertices_size_type numverts,
-                              edges_size_type numedges); 
+                              edges_size_type numedges);
 
   template&lt;typename Graph, typename VertexIndexMap&gt;
   compressed_sparse_row_graph(const Graph&amp; g, const VertexIndexMap&amp; vi);
@@ -202,17 +202,17 @@ public:
 <i>// <a href="IncidenceGraph.html">Incidence Graph requirements</a></i>
 vertex_descriptor source(edge_descriptor, const compressed_sparse_row_graph&amp;);
 vertex_descriptor target(edge_descriptor, const compressed_sparse_row_graph&amp;);
-std::pair&lt;out_edge_iterator, out_edge_iterator&gt; 
+std::pair&lt;out_edge_iterator, out_edge_iterator&gt;
   out_edges(vertex_descriptor, const compressed_sparse_row_graph&amp;);
 degree_size_type out_degree(vertex_descriptor v, const compressed_sparse_row_graph&amp;);
 
 <i>// <a href="BidirectionalGraph.html">Bidirectional Graph requirements <b>(bidirectional only)</b></a></i>
-std::pair&lt;in_edge_iterator, in_edge_iterator&gt; 
+std::pair&lt;in_edge_iterator, in_edge_iterator&gt;
   in_edges(vertex_descriptor, const compressed_sparse_row_graph&amp;);
 degree_size_type in_degree(vertex_descriptor v, const compressed_sparse_row_graph&amp;);
 
 <i>// <a href="AdjacencyGraph.html">Adjacency Graph requirements</a></i>
-std::pair&lt;adjacency_iterator, adjacency_iterator&gt; 
+std::pair&lt;adjacency_iterator, adjacency_iterator&gt;
   adjacent_vertices(vertex_descriptor, const compressed_sparse_row_graph&amp;);
 
 <i>// <a href="VertexListGraph.html">Vertex List Graph requirements</a></i>
@@ -227,7 +227,7 @@ edges_size_type num_edges(const compressed_sparse_row_graph&amp;);
 vertex_descriptor <a href="#vertex-lookup">vertex</a>(vertices_size_type i, const compressed_sparse_row_graph&amp;);
 
 <i>// <a href="#edge-access">Edge access</a></i>
-std::pair&lt;edge_descriptor, bool&gt; 
+std::pair&lt;edge_descriptor, bool&gt;
   <a href="#edge">edge</a>(vertex_descriptor u, vertex_descriptor v, const compressed_sparse_row_graph&amp;);
 edge_descriptor <a href="#edge_from_index">edge_from_index</a>(edges_size_type i, const compressed_sparse_row_graph&amp;);
 
@@ -283,7 +283,7 @@ void <a href="#add_edges_sorted_prop">add_edges_sorted</a>(BidirectionalIterator
     <p><code>&lt;<a href="../../../boost/graph/compressed_sparse_row_graph.hpp">boost/graph/compressed_sparse_row_graph.hpp</a>&gt;</code></p>
 
     <a name="models"></a><h2>Models</h2>
-    
+
     <p>The <tt>compressed_sparse_row_graph</tt> class template models
     (i.e., implements the requirements of) many of the
     BGL <a href="graph_concepts.html">graph concepts</a>, allowing it
@@ -628,7 +628,7 @@ void <a href="#add_edges_sorted_prop">add_edges_sorted</a>(BidirectionalIterator
   template&lt;typename Graph, typename VertexIndexMap&gt;
   compressed_sparse_row_graph(const Graph&amp; g, const VertexIndexMap&amp; vi,
                               vertices_size_type numverts,
-                              edges_size_type numedges); 
+                              edges_size_type numedges);
 
   template&lt;typename Graph, typename VertexIndexMap&gt;
   compressed_sparse_row_graph(const Graph&amp; g, const VertexIndexMap&amp; vi);
@@ -666,14 +666,14 @@ void <a href="#add_edges_sorted_prop">add_edges_sorted</a>(BidirectionalIterator
 
       <ul>
         <li><tt>g</tt>: The incoming graph.</li>
-        
+
         <li><tt>vi</tt>: A map from vertices to indices. If not
           provided, <tt>get(vertex_index, g)</tt> will be used.</li>
-        
+
         <li><tt>numverts</tt>: The number of vertices in the graph
           <tt>g</tt>. If not provided, <tt>Graph</tt> must be a model of
           <a href="VertexListGraph.html">VertexListGraph</a>.</li>
-        
+
         <li><tt>numedges</tt>: The number of edges in the graph
           <tt>g</tt>. If not provided, <tt>Graph</tt> must be a model of
           <a href="EdgeListGraph.html">EdgeListGraph</a>.</li>
@@ -726,7 +726,7 @@ void <a href="#add_edges_sorted_prop">add_edges_sorted</a>(BidirectionalIterator
     <a name="edge-access"></a><h3>Edge access</h3>
 
     <pre><a name="edge"></a>
-  std::pair&lt;edge_descriptor, bool&gt; 
+  std::pair&lt;edge_descriptor, bool&gt;
     edge(vertex_descriptor u, vertex_descriptor v, const compressed_sparse_row_graph&amp;);
     </pre>
 
@@ -766,7 +766,7 @@ template&lt;typename <a href="./PropertyTag.html">PropertyTag</a>&gt;
 property_map&lt;compressed_sparse_row_graph, Tag&gt;::const_type
 get(PropertyTag, const compressed_sparse_row_graph&amp; g)
     </pre>
-    
+
     <p class="indent">
       Returns the property map object for the vertex property
       specified by <TT>PropertyTag</TT>. The <TT>PropertyTag</TT> must
@@ -816,7 +816,7 @@ get_property(const compressed_sparse_row_graph&amp; g, GraphPropertyTag);
 
     <p class="indent">
       Return the property specified by <tt>GraphPropertyTag</tt> that
-      is attached to the graph object <tt>g</tt>. 
+      is attached to the graph object <tt>g</tt>.
     </p>
 
     <hr></hr>
@@ -840,7 +840,7 @@ void set_property(const compressed_sparse_row_graph&amp; g, GraphPropertyTag,
 template&lt;typename InputIterator&gt;
 void add_edges(InputIterator first, InputIterator last, compressed_sparse_row_graph&amp; g)
     </pre>
-    
+
     <p class="indent">
       Add a range of edges (from <tt>first</tt> to <tt>last</tt>) to the graph.
       The <tt>InputIterator</tt> must be a model of <a
@@ -856,7 +856,7 @@ void add_edges(InputIterator first, InputIterator last, compressed_sparse_row_gr
 template&lt;typename InputIterator, typename EPIter&gt;
 void add_edges(InputIterator first, InputIterator last, EPIter ep_first, EPIter ep_last, compressed_sparse_row_graph&amp; g)
     </pre>
-    
+
     <p class="indent">
       Add a range of edges (from <tt>first</tt> to <tt>last</tt>) with
       corresponding edge properties (from <tt>ep_first</tt> to
@@ -876,7 +876,7 @@ void add_edges(InputIterator first, InputIterator last, EPIter ep_first, EPIter 
 template&lt;typename BidirectionalIterator&gt;
 void add_edges_sorted(BidirectionalIterator first, BidirectionalIterator last, compressed_sparse_row_graph&amp; g)
     </pre>
-    
+
     <p class="indent">
       Add a range of edges (from <tt>first</tt> to <tt>last</tt>) to the graph.
       The <tt>BidirectionalIterator</tt> must be a model of <a
@@ -893,7 +893,7 @@ void add_edges_sorted(BidirectionalIterator first, BidirectionalIterator last, c
 template&lt;typename BidirectionalIterator, typename EPIter&gt;
 void add_edges_sorted(BidirectionalIterator first, BidirectionalIterator last, EPIter ep_iter, compressed_sparse_row_graph&amp; g)
     </pre>
-    
+
     <p class="indent">
       Add a range of edges (from <tt>first</tt> to <tt>last</tt>) to the graph.
       The <tt>BidirectionalIterator</tt> and <tt>EPIter</tt> must be models of
@@ -950,7 +950,7 @@ BGL_FORALL_VERTICES(v, g, WebGraph)
 // Output each of the links
 std::cout &lt;&lt; "The web graph:" &lt;&lt; std::endl;
 BGL_FORALL_EDGES(e, g, WebGraph)
-  std::cout &lt;&lt; "  " &lt;&lt; g[source(e, g)].url &lt;&lt; " -> " &lt;&lt; g[target(e, g)].url 
+  std::cout &lt;&lt; "  " &lt;&lt; g[source(e, g)].url &lt;&lt; " -> " &lt;&lt; g[target(e, g)].url
             &lt;&lt; std::endl;
     </pre>
 

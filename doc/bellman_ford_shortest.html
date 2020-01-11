@@ -1,17 +1,17 @@
 <HTML>
 <!--
      Copyright (c) Jeremy Siek 2000
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Bellman Ford Shortest Paths</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -24,7 +24,7 @@
 <PRE>
 <i>// named paramter version</i>
 template &lt;class <a href="./EdgeListGraph.html">EdgeListGraph</a>, class Size, class P, class T, class R&gt;
-bool bellman_ford_shortest_paths(const EdgeListGraph&amp; g, Size N, 
+bool bellman_ford_shortest_paths(const EdgeListGraph&amp; g, Size N,
   const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>);
 
 template &lt;class <a href="./VertexAndEdgeListGraph.html">VertexAndEdgeListGraph</a>, class P, class T, class R&gt;
@@ -36,8 +36,8 @@ template &lt;class <a href="./EdgeListGraph.html">EdgeListGraph</a>, class Size,
 	  class PredecessorMap, class DistanceMap,
 	  class <a href="http://www.boost.org/sgi/stl/BinaryFunction.html">BinaryFunction</a>, class <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html">BinaryPredicate</a>,
 	  class <a href="./BellmanFordVisitor.html">BellmanFordVisitor</a>&gt;
-bool bellman_ford_shortest_paths(EdgeListGraph&amp; g, Size N, 
-  WeightMap weight, PredecessorMap pred, DistanceMap distance, 
+bool bellman_ford_shortest_paths(EdgeListGraph&amp; g, Size N,
+  WeightMap weight, PredecessorMap pred, DistanceMap distance,
   BinaryFunction combine, BinaryPredicate compare, BellmanFordVisitor v)
 </PRE>
 
@@ -51,7 +51,7 @@ shortest paths problem for a graph with both positive and negative
 edge weights. For the definition of the shortest paths problem see
 Section <A
 HREF="./graph_theory_review.html#sec:shortest-paths-algorithms">Shortest-Paths
-Algorithms</A>. 
+Algorithms</A>.
 If you only need to solve the shortest paths problem for positive edge
 weights, Dijkstra's algorithm provides a more efficient
 alternative. If all the edge weights are all equal to one then breadth-first
@@ -77,7 +77,7 @@ ultimately be the parent in the shortest paths tree
 <td valign="top">
 <pre>
 RELAX(<i>u</i>, <i>v</i>, <i>w</i>, <i>d</i>, <i>p</i>)
-  <b>if</b> (<i>w(u,v) + d[u] < d[v]</i>) 
+  <b>if</b> (<i>w(u,v) + d[u] < d[v]</i>)
     <i>d[v] := w(u,v) + d[u]</i>
     <i>p[v] := u</i>
   <b>else</b>
@@ -91,7 +91,7 @@ RELAX(<i>u</i>, <i>v</i>, <i>w</i>, <i>d</i>, <i>p</i>)
 relax edge <i>(u,v)</i>
 
 
-edge <i>(u,v)</i> is not relaxed 
+edge <i>(u,v)</i> is not relaxed
 </pre>
 </td>
 </tr>
@@ -115,19 +115,19 @@ otherwise.
 <pre>
 BELLMAN-FORD(<i>G</i>)
   <i>// Optional initialization</i>
-  <b>for</b> each vertex <i>u in V</i> 
+  <b>for</b> each vertex <i>u in V</i>
     <i>d[u] := infinity</i>
-    <i>p[u] := u</i> 
+    <i>p[u] := u</i>
   <b>end for</b>
-  <b>for</b> <i>i := 1</i> <b>to</b> <i>|V|-1</i> 
-    <b>for</b> each edge <i>(u,v) in E</i> 
+  <b>for</b> <i>i := 1</i> <b>to</b> <i>|V|-1</i>
+    <b>for</b> each edge <i>(u,v) in E</i>
       RELAX(<i>u</i>, <i>v</i>, <i>w</i>, <i>d</i>, <i>p</i>)
     <b>end for</b>
   <b>end for</b>
-  <b>for</b> each edge <i>(u,v) in E</i> 
+  <b>for</b> each edge <i>(u,v) in E</i>
     <b>if</b> (<i>w(u,v) + d[u] < d[v]</i>)
       <b>return</b> (false, , )
-    <b>else</b> 
+    <b>else</b>
       ...
   <b>end for</b>
   <b>return</b> (true, <i>p</i>, <i>d</i>)
@@ -148,9 +148,9 @@ examine edge <i>(u,v)</i>
 
 
 
-edge <i>(u,v)</i> was not minimized 
+edge <i>(u,v)</i> was not minimized
 
-edge <i>(u,v)</i> was minimized 
+edge <i>(u,v)</i> was minimized
 </pre>
 </td>
 </tr>
@@ -175,7 +175,7 @@ algorithm's event points.
 <h3>Parameters</h3>
 
 
-IN: <tt>EdgeListGraph&amp; g</tt> 
+IN: <tt>EdgeListGraph&amp; g</tt>
 <blockquote>
   A directed or undirected graph whose type must be a model of
   <a href="./EdgeListGraph.html">Edge List Graph</a>. If a root vertex is
@@ -211,7 +211,7 @@ IN: <tt>weight_map(WeightMap w)</tt>
   <b>Python default</b>: <tt>graph.get_edge_double_map("weight")</tt>
 </blockquote>
 
-OUT: <tt>predecessor_map(PredecessorMap p_map)</tt> 
+OUT: <tt>predecessor_map(PredecessorMap p_map)</tt>
 <blockquote>
   The predecessor map records the edges in the minimum spanning
   tree. Upon completion of the algorithm, the edges <i>(p[u],u)</i>
@@ -227,7 +227,7 @@ OUT: <tt>predecessor_map(PredecessorMap p_map)</tt>
   <b>Python</b>: Must be a <tt>vertex_vertex_map</tt> for the graph.<br>
 </blockquote>
 
-IN/OUT: <tt>distance_map(DistanceMap d)</tt> 
+IN/OUT: <tt>distance_map(DistanceMap d)</tt>
 <blockquote>
   The shortest path weight from the source vertex to each vertex in
   the graph <tt>g</tt> is recorded in this property map.  The type
@@ -307,11 +307,11 @@ The time complexity is <i>O(V E)</i>.
 <li><b><tt>vis.examine_edge(e, g)</tt></b>  is invoked on every edge in
   the graph <i>|V|</i> times.
 <li><b><tt>vis.edge_relaxed(e, g)</tt></b>  is invoked when the distance
-  label for the target vertex is decreased. The edge <i>(u,v)</i> that 
+  label for the target vertex is decreased. The edge <i>(u,v)</i> that
   participated in the last relaxation for vertex <i>v</i> is an edge in the
-  shortest paths tree. 
+  shortest paths tree.
 <li><b><tt>vis.edge_not_relaxed(e, g)</tt></b>  is invoked if the distance label
-  for the target vertex is not decreased. 
+  for the target vertex is not decreased.
 <li><b><tt>vis.edge_minimized(e, g)</tt></b>  is invoked during the
   second stage of the algorithm, during the test of whether each edge
   was minimized. If the edge is minimized then this function
@@ -330,7 +330,7 @@ href="../example/bellman-example.cpp"><TT>examples/bellman-example.cpp</TT></a>.
 
 <h3>Notes</h3>
 
-<p><a name="1">[1]</a> 
+<p><a name="1">[1]</a>
   Since the visitor parameter is passed by value, if your visitor
   contains state then any changes to the state during the algorithm
   will be made to a copy of the visitor object, not the visitor object
@@ -346,4 +346,4 @@ href="../example/bellman-example.cpp"><TT>examples/bellman-example.cpp</TT></a>.
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>

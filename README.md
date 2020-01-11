@@ -18,24 +18,24 @@ There is no mailing-list specific to Boost Graph, although you can use the gener
 
 ## Development ##
 
-Clone the whole boost project, which includes the individual Boost projects as submodules ([see boost+git doc](https://github.com/boostorg/boost/wiki/Getting-Started)): 
+Clone the whole boost project, which includes the individual Boost projects as submodules ([see boost+git doc](https://github.com/boostorg/boost/wiki/Getting-Started)):
 
     git clone https://github.com/boostorg/boost
     cd boost
     git submodule update --init
 
-The Boost Graph Library is located in `libs/graph/`. 
+The Boost Graph Library is located in `libs/graph/`.
 
 Boost Graph Library is mostly made of headers but also contains some compiled components. Here are the build commands:
-    
-    ./bootstrap.sh            <- compile b2 
+
+    ./bootstrap.sh            <- compile b2
     ./b2 headers              <- just installs headers
     ./b2                      <- build compiled components
 
 **Note:** The Boost Graph Library cannot currently be built outside of Boost itself.
 
 ### Running tests ###
-First, make sure you are in `libs/graph/test`. 
+First, make sure you are in `libs/graph/test`.
 You can either run all the 300+ tests listed in `Jamfile.v2` or run a single test:
 
     ../../../b2                        <- run all tests

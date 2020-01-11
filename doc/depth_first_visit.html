@@ -1,17 +1,17 @@
 <HTML>
 <!--
      Copyright (c) Jeremy Siek 2000
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Boost Graph Library: Depth-First Visit</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -25,13 +25,13 @@
 <PRE>
 template &lt;class <a href="./IncidenceGraph.html">IncidenceGraph</a>, class <a href="./DFSVisitor.html">DFSVisitor</a>, class ColorMap&gt;
 void depth_first_visit(IncidenceGraph& g,
-  typename graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor s, 
+  typename graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor s,
   DFSVisitor&amp; vis, ColorMap color)
 
-template &lt;class <a href="./IncidenceGraph.html">IncidenceGraph</a>, class <a href="./DFSVisitor.html">DFSVisitor</a>, class ColorMap, 
+template &lt;class <a href="./IncidenceGraph.html">IncidenceGraph</a>, class <a href="./DFSVisitor.html">DFSVisitor</a>, class ColorMap,
           class TerminatorFunc&gt;
 void depth_first_visit(IncidenceGraph& g,
-  typename graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor s, 
+  typename graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor s,
   DFSVisitor&amp; vis, ColorMap color, TerminatorFunc func = TerminatorFunc())
 </PRE>
 
@@ -41,7 +41,7 @@ component as the source vertex <tt>s</tt>, using the <a
 href="./graph_theory_review.html#sec:dfs-algorithm">depth-first
 pattern</a>. The main purpose of the function is for the
 implementation of <TT>depth_first_search()</TT> though sometimes it is
-useful on its own. 
+useful on its own.
 
 <p>
 The <tt>DFSVisitor</tt> supplied by the user determines what
@@ -124,7 +124,7 @@ Time complexity is <i>O(E)</i>.
 
 <h3>Notes</h3>
 
-<p><a name="1">[1]</a> 
+<p><a name="1">[1]</a>
   Since the visitor parameter is passed by value, if your visitor
   contains state then any changes to the state during the algorithm
   will be made to a copy of the visitor object, not the visitor object
@@ -141,4 +141,4 @@ Time complexity is <i>O(E)</i>.
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>

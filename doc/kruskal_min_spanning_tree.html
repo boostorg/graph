@@ -1,17 +1,17 @@
 <HTML>
 <!--
      Copyright (c) Jeremy Siek 2000
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Boost Graph Library: Kruskal Minimum Spanning Tree</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -24,7 +24,7 @@
 <PRE>
 template &lt;class Graph, class OutputIterator, class P, class T, class R&gt;
 OutputIterator
-kruskal_minimum_spanning_tree(Graph&amp; g, OutputIterator tree_edges, 
+kruskal_minimum_spanning_tree(Graph&amp; g, OutputIterator tree_edges,
     const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>);
 </PRE>
 
@@ -56,15 +56,15 @@ operations (<tt>MAKE-SET</tt>, <tt>FIND-SET</tt>, and
 </p>
 
 <pre>
-KRUSKAL-MST(<i>G</i>, <i>w</i>) 
-  <i>T := &Oslash;</i> 
-  <b>for</b> each vertex <i>u in V</i> 
-    MAKE-SET(<i>DS</i>, <i>u</i>) 
+KRUSKAL-MST(<i>G</i>, <i>w</i>)
+  <i>T := &Oslash;</i>
+  <b>for</b> each vertex <i>u in V</i>
+    MAKE-SET(<i>DS</i>, <i>u</i>)
   <b>end for</b>
-  <b>for</b> each edge <i>(u,v) in E</i> in order of nondecreasing weight 
-    <b>if</b> FIND-SET(<i>DS</i>, <i>u</i>) != FIND-SET(<i>DS</i>, <i>v</i>) 
-      UNION-SET(<i>DS</i>, <i>u</i>, <i>v</i>) 
-      <i>T := T U {(u,v)}</i> 
+  <b>for</b> each edge <i>(u,v) in E</i> in order of nondecreasing weight
+    <b>if</b> FIND-SET(<i>DS</i>, <i>u</i>) != FIND-SET(<i>DS</i>, <i>v</i>)
+      UNION-SET(<i>DS</i>, <i>u</i>, <i>v</i>)
+      <i>T := T U {(u,v)}</i>
   <b>end for</b>
   <b>return</b> <i>T</i>
 </pre>
@@ -79,7 +79,7 @@ KRUSKAL-MST(<i>G</i>, <i>w</i>)
 
 <h3>Parameters</h3>
 
-IN: <tt>const Graph&amp; g</tt> 
+IN: <tt>const Graph&amp; g</tt>
 <blockquote>
   An undirected graph. The graph type must be a model of
   <a href="./VertexListGraph.html">Vertex List Graph</a>
@@ -102,7 +102,7 @@ IN: <tt>OutputIterator spanning_tree_edges</tt>
 
 <h3>Named Parameters</h3>
 
-IN: <tt>weight_map(WeightMap w_map)</tt> 
+IN: <tt>weight_map(WeightMap w_map)</tt>
 <blockquote>
 The weight or ``length'' of
   each edge in the graph.  The <tt>WeightMap</tt> type must be a model
@@ -116,7 +116,7 @@ The weight or ``length'' of
   <b>Python default</b>: <tt>graph.get_edge_double_map("weight")</tt>
 </blockquote>
 
-UTIL: <tt>rank_map(RankMap r_map)</tt> 
+UTIL: <tt>rank_map(RankMap r_map)</tt>
 <blockquote>
   This is used by the disjoint sets data structure.
   The type <tt>RankMap</tt> must be a model of <a
@@ -134,7 +134,7 @@ UTIL: <tt>rank_map(RankMap r_map)</tt>
   <b>Python</b>: Unsupported parameter.
 </blockquote>
 
-UTIL: <tt>predecessor_map(PredecessorMap p_map)</tt> 
+UTIL: <tt>predecessor_map(PredecessorMap p_map)</tt>
 <blockquote>
   This is used by the disjoint sets data structure, and is <b>not</b>
   used for storing predecessors in the spanning tree.  The predecessors
@@ -153,7 +153,7 @@ UTIL: <tt>predecessor_map(PredecessorMap p_map)</tt>
   <b>Python</b>: Unsupported parameter.
 </blockquote>
 
-IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt> 
+IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
 <blockquote>
   This maps each vertex to an integer in the range <tt>[0,
   num_vertices(g))</tt>. This is only necessary if the default is used
@@ -196,4 +196,4 @@ contains an example of using Kruskal's algorithm.
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>

@@ -1,17 +1,17 @@
 <HTML>
 <!--
      Copyright (c) Jeremy Siek 2000, 2001
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Boost Graph Library: Breadth-First Search</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -24,15 +24,15 @@
 <PRE>
 <i>// named parameter version</i>
 template &lt;class Graph, class P, class T, class R&gt;
-void breadth_first_search(Graph& G, 
-  typename graph_traits&lt;Graph&gt;::vertex_descriptor s, 
+void breadth_first_search(Graph& G,
+  typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
   const bgl_named_params&lt;P, T, R&gt;&amp; params);
 
 <i>// non-named parameter version</i>
-template &lt;class Graph, class Buffer, class BFSVisitor, 
+template &lt;class Graph, class Buffer, class BFSVisitor,
 	  class ColorMap&gt;
-void breadth_first_search(const Graph&amp; g, 
-   typename graph_traits&lt;Graph&gt;::vertex_descriptor s, 
+void breadth_first_search(const Graph&amp; g,
+   typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
    Buffer&amp; Q, BFSVisitor vis, ColorMap color);
 </PRE>
 
@@ -70,25 +70,25 @@ BFS algorithm is a listed below.
 <pre>
 BFS(<i>G</i>, <i>s</i>)
   <b>for</b> each vertex <i>u in V[G]</i>
-    <i>color[u] :=</i> WHITE 
-    <i>d[u] := infinity</i> 
-    <i>p[u] := u</i> 
+    <i>color[u] :=</i> WHITE
+    <i>d[u] := infinity</i>
+    <i>p[u] := u</i>
   <b>end for</b>
-  <i>color[s] :=</i> GRAY 
-  <i>d[s] := 0</i> 
+  <i>color[s] :=</i> GRAY
+  <i>d[s] := 0</i>
   ENQUEUE(<i>Q</i>, <i>s</i>)
-  <b>while</b> (<i>Q != &Oslash;</i>) 
+  <b>while</b> (<i>Q != &Oslash;</i>)
     <i>u :=</i> DEQUEUE(Q)
     <b>for</b> each vertex <i>v in Adj[u]</i>
       <b>if</b> (<i>color[v] =</i> WHITE)
-        <i>color[v] :=</i> GRAY 
-        <i>d[v] := d[u] + 1</i>  
-        <i>p[v] := u</i>  
+        <i>color[v] :=</i> GRAY
+        <i>d[v] := d[u] + 1</i>
+        <i>p[v] := u</i>
         ENQUEUE(<i>Q</i>, <i>v</i>)
       <b>else</b>
-        <b>if</b> (<i>color[v] =</i> GRAY) 
+        <b>if</b> (<i>color[v] =</i> GRAY)
           ...
-        <b>else</b> 
+        <b>else</b>
           ...
     <b>end for</b>
     <i>color[u] :=</i> BLACK
@@ -99,29 +99,29 @@ BFS(<i>G</i>, <i>s</i>)
 <td valign="top">
 <pre>
 
-initialize vertex <i>u</i> 
+initialize vertex <i>u</i>
 
 
 
 
 
 
-discover vertex <i>s</i> 
+discover vertex <i>s</i>
 
-examine vertex <i>u</i> 
+examine vertex <i>u</i>
 examine edge <i>(u,v)</i>
-<i>(u,v)</i> is a tree edge 
+<i>(u,v)</i> is a tree edge
 
 
 
-discover vertex <i>v</i> 
+discover vertex <i>v</i>
 <i>(u,v)</i> is a non-tree edge
 
-<i>(u,v)</i> has a gray target 
+<i>(u,v)</i> has a gray target
 
-<i>(u,v)</i> has a black target 
+<i>(u,v)</i> has a black target
 
-finish vertex <i>u</i> 
+finish vertex <i>u</i>
 </pre>
 </tr>
 </table>
@@ -244,7 +244,7 @@ UTIL: <tt>buffer(Buffer&amp; Q)</tt>
   <b>Python</b>: The buffer must derive from the <a
   href="./Buffer.html">Buffer</a> type for the graph.
 
-</blockquote>  
+</blockquote>
 
 
 <H3><A NAME="SECTION001330300000000000000">
@@ -252,7 +252,7 @@ Complexity</A>
 </H3>
 
 <P>
-The time complexity is <i>O(E + V)</i>. 
+The time complexity is <i>O(E + V)</i>.
 
 <P>
 
@@ -260,13 +260,13 @@ The time complexity is <i>O(E + V)</i>.
 
 <ul>
 <li><b><tt>vis.initialize_vertex(v, g)</tt></b> is invoked on every vertex
-  before the start of the search. 
+  before the start of the search.
 
 <li><b><tt>vis.examine_vertex(u, g)</tt></b>r is invoked in each
   vertex as it is removed from the queue.
 
 <li><b><tt>vis.examine_edge(e, g)</tt></b> is invoked on every out-edge
-  of each vertex immediately after the vertex is removed from the queue. 
+  of each vertex immediately after the vertex is removed from the queue.
 
 <li><b><tt>vis.tree_edge(e, g)</tt></b> is invoked (in addition to
   <tt>examine_edge()</tt>) if the edge is a tree edge. The
@@ -275,20 +275,20 @@ The time complexity is <i>O(E + V)</i>.
 <li><b><tt>vis.discover_vertex(u, g)</tt></b> is invoked the first time the
   algorithm encounters vertex <i>u</i>. All vertices closer to the
   source vertex have been discovered, and vertices further from the
-  source have not yet been discovered. 
+  source have not yet been discovered.
 
 <li><b><tt>vis.non_tree_edge(e, g)</tt></b> is invoked (in addition to
-  <tt>examine_edge()</tt>) if the edge is not a tree edge. 
+  <tt>examine_edge()</tt>) if the edge is not a tree edge.
 
 <li><b><tt>vis.gray_target(e, g)</tt></b> is invoked (in addition to
   <tt>non_tree_edge()</tt>) if the target vertex is colored gray at the
   time of examination. The color gray indicates that
-  the vertex is currently in the queue. 
+  the vertex is currently in the queue.
 
 <li><b><tt>vis.black_target(e, g)</tt></b> is invoked (in addition to
   <tt>non_tree_edge()</tt>) if the target vertex is colored black at the
   time of examination. The color black indicates that the
-  vertex is no longer in the queue. 
+  vertex is no longer in the queue.
 
 <li><b><tt>vis.finish_vertex(u, g)</tt></b> is invoked after all of the out
   edges of <i>u</i> have been examined and all of the adjacent vertices
@@ -319,7 +319,7 @@ to <tt>listS</tt>.
 
 <h3>Notes</h3>
 
-<p><a name="1">[1]</a> 
+<p><a name="1">[1]</a>
   Since the visitor parameter is passed by value, if your visitor
   contains state then any changes to the state during the algorithm
   will be made to a copy of the visitor object, not the visitor object
@@ -335,4 +335,4 @@ to <tt>listS</tt>.
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>
