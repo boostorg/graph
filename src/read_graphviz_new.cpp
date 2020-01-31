@@ -334,6 +334,8 @@ namespace read_graphviz_detail
                         BOOST_ASSERT(!"Definition of punctuation_token does "
                                       "not match switch statement");
                     }
+                    // Prevent static analyzers complaining about fallthrough:
+                    break;
                 }
                 default:
                     BOOST_ASSERT(!"Definition of punctuation_token does not "
