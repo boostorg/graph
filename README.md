@@ -1,4 +1,4 @@
-Boost Graph Library
+Boost Graph Library  [![Build Status](https://travis-ci.org/boostorg/graph.svg?branch=develop)](https://travis-ci.org/boostorg/graph)
 ===================
 
 A generic interface for traversing graphs, using C++ templates.
@@ -7,9 +7,14 @@ The full documentation is available on [boost.org](http://www.boost.org/doc/libs
 
 ## Support, bugs and feature requests ##
 
-Bugs and feature requests can be reported through the [Trac issue tracker](https://svn.boost.org/trac/boost/query?component=graph&desc=1&order=id)
-(see [open issues](https://svn.boost.org/trac/boost/query?status=!closed&component=graph&desc=1&order=id) and
-[closed issues](https://svn.boost.org/trac/boost/query?status=closed&component=graph&col=id&col=summary&col=status&col=owner&col=type&col=milestone&col=version&desc=1&order=id)). [Here](http://lists.boost.org/Archives/boost/2015/04/221780.php) is why Trac is still in use.
+Bugs and feature requests can be reported through the [Github issue page](https://github.com/boostorg/graph/issues).
+
+See also:
+
+* [Current open issues](https://github.com/boostorg/graph/issues)
+* [Closed issues](https://github.com/boostorg/graph/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aclosed)
+* Old issues still open on [Trac](https://svn.boost.org/trac/boost/query?status=!closed&component=graph&desc=1&order=id)
+* Closed issues on [Trac](https://svn.boost.org/trac/boost/query?status=closed&component=graph&col=id&col=summary&col=status&col=owner&col=type&col=milestone&col=version&desc=1&order=id)).
 
 You can submit your changes through a [pull request](https://github.com/boostorg/graph/pulls). One of the maintainers will take a look (remember that it can take some time).
 
@@ -17,6 +22,12 @@ There is no mailing-list specific to Boost Graph, although you can use the gener
 
 
 ## Development ##
+
+|                  |  Master  |   Develop   |
+|------------------|----------|-------------|
+| Travis           | [![Build Status](https://travis-ci.org/boostorg/graph.svg?branch=master)](https://travis-ci.org/boostorg/graph)  |  [![Build Status](https://travis-ci.org/boostorg/graph.svg)](https://travis-ci.org/boostorg/graph) |
+| Appveyor         | [![Build status](https://ci.appveyor.com/api/projects/status/78gegk21tc1g3v8d/branch/master?svg=true)](https://ci.appveyor.com/project/jzmaddock/graph/branch/master) | [![Build status](https://ci.appveyor.com/api/projects/status/78gegk21tc1g3v8d/branch/develop?svg=true)](https://ci.appveyor.com/project/jzmaddock/graph/branch/develop)  |
+
 
 Clone the whole boost project, which includes the individual Boost projects as submodules ([see boost+git doc](https://github.com/boostorg/boost/wiki/Getting-Started)):
 
