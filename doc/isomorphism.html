@@ -115,9 +115,8 @@ equal) or to impose extra conditions on the result.  The
 href="http://www.boost.org/sgi/stl/AdaptableUnaryFunction.html">AdaptableUnaryFunction</a>,
 with the argument type of <tt>vertex_invariant1</tt> being <tt>Graph1</tt>'s vertex
 descriptor type, the argument type of <tt>vertex_invariant2</tt> being
-<tt>Graph2</tt>'s vertex descriptor type, and both functions having integral
-result types.  The values returned by these two functions must have a low upper
-bound. 
+<tt>Graph2</tt>'s vertex descriptor type, and both functions sharing a 
+result type that is totally ordered and hashable such as an integer.
 <br>
 <b>Default:</b> <tt>degree_vertex_invariant</tt> for both arguments<br>
 <b>Python</b>: Unsupported parameter.

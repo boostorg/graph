@@ -57,7 +57,11 @@ template < typename Generator > struct random_functor
 #endif
 
 template < typename Graph1, typename Graph2 >
-void randomly_permute_graph(const Graph1& g1, Graph2& g2)
+std::map<
+    typename graph_traits< Graph1 >::vertex_descriptor,
+    typename graph_traits< Graph2 >::vertex_descriptor
+>
+randomly_permute_graph(const Graph1& g1, Graph2& g2)
 {
     // Need a clean graph to start with
     BOOST_TEST(num_vertices(g2) == 0);
@@ -93,6 +97,8 @@ void randomly_permute_graph(const Graph1& g1, Graph2& g2)
     {
         add_edge(vertex_map[source(*e, g1)], vertex_map[target(*e, g1)], g2);
     }
+
+    return vertex_map;
 }
 
 template < typename Graph >
@@ -243,11 +249,125 @@ void test_isomorphism(int n, double edge_probability)
     }
 }
 
+template<typename Graph>
+struct ColorFunctor {
+    typedef typename graph_traits<Graph>::vertex_descriptor argument_type;
+    typedef int result_type;
+
+    ColorFunctor(const Graph& g) : graph(g) {}
+
+    inline result_type operator() (argument_type v) const {
+        return get(vertex_color_t(), graph)(v);
+    }
+
+    const Graph& graph;
+};
+
+void test_colored_isomorphism(int n, double edge_probability)
+{
+    using namespace boost::graph::keywords;
+    typedef adjacency_list< vecS, vecS, bidirectionalS, property< vertex_color_t, int > > graph1;
+    typedef adjacency_list< listS, listS, bidirectionalS,
+        property< vertex_index_t, int, property< vertex_color_t, int >
+        >
+    > graph2;
+
+    typedef typename graph_traits< graph1 >::vertex_descriptor vertex1_t;
+    typedef typename graph_traits< graph2 >::vertex_descriptor vertex2_t;
+    typedef std::map< vertex1_t, vertex2_t > vertex_map_t;
+
+    graph1 g1(n);
+    generate_random_digraph(g1, edge_probability);
+    graph2 g2;
+    vertex_map_t vertex_map = randomly_permute_graph(g1, g2);
+
+    std::vector< int > colors(n);
+    typedef std::vector< int >::iterator colors_iter;
+    colors_iter midpoint = colors.begin() + n / 2;
+    std::fill(colors.begin(), midpoint, -1);
+    std::fill(midpoint, colors.end(), 1);
+
+    random_generator_type gen;
+
+#ifndef BOOST_NO_CXX98_RANDOM_SHUFFLE
+    random_functor< random_generator_type > rand_fun(gen);
+    std::random_shuffle(colors.begin(), colors.end(), rand_fun);
+#else
+    std::shuffle(colors.begin(), colors.end(), gen);
+#endif
+
+    int v_idx = 0;
+    for (graph1::vertex_iterator v = vertices(g1).first;
+         v != vertices(g1).second; ++v)
+    {
+        put(vertex_color_t(), g1, *v, colors[v_idx]);
+        put(vertex_color_t(), g2, vertex_map.at(*v), colors[v_idx]);
+        v_idx += 1;
+    }
+
+    v_idx = 0;
+    for (graph2::vertex_iterator v = vertices(g2).first;
+         v != vertices(g2).second; ++v)
+    {
+        put(vertex_index_t(), g2, *v, v_idx);
+        v_idx += 1;
+    }
+
+    std::map< graph1::vertex_descriptor, graph2::vertex_descriptor > mapping;
+
+    bool isomorphism_correct;
+    clock_t start = clock();
+    BOOST_TEST(
+        isomorphism_correct = isomorphism(
+            g1,
+            g2,
+            isomorphism_map(make_assoc_property_map(mapping))
+            .vertex_invariant1(ColorFunctor<graph1>(g1))
+            .vertex_invariant2(ColorFunctor<graph2>(g2))
+        )
+    );
+    clock_t end = clock();
+
+    std::cout << "Elapsed time (clock cycles): " << (end - start) << std::endl;
+
+    bool verify_correct;
+    BOOST_TEST(verify_correct
+        = verify_isomorphism(g1, g2, make_assoc_property_map(mapping)));
+
+    if (!isomorphism_correct || !verify_correct)
+    {
+        // Output graph 1
+        {
+            std::ofstream out("colored_isomorphism_failure.bg1");
+            out << num_vertices(g1) << std::endl;
+            for (graph1::edge_iterator e = edges(g1).first;
+                 e != edges(g1).second; ++e)
+            {
+                out << get(vertex_index_t(), g1, source(*e, g1)) << ' '
+                    << get(vertex_index_t(), g1, target(*e, g1)) << std::endl;
+            }
+        }
+
+        // Output graph 2
+        {
+            std::ofstream out("colored_isomorphism_failure.bg2");
+            out << num_vertices(g2) << std::endl;
+            for (graph2::edge_iterator e = edges(g2).first;
+                 e != edges(g2).second; ++e)
+            {
+                out << get(vertex_index_t(), g2, source(*e, g2)) << ' '
+                    << get(vertex_index_t(), g2, target(*e, g2)) << std::endl;
+            }
+        }
+    }
+}
+
 int main(int argc, char* argv[])
 {
     int n = argc < 3 ? 30 : boost::lexical_cast< int >(argv[1]);
     double edge_prob = argc < 3 ? 0.45 : boost::lexical_cast< double >(argv[2]);
     test_isomorphism(n, edge_prob);
+    test_colored_isomorphism(n, edge_prob);
 
     return boost::report_errors();
 }

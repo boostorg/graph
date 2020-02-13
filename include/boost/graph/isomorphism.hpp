@@ -15,6 +15,7 @@
 #include <boost/smart_ptr.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/detail/algorithm.hpp>
+#include <boost/unordered_map.hpp>
 #include <boost/pending/indirect_cmp.hpp> // for make_indirect_pmap
 #include <boost/concept/assert.hpp>
 
@@ -29,6 +30,37 @@ namespace boost
 namespace detail
 {
 
+    template < typename T >
+    struct HashableConcept {
+        BOOST_CONCEPT_USAGE(HashableConcept)
+        {
+            hash<T> hasher;
+            typedef typename hash<T>::result_type hash_result;
+            hash_result val = hasher(t);
+            boost::ignore_unused_variable_warning(val);
+        }
+
+        T t;
+    };
+
+    template < typename T, typename U >
+    struct HeterogeneousEqualityComparable {
+        BOOST_CONCEPT_USAGE(HeterogeneousEqualityComparable)
+        {
+            bool a = (t == u);
+            a = (u == t);
+            a = (t != u);
+            a = (u != t);
+            boost::ignore_unused_variable_warning(a);
+        }
+
+        T t;
+        U u;
+    };
+
+    template < typename Invariant >
+    struct InvariantConcept : LessThanComparable<Invariant>, EqualityComparable<Invariant>, HashableConcept<Invariant> {};
+
     template < typename Graph1, typename Graph2, typename IsoMapping,
         typename Invariant1, typename Invariant2, typename IndexMap1,
         typename IndexMap2 >
@@ -40,6 +72,7 @@ namespace detail
         typedef typename graph_traits< Graph1 >::vertices_size_type size_type;
         typedef typename Invariant1::result_type invar1_value;
         typedef typename Invariant2::result_type invar2_value;
+        typedef unordered_map< invar1_value, size_type > multiplicity_map;
 
         const Graph1& G1;
         const Graph2& G2;
@@ -80,17 +113,17 @@ namespace detail
         friend struct compare_multiplicity;
         struct compare_multiplicity
         {
-            compare_multiplicity(Invariant1 invariant1, size_type* multiplicity)
+            compare_multiplicity(Invariant1 invariant1, const multiplicity_map& multiplicity)
             : invariant1(invariant1), multiplicity(multiplicity)
             {
             }
             bool operator()(const vertex1_t& x, const vertex1_t& y) const
             {
-                return multiplicity[invariant1(x)]
-                    < multiplicity[invariant1(y)];
+                return multiplicity.at(invariant1(x))
+                    < multiplicity.at(invariant1(y));
             }
             Invariant1 invariant1;
-            size_type* multiplicity;
+            const multiplicity_map& multiplicity;
         };
 
         struct record_dfs_order : default_dfs_visitor
@@ -157,41 +190,64 @@ namespace detail
             );
         }
 
+        multiplicity_map multiplicities(const std::vector< invar1_value >& invariants) {
+          // Assumes invariants are sorted
+          multiplicity_map invar_multiplicity;
+
+          typedef typename std::vector< invar1_value >::const_iterator invar_iter;
+          typedef typename multiplicity_map::iterator invar_map_iter;
+          invar_iter it = invariants.begin();
+          const invar_iter end = invariants.end();
+
+          if(it == end) {
+            return invar_multiplicity;
+          }
+
+          invar1_value invar = *it;
+          invar_map_iter inserted = invar_multiplicity.emplace(invar, 1).first;
+          ++it;
+          for(; it != end; ++it)
+          {
+              if(*it == invar)
+              {
+                  inserted->second += 1;
+              }
+              else
+              {
+                  invar = *it;
+                  inserted = invar_multiplicity.emplace(invar, 1).first;
+              }
+          }
+
+          return invar_multiplicity;
+        }
+
         bool test_isomorphism()
         {
-            // reset isomapping
+            // Initialize IsoMap
             BGL_FORALL_VERTICES_T(v, G1, Graph1)
             f[v] = graph_traits< Graph2 >::null_vertex();
 
-            std::size_t max_invariant;
-            {
-                std::vector< invar1_value > invar1_array;
-                invar1_array.reserve(num_vertices(G1));
-                BGL_FORALL_VERTICES_T(v, G1, Graph1)
-                  invar1_array.push_back(invariant1(v));
-                sort(invar1_array);
+            // Calculate all invariants of G1 and G2, sort and compare
+            std::vector< invar1_value > invar1_array;
+            invar1_array.reserve(num_vertices(G1));
+            BGL_FORALL_VERTICES_T(v, G1, Graph1)
+            invar1_array.push_back(invariant1(v));
+            sort(invar1_array);
 
-                std::vector< invar2_value > invar2_array;
-                invar2_array.reserve(num_vertices(G2));
-                BGL_FORALL_VERTICES_T(v, G2, Graph2)
-                  invar2_array.push_back(invariant2(v));
-                sort(invar2_array);
-                if (!equal(invar1_array, invar2_array))
-                    return false;
+            std::vector< invar2_value > invar2_array;
+            invar2_array.reserve(num_vertices(G2));
+            BGL_FORALL_VERTICES_T(v, G2, Graph2)
+            invar2_array.push_back(invariant2(v));
+            sort(invar2_array);
+            if (!equal(invar1_array, invar2_array))
+                return false;
 
-                max_invariant = std::max(invar1_array.back(), invar2_array.back()) + 1;
-            }
-
+            // Sort vertices by the multiplicity of their invariants
             std::vector< vertex1_t > V_mult;
             BGL_FORALL_VERTICES_T(v, G1, Graph1)
             V_mult.push_back(v);
-            {
-                std::vector< size_type > multiplicity(max_invariant, 0);
-                BGL_FORALL_VERTICES_T(v, G1, Graph1)
-                ++multiplicity.at(invariant1(v));
-                sort(
-                    V_mult, compare_multiplicity(invariant1, &multiplicity[0]));
-            }
+            sort(V_mult, compare_multiplicity(invariant1, multiplicities(invar1_array)));
 
             std::vector< default_color_type > color_vec(num_vertices(G1));
             safe_iterator_property_map<
@@ -503,11 +559,19 @@ bool isomorphism(const Graph1& G1, const Graph2& G2, IsoMapping f,
     typedef typename graph_traits< Graph2 >::vertex_descriptor vertex2_t;
     typedef typename graph_traits< Graph1 >::vertices_size_type size_type;
 
+    typedef typename Invariant1::result_type invar1_t;
+    typedef typename Invariant2::result_type invar2_t;
+
+    BOOST_CONCEPT_ASSERT((detail::InvariantConcept<invar1_t>));
+    BOOST_CONCEPT_ASSERT((detail::InvariantConcept<invar2_t>));
+    BOOST_CONCEPT_ASSERT((detail::HeterogeneousEqualityComparable<invar1_t, invar2_t>));
+
     // Vertex invariant requirement
     BOOST_CONCEPT_ASSERT(
-        (AdaptableUnaryFunctionConcept< Invariant1, size_type, vertex1_t >));
+        (AdaptableUnaryFunctionConcept< Invariant1, invar1_t, vertex1_t >));
     BOOST_CONCEPT_ASSERT(
-        (AdaptableUnaryFunctionConcept< Invariant2, size_type, vertex2_t >));
+        (AdaptableUnaryFunctionConcept< Invariant2, invar2_t, vertex2_t >));
+
 
     // Property map requirements
     BOOST_CONCEPT_ASSERT(
