@@ -92,14 +92,13 @@ href="./VertexListGraph.html">Vertex List Graph</a>.
 
 OUT: <tt>isomorphism_map(IsoMap f)</tt>
 <blockquote>
-The mapping from vertices in graph 1 to vertices in graph 2. May contain <a
-href="Graph.h">null vertices</a> if both graphs contain single-vertex
-components. This must be a <a href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
-Property Map</a>.<br> <b>Default:</b> an <a
+The mapping from vertices in graph 1 to vertices in graph 2. This must be a 
+<a href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
+Map</a>.<br> <b>Default:</b> an <a
 href="../../property_map/doc/iterator_property_map.html"><tt>iterator_property_map</tt></a>
-constructed from a <tt>std::vector</tt> of graph 2's vertex
-descriptor type and the vertex index map for graph 1.<br>
-<b>Python</b>: Must be a <tt>vertex_vertex_map</tt> for the first graph.
+constructed from a <tt>std::vector</tt> of graph 2's vertex descriptor type and
+the vertex index map for graph 1.<br> <b>Python</b>: Must be a
+<tt>vertex_vertex_map</tt> for the first graph.
 </blockquote>
 
 IN: <tt>vertex_invariant1(VertexInvariant1 i1)</tt>

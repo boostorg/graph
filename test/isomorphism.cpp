@@ -278,6 +278,7 @@ void test_colored_isomorphism(int n, double edge_probability)
 
     graph1 g1(n);
     generate_random_digraph(g1, edge_probability);
+
     graph2 g2;
     vertex_map_t vertex_map = randomly_permute_graph(g1, g2);
 
@@ -313,7 +314,8 @@ void test_colored_isomorphism(int n, double edge_probability)
         v_idx += 1;
     }
 
-    std::map< graph1::vertex_descriptor, graph2::vertex_descriptor > mapping;
+    typedef std::map< graph1::vertex_descriptor, graph2::vertex_descriptor > iso_map;
+    iso_map mapping;
 
     bool isomorphism_correct;
     clock_t start = clock();
@@ -360,6 +362,23 @@ void test_colored_isomorphism(int n, double edge_probability)
             }
         }
     }
+
+    bool map_contains_null_vertices = false;
+    {
+        typedef typename graph2::vertex_descriptor vertex2_t;
+        const vertex2_t g2_null_vertex = graph2::null_vertex();
+
+        typedef typename iso_map::iterator map_iter;
+        const map_iter end = mapping.end();
+        for(map_iter iter = mapping.begin(); iter != end; ++iter) {
+            if(iter->second == g2_null_vertex) {
+                map_contains_null_vertices = true;
+                break;
+            }
+        }
+    }
+
+    BOOST_TEST(!map_contains_null_vertices);
 }
 
 int main(int argc, char* argv[])

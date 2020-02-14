@@ -43,21 +43,6 @@ namespace detail
         T t;
     };
 
-    template < typename T, typename U >
-    struct HeterogeneousEqualityComparable {
-        BOOST_CONCEPT_USAGE(HeterogeneousEqualityComparable)
-        {
-            bool a = (t == u);
-            a = (u == t);
-            a = (t != u);
-            a = (u != t);
-            boost::ignore_unused_variable_warning(a);
-        }
-
-        T t;
-        U u;
-    };
-
     template < typename Invariant >
     struct InvariantConcept : LessThanComparable<Invariant>, EqualityComparable<Invariant>, HashableConcept<Invariant> {};
 
@@ -70,9 +55,8 @@ namespace detail
         typedef typename graph_traits< Graph2 >::vertex_descriptor vertex2_t;
         typedef typename graph_traits< Graph1 >::edge_descriptor edge1_t;
         typedef typename graph_traits< Graph1 >::vertices_size_type size_type;
-        typedef typename Invariant1::result_type invar1_value;
-        typedef typename Invariant2::result_type invar2_value;
-        typedef unordered_map< invar1_value, size_type > multiplicity_map;
+        typedef typename Invariant1::result_type invariant_t;
+        typedef unordered_map< invariant_t, size_type > multiplicity_map;
 
         const Graph1& G1;
         const Graph2& G2;
@@ -190,11 +174,11 @@ namespace detail
             );
         }
 
-        multiplicity_map multiplicities(const std::vector< invar1_value >& invariants) {
+        multiplicity_map multiplicities(const std::vector< invariant_t >& invariants) {
           // Assumes invariants are sorted
           multiplicity_map invar_multiplicity;
 
-          typedef typename std::vector< invar1_value >::const_iterator invar_iter;
+          typedef typename std::vector< invariant_t >::const_iterator invar_iter;
           typedef typename multiplicity_map::iterator invar_map_iter;
           invar_iter it = invariants.begin();
           const invar_iter end = invariants.end();
@@ -203,7 +187,7 @@ namespace detail
             return invar_multiplicity;
           }
 
-          invar1_value invar = *it;
+          invariant_t invar = *it;
           invar_map_iter inserted = invar_multiplicity.emplace(invar, 1).first;
           ++it;
           for(; it != end; ++it)
@@ -229,13 +213,13 @@ namespace detail
             f[v] = graph_traits< Graph2 >::null_vertex();
 
             // Calculate all invariants of G1 and G2, sort and compare
-            std::vector< invar1_value > invar1_array;
+            std::vector< invariant_t > invar1_array;
             invar1_array.reserve(num_vertices(G1));
             BGL_FORALL_VERTICES_T(v, G1, Graph1)
             invar1_array.push_back(invariant1(v));
             sort(invar1_array);
 
-            std::vector< invar2_value > invar2_array;
+            std::vector< invariant_t > invar2_array;
             invar2_array.reserve(num_vertices(G2));
             BGL_FORALL_VERTICES_T(v, G2, Graph2)
             invar2_array.push_back(invariant2(v));
@@ -425,7 +409,39 @@ namespace detail
 
             {
             return_point_true:
-                return true;
+                {
+                    std::vector< vertex1_t > unmatched_g1_vertices;
+                    BGL_FORALL_VERTICES_T(v, G1, Graph1)
+                    {
+                        if(f[v] == graph_traits< Graph2 >::null_vertex()) {
+                            unmatched_g1_vertices.push_back(v);
+                        }
+                    }
+
+                    if(!unmatched_g1_vertices.empty()) {
+                        typedef unordered_multimap< invariant_t, vertex2_t > g2_invar_vertex_multimap;
+                        typedef typename g2_invar_vertex_multimap::iterator multimap_iter;
+                        g2_invar_vertex_multimap unmatched_invar_multimap;
+                        BGL_FORALL_VERTICES_T(v, G2, Graph2)
+                        {
+                            if(!in_S[v]) {
+                                unmatched_invar_multimap.emplace(invariant2(v), v);
+                            }
+                        }
+
+                        typedef typename std::vector< vertex1_t >::iterator v1_iter;
+                        const v1_iter end = unmatched_g1_vertices.end();
+                        for(v1_iter iter = unmatched_g1_vertices.begin(); iter != end; ++iter)
+                        {
+                            invariant_t unmatched_g1_vertex_invariant = invariant1(*iter);
+                            multimap_iter matching_invar = unmatched_invar_multimap.find(unmatched_g1_vertex_invariant);
+                            BOOST_ASSERT(matching_invar != unmatched_invar_multimap.end());
+                            f[*iter] = matching_invar->second;
+                            unmatched_invar_multimap.erase(matching_invar);
+                        }
+                    }
+                    return true;
+                }
 
             return_point_false:
                 if (k.empty())
@@ -562,9 +578,8 @@ bool isomorphism(const Graph1& G1, const Graph2& G2, IsoMapping f,
     typedef typename Invariant1::result_type invar1_t;
     typedef typename Invariant2::result_type invar2_t;
 
+    BOOST_STATIC_ASSERT(is_same<invar1_t, invar2_t>::value);
     BOOST_CONCEPT_ASSERT((detail::InvariantConcept<invar1_t>));
-    BOOST_CONCEPT_ASSERT((detail::InvariantConcept<invar2_t>));
-    BOOST_CONCEPT_ASSERT((detail::HeterogeneousEqualityComparable<invar1_t, invar2_t>));
 
     // Vertex invariant requirement
     BOOST_CONCEPT_ASSERT(
