@@ -272,8 +272,8 @@ void test_colored_isomorphism(int n, double edge_probability)
         >
     > graph2;
 
-    typedef typename graph_traits< graph1 >::vertex_descriptor vertex1_t;
-    typedef typename graph_traits< graph2 >::vertex_descriptor vertex2_t;
+    typedef graph_traits< graph1 >::vertex_descriptor vertex1_t;
+    typedef graph_traits< graph2 >::vertex_descriptor vertex2_t;
     typedef std::map< vertex1_t, vertex2_t > vertex_map_t;
 
     graph1 g1(n);
@@ -301,8 +301,8 @@ void test_colored_isomorphism(int n, double edge_probability)
     for (graph1::vertex_iterator v = vertices(g1).first;
          v != vertices(g1).second; ++v)
     {
-        put(vertex_color_t(), g1, *v, colors[v_idx]);
-        put(vertex_color_t(), g2, vertex_map.at(*v), colors[v_idx]);
+        put(get(vertex_color_t(), g1), *v, colors[v_idx]);
+        put(get(vertex_color_t(), g2), vertex_map[*v], colors[v_idx]);
         v_idx += 1;
     }
 
@@ -310,7 +310,7 @@ void test_colored_isomorphism(int n, double edge_probability)
     for (graph2::vertex_iterator v = vertices(g2).first;
          v != vertices(g2).second; ++v)
     {
-        put(vertex_index_t(), g2, *v, v_idx);
+        put(get(vertex_index_t(), g2), *v, v_idx);
         v_idx += 1;
     }
 
@@ -365,10 +365,10 @@ void test_colored_isomorphism(int n, double edge_probability)
 
     bool map_contains_null_vertices = false;
     {
-        typedef typename graph2::vertex_descriptor vertex2_t;
+        typedef graph2::vertex_descriptor vertex2_t;
         const vertex2_t g2_null_vertex = graph2::null_vertex();
 
-        typedef typename iso_map::iterator map_iter;
+        typedef iso_map::iterator map_iter;
         const map_iter end = mapping.end();
         for(map_iter iter = mapping.begin(); iter != end; ++iter) {
             if(iter->second == g2_null_vertex) {
