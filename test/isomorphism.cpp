@@ -365,7 +365,7 @@ void test_colored_isomorphism(int n, double edge_probability)
 
     bool map_contains_null_vertices = false;
     {
-        typedef graph2::vertex_descriptor vertex2_t;
+        typedef typename graph_traits< graph2 >::vertex_descriptor vertex2_t;
         const vertex2_t g2_null_vertex = graph2::null_vertex();
 
         typedef iso_map::iterator map_iter;
@@ -379,6 +379,20 @@ void test_colored_isomorphism(int n, double edge_probability)
     }
 
     BOOST_TEST(!map_contains_null_vertices);
+
+    // Map is bijective if each vertex of the second graph occurs only once
+    {
+      typedef typename graph_traits< graph2 >::vertex_descriptor vertex2_t;
+      std::set< vertex2_t > vertex_set;
+
+      typedef iso_map::iterator map_iter;
+      const map_iter end = mapping.end();
+      for(map_iter iter = mapping.begin(); iter != end; ++iter) {
+        vertex_set.insert(iter->second);
+      }
+
+      BOOST_TEST(vertex_set.size() == mapping.size());
+    }
 }
 
 int main(int argc, char* argv[])
