@@ -115,8 +115,8 @@ href="http://www.boost.org/sgi/stl/UnaryFunction.html">UnaryFunction</a>, with
 the argument type of <tt>vertex_invariant1</tt> being <tt>Graph1</tt>'s vertex
 descriptor type, the argument type of <tt>vertex_invariant2</tt> being
 <tt>Graph2</tt>'s vertex descriptor type, and both functions having integral
-result types.  The values returned by these two functions must be in the range
-[0, <tt>vertex_max_invariant</tt>).
+result types. The values returned by these two functions must have a low upper
+bound. 
 <br>
 <b>Default:</b> <tt>degree_vertex_invariant</tt> for both arguments<br>
 <b>Python</b>: Unsupported parameter.
@@ -124,14 +124,7 @@ result types.  The values returned by these two functions must be in the range
 
 IN: <tt>vertex_max_invariant(std::size_t max_invariant)</tt>
 <blockquote>
-An upper bound on the possible values returned from either
-vertex_invariant1 or vertex_invariant2.
-<br>
-<b>Default:</b> <tt>vertex_invariant2.max()</tt>. The default
-<tt>vertex_invariant2</tt> parameter, an instance of
-<tt>degree_vertex_invariant</tt>, defines this function to
-return <tt>num_vertices(g2) * (num_vertices(g2)+1)</tt>.<br>
-<b>Python</b>: Unsupported parameter.
+This parameter is ignored.
 </blockquote>
 
 IN: <tt>vertex_index1_map(VertexIndex1Map i1_map)</tt>
