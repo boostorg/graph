@@ -261,7 +261,7 @@ struct ColorFunctor {
     }
 
     inline result_type max() const {
-      result_type max_result = std::numeric_limits<result_type>::lowest();
+      result_type max_result = std::numeric_limits<result_type>::min();
       typedef typename graph_traits< Graph >::vertex_iterator vertex_iter;
       for(vertex_iter iter = vertices(graph).first; iter != vertices(graph).second; ++iter) {
         max_result = std::max(max_result, this->operator()(*iter));
