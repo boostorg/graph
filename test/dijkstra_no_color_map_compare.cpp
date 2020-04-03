@@ -10,6 +10,7 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <ctime>
 #include <boost/config.hpp>
 
 #ifdef BOOST_MSVC
@@ -80,7 +81,7 @@ int main(int argc, char* argv[])
 
     int vertices_to_create = 10;
     int edges_to_create = 500;
-    std::size_t random_seed = time(0);
+    std::size_t random_seed = std::time(0);
 
     if (argc > 1)
     {
