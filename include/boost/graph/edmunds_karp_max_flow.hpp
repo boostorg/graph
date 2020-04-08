@@ -12,7 +12,7 @@
 #pragma message( \
     "Warning: This header is deprecated. Please use: boost/graph/edmonds_karp_max_flow.hpp")
 #elif defined(__GNUC__) || defined(__HP_aCC) || defined(__SUNPRO_CC) \
-    || defined(__IBMCPP__)
+    || defined(__IBMCPP__) || defined(__BORLANDC__)
 #warning \
     "This header is deprecated. Please use: boost/graph/edmonds_karp_max_flow.hpp"
 #endif
