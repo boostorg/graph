@@ -52,7 +52,7 @@
 
   <pre>
   ...
-  link_cut_trees&lt;ElementParentMap, ElementChildMap&gt; lct(p, l, r);
+  link_cut_trees&lt;ElementParentMap, ElementChildMap&gt; lct(parent_map, left_child_map, right_child_map);
 
   for (ui = vertices(G).first; ui != vertices(G).second; ++ui)
     lct.make_tree(*ui);
@@ -88,7 +88,7 @@
     </tr>
 
     <tr>
-      <td><tt>link_cut_trees(const disjoint_sets&amp; c)</tt></td>
+      <td><tt>link_cut_trees(const link_cut_trees&amp; c)</tt></td>
 
       <td>Copy constructor.</td>
     </tr>
@@ -188,8 +188,8 @@
   height="31" width="88"></a></p>
 
   <p>Revised
-  <!--webbot bot="Timestamp" s-type="EDITED" s-format="%d %B, %Y" startspan -->07
-  October, 2019<!--webbot bot="Timestamp" endspan i-checksum="38508" --></p>
+  <!--webbot bot="Timestamp" s-type="EDITED" s-format="%d %B, %Y" startspan -->
+  June, 2020<!--webbot bot="Timestamp" endspan i-checksum="38508" --></p>
 
   <table summary="">
     <tr valign="top">

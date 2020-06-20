@@ -189,3 +189,25 @@ BOOST_AUTO_TEST_CASE(link_cut_trees_test5)
     link_cut_trees_t lct(id, inverse_id);
     test_link_cut_trees<link_cut_trees_t, std::string>(lct, elements);
 }
+
+BOOST_AUTO_TEST_CASE(link_cut_trees_test6)
+{
+    typedef associative_property_map< std::map<std::string, int> > id_map_t;
+    typedef vector_property_map<std::string> inverse_id_map_t;
+    typedef link_cut_trees_with_storage<id_map_t, inverse_id_map_t, typename std::map<int, int> > link_cut_trees_t;
+    std::vector<std::string> elements;
+    std::vector<int> numbers(100);
+    std::map<std::string, int> id_map;
+    id_map_t id(id_map);
+    inverse_id_map_t inverse_id;
+    boost::range::iota(numbers, -49);
+    BOOST_FOREACH(int i, numbers)
+    {
+        std::string i_str = lexical_cast<std::string, int>(i);
+        elements.push_back(i_str);
+        put(id, i_str, i+49);
+        put(inverse_id, i+49, i_str);
+    }
+    link_cut_trees_t lct(id, inverse_id);
+    test_link_cut_trees<link_cut_trees_t, std::string>(lct, elements);
+}

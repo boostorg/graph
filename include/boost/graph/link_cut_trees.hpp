@@ -22,7 +22,7 @@ namespace boost
     public:
         inline link_cut_trees(ElementParentMap p, ElementChildMap l, ElementChildMap r) : parent(p), left(l), right(r) {}
         
-        inline link_cut_trees(const link_cut_trees<ElementParentMap, ElementChildMap> &c)
+        inline link_cut_trees(const link_cut_trees &c)
             : parent(c.parent), left(c.left), right(c.right) {}
 
         template <class Element>
@@ -222,14 +222,15 @@ namespace boost
     };
     
     
-    template <class ID = identity_property_map, class InverseID = boost::unordered_map<typename property_traits<ID>::value_type, typename property_traits<ID>::key_type> >
+    template <class ID = identity_property_map, 
+        class InverseID = boost::unordered_map<typename property_traits<ID>::value_type, typename property_traits<ID>::key_type>, 
+        class IndexMapContainer = boost::unordered_map<typename property_traits<ID>::value_type, typename property_traits<ID>::value_type> >
     class link_cut_trees_with_storage :
-    public link_cut_trees<associative_property_map<boost::unordered_map<typename property_traits<ID>::value_type, typename property_traits<ID>::value_type> > >
+    public link_cut_trees<associative_property_map<IndexMapContainer> >
     {
     public:
         typedef typename property_traits<ID>::key_type Vertex;
         typedef typename property_traits<ID>::value_type Index;
-        typedef boost::unordered_map<Index, Index> IndexMapContainer;
         typedef associative_property_map<IndexMapContainer> IndexMap;
         typedef link_cut_trees<IndexMap> LCT;
         
