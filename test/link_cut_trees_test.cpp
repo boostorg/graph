@@ -194,7 +194,8 @@ BOOST_AUTO_TEST_CASE(link_cut_trees_test6)
 {
     typedef associative_property_map< std::map<std::string, int> > id_map_t;
     typedef vector_property_map<std::string> inverse_id_map_t;
-    typedef link_cut_trees_with_storage<id_map_t, inverse_id_map_t, typename std::map<int, int> > link_cut_trees_t;
+    typedef std::map<int, int> index_map_container_t;
+    typedef link_cut_trees_with_storage<id_map_t, inverse_id_map_t, index_map_container_t> link_cut_trees_t;
     std::vector<std::string> elements;
     std::vector<int> numbers(100);
     std::map<std::string, int> id_map;

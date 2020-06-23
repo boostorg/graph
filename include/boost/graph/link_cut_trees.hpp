@@ -38,8 +38,9 @@ namespace boost
         }
 
         template <class Element>
-        inline void link(Element x, Element y) // Element x must be a tree root
+        inline void link(Element x, Element y)
         {
+            BOOST_ASSERT(find_root(x) == x); // Element x must be a tree root
             Element r = expose(x);
             r = join(r, r, expose(y));
             put_successor(r, r);
@@ -55,8 +56,9 @@ namespace boost
         }
 
         template <class Element>
-        inline Element lowest_common_ancestor(Element x, Element y) // Elements x and y must have same root
+        inline Element lowest_common_ancestor(Element x, Element y)
         {
+            BOOST_ASSERT(find_root(x) == find_root(y)); // Elements x and y must have same root
             expose(x);
             return expose(y);
         }
