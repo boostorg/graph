@@ -90,7 +90,7 @@ void testScalability(unsigned numpts)
     typedef set< simple_point< double >, cmpPnt< double > > PointSet;
     typedef vector< Vertex > Container;
 
-    boost::mt19937 rng(time(0));
+    boost::mt19937 rng(std::time(0));
     uniform_real<> range(0.01, (numpts * 2));
     variate_generator< boost::mt19937&, uniform_real<> > pnt_gen(rng, range);
 
