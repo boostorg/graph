@@ -12,6 +12,7 @@
 
 #include <stdexcept>
 #include <string>
+#include <boost/config.hpp>
 
 namespace boost
 {
