@@ -15,6 +15,7 @@
 
 #include <functional>
 #include <vector>
+#include <boost/locale/definitions.hpp>
 #include <boost/limits.hpp>
 #include <boost/throw_exception.hpp>
 #include <boost/graph/named_function_params.hpp>
