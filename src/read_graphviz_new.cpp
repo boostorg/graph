@@ -45,7 +45,6 @@
 #include <boost/throw_exception.hpp>
 #include <boost/regex.hpp>
 #include <boost/function.hpp>
-#include <boost/bind.hpp>
 #include <boost/graph/dll_import_export.hpp>
 #include <boost/graph/graphviz.hpp>
 
