@@ -323,10 +323,21 @@ std::string buildString(std::vector<std::string> const &path_p, size_t moveReq_p
     return ss_l.str();
 }
 
-/// @brief test that the given path exists in the solution
-bool testPathExistence(std::vector<Path> const &paths_p, std::vector<std::string> const &path_p, size_t moveReq_p, double expo_p)
+/// @brief manual path build using % operator
+struct manual_path
 {
-    std::string refStringOneWay_l = buildString(path_p, moveReq_p, expo_p, false);
+    manual_path &operator%(std::string const &vertex_p)
+    {
+        internal_path.push_back(vertex_p);
+        return *this;
+    }
+    std::vector<std::string> internal_path;
+};
+
+/// @brief test that the given path exists in the solution
+bool testPathExistence(std::vector<Path> const &paths_p, manual_path const &manual_path_p, size_t moveReq_p, double expo_p)
+{
+    std::string refStringOneWay_l = buildString(manual_path_p.internal_path, moveReq_p, expo_p, false);
     for(Path const &path_l : paths_p)
     {
         if(boost::lexical_cast<std::string, Path>(path_l) == refStringOneWay_l)
@@ -338,7 +349,36 @@ bool testPathExistence(std::vector<Path> const &paths_p, std::vector<std::string
     return false;
 }
 
+/// @brief helpers struct to construct a row of position
+struct manual_row
+{
+    manual_row &operator%(size_t moveReq_p)
+    {
+        row.push_back(moveReq_p);
+        return *this;
+    }
+
+    std::vector<size_t> row;
+};
+
+/// @brief helpers struct to construct a map of position
+struct manual_map
+{
+
+    manual_map &operator%(manual_row const &row_p)
+    {
+        map.push_back(row_p.row);
+        return *this;
+    }
+
+    std::vector<std::vector<size_t> > map;
+};
+
 }
+
+///
+/// All tests are based on a map giving the number of required moves to access each position
+///
 
 void test_shortest_paths_to_all_no_move_allowed()
 {
@@ -353,27 +393,26 @@ void test_shortest_paths_to_all_no_move_allowed()
     // we read vertical index first
     // 2,0 is line 2 and colum 0
     //
-    std::vector<std::vector<size_t> > pos_l = {
-        {1, 1, 1, 1, 1},
-        {1, 0, 1, 0, 1},
-        {0, 0, 0, 0, 0},
-        {1, 0, 1, 0, 1},
-        {1, 1, 1, 0, 1}
-    };
+    manual_map map_l;
+    map_l % (manual_row() % 1 % 1 % 1 % 1 % 1);
+    map_l % (manual_row() % 1 % 0 % 1 % 0 % 1);
+    map_l % (manual_row() % 0 % 0 % 0 % 0 % 0);
+    map_l % (manual_row() % 1 % 0 % 1 % 0 % 1);
+    map_l % (manual_row() % 1 % 1 % 1 % 0 % 1);
 
-    std::vector<Path> vectPath_l = getAllPathsToN(pos_l, {2,0}, 0);
+    std::vector<Path> vectPath_l = getAllPathsToN(map_l.map, {2,0}, 0);
 
     // Check all paths to all accessible tiles (no move are allowed meaning that all tile with 1 value are forbidden)
-    BOOST_TEST(testPathExistence(vectPath_l, {"1,1", "2,1", "2,0"}, 0, 2));
-    BOOST_TEST(testPathExistence(vectPath_l, {"1,3", "2,3", "2,2", "2,1", "2,0"}, 0, 4));
-    BOOST_TEST(testPathExistence(vectPath_l, {"2,0"}, 0, 0));
-    BOOST_TEST(testPathExistence(vectPath_l, {"2,1", "2,0"}, 0, 1));
-    BOOST_TEST(testPathExistence(vectPath_l, {"2,2", "2,1", "2,0"}, 0, 2));
-    BOOST_TEST(testPathExistence(vectPath_l, {"2,3", "2,2", "2,1", "2,0"}, 0, 3));
-    BOOST_TEST(testPathExistence(vectPath_l, {"2,4", "2,3", "2,2", "2,1", "2,0"}, 0, 4));
-    BOOST_TEST(testPathExistence(vectPath_l, {"3,1", "2,1", "2,0"}, 0, 2));
-    BOOST_TEST(testPathExistence(vectPath_l, {"3,3", "2,3", "2,2", "2,1", "2,0"}, 0, 4));
-    BOOST_TEST(testPathExistence(vectPath_l, {"4,3", "3,3", "2,3", "2,2", "2,1", "2,0"}, 0, 5));
+    BOOST_TEST(testPathExistence(vectPath_l, manual_path() % "1,1" % "2,1" % "2,0", 0, 2));
+    BOOST_TEST(testPathExistence(vectPath_l, manual_path() % "1,3" % "2,3" % "2,2" % "2,1" % "2,0", 0, 4));
+    BOOST_TEST(testPathExistence(vectPath_l, manual_path() % "2,0", 0, 0));
+    BOOST_TEST(testPathExistence(vectPath_l, manual_path() % "2,1" % "2,0", 0, 1));
+    BOOST_TEST(testPathExistence(vectPath_l, manual_path() % "2,2" % "2,1" % "2,0", 0, 2));
+    BOOST_TEST(testPathExistence(vectPath_l, manual_path() % "2,3" % "2,2" % "2,1" % "2,0", 0, 3));
+    BOOST_TEST(testPathExistence(vectPath_l, manual_path() % "2,4" % "2,3" % "2,2" % "2,1" % "2,0", 0, 4));
+    BOOST_TEST(testPathExistence(vectPath_l, manual_path() % "3,1" % "2,1" % "2,0", 0, 2));
+    BOOST_TEST(testPathExistence(vectPath_l, manual_path() % "3,3" % "2,3" % "2,2" % "2,1" % "2,0", 0, 4));
+    BOOST_TEST(testPathExistence(vectPath_l, manual_path() % "4,3" % "3,3" % "2,3" % "2,2" % "2,1" % "2,0", 0, 5));
 
 }
 
@@ -382,28 +421,27 @@ void test_shortest_paths_to_all_one_move_allowed()
     //    0  1  2  3  4
     //   --------------
     //0 | 1, 1, 1, 1, 1
-    //1 | 1, 1, 1, 1, 1
+    //1 | 1, 1, 1, 0, 1
     //2 | 0, 0, 1, 0, 1
     //
     // we read vertical index first
     // 2,0 is line 2 and colum 0
     //
-    std::vector<std::vector<size_t> > pos_l = {
-        {1, 1, 1, 1, 1},
-        {1, 1, 1, 0, 1},
-        {0, 0, 1, 0, 1}
-    };
+    manual_map map_l;
+    map_l % (manual_row() % 1 % 1 % 1 % 1 % 1);
+    map_l % (manual_row() % 1 % 1 % 1 % 0 % 1);
+    map_l % (manual_row() % 0 % 0 % 1 % 0 % 1);
 
-    std::vector<Path> vectPath_l = getAllPathsToN(pos_l, {2,0}, 1);
+    std::vector<Path> vectPath_l = getAllPathsToN(map_l.map, {2,0}, 1);
 
     // Check all paths to all accessible tiles (no move are allowed meaning that all tile with 1 value are forbidden)
-    BOOST_TEST(testPathExistence(vectPath_l, {"1,0", "2,0"}, 1, 1));
-    BOOST_TEST(testPathExistence(vectPath_l, {"1,1", "2,1", "2,0"}, 1, 2));
-    BOOST_TEST(testPathExistence(vectPath_l, {"1,3", "2,3", "2,2", "2,1", "2,0"}, 1, 4));
-    BOOST_TEST(testPathExistence(vectPath_l, {"2,0"}, 0, 0));
-    BOOST_TEST(testPathExistence(vectPath_l, {"2,1", "2,0"}, 0, 1));
-    BOOST_TEST(testPathExistence(vectPath_l, {"2,2", "2,1", "2,0"}, 1, 2));
-    BOOST_TEST(testPathExistence(vectPath_l, {"2,3", "2,2", "2,1", "2,0"}, 1, 3));
+    BOOST_TEST(testPathExistence(vectPath_l, manual_path() % "1,0" % "2,0", 1, 1));
+    BOOST_TEST(testPathExistence(vectPath_l, manual_path() % "1,1" % "2,1" % "2,0", 1, 2));
+    BOOST_TEST(testPathExistence(vectPath_l, manual_path() % "1,3" % "2,3" % "2,2" % "2,1" % "2,0", 1, 4));
+    BOOST_TEST(testPathExistence(vectPath_l, manual_path() % "2,0", 0, 0));
+    BOOST_TEST(testPathExistence(vectPath_l, manual_path() % "2,1" % "2,0", 0, 1));
+    BOOST_TEST(testPathExistence(vectPath_l, manual_path() % "2,2" % "2,1" % "2,0", 1, 2));
+    BOOST_TEST(testPathExistence(vectPath_l, manual_path() % "2,3" % "2,2" % "2,1" % "2,0", 1, 3));
 }
 
 void test_shortest_paths_to_all_multiple_paths()
@@ -417,20 +455,19 @@ void test_shortest_paths_to_all_multiple_paths()
     // we read vertical index first
     // 2,0 is line 2 and colum 0
     //
-    std::vector<std::vector<size_t> > pos_l = {
-        {1, 1, 1, 1, 1},
-        {0, 0, 1, 0, 1},
-        {0, 0, 1, 0, 1}
-    };
+    manual_map map_l;
+    map_l % (manual_row() % 1 % 1 % 1 % 1 % 1);
+    map_l % (manual_row() % 0 % 0 % 1 % 0 % 1);
+    map_l % (manual_row() % 0 % 0 % 1 % 0 % 0);
 
-    std::vector<Path> vectPath_l = getAllPathsToN(pos_l, {2,0}, 0);
+    std::vector<Path> vectPath_l = getAllPathsToN(map_l.map, {2,0}, 0);
 
     // Check all paths to all accessible tiles (no move are allowed meaning that all tile with 1 value are forbidden)
-    BOOST_TEST(testPathExistence(vectPath_l, {"1,0", "2,0"}, 0, 1));
-    BOOST_TEST(testPathExistence(vectPath_l, {"1,1", "1,0", "2,0"}, 0, 2));
-    BOOST_TEST(testPathExistence(vectPath_l, {"1,1", "2,1", "2,0"}, 0, 2));
-    BOOST_TEST(testPathExistence(vectPath_l, {"2,0"}, 0, 0));
-    BOOST_TEST(testPathExistence(vectPath_l, {"2,1", "2,0"}, 0, 1));
+    BOOST_TEST(testPathExistence(vectPath_l, manual_path() % "1,0" % "2,0", 0, 1));
+    BOOST_TEST(testPathExistence(vectPath_l, manual_path() % "1,1" % "1,0" % "2,0", 0, 2));
+    BOOST_TEST(testPathExistence(vectPath_l, manual_path() % "1,1" % "2,1" % "2,0", 0, 2));
+    BOOST_TEST(testPathExistence(vectPath_l, manual_path() % "2,0", 0, 0));
+    BOOST_TEST(testPathExistence(vectPath_l, manual_path() % "2,1" % "2,0", 0, 1));
 }
 
 int main(int, char*[])
