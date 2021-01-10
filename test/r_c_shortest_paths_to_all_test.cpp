@@ -9,6 +9,7 @@
 #pragma warning(disable : 4267)
 #endif
 
+#include <map>
 #include <boost/graph/adjacency_list.hpp>
 
 #include <boost/graph/r_c_shortest_paths.hpp>
@@ -48,7 +49,7 @@ struct edge_t
 typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, vertex_t, edge_t> graph_t;
 typedef boost::graph_traits<graph_t>::vertex_descriptor vertex_desc;
 typedef boost::graph_traits<graph_t>::edge_descriptor edge_desc;
-typedef std::unordered_map<size_t, std::unordered_map<size_t, vertex_desc> > vertex_map_t;
+typedef std::map<size_t, std::map<size_t, vertex_desc> > vertex_map_t;
 
 ///
 /// @brief Function creating the vertices.
@@ -112,7 +113,8 @@ void create_edges(const vertex_map_t &vertex_map, graph_t &g)
                 cur_edge.id = index_l++;
                 vertex_desc v1 = map_get(j-1,map_get(i, vertex_map));
                 vertex_desc v2 = map_get(j,map_get(i, vertex_map));
-                cur_edge.extremities = {g[v1], g[v2]};
+                cur_edge.extremities.push_back(g[v1]);
+                cur_edge.extremities.push_back(g[v2]);
                 add_edge(v1, v2, cur_edge, g);
             }
             // If not on first column we link every vertex
@@ -123,7 +125,8 @@ void create_edges(const vertex_map_t &vertex_map, graph_t &g)
                 cur_edge.id = index_l++;
                 vertex_desc v1 = map_get(j,map_get(i-1, vertex_map));
                 vertex_desc v2 = map_get(j,map_get(i, vertex_map));
-                cur_edge.extremities = {g[v1], g[v2]};
+                cur_edge.extremities.push_back(g[v1]);
+                cur_edge.extremities.push_back(g[v2]);
                 add_edge(v1, v2, cur_edge, g);
             }
         }
@@ -134,12 +137,12 @@ void create_edges(const vertex_map_t &vertex_map, graph_t &g)
 /// @brief A simple label wtih movement required and exposition (plus the current vertex)
 ///
 struct Label {
-    Label() {}
+    Label() : v(), id(0), movedReq(0), expo(0.) {}
 
     vertex_t v;
     size_t id;
-    size_t movedReq = 0;
-    double expo = 0.;
+    size_t movedReq;
+    double expo;
 
     // Required for r_c_shortest_paths
     bool operator<(Label const & other_p ) const
@@ -224,7 +227,7 @@ std::ostream &operator<<(std::ostream &os_p, Path const &path_p)
     os_p << "Path[target = "<<path_p.label.v.name<<", path={";
     std::string lastId_l = path_p.label.v.name;
     os_p << "\"" <<lastId_l<< "\"" ;
-    for(edge_t const &e_l : path_p.edges)
+    BOOST_FOREACH(edge_t const &e_l, path_p.edges)
     {
         os_p<<", ";
         // If extremities[0] is last vertex walked on then use extremities[1]
@@ -277,10 +280,10 @@ std::vector<Path> getAllPathsToN(std::vector<std::vector<size_t> > const &map_p,
     for(size_t i = 0 ; i < shortestPaths_l.size() ; ++ i)
     {
         Path newPath_l;
-        auto path_l = shortestPaths_l[i];
-        auto label_l = bestLabels_l[i];
+        std::vector< edge_desc > const & path_l = shortestPaths_l[i];
+        Label const & label_l = bestLabels_l[i];
         newPath_l.label = label_l;
-        for(auto edge_desc_l : path_l)
+        BOOST_FOREACH(edge_desc const & edge_desc_l, path_l)
         {
             newPath_l.edges.push_back(g[edge_desc_l]);
         }
@@ -293,7 +296,7 @@ std::vector<Path> getAllPathsToN(std::vector<std::vector<size_t> > const &map_p,
 /// @brief construct the string representation of a handmade path
 /// based on the operator<< of Path
 /// used to compare handmade path with real Path
-std::string buildString(std::vector<std::string> const &path_p, size_t moveReq_p, double expo_p, bool reverse_p)
+std::string buildString(std::vector<std::string> const &path_p, size_t moveReq_p, double expo_p)
 {
     if(path_p.empty())
     {
@@ -301,21 +304,18 @@ std::string buildString(std::vector<std::string> const &path_p, size_t moveReq_p
     }
     std::stringstream ss_l;
     // Get correct iterator based on reverse
-    std::string firstId_l = reverse_p ? *path_p.rbegin() : * path_p.begin();
+    std::string firstId_l = *path_p.begin();
     ss_l << "Path[target = "<<firstId_l<<", path={";
     ss_l << "\"" << firstId_l<<"\"";
-    if(reverse_p)
+    bool first_l = true;
+    BOOST_FOREACH(std::string const &str_l, path_p)
     {
-        std::for_each(++path_p.rbegin(), path_p.rend(), [&](std::string const str_p)
+        if(first_l)
         {
-            ss_l<<", \""<<str_p<<"\"";
-        });
-    } else
-    {
-        std::for_each(++path_p.begin(), path_p.end(), [&](std::string const str_p)
-        {
-            ss_l<<", \""<<str_p<<"\"";
-        });
+            first_l = false;
+            continue;
+        }
+        ss_l<<", \""<<str_l<<"\"";
     }
     ss_l<<"}";
     ss_l<<", movedReq = "<<moveReq_p;
@@ -337,8 +337,8 @@ struct manual_path
 /// @brief test that the given path exists in the solution
 bool testPathExistence(std::vector<Path> const &paths_p, manual_path const &manual_path_p, size_t moveReq_p, double expo_p)
 {
-    std::string refStringOneWay_l = buildString(manual_path_p.internal_path, moveReq_p, expo_p, false);
-    for(Path const &path_l : paths_p)
+    std::string refStringOneWay_l = buildString(manual_path_p.internal_path, moveReq_p, expo_p);
+    BOOST_FOREACH(Path const &path_l, paths_p)
     {
         if(boost::lexical_cast<std::string, Path>(path_l) == refStringOneWay_l)
         {
@@ -400,7 +400,7 @@ void test_shortest_paths_to_all_no_move_allowed()
     map_l % (manual_row() % 1 % 0 % 1 % 0 % 1);
     map_l % (manual_row() % 1 % 1 % 1 % 0 % 1);
 
-    std::vector<Path> vectPath_l = getAllPathsToN(map_l.map, {2,0}, 0);
+    std::vector<Path> vectPath_l = getAllPathsToN(map_l.map, std::make_pair<size_t, size_t>(2,0), 0);
 
     // Check all paths to all accessible tiles (no move are allowed meaning that all tile with 1 value are forbidden)
     BOOST_TEST(testPathExistence(vectPath_l, manual_path() % "1,1" % "2,1" % "2,0", 0, 2));
@@ -432,7 +432,7 @@ void test_shortest_paths_to_all_one_move_allowed()
     map_l % (manual_row() % 1 % 1 % 1 % 0 % 1);
     map_l % (manual_row() % 0 % 0 % 1 % 0 % 1);
 
-    std::vector<Path> vectPath_l = getAllPathsToN(map_l.map, {2,0}, 1);
+    std::vector<Path> vectPath_l = getAllPathsToN(map_l.map, std::make_pair<size_t, size_t>(2,0), 1);
 
     // Check all paths to all accessible tiles (no move are allowed meaning that all tile with 1 value are forbidden)
     BOOST_TEST(testPathExistence(vectPath_l, manual_path() % "1,0" % "2,0", 1, 1));
@@ -460,7 +460,7 @@ void test_shortest_paths_to_all_multiple_paths()
     map_l % (manual_row() % 0 % 0 % 1 % 0 % 1);
     map_l % (manual_row() % 0 % 0 % 1 % 0 % 0);
 
-    std::vector<Path> vectPath_l = getAllPathsToN(map_l.map, {2,0}, 0);
+    std::vector<Path> vectPath_l = getAllPathsToN(map_l.map, std::make_pair<size_t, size_t>(2,0), 0);
 
     // Check all paths to all accessible tiles (no move are allowed meaning that all tile with 1 value are forbidden)
     BOOST_TEST(testPathExistence(vectPath_l, manual_path() % "1,0" % "2,0", 0, 1));
