@@ -20,25 +20,27 @@ namespace boost
     class link_cut_trees
     {
     public:
-        inline link_cut_trees(ElementParentMap p, ElementChildMap l, ElementChildMap r) : parent(p), left(l), right(r) {}
+        link_cut_trees(ElementParentMap p, ElementChildMap l, ElementChildMap r) : parent(p), left(l), right(r) {}
         
-        inline link_cut_trees(const link_cut_trees &c)
+        link_cut_trees(const link_cut_trees &c)
             : parent(c.parent), left(c.left), right(c.right) {}
 
         template <class Element>
-        inline void make_tree(Element x)
+        void make_tree(Element x)
         {
-            make_path(x);
+            put(parent, x, x);
+            put(right, x, x);
+            put(left, x, x);
         }
 
         template <class Element>
-        inline Element find_root(Element x)
+        Element find_root(Element x)
         {
             return find_tail(expose(x));
         }
 
         template <class Element>
-        inline void link(Element x, Element y)
+        void link(Element x, Element y)
         {
             BOOST_ASSERT(find_root(x) == x); // Element x must be a tree root
             Element r = expose(x);
@@ -47,7 +49,7 @@ namespace boost
         }
 
         template <class Element>
-        inline void cut(Element x)
+        void cut(Element x)
         {
             expose(x);
             std::pair<Element, Element> uv = split(x);
@@ -56,7 +58,7 @@ namespace boost
         }
 
         template <class Element>
-        inline Element lowest_common_ancestor(Element x, Element y)
+        Element lowest_common_ancestor(Element x, Element y)
         {
             BOOST_ASSERT(find_root(x) == find_root(y)); // Elements x and y must have same root
             expose(x);
@@ -68,7 +70,7 @@ namespace boost
         ElementChildMap left, right;
 
         template <class Element>
-        inline Element get_parent(Element x) const
+        Element get_parent(Element x) const
         {
             Element x_parent = get(parent, x);
             if (get(left, x_parent) == x || get(right, x_parent) == x)
@@ -77,19 +79,19 @@ namespace boost
         }
 
         template <class Element>
-        inline Element get_successor(Element x) const
+        Element get_successor(Element x) const
         {
             return get(parent, x);
         }
 
         template <class Element>
-        inline void put_successor(Element x, Element x_successor)
+        void put_successor(Element x, Element x_successor)
         {
             put(parent, x, x_successor);
         }
 
         template <class Element>
-        inline void rotate(const Element x, const ElementChildMap &side)
+        void rotate(const Element x, const ElementChildMap &side)
         {
             const ElementChildMap &opposite = (&side == &left) ? right : left;
             const Element pivot = get(side, x);
@@ -120,7 +122,7 @@ namespace boost
         }
 
         template <class Element>
-        inline ElementChildMap& get_side(Element x)
+        ElementChildMap& get_side(Element x)
         {
             Element x_parent = get_parent(x);
             if (get(left, x_parent) == x)
@@ -129,7 +131,7 @@ namespace boost
         }
 
         template <class Element>
-        inline void splay(Element x)
+        void splay(Element x)
         {
             for (Element x_parent = get_parent(x); x != x_parent; x_parent = get_parent(x))
             {
@@ -153,7 +155,7 @@ namespace boost
         }
 
         template <class Element>
-        inline Element expose(Element x)
+        Element expose(Element x)
         {
             Element r = x;
             while (true)
@@ -172,22 +174,14 @@ namespace boost
         }
 
         template <class Element>
-        inline void make_path(Element x)
-        {
-            put(parent, x, x);
-            put(right, x, x);
-            put(left, x, x);
-        }
-
-        template <class Element>
-        inline Element find_path(Element x)
+        Element find_path(Element x)
         {
             splay(x);
             return x;
         }
 
         template <class Element>
-        inline Element find_tail(Element x)
+        Element find_tail(Element x)
         {
             while (get(right, x) != x)
                 x = get(right, x);
@@ -196,7 +190,7 @@ namespace boost
         }
 
         template <class Element>
-        inline Element join(Element u, Element v, Element w)
+        Element join(Element u, Element v, Element w)
         {
             if (u != v)
                 put(parent, u, v);
@@ -208,7 +202,7 @@ namespace boost
         }
 
         template <class Element>
-        inline std::pair<Element, Element> split(Element x)
+        std::pair<Element, Element> split(Element x)
         {
             splay(x);
             Element x_left = get(left, x);
@@ -242,7 +236,7 @@ namespace boost
         id_to_vertex(inverse_id) {}
         
         template <class Vertex>
-        inline void make_tree(Vertex x)
+        void make_tree(Vertex x)
         {
             const Index x_id = get(id, x);
             LCT::make_tree(x_id);
@@ -250,25 +244,25 @@ namespace boost
         }
         
         template <class Vertex>
-        inline Vertex find_root(Vertex x)
+        Vertex find_root(Vertex x)
         {
             return id_to_vertex[LCT::find_root(get(id, x))];
         }
         
         template <class Vertex>
-        inline void link(Vertex x, Vertex y)
+        void link(Vertex x, Vertex y)
         {
             LCT::link(get(id, x), get(id, y));
         }
         
         template <class Vertex>
-        inline void cut(Vertex x)
+        void cut(Vertex x)
         {
             LCT::cut(get(id, x));
         }
         
         template <class Vertex>
-        inline Vertex lowest_common_ancestor(Vertex x, Vertex y)
+        Vertex lowest_common_ancestor(Vertex x, Vertex y)
         {
             return id_to_vertex[LCT::lowest_common_ancestor(get(id, x), get(id, y))];
         }
