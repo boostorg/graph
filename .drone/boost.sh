@@ -14,18 +14,16 @@ echo '==================================> BEFORE_INSTALL'
 
 echo '==================================> INSTALL'
 
-BOOST_BRANCH=develop && [ "$TRAVIS_BRANCH" == "master" ] && BOOST_BRANCH=master || true
 cd ..
-git clone -b $BOOST_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root
+git clone -b $TRAVIS_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root
 cd boost-root
 git submodule update --init tools/build
+git submodule update --init libs/config
 git submodule update --init tools/boost_install
 git submodule update --init libs/headers
-git submodule update --init libs/detail
-git submodule update --init libs/core
-git submodule update --init libs/assert
-git submodule update --init libs/type_traits
-cp -r $TRAVIS_BUILD_DIR/* libs/config
+git submodule update --init tools/boostdep
+cp -r $TRAVIS_BUILD_DIR/* libs/graph
+python tools/boostdep/depinst/depinst.py graph
 ./bootstrap.sh
 ./b2 headers
 
@@ -35,12 +33,10 @@ echo '==================================> BEFORE_SCRIPT'
 
 echo '==================================> SCRIPT'
 
-if [ $TEST_INTEL ]; then source ~/.bashrc; fi
-echo "using $TOOLSET : : $COMPILER : <cxxflags>$EXTRA_FLAGS <linkflags>$EXTRA_FLAGS ;" > ~/user-config.jam
-./b2 libs/config/test//print_config_info libs/config/test//print_math_info toolset=$TOOLSET cxxstd=$CXXSTD $CXXSTD_DIALECT
-./b2 -j3 libs/config/test toolset=$TOOLSET cxxstd=$CXXSTD $CXXSTD_DIALECT
+echo "using $TOOLSET : : $COMPILER : <cxxflags>-std=$CXXSTD $OPTIONS ;" > ~/user-config.jam
+(cd libs/config/test && ../../../b2 config_info_travis_install toolset=$TOOLSET && ./config_info_travis)
+(cd libs/math/test && ../../../b2 -j3 toolset=$TOOLSET $TEST_SUITE)
 
 echo '==================================> AFTER_SUCCESS'
 
 . $DRONE_BUILD_DIR/.drone/after-success.sh
-
