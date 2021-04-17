@@ -33,9 +33,9 @@ echo '==================================> BEFORE_SCRIPT'
 
 echo '==================================> SCRIPT'
 
-echo "using $TOOLSET : : $COMPILER : <cxxflags>-std=$CXXSTD $OPTIONS ;" > ~/user-config.jam
-(cd libs/config/test && ../../../b2 config_info_travis_install toolset=$TOOLSET && ./config_info_travis)
-(cd libs/math/test && ../../../b2 -j3 toolset=$TOOLSET $TEST_SUITE)
+echo "using $TOOLSET : : $COMPILER : $OPTIONS ;" > ~/user-config.jam
+(cd libs/config/test && ../../../b2 cxxstd=$CXXSTD config_info_travis_install toolset=$TOOLSET && ./config_info_travis)
+(cd libs/math/test && ../../../b2 -j3 cxxstd=$CXXSTD toolset=$TOOLSET)
 
 echo '==================================> AFTER_SUCCESS'
 

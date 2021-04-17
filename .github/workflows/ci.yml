@@ -30,11 +30,14 @@ jobs:
         run: sudo apt install g++-9 g++-10 clang-9 clang-10
       - name: Checkout main boost
         run: git clone -b develop --depth 1 https://github.com/boostorg/boost.git ../boost-root
-      - name: Update Dependencies
-        run: git submodule update --init tools/build tools/boost_install libs/headers libs/detail libs/core libs/assert libs/type_traits
+      - name: Update tools/boostdep
+        run: git submodule update --init tools/boostdep
         working-directory: ../boost-root
       - name: Copy files
-        run: cp -r $GITHUB_WORKSPACE/* libs/config
+        run: cp -r $GITHUB_WORKSPACE/* libs/graph
+        working-directory: ../boost-root
+      - name: Install deps
+        run: python tools/boostdep/depinst/depinst.py graph
         working-directory: ../boost-root
       - name: Bootstrap
         run: ./bootstrap.sh
@@ -74,11 +77,14 @@ jobs:
         run: sudo apt install g++-7 g++-8 clang-7 clang-8
       - name: Checkout main boost
         run: git clone -b develop --depth 1 https://github.com/boostorg/boost.git ../boost-root
-      - name: Update Dependencies
-        run: git submodule update --init tools/build tools/boost_install libs/headers libs/detail libs/core libs/assert libs/type_traits
+      - name: Update tools/boostdep
+        run: git submodule update --init tools/boostdep
         working-directory: ../boost-root
       - name: Copy files
-        run: cp -r $GITHUB_WORKSPACE/* libs/config
+        run: cp -r $GITHUB_WORKSPACE/* libs/graph
+        working-directory: ../boost-root
+      - name: Install deps
+        run: python tools/boostdep/depinst/depinst.py graph
         working-directory: ../boost-root
       - name: Bootstrap
         run: ./bootstrap.sh
@@ -112,11 +118,14 @@ jobs:
           fail-fast: true
       - name: Checkout main boost
         run: git clone -b develop --depth 1 https://github.com/boostorg/boost.git ../boost-root
-      - name: Update Dependencies
-        run: git submodule update --init tools/build tools/boost_install libs/headers libs/detail libs/core libs/assert libs/type_traits
+      - name: Update tools/boostdep
+        run: git submodule update --init tools/boostdep
         working-directory: ../boost-root
       - name: Copy files
-        run: cp -r $GITHUB_WORKSPACE/* libs/config
+        run: cp -r $GITHUB_WORKSPACE/* libs/graph
+        working-directory: ../boost-root
+      - name: Install deps
+        run: python tools/boostdep/depinst/depinst.py graph
         working-directory: ../boost-root
       - name: Bootstrap
         run: ./bootstrap.sh
@@ -150,11 +159,14 @@ jobs:
           fail-fast: true
       - name: Checkout main boost
         run: git clone -b develop --depth 1 https://github.com/boostorg/boost.git ../boost-root
-      - name: Update Dependencies
-        run: git submodule update --init tools/build tools/boost_install libs/headers libs/detail libs/core libs/assert libs/type_traits
+      - name: Update tools/boostdep
+        run: git submodule update --init tools/boostdep
         working-directory: ../boost-root
       - name: Copy files
-        run: xcopy /s /e /q %GITHUB_WORKSPACE% libs\config
+        run: cp -r $GITHUB_WORKSPACE/* libs/graph
+        working-directory: ../boost-root
+      - name: Install deps
+        run: python tools/boostdep/depinst/depinst.py graph
         working-directory: ../boost-root
       - name: Bootstrap
         run: bootstrap
@@ -188,11 +200,14 @@ jobs:
           fail-fast: true
       - name: Checkout main boost
         run: git clone -b develop --depth 1 https://github.com/boostorg/boost.git ../boost-root
-      - name: Update Dependencies
-        run: git submodule update --init tools/build tools/boost_install libs/headers libs/detail libs/core libs/assert libs/type_traits
+      - name: Update tools/boostdep
+        run: git submodule update --init tools/boostdep
         working-directory: ../boost-root
       - name: Copy files
-        run: xcopy /s /e /q %GITHUB_WORKSPACE% libs\config
+        run: cp -r $GITHUB_WORKSPACE/* libs/graph
+        working-directory: ../boost-root
+      - name: Install deps
+        run: python tools/boostdep/depinst/depinst.py graph
         working-directory: ../boost-root
       - name: Bootstrap
         run: bootstrap
