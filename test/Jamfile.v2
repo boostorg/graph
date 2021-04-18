@@ -9,6 +9,7 @@
 
 import modules ;
 import path ;
+import ../../config/checks/config : requires ;
 
 path-constant TEST_DIR : . ;
 
@@ -73,8 +74,8 @@ alias graph_test_regular :
             ../build//boost_graph
             ../../regex/build//boost_regex : --log_level=all ]
     [ run metis_test.cpp : $(METIS_INPUT_FILE) ]
-    [ run gursoy_atun_layout_test.cpp ]
-    [ run layout_test.cpp : : : <test-info>always_show_run_output <toolset>intel:<debug-symbols>off ]
+    [ run gursoy_atun_layout_test.cpp  : : : [ requires cxx11_hdr_type_traits ] ]
+    [ run layout_test.cpp : : : <test-info>always_show_run_output <toolset>intel:<debug-symbols>off [ requires cxx11_hdr_type_traits ] ]
 
     [ run serialize.cpp
           ../../serialization/build//boost_serialization

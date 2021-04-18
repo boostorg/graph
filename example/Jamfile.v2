@@ -75,7 +75,7 @@ run filtered_graph.cpp ;
 run filtered_graph_edge_range.cpp ;
 run filtered_vec_as_graph.cpp ;
 run filtered-copy-example.cpp ;
-exe fr_layout : fr_layout.cpp ;
+exe fr_layout : fr_layout.cpp : [ requires cxx11_hdr_type_traits ] ;
 run gerdemann.cpp ;
 run graph.cpp ;
 run graph_as_tree.cpp ;

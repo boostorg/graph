@@ -53,7 +53,7 @@ jobs:
         working-directory: ../boost-root/libs/config/test
       - name: Test
         run: ../../../b2 toolset=$TOOLSET cxxstd=03,11,14,17,2a
-        working-directory: ../boost-root/libs/config/test
+        working-directory: ../boost-root/libs/graph/test
   ubuntu-bionic:
     runs-on: ubuntu-18.04
     strategy:
@@ -100,7 +100,7 @@ jobs:
         working-directory: ../boost-root/libs/config/test
       - name: Test
         run: ../../../b2 toolset=$TOOLSET cxxstd=03,11,14,17
-        working-directory: ../boost-root/libs/config/test
+        working-directory: ../boost-root/libs/graph/test
   macos:
     runs-on: macos-latest
     strategy:
@@ -138,7 +138,7 @@ jobs:
         working-directory: ../boost-root/libs/config/test
       - name: Test
         run: ../../../b2 toolset=${{ matrix.toolset }} cxxstd=03,11,14,17,2a
-        working-directory: ../boost-root/libs/config/test
+        working-directory: ../boost-root/libs/graph/test
   windows_msvc_14_0:
     runs-on: windows-latest
     defaults:
@@ -179,7 +179,7 @@ jobs:
         working-directory: ../boost-root/libs/config/test
       - name: Test
         run: ..\..\..\b2 --hash address-model=64 cxxstd=14,17 toolset=msvc-14.0
-        working-directory: ../boost-root/libs/config/test
+        working-directory: ../boost-root/libs/graph/test
   windows_msvc_14_2:
     runs-on: windows-latest
     defaults:
@@ -220,4 +220,4 @@ jobs:
         working-directory: ../boost-root/libs/config/test
       - name: Test
         run: ..\..\..\b2 --hash address-model=64 cxxstd=14,17,20 toolset=msvc-14.2
-        working-directory: ../boost-root/libs/config/test
+        working-directory: ../boost-root/libs/graph/test
