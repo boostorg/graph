@@ -20,7 +20,11 @@ namespace boost
 template < class Alloc, class ValueType >
 struct container_gen< list_with_allocatorS< Alloc >, ValueType >
 {
+#ifdef BOOST_NO_CXX11_ALLOCATOR
     typedef typename Alloc::template rebind< ValueType >::other Allocator;
+#else
+    typedef typename std::allocator_traits<Alloc>::template rebind_alloc<ValueType> Allocator;
+#endif
     typedef std::list< ValueType, Allocator > type;
 };
 template < class Alloc >
