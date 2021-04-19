@@ -15,7 +15,7 @@
 //
 #include <version>
 
-#if defined(CI_SUPPRESS_KNOWN_ISSUES) && defined(_LIBCPP_VERSION) && (_LIBCPP_VERSION >= 10000)
+#if defined(CI_SUPPRESS_KNOWN_ISSUES) && defined(_LIBCPP_VERSION) && (_LIBCPP_VERSION >= 9000)
 // We have the issue.
 #else
 #error "Not issue 251"
