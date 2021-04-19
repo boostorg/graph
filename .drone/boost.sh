@@ -35,7 +35,7 @@ echo '==================================> SCRIPT'
 
 echo "using $TOOLSET : : $COMPILER : $OPTIONS ;" > ~/user-config.jam
 (cd libs/config/test && ../../../b2 cxxstd=$CXXSTD config_info_travis_install toolset=$TOOLSET && ./config_info_travis)
-(cd libs/graph/test && ../../../b2 -j3 cxxstd=$CXXSTD toolset=$TOOLSET)
+(cd libs/graph/test && ../../../b2 -j3 cxxstd=$CXXSTD toolset=$TOOLSET define=CI_SUPPRESS_KNOWN_ISSUES)
 
 echo '==================================> AFTER_SUCCESS'
 
