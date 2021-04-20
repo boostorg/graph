@@ -23,6 +23,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/concept/assert.hpp>
+#include <boost/algorithm/minmax_element.hpp>
 
 /** @file howard_cycle_ratio.hpp
  * @brief The implementation of the maximum/minimum cycle ratio/mean algorithm.
@@ -244,7 +245,7 @@ namespace detail
 
                 boost::tie(oei, oeie) = out_edges(*vi, m_g);
                 typename graph_traits< Graph >::out_edge_iterator mei
-                    = std::max_element(oei, oeie,
+                    = boost::first_max_element(oei, oeie,
                         boost::bind(m_cmp,
                             boost::bind(&EdgeWeight1::operator[], m_ew1m, _1),
                             boost::bind(&EdgeWeight1::operator[], m_ew1m, _2)));
