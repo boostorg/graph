@@ -1,4 +1,5 @@
-Boost Graph Library  [![Build Status](https://travis-ci.org/boostorg/graph.svg?branch=develop)](https://travis-ci.org/boostorg/graph)
+Boost Graph Library  [![Build Status](https://drone.cpp.al/api/badges/boostorg/graph/status.svg)](https://drone.cpp.al/boostorg/graph)[![Build Status](https://github.com/boostorg/graph/workflows/CI/badge.svg?branch=develop)](https://github.com/boostorg/graph/actions)
+
 ===================
 
 A generic interface for traversing graphs, using C++ templates.
@@ -25,9 +26,8 @@ There is no mailing-list specific to Boost Graph, although you can use the gener
 
 |                  |  Master  |   Develop   |
 |------------------|----------|-------------|
-| Travis           | [![Build Status](https://travis-ci.org/boostorg/graph.svg?branch=master)](https://travis-ci.org/boostorg/graph)  |  [![Build Status](https://travis-ci.org/boostorg/graph.svg)](https://travis-ci.org/boostorg/graph) |
-| Appveyor         | [![Build status](https://ci.appveyor.com/api/projects/status/78gegk21tc1g3v8d/branch/master?svg=true)](https://ci.appveyor.com/project/jzmaddock/graph/branch/master) | [![Build status](https://ci.appveyor.com/api/projects/status/78gegk21tc1g3v8d/branch/develop?svg=true)](https://ci.appveyor.com/project/jzmaddock/graph/branch/develop)  |
-
+| Github Actions | [![Build Status](https://github.com/boostorg/graph/workflows/CI/badge.svg?branch=master)](https://github.com/boostorg/graph/actions) | [![Build Status](https://github.com/boostorg/graph/workflows/CI/badge.svg?branch=develop)](https://github.com/boostorg/graph/actions) |
+|Drone | [![Build Status](https://drone.cpp.al/api/badges/boostorg/graph/status.svg?ref=refs/heads/master)](https://drone.cpp.al/boostorg/graph) | [![Build Status](https://drone.cpp.al/api/badges/boostorg/graph/status.svg)](https:/drone.cpp.al/boostorg/graph) |
 
 Clone the whole boost project, which includes the individual Boost projects as submodules ([see boost+git doc](https://github.com/boostorg/boost/wiki/Getting-Started)):
 
