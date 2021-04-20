@@ -15,7 +15,7 @@ See also:
 * [Current open issues](https://github.com/boostorg/graph/issues)
 * [Closed issues](https://github.com/boostorg/graph/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aclosed)
 * Old issues still open on [Trac](https://svn.boost.org/trac/boost/query?status=!closed&component=graph&desc=1&order=id)
-* Closed issues on [Trac](https://svn.boost.org/trac/boost/query?status=closed&component=graph&col=id&col=summary&col=status&col=owner&col=type&col=milestone&col=version&desc=1&order=id)).
+* Closed issues on [Trac](https://svn.boost.org/trac/boost/query?status=closed&component=graph&col=id&col=summary&col=status&col=owner&col=type&col=milestone&col=version&desc=1&order=id)
 
 You can submit your changes through a [pull request](https://github.com/boostorg/graph/pulls). One of the maintainers will take a look (remember that it can take some time).
 
