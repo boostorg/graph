@@ -10,7 +10,7 @@ import path ;
 path-constant TEST_DIR : . ;
 
 run accum-compile-times.cpp : $(TEST_DIR)/makefile-dependencies.dat $(TEST_DIR)/makefile-target-names.dat $(TEST_DIR)/target-compile-costs.dat ;
-exe actor_clustering : actor_clustering.cpp : [ check-target-builds ../test//is_issue_251 : <build>no ] ;
+exe actor_clustering : actor_clustering.cpp ;
 run adj_list_ra_edgelist.cpp ;
 run adjacency_list.cpp ;
 run adjacency_list_io.cpp ;
@@ -43,7 +43,7 @@ run copy-example.cpp ;
 run csr-example.cpp ;
 run cuthill_mckee_ordering.cpp ;
 run cycle_canceling_example.cpp ;
-run cycle_ratio_example.cpp : : : [ check-target-builds ../test//is_issue_251 : <build>no ] ;
+run cycle_ratio_example.cpp ;
 run cycle-file-dep.cpp : $(TEST_DIR)/makefile-dependencies.dat $(TEST_DIR)/makefile-target-names.dat ;
 run cycle-file-dep2.cpp : $(TEST_DIR)/makefile-dependencies.dat $(TEST_DIR)/makefile-target-names.dat ;
 run dag_shortest_paths.cpp ;

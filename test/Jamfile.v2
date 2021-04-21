@@ -19,9 +19,6 @@ path-constant CYCLE_RATIO_INPUT_FILE : ./cycle_ratio_s382.90.dot ;
 
 path-constant METIS_INPUT_FILE : ./weighted_graph.gr ;
 
-obj is_issue_251 : is_issue_251.cpp ;
-explicit is_issue_251 ;
-
 alias graph_test_regular :
     # test_graphs will eventually defined a framework for testing the structure
     # and implementation of graph data structures and adaptors.
@@ -118,7 +115,7 @@ alias graph_test_regular :
     [ run weighted_matching_test.cpp ]
     [ run max_flow_test.cpp ]
     [ run boykov_kolmogorov_max_flow_test.cpp ]
-    [ run cycle_ratio_tests.cpp ../build//boost_graph ../../regex/build//boost_regex : $(CYCLE_RATIO_INPUT_FILE) : : [ check-target-builds .//is_issue_251 : <build>no ] ]
+    [ run cycle_ratio_tests.cpp ../build//boost_graph ../../regex/build//boost_regex : $(CYCLE_RATIO_INPUT_FILE) ]
     [ run basic_planarity_test.cpp ]
     [ run make_connected_test.cpp ]
     [ run make_bicon_planar_test.cpp ]
