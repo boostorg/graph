@@ -734,7 +734,7 @@ inline typename LABELED_GRAPH::degree_size_type degree(
 template < LABELED_GRAPH_PARAMS >
 inline std::pair< typename LABELED_GRAPH::adjacency_iterator,
     typename LABELED_GRAPH::adjacency_iterator >
-adjacenct_vertices(
+adjacent_vertices(
     typename LABELED_GRAPH::vertex_descriptor v, LABELED_GRAPH const& g)
 {
     return adjacent_vertices(v, g.graph());
