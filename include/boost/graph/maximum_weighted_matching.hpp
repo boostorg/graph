@@ -991,7 +991,7 @@ public:
             delta1 = std::min(delta1, dual_var[*vi]);
             delta4 = pi[*vi] > 0 ? std::min(delta4, pi[*vi]) : delta4;
             if (*vi == base_vertex(*vi))
-                delta3 = std::min(delta3, gamma[*vi] / 2);
+                delta3 = std::min<edge_property_t>(delta3, gamma[*vi] / 2);
         }
 
         for (blossom_iterator_t bi = top_blossoms.begin();
@@ -1000,7 +1000,7 @@ public:
             vertex_descriptor_t b_base = (*bi)->get_base();
             if (label_T[b_base] != graph_traits< Graph >::null_vertex()
                 && pi[b_base] == 0)
-                delta2 = std::min(delta2, (*bi)->dual_var / 2);
+                delta2 = std::min<edge_property_t>(delta2, (*bi)->dual_var / 2);
         }
 
         delta = std::min(std::min(delta1, delta2), std::min(delta3, delta4));
