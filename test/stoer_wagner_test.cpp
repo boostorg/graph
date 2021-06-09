@@ -20,7 +20,7 @@
 #include <boost/graph/stoer_wagner_min_cut.hpp>
 #include <boost/graph/property_maps/constant_property_map.hpp>
 #include <boost/property_map/property_map.hpp>
-#include <boost/test/unit_test.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <boost/tuple/tuple.hpp>
 
 typedef boost::adjacency_list< boost::vecS, boost::vecS, boost::undirectedS,
@@ -35,19 +35,6 @@ typedef boost::adjacency_list< boost::vecS, boost::vecS, boost::undirectedS >
 
 std::string test_dir;
 
-boost::unit_test::test_suite* init_unit_test_suite(int argc, char* argv[])
-{
-    if (argc != 2)
-    {
-        std::cerr << "Usage: " << argv[0] << " path-to-libs-graph-test"
-                  << std::endl;
-        throw boost::unit_test::framework::setup_error(
-            "Invalid command line arguments");
-    }
-    test_dir = argv[1];
-    return 0;
-}
-
 struct edge_t
 {
     unsigned long first;
@@ -55,7 +42,7 @@ struct edge_t
 };
 
 // the example from Stoer & Wagner (1997)
-BOOST_AUTO_TEST_CASE(test0)
+void test0()
 {
     edge_t edges[] = { { 0, 1 }, { 1, 2 }, { 2, 3 }, { 0, 4 }, { 1, 4 },
         { 1, 5 }, { 2, 6 }, { 3, 6 }, { 3, 7 }, { 4, 5 }, { 5, 6 }, { 6, 7 } };
@@ -67,25 +54,25 @@ BOOST_AUTO_TEST_CASE(test0)
     boost::associative_property_map< std::map< int, bool > > parities(parity);
     int w
         = boost::stoer_wagner_min_cut(g, weights, boost::parity_map(parities));
-    BOOST_CHECK_EQUAL(w, 4);
+    BOOST_TEST_EQ(w, 4);
     const bool parity0 = get(parities, 0);
-    BOOST_CHECK_EQUAL(parity0, get(parities, 1));
-    BOOST_CHECK_EQUAL(parity0, get(parities, 4));
-    BOOST_CHECK_EQUAL(parity0, get(parities, 5));
+    BOOST_TEST_EQ(parity0, get(parities, 1));
+    BOOST_TEST_EQ(parity0, get(parities, 4));
+    BOOST_TEST_EQ(parity0, get(parities, 5));
     const bool parity2 = get(parities, 2);
-    BOOST_CHECK_NE(parity0, parity2);
-    BOOST_CHECK_EQUAL(parity2, get(parities, 3));
-    BOOST_CHECK_EQUAL(parity2, get(parities, 6));
-    BOOST_CHECK_EQUAL(parity2, get(parities, 7));
+    BOOST_TEST_NE(parity0, parity2);
+    BOOST_TEST_EQ(parity2, get(parities, 3));
+    BOOST_TEST_EQ(parity2, get(parities, 6));
+    BOOST_TEST_EQ(parity2, get(parities, 7));
 }
 
-BOOST_AUTO_TEST_CASE(test1)
+void test1()
 {
     { // if only one vertex, can't run `boost::stoer_wagner_min_cut`
         undirected_graph g;
         add_vertex(g);
 
-        BOOST_CHECK_THROW(
+        BOOST_TEST_THROWS(
             boost::stoer_wagner_min_cut(g, get(boost::edge_weight, g)),
             boost::bad_graph);
     }
@@ -107,15 +94,15 @@ BOOST_AUTO_TEST_CASE(test1)
             assignments(assignment);
         int w = boost::stoer_wagner_min_cut(g, weights,
             boost::parity_map(parities).vertex_assignment_map(assignments));
-        BOOST_CHECK_EQUAL(w, 3);
+        BOOST_TEST_EQ(w, 3);
         const bool parity2 = get(parities, 2), parity0 = get(parities, 0);
-        BOOST_CHECK_NE(parity2, parity0);
-        BOOST_CHECK_EQUAL(parity0, get(parities, 1));
+        BOOST_TEST_NE(parity2, parity0);
+        BOOST_TEST_EQ(parity0, get(parities, 1));
     }
 }
 
 // example by Daniel Trebbien
-BOOST_AUTO_TEST_CASE(test2)
+void test2()
 {
     edge_t edges[] = { { 5, 2 }, { 0, 6 }, { 5, 6 }, { 3, 1 }, { 0, 1 },
         { 6, 3 }, { 4, 6 }, { 2, 4 }, { 5, 3 } };
@@ -126,19 +113,19 @@ BOOST_AUTO_TEST_CASE(test2)
     boost::associative_property_map< std::map< int, bool > > parities(parity);
     int w = boost::stoer_wagner_min_cut(
         g, get(boost::edge_weight, g), boost::parity_map(parities));
-    BOOST_CHECK_EQUAL(w, 3);
+    BOOST_TEST_EQ(w, 3);
     const bool parity2 = get(parities, 2);
-    BOOST_CHECK_EQUAL(parity2, get(parities, 4));
+    BOOST_TEST_EQ(parity2, get(parities, 4));
     const bool parity5 = get(parities, 5);
-    BOOST_CHECK_NE(parity2, parity5);
-    BOOST_CHECK_EQUAL(parity5, get(parities, 3));
-    BOOST_CHECK_EQUAL(parity5, get(parities, 6));
-    BOOST_CHECK_EQUAL(parity5, get(parities, 1));
-    BOOST_CHECK_EQUAL(parity5, get(parities, 0));
+    BOOST_TEST_NE(parity2, parity5);
+    BOOST_TEST_EQ(parity5, get(parities, 3));
+    BOOST_TEST_EQ(parity5, get(parities, 6));
+    BOOST_TEST_EQ(parity5, get(parities, 1));
+    BOOST_TEST_EQ(parity5, get(parities, 0));
 }
 
 // example by Daniel Trebbien
-BOOST_AUTO_TEST_CASE(test3)
+void test3()
 {
     edge_t edges[] = { { 3, 4 }, { 3, 6 }, { 3, 5 }, { 0, 4 }, { 0, 1 },
         { 0, 6 }, { 0, 7 }, { 0, 5 }, { 0, 2 }, { 4, 1 }, { 1, 6 }, { 1, 5 },
@@ -151,19 +138,19 @@ BOOST_AUTO_TEST_CASE(test3)
     boost::associative_property_map< std::map< int, bool > > parities(parity);
     int w
         = boost::stoer_wagner_min_cut(g, weights, boost::parity_map(parities));
-    BOOST_CHECK_EQUAL(w, 7);
+    BOOST_TEST_EQ(w, 7);
     const bool parity1 = get(parities, 1);
-    BOOST_CHECK_EQUAL(parity1, get(parities, 5));
+    BOOST_TEST_EQ(parity1, get(parities, 5));
     const bool parity0 = get(parities, 0);
-    BOOST_CHECK_NE(parity1, parity0);
-    BOOST_CHECK_EQUAL(parity0, get(parities, 2));
-    BOOST_CHECK_EQUAL(parity0, get(parities, 3));
-    BOOST_CHECK_EQUAL(parity0, get(parities, 4));
-    BOOST_CHECK_EQUAL(parity0, get(parities, 6));
-    BOOST_CHECK_EQUAL(parity0, get(parities, 7));
+    BOOST_TEST_NE(parity1, parity0);
+    BOOST_TEST_EQ(parity0, get(parities, 2));
+    BOOST_TEST_EQ(parity0, get(parities, 3));
+    BOOST_TEST_EQ(parity0, get(parities, 4));
+    BOOST_TEST_EQ(parity0, get(parities, 6));
+    BOOST_TEST_EQ(parity0, get(parities, 7));
 }
 
-BOOST_AUTO_TEST_CASE(test4)
+void test4()
 {
     typedef boost::graph_traits<
         undirected_unweighted_graph >::vertex_descriptor vertex_descriptor;
@@ -185,16 +172,16 @@ BOOST_AUTO_TEST_CASE(test4)
     int w = boost::stoer_wagner_min_cut(g,
         boost::make_constant_property< edge_descriptor >(weight_type(1)),
         boost::vertex_assignment_map(assignments).parity_map(parities));
-    BOOST_CHECK_EQUAL(w, 2);
+    BOOST_TEST_EQ(w, 2);
     const bool parity0 = get(parities, 0);
-    BOOST_CHECK_EQUAL(parity0, get(parities, 1));
-    BOOST_CHECK_EQUAL(parity0, get(parities, 4));
-    BOOST_CHECK_EQUAL(parity0, get(parities, 5));
+    BOOST_TEST_EQ(parity0, get(parities, 1));
+    BOOST_TEST_EQ(parity0, get(parities, 4));
+    BOOST_TEST_EQ(parity0, get(parities, 5));
     const bool parity2 = get(parities, 2);
-    BOOST_CHECK_NE(parity0, parity2);
-    BOOST_CHECK_EQUAL(parity2, get(parities, 3));
-    BOOST_CHECK_EQUAL(parity2, get(parities, 6));
-    BOOST_CHECK_EQUAL(parity2, get(parities, 7));
+    BOOST_TEST_NE(parity0, parity2);
+    BOOST_TEST_EQ(parity2, get(parities, 3));
+    BOOST_TEST_EQ(parity2, get(parities, 6));
+    BOOST_TEST_EQ(parity2, get(parities, 7));
 }
 
 // The input for the `test_prgen` family of tests comes from a program, named
@@ -210,7 +197,7 @@ BOOST_AUTO_TEST_CASE(test4)
 // weight of the min-cut is verified.
 
 // 3 min-cuts
-BOOST_AUTO_TEST_CASE(test_prgen_20_70_2)
+void test_prgen_20_70_2()
 {
     typedef boost::graph_traits< undirected_graph >::vertex_descriptor
         vertex_descriptor;
@@ -225,7 +212,7 @@ BOOST_AUTO_TEST_CASE(test_prgen_20_70_2)
     boost::associative_property_map<
         std::map< vertex_descriptor, std::size_t > >
         components(component);
-    BOOST_CHECK_EQUAL(boost::connected_components(g, components),
+    BOOST_TEST_EQ(boost::connected_components(g, components),
         1U); // verify the connectedness assumption
 
     typedef boost::shared_array_property_map< weight_type,
@@ -247,11 +234,11 @@ BOOST_AUTO_TEST_CASE(test_prgen_20_70_2)
 
     int w = boost::stoer_wagner_min_cut(
         g, get(boost::edge_weight, g), boost::max_priority_queue(pq));
-    BOOST_CHECK_EQUAL(w, 3407);
+    BOOST_TEST_EQ(w, 3407);
 }
 
 // 7 min-cuts
-BOOST_AUTO_TEST_CASE(test_prgen_50_40_2)
+void test_prgen_50_40_2()
 {
     typedef boost::graph_traits< undirected_graph >::vertex_descriptor
         vertex_descriptor;
@@ -266,15 +253,15 @@ BOOST_AUTO_TEST_CASE(test_prgen_50_40_2)
     boost::associative_property_map<
         std::map< vertex_descriptor, std::size_t > >
         components(component);
-    BOOST_CHECK_EQUAL(boost::connected_components(g, components),
+    BOOST_TEST_EQ(boost::connected_components(g, components),
         1U); // verify the connectedness assumption
 
     int w = boost::stoer_wagner_min_cut(g, get(boost::edge_weight, g));
-    BOOST_CHECK_EQUAL(w, 10056);
+    BOOST_TEST_EQ(w, 10056);
 }
 
 // 6 min-cuts
-BOOST_AUTO_TEST_CASE(test_prgen_50_70_2)
+void test_prgen_50_70_2()
 {
     typedef boost::graph_traits< undirected_graph >::vertex_descriptor
         vertex_descriptor;
@@ -289,9 +276,24 @@ BOOST_AUTO_TEST_CASE(test_prgen_50_70_2)
     boost::associative_property_map<
         std::map< vertex_descriptor, std::size_t > >
         components(component);
-    BOOST_CHECK_EQUAL(boost::connected_components(g, components),
+    BOOST_TEST_EQ(boost::connected_components(g, components),
         1U); // verify the connectedness assumption
 
     int w = boost::stoer_wagner_min_cut(g, get(boost::edge_weight, g));
-    BOOST_CHECK_EQUAL(w, 21755);
+    BOOST_TEST_EQ(w, 21755);
+}
+
+int main(int argc, char* argv[])
+{
+    if (BOOST_TEST(argc == 2)) {
+        test_dir = argv[1];
+        test0();
+        test1();
+        test2();
+        test3();
+        test4();
+        test_prgen_20_70_2();
+        test_prgen_50_70_2();
+    }
+    return boost::report_errors();
 }

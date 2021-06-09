@@ -18,7 +18,7 @@
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/property_maps/constant_property_map.hpp>
 #include <boost/property_map/property_map.hpp>
-#include <boost/test/unit_test.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/tuple/tuple_comparison.hpp>
 #include <boost/tuple/tuple_io.hpp>
@@ -36,19 +36,6 @@ typedef boost::adjacency_list< boost::vecS, boost::vecS, boost::undirectedS >
     undirected_unweighted_graph;
 
 std::string test_dir;
-
-boost::unit_test::test_suite* init_unit_test_suite(int argc, char* argv[])
-{
-    if (argc != 2)
-    {
-        std::cerr << "Usage: " << argv[0] << " path-to-libs-graph-test"
-                  << std::endl;
-        throw boost::unit_test::framework::setup_error(
-            "Invalid command line arguments");
-    }
-    test_dir = argv[1];
-    return 0;
-}
 
 struct edge_t
 {
@@ -111,7 +98,7 @@ private:
 // Check various implementations of the ArgPack where
 // the weights are provided in it, and one case where
 // they are not.
-BOOST_AUTO_TEST_CASE(test0)
+void test0()
 {
     typedef boost::graph_traits< undirected_graph >::vertex_descriptor
         vertex_descriptor;
@@ -159,9 +146,9 @@ BOOST_AUTO_TEST_CASE(test0)
             .vertex_assignment_map(assignments)
             .max_priority_queue(pq));
 
-    BOOST_CHECK_EQUAL(test_vis.curr(), vertex_descriptor(7));
-    BOOST_CHECK_EQUAL(test_vis.prev(), vertex_descriptor(6));
-    BOOST_CHECK_EQUAL(test_vis.reach_weight(), 5);
+    BOOST_TEST_EQ(test_vis.curr(), vertex_descriptor(7));
+    BOOST_TEST_EQ(test_vis.prev(), vertex_descriptor(6));
+    BOOST_TEST_EQ(test_vis.reach_weight(), 5);
 
     test_vis.clear();
     boost::maximum_adjacency_search(g,
@@ -170,17 +157,17 @@ BOOST_AUTO_TEST_CASE(test0)
             .root_vertex(*vertices(g).first)
             .max_priority_queue(pq));
 
-    BOOST_CHECK_EQUAL(test_vis.curr(), vertex_descriptor(7));
-    BOOST_CHECK_EQUAL(test_vis.prev(), vertex_descriptor(6));
-    BOOST_CHECK_EQUAL(test_vis.reach_weight(), 5);
+    BOOST_TEST_EQ(test_vis.curr(), vertex_descriptor(7));
+    BOOST_TEST_EQ(test_vis.prev(), vertex_descriptor(6));
+    BOOST_TEST_EQ(test_vis.reach_weight(), 5);
 
     test_vis.clear();
     boost::maximum_adjacency_search(
         g, boost::weight_map(weights).visitor(test_vis).max_priority_queue(pq));
 
-    BOOST_CHECK_EQUAL(test_vis.curr(), vertex_descriptor(7));
-    BOOST_CHECK_EQUAL(test_vis.prev(), vertex_descriptor(6));
-    BOOST_CHECK_EQUAL(test_vis.reach_weight(), 5);
+    BOOST_TEST_EQ(test_vis.curr(), vertex_descriptor(7));
+    BOOST_TEST_EQ(test_vis.prev(), vertex_descriptor(6));
+    BOOST_TEST_EQ(test_vis.reach_weight(), 5);
 
     boost::maximum_adjacency_search(g,
         boost::weight_map(weights).visitor(
@@ -196,14 +183,14 @@ BOOST_AUTO_TEST_CASE(test0)
             boost::make_constant_property< edge_descriptor >(weight_type(1)))
             .visitor(test_vis)
             .max_priority_queue(pq));
-    BOOST_CHECK_EQUAL(test_vis.curr(), vertex_descriptor(7));
-    BOOST_CHECK_EQUAL(test_vis.prev(), vertex_descriptor(3));
-    BOOST_CHECK_EQUAL(test_vis.reach_weight(), 2);
+    BOOST_TEST_EQ(test_vis.curr(), vertex_descriptor(7));
+    BOOST_TEST_EQ(test_vis.prev(), vertex_descriptor(3));
+    BOOST_TEST_EQ(test_vis.reach_weight(), 2);
 }
 
 // Check the unweighted case
 // with and without providing a weight_map
-BOOST_AUTO_TEST_CASE(test1)
+void test1()
 {
     typedef boost::graph_traits<
         undirected_unweighted_graph >::vertex_descriptor vertex_descriptor;
@@ -248,9 +235,9 @@ BOOST_AUTO_TEST_CASE(test1)
             .visitor(test_vis)
             .max_priority_queue(pq));
 
-    BOOST_CHECK_EQUAL(test_vis.curr(), vertex_descriptor(7));
-    BOOST_CHECK_EQUAL(test_vis.prev(), vertex_descriptor(3));
-    BOOST_CHECK_EQUAL(test_vis.reach_weight(), weight_type(2));
+    BOOST_TEST_EQ(test_vis.curr(), vertex_descriptor(7));
+    BOOST_TEST_EQ(test_vis.prev(), vertex_descriptor(3));
+    BOOST_TEST_EQ(test_vis.reach_weight(), weight_type(2));
 
     weight_type ws[] = { 2, 3, 4, 3, 2, 2, 2, 2, 2, 3, 1, 3 };
     std::map< edge_descriptor, weight_type > wm;
@@ -266,9 +253,19 @@ BOOST_AUTO_TEST_CASE(test1)
 
     boost::maximum_adjacency_search(
         g, boost::weight_map(ws_map).visitor(test_vis).max_priority_queue(pq));
-    BOOST_CHECK_EQUAL(test_vis.curr(), vertex_descriptor(7));
-    BOOST_CHECK_EQUAL(test_vis.prev(), vertex_descriptor(6));
-    BOOST_CHECK_EQUAL(test_vis.reach_weight(), weight_type(5));
+    BOOST_TEST_EQ(test_vis.curr(), vertex_descriptor(7));
+    BOOST_TEST_EQ(test_vis.prev(), vertex_descriptor(6));
+    BOOST_TEST_EQ(test_vis.reach_weight(), weight_type(5));
 }
 
 #include <boost/graph/iteration_macros_undef.hpp>
+
+int main(int argc, char* argv[])
+{
+    if (BOOST_TEST(argc == 2)) {
+        test_dir = argv[1];
+        test0();
+        test1();
+    }
+    return boost::report_errors();
+}
