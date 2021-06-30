@@ -21,6 +21,7 @@
 #include <boost/tuple/tuple.hpp> // for boost::tie
 #include <boost/type_traits/remove_reference.hpp>
 #include <boost/utility/result_of.hpp>
+#include <functional> // for std::reference_wrapper
 #include <set>
 #include <utility> // for std::pair
 #include <vector>
@@ -88,6 +89,18 @@ namespace hawick_circuits_detail
     {
         return std::find(boost::begin(c), boost::end(c), v) != boost::end(c);
     }
+
+    template < typename T >
+    struct unwrap_reference_wrapper {
+        typedef T type;
+    };
+
+#if __cplusplus >= 201103L
+    template < typename T >
+    struct unwrap_reference_wrapper<std::reference_wrapper<T> > {
+        typedef T& type;
+    };
+#endif
 
     /*!
      * @internal
@@ -301,8 +314,9 @@ namespace hawick_circuits_detail
 
         typedef std::vector< Vertex > Stack;
         typedef std::vector< std::vector< Vertex > > ClosedMatrix;
+        typedef typename unwrap_reference_wrapper<Visitor>::type VisitorNoRef;
 
-        typedef hawick_circuits_from< Graph, Visitor, VertexIndexMap, Stack,
+        typedef hawick_circuits_from< Graph, VisitorNoRef, VertexIndexMap, Stack,
             ClosedMatrix, GetAdjacentVertices >
             SubAlgorithm;
 
