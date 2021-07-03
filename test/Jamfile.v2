@@ -19,9 +19,6 @@ path-constant CYCLE_RATIO_INPUT_FILE : ./cycle_ratio_s382.90.dot ;
 
 path-constant METIS_INPUT_FILE : ./weighted_graph.gr ;
 
-obj is_issue_251 : is_issue_251.cpp ;
-explicit is_issue_251 ;
-
 alias graph_test_regular :
     # test_graphs will eventually defined a framework for testing the structure
     # and implementation of graph data structures and adaptors.
@@ -73,7 +70,6 @@ alias graph_test_regular :
     [ run graph.cpp : : : <define>TEST=9 : graph_9 ]
     [ compile graph_concepts.cpp ]
     [ run graphviz_test.cpp
-            /boost/test//boost_test_exec_monitor/<link>static
             ../build//boost_graph
             ../../regex/build//boost_regex : --log_level=all ]
     [ run metis_test.cpp : $(METIS_INPUT_FILE) ]
@@ -90,7 +86,7 @@ alias graph_test_regular :
     # TODO: Merge these into a single test framework.
     [ run subgraph.cpp ]
     [ run subgraph_bundled.cpp ]
-    [ run subgraph_add.cpp ../../test/build//boost_unit_test_framework/<link>static : $(TEST_DIR) ]
+    [ run subgraph_add.cpp : $(TEST_DIR) ]
     [ run subgraph_props.cpp ]
 
     [ run isomorphism.cpp ]
@@ -118,7 +114,7 @@ alias graph_test_regular :
     [ run weighted_matching_test.cpp ]
     [ run max_flow_test.cpp ]
     [ run boykov_kolmogorov_max_flow_test.cpp ]
-    [ run cycle_ratio_tests.cpp ../build//boost_graph ../../regex/build//boost_regex : $(CYCLE_RATIO_INPUT_FILE) : : [ check-target-builds .//is_issue_251 : <build>no ] ]
+    [ run cycle_ratio_tests.cpp ../build//boost_graph ../../regex/build//boost_regex : $(CYCLE_RATIO_INPUT_FILE) ]
     [ run basic_planarity_test.cpp ]
     [ run make_connected_test.cpp ]
     [ run make_bicon_planar_test.cpp ]
@@ -146,17 +142,17 @@ alias graph_test_regular :
     [ run random_spanning_tree_test.cpp ../build//boost_graph ]
     [ run random_matching_test.cpp : 1000 1020 ]
     [ run graphml_test.cpp ../build//boost_graph : : "graphml_test.xml" ]
-    [ run mas_test.cpp ../../test/build//boost_unit_test_framework/<link>static : $(TEST_DIR) ]
-    [ run stoer_wagner_test.cpp ../../test/build//boost_unit_test_framework/<link>static : $(TEST_DIR) ]
+    [ run mas_test.cpp : $(TEST_DIR) ]
+    [ run stoer_wagner_test.cpp : $(TEST_DIR) ]
     [ compile filtered_graph_properties_dijkstra.cpp ]
     [ run vf2_sub_graph_iso_test.cpp ]
     [ run vf2_sub_graph_iso_test_2.cpp ]
     [ run hawick_circuits.cpp ]
-    [ run successive_shortest_path_nonnegative_weights_test.cpp ../../test/build//boost_unit_test_framework/<link>static ]
-    [ run cycle_canceling_test.cpp ../../test/build//boost_unit_test_framework/<link>static ]
+    [ run successive_shortest_path_nonnegative_weights_test.cpp ]
+    [ run cycle_canceling_test.cpp ]
     [ run strong_components_test.cpp ]
-    [ run find_flow_cost_bundled_properties_and_named_params_test.cpp ../../test/build//boost_unit_test_framework/<link>static ]
-    [ run max_flow_algorithms_bundled_properties_and_named_params.cpp ../../test/build//boost_unit_test_framework/<link>static ]
+    [ run find_flow_cost_bundled_properties_and_named_params_test.cpp ]
+    [ run max_flow_algorithms_bundled_properties_and_named_params.cpp ]
     [ run delete_edge.cpp ]
     [ run johnson-test.cpp ]
     [ run lvalue_pmap.cpp ]
