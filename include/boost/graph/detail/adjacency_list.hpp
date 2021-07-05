@@ -2070,7 +2070,7 @@ namespace detail
         EdgeList& el, vertex_descriptor u, boost::disallow_parallel_edge_tag)
     {
         typename EdgeList::iterator ei = el.begin(), e_end = el.end();
-        while (ei != e_end) {
+        while (ei != e_end)
         {
             if (ei->get_target() > u)
             {
