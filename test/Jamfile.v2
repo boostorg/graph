@@ -121,6 +121,7 @@ alias graph_test_regular :
     [ run make_maximal_planar_test.cpp ]
     [ run named_vertices_test.cpp ]
     [ run r_c_shortest_paths_test.cpp ]
+    [ run r_c_shortest_paths_to_all_test.cpp ]
     [ run rcsp_custom_vertex_id.cpp ]
     [ run is_straight_line_draw_test.cpp ]
     [ run metric_tsp_approx.cpp /boost/timer//boost_timer : metric_tsp_approx.graph : : ]
