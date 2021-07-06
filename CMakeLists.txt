@@ -23,6 +23,7 @@ target_link_libraries(boost_graph
     Boost::assert
     Boost::bimap
     Boost::bind
+    Boost::chrono
     Boost::concept_check
     Boost::config
     Boost::container_hash
