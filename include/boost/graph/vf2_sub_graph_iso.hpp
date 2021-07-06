@@ -25,6 +25,9 @@
 #include <utility>
 
 #include <boost/assert.hpp>
+#include <boost/chrono.hpp>
+#include <boost/chrono/duration.hpp>
+#include <boost/chrono/system_clocks.hpp>
 #include <boost/concept/assert.hpp>
 #include <boost/concept_check.hpp>
 #include <boost/graph/graph_utility.hpp>
@@ -749,7 +752,7 @@ namespace detail
     // mapping is found, the mapping is output to user_callback in the form
     // of a correspondence map (graph1 to graph2). Returning false from the
     // user_callback will terminate the search. Function match will return
-    // true if the entire search space was explored.
+    // true if a match was found.
     template < typename Graph1, typename Graph2, typename IndexMap1,
         typename IndexMap2, typename VertexOrder1,
         typename EdgeEquivalencePredicate, typename VertexEquivalencePredicate,
@@ -758,7 +761,7 @@ namespace detail
         SubGraphIsoMapCallback user_callback, const VertexOrder1& vertex_order1,
         state< Graph1, Graph2, IndexMap1, IndexMap2, EdgeEquivalencePredicate,
             VertexEquivalencePredicate, SubGraphIsoMapCallback,
-            problem_selection >& s)
+            problem_selection >& s, long timeout_ms=0)
     {
 
         typename VertexOrder1::const_iterator graph1_verts_iter;
@@ -771,8 +774,14 @@ namespace detail
             match_continuation_type;
         std::vector< match_continuation_type > k;
         bool found_match = false;
-
+        bool have_timeout = timeout_ms > 0;
+        const boost::chrono::steady_clock::time_point end_time =
+            boost::chrono::steady_clock::now()
+            + boost::chrono::milliseconds(timeout_ms);
     recur:
+        if (have_timeout && boost::chrono::steady_clock::now() >= end_time)
+            return found_match;
+
         if (s.success())
         {
             if (!s.call_back(user_callback))
@@ -924,7 +933,7 @@ namespace detail
         IndexMapSmall index_map_small, IndexMapLarge index_map_large,
         const VertexOrderSmall& vertex_order_small,
         EdgeEquivalencePredicate edge_comp,
-        VertexEquivalencePredicate vertex_comp)
+        VertexEquivalencePredicate vertex_comp, long timeout_ms=0)
     {
 
         // Graph requirements
@@ -1007,7 +1016,8 @@ namespace detail
                 edge_comp, vertex_comp);
 
         return detail::match(
-            graph_small, graph_large, user_callback, vertex_order_small, s);
+            graph_small, graph_large, user_callback, vertex_order_small, s,
+            timeout_ms);
     }
 
 } // namespace detail
@@ -1029,7 +1039,7 @@ vertex_order_by_mult(const Graph& graph)
 
 // Enumerates all graph sub-graph monomorphism mappings between graphs
 // graph_small and graph_large. Continues until user_callback returns true or
-// the search space has been fully explored.
+// the search space has been fully explored or the timeout (if > 0) is reached.
 template < typename GraphSmall, typename GraphLarge, typename IndexMapSmall,
     typename IndexMapLarge, typename VertexOrderSmall,
     typename EdgeEquivalencePredicate, typename VertexEquivalencePredicate,
@@ -1038,23 +1048,25 @@ bool vf2_subgraph_mono(const GraphSmall& graph_small,
     const GraphLarge& graph_large, SubGraphIsoMapCallback user_callback,
     IndexMapSmall index_map_small, IndexMapLarge index_map_large,
     const VertexOrderSmall& vertex_order_small,
-    EdgeEquivalencePredicate edge_comp, VertexEquivalencePredicate vertex_comp)
+    EdgeEquivalencePredicate edge_comp, VertexEquivalencePredicate vertex_comp,
+    long timeout_ms=0)
 {
     return detail::vf2_subgraph_morphism< detail::subgraph_mono >(graph_small,
         graph_large, user_callback, index_map_small, index_map_large,
-        vertex_order_small, edge_comp, vertex_comp);
+        vertex_order_small, edge_comp, vertex_comp, timeout_ms);
 }
 
 // All default interface for vf2_subgraph_iso
 template < typename GraphSmall, typename GraphLarge,
     typename SubGraphIsoMapCallback >
 bool vf2_subgraph_mono(const GraphSmall& graph_small,
-    const GraphLarge& graph_large, SubGraphIsoMapCallback user_callback)
+    const GraphLarge& graph_large, SubGraphIsoMapCallback user_callback,
+    long timeout_ms=0)
 {
     return vf2_subgraph_mono(graph_small, graph_large, user_callback,
         get(vertex_index, graph_small), get(vertex_index, graph_large),
         vertex_order_by_mult(graph_small), always_equivalent(),
-        always_equivalent());
+        always_equivalent(), timeout_ms);
 }
 
 // Named parameter interface of vf2_subgraph_iso
@@ -1064,7 +1076,7 @@ template < typename GraphSmall, typename GraphLarge, typename VertexOrderSmall,
 bool vf2_subgraph_mono(const GraphSmall& graph_small,
     const GraphLarge& graph_large, SubGraphIsoMapCallback user_callback,
     const VertexOrderSmall& vertex_order_small,
-    const bgl_named_params< Param, Tag, Rest >& params)
+    const bgl_named_params< Param, Tag, Rest >& params, long timeout_ms=0)
 {
     return vf2_subgraph_mono(graph_small, graph_large, user_callback,
         choose_const_pmap(
@@ -1075,12 +1087,13 @@ bool vf2_subgraph_mono(const GraphSmall& graph_small,
         choose_param(
             get_param(params, edges_equivalent_t()), always_equivalent()),
         choose_param(
-            get_param(params, vertices_equivalent_t()), always_equivalent()));
+            get_param(params, vertices_equivalent_t()), always_equivalent()),
+        timeout_ms);
 }
 
 // Enumerates all graph sub-graph isomorphism mappings between graphs
 // graph_small and graph_large. Continues until user_callback returns true or
-// the search space has been fully explored.
+// the search space has been fully explored or the timeout (if > 0) is reached.
 template < typename GraphSmall, typename GraphLarge, typename IndexMapSmall,
     typename IndexMapLarge, typename VertexOrderSmall,
     typename EdgeEquivalencePredicate, typename VertexEquivalencePredicate,
@@ -1089,24 +1102,26 @@ bool vf2_subgraph_iso(const GraphSmall& graph_small,
     const GraphLarge& graph_large, SubGraphIsoMapCallback user_callback,
     IndexMapSmall index_map_small, IndexMapLarge index_map_large,
     const VertexOrderSmall& vertex_order_small,
-    EdgeEquivalencePredicate edge_comp, VertexEquivalencePredicate vertex_comp)
+    EdgeEquivalencePredicate edge_comp, VertexEquivalencePredicate vertex_comp,
+    long timeout_ms=0)
 {
     return detail::vf2_subgraph_morphism< detail::subgraph_iso >(graph_small,
         graph_large, user_callback, index_map_small, index_map_large,
-        vertex_order_small, edge_comp, vertex_comp);
+        vertex_order_small, edge_comp, vertex_comp, timeout_ms);
 }
 
 // All default interface for vf2_subgraph_iso
 template < typename GraphSmall, typename GraphLarge,
     typename SubGraphIsoMapCallback >
 bool vf2_subgraph_iso(const GraphSmall& graph_small,
-    const GraphLarge& graph_large, SubGraphIsoMapCallback user_callback)
+    const GraphLarge& graph_large, SubGraphIsoMapCallback user_callback,
+    long timeout_ms=0)
 {
 
     return vf2_subgraph_iso(graph_small, graph_large, user_callback,
         get(vertex_index, graph_small), get(vertex_index, graph_large),
         vertex_order_by_mult(graph_small), always_equivalent(),
-        always_equivalent());
+        always_equivalent(), timeout_ms);
 }
 
 // Named parameter interface of vf2_subgraph_iso
@@ -1116,7 +1131,7 @@ template < typename GraphSmall, typename GraphLarge, typename VertexOrderSmall,
 bool vf2_subgraph_iso(const GraphSmall& graph_small,
     const GraphLarge& graph_large, SubGraphIsoMapCallback user_callback,
     const VertexOrderSmall& vertex_order_small,
-    const bgl_named_params< Param, Tag, Rest >& params)
+    const bgl_named_params< Param, Tag, Rest >& params, long timeout_ms=0)
 {
 
     return vf2_subgraph_iso(graph_small, graph_large, user_callback,
@@ -1128,12 +1143,13 @@ bool vf2_subgraph_iso(const GraphSmall& graph_small,
         choose_param(
             get_param(params, edges_equivalent_t()), always_equivalent()),
         choose_param(
-            get_param(params, vertices_equivalent_t()), always_equivalent()));
+            get_param(params, vertices_equivalent_t()), always_equivalent()),
+        timeout_ms);
 }
 
 // Enumerates all isomorphism mappings between graphs graph1_ and graph2_.
 // Continues until user_callback returns true or the search space has been
-// fully explored.
+// fully explored or the timeout (if > 0) is reached.
 template < typename Graph1, typename Graph2, typename IndexMap1,
     typename IndexMap2, typename VertexOrder1,
     typename EdgeEquivalencePredicate, typename VertexEquivalencePredicate,
@@ -1141,7 +1157,8 @@ template < typename Graph1, typename Graph2, typename IndexMap1,
 bool vf2_graph_iso(const Graph1& graph1, const Graph2& graph2,
     GraphIsoMapCallback user_callback, IndexMap1 index_map1,
     IndexMap2 index_map2, const VertexOrder1& vertex_order1,
-    EdgeEquivalencePredicate edge_comp, VertexEquivalencePredicate vertex_comp)
+    EdgeEquivalencePredicate edge_comp, VertexEquivalencePredicate vertex_comp,
+    long timeout_ms=0)
 {
 
     // Graph requirements
@@ -1210,18 +1227,20 @@ bool vf2_graph_iso(const Graph1& graph1, const Graph2& graph2,
         GraphIsoMapCallback, detail::isomorphism >
         s(graph1, graph2, index_map1, index_map2, edge_comp, vertex_comp);
 
-    return detail::match(graph1, graph2, user_callback, vertex_order1, s);
+    return detail::match(graph1, graph2, user_callback, vertex_order1, s,
+        timeout_ms);
 }
 
 // All default interface for vf2_graph_iso
 template < typename Graph1, typename Graph2, typename GraphIsoMapCallback >
 bool vf2_graph_iso(const Graph1& graph1, const Graph2& graph2,
-    GraphIsoMapCallback user_callback)
+    GraphIsoMapCallback user_callback, long timeout_ms=0)
 {
 
     return vf2_graph_iso(graph1, graph2, user_callback,
         get(vertex_index, graph1), get(vertex_index, graph2),
-        vertex_order_by_mult(graph1), always_equivalent(), always_equivalent());
+        vertex_order_by_mult(graph1), always_equivalent(), always_equivalent(),
+        timeout_ms);
 }
 
 // Named parameter interface of vf2_graph_iso
@@ -1229,7 +1248,7 @@ template < typename Graph1, typename Graph2, typename VertexOrder1,
     typename GraphIsoMapCallback, typename Param, typename Tag, typename Rest >
 bool vf2_graph_iso(const Graph1& graph1, const Graph2& graph2,
     GraphIsoMapCallback user_callback, const VertexOrder1& vertex_order1,
-    const bgl_named_params< Param, Tag, Rest >& params)
+    const bgl_named_params< Param, Tag, Rest >& params, long timeout_ms=0)
 {
 
     return vf2_graph_iso(graph1, graph2, user_callback,
@@ -1241,7 +1260,8 @@ bool vf2_graph_iso(const Graph1& graph1, const Graph2& graph2,
         choose_param(
             get_param(params, edges_equivalent_t()), always_equivalent()),
         choose_param(
-            get_param(params, vertices_equivalent_t()), always_equivalent()));
+            get_param(params, vertices_equivalent_t()), always_equivalent()),
+        timeout_ms);
 }
 
 // Verifies a graph (sub)graph isomorphism map
