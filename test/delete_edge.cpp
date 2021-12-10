@@ -55,5 +55,13 @@ int main(int argc, char* argv[])
 
     BOOST_TEST(m_graph[ed1] == EDGE_VAL);
 
+    // https://github.com/boostorg/graph/issues/268
+    {
+        boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS> g;
+        boost::add_edge(2, 0, g);
+        boost::remove_vertex(1, g);
+    }
+
+
     return boost::report_errors();
 }
