@@ -75,6 +75,14 @@ private:
 
 namespace detail
 {
+    template <typename Graph>
+    typename graph_traits<Graph>::vertices_size_type get_num_vertices(Graph& g)
+    {
+        typename graph_traits<Graph>::vertices_size_type N = 0;
+        BGL_FORALL_VERTICES_T(v, g, Graph)
+            N++;
+        return N;
+    }
 
     // State associated with a single graph (graph_this)
     template < typename GraphThis, typename GraphOther, typename IndexMapThis,
@@ -446,6 +454,8 @@ namespace detail
         base_state< Graph1, Graph2, IndexMap1, IndexMap2 > state1_;
         base_state< Graph2, Graph1, IndexMap2, IndexMap1 > state2_;
 
+        graph1_size_type NV1_;
+
         // Three helper functions used in Feasibility and Valid functions to
         // test terminal set counts when testing for:
         // - graph sub-graph monomorphism, or
@@ -484,6 +494,7 @@ namespace detail
         , vertex_comp_(vertex_comp)
         , state1_(graph1, graph2, index_map1, index_map2)
         , state2_(graph2, graph1, index_map2, index_map1)
+        , NV1_(get_num_vertices(graph1))
         {
         }
 
@@ -702,7 +713,7 @@ namespace detail
         // Returns true if a mapping was found
         bool success() const
         {
-            return state1_.count() == num_vertices(graph1_);
+            return state1_.count() == NV1_;
         }
 
         // Returns true if a state is valid
@@ -754,7 +765,7 @@ namespace detail
         typename IndexMap2, typename VertexOrder1,
         typename EdgeEquivalencePredicate, typename VertexEquivalencePredicate,
         typename SubGraphIsoMapCallback, problem_selector problem_selection >
-    bool match(const Graph1& graph1, const Graph2& graph2,
+    bool match(const Graph1&, const Graph2& graph2,
         SubGraphIsoMapCallback user_callback, const VertexOrder1& vertex_order1,
         state< Graph1, Graph2, IndexMap1, IndexMap2, EdgeEquivalencePredicate,
             VertexEquivalencePredicate, SubGraphIsoMapCallback,
@@ -976,14 +987,19 @@ namespace detail
             (BinaryPredicateConcept< VertexEquivalencePredicate,
                 vertex_small_type, vertex_large_type >));
 
+        typename graph_traits< GraphSmall >::vertices_size_type num_vertices_small
+            = get_num_vertices(graph_small);
+        typename graph_traits< GraphLarge >::vertices_size_type num_vertices_large
+            = get_num_vertices(graph_large);
+
         // Vertex order requirements
         BOOST_CONCEPT_ASSERT((ContainerConcept< VertexOrderSmall >));
         typedef typename VertexOrderSmall::value_type order_value_type;
         BOOST_STATIC_ASSERT(
             (is_same< vertex_small_type, order_value_type >::value));
-        BOOST_ASSERT(num_vertices(graph_small) == vertex_order_small.size());
+        BOOST_ASSERT(num_vertices_small == vertex_order_small.size());
 
-        if (num_vertices(graph_small) > num_vertices(graph_large))
+        if (num_vertices_small > num_vertices_large)
             return false;
 
         typename graph_traits< GraphSmall >::edges_size_type num_edges_small
@@ -1182,13 +1198,18 @@ bool vf2_graph_iso(const Graph1& graph1, const Graph2& graph2,
     BOOST_CONCEPT_ASSERT((BinaryPredicateConcept< VertexEquivalencePredicate,
         vertex1_type, vertex2_type >));
 
+    typename graph_traits< Graph1 >::vertices_size_type num_vertices1
+        = detail::get_num_vertices(graph1);
+    typename graph_traits< Graph2 >::vertices_size_type num_vertices2
+        = detail::get_num_vertices(graph2);
+
     // Vertex order requirements
     BOOST_CONCEPT_ASSERT((ContainerConcept< VertexOrder1 >));
     typedef typename VertexOrder1::value_type order_value_type;
     BOOST_STATIC_ASSERT((is_same< vertex1_type, order_value_type >::value));
-    BOOST_ASSERT(num_vertices(graph1) == vertex_order1.size());
+    BOOST_ASSERT(num_vertices1 == vertex_order1.size());
 
-    if (num_vertices(graph1) != num_vertices(graph2))
+    if (num_vertices1 != num_vertices2)
         return false;
 
     typename graph_traits< Graph1 >::edges_size_type num_edges1
