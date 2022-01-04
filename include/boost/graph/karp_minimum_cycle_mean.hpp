@@ -1,5 +1,5 @@
-#ifndef BOOST_GRAPH_KARP_MINIMUM_MEAN_CYCLE_HPP
-#define BOOST_GRAPH_KARP_MINIMUM_MEAN_CYCLE_HPP
+#ifndef BOOST_GRAPH_KARP_MINIMUM_CYCLE_MEAN_HPP
+#define BOOST_GRAPH_KARP_MINIMUM_CYCLE_MEAN_HPP
 
 #include <iostream>
 #include <boost/graph/graph_traits.hpp>
@@ -8,7 +8,7 @@
 namespace boost
 {
     template<typename Graph>
-    double karp_minimum_mean_cycle(Graph g)
+    double karp_minimum_cycle_mean(Graph g)
     {
         typedef typename boost::graph_traits<Graph>::vertex_iterator vertex_iterator;
         typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
