@@ -78,10 +78,9 @@ namespace detail
     template <typename Graph>
     typename graph_traits<Graph>::vertices_size_type get_num_vertices(Graph& g)
     {
-        typename graph_traits<Graph>::vertices_size_type N = 0;
-        BGL_FORALL_VERTICES_T(v, g, Graph)
-            N++;
-        return N;
+        typedef typename graph_traits<Graph>::vertex_iterator iter;
+        std::pair<iter, iter> vs = vertices(g);
+        return std::distance(vs.first, vs.second);
     }
 
     // State associated with a single graph (graph_this)
