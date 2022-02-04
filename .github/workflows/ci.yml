@@ -12,7 +12,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compiler: [ g++-9, g++-10, clang++-10 ]
+      # Removed g++-10 because of an ICE; meant to be fixed in 10.2?
+      # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94938
+        compiler: [ g++-9, clang++-10 ]
     steps:
       - uses: actions/checkout@v2
         with:
@@ -27,7 +29,7 @@ jobs:
       - name: Add repository
         run: sudo apt-add-repository -y "ppa:ubuntu-toolchain-r/test"
       - name: Install packages
-        run: sudo apt install g++-9 g++-10 clang-10
+        run: sudo apt install g++-9 clang-10
       - name: Checkout main boost
         run: git clone -b develop --depth 1 https://github.com/boostorg/boost.git ../boost-root
       - name: Update tools/boostdep
