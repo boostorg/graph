@@ -290,6 +290,7 @@ namespace graph
     void metis_reader::start()
     {
         in.seekg(0, std::ios::beg);
+        in.clear();
         std::string line;
         while (getline(in, line) && !line.empty() && line[0] == '%')
         {
