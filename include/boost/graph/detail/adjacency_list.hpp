@@ -2069,14 +2069,19 @@ namespace detail
     inline void reindex_edge_list(
         EdgeList& el, vertex_descriptor u, boost::disallow_parallel_edge_tag)
     {
-        for (typename EdgeList::iterator ei = el.begin(); ei != el.end(); ++ei)
+        typename EdgeList::iterator ei = el.begin(), e_end = el.end();
+        while (ei != e_end)
         {
             if (ei->get_target() > u)
             {
                 typename EdgeList::value_type ce = *ei;
+                ++ei;
                 el.erase(ce);
                 --ce.get_target();
                 el.insert(ce);
+            }
+            else {
+                ++ei;
             }
         }
     }
