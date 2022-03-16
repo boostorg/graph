@@ -25,7 +25,7 @@
 \fi
 
 \ifpdf
-  \newcommand{\stlconcept}[1]{\href{http://www.sgi.com/tech/stl/#1.html}{{\small \textsf{#1}}}}
+  \newcommand{\stlconcept}[1]{\href{https://boost.org/sgi/stl/#1.html}{{\small \textsf{#1}}}}
   \newcommand{\bglconcept}[1]{\href{http://www.boost.org/libs/graph/doc/#1.html}{{\small \textsf{#1}}}}
   \newcommand{\pmconcept}[1]{\href{http://www.boost.org/libs/property_map/#1.html}{{\small \textsf{#1}}}}
   \newcommand{\myhyperref}[2]{\hyperref[#1]{#2}}
@@ -172,7 +172,7 @@ if (iter != ordered_edges.end()) {
     } else {
         @<Check to see if there is an edge in $G_2$ to match $(u,v)$@>
     }
-} else 
+} else
     return true;
 return false;
 } // match()
@@ -236,7 +236,7 @@ M\=ATCH($k$, $v$) $\equiv$ \\
 \>$in_k \leftarrow \forall (j,k) \in E_1[k] - E_1[k-1] \Big( (f(j),v) \in E_2[S \union \{ v \}] - E_2[S] \Big)$ \\
 \>$out_v \leftarrow \forall (v,u) \in E_2[S \union \{ v \}] - E_2[S] \Big( (k,f^{-1}(u)) \in E_1[k] - E_1[k-1] \Big)$ \\
 \>$in_v \leftarrow \forall (u,v) \in E_2[S \union \{ v \}] - E_2[S] \Big( (f^{-1}(u),k) \in E_1[k] - E_1[k-1] \Big)$ \\
-\>\textbf{return} $out_k \Land in_k \Land out_v \Land in_v$ 
+\>\textbf{return} $out_k \Land in_k \Land out_v \Land in_v$
 \end{tabbing}
 
 The problem with the exhaustive backtracking algorithm is that there
@@ -324,11 +324,11 @@ requirements on type template parameters are described below in the
 
 @d Isomorphism function interface
 @{
-template <typename Graph1, typename Graph2, typename IsoMapping, 
+template <typename Graph1, typename Graph2, typename IsoMapping,
           typename Invariant1, typename Invariant2,
           typename IndexMap1, typename IndexMap2>
-bool isomorphism(const Graph1& G1, const Graph2& G2, IsoMapping f, 
-                 Invariant1 invariant1, Invariant2 invariant2, 
+bool isomorphism(const Graph1& G1, const Graph2& G2, IsoMapping f,
+                 Invariant1 invariant1, Invariant2 invariant2,
                  std::size_t max_invariant,
                  IndexMap1 index_map1, IndexMap2 index_map2)
 @}
@@ -351,9 +351,9 @@ of global variables (non-reentrant, etc.).
 {
     @<Concept checking@>
     @<Quick return based on size@>
-    detail::isomorphism_algo<Graph1, Graph2, IsoMapping, Invariant1, Invariant2, 
-        IndexMap1, IndexMap2> 
-        algo(G1, G2, f, invariant1, invariant2, max_invariant, 
+    detail::isomorphism_algo<Graph1, Graph2, IsoMapping, Invariant1, Invariant2,
+        IndexMap1, IndexMap2>
+        algo(G1, G2, f, invariant1, invariant2, max_invariant,
              index_map1, index_map2);
     return algo.test_isomorphism();
 }
@@ -563,7 +563,7 @@ target&1&2&3&1&2&3&5&6&4
 
 The backtracking algorithm will scan through the edge array from left
 to right to extend isomorphic subgraphs, and move back to the right
-when a match fails. We will want to 
+when a match fails. We will want to
 
 
 
@@ -575,7 +575,7 @@ when a match fails. We will want to
 
 
 For example, suppose we have already matched the vertices
-\{0,1,2\}, and 
+\{0,1,2\}, and
 
 
 
@@ -648,7 +648,7 @@ class is as follows. EXPLAIN ficticious edges
 @{
 struct record_dfs_order : default_dfs_visitor
 {
-    record_dfs_order(std::vector<vertex1_t>& v, std::vector<ordered_edge>& e) 
+    record_dfs_order(std::vector<vertex1_t>& v, std::vector<ordered_edge>& e)
 	: vertices(v), edges(e) { }
 
     void start_vertex(vertex1_t v, const Graph1&) const {
@@ -778,7 +778,7 @@ public:
             + get(m_in_degree_map, v);
     }
     // The largest possible vertex invariant number
-    size_type max() const { 
+    size_type max() const {
         return num_vertices(m_g) * num_vertices(m_g) + num_vertices(m_g);
     }
 private:
@@ -886,7 +886,7 @@ BGL_FORALL_ADJACENT_T(f[u], y, G2, Graph2)
 bool verify = false;
 assert(f_assigned[u] == true);
 BGL_FORALL_ADJACENT_T(f[u], y, G2, Graph2) {
-    if (y == f[v]) {    
+    if (y == f[v]) {
         verify = true;
         break;
     }
@@ -929,7 +929,7 @@ namespace boost {
 namespace detail {
 
 @<Isomorphism algorithm class@>
-    
+
 template <typename Graph, typename InDegreeMap>
 void compute_in_degree(const Graph& g, InDegreeMap in_degree_map)
 {
@@ -950,12 +950,12 @@ void compute_in_degree(const Graph& g, InDegreeMap in_degree_map)
 @<Isomorphism function body@>
 
 namespace detail {
-  
-template <typename Graph1, typename Graph2, 
-          typename IsoMapping, 
+
+template <typename Graph1, typename Graph2,
+          typename IsoMapping,
           typename IndexMap1, typename IndexMap2,
           typename P, typename T, typename R>
-bool isomorphism_impl(const Graph1& G1, const Graph2& G2, 
+bool isomorphism_impl(const Graph1& G1, const Graph2& G2,
                       IsoMapping f, IndexMap1 index_map1, IndexMap2 index_map2,
 		      const bgl_named_params<P,T,R>& params)
 {
@@ -977,9 +977,9 @@ bool isomorphism_impl(const Graph1& G1, const Graph2& G2,
         choose_param(get_param(params, vertex_invariant2_t()), invariant2),
         choose_param(get_param(params, vertex_max_invariant_t()), invariant2.max()),
 	index_map1, index_map2
-	);  
-}  
-   
+	);
+}
+
 } // namespace detail
 
 
@@ -993,7 +993,7 @@ bool isomorphism(const Graph1& g1,
   typename std::vector<vertex2_t>::size_type n = num_vertices(g1);
   std::vector<vertex2_t> f(n);
   return detail::isomorphism_impl
-    (g1, g2, 
+    (g1, g2,
      choose_param(get_param(params, vertex_isomorphism_t()),
           make_safe_iterator_property_map(f.begin(), f.size(),
                   choose_const_pmap(get_param(params, vertex_index1),
@@ -1023,7 +1023,7 @@ inline bool verify_isomorphism(const Graph1& g1, const Graph2& g2, IsoMap iso_ma
 {
   if (num_vertices(g1) != num_vertices(g2) || num_edges(g1) != num_edges(g2))
     return false;
-  
+
   for (typename graph_traits<Graph1>::edge_iterator e1 = edges(g1).first;
        e1 != edges(g1).second; ++e1) {
     bool found_edge = false;
@@ -1034,11 +1034,11 @@ inline bool verify_isomorphism(const Graph1& g1, const Graph2& g2, IsoMap iso_ma
         found_edge = true;
       }
     }
-    
+
     if (!found_edge)
       return false;
   }
-  
+
   return true;
 }
 

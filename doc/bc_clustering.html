@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <!--
      Copyright (c) 2004 Trustees of Indiana University
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
@@ -18,7 +18,7 @@
 <div class="titlepage"></div>
 <div class="refnamediv">
 
-<IMG SRC="../../../boost.png" 
+<IMG SRC="../../../boost.png"
      ALT="C++ Boost" width="277" height="86">
 
 <h1><img src="figs/python.gif" alt="(Python)"/><span class="refentrytitle">Function
@@ -36,23 +36,23 @@ clustering based on edge betweenness centrality.</p>
 <span class="bold"><b>template</b></span>&lt;<span class=
 "bold"><b>typename</b></span> MutableGraph, <span class=
 "bold"><b>typename</b></span> Done, <span class=
-"bold"><b>typename</b></span> EdgeCentralityMap, 
+"bold"><b>typename</b></span> EdgeCentralityMap,
          <span class=
-"bold"><b>typename</b></span> VertexIndexMap&gt; 
+"bold"><b>typename</b></span> VertexIndexMap&gt;
   <span class="type"><span class=
-"bold"><b>void</b></span></span> betweenness_centrality_clustering(MutableGraph &amp; g, Done done, 
-                                         EdgeCentralityMap edge_centrality, 
+"bold"><b>void</b></span></span> betweenness_centrality_clustering(MutableGraph &amp; g, Done done,
+                                         EdgeCentralityMap edge_centrality,
                                          VertexIndexMap vertex_index);
 <span class="bold"><b>template</b></span>&lt;<span class=
 "bold"><b>typename</b></span> MutableGraph, <span class=
 "bold"><b>typename</b></span> Done, <span class=
-"bold"><b>typename</b></span> EdgeCentralityMap&gt; 
+"bold"><b>typename</b></span> EdgeCentralityMap&gt;
   <span class="type"><span class=
-"bold"><b>void</b></span></span> betweenness_centrality_clustering(MutableGraph &amp; g, Done done, 
+"bold"><b>void</b></span></span> betweenness_centrality_clustering(MutableGraph &amp; g, Done done,
                                          EdgeCentralityMap edge_centrality);
 <span class="bold"><b>template</b></span>&lt;<span class=
 "bold"><b>typename</b></span> MutableGraph, <span class=
-"bold"><b>typename</b></span> Done&gt; 
+"bold"><b>typename</b></span> Done&gt;
   <span class="type"><span class=
 "bold"><b>void</b></span></span> betweenness_centrality_clustering(MutableGraph &amp; g, Done done);
 </pre></div>
@@ -108,7 +108,7 @@ OUT/UTIL: <tt>EdgeCentralityMap edge_centrality_map</tt>
   <b>Python default</b>: <tt>graph.get_edge_double_map("centrality")</tt>
 </blockquote>
 
-IN: <tt>VertexIndexMap vertex_index</tt> 
+IN: <tt>VertexIndexMap vertex_index</tt>
 <blockquote>
   This maps each vertex to an integer in the range <tt>[0,
     num_vertices(g))</tt>. This is necessary for efficient updates of the
@@ -142,7 +142,7 @@ IN: <tt>VertexIndexMap vertex_index</tt>
 <td nowrap>Copyright &copy; 2004</td>
 <td><a href="http://www.boost.org/people/doug_gregor.html">Douglas Gregor</a>,
 Indiana University (dgregor@cs.indiana.edu)<br>
-<a href="http://www.osl.iu.edu/~lums">Andrew Lumsdaine</a>, Indiana
+<a href="https://homes.cs.washington.edu/~al75">Andrew Lumsdaine</a>, Indiana
 University (<a href=
 "mailto:lums@osl.iu.edu">lums@osl.iu.edu</a>)</td>
 </tr>

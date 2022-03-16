@@ -9,7 +9,7 @@
 <head>
 <title>UpdatableQueue</title>
 </head>
-<body> 
+<body>
 <img src="../../../boost.png"  alt="C++ Boost">
 
 <h2><a name="concept:UpdatableQueue">UpdatableQueue</a></h2>
@@ -30,7 +30,7 @@
 
 <h3>Members</h3>
 
-For a type to model the UpdatableQueue concept it must have the following members 
+For a type to model the UpdatableQueue concept it must have the following members
 in addition to the members that are required of types that model <a href="./Buffer.html">Buffer</a>:
 
 <p>
@@ -59,14 +59,14 @@ in addition to the members that are required of types that model <a href="./Buff
   {
     void constraints() {
       BOOST_CONCEPT_ASSERT(( Buffer&lt;Q&gt; ));
-      
+
       q.update(g_ct);
     }
-    
+
     void const_constraints(const Q&amp; cq) {
       if (cq.contains(g_ct));
     }
-    
+
     static const typename Buffer&lt;Q&gt;::value_type g_ct;
     Q q;
   };

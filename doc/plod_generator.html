@@ -1,11 +1,11 @@
 <HTML>
 <!--
      Copyright (c) The Trustees of Indiana University
-    
+
      Use, modification and distribution is subject to the Boost Software
      License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
-    
+
       Authors: Douglas Gregor
                Andrew Lumsdaine
   -->
@@ -23,10 +23,10 @@ function address(host, user) {
 </script>
 </head>
 
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <tt>plod_iterator</tt>
 
@@ -53,12 +53,12 @@ public:
   plod_iterator operator++(int);
   bool operator==(const plod_iterator&amp; other) const;
   bool operator!=(const plod_iterator&amp; other) const;
-}; 
+};
 </PRE>
 
 <p> This class template implements a generator for scale-free graphs
 using the Power Law Out Degree (PLOD) algorithm
-  [<a href="bibliography.html#palmer2000">63</a>], suitable for 
+  [<a href="bibliography.html#palmer2000">63</a>], suitable for
 initializing an <a
 href="adjacency_list.html"><tt>adjacency_list</tt></a> or other graph
 structure with iterator-based initialization. A scale-free graph
@@ -119,7 +119,7 @@ typedef boost::plod_iterator&lt;boost::minstd_rand, Graph&gt; SFGen;
 int main()
 {
   boost::minstd_rand gen;
-  // Create graph with 100 nodes 
+  // Create graph with 100 nodes
   Graph g(SFGen(gen, 100, 2.5, 1000), SFGen(), 100);
   return 0;
 }
@@ -131,9 +131,9 @@ int main()
 <TR valign=top>
 <TD nowrap>Copyright &copy; 2005</TD><TD>
 <A HREF="http://www.boost.org/people/doug_gregor.html">Doug Gregor</A>, Indiana University (<script language="Javascript">address("cs.indiana.edu", "dgregor")</script>)<br>
-  <A HREF="http://www.osl.iu.edu/~lums">Andrew Lumsdaine</A>,
+  <A HREF="https://homes.cs.washington.edu/~al75">Andrew Lumsdaine</A>,
 Indiana University (<script language="Javascript">address("osl.iu.edu", "lums")</script>)
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>

@@ -1,17 +1,17 @@
 <HTML>
 <!--
      Copyright (c) Jeremy Siek, Lie-Quan Lee, and Andrew Lumsdaine 2000
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Boost Graph Library: Converting Existing Graphs to BGL</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -21,7 +21,7 @@
 <P>
 Though the main goal of  BGL is to aid the development of new
 applications and graph algorithms, there are quite a few existing codes
-that could benefit from using BGL algorithms. One way to use the BGL 
+that could benefit from using BGL algorithms. One way to use the BGL
 algorithms with existing graph data structures is to copy data from
 the older graph format into a BGL graph which could then be used in
 the BGL algorithms. The problem with this approach is that it can be
@@ -41,7 +41,7 @@ call this free function wrapper approach <I>external adaptation</I>.
 <P>
 One of the more commonly used graph classes is the LEDA parameterized
 <a
-href="http://www.mpi-sb.mpg.de/LEDA/MANUAL/bgraph.html"><TT>GRAPH</TT></a>
+href="https://algorithmic-solutions.info/leda_guide/graphs/param_graph.html"><TT>GRAPH</TT></a>
 class&nbsp;[<A HREF="bibliography.html#mehlhorn99:_leda">22</A>]. In
 this section we will show how to create a BGL interface for this
 class. The first question is which BGL interfaces (or concepts) we
@@ -179,7 +179,7 @@ category and value type.
     struct graph_traits&lt; GRAPH&lt;vtype,etype&gt; &gt; {
       // ...
       typedef iterator_adaptor&lt;edge,
-        out_edge_iterator_policies, 
+        out_edge_iterator_policies,
         iterator&lt;std::bidirectional_iterator_tag,edge&gt;
       &gt; out_edge_iterator;
       // ...
@@ -205,9 +205,9 @@ namespace boost {
   template &lt;class vtype, class etype&gt;
   inline std::pair&lt;
     typename graph_traits&lt; GRAPH&lt;vtype,etype&gt; &gt;::out_edge_iterator,
-    typename graph_traits&lt; GRAPH&lt;vtype,etype&gt; &gt;::out_edge_iterator &gt;  
+    typename graph_traits&lt; GRAPH&lt;vtype,etype&gt; &gt;::out_edge_iterator &gt;
   out_edges(
-    typename graph_traits&lt; GRAPH&lt;vtype,etype&gt; &gt;::vertex_descriptor u, 
+    typename graph_traits&lt; GRAPH&lt;vtype,etype&gt; &gt;::vertex_descriptor u,
     const GRAPH&lt;vtype,etype&gt;&amp; g)
   {
     typedef typename graph_traits&lt; GRAPH&lt;vtype,etype&gt; &gt;
@@ -254,10 +254,10 @@ href="../test/graph.cpp"><TT>test/graph.cpp</TT></a>.
 Indiana University (<A
 HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)<br>
 <A HREF="http://www.boost.org/people/liequan_lee.htm">Lie-Quan Lee</A>, Indiana University (<A HREF="mailto:llee@cs.indiana.edu">llee@cs.indiana.edu</A>)<br>
-<A HREF="http://www.osl.iu.edu/~lums">Andrew Lumsdaine</A>,
+<A HREF="https://homes.cs.washington.edu/~al75">Andrew Lumsdaine</A>,
 Indiana University (<A
 HREF="mailto:lums@osl.iu.edu">lums@osl.iu.edu</A>)
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>

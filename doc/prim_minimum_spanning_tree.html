@@ -1,17 +1,17 @@
 <HTML>
 <!--
      Copyright (c) Jeremy Siek 2000
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Boost Graph Library: Prim Minimum Spanning Tree</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -30,12 +30,12 @@ void prim_minimum_spanning_tree(const Graph&amp; g, PredMap p_map,
   const bgl_named_params&lt;P, T, R&gt;&amp; params)
 
 <i>// non-named parameter version</i>
-template &lt;class Graph, class DijkstraVisitor, 
+template &lt;class Graph, class DijkstraVisitor,
 	  class PredecessorMap, class DistanceMap,
 	  class WeightMap, class IndexMap&gt;
 void prim_minimum_spanning_tree(const Graph&amp; g,
-   typename graph_traits&lt;Graph&gt;::vertex_descriptor s, 
-   PredecessorMap predecessor, DistanceMap distance, WeightMap weight, 
+   typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
+   PredecessorMap predecessor, DistanceMap distance, WeightMap weight,
    IndexMap index_map, DijkstraVisitor vis)
 </PRE>
 
@@ -64,26 +64,26 @@ graphs with parallel edges.
 <td valign="top">
 <pre>
 PRIM-MST(<i>G</i>, <i>s</i>, <i>w</i>)
-  <b>for</b> each vertex <i>u</i> <i>in</i> <i>V[G]</i>  
+  <b>for</b> each vertex <i>u</i> <i>in</i> <i>V[G]</i>
     <i>color[u] :=</i> WHITE
-    <i>d[u] :=</i> <i>infinity</i>  
+    <i>d[u] :=</i> <i>infinity</i>
   <b>end for</b>
   <i>color[s] :=</i> GRAY
-  <i>d[s] := 0</i> 
-  ENQUEUE(<i>PQ</i>, <i>s</i>)  
-  <i>p[s] := s</i> 
-  <b>while</b> (<i>PQ != &Oslash;</i>) 
+  <i>d[s] := 0</i>
+  ENQUEUE(<i>PQ</i>, <i>s</i>)
+  <i>p[s] := s</i>
+  <b>while</b> (<i>PQ != &Oslash;</i>)
     <i>u :=</i> DEQUEUE(<i>PQ</i>)
-    <b>for</b> each <i>v in Adj[u]</i>  
+    <b>for</b> each <i>v in Adj[u]</i>
       <b>if</b> (<i>w(u,v) < d[v]</i>)
         <i>d[v] := w(u,v)</i>
-        <i>p[v] := u</i> 
-        <b>if</b> (<i>color[v] = </i> WHITE) 
-          ENQUEUE(<i>PQ</i>, <i>v</i>) 
-          <i>color[v] :=</i> GRAY 
-        <b>else if</b> (<i>color[v] = </i> GRAY) 
-          UPDATE(<i>PQ</i>, <i>v</i>) 
-      <b>else</b> 
+        <i>p[v] := u</i>
+        <b>if</b> (<i>color[v] = </i> WHITE)
+          ENQUEUE(<i>PQ</i>, <i>v</i>)
+          <i>color[v] :=</i> GRAY
+        <b>else if</b> (<i>color[v] = </i> GRAY)
+          UPDATE(<i>PQ</i>, <i>v</i>)
+      <b>else</b>
         do nothing
     <b>end for</b>
     <i>color[u] :=</i> BLACK
@@ -99,11 +99,11 @@ initialize vertex <i>u</i>
 
 
 start vertex <i>s</i>
-discover vertex <i>s</i> 
+discover vertex <i>s</i>
 
 
 examine vertex <i>u</i>
-examining edge <i>(u,v)</i> 
+examining edge <i>(u,v)</i>
 
 edge <i>(u,v)</i> relaxed
 
@@ -113,7 +113,7 @@ discover vertex <i>v</i>
 
 
 
-edge <i>(u,v)</i> not relaxed 
+edge <i>(u,v)</i> not relaxed
 
 finish <i>u</i>
 </pre>
@@ -130,7 +130,7 @@ finish <i>u</i>
 
 <h3>Parameters</h3>
 
-IN: <tt>const Graph&amp; g</tt> 
+IN: <tt>const Graph&amp; g</tt>
 <blockquote>
   An undirected graph. The type <tt>Graph</tt> must be a
   model of <a href="./VertexListGraph.html">Vertex List Graph</a>
@@ -143,7 +143,7 @@ IN: <tt>const Graph&amp; g</tt>
 OUT: <tt>PredecessorMap p_map</tt>
 <blockquote>
   The predecessor map records the edges in the minimum spanning
-  tree. Upon completion of the algorithm, the edges 
+  tree. Upon completion of the algorithm, the edges
   <i>(p[u],u)</i> for all <i>u in V</i> are in the minimum spanning
   tree. If <i>p[u] = u</i> then <i>u</i> is either the root of the
   tree or is a vertex that is not reachable from the root.
@@ -165,7 +165,7 @@ IN: <tt>root_vertex(vertex_descriptor r)</tt>
   <b>Default:</b> <tt>*vertices(g).first</tt>
 </blockquote>
 
-IN: <tt>weight_map(WeightMap w_map)</tt>   
+IN: <tt>weight_map(WeightMap w_map)</tt>
 <blockquote>
   The weight or ``length'' of each edge in the graph.
   The type <tt>WeightMap</tt> must be a model of
@@ -180,7 +180,7 @@ IN: <tt>weight_map(WeightMap w_map)</tt>
   <b>Python default</b>: <tt>graph.get_edge_double_map("weight")</tt>
 </blockquote>
 
-IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt> 
+IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
 <blockquote>
   This maps each vertex to an integer in the range <tt>[0,
     num_vertices(g))</tt>. This is necessary for efficient updates of the
@@ -198,17 +198,17 @@ IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
   <b>Python</b>: Unsupported parameter.
 </blockquote>
 
-UTIL/OUT: <tt>distance_map(DistanceMap d_map)</tt> 
+UTIL/OUT: <tt>distance_map(DistanceMap d_map)</tt>
 <blockquote>
   The weight of the spanning tree edge into each
   vertex in the graph <tt>g</tt> is recorded in this property map, with edges
-  directed away from the spanning tree root. 
+  directed away from the spanning tree root.
   The type <tt>DistanceMap</tt> must be a model of <a
   href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
   Property Map</a>. The vertex descriptor type of the
   graph needs to be usable as the key type of the distance map, and the value
   type needs to be the same as the value type of the <tt>weight_map</tt>
-  argument.<br> 
+  argument.<br>
   <b>Default:</b> <a href="../../property_map/doc/iterator_property_map.html">
   <tt>iterator_property_map</tt></a> created from a
   <tt>std::vector</tt> of the <tt>WeightMap</tt>'s value type of size
@@ -218,7 +218,7 @@ UTIL/OUT: <tt>distance_map(DistanceMap d_map)</tt>
   <b>Python</b>: Must be a <tt>vertex_double_map</tt> for the graph.<br>
 </blockquote>
 
-UTIL/OUT: <tt>color_map(ColorMap c_map)</tt> 
+UTIL/OUT: <tt>color_map(ColorMap c_map)</tt>
 <blockquote>
   This is used during the execution of the algorithm to mark the
   vertices. The vertices start out white and become gray when they are
@@ -239,13 +239,13 @@ UTIL/OUT: <tt>color_map(ColorMap c_map)</tt>
   <b>Python</b>: The color map must be a <tt>vertex_color_map</tt> for
   the graph.
 </blockquote>
-  
-OUT: <tt>visitor(DijkstraVisitor v)</tt>  
+
+OUT: <tt>visitor(DijkstraVisitor v)</tt>
 <blockquote>
   Use this to specify actions that you would like to happen
   during certain event points within the algorithm.
   The type <tt>DijkstraVisitor</tt> must be a model of the
-  <a href="./DijkstraVisitor.html">Dijkstra Visitor</a> concept. 
+  <a href="./DijkstraVisitor.html">Dijkstra Visitor</a> concept.
   The visitor object is passed by value <a
   href="#1">[1]</a>.<br>
   <b>Default:</b> <tt>dijkstra_visitor&lt;null_visitor&gt;</tt><br>
@@ -273,7 +273,7 @@ contains an example of using Prim's algorithm.
 
 <h3>Notes</h3>
 
-<p><a name="1">[1]</a> 
+<p><a name="1">[1]</a>
   Since the visitor parameter is passed by value, if your visitor
   contains state then any changes to the state during the algorithm
   will be made to a copy of the visitor object, not the visitor object
@@ -289,4 +289,4 @@ contains an example of using Prim's algorithm.
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>

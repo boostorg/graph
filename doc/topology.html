@@ -1,7 +1,7 @@
 <HTML>
 <!--
      Copyright (c) 2004, 2010 Trustees of Indiana University
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
@@ -21,10 +21,10 @@ function address(host, user) {
 </head>
 
 
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -119,9 +119,9 @@ that returns a random point within the space.
 
 <pre>
 template&lt;std::size_t Dims&gt;
-class convex_topology 
+class convex_topology
 {
-  struct point 
+  struct point
   {
     point() { }
     double&amp; operator[](std::size_t i) {return values[i];}
@@ -149,7 +149,7 @@ be constructed with a given random number generator; if omitted, a
 new, default-constructed random number generator will be used. The
 resulting layout will be contained within the hypercube, whose sides
 measure 2*<tt>scaling</tt> long (points will fall in the range
-[-<tt>scaling</tt>, <tt>scaling</tt>] in each dimension). 
+[-<tt>scaling</tt>, <tt>scaling</tt>] in each dimension).
 
 <pre>
 template&lt;std::size_t Dims, typename RandomNumberGenerator = minstd_rand&gt;
@@ -209,7 +209,7 @@ class ball_topology : public <a href="#convex_topology">convex_topology</a>&lt;D
 {
 public:
   explicit ball_topology(double radius = 1.0);
-  ball_topology(RandomNumberGenerator&amp; gen, double radius = 1.0); 
+  ball_topology(RandomNumberGenerator&amp; gen, double radius = 1.0);
   point_type random_point() const;
 };
 </pre>
@@ -248,11 +248,11 @@ class sphere_topology : public <a href="#ball_topology">ball_topology</a>&lt;3, 
 
 <p>Class template <tt>heart_topology</tt> is topology in the shape of
 a heart. It serves as an example of a non-convex, nontrivial topology
-for layout. 
+for layout.
 
 <pre>
 template&lt;typename RandomNumberGenerator = minstd_rand&gt;
-class heart_topology 
+class heart_topology
 {
  public:
   typedef <em>unspecified</em> point_type;
@@ -272,9 +272,9 @@ class heart_topology
 <TD nowrap>Copyright &copy; 2004, 2010 Trustees of Indiana University</TD><TD>
 Jeremiah Willcock, Indiana University (<script language="Javascript">address("osl.iu.edu", "jewillco")</script>)<br>
 <A HREF="http://www.boost.org/people/doug_gregor.html">Doug Gregor</A>, Indiana University (<script language="Javascript">address("cs.indiana.edu", "dgregor")</script>)<br>
-  <A HREF="http://www.osl.iu.edu/~lums">Andrew Lumsdaine</A>,
+  <A HREF="https://homes.cs.washington.edu/~al75">Andrew Lumsdaine</A>,
 Indiana University (<script language="Javascript">address("osl.iu.edu", "lums")</script>)
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>

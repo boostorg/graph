@@ -2,7 +2,7 @@
 <html>
 <!--
      Copyright (c) 2005 Trustees of Indiana University
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
@@ -12,15 +12,15 @@
   </head>
 
   <body>
-    <IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+    <IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 <h1><img src="figs/python.gif" alt="(Python)"/><tt>sequential_vertex_coloring</tt></h1>
 
     <p>
     <pre>
 template&lt;class VertexListGraph, class OrderPA, class ColorMap&gt;
 typename property_traits&lt;ColorMap&gt;::value_type
-sequential_vertex_coloring(const VertexListGraph&amp; g, OrderPA order, 
+sequential_vertex_coloring(const VertexListGraph&amp; g, OrderPA order,
                            ColorMap color);
 
 template&lt;class VertexListGraph, class ColorMap&gt;
@@ -30,7 +30,7 @@ sequential_vertex_coloring(const VertexListGraph&amp; g, ColorMap color);
 
 <p>Computes a <a href="graph_coloring.html">vertex coloring</a> for
 the vertices in the graph, using a simple algorithm [<a
-href="bibliography.html#coleman83">59</a>]. Given vertices 
+href="bibliography.html#coleman83">59</a>]. Given vertices
 ordered v<sub>1</sub>, v<sub>2</sub>, ... , v<sub>n</sub>, for k = 1,
 2, ..., n the algorithm assigns v<sub>k</sub> to the smallest possible
 color. The algorithm does not guarantee an optimum coloring.
@@ -52,8 +52,8 @@ IN: <tt>const Graph&amp; g</tt>
   href="AdjacencyGraph.html">Adjacency Graph</a>.<br>
 <b>Python</b>: The parameter is named <tt>graph</tt>.
 </blockquote>
-    
-OUT: <tt>ColorMap color</tt> 
+
+OUT: <tt>ColorMap color</tt>
 <blockquote>
   This property map records the colors of each vertex. It must be a
   model of
@@ -64,7 +64,7 @@ OUT: <tt>ColorMap color</tt>
   <b>Python</b>: Must be an <tt>vertex_int_map</tt> for the graph.
 </blockquote>
 
-IN: <tt>OrderPA order</tt> 
+IN: <tt>OrderPA order</tt>
 <blockquote>
   A mapping from integers in the range <em>[0, num_vertices(g))</em>
   to the vertices of the graph.<br>
@@ -89,8 +89,8 @@ in the graph, and <em>k</em> is the number of colors used.
 
   typedef std::pair&lt;int, int&gt; Edge;
   enum nodes {A, B, C, D, E, n};
-  Edge edge_array[] = { Edge(A, C), Edge(B, B), Edge(B, D), Edge(B, E), 
-                        Edge(C, B), Edge(C, D), Edge(D, E), Edge(E, A), 
+  Edge edge_array[] = { Edge(A, C), Edge(B, B), Edge(B, D), Edge(B, E),
+                        Edge(C, B), Edge(C, D), Edge(D, E), Edge(E, A),
                         Edge(E, B) };
   int m = sizeof(edge_array) / sizeof(Edge);
   Graph g(edge_array, edge_array + m, n);
@@ -107,7 +107,7 @@ in the graph, and <em>k</em> is the number of colors used.
 <TABLE>
 <TR valign=top>
 <TD nowrap>Copyright &copy; 1997-2004</TD><TD>
-<A HREF="http://www.osl.iu.edu/~lums">Andrew Lumsdaine</A>,
+<A HREF="https://homes.cs.washington.edu/~al75">Andrew Lumsdaine</A>,
 Indiana University (<A
 HREF="mailto:lums@osl.iu.edu">lums@osl.iu.edu</A>)<br>
 <A HREF="http://www.boost.org/people/doug_gregor.html">Douglas Gregor</A>, Indiana University (dgregor -at- cs.indiana.edu)</A>)

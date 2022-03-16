@@ -1,7 +1,7 @@
 <HTML>
 <!--
      Copyright (c) Jeremy Siek, Lie-Quan Lee, and Andrew Lumsdaine 2000
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
@@ -12,18 +12,18 @@
   <!--
      .code
      {
-       border-left-style: groove; 
-       border-left-width: 1px; 
-       padding-left: 2em; 
+       border-left-style: groove;
+       border-left-width: 1px;
+       padding-left: 2em;
      }
 
   -->
 </style>
 
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -54,22 +54,22 @@ and vertices <TT>u</TT> and <TT>v</TT>.
 <P>
 
 <UL>
-<LI><TT>initialize_incremental_components(g, ds)</TT> 
+<LI><TT>initialize_incremental_components(g, ds)</TT>
 <BR>
 Basic initialization of the disjoint-sets structure. Each
     vertex in the graph <TT>g</TT> is in its own set.
 </LI>
-<LI><TT>incremental_components(g, ds)</TT> 
+<LI><TT>incremental_components(g, ds)</TT>
 <BR>
 The connected components are calculated based on the edges in the graph
     <TT>g</TT> and the information is embedded in <TT>ds</TT>.
 </LI>
-<LI><TT>ds.find_set(v)</TT> 
+<LI><TT>ds.find_set(v)</TT>
 <BR>
 Extracts the component information for vertex <TT>v</TT> from the
     disjoint-sets.
 </LI>
-<LI><TT>ds.union_set(u, v)</TT> 
+<LI><TT>ds.union_set(u, v)</TT>
 <BR>
 Update the disjoint-sets structure when edge <i>(u,v)</i> is added to the graph.
 </LI>
@@ -103,7 +103,7 @@ href="../example/incremental_components.cpp"><TT>examples/incremental_components
 <PRE class="code">
 using namespace boost;
 
-int main(int argc, char* argv[]) 
+int main(int argc, char* argv[])
 {
   typedef adjacency_list <vecS, vecS, undirectedS> Graph;
   typedef graph_traits<Graph>::vertex_descriptor Vertex;
@@ -137,11 +137,11 @@ int main(int argc, char* argv[])
 
   boost::tie(edge, flag) = add_edge(2, 5, graph);
   ds.union_set(2,5);
-    
+
   std::cout << "An undirected graph:" << std::endl;
   print_graph(graph, get(boost::vertex_index, graph));
   std::cout << std::endl;
-    
+
   BOOST_FOREACH(Vertex current_vertex, vertices(graph)) {
     std::cout << "representative[" << current_vertex << "] = " <<
       ds.find_set(current_vertex) << std::endl;
@@ -199,7 +199,7 @@ int main(int argc, char* argv[])
 
 <P>
 <PRE>
-template &lt;class VertexListGraph, class DisjointSets&gt; 
+template &lt;class VertexListGraph, class DisjointSets&gt;
 void initialize_incremental_components(VertexListGraph&amp; G, DisjointSets&amp; ds)
 </PRE>
 
@@ -350,7 +350,7 @@ vertex -&gt; index property map is passed in
 <H3>Members</H3>
 
 <P>
- 
+
 <table border>
 
 <tr>
@@ -392,7 +392,7 @@ Returns an iterator at the start of the component indices (0).
 Returns an iterator past the end of the component indices (<tt>size()</tt>).
 </td>
 </tr>
- 
+
 <tr>
 <td><tt>std::pair&lt;component_iterator, component_iterator&gt; operator[size_type index] const</tt></td>
 <td>
@@ -400,7 +400,7 @@ Returns a pair of iterators for the component at <tt>index</tt> where <tt>index<
 </td>
 </tr>
 
-</table> 
+</table>
 
 <br>
 <HR>
@@ -411,10 +411,10 @@ Returns a pair of iterators for the component at <tt>index</tt> where <tt>index<
 Indiana University (<A
 HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)<br>
 <A HREF="http://www.boost.org/people/liequan_lee.htm">Lie-Quan Lee</A>, Indiana University (<A HREF="mailto:llee@cs.indiana.edu">llee@cs.indiana.edu</A>)<br>
-<A HREF="http://www.osl.iu.edu/~lums">Andrew Lumsdaine</A>,
+<A HREF="https://homes.cs.washington.edu/~al75">Andrew Lumsdaine</A>,
 Indiana University (<A
 HREF="mailto:lums@osl.iu.edu">lums@osl.iu.edu</A>)
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>

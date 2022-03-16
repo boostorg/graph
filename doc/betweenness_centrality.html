@@ -2,7 +2,7 @@
 <html>
 <!--
      Copyright (c) 2004 Trustees of Indiana University
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
@@ -12,54 +12,54 @@
   </head>
 
   <body>
-    <IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+    <IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 <h1><img src="figs/python.gif" alt="(Python)"/><tt>brandes_betweenness_centrality</tt></h1>
 
     <p>
     <pre>
 <em>// named parameter versions</em>
 template&lt;typename Graph, typename Param, typename Tag, typename Rest&gt;
-void 
+void
 brandes_betweenness_centrality(const Graph&amp; g,
                                const bgl_named_params&lt;Param,Tag,Rest&gt;&amp; params);
 
 template&lt;typename Graph, typename CentralityMap&gt;
-void 
+void
 brandes_betweenness_centrality(const Graph&amp; g, CentralityMap centrality_map);
 
 template&lt;typename Graph, typename CentralityMap, typename EdgeCentralityMap&gt;
-void 
+void
 brandes_betweenness_centrality(const Graph&amp; g, CentralityMap centrality_map,
                                EdgeCentralityMap edge_centrality);
 
 <em>// non-named parameter versions</em>
 template&lt;typename Graph, typename CentralityMap, typename EdgeCentralityMap,
-         typename IncomingMap, typename DistanceMap, typename DependencyMap, 
+         typename IncomingMap, typename DistanceMap, typename DependencyMap,
          typename PathCountMap, typename VertexIndexMap&gt;
-void 
+void
 brandes_betweenness_centrality(const Graph&amp; g, CentralityMap centrality_map,
                                EdgeCentralityMap edge_centrality,
                                IncomingMap incoming,
                                DistanceMap distance, DependencyMap dependency,
-                               PathCountMap path_count, 
+                               PathCountMap path_count,
                                VertexIndexMap vertex_index);
 
 template&lt;typename Graph, typename CentralityMap, typename EdgeCentralityMap,
-         typename IncomingMap, typename DistanceMap, typename DependencyMap, 
-         typename PathCountMap, typename VertexIndexMap, typename WeightMap&gt;    
-void 
+         typename IncomingMap, typename DistanceMap, typename DependencyMap,
+         typename PathCountMap, typename VertexIndexMap, typename WeightMap&gt;
+void
 brandes_betweenness_centrality(const Graph&amp; g, CentralityMap centrality_map,
                                EdgeCentralityMap edge_centrality,
-                               IncomingMap incoming, 
+                               IncomingMap incoming,
                                DistanceMap distance,  DependencyMap dependency,
-                               PathCountMap path_count,      
+                               PathCountMap path_count,
                                VertexIndexMap vertex_index,
                                WeightMap weight_map);
 
 <em>// helper functions</em>
 template&lt;typename Graph, typename CentralityMap&gt;
-void 
+void
 relative_betweenness_centrality(const Graph&amp; g, CentralityMap centrality_map);
 
 template&lt;typename Graph, typename CentralityMap&gt;
@@ -137,8 +137,8 @@ IN: <tt>const Graph&amp; g</tt>
 
 <b>Python</b>: The parameter is named <tt>graph</tt>.
 </blockquote>
-    
-UTIL: <tt>IncomingMap incoming</tt> 
+
+UTIL: <tt>IncomingMap incoming</tt>
 <blockquote>
   This property map records the set of edges incoming to each vertex that comprise a shortest path from a particular source vertex through this vertex, and is used internally by the algorithm.The <tt>IncomingMap</tt> type must be a <a
   href="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property
@@ -155,7 +155,7 @@ UTIL: <tt>IncomingMap incoming</tt>
   <b>Python</b>: Unsupported parameter.
 </blockquote>
 
-UTIL: <tt>DistanceMap distance_map</tt> 
+UTIL: <tt>DistanceMap distance_map</tt>
 <blockquote>
   The shortest path weight from each source vertex <tt>s</tt> to each
   vertex in the graph <tt>g</tt> is recorded in this property map, but
@@ -178,7 +178,7 @@ UTIL: <tt>DistanceMap distance_map</tt>
   <b>Python</b>: Unsupported parameter.
 </blockquote>
 
-UTIL: <tt>DependencyMap dependency</tt> 
+UTIL: <tt>DependencyMap dependency</tt>
 <blockquote>
   Property map used internally to accumulate partial betweenness
   centrality results. The type <tt>DependencyMap</tt> must be a model
@@ -198,7 +198,7 @@ UTIL: <tt>DependencyMap dependency</tt>
   <b>Python</b>: Unsupported parameter.
 </blockquote>
 
-UTIL: <tt>PathCountMap path_count</tt> 
+UTIL: <tt>PathCountMap path_count</tt>
 <blockquote>
   Property map used internally to accumulate the number of paths that
   pass through each particular vertex. The type <tt>PathCountMap</tt>
@@ -254,7 +254,7 @@ OUT/UTIL: <tt>EdgeCentralityMap edge_centrality_map</tt>
   <b>Python default</b>: <tt>graph.get_edge_double_map("centrality")</tt>
 </blockquote>
 
-IN: <tt>vertex_index_map(VertexIndexMap vertex_index)</tt> 
+IN: <tt>vertex_index_map(VertexIndexMap vertex_index)</tt>
 <blockquote>
   This maps each vertex to an integer in the range <tt>[0,
     num_vertices(g))</tt>. This is necessary for efficient updates of the
@@ -271,11 +271,11 @@ IN: <tt>vertex_index_map(VertexIndexMap vertex_index)</tt>
   <b>Python</b>: Unsupported parameter.
 </blockquote>
 
-IN: <tt>weight_map(WeightMap w_map)</tt>   
+IN: <tt>weight_map(WeightMap w_map)</tt>
 <blockquote>
   The weight or ``length'' of each edge in the graph. The weights
   must all be non-negative, and the algorithm will throw a
-  <a href="./exception.html#negative_edge"><tt>negative_edge</tt></a> 
+  <a href="./exception.html#negative_edge"><tt>negative_edge</tt></a>
   exception is one of the edges is negative.
   The type <tt>WeightMap</tt> must be a model of
   <a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property Map</a>. The edge descriptor type of
@@ -286,7 +286,7 @@ IN: <tt>weight_map(WeightMap w_map)</tt>
   <b>Python</b>: If supplied, must be an <tt>edge_double_map</tt> for the graph.
 </blockquote>
 
-<h3>Complexity</h3> 
+<h3>Complexity</h3>
 The time complexity is <em>O(VE)</em> for unweighted graphs and
 <em>O(VE + V(V+E) log V)</em> for weighted graphs. The space complexity
 is <em>O(VE)</em>.
@@ -297,7 +297,7 @@ is <em>O(VE)</em>.
 <TR valign=top>
 <TD nowrap>Copyright &copy; 2004</TD><TD>
 <A HREF="http://www.boost.org/people/doug_gregor.html">Douglas Gregor</A>, Indiana University (dgregor@cs.indiana.edu</A>)<br>
-<A HREF="http://www.osl.iu.edu/~lums">Andrew Lumsdaine</A>,
+<A HREF="https://homes.cs.washington.edu/~al75">Andrew Lumsdaine</A>,
 Indiana University (<A
 HREF="mailto:lums@osl.iu.edu">lums@osl.iu.edu</A>)
 </TD></TR></TABLE>

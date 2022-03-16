@@ -15,19 +15,22 @@
  * Test all graphs that have directed out edges.
  */
 //@{
-template <typename Graph, typename VertexSet>
-void test_outdirected_graph(Graph const& g, VertexSet const& verts, boost::mpl::true_) {
+template < typename Graph, typename VertexSet >
+void test_outdirected_graph(
+    Graph const& g, VertexSet const& verts, boost::mpl::true_)
+{
     using namespace boost;
-    BOOST_CONCEPT_ASSERT((IncidenceGraphConcept<Graph>));
+    BOOST_CONCEPT_ASSERT((IncidenceGraphConcept< Graph >));
 
     std::cout << "...test_outdirected_graph\n";
-    typedef typename graph_traits<Graph>::out_edge_iterator OutIter;
-    typedef std::pair<OutIter, OutIter> OutRange;
-    typedef std::vector<OutRange> OutSet;
+    typedef typename graph_traits< Graph >::out_edge_iterator OutIter;
+    typedef std::pair< OutIter, OutIter > OutRange;
+    typedef std::vector< OutRange > OutSet;
 
     // Collect all of the out edge ranges from the graph.
     OutSet outs(verts.size());
-    for(size_t i = 0; i < verts.size(); ++i) {
+    for (size_t i = 0; i < verts.size(); ++i)
+    {
         outs[i] = out_edges(verts[i], g);
     }
 
@@ -49,28 +52,32 @@ void test_outdirected_graph(Graph const& g, VertexSet const& verts, boost::mpl::
     BOOST_ASSERT(has_target(g, *outs[5].first, verts[3]));
 }
 
-template <typename Graph, typename VertexSet>
+template < typename Graph, typename VertexSet >
 void test_outdirected_graph(Graph const&, VertexSet const&, boost::mpl::false_)
-{ }
+{
+}
 //@}
 
 /** @name Test In-Directed Graph
  * Test all graphs that support in-directed edges.
  */
 //@{
-template <typename Graph, typename VertexSet>
-void test_indirected_graph(Graph const& g, VertexSet const& verts, boost::mpl::true_) {
+template < typename Graph, typename VertexSet >
+void test_indirected_graph(
+    Graph const& g, VertexSet const& verts, boost::mpl::true_)
+{
     using namespace boost;
-    BOOST_CONCEPT_ASSERT((BidirectionalGraphConcept<Graph>));
+    BOOST_CONCEPT_ASSERT((BidirectionalGraphConcept< Graph >));
 
     std::cout << "...test_indirected_graph\n";
-    typedef typename graph_traits<Graph>::in_edge_iterator InIter;
-    typedef std::pair<InIter, InIter> InRange;
-    typedef std::vector<InRange> InSet;
+    typedef typename graph_traits< Graph >::in_edge_iterator InIter;
+    typedef std::pair< InIter, InIter > InRange;
+    typedef std::vector< InRange > InSet;
 
     // Collect all of the in edges from the graph.
     InSet ins(verts.size());
-    for(size_t i = 0; i < verts.size(); ++i) {
+    for (size_t i = 0; i < verts.size(); ++i)
+    {
         ins[i] = in_edges(verts[i], g);
     }
 
@@ -88,27 +95,31 @@ void test_indirected_graph(Graph const& g, VertexSet const& verts, boost::mpl::t
     BOOST_ASSERT(has_source(g, *ins[4].first, verts[3]));
 }
 
-template <typename Graph, typename VertexSet>
+template < typename Graph, typename VertexSet >
 void test_indirected_graph(Graph const&, VertexSet const&, boost::mpl::false_)
-{ }
+{
+}
 //@}
 
 /** @name Undirected Graphs
  * Test all graphs that have undirected edges.
  */
-template <typename Graph, typename VertexSet>
-void test_undirected_graph(Graph const& g, VertexSet const& verts, boost::mpl::true_) {
+template < typename Graph, typename VertexSet >
+void test_undirected_graph(
+    Graph const& g, VertexSet const& verts, boost::mpl::true_)
+{
     using namespace boost;
-    BOOST_CONCEPT_ASSERT((IncidenceGraphConcept<Graph>));
+    BOOST_CONCEPT_ASSERT((IncidenceGraphConcept< Graph >));
 
     std::cout << "...test_undirected_graph\n";
-    typedef typename graph_traits<Graph>::out_edge_iterator OutIter;
-    typedef std::pair<OutIter, OutIter> OutRange;
-    typedef std::vector<OutRange> OutSet;
+    typedef typename graph_traits< Graph >::out_edge_iterator OutIter;
+    typedef std::pair< OutIter, OutIter > OutRange;
+    typedef std::vector< OutRange > OutSet;
 
     // The set of out edges is the same as the set of incident edges.
     OutSet outs(verts.size());
-    for(size_t i = 0; i < verts.size(); ++i) {
+    for (size_t i = 0; i < verts.size(); ++i)
+    {
         outs[i] = out_edges(verts[i], g);
     }
 
@@ -122,9 +133,10 @@ void test_undirected_graph(Graph const& g, VertexSet const& verts, boost::mpl::t
     BOOST_ASSERT(distance(outs[5]) == 1);
 }
 
-template <typename Graph, typename VertexSet>
+template < typename Graph, typename VertexSet >
 void test_undirected_graph(Graph const&, VertexSet const&, boost::mpl::false_)
-{ }
+{
+}
 //@}
 
 #endif

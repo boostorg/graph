@@ -2,7 +2,7 @@
 <html>
 <!--
      Copyright (c) 2004, 2010 Trustees of Indiana University
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
@@ -50,62 +50,62 @@ layout for connected, undirected graphs.</p>
 "bold"><b>typename</b></span> Graph, <span class=
 "bold"><b>typename</b></span> PositionMap, <span class=
 "bold"><b>typename</b></span> WeightMap, <span class=
-"bold"><b>typename</b></span> T, 
+"bold"><b>typename</b></span> T,
          <span class=
 "bold"><b>bool</b></span> EdgeOrSideLength, <span class=
 "bold"><b>typename</b></span> Done, <span class=
-"bold"><b>typename</b></span> VertexIndexMap, 
+"bold"><b>typename</b></span> VertexIndexMap,
          <span class=
 "bold"><b>typename</b></span> DistanceMatrix, <span class=
-"bold"><b>typename</b></span> SpringStrengthMatrix, 
+"bold"><b>typename</b></span> SpringStrengthMatrix,
          <span class=
-"bold"><b>typename</b></span> PartialDerivativeMap&gt; 
+"bold"><b>typename</b></span> PartialDerivativeMap&gt;
   <span class="type"><span class=
-"bold"><b>bool</b></span></span> kamada_kawai_spring_layout(<span class="bold"><b>const</b></span> Graph &amp; g, PositionMap position, 
-                                  WeightMap weight, 
+"bold"><b>bool</b></span></span> kamada_kawai_spring_layout(<span class="bold"><b>const</b></span> Graph &amp; g, PositionMap position,
+                                  WeightMap weight,
                                   <b>const</b> Topology&amp; space,
                                   <span class=
-"emphasis"><em>unspecified</em></span> edge_or_side_length, Done done, 
+"emphasis"><em>unspecified</em></span> edge_or_side_length, Done done,
                                   <span class=
-"bold"><b>typename</b></span> property_traits&lt; WeightMap &gt;::value_type spring_constant, 
-                                  VertexIndexMap index, 
-                                  DistanceMatrix distance, 
-                                  SpringStrengthMatrix spring_strength, 
+"bold"><b>typename</b></span> property_traits&lt; WeightMap &gt;::value_type spring_constant,
+                                  VertexIndexMap index,
+                                  DistanceMatrix distance,
+                                  SpringStrengthMatrix spring_strength,
                                   PartialDerivativeMap partial_derivatives);
 <span class="bold"><b>template</b></span>&lt;<span class=
 "bold"><b>typename</b></span> Topology, <span class=
 "bold"><b>typename</b></span> Graph, <span class=
 "bold"><b>typename</b></span> PositionMap, <span class=
 "bold"><b>typename</b></span> WeightMap, <span class=
-"bold"><b>typename</b></span> T, 
+"bold"><b>typename</b></span> T,
          <span class=
 "bold"><b>bool</b></span> EdgeOrSideLength, <span class=
 "bold"><b>typename</b></span> Done, <span class=
-"bold"><b>typename</b></span> VertexIndexMap&gt; 
+"bold"><b>typename</b></span> VertexIndexMap&gt;
   <span class="type"><span class=
-"bold"><b>bool</b></span></span> kamada_kawai_spring_layout(<span class="bold"><b>const</b></span> Graph &amp; g, PositionMap position, 
-                                  WeightMap weight, 
+"bold"><b>bool</b></span></span> kamada_kawai_spring_layout(<span class="bold"><b>const</b></span> Graph &amp; g, PositionMap position,
+                                  WeightMap weight,
                                   <b>const</b> Topology&amp; space,
                                   <span class=
-"emphasis"><em>unspecified</em></span> edge_or_side_length, Done done, 
+"emphasis"><em>unspecified</em></span> edge_or_side_length, Done done,
                                   <span class=
-"bold"><b>typename</b></span> property_traits&lt; WeightMap &gt;::value_type spring_constant, 
+"bold"><b>typename</b></span> property_traits&lt; WeightMap &gt;::value_type spring_constant,
                                   VertexIndexMap index);
 <span class="bold"><b>template</b></span>&lt;<span class=
 "bold"><b>typename</b></span> Topology, <span class=
 "bold"><b>typename</b></span> Graph, <span class=
 "bold"><b>typename</b></span> PositionMap, <span class=
 "bold"><b>typename</b></span> WeightMap, <span class=
-"bold"><b>typename</b></span> T, 
+"bold"><b>typename</b></span> T,
          <span class=
 "bold"><b>bool</b></span> EdgeOrSideLength, <span class=
-"bold"><b>typename</b></span> Done&gt; 
+"bold"><b>typename</b></span> Done&gt;
   <span class="type"><span class=
-"bold"><b>bool</b></span></span> kamada_kawai_spring_layout(<span class="bold"><b>const</b></span> Graph &amp; g, PositionMap position, 
-                                  WeightMap weight, 
+"bold"><b>bool</b></span></span> kamada_kawai_spring_layout(<span class="bold"><b>const</b></span> Graph &amp; g, PositionMap position,
+                                  WeightMap weight,
                                   <b>const</b> Topology&amp; space,
                                   <span class=
-"emphasis"><em>unspecified</em></span> edge_or_side_length, Done done, 
+"emphasis"><em>unspecified</em></span> edge_or_side_length, Done done,
                                   <span class=
 "bold"><b>typename</b></span> property_traits&lt; WeightMap &gt;::value_type spring_constant = typename property_traits&lt; WeightMap &gt;::value_type(1));
 <span class="bold"><b>template</b></span>&lt;<span class=
@@ -113,12 +113,12 @@ layout for connected, undirected graphs.</p>
 "bold"><b>typename</b></span> Graph, <span class=
 "bold"><b>typename</b></span> PositionMap, <span class=
 "bold"><b>typename</b></span> WeightMap, <span class=
-"bold"><b>typename</b></span> T, 
+"bold"><b>typename</b></span> T,
          <span class=
-"bold"><b>bool</b></span> EdgeOrSideLength&gt; 
+"bold"><b>bool</b></span> EdgeOrSideLength&gt;
   <span class="type"><span class=
-"bold"><b>bool</b></span></span> kamada_kawai_spring_layout(<span class="bold"><b>const</b></span> Graph &amp; g, PositionMap position, 
-                                  WeightMap weight, 
+"bold"><b>bool</b></span></span> kamada_kawai_spring_layout(<span class="bold"><b>const</b></span> Graph &amp; g, PositionMap position,
+                                  WeightMap weight,
                                   <b>const</b> Topology&amp; space,
                                   <span class=
 "emphasis"><em>unspecified</em></span> edge_or_side_length);
@@ -153,9 +153,9 @@ disconnected.</p>
 <h2>Parameters</h2>
 IN: <tt>const Graph&amp; g</tt>
 <blockquote>
-  The graph, whose type <tt>Graph</tt> must model the 
-  <a href="VertexListGraph.html">VertexListGraph</a>, 
-  <a href="EdgeListGraph.html">EdgeListGraph</a>, and 
+  The graph, whose type <tt>Graph</tt> must model the
+  <a href="VertexListGraph.html">VertexListGraph</a>,
+  <a href="EdgeListGraph.html">EdgeListGraph</a>, and
   <a href="IncidenceGraph.html">IncidenceGraph</a> concepts. The
   graph must be undirected and connected. <br>
   <b>Python</b>: This parameter is named <tt>graph</tt> in Python.
@@ -174,11 +174,11 @@ OUT: <tt>PositionMap position</tt>
   <b>Python default</b>: <tt>graph.get_vertex_point2d_map("position")</tt>
 </blockquote>
 
-IN: <tt>weight_map(WeightMap w_map)</tt>   
+IN: <tt>weight_map(WeightMap w_map)</tt>
 <blockquote>
   The weight or ``length'' of each edge in the graph. The weights
   must all be non-negative, and the algorithm will throw a
-  <a href="./exception.html#negative_edge"><tt>negative_edge</tt></a> 
+  <a href="./exception.html#negative_edge"><tt>negative_edge</tt></a>
   exception is one of the edges is negative.
   The type <tt>WeightMap</tt> must be a model of
   <a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property Map</a>. The edge descriptor type of
@@ -226,7 +226,7 @@ energy of the vertex being moved.
 "layout_tolerance.html"><tt class=
 "computeroutput">layout_tolerance</tt></a> instantiated over the
 value type of the weight map.<br>
-<b>Python</b>: Any callable Python object with an appropriate signature suffices. 
+<b>Python</b>: Any callable Python object with an appropriate signature suffices.
 </blockquote>
 
 IN: <tt>typename property_traits&lt;WeightMap&gt;::value_type spring_constant</tt>
@@ -314,7 +314,7 @@ an <tt>std::vector</tt> of <tt>Topology::point_difference_type</tt>.<br>
 <td nowrap>Copyright &copy; 2004, 2010 Trustees of Indiana University</td>
 <td><a href="http://www.boost.org/people/doug_gregor.html">Douglas Gregor</a>,
 Indiana University (dgregor -at cs.indiana.edu)<br>
-<a href="http://www.osl.iu.edu/~lums">Andrew Lumsdaine</a>, Indiana
+<a href="https://homes.cs.washington.edu/~al75">Andrew Lumsdaine</a>, Indiana
 University (<a href=
 "mailto:lums@osl.iu.edu">lums@osl.iu.edu</a>)</td>
 </tr>

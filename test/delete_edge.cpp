@@ -12,21 +12,22 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_traits.hpp>
 
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 
-int test_main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     typedef int Vertex;
     typedef int Edge;
 
-    typedef boost::adjacency_list<boost::setS, // Container type for edges
-                                      boost::vecS, // Container type for vertices
-                                      boost::directedS, // Param for
-                                      // directed/undirected/bidirectional
-                                      // graph
-                                      Vertex, // Type for the vertices
-                                      Edge    // Type for the edges
-                                      > Graph_t;
+    typedef boost::adjacency_list< boost::setS, // Container type for edges
+        boost::vecS, // Container type for vertices
+        boost::directedS, // Param for
+        // directed/undirected/bidirectional
+        // graph
+        Vertex, // Type for the vertices
+        Edge // Type for the edges
+        >
+        Graph_t;
 
     typedef Graph_t::edge_descriptor EdgeDesc;
     typedef Graph_t::vertex_descriptor VertexType;
@@ -42,7 +43,7 @@ int test_main(int argc, char* argv[])
 
     boost::tie(ed1, inserted1) = boost::add_edge(v3, v1, m_graph);
 
-    BOOST_REQUIRE(inserted1);
+    BOOST_TEST(inserted1);
 
     static const int EDGE_VAL = 1234;
 
@@ -52,7 +53,25 @@ int test_main(int argc, char* argv[])
 
     std::cout << "ed1 " << m_graph[ed1] << std::endl;
 
-    BOOST_REQUIRE(m_graph[ed1] == EDGE_VAL);
+    BOOST_TEST(m_graph[ed1] == EDGE_VAL);
 
-    return 0;
+    // https://github.com/boostorg/graph/issues/268
+    // 1. Undirected:
+    {
+        boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS> g;
+        boost::add_edge(2, 0, g);
+        boost::remove_vertex(1, g);
+        BOOST_TEST(num_vertices(g) == 2);
+        BOOST_TEST(num_edges(g) == 1);
+    }
+    // 2. Directed:
+    {
+        boost::adjacency_list<boost::setS, boost::vecS, boost::directedS> g;
+        boost::add_edge(2, 0, g);
+        boost::remove_vertex(1, g);
+        BOOST_TEST(num_vertices(g) == 2);
+        BOOST_TEST(num_edges(g) == 1);
+    }
+
+    return boost::report_errors();
 }

@@ -30,77 +30,95 @@
 
 using namespace boost;
 
-
-enum { a, b, c, d, e, f, g, h };
-enum { _1, _2, _3, _4, _5, _6, _7, _8 };
-
-void test_isomorphism() 
+enum
 {
-  typedef adjacency_list<vecS, vecS, bidirectionalS> GraphA;
-  typedef adjacency_list<vecS, vecS, bidirectionalS> GraphB;
+    a,
+    b,
+    c,
+    d,
+    e,
+    f,
+    g,
+    h
+};
+enum
+{
+    _1,
+    _2,
+    _3,
+    _4,
+    _5,
+    _6,
+    _7,
+    _8
+};
 
-  char a_names[] = "abcdefgh";
-  char b_names[] = "12345678";
+void test_isomorphism()
+{
+    typedef adjacency_list< vecS, vecS, bidirectionalS > GraphA;
+    typedef adjacency_list< vecS, vecS, bidirectionalS > GraphB;
 
-  GraphA Ga(8);
-  add_edge(a, d, Ga);
-  add_edge(a, h, Ga);
-  add_edge(b, c, Ga);
-  add_edge(b, e, Ga);
-  add_edge(c, f, Ga);
-  add_edge(d, a, Ga);
-  add_edge(d, h, Ga);
-  add_edge(e, b, Ga);
-  add_edge(f, b, Ga);
-  add_edge(f, e, Ga);
-  add_edge(g, d, Ga);
-  add_edge(g, f, Ga);
-  add_edge(h, c, Ga);
-  add_edge(h, g, Ga);
+    char a_names[] = "abcdefgh";
+    char b_names[] = "12345678";
 
-  GraphB Gb(8);
-  add_edge(_1, _6, Gb);
-  add_edge(_2, _1, Gb);
-  add_edge(_2, _5, Gb);
-  add_edge(_3, _2, Gb);
-  add_edge(_3, _4, Gb);
-  add_edge(_4, _2, Gb);
-  add_edge(_4, _3, Gb);
-  add_edge(_5, _4, Gb);
-  add_edge(_5, _6, Gb);
-  add_edge(_6, _7, Gb);
-  add_edge(_6, _8, Gb);
-  add_edge(_7, _8, Gb);
-  add_edge(_8, _1, Gb);
-  add_edge(_8, _7, Gb);
-  
+    GraphA Ga(8);
+    add_edge(a, d, Ga);
+    add_edge(a, h, Ga);
+    add_edge(b, c, Ga);
+    add_edge(b, e, Ga);
+    add_edge(c, f, Ga);
+    add_edge(d, a, Ga);
+    add_edge(d, h, Ga);
+    add_edge(e, b, Ga);
+    add_edge(f, b, Ga);
+    add_edge(f, e, Ga);
+    add_edge(g, d, Ga);
+    add_edge(g, f, Ga);
+    add_edge(h, c, Ga);
+    add_edge(h, g, Ga);
 
-  std::vector<std::size_t> in_degree_A(num_vertices(Ga));
-  boost::detail::compute_in_degree(Ga, &in_degree_A[0]);
+    GraphB Gb(8);
+    add_edge(_1, _6, Gb);
+    add_edge(_2, _1, Gb);
+    add_edge(_2, _5, Gb);
+    add_edge(_3, _2, Gb);
+    add_edge(_3, _4, Gb);
+    add_edge(_4, _2, Gb);
+    add_edge(_4, _3, Gb);
+    add_edge(_5, _4, Gb);
+    add_edge(_5, _6, Gb);
+    add_edge(_6, _7, Gb);
+    add_edge(_6, _8, Gb);
+    add_edge(_7, _8, Gb);
+    add_edge(_8, _1, Gb);
+    add_edge(_8, _7, Gb);
 
-  std::vector<std::size_t> in_degree_B(num_vertices(Gb));
-  boost::detail::compute_in_degree(Gb, &in_degree_B[0]);
+    std::vector< std::size_t > in_degree_A(num_vertices(Ga));
+    boost::detail::compute_in_degree(Ga, &in_degree_A[0]);
 
-  degree_vertex_invariant<std::size_t*, GraphA> 
-    invariantA(&in_degree_A[0], Ga);
-  degree_vertex_invariant<std::size_t*, GraphB> 
-    invariantB(&in_degree_B[0], Gb);
+    std::vector< std::size_t > in_degree_B(num_vertices(Gb));
+    boost::detail::compute_in_degree(Gb, &in_degree_B[0]);
 
-  std::vector<graph_traits<GraphB>::vertex_descriptor> f(num_vertices(Ga));
+    degree_vertex_invariant< std::size_t*, GraphA > invariantA(
+        &in_degree_A[0], Ga);
+    degree_vertex_invariant< std::size_t*, GraphB > invariantB(
+        &in_degree_B[0], Gb);
 
-  bool ret = isomorphism(Ga, Gb, &f[0], invariantA, invariantB, 
-                         (invariantB.max)(),
-                         get(vertex_index, Ga), get(vertex_index, Gb));
-  assert(ret == true);
+    std::vector< graph_traits< GraphB >::vertex_descriptor > f(
+        num_vertices(Ga));
 
-  for (std::size_t i = 0; i < num_vertices(Ga); ++i)
-    std::cout << "f(" << a_names[i] << ")=" << b_names[f[i]] << std::endl;
-  
-  BOOST_TEST(verify_isomorphism(Ga, Gb, &f[0]));
+    bool ret = isomorphism(Ga, Gb, &f[0], invariantA, invariantB,
+        (invariantB.max)(), get(vertex_index, Ga), get(vertex_index, Gb));
+    assert(ret == true);
+
+    for (std::size_t i = 0; i < num_vertices(Ga); ++i)
+        std::cout << "f(" << a_names[i] << ")=" << b_names[f[i]] << std::endl;
+
+    BOOST_TEST(verify_isomorphism(Ga, Gb, &f[0]));
 }
 
-int test_main(int, char* [])
+int test_main(int, char*[])
 {
-  test_isomorphism();
-  return boost::report_errors();
+    test_isomorphism();
+    return boost::report_errors();
 }

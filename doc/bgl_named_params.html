@@ -1,17 +1,17 @@
 <HTML>
 <!--
      Copyright (c) Jeremy Siek 2000
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Boost Graph Library: Named Parameters</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -38,7 +38,7 @@ reasons:
   he or she has to resort to providing all the parameters.
 
   <li>Since the list of parameters is long, it is easy to forget
-   the ordering. 
+   the ordering.
 </ul>
 
 <p>
@@ -54,7 +54,7 @@ indicates which parameter the argument is for. Each of the named
 parameters is separated by a <b>period</b>, not a comma.
 
 <pre>
-  bool r = boost::bellman_ford_shortest_paths(g, int(N), 
+  bool r = boost::bellman_ford_shortest_paths(g, int(N),
      boost::weight_map(weight).
      distance_map(&amp;distance[0]).
      predecessor_map(&amp;parent[0]));
@@ -66,7 +66,7 @@ an call to <tt>bellman_ford_shortest_paths</tt> that is equivalent to
 the one above.
 
 <pre>
-  bool r = boost::bellman_ford_shortest_paths(g, int(N), 
+  bool r = boost::bellman_ford_shortest_paths(g, int(N),
      boost::predecessor_map(&amp;parent[0]).
      distance_map(&amp;distance[0]).
      weight_map(weight));
@@ -87,7 +87,7 @@ like <tt>boost::weight_map</tt> that create an instance of
 Indiana University (<A
 HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)<br>
 <A HREF="http://www.boost.org/people/liequan_lee.htm">Lie-Quan Lee</A>, Indiana University (<A HREF="mailto:llee@cs.indiana.edu">llee@cs.indiana.edu</A>)<br>
-<A HREF="http://www.osl.iu.edu/~lums">Andrew Lumsdaine</A>,
+<A HREF="https://homes.cs.washington.edu/~al75">Andrew Lumsdaine</A>,
 Indiana University (<A
 HREF="mailto:lums@osl.iu.edu">lums@osl.iu.edu</A>)
 </TD></TR></TABLE>

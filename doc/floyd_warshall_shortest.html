@@ -1,17 +1,17 @@
 <HTML>
 <!--
      Copyright (c) 2002 Rensselaer Polytechnic Institute
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Floyd-Warshall All Pairs Shortest Paths</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -62,7 +62,7 @@ discussed below under the OUT parameter description.
 
 <P>This algorithm should be used to compute shortest paths between
 every pair of vertices for dense graphs. For sparse graphs, use <a
-href="johnson_all_pairs_shortest.html"><code>johnson_all_pairs_shortest_paths</code></a>. 
+href="johnson_all_pairs_shortest.html"><code>johnson_all_pairs_shortest_paths</code></a>.
 
 <H3>Where Defined</H3>
 
@@ -81,14 +81,14 @@ A directed or undirected graph.  The graph must be a model of <a href="VertexLis
 OUT: <code>DistanceMatrix&amp; d</code>
 <blockquote>
 The length of the shortest path between each pair of vertices
-<code>u</code>,<code>v</code> are  
+<code>u</code>,<code>v</code> are
 stored in the matrix at location <code>D[u][v]</code>.  The
-DistanceMatrix must be 
+DistanceMatrix must be
 of type <code>{M, I, V}</code> where <code>I</code> is of type
 <code>vertex_descriptor</code> and <code>V</code> is the
 type of the <code>weight_map</code>.  The set of types must be a model of
 <a href="BasicMatrix.html">BasicMatrix</a>, with the exceptions that
-it isn't required to 
+it isn't required to
 run in constant time, and it must be mutable.  The matrix must be
 properly initialized when it is passed to the function
 <code>floyd_warshall_initialized_all_pairs_shortest_paths</code>.  If the
@@ -102,7 +102,7 @@ IN: <code>weight_map(WeightMap w)</code>
 <blockquote>
 The weight of length of each edge in the graph.  The <code>WeightMap</code>
 must be a model of <a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
-Map</a>.  The edge descriptor 
+Map</a>.  The edge descriptor
 type of the graph needs to be usable as the key type for the weight
 map.  The <code>value_type</code> of the weight map must be the type of the
 <code>DistanceMatrix</code>, and must always either be part of the
@@ -164,4 +164,4 @@ The time complexity is <i>O(V<sup>3</sup>)</i>.
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>

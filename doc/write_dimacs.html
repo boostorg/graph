@@ -35,10 +35,10 @@
 
 <Head>
 <Title>Boost Graph Library: write_dimacs_max_flow</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 <BR Clear>
 
 <H1><A NAME="sec:write_dimacs_max_flow">
@@ -50,7 +50,7 @@
 //outputs a graph with including edge_capacity properties to an std::ostream
 template &lt; typename Graph, typename CapacityMap, typename IndexMap &gt;
 void write_dimacs_max_flow(Graph& g,
-                         CapacityMap capacity, 
+                         CapacityMap capacity,
                          IndexMap idx,
                          typename graph_traits<Graph>::vertex_descriptor& src,
                          typename graph_traits<Graph>::vertex_descriptor& sink,
@@ -59,8 +59,8 @@ void write_dimacs_max_flow(Graph& g,
 </pre>
 
 <p>
-This method writes a BGL graph object as an max-flow problem into an output stream in extended dimacs format (see <a href="http://www.avglab.com/andrew/CATS/maxflow_formats.htm"><TT>Goldbergs site</TT></a> for more information).
-The output can be read in again using the <a href="../../../boost/graph/read_dimacs.hpp"><TT>boost/graph/read_dimacs.hpp</TT></a> method. 
+This method writes a BGL graph object as an max-flow problem into an output stream in extended dimacs format (see <a href="https://web.archive.org/web/20120102213028/http://www.avglab.com/andrew/CATS/maxflow_formats.htm"><TT>Goldbergs site</TT></a> for more information).
+The output can be read in again using the <a href="../../../boost/graph/read_dimacs.hpp"><TT>boost/graph/read_dimacs.hpp</TT></a> method.
 
 <H3>Where Defined</H3>
 
@@ -72,25 +72,25 @@ The output can be read in again using the <a href="../../../boost/graph/read_dim
 <blockquote>
   A directed or undirected graph.  The graph's type must be a model of
   <a href="./VertexListGraph.html">VertexListGraph</a> and <a href="./EdgeListGraph.html">EdgeListGraph</a>, as num_vertices(Graph) and num_edges(Graph) is used inside. <a href="#1">[1]</a>
-</blockquote>  
+</blockquote>
 
  IN: <tt>CapacityMap capacity</tt>
 <blockquote>
  A property map that models <a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property Map</a> whose key type is the edge descriptor of the graph and whose value type can be written to a stream. <br>
-</blockquote>  
+</blockquote>
 
  IN: <tt>IndexMap epw</tt>
 <blockquote>
  A property map that models <a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property Map</a> whose key type is the vertex descriptor of the graph and whose value type can be written to a stream. <br>
 </blockquote>
-  
+
  OUT: <tt>std::ostream&amp; out</tt>
 <blockquote>
   A standard <tt>std::ostream</tt> object.
-</blockquote>  
+</blockquote>
 
 <H3>
-Example 
+Example
 </H3>
 A short <a href="../example/read_write_dimacs-eg.cpp">example</a> which uses read_dimacs and write_dimacs is located in the examples directory.
 
@@ -101,4 +101,4 @@ A short <a href="../example/read_write_dimacs-eg.cpp">example</a> which uses rea
 <h3>Notes</h3>
 <a name="1">[1]</a> As num_edges() and num_vertices() is used inside which returns values for the unfiltered graph (instead of the filtered), this method cannot be used with a <a href="./filtered_graph.html">filtered_graph</a>See <a href="./filtered_graph.html#2">filtered_graph Note [2]</a> for the reason.
 </BODY>
-</HTML> 
+</HTML>

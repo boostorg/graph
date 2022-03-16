@@ -1,17 +1,17 @@
 <HTML>
 <!--
      Copyright (c) Jeremy Siek, Lie-Quan Lee, and Andrew Lumsdaine 2000
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Boost Graph Library: History</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -19,16 +19,16 @@
 
 The Boost Graph Library began its life as the Generic Graph Component
 Library (GGCL), a software project at the <a
-href="http://www.lsc.nd.edu">Lab for Scientific Computing (LSC)</a> at
+href="https://web.archive.org/web/20010516042117/http://www.lsc.nd.edu/">Lab for Scientific Computing (LSC)</a> at
 the University of Notre Dame, under the direction of Professor <a
-href="http://www.osl.iu.edu/~lums">Andrew Lumsdaine</a>. The Lab's
+href="https://homes.cs.washington.edu/~al75">Andrew Lumsdaine</a>. The Lab's
 research directions include numerical linear algebra, parallel
 computing, and software engineering (including generic programming).
 
 <p>
 Soon after the Standard Template Library was released, work began at
 the LSC to apply generic programming to scientific computing.  The <a
-href="http://www.lsc.nd.edu/research/mtl">Matrix Template Library</a>
+href="https://en.wikipedia.org/wiki/Matrix_Template_Library">Matrix Template Library</a>
 (Jeremy Siek's masters thesis) was one of the first projects. Many of
 the lessons learned during construction of the MTL were applied to the
 design and implementation of the GGCL.
@@ -121,7 +121,7 @@ September 27, 2000.
       <li>Bundled properties now work with adjacency list I/O.</li>
       <li><a href="floyd_warshall_shortest.html"><tt>floyd_warshall_all_pairs_shortest_paths</tt></a> now properly uses its <tt>compare</tt>, <tt>inf</tt>, and <tt>zero</tt> parameters.</li>
       <li><a href="johnson_all_pairs_shortest.html"><tt>johnson_all_pairs_shortest_paths</tt></a> now supports <tt>compare</tt>, <tt>combine</tt>, <tt>inf</tt>, and <tt>zero</tt>.</li>
-      <li>Fixed a bug in smallest_last_vertex_ordering.hpp which could cause a vertex to be moved to the wrong bucket during an BucketSorter update. 
+      <li>Fixed a bug in smallest_last_vertex_ordering.hpp which could cause a vertex to be moved to the wrong bucket during an BucketSorter update.
     </ul>
     <br>
   </li>
@@ -153,7 +153,7 @@ September 27, 2000.
       <li><a href="dijkstra_shortest_paths.html"><tt>dijkstra_shortest_paths</tt></a> now uses a relaxed heap&nbsp;[<A
   HREF="bibliography.html#driscoll88">61</A>] as its priority queue, improving its complexity to <em>O(V log V)</em> and improving real-world performance for larger graphs.</li>
       <li><a href="read_graphviz.html"><code>read_graphviz</code></a> now has a new, Spirit-based parser that works for all graph types and supports arbitrary properties on the graph, from Ron Garcia. The old, Bison-based GraphViz reader has been deprecated and will be removed in a future Boost release.</li>
-      
+
       <li><a
       href="write-graphviz.html"><code>write_graphviz</code></a> now
       supports output of dynamic properties (as read in through the
@@ -164,7 +164,7 @@ September 27, 2000.
       has been recast as an invocation of
       <tt>breadth_first_search</tt> and now supports graphs with
       multiple components.</li>
- 
+
       <li><a href="subgraph.html"><tt>subgraph</tt></a> now supports
       <a href="bundles.html">bundled
       properties</a>. <code>get_property</code> now refers to the
@@ -199,13 +199,13 @@ September 27, 2000.
 Indiana University (<A
 HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)<br>
 <A HREF="http://www.boost.org/people/liequan_lee.htm">Lie-Quan Lee</A>, Indiana University (<A HREF="mailto:llee@cs.indiana.edu">llee@cs.indiana.edu</A>)<br>
-<A HREF="http://www.osl.iu.edu/~lums">Andrew Lumsdaine</A>,
+<A HREF="https://homes.cs.washington.edu/~al75">Andrew Lumsdaine</A>,
 Indiana University (<A
 HREF="mailto:lums@osl.iu.edu">lums@osl.iu.edu</A>)
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>
 <!--  LocalWords:  gif ALT GGCL LSC Lumsdaine Siek's MTL LEDA GTL GraphBase STL
  -->
 <!--  LocalWords:  Bjarne Stroustrup hl's Quan SGI Stepanov Austern Alex's hl

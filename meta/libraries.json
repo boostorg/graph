@@ -12,5 +12,6 @@
     ],
     "maintainers": [
         "K. Noel Belcourt <kbelco -at- sandia.gov>"
-    ]
+    ],
+    "cxxstd": "03"
 }

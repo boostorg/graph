@@ -2,17 +2,17 @@
 <!--
      Copyright (c) Jeremy Siek 2000
      Copyright (c) Daniel Trebbien 2010
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Boost Graph Library: Graph Theory Review</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -26,7 +26,7 @@ the reader has some previous acquaintance with graph algorithms, this
 chapter should be enough to get started.  If the reader has no
 previous background in graph algorithms we suggest a more thorough
 introduction such as <a
-href="http://toc.lcs.mit.edu/~clr/">Introduction to Algorithms</a>
+href="https://mitpress.mit.edu/algorithms">Introduction to Algorithms</a>
 by Cormen, Leiserson, and Rivest.
 
 <P>
@@ -69,7 +69,6 @@ pair of letters. Now we can write down an example of a directed graph
 as follows:
 
 <P>
-<BR>
 <DIV ALIGN="center">
 <table><tr><td><tt>
 V = {v, b, x, z, a, y } <br>
@@ -103,17 +102,16 @@ Example of a directed graph.</CAPTION>
 Next we have a similar graph, though this time it is undirected.  <A
 HREF="#fig:undirected-graph">Figure 2</A> gives the pictorial view.
 Self loops are not allowed in undirected graphs. This graph is the <a
-name="def:undirected-version"><I>undirected version</i></a. of the the
+name="def:undirected-version"><i>undirected version</i></a> of the the
 previous graph (minus the parallel edge <i>(b,y)</i>), meaning it has
 the same vertices and the same edges with their directions removed.
 Also the self edge has been removed, and edges such as <i>(a,z)</i>
 and <i>(z,a)</i> are collapsed into one edge. One can go the other
-way, and make a <a name="def:directed-version"><I>directed version</i>
+way, and make a <a name="def:directed-version"><i>directed version</i>
 of an undirected graph be replacing each edge by two edges, one
 pointing in each direction.
 
 <P>
-<BR>
 <DIV ALIGN="CENTER">
 <table><tr><td><tt>
 V = {v, b, x, z, a, y }<br>
@@ -136,7 +134,7 @@ Example of an undirected graph.</CAPTION>
 
 <P>
 Now for some more graph terminology. If some edge <i>(u,v)</i> is in
-graph , then vertex <i>v</i> is <a
+graph <i>G</i>, then vertex <i>v</i> is <a
 name="def:adjacent"><I>adjacent</I></a> to vertex <i>u</i>.  In a
 directed graph, edge <i>(u,v)</i> is an <a
 name="def:out-edge"><I>out-edge</I></a> of vertex <i>u</i> and an <a
@@ -175,7 +173,7 @@ name="def:simple-path"><I>simple</I></a> if none of the vertices in
 the sequence are repeated. The path &lt;(b,x), (x,v)&gt; is simple,
 while the path &lt;(a,z), (z,a)&gt; is not. Also, the path &lt;(a,z),
 (z,a)&gt; is called a <a name="def:cycle"><I>cycle</I></a> because the
-first and last vertex in the path are the same. A graph with no cycles
+first and last vertices in the path are the same. A graph with no cycles
 is <a name="def:acyclic"><I>acyclic</I></a>.
 
 <P>
@@ -352,13 +350,13 @@ Breadth-first search spreading through a graph.</CAPTION>
 
 <P>
 <PRE>
-  order of discovery: s r w v t x u y 
-  order of finish: s r w v t x u y
+  order of discovery: s r w v t x u y
+  order of finish:    s r w v t x u y
 </PRE>
 
 <P>
 We start at vertex <i>s</i>, and first visit <i>r</i> and <i>w</i> (the two
-neighbors of <i>s</i>). Once both neighbors of are visited, we visit the
+neighbors of <i>s</i>). Once both neighbors of <i>s</i> are visited, we visit the
 neighbor of <i>r</i> (vertex <i>v</i>), then the neighbors of <i>w</i>
 (the discovery order between <i>r</i> and <i>w</i> does not matter)
 which are <i>t</i> and <i>x</i>. Finally we visit the neighbors of
@@ -404,7 +402,8 @@ properly nested set of parenthesis.  <A
 HREF="#fig:dfs-example">Figure 7</A> shows
 DFS applied to an undirected graph, with the edges labeled in the
 order they were explored.  Below we list the vertices of the graph
-ordered by discover and finish time, as well as show the parenthesis structure.  DFS is used as the kernel for several other graph
+ordered by discover and finish time, as well as show the parenthesis
+structure.  DFS is used as the kernel for several other graph
 algorithms, including topological sort and two of the connected
 component algorithms. It can also be used to detect cycles (see the <A
 HREF="file_dependency_example.html#sec:cycles">Cylic Dependencies </a>
@@ -424,7 +423,7 @@ Depth-first search on an undirected graph.</CAPTION>
 <P>
 <PRE>
   order of discovery: a b e d c f g h i
-  order of finish: d f c e b a
+  order of finish:    d f c e b a i h g
   parenthesis: (a (b (e (d d) (c (f f) c) e) b) a) (g (h (i i) h) g)
 </PRE>
 
@@ -442,8 +441,7 @@ total weight is given by
 <i>w(T)</i> = sum of <i>w(u,v)</i> over all <i>(u,v)</i> in <i>T</i>,
 where <i>w(u,v)</i> is the weight on the edge <i>(u,v)</i>
 </DIV>
-<BR CLEAR="ALL">
-<P></P>
+<BR CLEAR="ALL"><P></P>
 <i>T</i> is called the <I>spanning tree</I>.
 
 <!--
@@ -452,7 +450,7 @@ Kruskal's algorithm&nbsp;[<A
  HREF="bibliography.html#kruskal56">18</A>]
 for solving the minimum spanning tree problem. This is a greedy
 algorithm to calculate the minimum spanning tree for an undirected
-graph with weighted edges. 
+graph with weighted edges.
 
 <P>
 This is Prim's algorithm&nbsp;[<A
@@ -480,7 +478,7 @@ of a path</I><BR>
 
 <p></p>
 <DIV ALIGN="left">
-<i>w(p) = sum from i=1..k of w(v<sub>i-1</sub>,v<sub>i</sub>)</i>
+<i>w(p) = sum of w(v<sub>i-1</sub>,v<sub>i</sub>) for i=1..k</i>
 </DIV>
 <BR CLEAR="ALL"><P></P>
 
@@ -495,7 +493,7 @@ The <I>shortest path weight</I> from vertex <i>u</i> to <i>v</i> is then
 </DIV>
 <BR CLEAR="ALL"><P></P>
 
-A <I>shortest path</I> is any path who's path weight is equal to the
+A <I>shortest path</I> is any path whose path weight is equal to the
 <I>shortest path weight</I>.
 
 <P>
@@ -509,12 +507,12 @@ problem that are asymptotically faster than algorithms that solve the
 single-source problem.
 
 <P>
-A <I>shortest-paths tree</I> rooted at vertex in graph <i>G=(V,E)</i>
-is a directed subgraph <G'> where <i>V'</i> is a subset
+A <I>shortest-paths tree</I> rooted at vertex <i>r</i> in graph <i>G=(V,E)</i>
+is a directed subgraph <I>G'=(V',E')</I> where <i>V'</i> is a subset
 of <i>V</i> and <i>E'</i> is a subset of <i>E</i>, <i>V'</i> is the
-set of vertices reachable from , <i>G'</i> forms a rooted tree with
-root , and for all <i>v</i> in <i>V'</i> the unique simple path from
-to <i>v</i> in <i>G'</i> is a shortest path from to <i>v</i> in . The
+set of vertices reachable from <i>r</i>, <i>G'</i> forms a rooted tree with
+root <i>r</i>, and for all <i>v</i> in <i>V'</i> the unique simple path from <i>r</i>
+to <i>v</i> in <i>G'</i> is a shortest path from <i>r</i> to <i>v</i> in <i>G</i>. The
 result of a single-source algorithm is a shortest-paths tree.
 
 <P>
@@ -532,7 +530,7 @@ constraints:
 <p>
 <i>f(u,v) <= c(u,v) for all (u,v) in V x V</i> (Capacity constraint) <br>
 <i>f(u,v) = - f(v,u) for all (u,v) in V x V</i> (Skew symmetry)<br>
-<i>sum<sub>v in V</sub> f(u,v) = 0 for all u in V - {s,t}</i> (Flow conservation)
+<i>sum<sub>v in V</sub> f(u,v) = 0 for all v in V - {s,t}</i> (Flow conservation)
 
 <p>
 The <b><i>flow</i></b> of the network is the net flow entering the
@@ -553,7 +551,8 @@ The <b><i>maximum flow problem</i></b> is to determine the maximum
 possible value for <i>|f|</i> and the corresponding flow values for
 every vertex pair in the graph.
 <p>
-The <b><i>minimum cost maximum flow problem</i></b> is to determine the maximum flow which minimizes <i> sum<sub>(u,v) in E</sub>
+The <b><i>minimum cost maximum flow problem</i></b> is to determine
+the maximum flow which minimizes <i> sum<sub>(u,v) in E</sub>
 cost(u,v) * f(u,v) </i>.
 
 <p>
@@ -626,4 +625,4 @@ which is based on the notion of a <b><i>preflow</i></b> introduced by
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>

@@ -19,24 +19,23 @@ using namespace boost;
 // the cycle. Note that the back() vertex of the path is not the same as
 // the front(). It is implicit in the listing of vertices that the back()
 // vertex is connected to the front().
-template <typename OutputStream>
-struct cycle_printer
+template < typename OutputStream > struct cycle_printer
 {
-    cycle_printer(OutputStream& stream)
-        : os(stream)
-    { }
+    cycle_printer(OutputStream& stream) : os(stream) {}
 
-    template <typename Path, typename Graph>
+    template < typename Path, typename Graph >
     void cycle(const Path& p, const Graph& g)
     {
         // Get the property map containing the vertex indices
         // so we can print them.
-        typedef typename property_map<Graph, vertex_index_t>::const_type IndexMap;
+        typedef
+            typename property_map< Graph, vertex_index_t >::const_type IndexMap;
         IndexMap indices = get(vertex_index, g);
 
         // Iterate over path printing each vertex that forms the cycle.
         typename Path::const_iterator i, end = p.end();
-        for(i = p.begin(); i != end; ++i) {
+        for (i = p.begin(); i != end; ++i)
+        {
             os << get(indices, *i) << " ";
         }
         os << endl;
@@ -46,18 +45,17 @@ struct cycle_printer
 
 // Declare the graph type and its vertex and edge types.
 typedef directed_graph<> Graph;
-typedef graph_traits<Graph>::vertex_descriptor Vertex;
-typedef graph_traits<Graph>::edge_descriptor Edge;
+typedef graph_traits< Graph >::vertex_descriptor Vertex;
+typedef graph_traits< Graph >::edge_descriptor Edge;
 
-int
-main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     // Create the graph and read it from standard input.
     Graph g;
     read_graph(g, cin);
 
     // Instantiate the visitor for printing cycles
-    cycle_printer<ostream> vis(cout);
+    cycle_printer< ostream > vis(cout);
 
     // Use the Tiernan algorithm to visit all cycles, printing them
     // as they are found.

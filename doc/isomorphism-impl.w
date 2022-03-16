@@ -25,7 +25,7 @@
 \fi
 
 \ifpdf
-  \newcommand{\stlconcept}[1]{\href{http://www.sgi.com/tech/stl/#1.html}{{\small \textsf{#1}}}}
+  \newcommand{\stlconcept}[1]{\href{https://boost.org/sgi/stl/#1.html}{{\small \textsf{#1}}}}
   \newcommand{\bglconcept}[1]{\href{http://www.boost.org/libs/graph/doc/#1.html}{{\small \textsf{#1}}}}
   \newcommand{\pmconcept}[1]{\href{http://www.boost.org/libs/property_map/#1.html}{{\small \textsf{#1}}}}
   \newcommand{\myhyperref}[2]{\hyperref[#1]{#2}}
@@ -152,7 +152,7 @@ in-edges $(u,v)$ of $v$ where $u \in S$.
 M\=ATCH($k$, $v$) $\equiv$ \\
 \>$out \leftarrow \forall (k,j) \in E_1[k] - E_1[k-1] \Big( (v,f(j)) \in E_2[S \union \{ v \}] - E_2[S] \Big)$ \\
 \>$in \leftarrow \forall (j,k) \in E_1[k] - E_1[k-1] \Big( (f(j),v) \in E_2[S \union \{ v \}] - E_2[S] \Big)$ \\
-\>\textbf{return} $out \Land in$ 
+\>\textbf{return} $out \Land in$
 \end{tabbing}
 
 The problem with the exhaustive backtracking algorithm is that there
@@ -192,7 +192,7 @@ help rule out vertices.
 M\=A\=T\=C\=H-INVAR($k$, $v$) $\equiv$ \\
 \>$out \leftarrow \forall (k,j) \in E_1[k] - E_1[k-1] \Big( (v,f(j)) \in E_2[S \union \{ v \}] - E_2[S] \Land i(v) = i(k) \Big)$ \\
 \>$in \leftarrow \forall (j,k) \in E_1[k] - E_1[k-1] \Big( (f(j),v) \in E_2[S \union \{ v \}] - E_2[S] \Land i(v) = i(k) \Big)$ \\
-\>\textbf{return} $out \Land in$ 
+\>\textbf{return} $out \Land in$
 \end{tabbing}
 
 \section{Vertex Order}
@@ -240,12 +240,12 @@ below in the section ``Concept checking''.
 
 @d Isomorphism Function Interface
 @{
-template <typename Graph1, typename Graph2, 
-          typename IndexMapping, 
+template <typename Graph1, typename Graph2,
+          typename IndexMapping,
           typename VertexInvariant1, typename VertexInvariant2,
           typename IndexMap1, typename IndexMap2>
-bool isomorphism(const Graph1& g1, const Graph2& g2, 
-                 IndexMapping f, 
+bool isomorphism(const Graph1& g1, const Graph2& g2,
+                 IndexMapping f,
                  VertexInvariant1 invariant1, VertexInvariant2 invariant2,
                  IndexMap1 index_map1, IndexMap2 index_map2)
 @}
@@ -358,7 +358,7 @@ public:
       + get(m_in_degree_map, v);
   }
   // The largest possible vertex invariant number
-  result_type max() const { 
+  result_type max() const {
     return num_vertices(m_g) * num_vertices(m_g) + num_vertices(m_g);
   }
 private:
@@ -414,7 +414,7 @@ invariants, and then check to see if they are equal.
   invar_vec2_t invar2_tmp(invar2_vec);
   std::sort(invar1_tmp.begin(), invar1_tmp.end());
   std::sort(invar2_tmp.begin(), invar2_tmp.end());
-  if (! std::equal(invar1_tmp.begin(), invar1_tmp.end(), 
+  if (! std::equal(invar1_tmp.begin(), invar1_tmp.end(),
                    invar2_tmp.begin()))
     return false;
 }
@@ -428,7 +428,7 @@ graph to record the multiplicity.
 @d Compute invariant multiplicity
 @{
 std::vector<std::size_t> invar_mult(invariant1.max(), 0);
-for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)      
+for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)
   ++invar_mult[invar1[*i1]];
 @}
 
@@ -516,12 +516,12 @@ the order in which DFS discovers the vertices.
 std::vector<default_color_type> color_vec(num_vertices(g1));
 for (typename std::vector<vertex1_t>::iterator ui = g1_vertices.begin();
      ui != g1_vertices.end(); ++ui) {
-  if (color_vec[get(index_map1, *ui)] 
+  if (color_vec[get(index_map1, *ui)]
       == color_traits<default_color_type>::white()) {
     depth_first_visit
-      (g1, *ui, detail::record_dfs_order<Graph1, IndexMap1>(perm, 
-                                                       index_map1), 
-       make_iterator_property_map(&color_vec[0], index_map1, 
+      (g1, *ui, detail::record_dfs_order<Graph1, IndexMap1>(perm,
+                                                       index_map1),
+       make_iterator_property_map(&color_vec[0], index_map1,
                                   color_vec[0]));
   }
 }
@@ -540,13 +540,13 @@ namespace detail {
     typedef typename graph_traits<Graph1>::vertices_size_type size_type;
     typedef typename graph_traits<Graph1>::vertex_descriptor vertex;
 
-    record_dfs_order(std::vector<size_type>& dfs_order, IndexMap1 index) 
+    record_dfs_order(std::vector<size_type>& dfs_order, IndexMap1 index)
       : dfs_order(dfs_order), index(index) { }
 
     void discover_vertex(vertex v, const Graph1& g) const {
       dfs_order.push_back(get(index, v));
     }
-    std::vector<size_type>& dfs_order; 
+    std::vector<size_type>& dfs_order;
     IndexMap1 index;
   };
 } // namespace detail
@@ -570,7 +570,7 @@ typedef typename graph_traits<Graph1>::edge_descriptor edge1_t;
 std::vector<edge1_t> edge_set;
 std::copy(edges(g1).first, edges(g1).second, std::back_inserter(edge_set));
 
-std::sort(edge_set.begin(), edge_set.end(), 
+std::sort(edge_set.begin(), edge_set.end(),
           detail::edge_ordering
           (make_iterator_property_map(perm.begin(), index_map1, perm[0]), g1));
 @}
@@ -587,7 +587,7 @@ namespace detail {
   template <typename VertexIndexMap, typename Graph>
   std::size_t edge_order(const typename graph_traits<Graph>::edge_descriptor e,
                          VertexIndexMap index_map, const Graph& g) {
-    return std::max(get(index_map, source(e, g)), get(index_map, target(e, g)));    
+    return std::max(get(index_map, source(e, g)), get(index_map, target(e, g)));
   }
 
   template <typename VertexIndexMap, typename Graph>
@@ -627,7 +627,7 @@ std::vector<char> not_in_S_vec(num_vertices(g2), true);
 iterator_property_map<char*, IndexMap2, char, char&>
   not_in_S(&not_in_S_vec[0], index_map2);
 
-return detail::isomorph(g1_vertices.begin(), g1_vertices.end(), 
+return detail::isomorph(g1_vertices.begin(), g1_vertices.end(),
       edge_set.begin(), edge_set.end(), g1, g2,
       make_iterator_property_map(perm.begin(), index_map1, perm[0]),
       index_map2, f, invar1, invar2, not_in_S);
@@ -646,7 +646,7 @@ The mapping is recorded in the parameter \code{f}.
 @d Signature for the recursive isomorph function
 @{
 template <class VertexIter, class EdgeIter, class Graph1, class Graph2,
-  class IndexMap1, class IndexMap2, class IndexMapping, 
+  class IndexMap1, class IndexMap2, class IndexMapping,
   class Invar1, class Invar2, class Set>
 bool isomorph(VertexIter k_iter, VertexIter last,
               EdgeIter edge_iter, EdgeIter edge_iter_end,
@@ -686,7 +686,7 @@ vertex1_t k = *k_iter;
 
 @d Return true if matching is complete
 @{
-if (k_iter == last) 
+if (k_iter == last)
   return true;
 @}
 
@@ -720,7 +720,7 @@ bool some_edges = false;
 
 for (; edge_iter != edge_iter_end; ++edge_iter) {
   if (get(index_map1, k) != edge_order(*edge_iter, index_map1, g1))
-    break;      
+    break;
   if (k == source(*edge_iter, g1)) { // (k,j)
     @<Compute the $out$ set@>
     if (some_edges == false) {
@@ -807,8 +807,8 @@ digraph G {
   ratio="fill"
 
   subgraph cluster0 { label="G_1"
-    k -> j_1 
-    k -> j_2 
+    k -> j_1
+    k -> j_2
     k -> j_3
   }
 
@@ -952,8 +952,8 @@ mapping into the mapping from the previous calling function.
 for (std::size_t j = 0; j < potential_matches.size(); ++j) {
   my_f[k] = potential_matches[j];
   @<Perform $S' = S - \{ v \}$@>
-  if (isomorph(boost::next(k_iter), last, edge_iter, edge_iter_end, g1, g2, 
-               index_map1, index_map2, 
+  if (isomorph(boost::next(k_iter), last, edge_iter, edge_iter_end, g1, g2,
+               index_map1, index_map2,
                my_f, invar1, invar2, my_not_in_S)) {
     for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)
       put(f, *i1, my_f[*i1]);
@@ -994,7 +994,7 @@ code parts into namespace \code{boost}.
 // "as is" without express or implied warranty, and with no claim as
 // to its suitability for any purpose.
 
-// See http://www.boost.org/libs/graph/doc/isomorphism-impl.pdf 
+// See http://www.boost.org/libs/graph/doc/isomorphism-impl.pdf
 // for a description of the implementation of the isomorphism function
 // defined in this header file.
 
@@ -1061,11 +1061,11 @@ namespace boost {
     }
 
 
-    template <typename Graph1, typename Graph2, 
+    template <typename Graph1, typename Graph2,
               typename IndexMapping, typename IndexMap1, typename IndexMap2,
               typename P, typename T, typename R>
-    bool isomorphism_impl(const Graph1& g1, const Graph2& g2, 
-                          IndexMapping f, 
+    bool isomorphism_impl(const Graph1& g1, const Graph2& g2,
+                          IndexMapping f,
                           IndexMap1 index_map1, IndexMap2 index_map2,
                           const bgl_named_params<P,T,R>& params)
     {
@@ -1073,22 +1073,22 @@ namespace boost {
 
       // Compute the in-degrees
       std::vector<size_type> in_degree_vec1(num_vertices(g1), 0);
-      typedef iterator_property_map<size_type*, IndexMap1, 
+      typedef iterator_property_map<size_type*, IndexMap1,
          size_type, size_type&> InDegreeMap1;
       InDegreeMap1 in_degree_map1(&in_degree_vec1[0], index_map1);
       detail::compute_in_degree(g1, in_degree_map1);
-      degree_vertex_invariant<InDegreeMap1, Graph1> 
+      degree_vertex_invariant<InDegreeMap1, Graph1>
         default_invar1(in_degree_map1, g1);
 
       std::vector<size_type> in_degree_vec2(num_vertices(g2), 0);
-      typedef iterator_property_map<size_type*, IndexMap2, 
+      typedef iterator_property_map<size_type*, IndexMap2,
          size_type, size_type&> InDegreeMap2;
       InDegreeMap2 in_degree_map2(&in_degree_vec2[0], index_map2);
       detail::compute_in_degree(g2, in_degree_map2);
       degree_vertex_invariant<InDegreeMap2, Graph2>
          default_invar2(in_degree_map2, g2);
 
-      return isomorphism(g1, g2, f, 
+      return isomorphism(g1, g2, f,
         choose_param(get_param(params, vertex_invariant_t()), default_invar1),
         choose_param(get_param(params, vertex_invariant_t()), default_invar2),
         index_map1, index_map2);
@@ -1109,9 +1109,9 @@ namespace boost {
     std::vector<vertex2_t> f(n);
     vertex2_t x;
     return detail::isomorphism_impl
-      (g1, g2, 
+      (g1, g2,
        choose_param(get_param(params, vertex_isomorphism_t()),
-          make_iterator_property_map(f.begin(), 
+          make_iterator_property_map(f.begin(),
             choose_const_pmap(get_param(params, vertex_index1),
                         g1, vertex_index), x)),
        choose_const_pmap(get_param(params, vertex_index1),
@@ -1132,7 +1132,7 @@ namespace boost {
     // Compute the in-degrees
     std::vector<size_type> in_degree_vec1(num_vertices(g1), 0);
     typedef typename property_map<Graph1,vertex_index_t>::const_type IndexMap1;
-    typedef iterator_property_map<size_type*, IndexMap1, 
+    typedef iterator_property_map<size_type*, IndexMap1,
        size_type, size_type&> InDegreeMap1;
     InDegreeMap1 in_degree_map1(&in_degree_vec1[0], get(vertex_index, g1));
     detail::compute_in_degree(g1, in_degree_map1);
@@ -1141,11 +1141,11 @@ namespace boost {
 
     std::vector<size_type> in_degree_vec2(num_vertices(g2), 0);
     typedef typename property_map<Graph2,vertex_index_t>::const_type IndexMap2;
-    typedef iterator_property_map<size_type*, IndexMap2, 
+    typedef iterator_property_map<size_type*, IndexMap2,
        size_type, size_type&> InDegreeMap2;
     InDegreeMap2 in_degree_map2(&in_degree_vec2[0], get(vertex_index, g2));
     detail::compute_in_degree(g2, in_degree_map2);
-    degree_vertex_invariant<InDegreeMap2, Graph2> 
+    degree_vertex_invariant<InDegreeMap2, Graph2>
       invariant2(in_degree_map, g2);
 
     return isomorphism
@@ -1159,7 +1159,7 @@ namespace boost {
   // concepts modeled, but since we're verifying an O(n^(lg n)) algorithm,
   // O(n^4) won't hurt us.
   template<typename Graph1, typename Graph2, typename IsoMap>
-  inline bool verify_isomorphism(const Graph1& g1, const Graph2& g2, 
+  inline bool verify_isomorphism(const Graph1& g1, const Graph2& g2,
 				 IsoMap iso_map)
   {
     if (num_vertices(g1) != num_vertices(g2) || num_edges(g1) != num_edges(g2))

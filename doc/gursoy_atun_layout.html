@@ -1,7 +1,7 @@
 <HTML>
 <!--
      Copyright (c) 2004 Trustees of Indiana University
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
@@ -21,10 +21,10 @@ function address(host, user) {
 </head>
 
 
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -38,7 +38,7 @@ function address(host, user) {
 <PRE>
 <em>// Non-named parameter version</em>
 template&lt;typename VertexListAndIncidenceGraph,  typename Topology,
-	 typename PositionMap, typename VertexIndexMap, 
+	 typename PositionMap, typename VertexIndexMap,
          typename EdgeWeightMap&gt;
 void
 gursoy_atun_layout(const VertexListAndIncidenceGraph&amp; g,
@@ -55,8 +55,8 @@ gursoy_atun_layout(const VertexListAndIncidenceGraph&amp; g,
 <em>// Named parameter version</em>
 template&lt;typename VertexListAndIncidenceGraph, typename Topology,
          typename PositionMap, typename P, typename T, typename R&gt;
-void 
-gursoy_atun_layout(const VertexListAndIncidenceGraph&amp; g,  
+void
+gursoy_atun_layout(const VertexListAndIncidenceGraph&amp; g,
                    const Topology&amp; space,
                    PositionMap position,
                    const bgl_named_params&lt;P,T,R&gt;&amp; params = <em>all defaults</em>);
@@ -91,7 +91,7 @@ Maps</a>.
 
 <h3>Parameters</h3>
 
-IN: <tt>const Graph&amp; g</tt> 
+IN: <tt>const Graph&amp; g</tt>
 <blockquote>
   The graph object on which the algorithm will be applied.  The type
   <tt>Graph</tt> must be a model of <a
@@ -158,11 +158,11 @@ IN: <tt>double learning_constant_final</tt>
   <b>Default</b>: 0.2
 </blockquote>
 
-IN: <tt>VertexIndexMap vertex_index_map</tt> 
+IN: <tt>VertexIndexMap vertex_index_map</tt>
 <blockquote>
   This maps each vertex to an integer in the range <tt>[0,
     num_vertices(g))</tt>. This is only necessary when no
-    displacement map is provided. 
+    displacement map is provided.
   The type <tt>VertexIndexMap</tt> must be a model of <a
   href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
   Map</a>. The value type of the map must be an integer type. The
@@ -175,7 +175,7 @@ IN: <tt>VertexIndexMap vertex_index_map</tt>
     not have an internal <tt>vertex_index</tt> property.
 </blockquote>
 
-IN: <tt>EdgeWeightMap weight</tt> 
+IN: <tt>EdgeWeightMap weight</tt>
 <blockquote>
   This maps each edge to a weight.
   The type <tt>EdgeWeightMap</tt> must be a model of <a
@@ -214,7 +214,7 @@ Equivalent to the non-named <tt>weight</tt> parameter.<br>
 <b>Default:</b> <tt>dummy_property_map()</tt>
 </blockquote>
 
-IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt> 
+IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
 <blockquote>
 Equivalent to the non-named <tt>vertex_index_map</tt> parameter.<br>
 <b>Default:</b> <tt>get(vertex_index, g)</tt>
@@ -231,9 +231,9 @@ Equivalent to the non-named <tt>vertex_index_map</tt> parameter.<br>
 <TD nowrap>Copyright &copy; 2004 Trustees of Indiana University</TD><TD>
 Jeremiah Willcock, Indiana University (<script language="Javascript">address("osl.iu.edu", "jewillco")</script>)<br>
 <A HREF="http://www.boost.org/people/doug_gregor.html">Doug Gregor</A>, Indiana University (<script language="Javascript">address("cs.indiana.edu", "dgregor")</script>)<br>
-  <A HREF="http://www.osl.iu.edu/~lums">Andrew Lumsdaine</A>,
+  <A HREF="https://homes.cs.washington.edu/~al75">Andrew Lumsdaine</A>,
 Indiana University (<script language="Javascript">address("osl.iu.edu", "lums")</script>)
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>

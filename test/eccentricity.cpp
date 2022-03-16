@@ -13,26 +13,24 @@
 #include <boost/graph/exterior_property.hpp>
 #include <boost/graph/property_maps/constant_property_map.hpp>
 
-
 using namespace std;
 using namespace boost;
 
 // number of vertices in the graph
 static const unsigned N = 5;
 
-template <typename Graph>
-struct vertex_vector
+template < typename Graph > struct vertex_vector
 {
-    typedef graph_traits<Graph> traits;
-    typedef vector<typename traits::vertex_descriptor> type;
+    typedef graph_traits< Graph > traits;
+    typedef vector< typename traits::vertex_descriptor > type;
 };
 
-template <typename Graph>
-void build_graph(Graph& g,
-                 typename vertex_vector<Graph>::type& v)
+template < typename Graph >
+void build_graph(Graph& g, typename vertex_vector< Graph >::type& v)
 {
     // add vertices
-    for(size_t i = 0; i < N; ++i) {
+    for (size_t i = 0; i < N; ++i)
+    {
         v[i] = add_vertex(g);
     }
 
@@ -44,25 +42,23 @@ void build_graph(Graph& g,
     add_edge(v[4], v[0], g);
 }
 
-
-template <typename Graph>
-void test_undirected()
+template < typename Graph > void test_undirected()
 {
-    typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-    typedef typename graph_traits<Graph>::edge_descriptor Edge;
+    typedef typename graph_traits< Graph >::vertex_descriptor Vertex;
+    typedef typename graph_traits< Graph >::edge_descriptor Edge;
 
-    typedef exterior_vertex_property<Graph, int> EccentricityProperty;
+    typedef exterior_vertex_property< Graph, int > EccentricityProperty;
     typedef typename EccentricityProperty::container_type EccentricityContainer;
     typedef typename EccentricityProperty::map_type EccentricityMap;
 
-    typedef exterior_vertex_property<Graph, int> DistanceProperty;
+    typedef exterior_vertex_property< Graph, int > DistanceProperty;
     typedef typename DistanceProperty::matrix_type DistanceMatrix;
     typedef typename DistanceProperty::matrix_map_type DistanceMatrixMap;
 
-    typedef constant_property_map<Edge, int> WeightMap;
+    typedef constant_property_map< Edge, int > WeightMap;
 
     Graph g;
-    vector<Vertex> v(N);
+    vector< Vertex > v(N);
     build_graph(g, v);
 
     EccentricityContainer eccs(num_vertices(g));
@@ -87,24 +83,23 @@ void test_undirected()
     BOOST_ASSERT(dia == 3);
 }
 
-template <typename Graph>
-void test_directed()
+template < typename Graph > void test_directed()
 {
-    typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-    typedef typename graph_traits<Graph>::edge_descriptor Edge;
+    typedef typename graph_traits< Graph >::vertex_descriptor Vertex;
+    typedef typename graph_traits< Graph >::edge_descriptor Edge;
 
-    typedef exterior_vertex_property<Graph, int> EccentricityProperty;
+    typedef exterior_vertex_property< Graph, int > EccentricityProperty;
     typedef typename EccentricityProperty::container_type EccentricityContainer;
     typedef typename EccentricityProperty::map_type EccentricityMap;
 
-    typedef exterior_vertex_property<Graph, int> DistanceProperty;
+    typedef exterior_vertex_property< Graph, int > DistanceProperty;
     typedef typename DistanceProperty::matrix_type DistanceMatrix;
     typedef typename DistanceProperty::matrix_map_type DistanceMatrixMap;
 
-    typedef constant_property_map<Edge, int> WeightMap;
+    typedef constant_property_map< Edge, int > WeightMap;
 
     Graph g;
-    vector<Vertex> v(N);
+    vector< Vertex > v(N);
     build_graph(g, v);
 
     EccentricityContainer eccs(num_vertices(g));
@@ -120,7 +115,7 @@ void test_directed()
     int rad = radius(g, em);
     int dia = diameter(g, em);
 
-    int inf = numeric_values<int>::infinity();
+    int inf = numeric_values< int >::infinity();
     BOOST_ASSERT(em[v[0]] == inf);
     BOOST_ASSERT(em[v[1]] == inf);
     BOOST_ASSERT(em[v[2]] == inf);
@@ -130,13 +125,11 @@ void test_directed()
     BOOST_ASSERT(dia == inf);
 }
 
-
-int
-main(int, char *[])
+int main(int, char*[])
 {
     typedef undirected_graph<> Graph;
     typedef directed_graph<> Digraph;
 
-    test_undirected<Graph>();
-    test_directed<Digraph>();
+    test_undirected< Graph >();
+    test_directed< Digraph >();
 }

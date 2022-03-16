@@ -1,21 +1,21 @@
 <HTML>
 <!--
      Copyright 2010 The Trustees of Indiana University.
-     
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
-     
+
       Authors: Jeremiah Willcock
                Jeremy Siek (due to adaptation from depth_first_search.html)
                Andrew Lumsdaine
   -->
 <Head>
 <Title>Boost Graph Library: Random Spanning Tree</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -39,7 +39,7 @@ void random_spanning_tree(const Graph&amp; g, Gen&amp; gen, vertex_descriptor ro
 <p>
 The <tt>random_spanning_tree()</tt> function generates a random spanning tree
 on a directed or undirected graph.  The algorithm used is Wilson's algorithm (<a
-href="bibliography.html#wilson96generating">73</a>, based on <!-- (FIXME: add
+href="bibliography.html#wilson96generating">73</a>), based on <!-- (FIXME: add
 documentation for loop_erased_random_walk()) <a
 href="loop_erased_random_walk.html"> -->loop-erased random walks<!-- </a> -->.  There must
 be a path from every non-root vertex of the graph to the root;
@@ -151,10 +151,10 @@ IN: <tt>weight_map(WeightMap weight)</tt>
 Indiana University (<A
 HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)<br>
 <A HREF="http://www.boost.org/people/liequan_lee.htm">Lie-Quan Lee</A>, Indiana University (<A HREF="mailto:llee@cs.indiana.edu">llee@cs.indiana.edu</A>)<br>
-<A HREF="http://www.osl.iu.edu/~lums">Andrew Lumsdaine</A>,
+<A HREF="https://homes.cs.washington.edu/~al75">Andrew Lumsdaine</A>,
 Indiana University (<A
 HREF="mailto:lums@osl.iu.edu">lums@osl.iu.edu</A>)
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>
