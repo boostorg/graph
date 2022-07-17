@@ -107,12 +107,11 @@ void transitive_closure(const Graph& g, GraphTC& tc,
             }
         }
         std::sort(adj.begin(), adj.end());
-        typename std::vector< cg_vertex >::iterator di
+        const typename std::vector< cg_vertex >::iterator di
             = std::unique(adj.begin(), adj.end());
-        if (di != adj.end())
-            adj.erase(di, adj.end());
+
         for (typename std::vector< cg_vertex >::const_iterator i = adj.begin();
-             i != adj.end(); ++i)
+             i != di; ++i)
         {
             add_edge(s, *i, CG);
         }
