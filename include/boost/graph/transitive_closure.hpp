@@ -82,7 +82,7 @@ void transitive_closure(const Graph& g, GraphTC& tc,
     iterator_property_map< cg_vertex*, VertexIndexMap, cg_vertex, cg_vertex& >
         component_number(&component_number_vec[0], index_map);
 
-    int num_scc
+    const cg_vertex num_scc
         = strong_components(g, component_number, vertex_index_map(index_map));
 
     std::vector< std::vector< vertex > > components;
