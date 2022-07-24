@@ -188,10 +188,24 @@ long test_bundled_properties(int n_verts, int n_edges, std::size_t seed)
     boost::tie(src, sink)
         = fill_random_max_flow_graph(g, get(&tEdge::edge_capacity, g),
             get(&tEdge::edge_reverse, g), n_verts, n_edges, seed);
-    return boykov_kolmogorov_max_flow(g, get(&tEdge::edge_capacity, g),
-        get(&tEdge::edge_residual_capacity, g), get(&tEdge::edge_reverse, g),
-        get(&tVertex::vertex_predecessor, g), get(&tVertex::vertex_color, g),
-        get(&tVertex::vertex_distance, g), get(vertex_index, g), src, sink);
+
+    long flow_unnamed_overload = boykov_kolmogorov_max_flow(g,
+        get(&tEdge::edge_capacity, g), get(&tEdge::edge_residual_capacity, g),
+        get(&tEdge::edge_reverse, g), get(&tVertex::vertex_predecessor, g),
+        get(&tVertex::vertex_color, g), get(&tVertex::vertex_distance, g),
+        get(vertex_index, g), src, sink);
+
+    long flow_named_overload = boykov_kolmogorov_max_flow(g, src, sink,
+        capacity_map(get(&tEdge::edge_capacity, g))
+            .residual_capacity_map(get(&tEdge::edge_residual_capacity, g))
+            .reverse_edge_map(get(&tEdge::edge_reverse, g))
+            .predecessor_map(get(&tVertex::vertex_predecessor, g))
+            .color_map(get(&tVertex::vertex_color, g))
+            .distance_map(get(&tVertex::vertex_distance, g))
+            .vertex_index_map(get(vertex_index, g)));
+
+    BOOST_TEST(flow_unnamed_overload == flow_named_overload);
+    return flow_named_overload;
 }
 
 long test_overloads(int n_verts, int n_edges, std::size_t seed)
