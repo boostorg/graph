@@ -72,7 +72,7 @@ fill_random_max_flow_graph(Graph& g, CapacityMap cap, ReverseEdgeMap rev,
     // cannot use this, as we have no idea how properties are stored, right?
     typename graph_traits< Graph >::edge_iterator ei, e_end;
     for (boost::tie(ei, e_end) = edges(g); ei != e_end; ++ei)
-        cap[*ei] = int_gen();
+        put(cap, *ei, int_gen());
 
     // get source and sink node
     vertex_descriptor s = random_vertex(g, gen);
@@ -96,9 +96,9 @@ fill_random_max_flow_graph(Graph& g, CapacityMap cap, ReverseEdgeMap rev,
         boost::tie(new_edge, inserted)
             = add_edge(source_vertex, target_vertex, g);
         assert(inserted);
-        rev[old_edge] = new_edge;
-        rev[new_edge] = old_edge;
-        cap[new_edge] = 0;
+        put(rev, old_edge, new_edge);
+        put(rev, new_edge, old_edge);
+        put(cap, new_edge, 0);
     }
     return std::make_pair(s, t);
 }
