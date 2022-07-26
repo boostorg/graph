@@ -184,6 +184,32 @@ void test4()
     BOOST_TEST_EQ(parity2, get(parities, 7));
 }
 
+// Non regression test for github.com/boostorg/graph/issues/286
+void test5()
+{
+    edge_t edges[] = { { 0, 1 }, { 0, 2 }, { 0, 3 }, { 1, 2 }, { 1, 3 },
+        { 2, 3 }, { 4, 5 }, { 4, 6 }, { 4, 7 }, { 5, 6 }, { 5, 7 }, { 6, 7 },
+        { 0, 4 } };
+    weight_type ws[] = { 3, 3, 3, 2, 2, 2, 3, 3, 3, 2, 2, 2, 6 };
+    undirected_graph g(edges, edges + 13, ws, 8, 13);
+
+    weight_map_type weights = get(boost::edge_weight, g);
+    std::map< int, bool > parity;
+    boost::associative_property_map< std::map< int, bool > > parities(parity);
+    int w
+        = boost::stoer_wagner_min_cut(g, weights, boost::parity_map(parities));
+    BOOST_TEST_EQ(w, 6);
+    const bool parity0 = get(parities, 0);
+    BOOST_TEST_EQ(parity0, get(parities, 1));
+    BOOST_TEST_EQ(parity0, get(parities, 2));
+    BOOST_TEST_EQ(parity0, get(parities, 3));
+    const bool parity4 = get(parities, 4);
+    BOOST_TEST_NE(parity0, parity4);
+    BOOST_TEST_EQ(parity4, get(parities, 5));
+    BOOST_TEST_EQ(parity4, get(parities, 6));
+    BOOST_TEST_EQ(parity4, get(parities, 7));
+}
+
 // The input for the `test_prgen` family of tests comes from a program, named
 // `prgen`, that comes with a package of min-cut solvers by Chandra Chekuri,
 // Andrew Goldberg, David Karger, Matthew Levine, and Cliff Stein. `prgen` was
@@ -285,13 +311,15 @@ void test_prgen_50_70_2()
 
 int main(int argc, char* argv[])
 {
-    if (BOOST_TEST(argc == 2)) {
+    if (BOOST_TEST(argc == 2))
+    {
         test_dir = argv[1];
         test0();
         test1();
         test2();
         test3();
         test4();
+        test5();
         test_prgen_20_70_2();
         test_prgen_50_70_2();
     }

@@ -127,34 +127,36 @@ def main(ctx):
   osx_cxx("XCode-11.7 17", "clang++", packages="", buildtype="boost", xcode_version="11.7", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '17', }, globalenv=globalenv),
   osx_cxx("XCode-11.7 2a", "clang++", packages="", buildtype="boost", xcode_version="11.7", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '2a', }, globalenv=globalenv),
 
-  osx_cxx("XCode-10.2 03", "clang++", packages="", buildtype="boost", xcode_version="10.2", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '03', }, globalenv=globalenv),
-  osx_cxx("XCode-10.2 11", "clang++", packages="", buildtype="boost", xcode_version="10.2", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '11', }, globalenv=globalenv),
-  osx_cxx("XCode-10.2 14", "clang++", packages="", buildtype="boost", xcode_version="10.2", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '14', }, globalenv=globalenv),
-  # osx_cxx("XCode-10.2 17", "clang++", packages="", buildtype="boost", xcode_version="10.2", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '17', }, globalenv=globalenv),
-  osx_cxx("XCode-10.2 2a", "clang++", packages="", buildtype="boost", xcode_version="10.2", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '2a', }, globalenv=globalenv),
+#   We don't support these old versions of Xcode any more, but you are welcome to take up the challenge for doing so if you need them.
+    
+#   osx_cxx("XCode-10.2 03", "clang++", packages="", buildtype="boost", xcode_version="10.2", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '03', }, globalenv=globalenv),
+#   osx_cxx("XCode-10.2 11", "clang++", packages="", buildtype="boost", xcode_version="10.2", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '11', }, globalenv=globalenv),
+#   osx_cxx("XCode-10.2 14", "clang++", packages="", buildtype="boost", xcode_version="10.2", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '14', }, globalenv=globalenv),
+#   osx_cxx("XCode-10.2 17", "clang++", packages="", buildtype="boost", xcode_version="10.2", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '17', }, globalenv=globalenv),
+#   osx_cxx("XCode-10.2 2a", "clang++", packages="", buildtype="boost", xcode_version="10.2", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '2a', }, globalenv=globalenv),
 
-  osx_cxx("XCode-9.4 03", "clang++", packages="", buildtype="boost", xcode_version="9.4", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '03', }, globalenv=globalenv),
-  osx_cxx("XCode-9.4 11", "clang++", packages="", buildtype="boost", xcode_version="9.4", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '11', }, globalenv=globalenv),
-  osx_cxx("XCode-9.4 14", "clang++", packages="", buildtype="boost", xcode_version="9.4", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '14', }, globalenv=globalenv),
-  osx_cxx("XCode-9.4 1z", "clang++", packages="", buildtype="boost", xcode_version="9.4", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '1z', }, globalenv=globalenv),
+#   osx_cxx("XCode-9.4 03", "clang++", packages="", buildtype="boost", xcode_version="9.4", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '03', }, globalenv=globalenv),
+#   osx_cxx("XCode-9.4 11", "clang++", packages="", buildtype="boost", xcode_version="9.4", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '11', }, globalenv=globalenv),
+#   osx_cxx("XCode-9.4 14", "clang++", packages="", buildtype="boost", xcode_version="9.4", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '14', }, globalenv=globalenv),
+#   osx_cxx("XCode-9.4 1z", "clang++", packages="", buildtype="boost", xcode_version="9.4", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '1z', }, globalenv=globalenv),
 
-  osx_cxx("XCode-9.0 03", "clang++", packages="", buildtype="boost", xcode_version="9", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '03', }, globalenv=globalenv),
-  osx_cxx("XCode-9.0 11", "clang++", packages="", buildtype="boost", xcode_version="9", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '11', }, globalenv=globalenv),
-  osx_cxx("XCode-9.0 14", "clang++", packages="", buildtype="boost", xcode_version="9", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '14', }, globalenv=globalenv),
-  osx_cxx("XCode-9.0 1z", "clang++", packages="", buildtype="boost", xcode_version="9", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '1z', }, globalenv=globalenv),
+#   osx_cxx("XCode-9.0 03", "clang++", packages="", buildtype="boost", xcode_version="9", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '03', }, globalenv=globalenv),
+#   osx_cxx("XCode-9.0 11", "clang++", packages="", buildtype="boost", xcode_version="9", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '11', }, globalenv=globalenv),
+#   osx_cxx("XCode-9.0 14", "clang++", packages="", buildtype="boost", xcode_version="9", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '14', }, globalenv=globalenv),
+#   osx_cxx("XCode-9.0 1z", "clang++", packages="", buildtype="boost", xcode_version="9", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '1z', }, globalenv=globalenv),
 
-  osx_cxx("XCode-8.3 03", "clang++", packages="", buildtype="boost", xcode_version="8.3", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '03', }, globalenv=globalenv),
-  osx_cxx("XCode-8.3 11", "clang++", packages="", buildtype="boost", xcode_version="8.3", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '11', }, globalenv=globalenv),
-  osx_cxx("XCode-8.3 14", "clang++", packages="", buildtype="boost", xcode_version="8.3", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '14', }, globalenv=globalenv),
-  osx_cxx("XCode-8.3 1z", "clang++", packages="", buildtype="boost", xcode_version="8.3", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '1z', }, globalenv=globalenv),
+#   osx_cxx("XCode-8.3 03", "clang++", packages="", buildtype="boost", xcode_version="8.3", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '03', }, globalenv=globalenv),
+#   osx_cxx("XCode-8.3 11", "clang++", packages="", buildtype="boost", xcode_version="8.3", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '11', }, globalenv=globalenv),
+#   osx_cxx("XCode-8.3 14", "clang++", packages="", buildtype="boost", xcode_version="8.3", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '14', }, globalenv=globalenv),
+#   osx_cxx("XCode-8.3 1z", "clang++", packages="", buildtype="boost", xcode_version="8.3", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '1z', }, globalenv=globalenv),
 
-  osx_cxx("XCode-8.0 03", "clang++", packages="", buildtype="boost", xcode_version="8", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '03', }, globalenv=globalenv),
-  osx_cxx("XCode-8.0 11", "clang++", packages="", buildtype="boost", xcode_version="8", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '11', }, globalenv=globalenv),
-  osx_cxx("XCode-8.0 14", "clang++", packages="", buildtype="boost", xcode_version="8", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '14', }, globalenv=globalenv),
-  # osx_cxx("XCode-8.0 1z", "clang++", packages="", buildtype="boost", xcode_version="8", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '1z', }, globalenv=globalenv),
+#   osx_cxx("XCode-8.0 03", "clang++", packages="", buildtype="boost", xcode_version="8", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '03', }, globalenv=globalenv),
+#   osx_cxx("XCode-8.0 11", "clang++", packages="", buildtype="boost", xcode_version="8", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '11', }, globalenv=globalenv),
+#   osx_cxx("XCode-8.0 14", "clang++", packages="", buildtype="boost", xcode_version="8", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '14', }, globalenv=globalenv),
+#   osx_cxx("XCode-8.0 1z", "clang++", packages="", buildtype="boost", xcode_version="8", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '1z', }, globalenv=globalenv),
 
-  osx_cxx("XCode-7.3 03", "clang++", packages="", buildtype="boost", xcode_version="7.3", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '03', }, globalenv=globalenv),
-  osx_cxx("XCode-7.3 11", "clang++", packages="", buildtype="boost", xcode_version="7.3", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '11', }, globalenv=globalenv),
+#   osx_cxx("XCode-7.3 03", "clang++", packages="", buildtype="boost", xcode_version="7.3", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '03', }, globalenv=globalenv),
+#   osx_cxx("XCode-7.3 11", "clang++", packages="", buildtype="boost", xcode_version="7.3", environment={'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '11', }, globalenv=globalenv),
   ]
 
 # from https://github.com/boostorg/boost-ci
