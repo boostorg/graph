@@ -411,7 +411,7 @@ BOOST_GRAPH_MAKE_OLD_STYLE_PARAMETER_FUNCTION(depth_first_search, 1)
 template < class IncidenceGraph, class DFSVisitor, class ColorMap >
 void depth_first_visit(const IncidenceGraph& g,
     typename graph_traits< IncidenceGraph >::vertex_descriptor u,
-    DFSVisitor vis, ColorMap color)
+    DFSVisitor& vis, ColorMap color)
 {
     vis.start_vertex(u, g);
     detail::depth_first_visit_impl(g, u, vis, color, detail::nontruth2());
@@ -421,7 +421,7 @@ template < class IncidenceGraph, class DFSVisitor, class ColorMap,
     class TerminatorFunc >
 void depth_first_visit(const IncidenceGraph& g,
     typename graph_traits< IncidenceGraph >::vertex_descriptor u,
-    DFSVisitor vis, ColorMap color, TerminatorFunc func = TerminatorFunc())
+    DFSVisitor& vis, ColorMap color, TerminatorFunc func = TerminatorFunc())
 {
     vis.start_vertex(u, g);
     detail::depth_first_visit_impl(g, u, vis, color, func);
