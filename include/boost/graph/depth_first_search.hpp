@@ -310,8 +310,7 @@ DFSVisitor depth_first_search(
     if (verts.first == verts.second)
         return vis;
 
-    depth_first_search(g, vis, color, detail::get_default_starting_vertex(g));
-    return vis;
+    return depth_first_search(g, vis, color, detail::get_default_starting_vertex(g));
 }
 
 template < class Visitors = null_visitor > class dfs_visitor
