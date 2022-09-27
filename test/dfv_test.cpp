@@ -5,13 +5,9 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
-#include <boost/config.hpp>
-#include <boost/throw_exception.hpp>
-#include <boost/serialization/vector.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/core/lightweight_test.hpp>
-#include <iostream>
 
 using namespace boost;
 
