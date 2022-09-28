@@ -17,6 +17,11 @@ enum vertex_id_t { u, v, w, x, y, z, N };
 
 struct counting_dfs_visitor
 {
+  counting_dfs_visitor():
+    vertex_events(0),
+    seen_edges(0)
+  {}
+
   template<typename Vertex, typename Graph>
   void initialize_vertex(Vertex v, const Graph& g)
   {
@@ -59,8 +64,8 @@ struct counting_dfs_visitor
     ++vertex_events;
   }
 
-  size_t vertex_events = 0;
-  size_t seen_edges = 0;
+  size_t vertex_events;
+  size_t seen_edges;
 
 };
 
@@ -84,8 +89,8 @@ test_dfv_returns_copied_visitor()
 
   ColorMap color = get(boost::vertex_color, g);
   counting_dfs_visitor visitor_copy = depth_first_visit(g, vertex(u, g), counting_dfs_visitor(), color);
-  BOOST_TEST(visitor_copy.vertex_events == 6u*2u + 1u); // discover_vertex + finish_vertex for each vertex and once start_vertex
-  BOOST_TEST(visitor_copy.seen_edges == 2u*9u);
+  BOOST_TEST(visitor_copy.vertex_events == num_vertices(g)*2u + 1u); // discover_vertex + finish_vertex for each vertex and once start_vertex
+  BOOST_TEST(visitor_copy.seen_edges == num_edges(g)*2u);
 }
 
 int
