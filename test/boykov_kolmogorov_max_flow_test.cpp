@@ -211,11 +211,17 @@ long test_bundled_properties(int n_verts, int n_edges, std::size_t seed)
 long test_overloads(int n_verts, int n_edges, std::size_t seed)
 {
     typedef adjacency_list_traits< vecS, vecS, directedS > tTraits;
+    typedef property< vertex_index_t, long,
+        property< vertex_predecessor_t, tTraits::edge_descriptor,
+            property< vertex_color_t, default_color_type,
+                property< vertex_distance_t, long > > > >
+        tVertexProperty;
     typedef property< edge_capacity_t, long,
         property< edge_residual_capacity_t, long,
             property< edge_reverse_t, tTraits::edge_descriptor > > >
         tEdgeProperty;
-    typedef adjacency_list< vecS, vecS, directedS, no_property, tEdgeProperty >
+    typedef adjacency_list< vecS, vecS, directedS, tVertexProperty,
+        tEdgeProperty >
         tGraph;
 
     tGraph g;
@@ -240,7 +246,10 @@ long test_overloads(int n_verts, int n_edges, std::size_t seed)
             color_vec.begin(), get(vertex_index, g)),
         get(vertex_index, g), src, sink);
 
+    long flow_overload_3 = boykov_kolmogorov_max_flow(g, src, sink);
+
     BOOST_TEST(flow_overload_1 == flow_overload_2);
+    BOOST_TEST(flow_overload_2 == flow_overload_3);
     return flow_overload_1;
 }
 
