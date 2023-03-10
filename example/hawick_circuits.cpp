@@ -78,7 +78,8 @@ int main(int argc, char const* argv[])
 {
     if (argc < 2)
     {
-        std::cout << "usage: " << argv[0] << " <num_vertices> <max_length (optional)>\n";
+        std::cout << "usage: " << argv[0] << " <num_vertices>";
+        std::cout << " <max_length (optional)>\n";
         return EXIT_FAILURE;
     }
 
