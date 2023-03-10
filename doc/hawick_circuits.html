@@ -13,13 +13,13 @@
 <h1 id="hawick_circuits"><code>hawick_circuits</code></h1>
 
 <pre><code>template &lt;typename Graph, typename Visitor, typename VertexIndexMap&gt;
-void hawick_circuits(Graph const&amp; graph, Visitor visitor, VertexIndexMap const&amp; vim = get(vertex_index, graph), unsigned int const maxLength = 0);
+void hawick_circuits(Graph const&amp; graph, Visitor visitor, VertexIndexMap const&amp; vim = get(vertex_index, graph), unsigned int const max_length = 0);
 
 template &lt;typename Graph, typename Visitor, typename VertexIndexMap&gt;
-void hawick_unique_circuits(Graph const&amp; graph, Visitor visitor, VertexIndexMap const&amp; vim = get(vertex_index, graph), unsigned int const maxLength = 0);
+void hawick_unique_circuits(Graph const&amp; graph, Visitor visitor, VertexIndexMap const&amp; vim = get(vertex_index, graph), unsigned int const max_length = 0);
 </code></pre>
 
-<p>Enumerate all the elementary circuits (of length &le; <code>maxLength</code>, if nonzero) in a directed multigraph. Specifically,
+<p>Enumerate all the elementary circuits (of length &le; <code>max_length</code>, if nonzero) in a directed multigraph. Specifically,
 self-loops and redundant circuits caused by parallel edges are enumerated too.
 <code>hawick_unique_circuits</code> may be used if redundant circuits caused by parallel
 edges are not desired.</p>
@@ -59,10 +59,10 @@ edges are not desired.</p>
   the vertex index map provided by the <code>graph</code>.</p>
 </blockquote>
 
-<p><strong>IN:</strong> <code>unsigned int const maxLength = 0</code></p>
+<p><strong>IN:</strong> <code>unsigned int const max_length = 0</code></p>
 
 <blockquote>
-  <p>The maximum circuit length to consider. Beyond this it truncates the depth-first search, reducing the computation time by ignoring longer circuits. The default value of <code>maxLength = 0</code> implies no maximum.</p>
+  <p>The maximum circuit length to consider. Beyond this it truncates the depth-first search, reducing the computation time by ignoring longer circuits. The default value of <code>max_length = 0</code> implies no maximum.</p>
 </blockquote>
 
 <hr />
