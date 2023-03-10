@@ -10,19 +10,25 @@
 
 struct call_hawick_circuits
 {
+    unsigned int max_length;
+    call_hawick_circuits(unsigned int ml = 0) : max_length(ml) {}
+
     template < typename Graph, typename Visitor >
     void operator()(Graph const& g, Visitor const& v) const
     {
-        boost::hawick_circuits(g, v);
+        boost::hawick_circuits(g, v, max_length);
     }
 };
 
 struct call_hawick_unique_circuits
 {
+    unsigned int max_length;
+    call_hawick_unique_circuits(unsigned int ml = 0) : max_length(ml) {}
+
     template < typename Graph, typename Visitor >
     void operator()(Graph const& g, Visitor const& v) const
     {
-        boost::hawick_unique_circuits(g, v);
+        boost::hawick_unique_circuits(g, v, max_length);
     }
 };
 
@@ -33,4 +39,10 @@ int main()
 
     std::cout << "\n\n---------hawick_unique_circuits---------\n";
     cycle_test(call_hawick_unique_circuits());
+
+    std::cout << "\n\n---------hawick_circuits(max_length = 4)---------\n";
+    cycle_test(call_hawick_circuits(4));
+
+    std::cout << "\n\n---------hawick_unique_circuits(max_length = 4)---------\n";
+    cycle_test(call_hawick_unique_circuits(4));
 }
