@@ -34,15 +34,21 @@ struct call_hawick_unique_circuits
 
 int main()
 {
+    // The last two arguments to cycle_test() are the expected (correct)
+    // number of circuits in the undirected and directed test graphs.
+
     std::cout << "---------hawick_circuits---------\n";
-    cycle_test(call_hawick_circuits());
+    cycle_test(call_hawick_circuits(), 30, 31);
 
     std::cout << "\n\n---------hawick_unique_circuits---------\n";
-    cycle_test(call_hawick_unique_circuits());
+    cycle_test(call_hawick_unique_circuits(), 27, 24);
 
     std::cout << "\n\n---------hawick_circuits(max_length = 4)---------\n";
-    cycle_test(call_hawick_circuits(4));
+    cycle_test(call_hawick_circuits(4), 28, 13);
 
     std::cout << "\n\n---------hawick_unique_circuits(max_length = 4)---------\n";
-    cycle_test(call_hawick_unique_circuits(4));
+    cycle_test(call_hawick_unique_circuits(4), 25, 10);
+
+    std::cout << "\n\n";
+    return boost::report_errors();
 }
