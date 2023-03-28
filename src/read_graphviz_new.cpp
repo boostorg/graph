@@ -882,6 +882,7 @@ namespace read_graphviz_detail
                           "port location");
                 }
             }
+            break;
             default:
                 break;
             }
