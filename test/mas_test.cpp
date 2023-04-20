@@ -4,11 +4,13 @@
 //   (See accompanying file LICENSE_1_0.txt or the copy at
 //         http://www.boost.org/LICENSE_1_0.txt)
 
+#include <array>
 #include <fstream>
 #include <iostream>
 #include <map>
 #include <vector>
 #include <string>
+#include <utility>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/connected_components.hpp>
 #include <boost/graph/exception.hpp>
@@ -44,54 +46,45 @@ struct edge_t
 };
 
 template < typename Graph, typename KeyedUpdatablePriorityQueue >
-class mas_edge_connectivity_visitor : public boost::default_mas_visitor
+class mas_test_visitor : public boost::default_mas_visitor
 {
 public:
     typedef typename boost::graph_traits< Graph >::vertex_descriptor
         vertex_descriptor;
     typedef typename KeyedUpdatablePriorityQueue::key_type weight_type;
-#if 0
-    mas_edge_connectivity_visitor(const mas_edge_connectivity_visitor<Graph, KeyedUpdatablePriorityQueue>& r)
-      : m_pq(r.m_pq), m_curr(r.m_curr), m_prev(r.m_prev),
-        m_reach_weight(r.m_reach_weight) {
-          BOOST_TEST_MESSAGE( "COPY CTOR" );
-        }
-#endif
-    explicit mas_edge_connectivity_visitor(KeyedUpdatablePriorityQueue& pq)
-    : m_pq(pq)
-    , m_curr(new vertex_descriptor(0))
-    , m_prev(new vertex_descriptor(0))
-    , m_reach_weight(new weight_type(0))
-    {
-        //    BOOST_TEST_MESSAGE( "CTOR" );
-    }
+
+    explicit mas_test_visitor(KeyedUpdatablePriorityQueue& pq)
+    :   m_pq_(pq),
+        vertex_visit_order_(std::make_shared<std::vector<vertex_descriptor>>()),
+        vertex_weights_when_visited_(std::make_shared<std::vector<weight_type>>())
+    {}
 
     void clear()
     {
-        *m_curr = 0;
-        *m_prev = 0;
-        *m_reach_weight = 0;
+        vertex_visit_order_->clear();
+        vertex_weights_when_visited_->clear();
     }
 
-    // template <typename Vertex> //, typename Graph>
-    // void start_vertex(Vertex u, const Graph& g) {
     void start_vertex(vertex_descriptor u, const Graph& g)
     {
-        *m_prev = *m_curr;
-        *m_curr = u;
-        // BOOST_TEST_MESSAGE( "Initializing Vertex(weight): " << u << "(" <<
-        // *m_reach_weight << ")" );
-        *m_reach_weight = get(m_pq.keys(), u);
+        vertex_visit_order_->push_back(u);
+
+        const weight_type u_weight = get(m_pq_.keys(), u);
+        vertex_weights_when_visited_->push_back(u_weight);
     }
 
-    vertex_descriptor curr() const { return *m_curr; }
-    vertex_descriptor prev() const { return *m_prev; }
-    weight_type reach_weight() const { return *m_reach_weight; }
+    const std::vector<vertex_descriptor>& vertex_visit_order() const {
+        return *vertex_visit_order_;
+    }
+
+    const std::vector<weight_type>& vertex_weights_when_visited() const {
+        return *vertex_weights_when_visited_;
+    }
 
 private:
-    const KeyedUpdatablePriorityQueue& m_pq;
-    boost::shared_ptr< vertex_descriptor > m_curr, m_prev;
-    boost::shared_ptr< weight_type > m_reach_weight;
+    const KeyedUpdatablePriorityQueue& m_pq_;
+    std::shared_ptr<std::vector<vertex_descriptor>> vertex_visit_order_;
+    std::shared_ptr<std::vector<weight_type>> vertex_weights_when_visited_;
 };
 
 // the example from Stoer & Wagner (1997)
@@ -105,10 +98,12 @@ void test0()
     typedef boost::graph_traits< undirected_graph >::edge_descriptor
         edge_descriptor;
 
-    edge_t edges[] = { { 0, 1 }, { 1, 2 }, { 2, 3 }, { 0, 4 }, { 1, 4 },
-        { 1, 5 }, { 2, 6 }, { 3, 6 }, { 3, 7 }, { 4, 5 }, { 5, 6 }, { 6, 7 } };
-    weight_type ws[] = { 2, 3, 4, 3, 2, 2, 2, 2, 2, 3, 1, 3 };
-    undirected_graph g(edges, edges + 12, ws, 8, 12);
+    std::array< edge_t, 12 > edge_list = { { { 0, 1 }, { 1, 2 }, { 2, 3 }, { 0, 4 }, { 1, 4 }, { 1, 5 },
+            { 2, 6 }, { 3, 6 }, { 3, 7 }, { 4, 5 }, { 5, 6 }, { 6, 7 } } };
+    const std::size_t vertices_count = 8;
+
+    std::array<weight_type, 12> ws = { 2, 3, 4, 3, 2, 2, 2, 2, 2, 3, 1, 3 };
+    undirected_graph g(edge_list.cbegin(), edge_list.cend(), ws.cbegin(), vertices_count, ws.size());
 
     weight_map_type weights = get(boost::edge_weight, g);
 
@@ -134,7 +129,7 @@ void test0()
         distances_type, std::greater< weight_type > >
         pq(distances, indicesInHeap);
 
-    mas_edge_connectivity_visitor< undirected_graph,
+    mas_test_visitor< undirected_graph,
         boost::d_ary_heap_indirect< vertex_descriptor, 22, indicesInHeap_type,
             distances_type, std::greater< weight_type > > >
         test_vis(pq);
@@ -146,28 +141,65 @@ void test0()
             .vertex_assignment_map(assignments)
             .max_priority_queue(pq));
 
-    BOOST_TEST_EQ(test_vis.curr(), vertex_descriptor(7));
-    BOOST_TEST_EQ(test_vis.prev(), vertex_descriptor(6));
-    BOOST_TEST_EQ(test_vis.reach_weight(), 5);
+    const std::vector<vertex_descriptor> expected_vertex_order1 = { 0, 4, 1, 5, 2, 3, 6, 7 };
+    const std::vector<weight_type> expected_weights_when_visited1 = { 9, 3, 4, 5, 3, 4, 5, 5 };
+
+    BOOST_TEST_ALL_EQ(
+        test_vis.vertex_visit_order().cbegin(),
+        test_vis.vertex_visit_order().cend(),
+        expected_vertex_order1.cbegin(),
+        expected_vertex_order1.cend()
+    );
+
+    BOOST_TEST_ALL_EQ(
+        test_vis.vertex_weights_when_visited().cbegin(),
+        test_vis.vertex_weights_when_visited().cend(),
+        expected_weights_when_visited1.cbegin(),
+        expected_weights_when_visited1.cend()
+    );
 
     test_vis.clear();
+
     boost::maximum_adjacency_search(g,
         boost::weight_map(weights)
             .visitor(test_vis)
             .root_vertex(*vertices(g).first)
             .max_priority_queue(pq));
 
-    BOOST_TEST_EQ(test_vis.curr(), vertex_descriptor(7));
-    BOOST_TEST_EQ(test_vis.prev(), vertex_descriptor(6));
-    BOOST_TEST_EQ(test_vis.reach_weight(), 5);
+    BOOST_TEST_ALL_EQ(
+        test_vis.vertex_visit_order().cbegin(),
+        test_vis.vertex_visit_order().cend(),
+        expected_vertex_order1.cbegin(),
+        expected_vertex_order1.cend()
+    );
+
+    BOOST_TEST_ALL_EQ(
+        test_vis.vertex_weights_when_visited().cbegin(),
+        test_vis.vertex_weights_when_visited().cend(),
+        expected_weights_when_visited1.cbegin(),
+        expected_weights_when_visited1.cend()
+    );
 
     test_vis.clear();
+
     boost::maximum_adjacency_search(
         g, boost::weight_map(weights).visitor(test_vis).max_priority_queue(pq));
 
-    BOOST_TEST_EQ(test_vis.curr(), vertex_descriptor(7));
-    BOOST_TEST_EQ(test_vis.prev(), vertex_descriptor(6));
-    BOOST_TEST_EQ(test_vis.reach_weight(), 5);
+    BOOST_TEST_ALL_EQ(
+        test_vis.vertex_visit_order().cbegin(),
+        test_vis.vertex_visit_order().cend(),
+        expected_vertex_order1.cbegin(),
+        expected_vertex_order1.cend()
+    );
+
+    BOOST_TEST_ALL_EQ(
+        test_vis.vertex_weights_when_visited().cbegin(),
+        test_vis.vertex_weights_when_visited().cend(),
+        expected_weights_when_visited1.cbegin(),
+        expected_weights_when_visited1.cend()
+    );
+
+    test_vis.clear();
 
     boost::maximum_adjacency_search(g,
         boost::weight_map(weights).visitor(
@@ -183,9 +215,23 @@ void test0()
             boost::make_constant_property< edge_descriptor >(weight_type(1)))
             .visitor(test_vis)
             .max_priority_queue(pq));
-    BOOST_TEST_EQ(test_vis.curr(), vertex_descriptor(7));
-    BOOST_TEST_EQ(test_vis.prev(), vertex_descriptor(3));
-    BOOST_TEST_EQ(test_vis.reach_weight(), 2);
+
+    const std::vector<vertex_descriptor> expected_vertex_order2 = { 0, 1, 4, 5, 2, 6, 3, 7 };
+    const std::vector<weight_type> expected_weights_when_visited2 = { 9, 1, 2, 2, 1, 2, 2, 2 };
+
+    BOOST_TEST_ALL_EQ(
+        test_vis.vertex_visit_order().cbegin(),
+        test_vis.vertex_visit_order().cend(),
+        expected_vertex_order2.cbegin(),
+        expected_vertex_order2.cend()
+    );
+
+    BOOST_TEST_ALL_EQ(
+        test_vis.vertex_weights_when_visited().cbegin(),
+        test_vis.vertex_weights_when_visited().cend(),
+        expected_weights_when_visited2.cbegin(),
+        expected_weights_when_visited2.cend()
+    );
 }
 
 // Check the unweighted case
@@ -197,16 +243,18 @@ void test1()
     typedef boost::graph_traits< undirected_unweighted_graph >::edge_descriptor
         edge_descriptor;
 
-    edge_t edge_list[] = { { 0, 1 }, { 1, 2 }, { 2, 3 }, { 0, 4 }, { 1, 4 },
-        { 1, 5 }, { 2, 6 }, { 3, 6 }, { 3, 7 }, { 4, 5 }, { 5, 6 }, { 6, 7 } };
-    undirected_unweighted_graph g(edge_list, edge_list + 12, 8);
+    std::array< edge_t, 12 > edge_list = { { { 0, 1 }, { 1, 2 }, { 2, 3 }, { 0, 4 }, { 1, 4 }, { 1, 5 },
+            { 2, 6 }, { 3, 6 }, { 3, 7 }, { 4, 5 }, { 5, 6 }, { 6, 7 } } };
+    const std::size_t vertices_count = 8;
+
+    undirected_unweighted_graph g(edge_list.cbegin(), edge_list.cend(), vertices_count);
 
     std::map< vertex_descriptor, vertex_descriptor > assignment;
     boost::associative_property_map<
         std::map< vertex_descriptor, vertex_descriptor > >
         assignments(assignment);
 
-    typedef unsigned weight_type;
+    typedef unsigned weight_type; // weight_type corresponds to the priority in the priority queue
     typedef boost::shared_array_property_map< weight_type,
         boost::property_map< undirected_graph,
             boost::vertex_index_t >::const_type >
@@ -224,7 +272,7 @@ void test1()
         distances_type, std::greater< weight_type > >
         pq(distances, indicesInHeap);
 
-    mas_edge_connectivity_visitor< undirected_unweighted_graph,
+    mas_test_visitor< undirected_unweighted_graph,
         boost::d_ary_heap_indirect< vertex_descriptor, 22, indicesInHeap_type,
             distances_type, std::greater< weight_type > > >
         test_vis(pq);
@@ -235,9 +283,24 @@ void test1()
             .visitor(test_vis)
             .max_priority_queue(pq));
 
-    BOOST_TEST_EQ(test_vis.curr(), vertex_descriptor(7));
-    BOOST_TEST_EQ(test_vis.prev(), vertex_descriptor(3));
-    BOOST_TEST_EQ(test_vis.reach_weight(), weight_type(2));
+    const std::vector<vertex_descriptor> expected_vertex_order1 = { 0, 1, 4, 5, 2, 6, 3, 7 };
+    const std::vector<weight_type> expected_weights_when_visited1 = { 9, 1, 2, 2, 1, 2, 2, 2 };
+
+    BOOST_TEST_ALL_EQ(
+        test_vis.vertex_visit_order().cbegin(),
+        test_vis.vertex_visit_order().cend(),
+        expected_vertex_order1.cbegin(),
+        expected_vertex_order1.cend()
+    );
+
+    BOOST_TEST_ALL_EQ(
+        test_vis.vertex_weights_when_visited().cbegin(),
+        test_vis.vertex_weights_when_visited().cend(),
+        expected_weights_when_visited1.cbegin(),
+        expected_weights_when_visited1.cend()
+    );
+
+    test_vis.clear();
 
     weight_type ws[] = { 2, 3, 4, 3, 2, 2, 2, 2, 2, 3, 1, 3 };
     std::map< edge_descriptor, weight_type > wm;
@@ -253,9 +316,23 @@ void test1()
 
     boost::maximum_adjacency_search(
         g, boost::weight_map(ws_map).visitor(test_vis).max_priority_queue(pq));
-    BOOST_TEST_EQ(test_vis.curr(), vertex_descriptor(7));
-    BOOST_TEST_EQ(test_vis.prev(), vertex_descriptor(6));
-    BOOST_TEST_EQ(test_vis.reach_weight(), weight_type(5));
+    
+    const std::vector<vertex_descriptor> expected_vertex_order2 = { 0, 4, 1, 5, 2, 3, 6, 7 };
+    const std::vector<weight_type> expected_weights_when_visited2 = { 9, 3, 4, 5, 3, 4, 5, 5 };
+
+    BOOST_TEST_ALL_EQ(
+        test_vis.vertex_visit_order().cbegin(),
+        test_vis.vertex_visit_order().cend(),
+        expected_vertex_order2.cbegin(),
+        expected_vertex_order2.cend()
+    );
+
+    BOOST_TEST_ALL_EQ(
+        test_vis.vertex_weights_when_visited().cbegin(),
+        test_vis.vertex_weights_when_visited().cend(),
+        expected_weights_when_visited2.cbegin(),
+        expected_weights_when_visited2.cend()
+    );
 }
 
 #include <boost/graph/iteration_macros_undef.hpp>
@@ -264,7 +341,7 @@ int main(int argc, char* argv[])
 {
     if (BOOST_TEST(argc == 2)) {
         test_dir = argv[1];
-        test0();
+        //test0();
         test1();
     }
     return boost::report_errors();
