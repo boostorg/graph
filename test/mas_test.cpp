@@ -10,7 +10,6 @@
 #include <map>
 #include <vector>
 #include <string>
-#include <utility>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/connected_components.hpp>
 #include <boost/graph/exception.hpp>
@@ -102,7 +101,7 @@ void test0()
             { 2, 6 }, { 3, 6 }, { 3, 7 }, { 4, 5 }, { 5, 6 }, { 6, 7 } } };
     std::array<weight_type, 12> ws = { 2, 3, 4, 3, 2, 2, 2, 2, 2, 3, 1, 3 };
     const std::size_t vertices_count = 8;
-    
+
     undirected_graph g(edge_list.cbegin(), edge_list.cend(), ws.cbegin(), vertices_count, ws.size());
 
     weight_map_type weights = get(boost::edge_weight, g);
