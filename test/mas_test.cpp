@@ -341,7 +341,7 @@ using mas_test_weight_type = std::size_t;
 using mas_test_distances_type = boost::shared_array_property_map< mas_test_weight_type, boost::property_map< undirected_graph, boost::vertex_index_t >::const_type >;
 using mas_test_index_in_heap_type = std::vector< mas_test_vertex_descriptor >::size_type;
 using mas_test_indicesInHeap_type = boost::shared_array_property_map< mas_test_index_in_heap_type, boost::property_map< undirected_graph, boost::vertex_index_t >::const_type >;
-constexpr std::size_t mas_test_arity = 22;
+constexpr std::size_t mas_test_arity = 4;
 using mas_test_maxheap_type = boost::d_ary_heap_indirect< mas_test_vertex_descriptor, mas_test_arity, mas_test_indicesInHeap_type, mas_test_distances_type, std::greater< mas_test_weight_type > >;
 using mas_text_visitor_type = mas_test_visitor< undirected_unweighted_graph, mas_test_maxheap_type>;
 
