@@ -334,6 +334,106 @@ void test1()
     );
 }
 
+using mas_test_vertex_descriptor = boost::graph_traits< undirected_unweighted_graph >::vertex_descriptor;
+using mas_test_edge_descriptor = boost::graph_traits< undirected_unweighted_graph >::edge_descriptor;
+
+using mas_test_weight_type = std::size_t;
+using mas_test_distances_type = boost::shared_array_property_map< mas_test_weight_type, boost::property_map< undirected_graph, boost::vertex_index_t >::const_type >;
+using mas_test_index_in_heap_type = std::vector< mas_test_vertex_descriptor >::size_type;
+using mas_test_indicesInHeap_type = boost::shared_array_property_map< mas_test_index_in_heap_type, boost::property_map< undirected_graph, boost::vertex_index_t >::const_type >;
+constexpr std::size_t mas_test_arity = 22;
+using mas_test_maxheap_type = boost::d_ary_heap_indirect< mas_test_vertex_descriptor, mas_test_arity, mas_test_indicesInHeap_type, mas_test_distances_type, std::greater< mas_test_weight_type > >;
+using mas_text_visitor_type = mas_test_visitor< undirected_unweighted_graph, mas_test_maxheap_type>;
+
+template <typename Graph>
+mas_test_maxheap_type create_mas_test_maxheap(const Graph& g) {
+    mas_test_distances_type distances = boost::make_shared_array_property_map(
+        num_vertices(g), mas_test_weight_type(0), get(boost::vertex_index, g));
+
+    mas_test_indicesInHeap_type indicesInHeap = boost::make_shared_array_property_map(
+        num_vertices(g), mas_test_index_in_heap_type(-1), get(boost::vertex_index, g));
+
+    return mas_test_maxheap_type(distances, indicesInHeap);
+}
+
+template <std::size_t edge_count, std::size_t vertices_count>
+void test_unweighted(const std::array<edge_t, edge_count>& edge_list, const std::array<mas_test_vertex_descriptor, vertices_count>& expected_vertex_order, const std::array<mas_test_weight_type, vertices_count>& expected_weights_when_visited) {
+    const undirected_unweighted_graph g(edge_list.cbegin(), edge_list.cend(), vertices_count);
+
+    mas_test_maxheap_type pq = create_mas_test_maxheap(g);
+    mas_text_visitor_type test_vis = mas_text_visitor_type(pq);
+
+    boost::maximum_adjacency_search(
+        g,
+        boost::weight_map(
+            boost::make_constant_property< mas_test_edge_descriptor >(mas_test_weight_type(1)))
+            .visitor(test_vis)
+            .max_priority_queue(pq)
+    );
+
+    BOOST_TEST_ALL_EQ(
+        test_vis.vertex_visit_order().cbegin(),
+        test_vis.vertex_visit_order().cend(),
+        expected_vertex_order.cbegin(),
+        expected_vertex_order.cend()
+    );
+
+    BOOST_TEST_ALL_EQ(
+        test_vis.vertex_weights_when_visited().cbegin(),
+        test_vis.vertex_weights_when_visited().cend(),
+        expected_weights_when_visited.cbegin(),
+        expected_weights_when_visited.cend()
+    );
+}
+
+void test2_noweights() {
+    constexpr std::size_t edge_count = 1;
+    constexpr std::size_t vertices_count = 2;
+
+    const std::array< edge_t, edge_count > edge_list = { { { 0, 1 } } };
+
+    const std::array< mas_test_vertex_descriptor, vertices_count > expected_vertex_order = { 0, 1 };
+    const std::array< mas_test_weight_type, vertices_count > expected_weights_when_visited = { vertices_count+1, 1 };
+
+    test_unweighted(
+        edge_list,
+        expected_vertex_order,
+        expected_weights_when_visited
+    );
+}
+
+void test3_noweights() {
+    constexpr std::size_t edge_count = 2;
+    constexpr std::size_t vertices_count = 3;
+
+    const std::array< edge_t, edge_count > edge_list = { { { 0, 1 }, { 1, 2 } } };
+
+    const std::array< mas_test_vertex_descriptor, vertices_count > expected_vertex_order = { 0, 1, 2 };
+    const std::array< mas_test_weight_type, vertices_count > expected_weights_when_visited = { vertices_count+1, 1, 1 };
+
+    test_unweighted(
+        edge_list,
+        expected_vertex_order,
+        expected_weights_when_visited
+    );
+}
+
+void test4_noweights() {
+    constexpr std::size_t edge_count = 3;
+    constexpr std::size_t vertices_count = 3;
+
+    const std::array< edge_t, edge_count > edge_list = { { { 0, 1 }, { 0, 2 }, { 1, 2 } } };
+
+    const std::array< mas_test_vertex_descriptor, vertices_count > expected_vertex_order = { 0, 1, 2 };
+    const std::array< mas_test_weight_type, vertices_count > expected_weights_when_visited = { vertices_count+1, 1, 2 };
+
+    test_unweighted(
+        edge_list,
+        expected_vertex_order,
+        expected_weights_when_visited
+    );
+}
+
 #include <boost/graph/iteration_macros_undef.hpp>
 
 int main(int argc, char* argv[])
@@ -342,6 +442,9 @@ int main(int argc, char* argv[])
         test_dir = argv[1];
         test0();
         test1();
+        test2_noweights();
+        test3_noweights();
+        test4_noweights();
     }
     return boost::report_errors();
 }
