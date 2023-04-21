@@ -99,7 +99,7 @@ void test0()
 
     std::array< edge_t, 12 > edge_list = { { { 0, 1 }, { 1, 2 }, { 2, 3 }, { 0, 4 }, { 1, 4 }, { 1, 5 },
             { 2, 6 }, { 3, 6 }, { 3, 7 }, { 4, 5 }, { 5, 6 }, { 6, 7 } } };
-    std::array<weight_type, 12> ws = { 2, 3, 4, 3, 2, 2, 2, 2, 2, 3, 1, 3 };
+    const std::array<weight_type, 12> ws = { 2, 3, 4, 3, 2, 2, 2, 2, 2, 3, 1, 3 };
     const std::size_t vertices_count = 8;
 
     undirected_graph g(edge_list.cbegin(), edge_list.cend(), ws.cbegin(), vertices_count, ws.size());
@@ -301,7 +301,7 @@ void test1()
 
     test_vis.clear();
 
-    weight_type ws[] = { 2, 3, 4, 3, 2, 2, 2, 2, 2, 3, 1, 3 };
+    const std::array<weight_type, 12> ws = { 2, 3, 4, 3, 2, 2, 2, 2, 2, 3, 1, 3 };
     std::map< edge_descriptor, weight_type > wm;
 
     weight_type i = 0;
