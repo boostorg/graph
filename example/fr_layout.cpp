@@ -16,7 +16,7 @@
 #include <map>
 #include <vector>
 #include <boost/random/linear_congruential.hpp>
-#include <boost/progress.hpp>
+#include <boost/timer/progress_display.hpp>
 #include <boost/shared_ptr.hpp>
 
 using namespace boost;
