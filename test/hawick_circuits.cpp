@@ -43,11 +43,24 @@ int main()
     std::cout << "\n\n---------hawick_unique_circuits---------\n";
     cycle_test(call_hawick_unique_circuits(), 27, 24);
 
-    std::cout << "\n\n---------hawick_circuits(max_length = 4)---------\n";
-    cycle_test(call_hawick_circuits(4), 28, 13);
+    // Correct values for max_length = 0 to 10
+    // undirected
+    std::size_t nc1[] = { 30, 0, 22, 26, 28, 30, 30, 30, 30, 30, 30 };
+    // directed
+    std::size_t nc2[] = { 31, 0,  3,  7, 13, 17, 22, 24, 27, 30, 31 };
+    // undirected, unique
+    std::size_t nc3[] = { 27, 0, 19, 23, 25, 27, 27, 27, 27, 27, 27 };
+    // directed, unique
+    std::size_t nc4[] = { 24, 0,  3,  6, 10, 13, 17, 19, 21, 23, 24 };
+    for (unsigned int ml = 0; ml <= 10; ++ml) {
+        std::cout << "\n\n---------hawick_circuits(max_length = " << ml;
+        std::cout << ")---------\n";
+        cycle_test(call_hawick_circuits(ml), nc1[ml], nc2[ml]);
 
-    std::cout << "\n\n---------hawick_unique_circuits(max_length = 4)---------\n";
-    cycle_test(call_hawick_unique_circuits(4), 25, 10);
+        std::cout << "\n\n---------hawick_unique_circuits(max_length = " << ml;
+        std::cout << ")---------\n";
+        cycle_test(call_hawick_unique_circuits(ml), nc3[ml], nc4[ml]);
+    }
 
     std::cout << "\n\n";
     return boost::report_errors();
