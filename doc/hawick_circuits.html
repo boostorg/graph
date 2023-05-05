@@ -49,6 +49,10 @@ edges are not desired.</p>
 
   <p>For example, if a circuit <code>u -&gt; v -&gt; w -&gt; u</code> exists in the graph, the
   visitor will be called with a sequence consisting of <code>(u, v, w)</code>.</p>
+
+  Note that if <code>visitor</code> is a <code>std::reference_wrapper</code>,
+  it will be unwrapped before the <code>.cycle</code> method being called on it.
+  This allows passing a visitor that shouldn't be copied.
 </blockquote>
 
 <p><strong>IN:</strong> <code>VertexIndexMap const&amp; vim = get(vertex_index, graph)</code></p>
