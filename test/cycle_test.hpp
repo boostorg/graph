@@ -57,7 +57,7 @@ void test_one(Algorithm algorithm, std::size_t num_cycles_expected)
 {
     typedef erdos_renyi_iterator< minstd_rand, Graph > er;
 
-    // Generate random graphs with 15 vertices and 15% probability
+    // Generate random graph with N vertices and probability P
     // of edge connection.
     static std::size_t const N = 20;
     static double const P = 0.1;
