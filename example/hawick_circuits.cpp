@@ -78,7 +78,8 @@ int main(int argc, char const* argv[])
 {
     if (argc < 2)
     {
-        std::cout << "usage: " << argv[0] << " num_vertices < input\n";
+        std::cout << "usage: " << argv[0] << " <num_vertices>";
+        std::cout << " <max_length (optional)>\n";
         return EXIT_FAILURE;
     }
 
@@ -88,7 +89,12 @@ int main(int argc, char const* argv[])
     build_graph(graph, num_vertices, first_vertex, last_vertex);
 
     cycle_printer< std::ostream > visitor(std::cout);
-    boost::hawick_circuits(graph, visitor);
+    if (argc == 2) {
+        boost::hawick_circuits(graph, visitor);
+    } else {
+        unsigned int max_length = boost::lexical_cast< unsigned int >(argv[2]);
+        boost::hawick_circuits(graph, visitor, max_length);
+    }
 
     return EXIT_SUCCESS;
 }
