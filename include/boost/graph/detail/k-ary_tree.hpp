@@ -65,9 +65,6 @@ namespace boost
     template <typename Vertex, typename Node>
     class binary_tree_base
     {
-    protected:
-      std::vector<Node> nodes;
-      std::vector<Vertex> free_list;
     public:
       typedef Vertex vertex_descriptor;
       typedef std::pair<vertex_descriptor, vertex_descriptor> edge_descriptor;
@@ -75,6 +72,36 @@ namespace boost
       typedef std::size_t degree_size_type;
       typedef std::size_t vertices_size_type;
 
+    private:
+      void invariants() const
+      {
+        BOOST_ASSERT(!free_list.empty());
+        BOOST_ASSERT(free_list[0] == nodes.size());
+        BOOST_ASSERT(boost::is_sorted(free_list, std::greater<>()));
+      }
+
+      void strict_invariants(vertex_descriptor u) const
+      {
+        invariants();
+        BOOST_ASSERT(u < nodes.size());
+        BOOST_ASSERT(boost::find(free_list, u) == boost::end(free_list));
+      }
+
+      void strict_invariants(vertex_descriptor u, vertex_descriptor v) const
+      {
+        invariants();
+        BOOST_ASSERT(u != v);
+        BOOST_ASSERT(u < nodes.size());
+        BOOST_ASSERT(v < nodes.size());
+        BOOST_ASSERT(find(free_list, u) == find(free_list, v));
+      }
+
+
+    protected:
+      std::vector<Node> nodes;
+      std::vector<Vertex> free_list;
+
+    public:
       BOOST_STATIC_CONSTEXPR
       vertex_descriptor null_vertex()
       {
@@ -85,43 +112,28 @@ namespace boost
 
       std::size_t num_vertices() const
       {
-        BOOST_ASSERT(!free_list.empty());
-        BOOST_ASSERT(free_list[0] == nodes.size());
-        BOOST_ASSERT(boost::is_sorted(free_list, std::greater<>()));
-
+        invariants();
         return nodes.size() - free_list.size() + 1;
       }
 
       Node const &
       operator[](vertex_descriptor u) const
       {
-        BOOST_ASSERT(!free_list.empty());
-        BOOST_ASSERT(free_list[0] == nodes.size());
-        BOOST_ASSERT(boost::is_sorted(free_list, std::greater<>()));
-        BOOST_ASSERT(u < nodes.size());
-        BOOST_ASSERT(boost::find(free_list, u) == boost::end(free_list));
-
+        strict_invariants(u);
         return nodes[u];
       }
 
       template <std::size_t N>
       bool has_successor(vertex_descriptor u) const
       {
-        BOOST_ASSERT(!free_list.empty());
-        BOOST_ASSERT(free_list[0] == nodes.size());
-        BOOST_ASSERT(boost::is_sorted(free_list, std::greater<>()));
-        BOOST_ASSERT(u < nodes.size());
-        BOOST_ASSERT(boost::find(free_list, u) == boost::end(free_list));
-
+        strict_invariants(u);
         return nodes[u].successors[N] != null_vertex();
       }
 
       binary_tree_base()
       {
         free_list.push_back(0);
-
-        BOOST_ASSERT(!free_list.empty());
-        BOOST_ASSERT(free_list[0] == nodes.size());
+        invariants();
       }
 
       // *** IncidenceGraph ***
@@ -334,6 +346,7 @@ namespace boost
         nodes.clear();
         free_list.resize(1);
         free_list[0] = 0;
+        invariants();
       }
 
       void shrink_to_fit()
@@ -366,17 +379,11 @@ namespace boost
       add_edge(vertex_descriptor u, vertex_descriptor v)
       {
         BOOST_ASSERT(u != v);
-
-        BOOST_ASSERT(!free_list.empty());
-        BOOST_ASSERT(free_list[0] == nodes.size());
-        BOOST_ASSERT(boost::is_sorted(free_list, std::greater<>()));
-
+        invariants();
         add_vertex(u);
         add_vertex(v);
         auto const result = add_edge_strict(u, v);
-        BOOST_ASSERT(!free_list.empty());
-        BOOST_ASSERT(free_list[0] == nodes.size());
-        BOOST_ASSERT(boost::is_sorted(free_list, std::greater<>()));
+        invariants();
         return result;
       }
 
@@ -384,20 +391,12 @@ namespace boost
       std::pair<edge_descriptor, bool>
       add_edge_strict(vertex_descriptor u, vertex_descriptor v)
       {
-        BOOST_ASSERT(u != v);
-        BOOST_ASSERT(u < nodes.size());
-        BOOST_ASSERT(v < nodes.size());
-        BOOST_ASSERT(find(free_list, u) == find(free_list, v));
-
-        BOOST_ASSERT(!free_list.empty());
-        BOOST_ASSERT(free_list[0] == nodes.size());
-        BOOST_ASSERT(boost::is_sorted(free_list, std::greater<>()));
-
+        strict_invariants(u, v);
         array<vertex_descriptor, 2> const keys{{null_vertex(), v}};
         auto const p = find_first_of(nodes[u].successors, keys); // O(k)
         edge_descriptor const result(u, v);
 
-        if (p == boost::end(nodes[u].successors) or * p == v)
+        if (p == boost::end(nodes[u].successors) || *p == v)
           return std::make_pair(result, false);
         else
         {
@@ -410,14 +409,7 @@ namespace boost
       void
       remove_edge(vertex_descriptor u, vertex_descriptor v)
       {
-        BOOST_ASSERT(u != v);
-        BOOST_ASSERT(u < nodes.size() && v < nodes.size());
-        BOOST_ASSERT(find(free_list, u) == find(free_list, v)); // i.e., end.
-
-        BOOST_ASSERT(!free_list.empty());
-        BOOST_ASSERT(free_list[0] == nodes.size());
-        BOOST_ASSERT(boost::is_sorted(free_list, std::greater<>()));
-
+        strict_invariants(u, v);
         auto const p = find(nodes[u].successors, v);
         BOOST_ASSERT(p != boost::end(nodes[u].successors));
         *p = null_vertex();
@@ -425,9 +417,7 @@ namespace boost
 
       vertex_descriptor add_vertex()
       {
-        BOOST_ASSERT(!free_list.empty());
-        BOOST_ASSERT(free_list[0] == nodes.size());
-        BOOST_ASSERT(boost::is_sorted(free_list, std::greater<>()));
+        invariants();
         BOOST_ASSERT(nodes.size() >= free_list.back() + 1
                      || free_list.size() == 1);
 
@@ -439,19 +429,14 @@ namespace boost
         }
         else
           free_list.pop_back();
-        BOOST_ASSERT(!free_list.empty());
-        BOOST_ASSERT(free_list[0] == nodes.size());
-        BOOST_ASSERT(boost::is_sorted(free_list, std::greater<>()));
+        invariants();
         return result;
       }
 
       // Internal use.
       bool add_vertex(vertex_descriptor u)
       {
-        BOOST_ASSERT(!free_list.empty());
-        BOOST_ASSERT(free_list[0] == nodes.size());
-        BOOST_ASSERT(boost::is_sorted(free_list, std::greater<>()));
-
+        invariants();
         // First handle the case where it's not on the free list.
         if (nodes.size() < u)
         {
@@ -460,8 +445,7 @@ namespace boost
             free_list.push_back(i);
           nodes.resize(u + 1);
           free_list[0] = nodes.size();
-          BOOST_ASSERT(!free_list.empty());
-          BOOST_ASSERT(free_list[0] == nodes.size());
+          invariants();
           return true;
         }
 
@@ -478,9 +462,7 @@ namespace boost
           free_list.erase(which);
         }
 
-        BOOST_ASSERT(!free_list.empty());
-        BOOST_ASSERT(free_list[0] == nodes.size());
-        BOOST_ASSERT(boost::is_sorted(free_list, std::greater<>()));
+        invariants();
         return true;
       }
 
@@ -490,10 +472,7 @@ namespace boost
         BOOST_ASSERT(u || nodes.size() == 1); // FIXME: Kludge for now.
 
         BOOST_ASSERT(num_vertices() > 0);
-        BOOST_ASSERT(!free_list.empty());
-        BOOST_ASSERT(free_list[0] == nodes.size());
-        BOOST_ASSERT(boost::is_sorted(free_list, std::greater<>()));
-        BOOST_ASSERT(find(free_list, u) == boost::end(free_list));
+        strict_invariants(u);
         BOOST_ASSERT(out_degree(u, *this) == 0);
 
         if (u == nodes.size() - 1)
@@ -522,19 +501,14 @@ namespace boost
         }
 
         BOOST_ASSERT(find(free_list, u) != boost::end(free_list));
-        BOOST_ASSERT(!free_list.empty());
-        BOOST_ASSERT(free_list[0] == nodes.size());
-        BOOST_ASSERT(boost::is_sorted(free_list, std::greater<>()));
+        invariants();
       }
 
 
       void clear_vertex(vertex_descriptor u)
       {
+        invariants();
         BOOST_ASSERT(num_vertices() > 0);
-        BOOST_ASSERT(!free_list.empty());
-        BOOST_ASSERT(free_list[0] == nodes.size());
-        BOOST_ASSERT(free_list[0] == nodes.size());
-        BOOST_ASSERT(find(free_list, u) == boost::end(free_list));
 
         boost::fill(nodes[u].successors, null_vertex());
       }
@@ -546,15 +520,7 @@ namespace boost
       edge_descriptor
       add_left_edge(vertex_descriptor parent, vertex_descriptor child)
       {
-        BOOST_ASSERT(parent != child);
-        BOOST_ASSERT(parent < nodes.size());
-        BOOST_ASSERT(child < nodes.size());
-        BOOST_ASSERT(find(free_list, parent) == find(free_list, child));
-
-        BOOST_ASSERT(!free_list.empty());
-        BOOST_ASSERT(free_list[0] == nodes.size());
-        BOOST_ASSERT(boost::is_sorted(free_list, std::greater<>()));
-
+        strict_invariants(parent, child);
         BOOST_ASSERT(!has_left_successor(parent, *this));
 
         nodes[parent].successors[0] = child;
@@ -569,15 +535,7 @@ namespace boost
       edge_descriptor
       add_right_edge(vertex_descriptor parent, vertex_descriptor child)
       {
-        BOOST_ASSERT(parent != child);
-        BOOST_ASSERT(parent < nodes.size());
-        BOOST_ASSERT(child < nodes.size());
-        BOOST_ASSERT(find(free_list, parent) == find(free_list, child));
-
-        BOOST_ASSERT(!free_list.empty());
-        BOOST_ASSERT(free_list[0] == nodes.size());
-        BOOST_ASSERT(boost::is_sorted(free_list, std::greater<>()));
-
+        strict_invariants(parent, child);
         BOOST_ASSERT(!has_right_successor(parent, *this));
 
         nodes[parent].successors[1] = child;
@@ -592,4 +550,3 @@ namespace boost
 } // namespace boost
 
 #endif
-
