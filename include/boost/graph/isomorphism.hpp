@@ -163,7 +163,7 @@ namespace detail
             BGL_FORALL_VERTICES_T(v, G1, Graph1)
             f[v] = graph_traits< Graph2 >::null_vertex();
 
-            std::size_t max_invariant;
+            std::size_t max_invariant = 0;
             {
                 std::vector< invar1_value > invar1_array;
                 invar1_array.reserve(num_vertices(G1));
@@ -179,7 +179,10 @@ namespace detail
                 if (!equal(invar1_array, invar2_array))
                     return false;
 
-                max_invariant = std::max(invar1_array.back(), invar2_array.back()) + 1;
+                if (!invar1_array.empty())
+                    max_invariant = invar1_array.back() + 1;
+                if (!invar2_array.empty())
+                    max_invariant = std::max(max_invariant, invar2_array.back() + 1);
             }
 
             std::vector< vertex1_t > V_mult;
