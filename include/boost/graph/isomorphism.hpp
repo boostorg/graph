@@ -179,9 +179,10 @@ namespace detail
                 if (!equal(invar1_array, invar2_array))
                     return false;
 
-                // Empty graphs case is covered before test_isomorphism is called,
-                // so the invar?_arrays cannot be empty, so back() is safe
-                max_invariant = std::max(invar1_array.back(), invar2_array.back()) + 1;
+                // Empty graphs case is covered before test_isomorphism is
+                // called, so the invar?_arrays cannot be empty, so back() is
+                // safe. Also the two invariant arrays are equal:
+                max_invariant = invar1_array.back() + 1;
             }
 
             std::vector< vertex1_t > V_mult;
