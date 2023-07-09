@@ -368,6 +368,8 @@ namespace detail
             {
             return_point_true:
                 {
+                    // At this point, there may still be null vertices in the 
+                    // mapping for disconnected vertices
                     std::vector< vertex1_t > unmatched_g1_vertices;
                     BGL_FORALL_VERTICES_T(v, G1, Graph1)
                     {
@@ -377,13 +379,13 @@ namespace detail
                     }
 
                     if(!unmatched_g1_vertices.empty()) {
-                        typedef unordered_multimap< invar2_value, vertex2_t > g2_invar_vertex_multimap;
-                        typedef typename g2_invar_vertex_multimap::iterator multimap_iter;
-                        g2_invar_vertex_multimap unmatched_invar_multimap;
+                        typedef unordered_multimap< invar2_value, vertex2_t > g2_invariant_vertex_multimap;
+                        typedef typename g2_invariant_vertex_multimap::iterator multimap_iter;
+                        g2_invariant_vertex_multimap unmatched_invariants;
                         BGL_FORALL_VERTICES_T(v, G2, Graph2)
                         {
                             if(!in_S[v]) {
-                                unmatched_invar_multimap.emplace(invariant2(v), v);
+                                unmatched_invariants.emplace(invariant2(v), v);
                             }
                         }
 
@@ -392,10 +394,10 @@ namespace detail
                         for(v1_iter iter = unmatched_g1_vertices.begin(); iter != end; ++iter)
                         {
                             invar1_value unmatched_g1_vertex_invariant = invariant1(*iter);
-                            multimap_iter matching_invar = unmatched_invar_multimap.find(unmatched_g1_vertex_invariant);
-                            BOOST_ASSERT(matching_invar != unmatched_invar_multimap.end());
-                            f[*iter] = matching_invar->second;
-                            unmatched_invar_multimap.erase(matching_invar);
+                            multimap_iter matching_invariant = unmatched_invariants.find(unmatched_g1_vertex_invariant);
+                            BOOST_ASSERT(matching_invariant != unmatched_invariants.end());
+                            f[*iter] = matching_invariant->second;
+                            unmatched_invariants.erase(matching_invariant);
                         }
                     }
                     return true;
