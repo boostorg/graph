@@ -182,7 +182,9 @@ namespace detail
                 // Empty graphs case is covered before test_isomorphism is
                 // called, so the invar?_arrays cannot be empty, so back() is
                 // safe. Also the two invariant arrays are equal:
-                max_invariant = invar1_array.back() + 1;
+                max_invariant = invar1_array.back();
+                assert(max_invariant != std::numeric_limits<std::size_t>::max());
+                max_invariant += 1;
             }
 
             std::vector< vertex1_t > V_mult;
