@@ -369,10 +369,8 @@ namespace detail
             return_point_true:
                 // At this point, there may still be null vertices in the 
                 // mapping for disconnected vertices
-                {
-                    map_disconnected_vertices();
-                    return true;
-                }
+                map_disconnected_vertices();
+                return true;
 
             return_point_false:
                 if (k.empty())
