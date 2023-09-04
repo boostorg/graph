@@ -15,6 +15,7 @@
 #include <boost/smart_ptr.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/detail/algorithm.hpp>
+#include <boost/unordered_map.hpp>
 #include <boost/pending/indirect_cmp.hpp> // for make_indirect_pmap
 #include <boost/concept/assert.hpp>
 
@@ -374,6 +375,9 @@ namespace detail
 
             {
             return_point_true:
+                // At this point, there may still be null vertices in the 
+                // mapping for disconnected vertices
+                map_disconnected_vertices();
                 return true;
 
             return_point_false:
@@ -418,6 +422,40 @@ namespace detail
                     abort();
 #endif
                 }
+                }
+            }
+        }
+
+        void map_disconnected_vertices()
+        {
+            std::vector< vertex1_t > unmatched_g1_vertices;
+            BGL_FORALL_VERTICES_T(v, G1, Graph1)
+            {
+                if(f[v] == graph_traits< Graph2 >::null_vertex()) {
+                    unmatched_g1_vertices.push_back(v);
+                }
+            }
+
+            if(!unmatched_g1_vertices.empty()) {
+                typedef unordered_multimap< invar2_value, vertex2_t > g2_invariant_vertex_multimap;
+                typedef typename g2_invariant_vertex_multimap::iterator multimap_iter;
+                g2_invariant_vertex_multimap unmatched_invariants;
+                BGL_FORALL_VERTICES_T(v, G2, Graph2)
+                {
+                    if(!in_S[v]) {
+                        unmatched_invariants.emplace(invariant2(v), v);
+                    }
+                }
+
+                typedef typename std::vector< vertex1_t >::iterator v1_iter;
+                const v1_iter end = unmatched_g1_vertices.end();
+                for(v1_iter iter = unmatched_g1_vertices.begin(); iter != end; ++iter)
+                {
+                    invar1_value unmatched_g1_vertex_invariant = invariant1(*iter);
+                    multimap_iter matching_invariant = unmatched_invariants.find(unmatched_g1_vertex_invariant);
+                    BOOST_ASSERT(matching_invariant != unmatched_invariants.end());
+                    f[*iter] = matching_invariant->second;
+                    unmatched_invariants.erase(matching_invariant);
                 }
             }
         }
