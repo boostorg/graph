@@ -18,6 +18,7 @@
 #include <boost/algorithm/minmax.hpp>
 #include <boost/config.hpp> // For BOOST_STATIC_CONSTANT
 #include <boost/math/special_functions/hypot.hpp>
+#include <boost/shared_ptr.hpp>
 
 // Classes and concepts to represent points in a space, with distance and move
 // operations (used for Gurson-Atun layout), plus other things like bounding
