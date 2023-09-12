@@ -72,7 +72,7 @@ public:
     // Link - union the two sets represented by vertex x and y
     template < class Element > inline void link(Element x, Element y)
     {
-        detail::link_sets(parent, rank, x, y, rep);
+        detail::link_sets(parent, rank, x, y);
     }
 
     // Union-Set - union the two sets containing vertex x and y
@@ -146,7 +146,7 @@ public:
     template < class Element > inline void link(Element x, Element y)
     {
         extend_sets(x, y);
-        detail::link_sets(&parent[0], &rank[0], get(id, x), get(id, y), rep);
+        detail::link_sets(&parent[0], &rank[0], get(id, x), get(id, y));
     }
     template < class Element > inline void union_set(Element x, Element y)
     {
