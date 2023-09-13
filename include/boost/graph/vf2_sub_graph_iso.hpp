@@ -76,7 +76,7 @@ private:
 namespace detail
 {
     template <typename Graph>
-    typename graph_traits<Graph>::vertices_size_type get_num_vertices(Graph& g)
+    typename graph_traits<Graph>::vertices_size_type get_num_vertices(const Graph& g)
     {
         typedef typename graph_traits<Graph>::vertex_iterator iter;
         std::pair<iter, iter> vs = vertices(g);
@@ -453,7 +453,7 @@ namespace detail
         base_state< Graph1, Graph2, IndexMap1, IndexMap2 > state1_;
         base_state< Graph2, Graph1, IndexMap2, IndexMap1 > state2_;
 
-        graph1_size_type NV1_;
+        graph1_size_type num_vertices1_;
 
         // Three helper functions used in Feasibility and Valid functions to
         // test terminal set counts when testing for:
@@ -493,7 +493,7 @@ namespace detail
         , vertex_comp_(vertex_comp)
         , state1_(graph1, graph2, index_map1, index_map2)
         , state2_(graph2, graph1, index_map2, index_map1)
-        , NV1_(get_num_vertices(graph1))
+        , num_vertices1_(get_num_vertices(graph1))
         {
         }
 
@@ -712,7 +712,7 @@ namespace detail
         // Returns true if a mapping was found
         bool success() const
         {
-            return state1_.count() == NV1_;
+            return state1_.count() == num_vertices1_;
         }
 
         // Returns true if a state is valid
