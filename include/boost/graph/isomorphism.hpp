@@ -97,16 +97,19 @@ namespace detail
         struct compare_multiplicity
         {
             compare_multiplicity(Invariant1 invariant1, const multiplicity_map& multiplicity)
-            : invariant1(invariant1), multiplicity(multiplicity)
+            : invariant1(invariant1), multiplicity(&multiplicity)
             {
             }
             bool operator()(const vertex1_t& x, const vertex1_t& y) const
             {
-                return multiplicity.at(invariant1(x))
-                    < multiplicity.at(invariant1(y));
+                auto x_multiplicity_iter = multiplicity->find(invariant1(x));
+                assert(x_multiplicity_iter != multiplicity->end());
+                auto y_multiplicity_iter = multiplicity->find(invariant1(y));
+                assert(y_multiplicity_iter != multiplicity->end());
+                return *x_multiplicity_iter < *y_multiplicity_iter;
             }
             Invariant1 invariant1;
-            const multiplicity_map& multiplicity;
+            const multiplicity_map* multiplicity;
         };
 
         struct record_dfs_order : default_dfs_visitor
