@@ -177,36 +177,37 @@ namespace detail
         }
 
         // Generates map of invariant multiplicity from sorted invariants
-        multiplicity_map multiplicities(const std::vector< invariant_t >& invariants) {
-          // Assumes invariants are sorted
-          multiplicity_map invar_multiplicity;
+        template<typename ForwardIterator>
+        multiplicity_map multiplicities(ForwardIterator first, const ForwardIterator last) 
+        {
+            assert(std::is_sorted(first, last));
+            multiplicity_map invar_multiplicity;
 
-          typedef typename std::vector< invariant_t >::const_iterator invar_iter;
-          typedef typename multiplicity_map::iterator invar_map_iter;
-          invar_iter it = invariants.begin();
-          const invar_iter end = invariants.end();
+            typedef typename std::vector< invariant_t >::const_iterator invar_iter;
+            typedef typename multiplicity_map::iterator invar_map_iter;
 
-          if(it == end) {
+            if(first == last) 
+                return invar_multiplicity;
+            
+            invar_iter it = std::move(first);
+
+            invariant_t invar = *it;
+            invar_map_iter inserted = invar_multiplicity.emplace(invar, 1).first;
+            ++it;
+            for(; it != last; ++it)
+            {
+                if(*it == invar)
+                {
+                    inserted->second += 1;
+                }
+                else
+                {
+                    invar = *it;
+                    inserted = invar_multiplicity.emplace(invar, 1).first;
+                }
+            }
+
             return invar_multiplicity;
-          }
-
-          invariant_t invar = *it;
-          invar_map_iter inserted = invar_multiplicity.emplace(invar, 1).first;
-          ++it;
-          for(; it != end; ++it)
-          {
-              if(*it == invar)
-              {
-                  inserted->second += 1;
-              }
-              else
-              {
-                  invar = *it;
-                  inserted = invar_multiplicity.emplace(invar, 1).first;
-              }
-          }
-
-          return invar_multiplicity;
         }
 
         bool test_isomorphism()
@@ -234,7 +235,7 @@ namespace detail
             std::vector< vertex1_t > V_mult;
             BGL_FORALL_VERTICES_T(v, G1, Graph1)
             V_mult.push_back(v);
-            sort(V_mult, compare_multiplicity(invariant1, multiplicities(invar1_array)));
+            sort(V_mult, compare_multiplicity(invariant1, multiplicities(invar1_array.begin(), invar1_array.end())));
 
             std::vector< default_color_type > color_vec(num_vertices(G1));
             safe_iterator_property_map<
