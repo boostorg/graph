@@ -474,13 +474,15 @@ namespace detail
                 }
             }
 
-            if(!unmatched_g1_vertices.empty()) {
+            if(!unmatched_g1_vertices.empty()) 
+            {
                 typedef unordered_multimap< invariant_t, vertex2_t > g2_invariant_vertex_multimap;
                 typedef typename g2_invariant_vertex_multimap::iterator multimap_iter;
                 g2_invariant_vertex_multimap unmatched_invariants;
                 BGL_FORALL_VERTICES_T(v, G2, Graph2)
                 {
-                    if(!in_S[v]) {
+                    if(!in_S[v]) 
+                    {
                         unmatched_invariants.emplace(invariant2(v), v);
                     }
                 }
