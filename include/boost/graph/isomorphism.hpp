@@ -39,7 +39,7 @@ namespace detail
         using TestHashable = decltype(hash<T>()(std::declval<T>()));
 
         template < typename T >
-        struct Hashable: std::integral_constant<bool, boost::is_detected_v<TestHashable, T>> {};
+        struct Hashable: std::integral_constant<bool, boost::is_detected<TestHashable, T>::value> {};
 
         template < typename T >
         struct Invariant: std::integral_constant<bool, Hashable<T>::value && boost::has_less<T, T, bool>::value && boost::has_equal_to<T, T, bool>::value> {};
