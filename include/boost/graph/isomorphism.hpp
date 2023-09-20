@@ -33,17 +33,14 @@ namespace boost
 namespace detail
 {
 
-    namespace concept
-    {
-        template < typename T >
-        using TestHashable = decltype(hash<T>()(std::declval<T>()));
+    template < typename T >
+    using TestHashable = decltype(hash<T>()(std::declval<T>()));
 
-        template < typename T >
-        struct Hashable: std::integral_constant<bool, boost::is_detected<TestHashable, T>::value> {};
+    template < typename T >
+    struct Hashable: std::integral_constant<bool, boost::is_detected<TestHashable, T>::value> {};
 
-        template < typename T >
-        struct Invariant: std::integral_constant<bool, Hashable<T>::value && boost::has_less<T, T, bool>::value && boost::has_equal_to<T, T, bool>::value> {};
-    }
+    template < typename T >
+    struct Invariant: std::integral_constant<bool, Hashable<T>::value && boost::has_less<T, T, bool>::value && boost::has_equal_to<T, T, bool>::value> {};
 
     template < typename Graph1, typename Graph2, typename IsoMapping,
         typename Invariant1, typename Invariant2, typename IndexMap1,
@@ -590,7 +587,7 @@ bool isomorphism(const Graph1& G1, const Graph2& G2, IsoMapping f,
     typedef typename Invariant2::result_type invariant2_t;
 
     BOOST_STATIC_ASSERT(is_same<invariant1_t, invariant2_t>::value);
-    BOOST_STATIC_ASSERT(detail::concept::Invariant<invariant1_t>::value);
+    BOOST_STATIC_ASSERT(detail::Invariant<invariant1_t>::value);
 
     // Vertex invariant requirement
     BOOST_CONCEPT_ASSERT(
