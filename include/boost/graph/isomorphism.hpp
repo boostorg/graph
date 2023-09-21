@@ -165,29 +165,26 @@ namespace detail
         template<typename ForwardIterator>
         multiplicity_map multiplicities(ForwardIterator first, const ForwardIterator last) 
         {
+            typedef typename multiplicity_map::iterator invar_map_iter;
+
             assert(std::is_sorted(first, last));
             multiplicity_map invar_multiplicity;
 
-            typedef typename std::vector< invariant_t >::const_iterator invar_iter;
-            typedef typename multiplicity_map::iterator invar_map_iter;
-
             if(first == last) 
                 return invar_multiplicity;
-            
-            invar_iter it = std::move(first);
 
-            invariant_t invar = *it;
+            invariant_t invar = *first;
             invar_map_iter inserted = invar_multiplicity.emplace(invar, 1).first;
-            ++it;
-            for(; it != last; ++it)
+            ++first;
+            for(; first != last; ++first)
             {
-                if(*it == invar)
+                if(*first == invar)
                 {
                     inserted->second += 1;
                 }
                 else
                 {
-                    invar = *it;
+                    invar = *first;
                     inserted = invar_multiplicity.emplace(invar, 1).first;
                 }
             }
