@@ -24,12 +24,16 @@ using namespace boost;
 void test_norm();
 void test_temp();
 void test_bacon();
+void test_remove_labeled_vertex();
+void test_multiple_associative_container();
 
 int main()
 {
     test_norm();
     test_temp();
     test_bacon();
+    test_remove_labeled_vertex();
+    test_multiple_associative_container();
 }
 
 //////////////////////////////////////
@@ -146,4 +150,37 @@ void test_bacon()
         add_vertex(slater, g);
         add_edge_by_label(bacon, slater, murder, g);
     }
+}
+
+void test_remove_labeled_vertex()
+{
+    typedef labeled_graph< directed_graph<>, string > Graph;
+
+    Graph g;
+    g.add_vertex("foo");
+
+    auto v = g.vertex("foo");
+    BOOST_ASSERT(v != nullptr);
+
+    g.remove_vertex("foo");
+
+    auto v2 = g.vertex("foo");
+    BOOST_ASSERT(v2 == nullptr);
+}
+
+void test_multiple_associative_container()
+{
+    typedef labeled_graph<adjacency_list<listS, multisetS, directedS>, string, multimapS> Graph;
+
+    Graph g;
+    g.add_vertex("test");
+    g.add_vertex("test");
+
+    BOOST_ASSERT(num_vertices(g) == 2);
+
+    g.remove_vertex("test");
+    BOOST_ASSERT(num_vertices(g) == 1);
+
+    g.remove_vertex("test");
+    BOOST_ASSERT(num_vertices(g) == 0);
 }
