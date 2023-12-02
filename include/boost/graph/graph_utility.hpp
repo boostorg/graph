@@ -19,6 +19,7 @@
 #include <boost/tuple/tuple.hpp>
 
 #include <boost/graph/graph_traits.hpp>
+#include <boost/graph/iteration_macros.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/pending/container_traits.hpp>
 #include <boost/graph/depth_first_search.hpp>
@@ -447,8 +448,6 @@ namespace graph
     }
 
 } // namespace graph
-
-#include <boost/graph/iteration_macros.hpp>
 
 template < class PropertyIn, class PropertyOut, class Graph >
 void copy_vertex_property(PropertyIn p_in, PropertyOut p_out, Graph& g)
