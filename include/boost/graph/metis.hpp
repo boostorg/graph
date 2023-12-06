@@ -24,6 +24,8 @@
 #include <vector>
 #include <algorithm>
 
+#include <boost/throw_exception.hpp>
+
 namespace boost
 {
 namespace graph

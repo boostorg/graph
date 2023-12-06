@@ -18,7 +18,9 @@
 #include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/is_unsigned.hpp>
 #include <boost/pending/container_traits.hpp>
+#include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_traits.hpp>
+#include <boost/property_map/property_map.hpp>
 
 // This file implements a utility for creating mappings from arbitrary
 // identifiers to the vertices of a graph.
