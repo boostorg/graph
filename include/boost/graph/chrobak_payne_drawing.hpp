@@ -14,6 +14,7 @@
 #include <stack>
 #include <boost/config.hpp>
 #include <boost/graph/graph_traits.hpp>
+#include <boost/graph/properties.hpp>
 #include <boost/property_map/property_map.hpp>
 
 namespace boost
