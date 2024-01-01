@@ -16,7 +16,6 @@ lib boost_graph
     read_graphviz_new.cpp
     graphml.cpp
     :
-    <library>../../regex/build//boost_regex
     <link>shared:<define>BOOST_GRAPH_DYN_LINK=1
     # Without these flags, MSVC 7.1 and 8.0 crash
     # User reports that VC++ 8.0 does not fail anymore, so that is removed
