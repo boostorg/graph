@@ -233,7 +233,7 @@ int main(int argc, char* argv[])
         if (dir_itr->path().extension() != dimacs_extension)
             continue;
 
-        std::cout << "Testing " << dir_itr->path().leaf() << "... ";
+        std::cout << "Testing " << dir_itr->path().filename() << "... ";
         BOOST_TEST(test_graph(dir_itr->path().string()) == 0);
 
         std::cout << std::endl;
