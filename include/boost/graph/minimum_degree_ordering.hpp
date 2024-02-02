@@ -317,9 +317,6 @@ namespace detail
             DegreeListsMarker;
         typedef Marker< diff_t, vertex_t, VertexIndexMap > MarkerP;
 
-        // Data Members
-        bool has_no_edges;
-
         // input parameters
         Graph& G;
         int delta;
@@ -343,8 +340,7 @@ namespace detail
         mmd_impl(Graph& g, size_type n_, int delta, DegreeMap degree,
             InversePermutationMap inverse_perm, PermutationMap perm,
             SuperNodeMap supernode_size, VertexIndexMap id)
-        : has_no_edges(true)
-        , G(g)
+        : G(g)
         , delta(delta)
         , degree(degree)
         , inverse_perm(inverse_perm)
@@ -371,8 +367,6 @@ namespace detail
             {
                 typename Traits::degree_size_type d = out_degree(*v, G);
                 put(degree, *v, d);
-                if (0 < d)
-                    has_no_edges = false;
                 degreelists.push(*v);
             }
         }
@@ -391,11 +385,6 @@ namespace detail
                 numbering(node);
                 numbering.increment();
                 list_isolated.pop();
-            }
-
-            if (has_no_edges)
-            {
-                return;
             }
 
             size_type min_degree = 1;
