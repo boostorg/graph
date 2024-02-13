@@ -182,10 +182,10 @@ namespace detail
 
             if (m_decreased)
             {
-                m_vis.edge_relaxed(e, g);
                 put(m_cost, target(e, g),
                     m_combine(
                         get(m_distance, target(e, g)), m_h(target(e, g))));
+                m_vis.edge_relaxed(e, g);
             }
             else
                 m_vis.edge_not_relaxed(e, g);
@@ -203,8 +203,8 @@ namespace detail
                 put(m_cost, target(e, g),
                     m_combine(
                         get(m_distance, target(e, g)), m_h(target(e, g))));
-                m_Q.update(target(e, g));
                 m_vis.edge_relaxed(e, g);
+                m_Q.update(target(e, g));
             }
             else
                 m_vis.edge_not_relaxed(e, g);
@@ -219,10 +219,10 @@ namespace detail
 
             if (m_decreased)
             {
-                m_vis.edge_relaxed(e, g);
                 put(m_cost, target(e, g),
                     m_combine(
                         get(m_distance, target(e, g)), m_h(target(e, g))));
+                m_vis.edge_relaxed(e, g);
                 m_Q.push(target(e, g));
                 put(m_color, target(e, g), Color::gray());
                 m_vis.black_target(e, g);
