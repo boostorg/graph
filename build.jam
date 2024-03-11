@@ -1,0 +1,61 @@
+# Copyright René Ferdinand Rivera Morell 2024
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+import project ;
+
+project /boost/graph
+    : common-requirements
+        <source>/boost/algorithm//boost_algorithm
+        <source>/boost/any//boost_any
+        <source>/boost/array//boost_array
+        <source>/boost/assert//boost_assert
+        <source>/boost/bimap//boost_bimap
+        <source>/boost/bind//boost_bind
+        <source>/boost/concept_check//boost_concept_check
+        <source>/boost/config//boost_config
+        <source>/boost/container_hash//boost_container_hash
+        <source>/boost/conversion//boost_conversion
+        <source>/boost/core//boost_core
+        <source>/boost/detail//boost_detail
+        <source>/boost/foreach//boost_foreach
+        <source>/boost/function//boost_function
+        <source>/boost/integer//boost_integer
+        <source>/boost/iterator//boost_iterator
+        <source>/boost/lexical_cast//boost_lexical_cast
+        <source>/boost/math//boost_math
+        <source>/boost/move//boost_move
+        <source>/boost/mpl//boost_mpl
+        <source>/boost/multi_index//boost_multi_index
+        <source>/boost/optional//boost_optional
+        <source>/boost/parameter//boost_parameter
+        <source>/boost/preprocessor//boost_preprocessor
+        <source>/boost/property_map//boost_property_map
+        <source>/boost/property_tree//boost_property_tree
+        <source>/boost/random//boost_random
+        <source>/boost/range//boost_range
+        <source>/boost/regex//boost_regex
+        <source>/boost/serialization//boost_serialization
+        <source>/boost/smart_ptr//boost_smart_ptr
+        <source>/boost/spirit//boost_spirit
+        <source>/boost/static_assert//boost_static_assert
+        <source>/boost/throw_exception//boost_throw_exception
+        <source>/boost/tti//boost_tti
+        <source>/boost/tuple//boost_tuple
+        <source>/boost/type_traits//boost_type_traits
+        <source>/boost/typeof//boost_typeof
+        <source>/boost/unordered//boost_unordered
+        <source>/boost/utility//boost_utility
+        <source>/boost/xpressive//boost_xpressive
+        <include>include
+    ;
+
+explicit
+    [ alias boost_graph : build//boost_graph ]
+    [ alias all : boost_graph example test ]
+    ;
+
+call-if : boost-library graph
+    : install boost_graph
+    ;

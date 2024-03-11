@@ -7,9 +7,12 @@
 # Define SGB (stanford graph base top level directory) and
 # LEDA (also top level directory) at the command line of jam using -s
 
+require-b2 5.0.1 ;
+import-search /boost/config/checks ;
+
 import modules ;
 import path ;
-import ../../config/checks/config : requires ;
+import config : requires ;
 
 path-constant TEST_DIR : . ;
 
@@ -73,13 +76,14 @@ alias graph_test_regular :
     [ run graph.cpp : : : <define>TEST=9 : graph_9 ]
     [ compile graph_concepts.cpp ]
     [ run graphviz_test.cpp
-            ../build//boost_graph : --log_level=all ]
+            /boost/assign//boost_assign
+            /boost/graph//boost_graph : --log_level=all ]
     [ run metis_test.cpp : $(METIS_INPUT_FILE) ]
     [ run gursoy_atun_layout_test.cpp  : : : [ requires cxx11_noexcept cxx11_rvalue_references sfinae_expr cxx11_auto_declarations cxx11_lambdas cxx11_unified_initialization_syntax cxx11_hdr_tuple cxx11_hdr_initializer_list cxx11_hdr_chrono cxx11_thread_local cxx11_constexpr cxx11_nullptr cxx11_numeric_limits cxx11_decltype cxx11_hdr_array cxx11_hdr_atomic cxx11_hdr_type_traits cxx11_allocator cxx11_explicit_conversion_operators ] ]
     [ run layout_test.cpp : : : <test-info>always_show_run_output <toolset>intel:<debug-symbols>off [ requires cxx11_noexcept cxx11_rvalue_references sfinae_expr cxx11_auto_declarations cxx11_lambdas cxx11_unified_initialization_syntax cxx11_hdr_tuple cxx11_hdr_initializer_list cxx11_hdr_chrono cxx11_thread_local cxx11_constexpr cxx11_nullptr cxx11_numeric_limits cxx11_decltype cxx11_hdr_array cxx11_hdr_atomic cxx11_hdr_type_traits cxx11_allocator cxx11_explicit_conversion_operators ] ]
 
     [ run serialize.cpp
-          ../../serialization/build//boost_serialization
+          /boost/serialization//boost_serialization
       : : : ]
 
     [ compile reverse_graph_cc.cpp ]
@@ -116,7 +120,7 @@ alias graph_test_regular :
     [ run weighted_matching_test.cpp ]
     [ run max_flow_test.cpp ]
     [ run boykov_kolmogorov_max_flow_test.cpp ]
-    [ run cycle_ratio_tests.cpp ../build//boost_graph : $(CYCLE_RATIO_INPUT_FILE) ]
+    [ run cycle_ratio_tests.cpp /boost/graph//boost_graph : $(CYCLE_RATIO_INPUT_FILE) ]
     [ run basic_planarity_test.cpp ]
     [ run make_connected_test.cpp ]
     [ run make_bicon_planar_test.cpp ]
@@ -136,14 +140,14 @@ alias graph_test_regular :
     [ run clustering_coefficient.cpp ]
     [ run core_numbers_test.cpp ]
     [ run read_propmap.cpp ]
-    [ run mcgregor_subgraphs_test.cpp ../build//boost_graph ]
+    [ run mcgregor_subgraphs_test.cpp /boost/graph//boost_graph ]
     [ compile grid_graph_cc.cpp ]
     [ run grid_graph_test.cpp ]
     [ run incremental_components_test.cpp ]
-    [ run two_graphs_common_spanning_trees_test.cpp ]
-    [ run random_spanning_tree_test.cpp ../build//boost_graph ]
+    [ run two_graphs_common_spanning_trees_test.cpp /boost/assign//boost_assign ]
+    [ run random_spanning_tree_test.cpp /boost/graph//boost_graph ]
     [ run random_matching_test.cpp : 1000 1020 ]
-    [ run graphml_test.cpp ../build//boost_graph : : "graphml_test.xml" ]
+    [ run graphml_test.cpp /boost/graph//boost_graph : : "graphml_test.xml" ]
     [ run mas_test.cpp : $(TEST_DIR) ]
     [ run stoer_wagner_test.cpp : $(TEST_DIR) ]
     [ compile filtered_graph_properties_dijkstra.cpp ]
@@ -169,12 +173,12 @@ alias graph_test_with_filesystem : :
 
 alias graph_test_with_filesystem :
     [ run all_planar_input_files_test.cpp
-        ../../filesystem/build
-        ../../system/build
+        /boost/filesystem//boost_filesystem
+        /boost/system//boost_system
         : $(PLANAR_INPUT_FILES) ]
     [ run parallel_edges_loops_test.cpp
-        ../../filesystem/build
-        ../../system/build
+        /boost/filesystem//boost_filesystem
+        /boost/system//boost_system
         : $(PLANAR_INPUT_FILES) ]
     ;
 
