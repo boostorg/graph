@@ -1,13 +1,12 @@
 //=======================================================================
-// Copyright (c) 2013 Alberto Santini
-// Author: Alberto Santini <alberto@santini.in>
+// Copyright (c) 2024 Andrea Cassioli
+// Author: Andrea Cassioli <cassioliandre@gmail.com>
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 
-#include <compare>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/r_c_shortest_paths.hpp>
 
