@@ -13,6 +13,8 @@
 #include <boost/core/lightweight_test.hpp>
 
 struct edge_prop {
+  edge_prop(int c, int t) : cost(c), time(t) {}
+
   int cost;
   int time;
 };
@@ -33,6 +35,8 @@ class dominance
 
 struct resource_container
 {
+  resource_container(int c, int t) : cost(c), time(t) {}
+
   int cost; // minimise cost
   int time; // a fake time constraints
 };
@@ -75,8 +79,8 @@ resource_container run_rcsp(const graph_type& graph, vertex_type source, vertex_
   boost::default_r_c_shortest_paths_allocator label_allocator{};
 
   path_type single_solution;
-  resource_container single_resource;
-  const resource_container start_resource{.cost=0, .time=0};
+  resource_container single_resource(0, 0);
+  const resource_container start_resource(0, 0);
   boost::r_c_shortest_paths(graph, vertex_index_map, edge_index_map, source, target, single_solution, single_resource,
                             start_resource, extension_function{}, dominance{}, label_allocator,
                             boost::default_r_c_shortest_paths_visitor());
@@ -102,12 +106,12 @@ int main() {
   const auto t = boost::add_vertex("B", graph);
   const auto A = boost::add_vertex("t", graph);
 
-  boost::add_edge(s, A, edge_prop{.cost=1, .time=0}, graph);
-  boost::add_edge(s, B, edge_prop{.cost=2, .time=1}, graph);
+  boost::add_edge(s, A, edge_prop(1,0), graph);
+  boost::add_edge(s, B, edge_prop(2, 1), graph);
 
   // swapping these two edges lead to a different solution
-  boost::add_edge(A, t, edge_prop{.cost=10, .time=0}, graph);
-  boost::add_edge(B, t, edge_prop{.cost=3, .time=1}, graph);
+  boost::add_edge(A, t, edge_prop(10, 0), graph);
+  boost::add_edge(B, t, edge_prop(3,1), graph);
 
   const auto solution_resource_container = run_rcsp(graph, s, t);
 
