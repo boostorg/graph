@@ -431,6 +431,10 @@ namespace detail
             }
         }
         std::list< Splabel > dsplabels = get(vec_vertex_labels, t);
+        if(!b_all_pareto_optimal_solutions)
+        {
+            dsplabels.sort();
+        }
         typename std::list< Splabel >::const_iterator csi = dsplabels.begin();
         typename std::list< Splabel >::const_iterator csi_end = dsplabels.end();
         // if d could be reached from o

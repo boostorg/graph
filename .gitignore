@@ -6,3 +6,7 @@ kevin-bacon2.dat
 random.dot
 triangular-fr.dot
 triangular-kk.dot
+test/*.dot
+example/routing-table.dat
+example/figs/ospf-sptree.dot
+CMakeFiles/
