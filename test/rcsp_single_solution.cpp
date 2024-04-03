@@ -102,16 +102,14 @@ int main() {
   */
 
   const auto s = boost::add_vertex("s", graph);
-  const auto B = boost::add_vertex("A", graph);
-  const auto t = boost::add_vertex("B", graph);
-  const auto A = boost::add_vertex("t", graph);
+  const auto A = boost::add_vertex("A", graph);
+  const auto B = boost::add_vertex("B", graph);
+  const auto t = boost::add_vertex("t", graph);
 
-  boost::add_edge(s, A, edge_prop(1,0), graph);
+  boost::add_edge(s, A, edge_prop(1, 0), graph);
   boost::add_edge(s, B, edge_prop(2, 1), graph);
-
-  // swapping these two edges lead to a different solution
   boost::add_edge(A, t, edge_prop(10, 0), graph);
-  boost::add_edge(B, t, edge_prop(3,1), graph);
+  boost::add_edge(B, t, edge_prop(3, 1), graph);
 
   const auto solution_resource_container = run_rcsp(graph, s, t);
 
