@@ -16,6 +16,7 @@
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/detail/algorithm.hpp>
 #include <boost/unordered_map.hpp>
+#include <boost/unordered/unordered_flat_map.hpp>
 #include <boost/pending/indirect_cmp.hpp> // for make_indirect_pmap
 #include <boost/concept/assert.hpp>
 
@@ -32,7 +33,7 @@ namespace detail
 
     template < typename Graph1, typename Graph2, typename IsoMapping,
         typename Invariant1, typename Invariant2, typename IndexMap1,
-        typename IndexMap2 >
+        typename IndexMap2, typename InvariantCountMap = boost::unordered_flat_map<typename Invariant1::result_type, typename graph_traits< Graph1 >::vertices_size_type > >
     class isomorphism_algo
     {
         typedef typename graph_traits< Graph1 >::vertex_descriptor vertex1_t;
@@ -40,7 +41,6 @@ namespace detail
         typedef typename graph_traits< Graph1 >::edge_descriptor edge1_t;
         typedef typename graph_traits< Graph1 >::vertices_size_type size_type;
         typedef typename Invariant1::result_type invariant_t;
-        typedef unordered_map< invariant_t, size_type > multiplicity_map;
 
         const Graph1& G1;
         const Graph2& G2;
@@ -81,7 +81,7 @@ namespace detail
         friend struct compare_multiplicity;
         struct compare_multiplicity
         {
-            compare_multiplicity(Invariant1 invariant1, const multiplicity_map& multiplicity)
+            compare_multiplicity(Invariant1 invariant1, const InvariantCountMap& multiplicity)
             : invariant1(invariant1), multiplicity(&multiplicity)
             {
             }
@@ -94,7 +94,7 @@ namespace detail
                 return *x_multiplicity_iter < *y_multiplicity_iter;
             }
             Invariant1 invariant1;
-            const multiplicity_map* multiplicity;
+            const InvariantCountMap* multiplicity;
         };
 
         struct record_dfs_order : default_dfs_visitor
@@ -163,12 +163,12 @@ namespace detail
 
         // Generates map of invariant multiplicity from sorted invariants
         template<typename ForwardIterator>
-        multiplicity_map multiplicities(ForwardIterator first, const ForwardIterator last) 
+        InvariantCountMap multiplicities(ForwardIterator first, const ForwardIterator last) 
         {
-            typedef typename multiplicity_map::iterator invar_map_iter;
+            typedef typename InvariantCountMap::iterator invar_map_iter;
 
             assert(std::is_sorted(first, last));
-            multiplicity_map invar_multiplicity;
+            InvariantCountMap invar_multiplicity;
 
             if(first == last) 
                 return invar_multiplicity;
