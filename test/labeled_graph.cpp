@@ -4,23 +4,23 @@
 // Boost Software License, Version 1.0 (See accompanying file
 // LICENSE_1_0.txt or http://www.boost.org/LICENSE_1_0.txt)
 
-#include <iostream>
 #include <string>
-#include <set>
 
 #include <boost/assert.hpp>
+#include <boost/concept/assert.hpp>
 #include <boost/range.hpp>
 
+#include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/undirected_graph.hpp>
 #include <boost/graph/directed_graph.hpp>
 #include <boost/graph/labeled_graph.hpp>
 
 #include "typestr.hpp"
 
-using std::cout;
 using std::string;
 using namespace boost;
 
+void test_concepts();
 void test_norm();
 void test_temp();
 void test_bacon();
@@ -29,11 +29,35 @@ void test_multiple_associative_container();
 
 int main()
 {
+    test_concepts();
     test_norm();
     test_temp();
     test_bacon();
     test_remove_labeled_vertex();
     test_multiple_associative_container();
+}
+
+//////////////////////////////////////
+// Graph Concepts
+//////////////////////////////////////
+
+void test_concepts()
+{
+    // The labeled mutable graph hides the add_ and remove_ vertex functions
+    // from the mutable graph concept, so VertexMutableGraphConcept will not be
+    // tested here.
+    {
+        typedef labeled_graph< directed_graph<>, unsigned > Graph;
+        BOOST_CONCEPT_ASSERT((VertexListGraphConcept< Graph >));
+        BOOST_CONCEPT_ASSERT((AdjacencyGraphConcept< Graph >));
+        BOOST_CONCEPT_ASSERT((EdgeMutableGraphConcept< Graph >));
+    }
+    {
+        typedef labeled_graph< undirected_graph<>, unsigned > Graph;
+        BOOST_CONCEPT_ASSERT((VertexListGraphConcept< Graph >));
+        BOOST_CONCEPT_ASSERT((AdjacencyGraphConcept< Graph >));
+        BOOST_CONCEPT_ASSERT((EdgeMutableGraphConcept< Graph >));
+    }
 }
 
 //////////////////////////////////////
