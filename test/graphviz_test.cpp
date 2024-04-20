@@ -17,6 +17,11 @@
 #include <boost/assign/std/map.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/compressed_sparse_row_graph.hpp>
+#include <boost/core/lightweight_test.hpp>
+#include <boost/property_map/function_property_map.hpp>
+
+// SEHE: Apparently unused or indirectly included
+#include <boost/regex.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/property_map/dynamic_property_map.hpp>
@@ -376,19 +381,40 @@ void test_comments_embedded_in_strings()
     BOOST_TEST((test_graph< graph_t >(gs, 2, mass_map_t(), weight_map_t())));
 }
 
-#if 0 // Currently broken
-  void test_basic_csr_directed_graph() {
+void test_basic_csr_directed_graph()
+{
     weight_map_t weights;
-    insert( weights )(make_pair("a","b"),0.0)
-      (make_pair("c","d"),7.7)(make_pair("e","f"),6.66)
-      (make_pair("d","e"),0.5)(make_pair("e","a"),0.5);
+    insert(weights)(make_pair("a", "b"), 0.0)(make_pair("c", "d"), 7.7)(
+        make_pair("e", "f"), 6.66)(make_pair("d", "e"), 0.5)(
+        make_pair("e", "a"), 0.5);
     gs_t gs("digraph { a -> b eDge [weight = 7.7] "
-            "c -> d e-> f [weight = 6.66] "
+          "c -> d e-> f [weight = 6.66] "
             "d ->e->a [weight=.5]}");
-    typedef compressed_sparse_row_graph<directedS, vertex_p_bundled, edge_p_bundled, graph_p > graph_t;
-    BOOST_TEST((test_graph<graph_t>(gs,6,mass_map_t(),weights,"node_id","",&vertex_p_bundled::name,&vertex_p_bundled::color,&edge_p_bundled::weight)));
-  }
+    typedef compressed_sparse_row_graph< directedS, vertex_p_bundled,
+        edge_p_bundled, graph_p >
+        graph_t;
+    graph_t g;
+#ifdef SEHE_UNSTABLE_PROPERTY_MAPS_FIXED // https://github.com/boostorg/graph/issues/373
+    BOOST_TEST((test_graph(gs, g, 6, mass_map_t(), weights, "node_id", "",
+        get(&vertex_p_bundled::name, g), // SEHE FIXME
+        get(&vertex_p_bundled::color, g), // SEHE FIXME
+        get(&edge_p_bundled::weight, g)) // SEHE FIXME
+        ));
+#else
+    BOOST_TEST((test_graph(gs, g, 6, mass_map_t(), weights, "node_id",
+        "", //
+        boost::make_function_property_map< graph_t::vertex_descriptor >(
+            [&g](graph_t::vertex_descriptor v) -> std::string&
+            { return g[v].name; }),
+        boost::make_function_property_map< graph_t::vertex_descriptor >(
+            [&g](graph_t::vertex_descriptor v) -> float&
+            { return g[v].color; }),
+        boost::make_function_property_map< graph_t::edge_descriptor >(
+            [&g](graph_t::edge_descriptor e) -> double&
+            { return g[e].weight; }) //
+        )));
 #endif
+}
 
 void test_basic_csr_directed_graph_ext_props()
 {
@@ -433,5 +459,6 @@ int main()
     test_graph_property_test_3();
     test_comments_embedded_in_strings();
     test_basic_csr_directed_graph_ext_props();
+    test_basic_csr_directed_graph();
     return boost::report_errors();
 }
