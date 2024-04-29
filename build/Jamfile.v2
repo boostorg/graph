@@ -9,6 +9,7 @@ import mpi ;
 project
     : requirements <include>../src
     : source-location ../src
+    : usage-requirements <define> BOOST_GRAPH_NO_LIB=1
     ;
 
 lib boost_graph
