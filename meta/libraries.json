@@ -13,5 +13,5 @@
     "maintainers": [
         "Jeremy W. Murphy <jeremy.william.murphy -at- gmail.com>"
     ],
-    "cxxstd": "03"
+    "cxxstd": "14"
 }
