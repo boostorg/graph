@@ -440,6 +440,27 @@ void test_basic_csr_directed_graph_ext_props()
         edge_weight);
 }
 
+void test_subgraphs() {
+    // on the BGL side, the new parser doesn't support subgraphs
+    // however, the docs promise to support reading them on the input side as "syntactic sugar".
+    for (auto gv : {
+             Fixture { "digraph {}" },
+             Fixture { "digraph { 1 -> {} }", 1 },
+             Fixture { "digraph { 1 -> {2} }", 2 },
+             Fixture { "digraph { 1; { 2; 3; } }", 3 },
+             Fixture { "digraph { { 2; 3; } 1; }", 3 },
+             Fixture { "digraph { 1; subgraph { 2; 3; } }", 3 },
+             Fixture { "digraph { 1 -> subgraph { 2; 3; } }", 3 },
+             Fixture { "digraph { 1 -> subgraph hello { 2; 3; } }", 3 },
+             Fixture { "digraph { 1 -> subgraph clust_Hello { 2; 3; } }", 3 },
+             Fixture { "digraph { 1 -> subgraph \"hello\" { 2; 3; } }", 3 },
+             Fixture { "digraph { {2} -> subgraph \"hello\" {{{{{{{{{{{{{{{{{{{{{{{{ 2; 3; }}}}}}}}}}}}}}}}}}}}}}}} }", 2 },
+         })
+    {
+        TEST_GRAPH(Models::DiGraph, gv);
+    }
+}
+
 int main()
 {
     test_basic_directed_graph_1();
@@ -457,5 +478,6 @@ int main()
     test_comments_embedded_in_strings();
     test_basic_csr_directed_graph_ext_props();
     test_basic_csr_directed_graph();
+    test_subgraphs();
     return boost::report_errors();
 }
