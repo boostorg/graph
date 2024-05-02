@@ -207,7 +207,7 @@ namespace read_graphviz_detail
 
         tokenizer(const std::string& str) : begin(str.begin()), end(str.end())
         {
-            std::string end_of_token = "(?=(?:\\W))";
+            // std::string end_of_token = "(?=(?:\\W))"; // SEHE: unused?
             std::string whitespace = "(?:\\s+)";
             std::string slash_slash_comment = "(?://.*?$)";
             std::string slash_star_comment = "(?:/\\*.*?\\*/)";
@@ -773,10 +773,18 @@ namespace read_graphviz_detail
             bool is_anonymous = true;
             if (first_token.type == token::kw_subgraph)
             {
-                if (peek().type == token::identifier)
+                switch (peek().type)
                 {
+                case token::identifier:
                     name = get().normalized_value;
                     is_anonymous = false;
+                    break;
+                case token::left_brace:
+                    is_anonymous = true;
+                    break;
+                default:
+                    error("Subgraph reference needs a name");
+                    break;
                 }
             }
             if (is_anonymous)
@@ -790,19 +798,19 @@ namespace read_graphviz_detail
                     = current(); // Initialize properties and defaults
                 subgraphs[name].members.clear(); // Except member list
             }
-            if (first_token.type == token::kw_subgraph
-                && peek().type != token::left_brace)
+            if (!is_anonymous && peek().type != token::left_brace)
             {
-                if (is_anonymous)
-                    error("Subgraph reference needs a name");
                 return name;
             }
             subgraph_name old_sg = current_subgraph_name;
             current_subgraph_name = name;
-            if (peek().type == token::left_brace)
-                get();
-            else
-                error("Wanted left brace to start subgraph");
+            if (first_token.type != token::left_brace)
+            {
+                if (peek().type == token::left_brace)
+                    get();
+                else
+                    error("Wanted left brace to start subgraph");
+            }
             parse_stmt_list();
             if (peek().type == token::right_brace)
                 get();
