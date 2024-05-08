@@ -20,7 +20,6 @@
 #include <boost/core/lightweight_test.hpp>
 #include <boost/property_map/function_property_map.hpp>
 
-// SEHE: Apparently unused or indirectly included
 #include <boost/regex.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/tuple/tuple.hpp>
@@ -394,11 +393,11 @@ void test_basic_csr_directed_graph()
         edge_p_bundled, graph_p >
         graph_t;
     graph_t g;
-#ifdef SEHE_UNSTABLE_PROPERTY_MAPS_FIXED // https://github.com/boostorg/graph/issues/373
+#ifdef UNSTABLE_PROPERTY_MAPS_FIXED // https://github.com/boostorg/graph/issues/373
     BOOST_TEST((test_graph(gs, g, 6, mass_map_t(), weights, "node_id", "",
-        get(&vertex_p_bundled::name, g), // SEHE FIXME
-        get(&vertex_p_bundled::color, g), // SEHE FIXME
-        get(&edge_p_bundled::weight, g)) // SEHE FIXME
+        get(&vertex_p_bundled::name, g), // Warning, currently broken
+        get(&vertex_p_bundled::color, g), // Warning, currently broken
+        get(&edge_p_bundled::weight, g)) // Warning, currently broken
         ));
 #else
     BOOST_TEST((test_graph(gs, g, 6, mass_map_t(), weights, "node_id",
