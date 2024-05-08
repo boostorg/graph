@@ -440,9 +440,11 @@ void test_basic_csr_directed_graph_ext_props()
         edge_weight);
 }
 
-void test_subgraphs() {
+void test_subgraphs()
+{
     // on the BGL side, the new parser doesn't support subgraphs
-    // however, the docs promise to support reading them on the input side as "syntactic sugar".
+    // however, the docs promise to support reading them on the input side as
+    // "syntactic sugar".
     for (auto gv : {
              Fixture { "digraph {}" },
              Fixture { "digraph { 1 -> {} }", 1 },
@@ -454,11 +456,31 @@ void test_subgraphs() {
              Fixture { "digraph { 1 -> subgraph hello { 2; 3; } }", 3 },
              Fixture { "digraph { 1 -> subgraph clust_Hello { 2; 3; } }", 3 },
              Fixture { "digraph { 1 -> subgraph \"hello\" { 2; 3; } }", 3 },
-             Fixture { "digraph { {2} -> subgraph \"hello\" {{{{{{{{{{{{{{{{{{{{{{{{ 2; 3; }}}}}}}}}}}}}}}}}}}}}}}} }", 2 },
+             Fixture {
+                 "digraph { {2} -> subgraph \"hello\" {{{{ 2; 3; }}}} }", 2 },
          })
     {
         TEST_GRAPH(Models::DiGraph, gv);
     }
+}
+
+void test_subgraph_nesting_limit() // issue #364
+{
+    auto independent_nests = [=](unsigned level)
+    {
+        auto sg = std::string(level, '{') + " 2; 3; " + std::string(level, '}');
+        ComparisonDriver::test_graph< Models::DiGraph >(
+            { "digraph{1->" + sg + "}", 3 });
+        ComparisonDriver::test_graph< Models::DiGraph >(
+            { "digraph{1->" + sg + ";4->" + sg + "}", 4 });
+    };
+
+    constexpr unsigned limit = 255;
+    independent_nests(1);
+    independent_nests(limit / 2);
+    independent_nests(limit - 1);
+    independent_nests(limit); // edge-case
+    BOOST_TEST_THROWS(independent_nests(limit + 1), boost::bad_graphviz_syntax);
 }
 
 int main()
@@ -479,5 +501,6 @@ int main()
     test_basic_csr_directed_graph_ext_props();
     test_basic_csr_directed_graph();
     test_subgraphs();
+    test_subgraph_nesting_limit();
     return boost::report_errors();
 }
