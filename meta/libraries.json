@@ -11,7 +11,7 @@
         "Iterators"
     ],
     "maintainers": [
-        "K. Noel Belcourt <kbelco -at- sandia.gov>"
+        "Jeremy W. Murphy <jeremy.william.murphy -at- gmail.com>"
     ],
-    "cxxstd": "03"
+    "cxxstd": "14"
 }

@@ -8,6 +8,7 @@
 #define BOOST_GRAPH_DETAIL_INDEX_HPP
 
 #include <boost/graph/graph_traits.hpp>
+#include <boost/graph/properties.hpp>
 
 // The structures in this module are responsible for selecting and defining
 // types for accessing a builting index map. Note that the selection of these

@@ -174,20 +174,117 @@ template < typename EdgeDescriptor > struct Link
     EdgeDescriptor edge_reverse;
 };
 
+typedef adjacency_list_traits< vecS, vecS, directedS > tTraits;
+typedef Node< tTraits::edge_descriptor > tVertex;
+typedef Link< tTraits::edge_descriptor > tEdge;
+typedef adjacency_list< vecS, vecS, directedS, tVertex, tEdge > tBundleGraph;
+
+namespace boost
+{
+template <> struct property_map< tBundleGraph, edge_capacity_t >
+{
+    typedef adj_list_edge_property_map< directed_tag, long, long&, size_t,
+        tEdge, long tEdge::* >
+        type;
+    typedef adj_list_edge_property_map< directed_tag, long, const long&, size_t,
+        const tEdge, long tEdge::* >
+        const_type;
+};
+
+template <> struct property_map< tBundleGraph, edge_residual_capacity_t >
+{
+    typedef adj_list_edge_property_map< directed_tag, long, long&, size_t,
+        tEdge, long tEdge::* >
+        type;
+    typedef adj_list_edge_property_map< directed_tag, long, const long&, size_t,
+        const tEdge, long tEdge::* >
+        const_type;
+};
+
+template <> struct property_map< tBundleGraph, edge_reverse_t >
+{
+    typedef adj_list_edge_property_map< directed_tag, tTraits::edge_descriptor,
+        tTraits::edge_descriptor&, size_t, tEdge,
+        tTraits::edge_descriptor tEdge::* >
+        type;
+    typedef adj_list_edge_property_map< directed_tag, tTraits::edge_descriptor,
+        const tTraits::edge_descriptor&, size_t, const tEdge,
+        tTraits::edge_descriptor tEdge::* >
+        const_type;
+};
+template <> struct property_map< tBundleGraph, vertex_predecessor_t >
+{
+    typedef vec_adj_list_vertex_property_map< tBundleGraph, tBundleGraph*,
+        tTraits::edge_descriptor, tTraits::edge_descriptor&,
+        tTraits::edge_descriptor tVertex::* >
+        type;
+    typedef vec_adj_list_vertex_property_map< tBundleGraph, const tBundleGraph*,
+        tTraits::edge_descriptor, const tTraits::edge_descriptor&,
+        tTraits::edge_descriptor tVertex::* >
+        const_type;
+};
+template <> struct property_map< tBundleGraph, vertex_color_t >
+{
+    typedef vec_adj_list_vertex_property_map< tBundleGraph, tBundleGraph*,
+        default_color_type, default_color_type&, default_color_type tVertex::* >
+        type;
+    typedef vec_adj_list_vertex_property_map< tBundleGraph, const tBundleGraph*,
+        default_color_type, const default_color_type&,
+        default_color_type tVertex::* >
+        const_type;
+};
+template <> struct property_map< tBundleGraph, vertex_distance_t >
+{
+    typedef vec_adj_list_vertex_property_map< tBundleGraph, tBundleGraph*, long,
+        long&, long tVertex::* >
+        type;
+    typedef vec_adj_list_vertex_property_map< tBundleGraph, const tBundleGraph*,
+        long, const long&, long tVertex::* >
+        const_type;
+};
+}
+
+property_map< tBundleGraph, edge_capacity_t >::const_type get(
+    edge_capacity_t, const tBundleGraph& g)
+{
+    return get(&tEdge::edge_capacity, g);
+}
+property_map< tBundleGraph, edge_residual_capacity_t >::type get(
+    edge_residual_capacity_t, tBundleGraph& g)
+{
+    return get(&tEdge::edge_residual_capacity, g);
+}
+property_map< tBundleGraph, edge_reverse_t >::const_type get(
+    edge_reverse_t, const tBundleGraph& g)
+{
+    return get(&tEdge::edge_reverse, g);
+}
+property_map< tBundleGraph, vertex_predecessor_t >::type get(
+    vertex_predecessor_t, tBundleGraph& g)
+{
+    return get(&tVertex::vertex_predecessor, g);
+}
+property_map< tBundleGraph, vertex_color_t >::type get(
+    vertex_color_t, tBundleGraph& g)
+{
+    return get(&tVertex::vertex_color, g);
+}
+property_map< tBundleGraph, vertex_distance_t >::type get(
+    vertex_distance_t, tBundleGraph& g)
+{
+    return get(&tVertex::vertex_distance, g);
+}
+
 long test_bundled_properties(int n_verts, int n_edges, std::size_t seed)
 {
-    typedef adjacency_list_traits< vecS, vecS, directedS > tTraits;
-    typedef Node< tTraits::edge_descriptor > tVertex;
-    typedef Link< tTraits::edge_descriptor > tEdge;
-    typedef adjacency_list< vecS, vecS, directedS, tVertex, tEdge >
-        tBundleGraph;
-
     tBundleGraph g;
 
     graph_traits< tBundleGraph >::vertex_descriptor src, sink;
     boost::tie(src, sink)
         = fill_random_max_flow_graph(g, get(&tEdge::edge_capacity, g),
             get(&tEdge::edge_reverse, g), n_verts, n_edges, seed);
+
+    long flow_all_defaults_overload = boykov_kolmogorov_max_flow(g, src, sink);
 
     long flow_unnamed_overload = boykov_kolmogorov_max_flow(g,
         get(&tEdge::edge_capacity, g), get(&tEdge::edge_residual_capacity, g),
@@ -204,6 +301,7 @@ long test_bundled_properties(int n_verts, int n_edges, std::size_t seed)
             .distance_map(get(&tVertex::vertex_distance, g))
             .vertex_index_map(get(vertex_index, g)));
 
+    BOOST_TEST(flow_all_defaults_overload == flow_unnamed_overload);
     BOOST_TEST(flow_unnamed_overload == flow_named_overload);
     return flow_named_overload;
 }
@@ -211,11 +309,17 @@ long test_bundled_properties(int n_verts, int n_edges, std::size_t seed)
 long test_overloads(int n_verts, int n_edges, std::size_t seed)
 {
     typedef adjacency_list_traits< vecS, vecS, directedS > tTraits;
+    typedef property< vertex_index_t, long,
+        property< vertex_predecessor_t, tTraits::edge_descriptor,
+            property< vertex_color_t, default_color_type,
+                property< vertex_distance_t, long > > > >
+        tVertexProperty;
     typedef property< edge_capacity_t, long,
         property< edge_residual_capacity_t, long,
             property< edge_reverse_t, tTraits::edge_descriptor > > >
         tEdgeProperty;
-    typedef adjacency_list< vecS, vecS, directedS, no_property, tEdgeProperty >
+    typedef adjacency_list< vecS, vecS, directedS, tVertexProperty,
+        tEdgeProperty >
         tGraph;
 
     tGraph g;
@@ -240,7 +344,10 @@ long test_overloads(int n_verts, int n_edges, std::size_t seed)
             color_vec.begin(), get(vertex_index, g)),
         get(vertex_index, g), src, sink);
 
+    long flow_overload_3 = boykov_kolmogorov_max_flow(g, src, sink);
+
     BOOST_TEST(flow_overload_1 == flow_overload_2);
+    BOOST_TEST(flow_overload_2 == flow_overload_3);
     return flow_overload_1;
 }
 

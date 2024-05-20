@@ -288,8 +288,8 @@ int main()
 
     std::cout << "SPP with time windows:" << std::endl;
     std::cout << "Number of optimal solutions: ";
-    std::cout << static_cast< int >(opt_solutions.size()) << std::endl;
-    for (int i = 0; i < static_cast< int >(opt_solutions.size()); ++i)
+    std::cout << static_cast< int >(opt_solutions_spptw.size()) << std::endl;
+    for (int i = 0; i < static_cast< int >(opt_solutions_spptw.size()); ++i)
     {
         std::cout << "The " << i << "th shortest path from A to E is: ";
         std::cout << std::endl;

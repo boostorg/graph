@@ -47,7 +47,10 @@ alias graph_test_regular :
     [ run undirected_dfs.cpp ]
     [ compile dfs_cc.cpp ]
     [ compile dijkstra_cc.cpp ]
-    [ run dijkstra_heap_performance.cpp /boost/timer//boost_timer : 10000 ]
+
+    # Performance benchmark
+    #[ run dijkstra_heap_performance.cpp /boost/timer//boost_timer : 10000 ]
+
     [ run dijkstra_no_color_map_compare.cpp : 10000 ]
     [ run disjoint_set_test.cpp ]
     [ run dominator_tree_test.cpp ]
@@ -70,8 +73,7 @@ alias graph_test_regular :
     [ run graph.cpp : : : <define>TEST=9 : graph_9 ]
     [ compile graph_concepts.cpp ]
     [ run graphviz_test.cpp
-            ../build//boost_graph
-            ../../regex/build//boost_regex : --log_level=all ]
+            ../build//boost_graph : --log_level=all ]
     [ run metis_test.cpp : $(METIS_INPUT_FILE) ]
     [ run gursoy_atun_layout_test.cpp  : : : [ requires cxx11_noexcept cxx11_rvalue_references sfinae_expr cxx11_auto_declarations cxx11_lambdas cxx11_unified_initialization_syntax cxx11_hdr_tuple cxx11_hdr_initializer_list cxx11_hdr_chrono cxx11_thread_local cxx11_constexpr cxx11_nullptr cxx11_numeric_limits cxx11_decltype cxx11_hdr_array cxx11_hdr_atomic cxx11_hdr_type_traits cxx11_allocator cxx11_explicit_conversion_operators ] ]
     [ run layout_test.cpp : : : <test-info>always_show_run_output <toolset>intel:<debug-symbols>off [ requires cxx11_noexcept cxx11_rvalue_references sfinae_expr cxx11_auto_declarations cxx11_lambdas cxx11_unified_initialization_syntax cxx11_hdr_tuple cxx11_hdr_initializer_list cxx11_hdr_chrono cxx11_thread_local cxx11_constexpr cxx11_nullptr cxx11_numeric_limits cxx11_decltype cxx11_hdr_array cxx11_hdr_atomic cxx11_hdr_type_traits cxx11_allocator cxx11_explicit_conversion_operators ] ]
@@ -114,7 +116,7 @@ alias graph_test_regular :
     [ run weighted_matching_test.cpp ]
     [ run max_flow_test.cpp ]
     [ run boykov_kolmogorov_max_flow_test.cpp ]
-    [ run cycle_ratio_tests.cpp ../build//boost_graph ../../regex/build//boost_regex : $(CYCLE_RATIO_INPUT_FILE) ]
+    [ run cycle_ratio_tests.cpp ../build//boost_graph : $(CYCLE_RATIO_INPUT_FILE) ]
     [ run basic_planarity_test.cpp ]
     [ run make_connected_test.cpp ]
     [ run make_bicon_planar_test.cpp ]
@@ -122,6 +124,7 @@ alias graph_test_regular :
     [ run named_vertices_test.cpp ]
     [ run r_c_shortest_paths_test.cpp ]
     [ run rcsp_custom_vertex_id.cpp ]
+    [ run rcsp_single_solution.cpp ]
     [ run is_straight_line_draw_test.cpp ]
     [ run metric_tsp_approx.cpp /boost/timer//boost_timer : metric_tsp_approx.graph : : ]
     [ compile dimacs.cpp ]
