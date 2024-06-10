@@ -194,7 +194,7 @@ public:
         m_children.back()->m_parent = this;
         for (; first != last; ++first)
         {
-            add_vertex(*first, *m_children.back());
+            add_vertex(local_to_global(*first), *m_children.back());
         }
         return *m_children.back();
     }
