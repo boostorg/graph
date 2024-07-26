@@ -34,7 +34,6 @@ constant boost_dependencies :
     /boost/property_tree//boost_property_tree
     /boost/random//boost_random
     /boost/range//boost_range
-    /boost/regex//boost_regex
     /boost/serialization//boost_serialization
     /boost/smart_ptr//boost_smart_ptr
     /boost/spirit//boost_spirit
