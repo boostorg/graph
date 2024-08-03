@@ -12,6 +12,8 @@ import path ;
 
 path-constant TEST_DIR : . ;
 
+project : requirements <library>/boost/graph//boost_graph ;
+
 run accum-compile-times.cpp : $(TEST_DIR)/makefile-dependencies.dat $(TEST_DIR)/makefile-target-names.dat $(TEST_DIR)/target-compile-costs.dat ;
 exe actor_clustering : actor_clustering.cpp ;
 run adj_list_ra_edgelist.cpp ;
