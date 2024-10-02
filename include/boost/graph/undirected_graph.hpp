@@ -340,6 +340,14 @@ public:
         std::swap(m_max_edge_index, g.m_max_edge_index);
     }
 
+protected:
+    void remove_edge(void *p)
+    {
+        auto *q = static_cast< std::pair< out_edge_iterator, out_edge_iterator > * >(p);
+        boost::remove_edge(q->first, q->second, m_graph);
+        --m_num_edges;
+    }
+
 private:
     vertices_size_type renumber_vertex_indices(
         vertex_iterator i, vertex_iterator end, vertices_size_type n)
