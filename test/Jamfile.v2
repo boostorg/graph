@@ -84,7 +84,8 @@ alias graph_test_regular :
 
     [ compile reverse_graph_cc.cpp ]
     [ run sequential_vertex_coloring.cpp ]
-
+    [ run planar_vertex_six_coloring.cpp ]
+    
     # TODO: Merge these into a single test framework.
     [ run subgraph.cpp ]
     [ run subgraph_bundled.cpp ]
