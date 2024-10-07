@@ -802,7 +802,7 @@ namespace detail
         template < class OutEdgeList_iterator, class Config >
         static void apply(OutEdgeList_iterator iter1,
             OutEdgeList_iterator iter2,
-            undirected_graph_helper< Config >& g_, StoredProperty& p)
+            undirected_graph_helper< Config >& g_, StoredProperty&)
         {
             typedef typename Config::global_edgelist_selector EdgeListS;
             BOOST_STATIC_ASSERT((is_same< EdgeListS, listS >::value));
@@ -876,7 +876,6 @@ namespace detail
             BOOST_ASSERT(source(e, g) == target(f, g));
             BOOST_ASSERT(source(f, g) == target(e, g));
 
-            no_property* p = (no_property*)e.get_property();
             typename Config::OutEdgeList& out_el
                 = g.out_edge_list(source(e, g));
             typename Config::EdgeIter edge_iter_to_erase;
