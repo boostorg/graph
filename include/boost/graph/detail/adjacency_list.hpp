@@ -1019,7 +1019,7 @@ inline void remove_edge(EdgeOrIter e, undirected_graph_helper< Config >& g_)
 
 // O(1)
 template < class OutEdgeIter, class Config >
-inline void remove_edge(OutEdgeIter i1, OutEdgeIter i2,
+inline void remove_edge_(OutEdgeIter i1, OutEdgeIter i2,
     undirected_graph_helper< Config >& g_)
 {
     typedef typename Config::global_edgelist_selector EdgeListS;

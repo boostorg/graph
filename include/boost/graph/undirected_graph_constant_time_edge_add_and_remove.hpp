@@ -7,8 +7,8 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 
-#ifndef BOOST_GRAPH_UNDIRECTED_GRAPH_CONSTANT_TIME_EDGE_ADD_AND_REMOVE.HPP
-#define BOOST_GRAPH_UNDIRECTED_GRAPH_CONSTANT_TIME_EDGE_ADD_AND_REMOVE.HPP
+#ifndef BOOST_GRAPH_UNDIRECTED_GRAPH_CONSTANT_TIME_EDGE_ADD_AND_REMOVE_HPP
+#define BOOST_GRAPH_UNDIRECTED_GRAPH_CONSTANT_TIME_EDGE_ADD_AND_REMOVE_HPP
 
 #include <utility>
 #include <list>
@@ -95,7 +95,7 @@ class undirected_graph_constant_time_edge_add_and_remove
     // O(1)
     inline void remove_edge(edge_descriptor e)
     {
-        graph_type::remove_edge(m_map[e]);
+        graph_type::remove_edge_(m_map[e]);
     }
 
     // O(degree(v))

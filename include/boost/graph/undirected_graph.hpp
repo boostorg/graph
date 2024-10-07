@@ -341,10 +341,10 @@ public:
     }
 
 protected:
-    void remove_edge(void *p)
+    void remove_edge_(void *p)
     {
         auto *q = static_cast< std::pair< out_edge_iterator, out_edge_iterator > * >(p);
-        boost::remove_edge(q->first, q->second, m_graph);
+        boost::remove_edge_(q->first, q->second, m_graph);
         --m_num_edges;
     }
 
