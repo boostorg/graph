@@ -79,7 +79,7 @@ namespace detail
                 {
                     vis.tree_edge(*ei, g);
                     stack.push_back(std::make_pair(u,
-                        std::make_pair(src_e, std::make_pair(ei+1, ei_end))));
+                        std::make_pair(src_e, std::make_pair(std::next(ei), ei_end))));
                     u = v;
                     src_e = *ei;
                     put(vertex_color, u, Color::gray());
