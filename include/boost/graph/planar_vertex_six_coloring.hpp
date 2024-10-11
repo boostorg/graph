@@ -118,7 +118,8 @@ typename property_traits< ColorMap >::value_type planar_vertex_six_coloring(
         vertex_descriptor w;
         BOOST_FOREACH(w, adj5[u]) { bs |= (1 << get(color, w)); }
         put(color, back[u], smallest_possible_color[bs]);
-        colmax = std::max(colmax, smallest_possible_color[bs]);
+        colmax = std::max BOOST_PREVENT_MACRO_SUBSTITUTION(
+                              colmax, smallest_possible_color[bs]);
     }
 
     return colmax+1;

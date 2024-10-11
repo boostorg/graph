@@ -196,7 +196,7 @@ void read_leda_graph(Graph& g, const char* gname)
     std::string line;
 
     std::ifstream in(gname);
-    assert(in);
+    BOOST_ASSERT(in);
 
     std::getline(in, line);
     in >> line >> line >> n;
