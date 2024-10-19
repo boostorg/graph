@@ -15,6 +15,7 @@
 #include <boost/foreach.hpp>
 #include <boost/graph/undirected_graph_constant_time_edge_add_and_remove.hpp>
 #include <boost/graph/graph_utility.hpp>
+#include <boost/graph/sequential_vertex_coloring.hpp>
 
 /* This algorithm is to find a vertex six coloring of a planar graph
 
@@ -78,8 +79,10 @@ typename property_traits< ColorMap >::value_type planar_vertex_six_coloring(
 
 
     std::vector< typename ugraph_o1::vertex_descriptor > small, visited;
+    std::vector< vertex_descriptor > rev;
     small.reserve(num_vertices(U));
     visited.reserve(num_vertices(U));
+    rev.reserve(num_vertices(U));
 
     BGL_FORALL_VERTICES_T(u, U, ugraph_o1)
         { adj5[u].reserve(5); if (degree(u, U) <= 5) { small.push_back(u); } }
@@ -103,26 +106,11 @@ typename property_traits< ColorMap >::value_type planar_vertex_six_coloring(
     BOOST_ASSERT(num_vertices(U) == visited.size());
 
 
-    // highest possisble index with <=5 neighbors is 0x3E (= 0b111110)
-    const size_type smallest_possible_color[1+0x3E]
-        = {0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4,
-           0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 5,
-           0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4,
-           0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0};
+    BOOST_REVERSE_FOREACH(typename ugraph_o1::vertex_descriptor u, visited)
+        rev.push_back(back[u]);
 
-    size_type colmax = 0;
-    typename ugraph_o1::vertex_descriptor u;
-    BOOST_REVERSE_FOREACH(u, visited)
-    {
-        size_type bs = 0;
-        vertex_descriptor w;
-        BOOST_FOREACH(w, adj5[u]) { bs |= (1 << get(color, w)); }
-        put(color, back[u], smallest_possible_color[bs]);
-        colmax = std::max BOOST_PREVENT_MACRO_SUBSTITUTION(
-                              colmax, smallest_possible_color[bs]);
-    }
-
-    return colmax+1;
+    return sequential_vertex_coloring(
+        G, make_container_vertex_map(rev, G), color);
 }
 
 }  // namespace boost
