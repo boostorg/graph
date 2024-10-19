@@ -65,6 +65,8 @@ typename property_traits< ColorMap >::value_type planar_vertex_six_coloring(
 //             std::vector<V(G)> <--------------+
 //                                   adj5[_]
 //
+//  Determine copy U of G with linkage
+//
     ugraph_o1 U;
 
     auto adj5 = get(vertex_adj5, U);
@@ -77,7 +79,14 @@ typename property_traits< ColorMap >::value_type planar_vertex_six_coloring(
     BGL_FORALL_EDGES_T(e, G, VertexListGraph)
         { U.add_edge(get(vmap, source(e, G)), get(vmap, target(e, G))); }
 
+/*
+  Determine 5-bounded acyclic orientation
 
+  Marek Chrobak, David Eppstein
+  "Planar orientations with low out-degree and compaction of adjacency matrices"
+  Theoretical Computer Science 1991
+  https://dl.acm.org/doi/10.1016/0304-3975%2891%2990020-3
+*/
     std::vector< typename ugraph_o1::vertex_descriptor > small, visited;
     std::vector< vertex_descriptor > rev;
     small.reserve(num_vertices(U));
@@ -105,7 +114,9 @@ typename property_traits< ColorMap >::value_type planar_vertex_six_coloring(
 
     BOOST_ASSERT(num_vertices(U) == visited.size());
 
-
+// call sequential_vertex_coloring()
+// with reverse order of 5-bounded acyclic orientation determination
+//
     BOOST_REVERSE_FOREACH(typename ugraph_o1::vertex_descriptor u, visited)
         rev.push_back(back[u]);
 
