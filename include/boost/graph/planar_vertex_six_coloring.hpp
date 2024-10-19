@@ -36,9 +36,6 @@ namespace boost
     enum vertex_back_t { vertex_back };
     BOOST_INSTALL_PROPERTY(vertex, back);
 
-    enum vertex_adj5_t { vertex_adj5 };
-    BOOST_INSTALL_PROPERTY(vertex, adj5);
-
 template < class VertexListGraph, class ColorMap >
 typename property_traits< ColorMap >::value_type planar_vertex_six_coloring(
     const VertexListGraph& G, ColorMap color)
@@ -48,8 +45,7 @@ typename property_traits< ColorMap >::value_type planar_vertex_six_coloring(
     typedef typename property_traits< ColorMap >::value_type size_type;
 
     typedef undirected_graph_constant_time_edge_add_and_remove<
-        property< vertex_back_t, vertex_descriptor,
-            property< vertex_adj5_t, std::vector< vertex_descriptor > > >,
+        property< vertex_back_t, vertex_descriptor >,
         no_property, no_property > ugraph_o1;
 
 
@@ -60,16 +56,12 @@ typename property_traits< ColorMap >::value_type planar_vertex_six_coloring(
 //                               get(vmap, _)
 //                {v,w} in V(G)--------------->
 //                             <---------------V(U) <= {u,t}
-//                                 back[_]      |
-//                                              |
-//             std::vector<V(G)> <--------------+
-//                                   adj5[_]
+//                                 back[_]
 //
 //  Determine copy U of G with linkage
 //
     ugraph_o1 U;
 
-    auto adj5 = get(vertex_adj5, U);
     auto back = get(vertex_back, U);
 
 
@@ -94,7 +86,7 @@ typename property_traits< ColorMap >::value_type planar_vertex_six_coloring(
     rev.reserve(num_vertices(U));
 
     BGL_FORALL_VERTICES_T(u, U, ugraph_o1)
-        { adj5[u].reserve(5); if (degree(u, U) <= 5) { small.push_back(u); } }
+        { if (degree(u, U) <= 5) { small.push_back(u); } }
 
 
     while (!small.empty())
@@ -104,7 +96,6 @@ typename property_traits< ColorMap >::value_type planar_vertex_six_coloring(
 
         BGL_FORALL_ADJ_T(u, t, U, ugraph_o1)
         {
-            adj5[u].push_back(back[t]);
             if (degree(t, U) == 6)  small.push_back(t);
         }
         U.clear_vertex(u);
