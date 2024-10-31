@@ -1,7 +1,4 @@
-find_package(Boost 1.87.0 REQUIRED COMPONENTS unit_test_framework)
-
-# Boost.UTF tests all have their own int main() function, so we must put each
-# one in a separate executable.
+# These use Boost.Core's lightweight_test, one main() function per file.
 
 set(TEST_SOURCES
     adj_list_cc.cpp
