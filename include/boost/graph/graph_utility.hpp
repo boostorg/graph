@@ -359,7 +359,6 @@ inline bool is_connected_dispatch(const Graph& g, VertexColorMap color, undirect
         if (get(color, *ui) == Color::white())
             return false;
     return true;
-
 }
 
 template < typename Graph, typename VertexColorMap >
