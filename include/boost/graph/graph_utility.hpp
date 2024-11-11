@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <algorithm>
+#include <vector>
 #include <assert.h>
 #include <boost/config.hpp>
 #include <boost/tuple/tuple.hpp>
@@ -21,6 +22,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/graph/properties.hpp>
+#include <boost/graph/strong_components.hpp>
 #include <boost/pending/container_traits.hpp>
 #include <boost/graph/depth_first_search.hpp>
 // iota moved to detail/algorithm.hpp
@@ -339,25 +341,52 @@ inline bool is_reachable(
     return get(color, y) != color_traits< ColorValue >::white();
 }
 
+template < typename Graph, typename VertexColorMap >
+inline bool is_connected_dispatch(const Graph& g, VertexColorMap color, undirected_tag)
+{
+    // color map should start out white for each vertex
+    typedef typename property_traits< VertexColorMap >::value_type ColorValue;
+    typedef color_traits< ColorValue > Color;
+
+    default_dfs_visitor vis;
+    detail::depth_first_visit_impl(g, detail::get_default_starting_vertex(g),
+        vis, color, detail::nontruth2());
+
+    // If an undirected graph is connected, then each vertex is reachable in a
+    // single DFS visit. If any vertex was unreachable, grpah is not connected.
+    typename graph_traits< Graph >::vertex_iterator ui, ui_end;
+    for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
+        if (get(color, *ui) == Color::white())
+            return false;
+    return true;
+
+}
+
+template < typename Graph, typename VertexColorMap >
+inline bool is_connected_dispatch(const Graph& g, VertexColorMap, directed_tag)
+{
+    // Run the Tarjan SCC algorithm
+    std::vector< size_t > comp_map(num_vertices(g));
+    strong_components(g,
+        make_iterator_property_map(comp_map.begin(), get(vertex_index, g)));
+
+    // If the directed graph is strongly connected, all vertices are in
+    // the same component 0
+    for (std::vector< size_t >::const_iterator i = comp_map.begin();
+         i != comp_map.end(); ++i)
+        if (*i > 0)
+            return false;
+    return true;
+}
+
+
 // Is the undirected graph connected?
 // Is the directed graph strongly connected?
 template < typename VertexListGraph, typename VertexColorMap >
 inline bool is_connected(const VertexListGraph& g, VertexColorMap color)
 {
-    typedef typename property_traits< VertexColorMap >::value_type ColorValue;
-    typedef color_traits< ColorValue > Color;
-    typename graph_traits< VertexListGraph >::vertex_iterator ui, ui_end, vi,
-        vi_end, ci, ci_end;
-    for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
-        for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
-            if (*ui != *vi)
-            {
-                for (boost::tie(ci, ci_end) = vertices(g); ci != ci_end; ++ci)
-                    put(color, *ci, Color::white());
-                if (!is_reachable(*ui, *vi, g, color))
-                    return false;
-            }
-    return true;
+    typedef typename graph_traits< VertexListGraph >::directed_category Cat;
+    return is_connected_dispatch(g, color, Cat());
 }
 
 template < typename Graph >
