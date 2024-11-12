@@ -8,16 +8,20 @@ using namespace std;
 using namespace boost;
 
 // todo: consider mdspan when it's widely implemented
-inline size_t coord_to_idx(size_t height, size_t x, size_t y) {
+inline size_t coord_to_idx(size_t height, size_t x, size_t y)
+{
     return y * height + x;
 }
 
-template <class Graph>
-void fill_square_graph(Graph& graph, size_t size) {
+template < class Graph >
+void fill_square_graph(Graph& graph, size_t size)
+{
     const size_t W = size, H = size;
 
-    for (size_t i = 0; i < W; ++i) {
-        for (size_t j = 0; j < H; ++j) {
+    for (size_t i = 0; i < W; ++i)
+    {
+        for (size_t j = 0; j < H; ++j)
+        {
             size_t idx = coord_to_idx(H, i, j);
             if (i > 0)
                 add_edge(coord_to_idx(H, i - 1, j), idx, graph);
@@ -27,14 +31,18 @@ void fill_square_graph(Graph& graph, size_t size) {
     }
 }
 
-template <typename Graph>
-void run_test(const Graph& g, bool exp_result) {
-    bool result = is_connected(g, boost::make_two_bit_color_map(num_vertices(g), get(boost::vertex_index, g)));
+template < typename Graph >
+void run_test(const Graph& g, bool exp_result)
+{
+    bool result = is_connected(g,
+        boost::make_two_bit_color_map(
+            num_vertices(g), get(boost::vertex_index, g)));
     BOOST_TEST(exp_result == result);
 }
 
-template <typename Graph, typename ColorMap>
-void test_colormap_reuse_disp(Graph& g, ColorMap color, size_t size) {
+template < typename Graph, typename ColorMap >
+void test_colormap_reuse_disp(Graph& g, ColorMap color, size_t size)
+{
     fill_square_graph(g, size);
     bool result = is_connected(g, color);
     BOOST_TEST(result == true);
@@ -47,9 +55,12 @@ void test_colormap_reuse_disp(Graph& g, ColorMap color, size_t size) {
 // test that the colormap is cleared (preserve backward compatibility)
 void test_colormap_reuse(size_t size)
 {
-    typedef adjacency_list<vecS, vecS, undirectedS> undir_graph_t;
+    typedef adjacency_list< vecS, vecS, undirectedS > undir_graph_t;
     undir_graph_t g(size * size);
-    test_colormap_reuse_disp(g, boost::make_two_bit_color_map(num_vertices(g), get(boost::vertex_index, g)), size);
+    test_colormap_reuse_disp(g,
+        boost::make_two_bit_color_map(
+            num_vertices(g), get(boost::vertex_index, g)),
+        size);
 }
 
 int main(int argc, char* argv[])
@@ -67,11 +78,12 @@ int main(int argc, char* argv[])
     fill_square_graph(g, size);
     run_test(g, false);
 
-    // now make it connected with one more edge from the last vertex to the first
+    // now make it connected with one more edge from the last vertex to the
+    // first
     add_edge(coord_to_idx(size, size - 1, size - 1), 0, g);
     run_test(g, true);
 
-    typedef adjacency_list<vecS, vecS, undirectedS> undir_graph_t;
+    typedef adjacency_list< vecS, vecS, undirectedS > undir_graph_t;
     undir_graph_t ug(size * size);
     // the undirected graph is already strongly connected
     fill_square_graph(g, size);
@@ -86,4 +98,3 @@ int main(int argc, char* argv[])
 
     return boost::report_errors();
 }
-

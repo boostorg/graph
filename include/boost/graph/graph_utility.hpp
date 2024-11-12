@@ -342,7 +342,8 @@ inline bool is_reachable(
 }
 
 template < typename Graph, typename VertexColorMap >
-inline bool is_connected_dispatch(const Graph& g, VertexColorMap color, undirected_tag)
+inline bool is_connected_dispatch(const Graph& g, VertexColorMap color,
+    undirected_tag)
 {
     typedef typename property_traits< VertexColorMap >::value_type ColorValue;
     typedef color_traits< ColorValue > Color;
@@ -369,8 +370,8 @@ inline bool is_connected_dispatch(const Graph& g, VertexColorMap, directed_tag)
 {
     // Run the Tarjan SCC algorithm
     std::vector< size_t > comp_map(num_vertices(g));
-    strong_components(g,
-        make_iterator_property_map(comp_map.begin(), get(vertex_index, g)));
+    strong_components(
+        g, make_iterator_property_map(comp_map.begin(), get(vertex_index, g)));
 
     // If the directed graph is strongly connected, all vertices are in
     // the same component 0
@@ -380,7 +381,6 @@ inline bool is_connected_dispatch(const Graph& g, VertexColorMap, directed_tag)
             return false;
     return true;
 }
-
 
 // Is the undirected graph connected?
 // Is the directed graph strongly connected?
