@@ -33,6 +33,25 @@ void run_test(const Graph& g, bool exp_result) {
     BOOST_TEST(exp_result == result);
 }
 
+template <typename Graph, typename ColorMap>
+void test_colormap_reuse_disp(Graph& g, ColorMap color, size_t size) {
+    fill_square_graph(g, size);
+    bool result = is_connected(g, color);
+    BOOST_TEST(result == true);
+
+    Graph g2(num_vertices(g));
+    bool result2 = is_connected(g2, color);
+    BOOST_TEST(result2 == false);
+}
+
+// test that the colormap is cleared (preserve backward compatibility)
+void test_colormap_reuse(size_t size)
+{
+    typedef adjacency_list<vecS, vecS, undirectedS> undir_graph_t;
+    undir_graph_t g(size * size);
+    test_colormap_reuse_disp(g, boost::make_two_bit_color_map(num_vertices(g), get(boost::vertex_index, g)), size);
+}
+
 int main(int argc, char* argv[])
 {
     // the side length of the square graph
@@ -62,6 +81,8 @@ int main(int argc, char* argv[])
     undir_graph_t ug2(size * (size + 1));
     fill_square_graph(ug2, size);
     run_test(ug2, false);
+
+    test_colormap_reuse(size);
 
     return boost::report_errors();
 }

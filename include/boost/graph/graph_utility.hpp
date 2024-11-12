@@ -344,9 +344,13 @@ inline bool is_reachable(
 template < typename Graph, typename VertexColorMap >
 inline bool is_connected_dispatch(const Graph& g, VertexColorMap color, undirected_tag)
 {
-    // color map should start out white for each vertex
     typedef typename property_traits< VertexColorMap >::value_type ColorValue;
     typedef color_traits< ColorValue > Color;
+    typename graph_traits< Graph >::vertex_iterator ui, ui_end, ci, ci_end;
+
+    // clear the colormap to preserve backward compatibility
+    for (boost::tie(ci, ci_end) = vertices(g); ci != ci_end; ++ci)
+        put(color, *ci, Color::white());
 
     default_dfs_visitor vis;
     detail::depth_first_visit_impl(g, detail::get_default_starting_vertex(g),
@@ -354,7 +358,6 @@ inline bool is_connected_dispatch(const Graph& g, VertexColorMap color, undirect
 
     // If an undirected graph is connected, then each vertex is reachable in a
     // single DFS visit. If any vertex was unreachable, grpah is not connected.
-    typename graph_traits< Graph >::vertex_iterator ui, ui_end;
     for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
         if (get(color, *ui) == Color::white())
             return false;
