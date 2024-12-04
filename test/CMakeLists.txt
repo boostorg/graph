@@ -1,4 +1,4 @@
-find_package(Boost REQUIRED COMPONENTS filesystem serialization)
+find_package(Boost 1.87.0 REQUIRED COMPONENTS filesystem serialization)
 
 # These use Boost.Core's lightweight_test, one main() function per file.
 
