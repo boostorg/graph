@@ -96,7 +96,6 @@ int main(int argc, char* argv[])
         undir_graph_t g(size * size);
         // the undirected graph is already strongly connected
         fill_square_graph(g, size);
-        run_test(g, true);
 
         BOOST_TEST(is_connected(g) == true);
         BOOST_TEST(is_connected_undirected(g) == true);
