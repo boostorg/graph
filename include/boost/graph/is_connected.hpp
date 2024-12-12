@@ -37,7 +37,7 @@ inline bool is_connected(const Graph& g, ConnectedKind kind = connected_kind::un
     BOOST_STATIC_ASSERT_MSG(
         (mpl::not_< mpl::and_ <
                 is_same < ConnectedKind, connected_kind::unspecified_t >,
-                is_convertible<Cat, directed_tag > > >::value),
+                is_directed_graph< Graph > > >::value),
         "connected_kind must be specified for directed graphs");
 
     return is_connected_dispatch(g, Cat(), kind);
@@ -49,13 +49,14 @@ inline bool is_connected_dispatch(const IncidenceGraph& g, undirected_tag,
                                   ConnectedKind)
 {
     // ignore the connection kind for undirected graph
-    BOOST_CONCEPT_ASSERT((IncidenceGraphConcept< IncidenceGraph >));
     return is_connected_undirected(g);
 }
 
 template < typename IncidenceGraph >
 inline bool is_connected_undirected(const IncidenceGraph& g)
 {
+    BOOST_CONCEPT_ASSERT((IncidenceGraphConcept< IncidenceGraph >));
+
     return is_connected_undirected(g,
         make_two_bit_color_map(num_vertices(g), get(boost::vertex_index, g)));
 }
@@ -95,9 +96,7 @@ inline bool is_strongly_connected(const Graph& g)
     // are in a sinlge stronly connected component
 
     BOOST_CONCEPT_ASSERT((IncidenceGraphConcept< Graph >));
-    BOOST_CONCEPT_ASSERT((boost::Convertible<
-        typename boost::graph_traits< Graph >::directed_category,
-        boost::directed_tag >));
+    BOOST_STATIC_ASSERT((is_directed_graph< Graph >::value));
 
     // Run the Tarjan's SCC algorithm
     std::vector< size_t > comp_map(num_vertices(g));
@@ -116,15 +115,9 @@ inline bool is_connected_dispatch(const IncidenceGraph& g, directed_tag,
 }
 
 template < typename BidirectionalGraph >
-inline bool is_weakly_connected(const BidirectionalGraph & g)
+inline bool is_weakly_connected(const BidirectionalGraph& g)
 {
-    BOOST_CONCEPT_ASSERT((boost::Convertible<
-        typename graph_traits< BidirectionalGraph >::directed_category,
-        bidirectional_tag >));
-    BOOST_CONCEPT_ASSERT(
-            (Convertible<
-                typename graph_traits< BidirectionalGraph >::traversal_category,
-                bidirectional_graph_tag >));
+    BOOST_CONCEPT_ASSERT((BidirectionalGraphConcept< BidirectionalGraph >));
 
     // For now do an undirected BFS walk
     return is_weakly_connected(g,
@@ -222,9 +215,7 @@ inline bool is_unilaterally_connected(const Graph& g)
     BOOST_CONCEPT_ASSERT((IncidenceGraphConcept< Graph >));
     // See comment about renumber_vertex_indices above
     // BOOST_CONCEPT_ASSERT((VertexIndexGraphConcept< Graph >));
-    BOOST_CONCEPT_ASSERT((boost::Convertible<
-        typename boost::graph_traits< Graph >::directed_category,
-        boost::directed_tag >));
+    BOOST_STATIC_ASSERT((is_directed_graph< Graph >::value));
 
     // Run the Tarjan's SCC algorithm
     std::vector< size_t > comp_number(num_vertices(g));
