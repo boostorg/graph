@@ -53,19 +53,17 @@ int main(int argc, char* argv[])
         // the directed graph is not strongly connected
         fill_square_graph(g, size);
 
-        BOOST_TEST(is_connected(g) == false);
-        BOOST_TEST(is_connected(g, is_connected_kind::strong) == false);
+        BOOST_TEST(is_connected(g, connected_kind::strong) == false);
         BOOST_TEST(is_strongly_connected(g) == false);
-        BOOST_TEST(is_connected(g, is_connected_kind::unilateral) == false);
+        BOOST_TEST(is_connected(g, connected_kind::unilateral) == false);
 
         // now make it strongly connected with one more edge from the last vertex
         // to the first
         add_edge(coord_to_idx(size, size - 1, size - 1), 0, g);
 
-        BOOST_TEST(is_connected(g) == true);
-        BOOST_TEST(is_connected(g, is_connected_kind::strong) == true);
+        BOOST_TEST(is_connected(g, connected_kind::strong) == true);
         BOOST_TEST(is_strongly_connected(g) == true);
-        BOOST_TEST(is_connected(g, is_connected_kind::unilateral) == true);
+        BOOST_TEST(is_connected(g, connected_kind::unilateral) == true);
     }
 
     {
@@ -74,20 +72,20 @@ int main(int argc, char* argv[])
         bidir_graph_t g(size * size);
         fill_square_graph(g, size);
         // the directed graph is not strongly connected
-        BOOST_TEST(is_connected(g, is_connected_kind::strong) == false);
+        BOOST_TEST(is_connected(g, connected_kind::strong) == false);
         BOOST_TEST(is_strongly_connected(g) == false);
         // but it is weakly connected
-        BOOST_TEST(is_connected(g, is_connected_kind::weak) == true);
+        BOOST_TEST(is_connected(g, connected_kind::weak) == true);
         BOOST_TEST(is_weakly_connected(g) == true);
 
         // another graph, 2 disconnected vertices
         bidir_graph_t g2(2);
-        BOOST_TEST(is_connected(g2, is_connected_kind::weak) == false);
+        BOOST_TEST(is_connected(g2, connected_kind::weak) == false);
 
         // make it weakly connected
         add_edge(0, 1, g2);
-        BOOST_TEST(is_connected(g2, is_connected_kind::weak) == true);
-        BOOST_TEST(is_connected(g2, is_connected_kind::strong) == false);
+        BOOST_TEST(is_connected(g2, connected_kind::weak) == true);
+        BOOST_TEST(is_connected(g2, connected_kind::strong) == false);
     }
 
     {
@@ -99,8 +97,9 @@ int main(int argc, char* argv[])
 
         BOOST_TEST(is_connected(g) == true);
         BOOST_TEST(is_connected_undirected(g) == true);
-        BOOST_TEST(is_connected(g, is_connected_kind::strong) == true);
-        BOOST_TEST(is_connected(g, is_connected_kind::weak) == true);
+        BOOST_TEST(is_connected(g, connected_kind::strong) == true);
+        BOOST_TEST(is_connected(g, connected_kind::unilateral) == true);
+        BOOST_TEST(is_connected(g, connected_kind::weak) == true);
 
         // now fill fewer edges, so one row is disconnected
         undir_graph_t g2(size * (size + 1));
@@ -108,8 +107,8 @@ int main(int argc, char* argv[])
 
         BOOST_TEST(is_connected(g2) == false);
         BOOST_TEST(is_connected_undirected(g2) == false);
-        BOOST_TEST(is_connected(g2, is_connected_kind::strong) == false);
-        BOOST_TEST(is_connected(g2, is_connected_kind::weak) == false);
+        BOOST_TEST(is_connected(g2, connected_kind::strong) == false);
+        BOOST_TEST(is_connected(g2, connected_kind::weak) == false);
 
     }
 
@@ -119,49 +118,59 @@ int main(int argc, char* argv[])
         bidir_graph_t g(size * size);
         fill_square_graph(g, size);
 
-        BOOST_TEST(is_connected(g, is_connected_kind::weak) == true);
+        BOOST_TEST(is_connected(g, connected_kind::weak) == true);
         BOOST_TEST(is_weakly_connected(g) == true);
 
-        BOOST_TEST(is_connected(g, is_connected_kind::strong) == false);
+        BOOST_TEST(is_connected(g, connected_kind::strong) == false);
         BOOST_TEST(is_strongly_connected(g) == false);
 
-        BOOST_TEST(is_connected(g, is_connected_kind::unilateral) == false);
+        BOOST_TEST(is_connected(g, connected_kind::unilateral) == false);
         BOOST_TEST(is_unilaterally_connected(g) == false);
 
         bidir_graph_t g2(2);
-        BOOST_TEST(is_connected(g2, is_connected_kind::weak) == false);
-        BOOST_TEST(is_connected(g2, is_connected_kind::strong) == false);
-        BOOST_TEST(is_connected(g2, is_connected_kind::unilateral) == false);
+        BOOST_TEST(is_connected(g2, connected_kind::weak) == false);
+        BOOST_TEST(is_connected(g2, connected_kind::strong) == false);
+        BOOST_TEST(is_connected(g2, connected_kind::unilateral) == false);
 
         add_edge(0, 1, g2);
-        BOOST_TEST(is_connected(g2, is_connected_kind::weak) == true);
-        BOOST_TEST(is_connected(g2, is_connected_kind::strong) == false);
-        BOOST_TEST(is_connected(g2, is_connected_kind::unilateral) == true);
+        BOOST_TEST(is_connected(g2, connected_kind::weak) == true);
+        BOOST_TEST(is_connected(g2, connected_kind::strong) == false);
+        BOOST_TEST(is_connected(g2, connected_kind::unilateral) == true);
 
 
         // test making a graph weakly, then unilaterally, then strongly connected
         bidir_graph_t g3(3);
-        BOOST_TEST(is_connected(g3, is_connected_kind::weak) == false);
-        BOOST_TEST(is_connected(g3, is_connected_kind::unilateral) == false);
-        BOOST_TEST(is_connected(g3, is_connected_kind::strong) == false);
+        BOOST_TEST(is_connected(g3, connected_kind::weak) == false);
+        BOOST_TEST(is_connected(g3, connected_kind::unilateral) == false);
+        BOOST_TEST(is_connected(g3, connected_kind::strong) == false);
         add_edge(0, 1, g3);
         add_edge(2, 1, g3);
-        BOOST_TEST(is_connected(g3, is_connected_kind::weak) == true);
-        BOOST_TEST(is_connected(g3, is_connected_kind::unilateral) == false);
-        BOOST_TEST(is_connected(g3, is_connected_kind::strong) == false);
+        BOOST_TEST(is_connected(g3, connected_kind::weak) == true);
+        BOOST_TEST(is_connected(g3, connected_kind::unilateral) == false);
+        BOOST_TEST(is_connected(g3, connected_kind::strong) == false);
         add_edge(0, 2, g3);
-        BOOST_TEST(is_connected(g3, is_connected_kind::weak) == true);
-        BOOST_TEST(is_connected(g3, is_connected_kind::unilateral) == true);
-        BOOST_TEST(is_connected(g3, is_connected_kind::strong) == false);
+        BOOST_TEST(is_connected(g3, connected_kind::weak) == true);
+        BOOST_TEST(is_connected(g3, connected_kind::unilateral) == true);
+        BOOST_TEST(is_connected(g3, connected_kind::strong) == false);
         add_edge(1, 0, g3);
-        BOOST_TEST(is_connected(g3, is_connected_kind::weak) == true);
-        BOOST_TEST(is_connected(g3, is_connected_kind::unilateral) == true);
-        BOOST_TEST(is_connected(g3, is_connected_kind::strong) == true);
+        BOOST_TEST(is_connected(g3, connected_kind::weak) == true);
+        BOOST_TEST(is_connected(g3, connected_kind::unilateral) == true);
+        BOOST_TEST(is_connected(g3, connected_kind::strong) == true);
 
         // Test the usage of the old interface with ColorMap as the second arg.
         // This causes static assertion. I don't see a way to test for it, so
         // it's commented out.
         // BOOST_TEST(is_connected(g3, two_bit_color_map<>(0)) == false);
+
+        // Test that connected_kind is required for directed graph.
+        // This causes static assertion to fail as well.
+        // BOOST_TEST(is_connected(g3) == false);
+    }
+
+    {
+        // check that we don't need the vertex_index
+        typedef adjacency_list< listS, listS, bidirectionalS > bidir_graph_t;
+        
     }
 
     /*
@@ -172,38 +181,38 @@ int main(int argc, char* argv[])
         bidir_graph_t g(size * size);
         fill_square_graph(g, size);
 
-        BOOST_TEST(is_connected(g, is_connected_kind::weak) == true);
+        BOOST_TEST(is_connected(g, connected_kind::weak) == true);
         BOOST_TEST(is_weakly_connected(g) == true);
 
-        BOOST_TEST(is_connected(g, is_connected_kind::strong) == false);
+        BOOST_TEST(is_connected(g, connected_kind::strong) == false);
         BOOST_TEST(is_strongly_connected(g) == false);
 
-        BOOST_TEST(is_connected(g, is_connected_kind::unilateral) == false);
+        BOOST_TEST(is_connected(g, connected_kind::unilateral) == false);
         BOOST_TEST(is_unilaterally_connected(g) == false);
 
         bidir_graph_t g2(2);
-        BOOST_TEST(is_connected(g2, is_connected_kind::weak) == false);
+        BOOST_TEST(is_connected(g2, connected_kind::weak) == false);
         BOOST_TEST(is_weakly_connected(g2) == false);
-        BOOST_TEST(is_connected(g2, is_connected_kind::strong) == false);
+        BOOST_TEST(is_connected(g2, connected_kind::strong) == false);
         BOOST_TEST(is_strongly_connected(g2) == false);
-        BOOST_TEST(is_connected(g2, is_connected_kind::unilateral) == false);
+        BOOST_TEST(is_connected(g2, connected_kind::unilateral) == false);
         BOOST_TEST(is_unilaterally_connected(g2) == false);
 
         add_edge(0, 1, g2);
-        BOOST_TEST(is_connected(g2, is_connected_kind::weak) == true);
+        BOOST_TEST(is_connected(g2, connected_kind::weak) == true);
         BOOST_TEST(is_weakly_connected(g2) == true);
-        BOOST_TEST(is_connected(g2, is_connected_kind::strong) == false);
+        BOOST_TEST(is_connected(g2, connected_kind::strong) == false);
         BOOST_TEST(is_strongly_connected(g2) == false);
-        BOOST_TEST(is_connected(g2, is_connected_kind::unilateral) == true);
+        BOOST_TEST(is_connected(g2, connected_kind::unilateral) == true);
         BOOST_TEST(is_unilaterally_connected(g2) == true);
 
         bidir_graph_t g3(3);
-        BOOST_TEST(is_connected(g3, is_connected_kind::unilateral) == false);
+        BOOST_TEST(is_connected(g3, connected_kind::unilateral) == false);
         add_edge(0, 1, g3);
         add_edge(2, 1, g3);
-        BOOST_TEST(is_connected(g3, is_connected_kind::unilateral) == false);
+        BOOST_TEST(is_connected(g3, connected_kind::unilateral) == false);
         add_edge(0, 2, g3);
-        BOOST_TEST(is_connected(g3, is_connected_kind::unilateral) == true);
+        BOOST_TEST(is_connected(g3, connected_kind::unilateral) == true);
     }
     */
 

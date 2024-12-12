@@ -11,17 +11,18 @@
 namespace boost
 {
 
-struct is_connected_kind {
+struct connected_kind {
     enum weak_t { weak };
     enum unilateral_t { unilateral };
     enum strong_t { strong };
+    enum unspecified_t { unspecified };
 };
 
 // used for static assert below
 BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_value_type_ic, value_type, false)
 
-template < typename Graph, typename ConnectedKind = is_connected_kind::strong_t >
-inline bool is_connected(const Graph& g, ConnectedKind kind = is_connected_kind::strong)
+template < typename Graph, typename ConnectedKind = connected_kind::unspecified_t >
+inline bool is_connected(const Graph& g, ConnectedKind kind = connected_kind::unspecified)
 {
     // Issue error message if these functions are called with a ColorMap.
     // This is to gracefully handle possible old usages of is_connected.
@@ -29,10 +30,16 @@ inline bool is_connected(const Graph& g, ConnectedKind kind = is_connected_kind:
     BOOST_STATIC_ASSERT_MSG(
         (mpl::not_< has_value_type_ic< ConnectedKind > >::value),
         "ColorMap argument to is_connected is deprecated. Omit the second "
-        "argument to preserve the old behavior or use it to specify the "
-        "connection kind (for directed graph).");
+        "argument for undirected graphs or specify connected_kind::strong "
+        "to preserve the old behavior.");
 
     typedef typename graph_traits< Graph >::directed_category Cat;
+    BOOST_STATIC_ASSERT_MSG(
+        (mpl::not_< mpl::and_ <
+                is_same < ConnectedKind, connected_kind::unspecified_t >,
+                is_convertible<Cat, directed_tag > > >::value),
+        "connected_kind must be specified for directed graphs");
+
     return is_connected_dispatch(g, Cat(), kind);
 }
 
@@ -76,7 +83,7 @@ inline bool is_connected_undirected(const IncidenceGraph& g,
 // Directed graph, strongly connected
 template < typename IncidenceGraph >
 inline bool is_connected_dispatch(const IncidenceGraph& g, directed_tag,
-                                  is_connected_kind::strong_t)
+                                  connected_kind::strong_t)
 {
     return is_strongly_connected(g);
 }
@@ -88,9 +95,6 @@ inline bool is_strongly_connected(const Graph& g)
     // are in a sinlge stronly connected component
 
     BOOST_CONCEPT_ASSERT((IncidenceGraphConcept< Graph >));
-    // adj_list is not VertexIndexGraph due to missing renumber_vertex_indices
-    // This requirement should probably be dropped from the concept
-    // BOOST_CONCEPT_ASSERT((VertexIndexGraphConcept< Graph >));
     BOOST_CONCEPT_ASSERT((boost::Convertible<
         typename boost::graph_traits< Graph >::directed_category,
         boost::directed_tag >));
@@ -106,7 +110,7 @@ inline bool is_strongly_connected(const Graph& g)
 // Directed graph, weakly connected
 template < typename IncidenceGraph >
 inline bool is_connected_dispatch(const IncidenceGraph& g, directed_tag,
-                                  is_connected_kind::weak_t)
+                                  connected_kind::weak_t)
 {
     return is_weakly_connected(g);
 }
@@ -154,7 +158,7 @@ inline bool is_weakly_connected(const BidirectionalGraph& g, VertexColorMap colo
 // Directed graph, unilaterally connected
 template < typename IncidenceGraph >
 inline bool is_connected_dispatch(const IncidenceGraph& g, directed_tag,
-                                  is_connected_kind::unilateral_t)
+                                  connected_kind::unilateral_t)
 {
     return is_unilaterally_connected(g);
 }
@@ -174,6 +178,7 @@ namespace detail {
             result = true;
         }
 
+        // Check that each finished vertex has an arrow to the last finished one
         template < typename Vertex, typename G >
         void finish_vertex(const Vertex& u, const G& g)
         {
@@ -212,6 +217,7 @@ inline bool is_unilaterally_connected(const Graph& g)
 {
     // A directed graph is unilaterally connected if and only if its
     // condensation graph is in unique topological order.
+    // Warning: condensation might be slow and consume 2x memory for the graph.
 
     BOOST_CONCEPT_ASSERT((IncidenceGraphConcept< Graph >));
     // See comment about renumber_vertex_indices above
@@ -220,11 +226,13 @@ inline bool is_unilaterally_connected(const Graph& g)
         typename boost::graph_traits< Graph >::directed_category,
         boost::directed_tag >));
 
-    typedef typename graph_traits< Graph >::vertices_size_type vertex_index_t;
     // Run the Tarjan's SCC algorithm
-    std::vector< vertex_index_t > comp_number(num_vertices(g));
-    vertex_index_t num_scc = strong_components(
+    std::vector< size_t > comp_number(num_vertices(g));
+    size_t num_scc = strong_components(
         g, make_iterator_property_map(comp_number.begin(), get(vertex_index, g)));
+    if (num_scc == 1) // strongly connected case
+        return true;
+
     // Build the condensation graph
     adjacency_list<> c;
     std::vector< std::vector< typename graph_traits< Graph >::vertices_size_type > > components;
