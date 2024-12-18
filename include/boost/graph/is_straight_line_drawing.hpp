@@ -16,75 +16,16 @@
 #include <boost/graph/properties.hpp>
 #include <boost/graph/planar_detail/bucket_sort.hpp>
 
+#include <boost/geometry/algorithms/crosses.hpp>
+#include <boost/geometry/geometries/linestring.hpp>
+
 #include <algorithm>
 #include <vector>
-#include <set>
 #include <map>
 
 namespace boost
 {
 
-// Return true exactly when the line segments s1 = ((x1,y1), (x2,y2)) and
-// s2 = ((a1,b1), (a2,b2)) intersect in a point other than the endpoints of
-// the line segments. The one exception to this rule is when s1 = s2, in
-// which case false is returned - this is to accomodate multiple edges
-// between the same pair of vertices, which shouldn't invalidate the straight
-// line embedding. A tolerance variable epsilon can also be used, which
-// defines how far away from the endpoints of s1 and s2 we want to consider
-// an intersection.
-
-inline bool intersects(double x1, double y1, double x2, double y2, double a1,
-    double b1, double a2, double b2, double epsilon = 0.000001)
-{
-
-    if (x1 - x2 == 0)
-    {
-        std::swap(x1, a1);
-        std::swap(y1, b1);
-        std::swap(x2, a2);
-        std::swap(y2, b2);
-    }
-
-    if (x1 - x2 == 0)
-    {
-        BOOST_USING_STD_MAX();
-        BOOST_USING_STD_MIN();
-
-        // two vertical line segments
-        double min_y = min BOOST_PREVENT_MACRO_SUBSTITUTION(y1, y2);
-        double max_y = max BOOST_PREVENT_MACRO_SUBSTITUTION(y1, y2);
-        double min_b = min BOOST_PREVENT_MACRO_SUBSTITUTION(b1, b2);
-        double max_b = max BOOST_PREVENT_MACRO_SUBSTITUTION(b1, b2);
-        if ((max_y > max_b && max_b > min_y)
-            || (max_b > max_y && max_y > min_b))
-            return true;
-        else
-            return false;
-    }
-
-    double x_diff = x1 - x2;
-    double y_diff = y1 - y2;
-    double a_diff = a2 - a1;
-    double b_diff = b2 - b1;
-
-    double beta_denominator = b_diff - (y_diff / ((double)x_diff)) * a_diff;
-
-    if (beta_denominator == 0)
-    {
-        // parallel lines
-        return false;
-    }
-
-    double beta = (b2 - y2 - (y_diff / ((double)x_diff)) * (a2 - x2))
-        / beta_denominator;
-    double alpha = (a2 - x2 - beta * (a_diff)) / x_diff;
-
-    double upper_bound = 1 - epsilon;
-    double lower_bound = 0 + epsilon;
-
-    return (beta < upper_bound && beta > lower_bound && alpha < upper_bound
-        && alpha > lower_bound);
-}
 
 template < typename Graph, typename GridPositionMap, typename VertexIndexMap >
 bool is_straight_line_drawing(
@@ -152,6 +93,10 @@ bool is_straight_line_drawing(
         }
         else
         {
+            using geometry::crosses;
+            using geometry::model::linestring;
+            using geometry::model::d2::point_xy;
+
             active_map_iterator_t before, after;
             if (a_itr == active_edges.begin())
                 before = active_edges.end();
@@ -168,10 +113,12 @@ bool is_straight_line_drawing(
                 vertex_t f_source(source(f, g));
                 vertex_t f_target(target(f, g));
 
-                if (intersects(drawing[e_source].x, drawing[e_source].y,
-                        drawing[e_target].x, drawing[e_target].y,
-                        drawing[f_source].x, drawing[f_source].y,
-                        drawing[f_target].x, drawing[f_target].y))
+                linestring<point_xy<double>> source{{drawing[e_source].x, drawing[e_source].y},
+                                                    {drawing[e_target].x, drawing[e_target].y}};
+                linestring<point_xy<double>> target{{drawing[f_source].x, drawing[f_source].y},
+                                                    {drawing[f_target].x, drawing[f_target].y}};
+
+                if (crosses(source, target))
                     return false;
             }
 
@@ -184,10 +131,12 @@ bool is_straight_line_drawing(
                 vertex_t f_source(source(f, g));
                 vertex_t f_target(target(f, g));
 
-                if (intersects(drawing[e_source].x, drawing[e_source].y,
-                        drawing[e_target].x, drawing[e_target].y,
-                        drawing[f_source].x, drawing[f_source].y,
-                        drawing[f_target].x, drawing[f_target].y))
+                linestring<point_xy<double>> source{{drawing[e_source].x, drawing[e_source].y},
+                                                    {drawing[e_target].x, drawing[e_target].y}};
+                linestring<point_xy<double>> target{{drawing[f_source].x, drawing[f_source].y},
+                                                    {drawing[f_target].x, drawing[f_target].y}};
+
+                if (crosses(source, target))
                     return false;
             }
 
