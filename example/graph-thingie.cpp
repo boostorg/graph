@@ -14,6 +14,7 @@
 #include <boost/foreach.hpp>
 #include <string>
 #include <sstream>
+#include <cstdlib>
 
 using namespace boost;
 using namespace std;
@@ -104,5 +105,5 @@ int main()
              << get("label", dp, v) << ")\n";
     }
 
-    return 0;
+    return status ? EXIT_SUCCESS : EXIT_FAILURE;
 }
