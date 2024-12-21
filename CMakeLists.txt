@@ -29,7 +29,6 @@ target_link_libraries(boost_graph
     Boost::conversion
     Boost::core
     Boost::detail
-    Boost::foreach
     Boost::function
     Boost::integer
     Boost::iterator

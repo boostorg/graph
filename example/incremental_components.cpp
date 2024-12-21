@@ -10,7 +10,6 @@
 #include <iostream>
 #include <vector>
 
-#include <boost/foreach.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_utility.hpp>
 #include <boost/graph/incremental_components.hpp>
@@ -86,7 +85,7 @@ int main(int argc, char* argv[])
     print_graph(graph, get(boost::vertex_index, graph));
     std::cout << std::endl;
 
-    BOOST_FOREACH (Vertex current_vertex, vertices(graph))
+    for (Vertex current_vertex: vertices(graph))
     {
         std::cout << "representative[" << current_vertex
                   << "] = " << ds.find_set(current_vertex) << std::endl;
@@ -103,12 +102,12 @@ int main(int argc, char* argv[])
     Components components(parent.begin(), parent.end());
 
     // Iterate through the component indices
-    BOOST_FOREACH (VertexIndex current_index, components)
+    for (VertexIndex current_index: components)
     {
         std::cout << "component " << current_index << " contains: ";
 
         // Iterate through the child vertex indices for [current_index]
-        BOOST_FOREACH (VertexIndex child_index, components[current_index])
+        for (VertexIndex child_index: components[current_index])
         {
             std::cout << child_index << " ";
         }
