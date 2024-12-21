@@ -133,8 +133,8 @@ namespace hawick_circuits_detail
         // documented above.
         bool blocked_map_starts_all_unblocked() const
         {
-            for (Vertex v: vertices(graph_))
-                if (is_blocked(v))
+            for (auto it = vertices(graph_).first; it != vertices(graph_).second; ++it)
+                if (is_blocked(*it))
                     return false;
             return true;
         }
