@@ -11,6 +11,7 @@
 
 #include <boost/graph/graphviz.hpp>
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/foreach.hpp>
 #include <string>
 #include <sstream>
 #include <cstdlib>
@@ -98,7 +99,7 @@ int main()
     cout << "graph " << get("name", dp, &graph) << " ("
          << get("identifier", dp, &graph) << ")\n\n";
 
-    for (graph_t::vertex_descriptor v: vertices(graph))
+    BOOST_FOREACH (graph_t::vertex_descriptor v, vertices(graph))
     {
         cout << "vertex " << get("node_id", dp, v) << " ("
              << get("label", dp, v) << ")\n";
