@@ -19,6 +19,8 @@
 #include <boost/geometry/algorithms/crosses.hpp>
 #include <boost/geometry/geometries/linestring.hpp>
 
+#include <boost/numeric/conversion/cast.hpp>
+
 #include <algorithm>
 #include <vector>
 #include <map>
@@ -113,10 +115,14 @@ bool is_straight_line_drawing(
                 vertex_t f_source(source(f, g));
                 vertex_t f_target(target(f, g));
 
-                linestring<point_xy<double>> source{{drawing[e_source].x, drawing[e_source].y},
-                                                    {drawing[e_target].x, drawing[e_target].y}};
-                linestring<point_xy<double>> target{{drawing[f_source].x, drawing[f_source].y},
-                                                    {drawing[f_target].x, drawing[f_target].y}};
+                linestring<point_xy<double>> source{{numeric_cast<double>(drawing[e_source].x),
+                                                     numeric_cast<double>(drawing[e_source].y)},
+                                                    {numeric_cast<double>(drawing[e_target].x),
+                                                     numeric_cast<double>(drawing[e_target].y)}};
+                linestring<point_xy<double>> target{{numeric_cast<double>(drawing[f_source].x),
+                                                     numeric_cast<double>(drawing[f_source].y)},
+                                                    {numeric_cast<double>(drawing[f_target].x),
+                                                     numeric_cast<double>(drawing[f_target].y)}};
 
                 if (crosses(source, target))
                     return false;
@@ -131,10 +137,14 @@ bool is_straight_line_drawing(
                 vertex_t f_source(source(f, g));
                 vertex_t f_target(target(f, g));
 
-                linestring<point_xy<double>> source{{drawing[e_source].x, drawing[e_source].y},
-                                                    {drawing[e_target].x, drawing[e_target].y}};
-                linestring<point_xy<double>> target{{drawing[f_source].x, drawing[f_source].y},
-                                                    {drawing[f_target].x, drawing[f_target].y}};
+                linestring<point_xy<double>> source{{numeric_cast<double>(drawing[e_source].x),
+                                                     numeric_cast<double>(drawing[e_source].y)},
+                                                    {numeric_cast<double>(drawing[e_target].x),
+                                                     numeric_cast<double>(drawing[e_target].y)}};
+                linestring<point_xy<double>> target{{numeric_cast<double>(drawing[f_source].x),
+                                                     numeric_cast<double>(drawing[f_source].y)},
+                                                    {numeric_cast<double>(drawing[f_target].x),
+                                                     numeric_cast<double>(drawing[f_target].y)}};
 
                 if (crosses(source, target))
                     return false;
