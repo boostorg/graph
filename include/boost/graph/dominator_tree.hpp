@@ -78,14 +78,6 @@ namespace detail
 
         typedef typename graph_traits< Graph >::vertex_descriptor Vertex;
 
-        void set_ancestor(const preds& pr) { ancestor = pr.ancestor; }
-
-        void set_ancestor(const Vertex& v) { ancestor = v; }
-
-        void set_best(const Vertex& v) { best = v; }
-
-        void set_semi(const Vertex& v) { semi = v; }
-
         Vertex semi, ancestor, best;
     };
 
@@ -162,13 +154,13 @@ namespace detail
                     s = s2;
             }
             preds< Graph >& preds_of_n = get(predsMap_, n);
-            preds_of_n.set_semi(s);
+            preds_of_n.semi = s;
 
             // 2. Calculation of n's dominator is deferred until
             // the path from s to n has been linked into the forest
             get(bucketMap_, s).push_back(n);
-            preds_of_n.set_ancestor(p);
-            preds_of_n.set_best(n);
+            preds_of_n.ancestor = p;
+            preds_of_n.best = n;
 
             // 3. Now that the path from p to v has been linked into
             // the spanning forest, these lines calculate the dominator of v,
@@ -212,11 +204,11 @@ namespace detail
                 const Vertex b(ancestor_with_lowest_semi_(a, dfnumMap));
                 const preds< Graph >& preds_of_b = get(predsMap_, b);
 
-                preds_of_v.set_ancestor(preds_of_a);
+                preds_of_v.ancestor = preds_of_a.ancestor;
 
                 if (get(dfnumMap, preds_of_b.semi)
                     < get(dfnumMap, get(predsMap_, preds_of_v.best).semi))
-                    preds_of_v.set_best(b);
+                    preds_of_v.best = b;
             }
 
             return preds_of_v.best;
