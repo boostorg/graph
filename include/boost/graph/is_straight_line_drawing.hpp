@@ -18,6 +18,7 @@
 
 #include <boost/geometry/algorithms/crosses.hpp>
 #include <boost/geometry/geometries/linestring.hpp>
+#include <boost/geometry/core/coordinate_type.hpp>
 
 #include <boost/numeric/conversion/cast.hpp>
 
@@ -27,7 +28,33 @@
 
 namespace boost
 {
+// Overload of make from Boost.Geometry.
+template<typename Geometry, typename Graph, typename GridPositionMap>
+Geometry make(typename graph_traits<Graph>::edge_descriptor e,
+              Graph const &g,
+              GridPositionMap const &drawing)
+{
+    auto e_source(source(e, g));
+    auto e_target(target(e, g));
+    using Float = typename geometry::coordinate_type<Geometry>::type;
+    return {{numeric_cast<Float>(drawing[e_source].x), numeric_cast<Float>(drawing[e_source].y)},
+            {numeric_cast<Float>(drawing[e_target].x), numeric_cast<Float>(drawing[e_target].y)}};
+}
 
+// Overload of crosses from Boost.Geometry.
+template<typename Graph, typename GridPositionMap>
+bool crosses(typename graph_traits<Graph>::edge_descriptor e,
+             typename graph_traits<Graph>::edge_descriptor f,
+             Graph const &g,
+             GridPositionMap const &drawing)
+{
+    using geometry::crosses;
+    using geometry::model::linestring;
+    using geometry::model::d2::point_xy;
+    using linestring2d = geometry::model::linestring<geometry::model::d2::point_xy<double>>;
+    return crosses(make<linestring2d>(e, g, drawing),
+                   make<linestring2d>(f, g, drawing));
+}
 
 template < typename Graph, typename GridPositionMap, typename VertexIndexMap >
 bool is_straight_line_drawing(
@@ -95,10 +122,6 @@ bool is_straight_line_drawing(
         }
         else
         {
-            using geometry::crosses;
-            using geometry::model::linestring;
-            using geometry::model::d2::point_xy;
-
             active_map_iterator_t before, after;
             if (a_itr == active_edges.begin())
                 before = active_edges.end();
@@ -108,45 +131,15 @@ bool is_straight_line_drawing(
 
             if (before != active_edges.end())
             {
-
                 edge_t f = before->second;
-                vertex_t e_source(source(e, g));
-                vertex_t e_target(target(e, g));
-                vertex_t f_source(source(f, g));
-                vertex_t f_target(target(f, g));
-
-                linestring<point_xy<double>> source{{numeric_cast<double>(drawing[e_source].x),
-                                                     numeric_cast<double>(drawing[e_source].y)},
-                                                    {numeric_cast<double>(drawing[e_target].x),
-                                                     numeric_cast<double>(drawing[e_target].y)}};
-                linestring<point_xy<double>> target{{numeric_cast<double>(drawing[f_source].x),
-                                                     numeric_cast<double>(drawing[f_source].y)},
-                                                    {numeric_cast<double>(drawing[f_target].x),
-                                                     numeric_cast<double>(drawing[f_target].y)}};
-
-                if (crosses(source, target))
+                if (crosses(e, f, g, drawing))
                     return false;
             }
 
             if (after != active_edges.end())
             {
-
                 edge_t f = after->second;
-                vertex_t e_source(source(e, g));
-                vertex_t e_target(target(e, g));
-                vertex_t f_source(source(f, g));
-                vertex_t f_target(target(f, g));
-
-                linestring<point_xy<double>> source{{numeric_cast<double>(drawing[e_source].x),
-                                                     numeric_cast<double>(drawing[e_source].y)},
-                                                    {numeric_cast<double>(drawing[e_target].x),
-                                                     numeric_cast<double>(drawing[e_target].y)}};
-                linestring<point_xy<double>> target{{numeric_cast<double>(drawing[f_source].x),
-                                                     numeric_cast<double>(drawing[f_source].y)},
-                                                    {numeric_cast<double>(drawing[f_target].x),
-                                                     numeric_cast<double>(drawing[f_target].y)}};
-
-                if (crosses(source, target))
+                if (crosses(e, f, g, drawing))
                     return false;
             }
 
