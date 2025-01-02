@@ -2,7 +2,7 @@
 # Distributed under the Boost Software License, Version 1.0.
 # https://www.boost.org/LICENSE_1_0.txt
 
-if (BOOST_SUPERPROJECT_VERSION)
+if (NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     # When we're part of the Boost super project.
     cmake_minimum_required(VERSION 3.5...3.16)
     
