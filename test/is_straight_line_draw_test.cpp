@@ -192,5 +192,32 @@ int main(int, char*[])
 
     BOOST_TEST(!is_straight_line_drawing(g, drawing));
 
+
+    // issue #388
+    g.clear();
+    add_edge(0, 1, g);
+    add_edge(2, 0, g);
+    add_edge(1, 2, g);
+
+    struct coord_t { size_t x, y; };
+    std::vector<coord_t> coordinates{
+        {4143438, 86426},
+        {4064945, 7932},
+	{4064944, 7931}
+    };
+/*
+   There is a very small angle between edge 0--1 and edge 2--0 at vertex 0,
+   with slope of edges 78494/78493 != 78495/78494, which cannot be
+   correctly handled by double type function "intersects()" called
+   by "is_straight_line_drawing()":
+
+4143438-4064945 = 78493
+86426-7932 = 78494
+
+4143438-4064944 = 78494
+86426-7931 = 78495
+*/
+    BOOST_TEST(is_straight_line_drawing(g, coordinates.data()));
+
     return boost::report_errors();
 }
