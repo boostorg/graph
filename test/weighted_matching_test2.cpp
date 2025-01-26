@@ -9,15 +9,15 @@
 
 #include <boost/graph/maximum_weighted_matching.hpp>
 
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/adjacency_matrix.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <iostream>
 #include <limits>
 #include <random>
 #include <sstream>
 #include <type_traits>
 #include <vector>
-#include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/adjacency_matrix.hpp>
-#include <boost/core/lightweight_test.hpp>
 
 using namespace boost;
 
