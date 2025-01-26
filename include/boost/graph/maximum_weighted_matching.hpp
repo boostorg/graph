@@ -11,6 +11,14 @@
 #ifndef BOOST_GRAPH_MAXIMUM_WEIGHTED_MATCHING_HPP
 #define BOOST_GRAPH_MAXIMUM_WEIGHTED_MATCHING_HPP
 
+#include <boost/assert.hpp>
+#include <boost/optional.hpp>
+#include <boost/property_map/property_map.hpp>
+#include <boost/range/iterator_range_core.hpp>
+#include <boost/graph/exception.hpp>
+#include <boost/graph/graph_concepts.hpp>
+#include <boost/graph/max_cardinality_matching.hpp>  // for empty_matching
+
 #include <algorithm>
 #include <deque>
 #include <limits>
@@ -20,14 +28,6 @@
 #include <tuple>  // for std::tie
 #include <utility>  // for std::pair, std::swap
 #include <vector>
-
-#include <boost/assert.hpp>
-#include <boost/optional.hpp>
-#include <boost/property_map/property_map.hpp>
-#include <boost/range/iterator_range_core.hpp>
-#include <boost/graph/exception.hpp>
-#include <boost/graph/graph_concepts.hpp>
-#include <boost/graph/max_cardinality_matching.hpp>  // for empty_matching
 
 namespace boost
 {
