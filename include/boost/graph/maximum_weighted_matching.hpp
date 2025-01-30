@@ -24,7 +24,6 @@
 #include <limits>
 #include <list>
 #include <stack>
-#include <stdexcept>
 #include <tuple>  // for std::tie
 #include <utility>  // for std::pair, std::swap
 #include <vector>
@@ -1405,235 +1404,6 @@ struct maximum_weighted_matching_context
         for (vertex_t x : make_iterator_range(vertices(g)))
             put(mate, x, vertex_mate[x]);
     }
-
-    /** Check that the array "vertex_mate" is consistent. */
-    bool verify_vertex_mate()
-    {
-        vertices_size_t num_matched_vertex = 0;
-        for (vertex_t x : make_iterator_range(vertices(g)))
-        {
-            vertex_t y = vertex_mate[x];
-            if (y != null_vertex)
-            {
-                ++num_matched_vertex;
-                if (vertex_mate[y] != x)
-                    return false;
-            }
-        }
-
-        edges_size_t num_matched_edge = 0;
-        for (const edge_t& e : make_iterator_range(edges(g)))
-        {
-            if (vertex_mate[source(e, g)] == target(e, g))
-                ++num_matched_edge;
-        }
-
-        return num_matched_vertex == 2 * num_matched_edge;
-    }
-
-    /**
-     * Verify that vertex dual variables are non-negative,
-     * and all unmatched vertices have zero dual.
-     */
-    bool verify_vertex_duals()
-    {
-        for (vertex_t x : make_iterator_range(vertices(g)))
-        {
-            if (vertex_dual[x] < 0)
-                return false;
-            if ((vertex_mate[x] == null_vertex) && (vertex_dual[x] != 0))
-                return false;
-        }
-        return true;
-    }
-
-    /** Verify that blossom dual variables are non-negative. */
-    bool verify_blossom_duals()
-    {
-        for (const nontrivial_blossom_t& blossom : nontrivial_blossom)
-        {
-            if (blossom.dual_var < 0)
-                return false;
-        }
-        return true;
-    }
-
-    /** Verify slack of edges between trivial blossoms. */
-    bool verify_trivial_blossom_edges()
-    {
-        for (const edge_t& e : make_iterator_range(edges(g)))
-        {
-            vertex_t x = source(e, g);
-            vertex_t y = target(e, g);
-            if ((! trivial_blossom[x].parent) && (! trivial_blossom[y].parent))
-            {
-                weight_t w = weight_factor * get(edge_weights, e);
-                weight_t dual_sum = vertex_dual[x] + vertex_dual[y];
-                // Edge slack must be non-negative.
-                if (w > dual_sum)
-                    return false;
-                // Matched edges must have slack zero.
-                if ((vertex_mate[x] == y) && (w != dual_sum))
-                    return false;
-            }
-        }
-        return true;
-    }
-
-    /** Verify one top-level blossom and its edges. */
-    bool verify_blossom(const nontrivial_blossom_t* blossom)
-    {
-        // This function recursively descends down the blossom structure.
-        // It checks the number of matched edges in every sub-blossom.
-        // It also checks the slack of edges contained in this blossom
-        // and of edges incident on this blossom.
-
-        // For each vertex, deepest level on current recursion path
-        // that contains the vertex.
-        vertex_map< vertices_size_t > vertex_depth(num_vertices(g), vm);
-
-        // At each recursion depth, sum of duals of containing blossoms.
-        std::vector< weight_t > path_sum_dual = {0};
-
-        // At each recursion depth, number of internally matched vertices.
-        std::vector< vertices_size_t > path_num_matched = {0};
-
-        // Use an explicit stack to avoid deep call chains.
-        using sub_blossom_iterator = typename std::list<
-            typename nontrivial_blossom_t::sub_blossom_t >::const_iterator;
-        std::stack< std::pair<
-            const nontrivial_blossom_t*, sub_blossom_iterator > > stack;
-
-        stack.emplace(blossom, blossom->subblossoms.cbegin());
-        while (! stack.empty())
-        {
-            vertices_size_t depth = stack.size();
-            blossom = stack.top().first;
-            auto subblossom_it = stack.top().second;
-
-            if (subblossom_it == blossom->subblossoms.cbegin())
-            {
-                // Entering a new (sub)-blossom.
-                if (blossom->subblossoms.size() < 3) {
-                    return false;
-                }
-
-                // Update the depth of vertices in this sub-blossom.
-                for_vertices_in_blossom(blossom,
-                    [&vertex_depth,depth](vertex_t x) {
-                        vertex_depth[x] = depth;
-                    });
-
-                // Calculate the sum of blossom duals at the new depth.
-                path_sum_dual.push_back(
-                    path_sum_dual.back() + blossom->dual_var);
-
-                // Initialize the number of matched edges at the new depth.
-                path_num_matched.push_back(0);
-            }
-
-            if (subblossom_it != blossom->subblossoms.cend())
-            {
-                // Update the sub-blossom pointer at the current depth.
-                ++(stack.top().second);
-
-                // Examine a sub-blossom.
-                blossom_t* b = subblossom_it->blossom;
-                BOOST_ASSERT(b->parent == blossom);
-                nontrivial_blossom_t* ntb = b->nontrivial();
-                if (ntb)
-                {
-                    // Prepare to descend into the sub-blossom.
-                    stack.emplace(ntb, ntb->subblossoms.cbegin());
-                }
-                else
-                {
-                    // Handle single vertex.
-                    vertex_t x = b->base_vertex;
-                    for (const edge_t& e : make_iterator_range(out_edges(x, g)))
-                    {
-                        BOOST_ASSERT(source(e, g) == x);
-                        vertex_t y = target(e, g);
-                        // Find the smallest blossom that contains this edge.
-                        vertices_size_t edge_depth = vertex_depth[y];
-                        // Verify edge slack.
-                        weight_t w = weight_factor * get(edge_weights, e);
-                        weight_t dual_sum = vertex_dual[x] + vertex_dual[y]
-                            + path_sum_dual[edge_depth];
-                        // Edge slack must be non-negative.
-                        if (w > dual_sum)
-                            return false;
-                        // Matched edges must have slack zero.
-                        if ((vertex_mate[x] == y) && (w != dual_sum))
-                            return false;
-                        // Update number of internally matched vertices.
-                        if ((vertex_mate[x] == y) && (edge_depth > 0))
-                            path_num_matched[edge_depth] += 1;
-                    }
-                }
-            }
-            else
-            {
-                // Leaving the current (sub)-blossom.
-                // Count the number of vertices inside this blossom.
-                vertices_size_t blossom_num_vertex = 0;
-                for_vertices_in_blossom(blossom,
-                    [&blossom_num_vertex](vertex_t) {
-                        ++blossom_num_vertex;
-                    });
-
-                // Check that the (sub)-blossom is "full".
-                // A blossom is full if all except one of its vertices
-                // are matched to another vertex within the blossom.
-                vertices_size_t blossom_num_matched = path_num_matched[depth];
-                if (blossom_num_vertex != blossom_num_matched + 1)
-                    return false;
-
-                // Update the number of matched edges in the parent blossom.
-                path_num_matched[depth - 1] += path_num_matched[depth];
-
-                // Restore the depth of vertices.
-                for_vertices_in_blossom(blossom,
-                    [&vertex_depth,depth](vertex_t x) {
-                        vertex_depth[x] = depth - 1;
-                    });
-
-                // Remove the blossom from the stack.
-                path_sum_dual.pop_back();
-                path_num_matched.pop_back();
-                stack.pop();
-            }
-        }
-
-        return true;
-    }
-
-    /** Verify blossoms and their edges. */
-    bool verify_blossoms()
-    {
-        // Recursively verify each non-trivial top-level blossom.
-        // This takes total time O(V^2).
-        for (const nontrivial_blossom_t& blossom : nontrivial_blossom)
-        {
-            if (! blossom.parent)
-            {
-                if (! verify_blossom(&blossom))
-                    return false;
-            }
-        }
-        return true;
-    }
-
-    /** Verify that the optimum solution has been found. */
-    bool verify()
-    {
-        return (verify_vertex_mate()
-                && verify_vertex_duals()
-                && verify_blossom_duals()
-                && verify_trivial_blossom_edges()
-                && verify_blossoms());
-        return true;
-    }
 };
 
 } // namespace detail
@@ -1644,11 +1414,6 @@ struct maximum_weighted_matching_context
  *
  * This function takes time O(V^3).
  * This function uses memory size O(V + E).
- *
- * @tparam Verify   True to verify the matching.
- *                  This is only supported for integer edge weights.
- *                  Verification will always succeed unless there is a bug
- *                  in the matching algorithm.
  *
  * @param g         Input graph.
  *                  The graph type must be a model of VertexListGraph
@@ -1670,7 +1435,7 @@ struct maximum_weighted_matching_context
  * @throw boost::bad_graph  If the input graph is not valid.
  */
 template < typename Graph, typename MateMap, typename VertexIndexMap,
-    typename EdgeWeightMap, bool Verify = true >
+    typename EdgeWeightMap >
 void maximum_weighted_matching(
     const Graph& g, MateMap mate, VertexIndexMap vm, EdgeWeightMap weights)
 {
@@ -1695,14 +1460,6 @@ void maximum_weighted_matching(
         Graph, VertexIndexMap, EdgeWeightMap >
         matching(g, vm, weights);
     matching.run();
-
-    typedef typename property_traits< EdgeWeightMap >::value_type weight_t;
-    if (Verify && std::numeric_limits< weight_t >::is_integer)
-    {
-        if (! matching.verify())
-            throw std::logic_error("Incorrect solution.");
-    }
-
     matching.extract_matching(mate);
 }
 

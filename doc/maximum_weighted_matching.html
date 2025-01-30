@@ -21,7 +21,7 @@ void maximum_weighted_matching(const Graph&amp; g, MateMap mate);
 template &lt;typename Graph, typename MateMap, typename VertexIndexMap&gt;
 void maximum_weighted_matching(const Graph&amp; g, MateMap mate, VertexIndexMap vm);
 
-template &lt;typename Graph, typename MateMap, typename VertexIndexMap, typename EdgeWeightMap, bool Verify = true&gt;
+template &lt;typename Graph, typename MateMap, typename VertexIndexMap, typename EdgeWeightMap&gt;
 void maximum_weighted_matching(const Graph&amp; g, MateMap mate, VertexIndexMap vm, EdgeWeightMap weights);
 
 template &lt;typename Graph, typename MateMap&gt;
@@ -119,13 +119,6 @@ This is avoided by storing each row of the array as a list <tt>best_edge_set</tt
 <p>
 If edge weights are integers, the algorithm uses only integer computations.
 This is achieved by internally multiplying edge weights by 2, which ensures that all dual variables are also integers.
-</p>
-
-<p>
-After computing the maximum matching, a verification step may be performed to check that the matching is optimal.
-The verification step is simpler and faster (<i>O(V<sup>2</sup>)</i>) than the search for the matching.
-It always succeeds unless there is a bug in the matching algorithm.
-Since verification checks for exact optimality, it can only be used if edge weights are integers.
 </p>
 
 <p>
