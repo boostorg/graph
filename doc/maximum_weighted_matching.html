@@ -88,7 +88,7 @@ The outline of the algorithm is as follows:
 
 <ol start="0">
 <li>Start with an empty matching and initialize dual variables to half of the maximum edge weight.</li>
-<li>(Labeling) Root an alternate tree at each non-matched vertex, and proceed to construct alternate trees by labeling, using only edges with zero slack value.
+<li>(Labeling) Root a tree at each non-matched vertex, and proceed to construct alternating trees by labeling, using only edges with zero slack value.
 If an augmenting path is found, go to step 2. If a blossom is formed, go to step 3. Otherwise, go to step 4. </li>
 <li>(Augmentation) Find the augmenting path, tracing the path through shrunken blossoms. Augment the matching.
 Deconstruct and unlabel the alternating trees traversed by the augmenting path.
@@ -105,15 +105,39 @@ The implementation deviates from the description in [<a href="bibliography.html#
 </p>
 
 <ul>
-<li>After augmenting the matching, blossoms with zero dual are not expanded right away.
-Expanding such blossoms is correct, but potentially unnecessary.
-If expansion is required, it will eventually happen by assigning label T and going through a zero-delta dual update.</li>
-<li>After augmenting, labels and alternating trees are reused for the next round.
-Labels are erased only from the two alternating trees that are touched by the augmenting path.
-Although this strategy does not change the worst-case time complexity of the algorithm, it appears to provide a significant speedup for random graphs.</li>
-<li>The algorithm keeps track of the minimum-slack edge <i>e<sub>k,l</sub></i> for each pair of blossoms.
-Storing these edges in a 2-dimensional array would increase the space complexity to <i>O(V<sup>2</sup>)</i>.
-This is avoided by storing each row of the array as a list <tt>best_edge_set</tt> that contains only the non-empty elements.</li>
+<li>
+After augmenting the matching, [<a href="bibliography.html#galil86">77</a>] expands all blossoms with zero dual.
+This is correct but potentially unnecessary; some of the expanded blossoms will be recreated during the next stage.
+The implementation holds off on the expansion of such blossoms.
+In any scenario where a blossom <i>must</i> be expanded to make progress, label T will be assigned to it.
+At that point, the blossom will be expanded through a zero-delta dual step.
+The additional cost is <i>O(V)</i> per expanded blossom, and the total number of blossom expansions is <i>O(V<sup>2</sup>)</i>,
+therefore this does not change the overall time complexity of the algorithm.
+</li>
+<li>
+The algorithm records a minimum-slack edge <i>e<sub>k,l</sub></i> for every pair of blossoms <i>B<sub>k</sub>, B<sub>l</sub></i>.
+Storing these edges in a 2-dimensional array would increase the space complexity to <i>O(V<sup>2</sup>)</i>;
+an unfortunate cost for large sparse graphs.
+The implementation of <tt>maximum_weighted_matching</tt> avoids this by maintaining, for each blossom <i>B<sub>k</sub></i>,
+a list <tt>B<sub>k</sub>.best_edge_set</tt> that contains the non-empty elements of <i>e<sub>k,l</sub></i>,
+plus edges between <i>B<sub>k</sub></i> and <i>B<sub>l</sub></i> discovered after shrinking <i>B<sub>k</sub></i>.
+The combined length of these lists is <i>O(E)</i>, since any edge is contained in at most two lists.
+The algorithm only ever examines <i>e<sub>k,l</sub></i> during the process of merging <i>B<sub>k</sub></i> into a larger blossom.
+In that case, it sequentially examines <i>e<sub>k,l</sub></i> for all <i>l</i>, taking time <i>O(V)</i>.
+The implementation handles this by examining every element of <tt>B<sub>k</sub>.best_edge_set</tt>,
+taking time <i>O(V)</i> plus a constant time per newly discovered edge.
+This does not change the overall time complexity of the algorithm.
+</li>
+<li>
+After augmenting, [<a href="bibliography.html#galil86">77</a>] removes all labels and alternating trees.
+This keeps the algorithm simple, but it causes many trees and labels to be rediscovered at the beginning of the new stage.
+To avoid such redundent work, <tt>maximum_weighted_matching</tt> removes labels only from the two alternating trees that are touched by the augmenting path.
+All other labels and trees are reused in the next stage.
+Erasing labels from a subset of the graph, requires updating the data structures that track minimum-slack edges.
+This involves examining all edges that either touch a blossom which loses its label or touch a vertex which depended on a lost label.
+These steps take <i>O(V + E)</i> per stage, adding up to <i>O(V<sup>3</sup>)</i> in total.
+Although this strategy does not improve the worst-case time complexity of the algorithm, it achieves a significant speedup in benchmarks on random graphs.
+</li>
 </ul>
 
 <p>
@@ -122,7 +146,7 @@ This is achieved by internally multiplying edge weights by 2, which ensures that
 </p>
 
 <p>
-In addition, a brute-force implementation <tt>brute_force_maximum_weighted_matching</tt> is provided.
+A brute-force implementation <tt>brute_force_maximum_weighted_matching</tt> is also provided.
 This algorithm simply searches all possible matchings and selects one with the maximum weight sum.
 </p>
 
