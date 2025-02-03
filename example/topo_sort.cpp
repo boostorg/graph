@@ -54,15 +54,14 @@ int main(int, char*[])
     Graph G(edges, edges + 6, 6);
 #endif
 
-    boost::property_map< Graph, vertex_index_t >::type id
-        = get(vertex_index, G);
+    auto id = get(vertex_index, G);
 
     typedef std::vector< Vertex > container;
     container c;
     topological_sort(G, std::back_inserter(c));
 
     std::cout << "A topological ordering: ";
-    for (container::reverse_iterator ii = c.rbegin(); ii != c.rend(); ++ii)
+    for (auto ii = c.rbegin(); ii != c.rend(); ++ii)
         std::cout << id[*ii] << " ";
     std::cout << std::endl;
 

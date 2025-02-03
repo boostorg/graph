@@ -30,21 +30,20 @@ int main()
         property< edge_weight_t, int > >
         Graph;
     Graph g(num_vertices(g_dot));
-    property_map< GraphvizGraph, edge_attribute_t >::type edge_attr_map
-        = get(edge_attribute, g_dot);
+    auto edge_attr_map = get(edge_attribute, g_dot);
     graph_traits< GraphvizGraph >::edge_iterator ei, ei_end;
     for (boost::tie(ei, ei_end) = edges(g_dot); ei != ei_end; ++ei)
     {
-        int weight = lexical_cast< int >(edge_attr_map[*ei]["label"]);
+        auto weight = lexical_cast< int >(edge_attr_map[*ei]["label"]);
         property< edge_weight_t, int > edge_property(weight);
         add_edge(source(*ei, g_dot), target(*ei, g_dot), edge_property, g);
     }
 
     typedef graph_traits< Graph >::vertex_descriptor Vertex;
     std::vector< Vertex > parent(num_vertices(g));
-    property_map< Graph, edge_weight_t >::type weight = get(edge_weight, g);
+    auto weight = get(edge_weight, g);
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
-    property_map< Graph, vertex_index_t >::type indexmap = get(vertex_index, g);
+    auto indexmap = get(vertex_index, g);
     std::vector< std::size_t > distance(num_vertices(g));
     prim_minimum_spanning_tree(g, *vertices(g).first, &parent[0], &distance[0],
         weight, indexmap, default_dijkstra_visitor());

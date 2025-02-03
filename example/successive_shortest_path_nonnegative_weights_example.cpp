@@ -20,7 +20,7 @@ int main()
 
     boost::successive_shortest_path_nonnegative_weights(g, s, t);
 
-    int cost = boost::find_flow_cost(g);
+    auto cost = boost::find_flow_cost(g);
     assert(cost == 29);
 
     return 0;

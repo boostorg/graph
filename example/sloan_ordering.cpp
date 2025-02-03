@@ -106,13 +106,12 @@ int main(int, char*[])
     graph_traits< Graph >::vertex_iterator ui, ui_end;
 
     // Creating a property_map with the degrees of the degrees of each vertex
-    property_map< Graph, vertex_degree_t >::type deg = get(vertex_degree, G);
+    auto deg = get(vertex_degree, G);
     for (boost::tie(ui, ui_end) = vertices(G); ui != ui_end; ++ui)
         deg[*ui] = degree(*ui, G);
 
     // Creating a property_map for the indices of a vertex
-    property_map< Graph, vertex_index_t >::type index_map
-        = get(vertex_index, G);
+    auto index_map = get(vertex_index, G);
 
     std::cout << "original bandwidth: " << bandwidth(G) << std::endl;
     std::cout << "original profile: " << profile(G) << std::endl;
@@ -147,8 +146,7 @@ int main(int, char*[])
         cout << "Sloan ordering starting at: " << s << endl;
         cout << "  ";
 
-        for (std::vector< Vertex >::const_iterator i = sloan_order.begin();
-             i != sloan_order.end(); ++i)
+        for (auto i = sloan_order.begin(); i != sloan_order.end(); ++i)
             cout << index_map[*i] << " ";
         cout << endl;
 
@@ -192,8 +190,7 @@ int main(int, char*[])
 
         cout << endl << "Sloan ordering without a start-vertex:" << endl;
         cout << "  ";
-        for (std::vector< Vertex >::const_iterator i = sloan_order.begin();
-             i != sloan_order.end(); ++i)
+        for (auto i = sloan_order.begin(); i != sloan_order.end(); ++i)
             cout << index_map[*i] << " ";
         cout << endl;
 

@@ -201,8 +201,8 @@ bool maze::solve()
     dist_map distance;
     boost::associative_property_map< dist_map > dist_pmap(distance);
 
-    vertex_descriptor s = source();
-    vertex_descriptor g = goal();
+    auto s = source();
+    auto g = goal();
     euclidean_heuristic heuristic(g);
     astar_goal_visitor visitor(g);
 
@@ -218,7 +218,7 @@ bool maze::solve()
     {
         // Walk backwards from the goal through the predecessor chain adding
         // vertices to the solution path.
-        for (vertex_descriptor u = g; u != s; u = predecessor[u])
+        for (auto u = g; u != s; u = predecessor[u])
             m_solution.insert(u);
         m_solution.insert(s);
         m_solution_length = distance[g];
@@ -285,9 +285,9 @@ std::size_t random_int(std::size_t a, std::size_t b)
 // Generate a maze with a random assignment of barriers.
 void random_maze(maze& m)
 {
-    vertices_size_type n = num_vertices(m.m_grid);
-    vertex_descriptor s = m.source();
-    vertex_descriptor g = m.goal();
+    auto n = num_vertices(m.m_grid);
+    auto s = m.source();
+    auto g = m.goal();
     // One quarter of the cells in the maze should be barriers.
     int barriers = n / 4;
     while (barriers > 0)
@@ -297,7 +297,7 @@ void random_maze(maze& m)
         // Walls range up to one quarter the dimension length in this direction.
         vertices_size_type wall = random_int(1, m.length(direction) / 4);
         // Create the wall while decrementing the total barrier count.
-        vertex_descriptor u = vertex(random_int(0, n - 1), m.m_grid);
+        auto u = vertex(random_int(0, n - 1), m.m_grid);
         while (wall)
         {
             // Start and goal spaces should never be barriers.
@@ -310,7 +310,7 @@ void random_maze(maze& m)
                     barriers--;
                 }
             }
-            vertex_descriptor v = m.m_grid.next(u, direction);
+            auto v = m.m_grid.next(u, direction);
             // Stop creating this wall if we reached the maze's edge.
             if (u == v)
                 break;

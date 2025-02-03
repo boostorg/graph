@@ -81,7 +81,7 @@ int main()
     Size time = 0;
     typedef property_map< graph_t, std::size_t VertexProps::* >::type
         dtime_map_t;
-    dtime_map_t dtime_map = get(&VertexProps::discover_time, g);
+    auto dtime_map = get(&VertexProps::discover_time, g);
     bfs_time_visitor< dtime_map_t > vis(dtime_map, time);
     breadth_first_search(
         g, vertex(s, g), color_map(get(&VertexProps::color, g)).visitor(vis));

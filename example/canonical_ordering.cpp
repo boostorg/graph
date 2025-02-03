@@ -44,7 +44,7 @@ int main(int argc, char** argv)
     add_edge(1, 5, g);
 
     // Initialize the interior edge index
-    property_map< graph, edge_index_t >::type e_index = get(edge_index, g);
+    auto e_index = get(edge_index, g);
     graph_traits< graph >::edges_size_type edge_count = 0;
     graph_traits< graph >::edge_iterator ei, ei_end;
     for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
@@ -69,10 +69,9 @@ int main(int argc, char** argv)
         make_iterator_property_map(embedding.begin(), get(vertex_index, g)),
         std::back_inserter(ordering));
 
-    ordering_storage_t::iterator oi, oi_end;
-    oi_end = ordering.end();
+    auto oi_end = ordering.end();
     std::cout << "The planar canonical ordering is: ";
-    for (oi = ordering.begin(); oi != oi_end; ++oi)
+    for (auto oi = ordering.begin(); oi != oi_end; ++oi)
         std::cout << *oi << " ";
     std::cout << std::endl;
 

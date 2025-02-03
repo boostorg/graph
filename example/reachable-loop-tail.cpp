@@ -56,8 +56,7 @@ int main(int argc, char* argv[])
               << "  node [shape=\"box\"];\n"
               << "  edge [style=\"bold\"];\n";
 
-    property_map< Graph, vertex_attribute_t >::type vattr_map
-        = get(vertex_attribute, g);
+    auto vattr_map = get(vertex_attribute, g);
     graph_traits< GraphvizDigraph >::vertex_iterator i, i_end;
     for (boost::tie(i, i_end) = vertices(g_in); i != i_end; ++i)
     {

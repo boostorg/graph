@@ -32,8 +32,7 @@ void print_vertex_names(const Graph& g, VertexNameMap name_map)
 {
     std::cout << "vertices(g) = { ";
     typedef typename graph_traits< Graph >::vertex_iterator iter_t;
-    for (std::pair< iter_t, iter_t > p = vertices(g); p.first != p.second;
-         ++p.first)
+    for (auto p = vertices(g); p.first != p.second; ++p.first)
     {
         print_vertex_name(*p.first, name_map);
         std::cout << ' ';
@@ -95,9 +94,8 @@ int main()
         graph_t;
     graph_t g;
 
-    property_map< graph_t, vertex_name_t >::type name_map = get(vertex_name, g);
-    property_map< graph_t, edge_weight_t >::type delay_map
-        = get(edge_weight, g);
+    auto name_map = get(vertex_name, g);
+    auto delay_map = get(edge_weight, g);
 
     build_router_network(g, name_map, delay_map);
     print_vertex_names(g, name_map);

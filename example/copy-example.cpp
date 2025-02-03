@@ -30,7 +30,7 @@ int main()
         N
     };
     graph_t G(N);
-    property_map< graph_t, vertex_name_t >::type name_map = get(vertex_name, G);
+    auto name_map = get(vertex_name, G);
     char name = 'a';
     graph_traits< graph_t >::vertex_iterator v, v_end;
     for (boost::tie(v, v_end) = vertices(G); v != v_end; ++v, ++name)

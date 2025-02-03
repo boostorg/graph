@@ -49,14 +49,14 @@ void merge_vertex(typename boost::graph_traits< Graph >::vertex_descriptor u,
          ++out_i)
     {
         e = *out_i;
-        typename Traits::vertex_descriptor targ = target(e, g);
+        auto targ = target(e, g);
         add_edge(u, targ, getp(e), g);
     }
     typename Traits::in_edge_iterator in_i, in_end;
     for (boost::tie(in_i, in_end) = in_edges(v, g); in_i != in_end; ++in_i)
     {
         e = *in_i;
-        typename Traits::vertex_descriptor src = source(e, g);
+        auto src = source(e, g);
         add_edge(src, u, getp(e), g);
     }
     clear_vertex(v, g);
@@ -131,8 +131,8 @@ int main()
     add_edge(3, 4, EdgeProperty('h'), g);
     add_edge(0, 1, EdgeProperty('c'), g);
 
-    property_map< graph_type, vertex_index_t >::type id = get(vertex_index, g);
-    property_map< graph_type, edge_name_t >::type name = get(edge_name, g);
+    auto id = get(vertex_index, g);
+    auto name = get(edge_name, g);
 
     graph_traits< graph_type >::vertex_iterator i, end;
     graph_traits< graph_type >::out_edge_iterator ei, edge_end;

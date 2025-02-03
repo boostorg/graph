@@ -18,9 +18,9 @@ int main(int, char*[])
     Graph g;
 
     // Add vertices
-    boost::graph_traits< Graph >::vertex_descriptor v0 = g.add_vertex();
-    boost::graph_traits< Graph >::vertex_descriptor v1 = g.add_vertex();
-    boost::graph_traits< Graph >::vertex_descriptor v2 = g.add_vertex();
+    auto v0 = g.add_vertex();
+    auto v1 = g.add_vertex();
+    auto v2 = g.add_vertex();
 
     // Add edges
     g.add_edge(v0, v1);

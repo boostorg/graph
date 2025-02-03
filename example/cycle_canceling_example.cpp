@@ -21,7 +21,7 @@ int main()
     boost::edmonds_karp_max_flow(g, s, t);
     boost::cycle_canceling(g);
 
-    int cost = boost::find_flow_cost(g);
+    auto cost = boost::find_flow_cost(g);
     assert(cost == 29);
     return 0;
 }
