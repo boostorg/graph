@@ -22,30 +22,30 @@
 using namespace boost;
 
 
-template < typename WeightType >
+template <typename WeightType>
 using adj_vec_test_graph = adjacency_list<
     vecS,  // OutEdgeList
     vecS,  // VertexList
     undirectedS,  // DirectedS
     no_property,  // VertexProperty (vertex_index is implicit)
-    property< edge_weight_t, WeightType > >;  // EdgeProperty
+    property<edge_weight_t, WeightType>>;  // EdgeProperty
 
-template < typename WeightType >
+template <typename WeightType>
 using adj_list_test_graph = adjacency_list<
     listS,  // OutEdgeList
     listS,  // VertexList
     undirectedS,  // DirectedS
-    property< vertex_index_t, unsigned int >,  // VertexProperty
-    property< edge_weight_t, WeightType > >;  // EdgeProperty
+    property<vertex_index_t, unsigned int>,  // VertexProperty
+    property<edge_weight_t, WeightType>>;  // EdgeProperty
 
-template < typename WeightType >
+template <typename WeightType>
 using adj_matrix_test_graph = adjacency_matrix<
     undirectedS,  // Directed
     no_property,  // VertexProperty (vertex_index is implicit)
-    property< edge_weight_t, WeightType > >;  // EdgeProperty
+    property<edge_weight_t, WeightType>>;  // EdgeProperty
 
 
-template < typename WeightType >
+template <typename WeightType>
 struct edge_info
 {
     unsigned int x, y;
@@ -54,16 +54,16 @@ struct edge_info
 
 
 // Initialize vertex_index if necessary.
-template < typename Graph >
+template <typename Graph>
 struct vertex_index_installer
 {
     static void install(Graph&) {}
 };
 
-template < typename WeightType >
-struct vertex_index_installer< adj_list_test_graph< WeightType > >
+template <typename WeightType>
+struct vertex_index_installer<adj_list_test_graph<WeightType>>
 {
-    static void install(adj_list_test_graph< WeightType >& g)
+    static void install(adj_list_test_graph<WeightType>& g)
     {
         auto vrange = vertices(g);
         unsigned int i = 0;
@@ -73,30 +73,30 @@ struct vertex_index_installer< adj_list_test_graph< WeightType > >
 };
 
 
-template < typename Graph, typename WeightType >
+template <typename Graph, typename WeightType>
 Graph make_graph(
     unsigned int nv,
-    const std::vector< edge_info< WeightType > >& edges_info)
+    const std::vector<edge_info<WeightType>>& edges_info)
 {
-    typedef property< edge_weight_t, WeightType > EdgeProperty;
+    using EdgeProperty = property<edge_weight_t, WeightType>;
     Graph g(nv);
-    vertex_index_installer< Graph >::install(g);
+    vertex_index_installer<Graph>::install(g);
     for (const auto& e : edges_info)
         add_edge(vertex(e.x, g), vertex(e.y, g), EdgeProperty(e.w), g);
     return g;
 }
 
 
-template < typename Graph >
+template <typename Graph>
 using graph_edge_weight_type = typename property_traits<
-    typename property_map< Graph, edge_weight_t >::type >::value_type;
+    typename property_map<Graph, edge_weight_t>::type>::value_type;
 
 
-template < typename Graph, typename MateMap >
-std::pair< graph_edge_weight_type< Graph >, bool >
+template <typename Graph, typename MateMap>
+std::pair<graph_edge_weight_type<Graph>, bool>
 check_matching(const Graph& g, const MateMap& mate)
 {
-    graph_edge_weight_type< Graph > matching_weight = 0;
+    graph_edge_weight_type<Graph> matching_weight = 0;
     unsigned int n_matched_edges = 0;
 
     auto edge_range = edges(g);
@@ -113,7 +113,7 @@ check_matching(const Graph& g, const MateMap& mate)
     auto vertex_range = vertices(g);
     for (auto it = vertex_range.first; it != vertex_range.second; ++it)
     {
-        if (mate[*it] != graph_traits< Graph >::null_vertex())
+        if (mate[*it] != graph_traits<Graph>::null_vertex())
         {
             if (mate[mate[*it]] != *it)
                 return std::make_pair(0, false);
@@ -128,7 +128,7 @@ check_matching(const Graph& g, const MateMap& mate)
 }
 
 
-template < typename Graph >
+template <typename Graph>
 std::string show_graph(const Graph& g)
 {
     std::ostringstream ss;
@@ -146,14 +146,13 @@ std::string show_graph(const Graph& g)
 }
 
 
-template < typename Graph, typename WeightType >
+template <typename Graph, typename WeightType>
 void test_matching(const Graph& g, WeightType answer)
 {
-    typedef typename property_map< Graph, vertex_index_t >::type
-        vertex_index_map_t;
-    typedef vector_property_map<
-        typename graph_traits< Graph>::vertex_descriptor, vertex_index_map_t >
-        mate_t;
+    using vertex_index_map_t =
+        typename property_map<Graph, vertex_index_t>::type;
+    using mate_t = vector_property_map<
+        typename graph_traits<Graph>::vertex_descriptor, vertex_index_map_t>;
 
     mate_t mate(num_vertices(g));
     maximum_weighted_matching(g, mate);
@@ -171,7 +170,7 @@ void test_matching(const Graph& g, WeightType answer)
     else
     {
         bool same_answer;
-        if (std::numeric_limits< WeightType >::is_integer)
+        if (std::numeric_limits<WeightType>::is_integer)
         {
             same_answer = (weight == answer);
         }
@@ -194,26 +193,23 @@ void test_matching(const Graph& g, WeightType answer)
 }
 
 
-template < typename WeightType = long >
+template <typename WeightType = long>
 void run_test_graph(
     unsigned int nv,
-    const std::vector< edge_info< WeightType > >& edges_info,
+    const std::vector<edge_info<WeightType>>& edges_info,
     WeightType answer)
 {
-    typedef adj_vec_test_graph< WeightType > vec_graph_t;
+    using vec_graph_t = adj_vec_test_graph<WeightType>;
     test_matching(
-        make_graph< vec_graph_t, WeightType >(nv, edges_info),
-        answer);
+        make_graph<vec_graph_t, WeightType>(nv, edges_info), answer);
 
-    typedef adj_list_test_graph< WeightType > list_graph_t;
+    using list_graph_t = adj_list_test_graph<WeightType>;
     test_matching(
-        make_graph< list_graph_t, WeightType >(nv, edges_info),
-        answer);
+        make_graph<list_graph_t, WeightType>(nv, edges_info), answer);
 
-    typedef adj_matrix_test_graph< WeightType > matrix_graph_t;
+    using matrix_graph_t = adj_matrix_test_graph<WeightType>;
     test_matching(
-        make_graph< matrix_graph_t, WeightType >(nv, edges_info),
-        answer);
+        make_graph<matrix_graph_t, WeightType>(nv, edges_info), answer);
 }
 
 

@@ -31,16 +31,15 @@
 namespace boost
 {
 
-template < typename Graph, typename MateMap, typename VertexIndexMap >
+template <typename Graph, typename MateMap, typename VertexIndexMap>
 typename property_traits<
-    typename property_map< Graph, edge_weight_t >::type >::value_type
+    typename property_map<Graph, edge_weight_t>::type>::value_type
 matching_weight_sum(const Graph& g, MateMap mate, VertexIndexMap vm)
 {
-    typedef typename graph_traits< Graph >::vertex_iterator vertex_iterator_t;
-    typedef
-        typename graph_traits< Graph >::vertex_descriptor vertex_descriptor_t;
-    typedef typename property_traits< typename property_map< Graph,
-        edge_weight_t >::type >::value_type edge_property_t;
+    using vertex_iterator_t = typename graph_traits<Graph>::vertex_iterator;
+    using vertex_descriptor_t = typename graph_traits<Graph>::vertex_descriptor;
+    using edge_property_t = typename property_traits<
+        typename property_map<Graph, edge_weight_t>::type>::value_type;
 
     edge_property_t weight_sum = 0;
     vertex_iterator_t vi, vi_end;
@@ -48,16 +47,16 @@ matching_weight_sum(const Graph& g, MateMap mate, VertexIndexMap vm)
     for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
     {
         vertex_descriptor_t v = *vi;
-        if (get(mate, v) != graph_traits< Graph >::null_vertex()
+        if (get(mate, v) != graph_traits<Graph>::null_vertex()
             && get(vm, v) < get(vm, get(mate, v)))
             weight_sum += get(edge_weight, g, edge(v, mate[v], g).first);
     }
     return weight_sum;
 }
 
-template < typename Graph, typename MateMap >
+template <typename Graph, typename MateMap>
 inline typename property_traits<
-    typename property_map< Graph, edge_weight_t >::type >::value_type
+    typename property_map<Graph, edge_weight_t>::type>::value_type
 matching_weight_sum(const Graph& g, MateMap mate)
 {
     return matching_weight_sum(g, mate, get(vertex_index, g));
@@ -66,18 +65,17 @@ matching_weight_sum(const Graph& g, MateMap mate)
 // brute-force matcher searches all possible combinations of matched edges to
 // get the maximum weighted matching which can be used for testing on small
 // graphs (within dozens vertices)
-template < typename Graph, typename MateMap, typename VertexIndexMap >
+template <typename Graph, typename MateMap, typename VertexIndexMap>
 class brute_force_matching
 {
 public:
-    typedef
-        typename graph_traits< Graph >::vertex_descriptor vertex_descriptor_t;
-    typedef typename graph_traits< Graph >::vertex_iterator vertex_iterator_t;
-    typedef
-        typename std::vector< vertex_descriptor_t >::iterator vertex_vec_iter_t;
-    typedef typename graph_traits< Graph >::edge_iterator edge_iterator_t;
-    typedef boost::iterator_property_map< vertex_vec_iter_t, VertexIndexMap >
-        vertex_to_vertex_map_t;
+    using vertex_descriptor_t = typename graph_traits<Graph>::vertex_descriptor;
+    using vertex_iterator_t = typename graph_traits<Graph>::vertex_iterator;
+    using vertex_vec_iter_t =
+        typename std::vector<vertex_descriptor_t>::iterator;
+    using edge_iterator_t = typename graph_traits<Graph>::edge_iterator;
+    using vertex_to_vertex_map_t =
+        boost::iterator_property_map<vertex_vec_iter_t, VertexIndexMap>;
 
     brute_force_matching(
         const Graph& arg_g, MateMap arg_mate, VertexIndexMap arg_vm)
@@ -93,7 +91,7 @@ public:
             best_mate[*vi] = mate[*vi] = get(arg_mate, *vi);
     }
 
-    template < typename PropertyMap > void find_matching(PropertyMap pm)
+    template <typename PropertyMap> void find_matching(PropertyMap pm)
     {
         edge_iterator_t ei;
         boost::tie(ei, ei_end) = edges(g);
@@ -107,7 +105,7 @@ public:
 private:
     const Graph& g;
     VertexIndexMap vm;
-    std::vector< vertex_descriptor_t > mate_vector, best_mate_vector;
+    std::vector<vertex_descriptor_t> mate_vector, best_mate_vector;
     vertex_to_vertex_map_t mate, best_mate;
     edge_iterator_t ei_end;
 
@@ -131,28 +129,28 @@ private:
 
         select_edge(++ei);
 
-        if (mate[v] == graph_traits< Graph >::null_vertex()
-            && mate[w] == graph_traits< Graph >::null_vertex())
+        if (mate[v] == graph_traits<Graph>::null_vertex()
+            && mate[w] == graph_traits<Graph>::null_vertex())
         {
             mate[v] = w;
             mate[w] = v;
             select_edge(ei);
-            mate[v] = mate[w] = graph_traits< Graph >::null_vertex();
+            mate[v] = mate[w] = graph_traits<Graph>::null_vertex();
         }
     }
 };
 
-template < typename Graph, typename MateMap, typename VertexIndexMap >
+template <typename Graph, typename MateMap, typename VertexIndexMap>
 void brute_force_maximum_weighted_matching(
     const Graph& g, MateMap mate, VertexIndexMap vm)
 {
-    empty_matching< Graph, MateMap >::find_matching(g, mate);
-    brute_force_matching< Graph, MateMap, VertexIndexMap > brute_force_matcher(
+    empty_matching<Graph, MateMap>::find_matching(g, mate);
+    brute_force_matching<Graph, MateMap, VertexIndexMap> brute_force_matcher(
         g, mate, vm);
     brute_force_matcher.find_matching(mate);
 }
 
-template < typename Graph, typename MateMap >
+template <typename Graph, typename MateMap>
 inline void brute_force_maximum_weighted_matching(const Graph& g, MateMap mate)
 {
     brute_force_maximum_weighted_matching(g, mate, get(vertex_index, g));
@@ -164,11 +162,11 @@ namespace detail
 {
 
 /** Check that vertex indices are unique and in range [0, V). */
-template < typename Graph, typename VertexIndexMap >
+template <typename Graph, typename VertexIndexMap>
 void check_vertex_index_range(const Graph& g, VertexIndexMap vm)
 {
-    typedef typename property_traits< VertexIndexMap >::value_type index_t;
-    typedef typename std::make_unsigned<index_t>::type unsigned_index_t;
+    using index_t = typename property_traits<VertexIndexMap>::value_type;
+    using unsigned_index_t = typename std::make_unsigned<index_t>::type;
     auto nv = num_vertices(g);
     std::vector<bool> got_vertex(nv);
     for (const auto& x : make_iterator_range(vertices(g)))
@@ -183,31 +181,31 @@ void check_vertex_index_range(const Graph& g, VertexIndexMap vm)
 }
 
 /** Check that edge weights are valid. */
-template < typename Graph, typename EdgeWeightMap >
+template <typename Graph, typename EdgeWeightMap>
 void check_maximum_weighted_matching_edge_weights(
     const Graph& g, EdgeWeightMap edge_weights)
 {
     for (const auto& e : make_iterator_range(edges(g)))
     {
         auto w = get(edge_weights, e);
-        auto max_weight = (std::numeric_limits< decltype(w) >::max)() / 4;
+        auto max_weight = (std::numeric_limits<decltype(w)>::max)() / 4;
         if (! (w <= max_weight))  // inverted logic to catch NaN
             throw bad_graph("Edge weight exceeds maximum supported value.");
     }
 }
 
 /** Implementation of the matching algorithm. */
-template < typename Graph, typename VertexIndexMap, typename EdgeWeightMap >
+template <typename Graph, typename VertexIndexMap, typename EdgeWeightMap>
 struct maximum_weighted_matching_context
 {
-    typedef typename graph_traits< Graph >::vertex_descriptor vertex_t;
-    typedef typename graph_traits< Graph >::edge_descriptor edge_t;
-    typedef typename graph_traits< Graph >::vertices_size_type vertices_size_t;
-    typedef typename graph_traits< Graph >::edges_size_type edges_size_t;
-    typedef typename property_traits< EdgeWeightMap >::value_type weight_t;
+    using vertex_t = typename graph_traits<Graph>::vertex_descriptor;
+    using edge_t = typename graph_traits<Graph>::edge_descriptor;
+    using vertices_size_t = typename graph_traits<Graph>::vertices_size_type;
+    using edges_size_t = typename graph_traits<Graph>::edges_size_type;
+    using weight_t = typename property_traits<EdgeWeightMap>::value_type;
 
     /** Ordered pair of vertices. */
-    typedef std::pair< vertex_t, vertex_t > vertex_pair_t;
+    using vertex_pair_t = std::pair<vertex_t, vertex_t>;
 
     /**
      * List of edges forming an alternating path or alternating cycle.
@@ -216,7 +214,7 @@ struct maximum_weighted_matching_context
      * that are internal to blossoms. Vertex pairs are oriented to match the
      * direction of the path.
      */
-    typedef std::deque< vertex_pair_t > alternating_path_t;
+    using alternating_path_t = std::deque<vertex_pair_t>;
 
     /** Top-level blossoms may be labeled "S" or "T" or unlabeled. */
     enum blossom_label_t { LABEL_NONE = 0, LABEL_S = 1, LABEL_T = 2 };
@@ -253,10 +251,10 @@ struct maximum_weighted_matching_context
         vertex_t tree_root;
 
         /** Least-slack edge to a different S-blossom. */
-        optional< edge_t > best_edge;
+        optional<edge_t> best_edge;
 
         /** Initialize a blossom instance. */
-        blossom_t(vertex_t base_vertex = graph_traits< Graph >::null_vertex(),
+        blossom_t(vertex_t base_vertex = graph_traits<Graph>::null_vertex(),
                   bool is_nontrivial_blossom = false)
           : parent(nullptr)
           , base_vertex(base_vertex)
@@ -272,13 +270,13 @@ struct maximum_weighted_matching_context
         {
             // This is much faster than dynamic_cast.
             return (is_nontrivial_blossom ?
-                static_cast< nontrivial_blossom_t* >(this) : nullptr);
+                static_cast<nontrivial_blossom_t*>(this) : nullptr);
         }
 
         const nontrivial_blossom_t* nontrivial() const
         {
             return (is_nontrivial_blossom ?
-                static_cast< const nontrivial_blossom_t* >(this) : nullptr);
+                static_cast<const nontrivial_blossom_t*>(this) : nullptr);
         }
     };
 
@@ -298,18 +296,18 @@ struct maximum_weighted_matching_context
         };
 
         /** List of sub-blossoms, ordered along the alternating cycle. */
-        std::list< sub_blossom_t > subblossoms;
+        std::list<sub_blossom_t> subblossoms;
 
         /** Dual LPP variable for this blossom. */
         weight_t dual_var;
 
         /** Least-slack edges to other S-blossoms. */
-        std::list< edge_t > best_edge_set;
+        std::list<edge_t> best_edge_set;
 
         /** Initialize a non-trivial blossom. */
         nontrivial_blossom_t(
-            const std::vector< blossom_t* >& blossoms,
-            const std::deque< vertex_pair_t >& edges)
+            const std::vector<blossom_t*>& blossoms,
+            const std::deque<vertex_pair_t>& edges)
           : blossom_t(blossoms.front()->base_vertex, true)
           , dual_var(0)
         {
@@ -328,8 +326,7 @@ struct maximum_weighted_matching_context
         }
 
         /** Find the position of the specified subblossom. */
-        std::pair< vertices_size_t,
-                   typename std::list< sub_blossom_t >::iterator >
+        std::pair<vertices_size_t, typename std::list<sub_blossom_t>::iterator>
         find_subblossom(blossom_t* child)
         {
             vertices_size_t pos = 0;
@@ -360,11 +357,11 @@ struct maximum_weighted_matching_context
     };
 
     /** Similar to vector_property_map, but uses a fixed-size vector. */
-    template < typename T >
+    template <typename T>
     struct vertex_map
     {
-        typedef typename property_traits<VertexIndexMap>::key_type key_type;
-        std::vector< T > vec;
+        using key_type = typename property_traits<VertexIndexMap>::key_type;
+        std::vector<T> vec;
         VertexIndexMap vm;
 
         vertex_map(vertices_size_t arg_size, VertexIndexMap arg_vm)
@@ -386,7 +383,7 @@ struct maximum_weighted_matching_context
     /** Keep track of the least-slack edge out of a bunch of edges. */
     struct least_slack_edge_t
     {
-        optional< edge_t > edge;
+        optional<edge_t> edge;
         weight_t slack;
 
         least_slack_edge_t() : slack(0) {}
@@ -403,7 +400,7 @@ struct maximum_weighted_matching_context
 
     /** Scale integer edge weights to enable integer-only calculations. */
     static constexpr weight_t weight_factor =
-        std::numeric_limits< weight_t >::is_integer ? 2 : 1;
+        std::numeric_limits<weight_t>::is_integer ? 2 : 1;
 
     /** Input graph. */
     const Graph& g;
@@ -413,7 +410,7 @@ struct maximum_weighted_matching_context
     const vertex_t null_vertex;
 
     /** Current mate of each vertex. */
-    vertex_map< vertex_t > vertex_mate;
+    vertex_map<vertex_t> vertex_mate;
 
     /**
      * For each vertex, the trivial blossom that contains it.
@@ -422,7 +419,7 @@ struct maximum_weighted_matching_context
      * this data structure, therefore the underlying vector must
      * have a fixed size.
      */
-    vertex_map< blossom_t > trivial_blossom;
+    vertex_map<blossom_t> trivial_blossom;
 
     /**
      * List of non-trivial blossoms.
@@ -430,19 +427,19 @@ struct maximum_weighted_matching_context
      * This must be a linked list to ensure that elements can be added
      * and removed without invalidating pointers to other elements.
      */
-    std::list< nontrivial_blossom_t > nontrivial_blossom;
+    std::list<nontrivial_blossom_t> nontrivial_blossom;
 
     /** For each vertex, the unique top-level blossom that contains it. */
-    vertex_map< blossom_t* > vertex_top_blossom;
+    vertex_map<blossom_t*> vertex_top_blossom;
 
     /** For each vertex, a variable in the dual LPP. */
-    vertex_map< weight_t > vertex_dual;
+    vertex_map<weight_t> vertex_dual;
 
     /** For T-vertex or unlabeled vertex, least-slack edge to any S-vertex. */
-    vertex_map< optional< edge_t > > vertex_best_edge;
+    vertex_map<optional<edge_t>> vertex_best_edge;
 
     /** Queue of S-vertices to be scanned. */
-    std::deque< vertex_t > scan_queue;
+    std::deque<vertex_t> scan_queue;
 
     /** Initialize the matching algorithm. */
     explicit maximum_weighted_matching_context(
@@ -450,7 +447,7 @@ struct maximum_weighted_matching_context
       : g(arg_g)
       , vm(arg_vm)
       , edge_weights(weights)
-      , null_vertex(graph_traits< Graph >::null_vertex())
+      , null_vertex(graph_traits<Graph>::null_vertex())
       , vertex_mate(num_vertices(g), arg_vm)
       , trivial_blossom(num_vertices(g), arg_vm)
       , vertex_top_blossom(num_vertices(g), arg_vm)
@@ -473,14 +470,14 @@ struct maximum_weighted_matching_context
     }
 
     /** Call a function for every vertex inside the specified blossom. */
-    template < typename Func >
+    template <typename Func>
     static void for_vertices_in_blossom(const blossom_t* blossom, Func func)
     {
         const nontrivial_blossom_t* ntb = blossom->nontrivial();
         if (ntb) {
             // Visit all vertices in the non-trivial blossom.
             // Use an explicit stack to avoid deep call chains.
-            std::vector< const nontrivial_blossom_t* > stack;
+            std::vector<const nontrivial_blossom_t*> stack;
             stack.push_back(ntb);
             while (! stack.empty()) {
                 const nontrivial_blossom_t* cur = stack.back();
@@ -581,7 +578,7 @@ struct maximum_weighted_matching_context
     {
         // Build a temporary array holding the least-slack edges to
         // other S-blossoms. The array is indexed by base vertex.
-        std::vector< least_slack_edge_t > tmp_best_edge(num_vertices(g));
+        std::vector<least_slack_edge_t> tmp_best_edge(num_vertices(g));
 
         // Collect edges from sub-blossoms that were S-blossoms.
         for (auto& sub : blossom->subblossoms)
@@ -721,7 +718,7 @@ struct maximum_weighted_matching_context
         BOOST_ASSERT(path.size() >= 3);
 
         // Collect pointers to sub-blossoms.
-        std::vector< blossom_t* > subblossoms;
+        std::vector<blossom_t*> subblossoms;
         subblossoms.reserve(path.size());
         for (const vertex_pair_t& edge : path)
             subblossoms.push_back(vertex_top_blossom[edge.first]);
@@ -838,7 +835,7 @@ struct maximum_weighted_matching_context
 
     void augment_blossom_rec(
         nontrivial_blossom_t* blossom, blossom_t* entry,
-        std::stack< std::pair< nontrivial_blossom_t*, blossom_t* > >& stack)
+        std::stack<std::pair<nontrivial_blossom_t*, blossom_t*>>& stack)
     {
         auto subblossom_loc = blossom->find_subblossom(entry);
         auto entry_pos = subblossom_loc.first;
@@ -900,7 +897,7 @@ struct maximum_weighted_matching_context
     void augment_blossom(nontrivial_blossom_t* blossom, blossom_t* entry)
     {
         // Use an explicit stack to avoid deep call chains.
-        std::stack< std::pair< nontrivial_blossom_t*, blossom_t* > > stack;
+        std::stack<std::pair<nontrivial_blossom_t*, blossom_t*>> stack;
         stack.emplace(blossom, entry);
 
         while (! stack.empty()) {
@@ -962,7 +959,7 @@ struct maximum_weighted_matching_context
      */
     void refresh_scan_queue()
     {
-        std::deque< vertex_t > new_scan_queue;
+        std::deque<vertex_t> new_scan_queue;
         for (const vertex_t& x : scan_queue)
         {
             if (vertex_top_blossom[x]->label == LABEL_S)
@@ -1048,7 +1045,7 @@ struct maximum_weighted_matching_context
     void remove_alternating_tree(vertex_t r1, vertex_t r2)
     {
         // Find blossoms that are part of the specified alternating trees.
-        std::vector< blossom_t* > former_s_blossoms;
+        std::vector<blossom_t*> former_s_blossoms;
         for (vertex_t x : make_iterator_range(vertices(g)))
         {
             blossom_t* b = vertex_top_blossom[x];
@@ -1065,8 +1062,8 @@ struct maximum_weighted_matching_context
             }
         }
 
-        vertex_map< char > blossom_recompute_best_edge(num_vertices(g), vm);
-        vertex_map< char > vertex_recompute_best_edge(num_vertices(g), vm);
+        vertex_map<char> blossom_recompute_best_edge(num_vertices(g), vm);
+        vertex_map<char> vertex_recompute_best_edge(num_vertices(g), vm);
 
         // Visit former S-blossoms.
         for (blossom_t* b : former_s_blossoms)
@@ -1261,7 +1258,7 @@ struct maximum_weighted_matching_context
 
         // Compute delta1: minimum dual variable of any S-vertex.
         delta.kind = 1;
-        delta.value = (std::numeric_limits< weight_t >::max)();
+        delta.value = (std::numeric_limits<weight_t>::max)();
         for (vertex_t x : make_iterator_range(vertices(g)))
         {
             if (vertex_top_blossom[x]->label == LABEL_S)
@@ -1398,7 +1395,7 @@ struct maximum_weighted_matching_context
     }
 
     /** Copy matching to specified map. */
-    template < typename MateMap >
+    template <typename MateMap>
     void extract_matching(MateMap mate)
     {
         for (vertex_t x : make_iterator_range(vertices(g)))
@@ -1434,30 +1431,28 @@ struct maximum_weighted_matching_context
  *
  * @throw boost::bad_graph  If the input graph is not valid.
  */
-template < typename Graph, typename MateMap, typename VertexIndexMap,
-    typename EdgeWeightMap >
+template <typename Graph, typename MateMap, typename VertexIndexMap,
+    typename EdgeWeightMap>
 void maximum_weighted_matching(
     const Graph& g, MateMap mate, VertexIndexMap vm, EdgeWeightMap weights)
 {
-    BOOST_CONCEPT_ASSERT((VertexListGraphConcept< Graph >));
-    BOOST_CONCEPT_ASSERT((EdgeListGraphConcept< Graph >));
-    BOOST_CONCEPT_ASSERT((IncidenceGraphConcept< Graph >));
-    BOOST_STATIC_ASSERT(is_undirected_graph< Graph >::value);
+    BOOST_CONCEPT_ASSERT((VertexListGraphConcept<Graph>));
+    BOOST_CONCEPT_ASSERT((EdgeListGraphConcept<Graph>));
+    BOOST_CONCEPT_ASSERT((IncidenceGraphConcept<Graph>));
+    BOOST_STATIC_ASSERT(is_undirected_graph<Graph>::value);
 
-    typedef typename graph_traits< Graph >::vertex_descriptor vertex_t;
-    typedef typename graph_traits< Graph >::edge_descriptor edge_t;
+    using vertex_t = typename graph_traits<Graph>::vertex_descriptor;
+    using edge_t = typename graph_traits<Graph>::edge_descriptor;
+    BOOST_CONCEPT_ASSERT((ReadWritePropertyMapConcept<MateMap, vertex_t>));
     BOOST_CONCEPT_ASSERT(
-        (ReadWritePropertyMapConcept< MateMap, vertex_t >));
-    BOOST_CONCEPT_ASSERT(
-        (ReadablePropertyMapConcept< VertexIndexMap, vertex_t >));
-    BOOST_CONCEPT_ASSERT(
-        (ReadablePropertyMapConcept< EdgeWeightMap, edge_t >));
+        (ReadablePropertyMapConcept<VertexIndexMap, vertex_t>));
+    BOOST_CONCEPT_ASSERT((ReadablePropertyMapConcept<EdgeWeightMap, edge_t>));
 
     graph::detail::check_vertex_index_range(g, vm);
     graph::detail::check_maximum_weighted_matching_edge_weights(g, weights);
 
     graph::detail::maximum_weighted_matching_context<
-        Graph, VertexIndexMap, EdgeWeightMap >
+        Graph, VertexIndexMap, EdgeWeightMap>
         matching(g, vm, weights);
     matching.run();
     matching.extract_matching(mate);
@@ -1468,7 +1463,7 @@ void maximum_weighted_matching(
  *
  * This overloaded function obtains edge weights from "get(edge_weight, g)".
  */
-template < typename Graph, typename MateMap, typename VertexIndexMap >
+template <typename Graph, typename MateMap, typename VertexIndexMap>
 inline void maximum_weighted_matching(
     const Graph& g, MateMap mate, VertexIndexMap vm)
 {
@@ -1481,7 +1476,7 @@ inline void maximum_weighted_matching(
  * This overloaded function obtains vertex indices from "get(vertex_index, g)"
  * and edge weights from "get(edge_weight, g)".
  */
-template < typename Graph, typename MateMap >
+template <typename Graph, typename MateMap>
 inline void maximum_weighted_matching(const Graph& g, MateMap mate)
 {
     maximum_weighted_matching(g, mate, get(vertex_index, g));
