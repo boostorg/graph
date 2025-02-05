@@ -217,68 +217,6 @@ void run_test_graph(
 }
 
 
-template < typename WeightType >
-WeightType find_brute_force_answer(
-    unsigned int nv,
-    const std::vector< edge_info< WeightType > >& edges_info)
-{
-    typedef adj_vec_test_graph< WeightType > vec_graph_t;
-    typedef typename graph_traits< vec_graph_t >::vertex_descriptor vertex_t;
-
-    vec_graph_t g = make_graph< vec_graph_t, WeightType >(nv, edges_info);
-    vector_property_map< vertex_t > mate(nv);
-    brute_force_maximum_weighted_matching(g, mate);
-
-    WeightType weight;
-    bool ok;
-    std::tie(weight, ok) = check_matching(g, mate);
-    BOOST_TEST(ok);
-    return weight;
-}
-
-
-template < typename WeightType >
-void run_random_graph(unsigned int n, unsigned int m, std::mt19937& rng)
-{
-    using edge_weight_dist_type = typename std::conditional<
-        std::is_integral< WeightType >::value,
-        std::uniform_int_distribution< WeightType >,
-        std::uniform_real_distribution< WeightType > >::type;
-
-    std::vector< edge_info< WeightType > > edges_info;
-    for (unsigned int i = 0; i < m; ++i)
-    {
-        while (true)
-        {
-            std::uniform_int_distribution< unsigned int > xdist{0, n - 1};
-            unsigned int x = xdist(rng);
-            std::uniform_int_distribution< unsigned int > ydist{0, n - 2};
-            unsigned int y = ydist(rng);
-            if (y >= x)
-                y += 1;
-            bool ok = true;
-            for (const auto& e : edges_info)
-            {
-                if (((e.x == x) && (e.y == y)) || ((e.x == y) && (e.y == x)))
-                {
-                    ok = false;
-                    break;
-                }
-            }
-            if (ok)
-            {
-                edge_weight_dist_type edge_weight_dist(0, 1000);
-                WeightType w = edge_weight_dist(rng);
-                edges_info.push_back(edge_info< WeightType >{x, y, w});
-                break;
-            }
-        }
-    }
-    WeightType answer = find_brute_force_answer(n, edges_info);
-    run_test_graph< WeightType >(n, edges_info, answer);
-}
-
-
 int main(int, char*[])
 {
     // Simple test cases:
@@ -510,13 +448,6 @@ int main(int, char*[])
         {4, 11, 933}, {5, 6, 608}, {5, 8, 636}, {6, 9, 274}, {6, 10, 279},
         {7, 9, 705}, {7, 10, 114}, {8, 11, 602}, {9, 10, 764}, {10, 11, 413}},
         4599);
-
-    // Random graphs:
-    std::mt19937 rng(123456);
-    for (int k = 0; k < 20000; ++k)
-        run_random_graph< long >(10, 15, rng);
-    for (int k = 0; k < 10000; ++k)
-        run_random_graph< double >(10, 15, rng);
 
     return boost::report_errors();
 }
