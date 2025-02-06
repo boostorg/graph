@@ -242,7 +242,7 @@ struct maximum_weighted_matching_context
         blossom_label_t label;
 
         /** True if this is an instance of nontrivial_blossom. */
-        const bool is_nontrivial_blossom;
+        bool is_nontrivial_blossom;
 
         /** Edge that attaches this blossom to the alternating tree. */
         vertex_pair_t tree_edge;
@@ -404,10 +404,8 @@ struct maximum_weighted_matching_context
 
     /** Input graph. */
     const Graph* g;
-    const VertexIndexMap vm;
-    const EdgeWeightMap edge_weights;
-
-    const vertex_t null_vertex;
+    VertexIndexMap vm;
+    EdgeWeightMap edge_weights;
 
     /** Current mate of each vertex. */
     vertex_map<vertex_t> vertex_mate;
@@ -447,7 +445,6 @@ struct maximum_weighted_matching_context
       : g(&arg_g)
       , vm(arg_vm)
       , edge_weights(weights)
-      , null_vertex(graph_traits<Graph>::null_vertex())
       , vertex_mate(num_vertices(*g), arg_vm)
       , trivial_blossom(num_vertices(*g), arg_vm)
       , vertex_top_blossom(num_vertices(*g), arg_vm)
@@ -462,11 +459,17 @@ struct maximum_weighted_matching_context
 
         for (const vertex_t& x : make_iterator_range(vertices(*g)))
         {
-            vertex_mate[x] = null_vertex;
+            vertex_mate[x] = null_vertex();
             trivial_blossom[x].base_vertex = x;
             vertex_top_blossom[x] = &trivial_blossom[x];
             vertex_dual[x] = init_vertex_dual;
         }
+    }
+
+    /** Return the null vertex. */
+    static vertex_t null_vertex()
+    {
+        return graph_traits<Graph>::null_vertex();
     }
 
     /** Call a function for every vertex inside the specified blossom. */
@@ -680,20 +683,20 @@ struct maximum_weighted_matching_context
         path.emplace_back(x, y);
 
         // Trace alternating path from "x" to the root of the tree.
-        while (x != null_vertex)
+        while (x != null_vertex())
         {
             blossom_t* bx = vertex_top_blossom[x];
             x = bx->tree_edge.first;
-            if (x != null_vertex)
+            if (x != null_vertex())
                 path.push_front(bx->tree_edge);
         }
 
         // Trace alternating path from "y" to the root of the tree.
-        while (y != null_vertex)
+        while (y != null_vertex())
         {
             blossom_t* by = vertex_top_blossom[y];
             y = by->tree_edge.first;
-            if (y != null_vertex)
+            if (y != null_vertex())
                 path.emplace_back(by->tree_edge.second, y);
         }
 
@@ -1140,7 +1143,7 @@ struct maximum_weighted_matching_context
 
         vertex_t y2 = by->base_vertex;
         vertex_t z = vertex_mate[y2];
-        BOOST_ASSERT(z != null_vertex);
+        BOOST_ASSERT(z != null_vertex());
 
         blossom_t* bz = vertex_top_blossom[z];
         BOOST_ASSERT(bz->label == LABEL_NONE);
@@ -1377,12 +1380,12 @@ struct maximum_weighted_matching_context
         // Assign label S to all vertices and put them in the queue.
         for (vertex_t x : make_iterator_range(vertices(*g)))
         {
-            BOOST_ASSERT(vertex_mate[x] == null_vertex);
+            BOOST_ASSERT(vertex_mate[x] == null_vertex());
             blossom_t* bx = vertex_top_blossom[x];
             BOOST_ASSERT(bx->label == LABEL_NONE);
             BOOST_ASSERT(bx->base_vertex == x);
             bx->label = LABEL_S;
-            bx->tree_edge = std::make_pair(null_vertex, x);
+            bx->tree_edge = std::make_pair(null_vertex(), x);
             bx->tree_root = x;
             scan_queue.push_back(x);
         }
