@@ -79,31 +79,31 @@ public:
 
     brute_force_matching(
         const Graph& arg_g, MateMap arg_mate, VertexIndexMap arg_vm)
-    : g(arg_g)
+    : g(&arg_g)
     , vm(arg_vm)
-    , mate_vector(num_vertices(g))
-    , best_mate_vector(num_vertices(g))
+    , mate_vector(num_vertices(*g))
+    , best_mate_vector(num_vertices(*g))
     , mate(mate_vector.begin(), vm)
     , best_mate(best_mate_vector.begin(), vm)
     {
         vertex_iterator_t vi, vi_end;
-        for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
+        for (boost::tie(vi, vi_end) = vertices(*g); vi != vi_end; ++vi)
             best_mate[*vi] = mate[*vi] = get(arg_mate, *vi);
     }
 
     template <typename PropertyMap> void find_matching(PropertyMap pm)
     {
         edge_iterator_t ei;
-        boost::tie(ei, ei_end) = edges(g);
+        boost::tie(ei, ei_end) = edges(*g);
         select_edge(ei);
 
         vertex_iterator_t vi, vi_end;
-        for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
+        for (boost::tie(vi, vi_end) = vertices(*g); vi != vi_end; ++vi)
             put(pm, *vi, best_mate[*vi]);
     }
 
 private:
-    const Graph& g;
+    const Graph* g;
     VertexIndexMap vm;
     std::vector<vertex_descriptor_t> mate_vector, best_mate_vector;
     vertex_to_vertex_map_t mate, best_mate;
@@ -113,19 +113,19 @@ private:
     {
         if (ei == ei_end)
         {
-            if (matching_weight_sum(g, mate)
-                > matching_weight_sum(g, best_mate))
+            if (matching_weight_sum(*g, mate)
+                > matching_weight_sum(*g, best_mate))
             {
                 vertex_iterator_t vi, vi_end;
-                for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
+                for (boost::tie(vi, vi_end) = vertices(*g); vi != vi_end; ++vi)
                     best_mate[*vi] = mate[*vi];
             }
             return;
         }
 
         vertex_descriptor_t v, w;
-        v = source(*ei, g);
-        w = target(*ei, g);
+        v = source(*ei, *g);
+        w = target(*ei, *g);
 
         select_edge(++ei);
 
@@ -403,7 +403,7 @@ struct maximum_weighted_matching_context
         std::numeric_limits<weight_t>::is_integer ? 2 : 1;
 
     /** Input graph. */
-    const Graph& g;
+    const Graph* g;
     const VertexIndexMap vm;
     const EdgeWeightMap edge_weights;
 
@@ -444,23 +444,23 @@ struct maximum_weighted_matching_context
     /** Initialize the matching algorithm. */
     explicit maximum_weighted_matching_context(
         const Graph& arg_g, VertexIndexMap arg_vm, EdgeWeightMap weights)
-      : g(arg_g)
+      : g(&arg_g)
       , vm(arg_vm)
       , edge_weights(weights)
       , null_vertex(graph_traits<Graph>::null_vertex())
-      , vertex_mate(num_vertices(g), arg_vm)
-      , trivial_blossom(num_vertices(g), arg_vm)
-      , vertex_top_blossom(num_vertices(g), arg_vm)
-      , vertex_dual(num_vertices(g), arg_vm)
-      , vertex_best_edge(num_vertices(g), arg_vm)
+      , vertex_mate(num_vertices(*g), arg_vm)
+      , trivial_blossom(num_vertices(*g), arg_vm)
+      , vertex_top_blossom(num_vertices(*g), arg_vm)
+      , vertex_dual(num_vertices(*g), arg_vm)
+      , vertex_best_edge(num_vertices(*g), arg_vm)
     {
         // Vertex duals are initialized to half the maximum edge weight.
         weight_t max_weight = 0;
-        for (const edge_t& e : make_iterator_range(edges(g)))
+        for (const edge_t& e : make_iterator_range(edges(*g)))
             max_weight = (std::max)(max_weight, get(weights, e));
         weight_t init_vertex_dual = max_weight * (weight_factor / 2);
 
-        for (const vertex_t& x : make_iterator_range(vertices(g)))
+        for (const vertex_t& x : make_iterator_range(vertices(*g)))
         {
             vertex_mate[x] = null_vertex;
             trivial_blossom[x].base_vertex = x;
@@ -514,8 +514,8 @@ struct maximum_weighted_matching_context
      */
     weight_t edge_slack(const edge_t& e) const
     {
-        vertex_t x = source(e, g);
-        vertex_t y = target(e, g);
+        vertex_t x = source(e, *g);
+        vertex_t y = target(e, *g);
         weight_t w = get(edge_weights, e);
         BOOST_ASSERT(vertex_top_blossom[x] != vertex_top_blossom[y]);
         return vertex_dual[x] + vertex_dual[y] - weight_factor * w;
@@ -524,7 +524,7 @@ struct maximum_weighted_matching_context
     /** Clear least-slack edge tracking. */
     void clear_best_edge()
     {
-        for (vertex_t x : make_iterator_range(vertices(g)))
+        for (vertex_t x : make_iterator_range(vertices(*g)))
         {
             vertex_best_edge[x].reset();
             trivial_blossom[x].best_edge.reset();
@@ -549,7 +549,7 @@ struct maximum_weighted_matching_context
     least_slack_edge_t get_least_slack_delta2_edge()
     {
         least_slack_edge_t best_edge;
-        for (vertex_t x : make_iterator_range(vertices(g)))
+        for (vertex_t x : make_iterator_range(vertices(*g)))
         {
             if (vertex_top_blossom[x]->label == LABEL_NONE)
             {
@@ -578,7 +578,7 @@ struct maximum_weighted_matching_context
     {
         // Build a temporary array holding the least-slack edges to
         // other S-blossoms. The array is indexed by base vertex.
-        std::vector<least_slack_edge_t> tmp_best_edge(num_vertices(g));
+        std::vector<least_slack_edge_t> tmp_best_edge(num_vertices(*g));
 
         // Collect edges from sub-blossoms that were S-blossoms.
         for (auto& sub : blossom->subblossoms)
@@ -593,8 +593,8 @@ struct maximum_weighted_matching_context
                     // Use least-slack edges from subblossom.
                     for (const edge_t& e : ntb->best_edge_set)
                     {
-                        blossom_t* bx = vertex_top_blossom[source(e, g)];
-                        blossom_t* by = vertex_top_blossom[target(e, g)];
+                        blossom_t* bx = vertex_top_blossom[source(e, *g)];
+                        blossom_t* by = vertex_top_blossom[target(e, *g)];
                         BOOST_ASSERT(bx == blossom);
                         // Only use edges between top-level blossoms.
                         if (bx != by)
@@ -611,10 +611,10 @@ struct maximum_weighted_matching_context
                     // Trivial blossoms don't maintain a least-slack edge set.
                     // Consider all incident edges.
                     for (const edge_t& e :
-                        make_iterator_range(out_edges(b->base_vertex, g)))
+                        make_iterator_range(out_edges(b->base_vertex, *g)))
                     {
-                        BOOST_ASSERT(source(e, g) == b->base_vertex);
-                        vertex_t y = target(e, g);
+                        BOOST_ASSERT(source(e, *g) == b->base_vertex);
+                        vertex_t y = target(e, *g);
                         blossom_t* by = vertex_top_blossom[y];
                         // Only use edges to different S-blossoms.
                         // Ignore edges with negative weight.
@@ -651,7 +651,7 @@ struct maximum_weighted_matching_context
     {
         least_slack_edge_t best_edge;
 
-        for (vertex_t x : make_iterator_range(vertices(g)))
+        for (vertex_t x : make_iterator_range(vertices(*g)))
         {
             blossom_t* b = vertex_top_blossom[x];
             BOOST_ASSERT(! b->parent);
@@ -984,7 +984,7 @@ struct maximum_weighted_matching_context
             auto it_end = ntb->best_edge_set.end();
             while (it != it_end)
             {
-                vertex_t y = target(*it, g);
+                vertex_t y = target(*it, *g);
                 blossom_t* by = vertex_top_blossom[y];
                 BOOST_ASSERT(by != b);
                 if (by->label == LABEL_S)
@@ -1005,17 +1005,17 @@ struct maximum_weighted_matching_context
             // Trivial blossom does not maintain best_edge_set.
             // If its current best_edge is invalid, recompute it.
             vertex_t x = b->base_vertex;
-            vertex_t y = target(*b->best_edge, g);
+            vertex_t y = target(*b->best_edge, *g);
             blossom_t* by = vertex_top_blossom[y];
             BOOST_ASSERT(by != b);
             if (by->label != LABEL_S)
             {
                 // Consider all incident edges to recompute best_edge.
                 least_slack_edge_t best_edge;
-                for (const edge_t& e : make_iterator_range(out_edges(x, g)))
+                for (const edge_t& e : make_iterator_range(out_edges(x, *g)))
                 {
-                    BOOST_ASSERT(source(e, g) == x);
-                    y = target(e, g);
+                    BOOST_ASSERT(source(e, *g) == x);
+                    y = target(e, *g);
                     by = vertex_top_blossom[y];
                     if ((by != b) && (by->label == LABEL_S))
                         best_edge.update(e, edge_slack(e));
@@ -1030,10 +1030,10 @@ struct maximum_weighted_matching_context
     {
         least_slack_edge_t best_edge;
 
-        for (const edge_t& e : make_iterator_range(out_edges(x, g)))
+        for (const edge_t& e : make_iterator_range(out_edges(x, *g)))
         {
-            BOOST_ASSERT(source(e, g) == x);
-            vertex_t y = target(e, g);
+            BOOST_ASSERT(source(e, *g) == x);
+            vertex_t y = target(e, *g);
             blossom_t* by = vertex_top_blossom[y];
             if (by->label == LABEL_S)
                 best_edge.update(e, edge_slack(e));
@@ -1046,7 +1046,7 @@ struct maximum_weighted_matching_context
     {
         // Find blossoms that are part of the specified alternating trees.
         std::vector<blossom_t*> former_s_blossoms;
-        for (vertex_t x : make_iterator_range(vertices(g)))
+        for (vertex_t x : make_iterator_range(vertices(*g)))
         {
             blossom_t* b = vertex_top_blossom[x];
             if ((! b->parent)
@@ -1062,8 +1062,8 @@ struct maximum_weighted_matching_context
             }
         }
 
-        vertex_map<char> blossom_recompute_best_edge(num_vertices(g), vm);
-        vertex_map<char> vertex_recompute_best_edge(num_vertices(g), vm);
+        vertex_map<char> blossom_recompute_best_edge(num_vertices(*g), vm);
+        vertex_map<char> vertex_recompute_best_edge(num_vertices(*g), vm);
 
         // Visit former S-blossoms.
         for (blossom_t* b : former_s_blossoms)
@@ -1081,11 +1081,12 @@ struct maximum_weighted_matching_context
                     // Mark former S-vertices.
                     vertex_recompute_best_edge[x] = 1;
 
-                    for (const edge_t& e : make_iterator_range(out_edges(x, g)))
+                    for (const edge_t& e :
+                         make_iterator_range(out_edges(x, *g)))
                     {
                         // Mark S-blossoms adjacent to the former S-blossom.
-                        BOOST_ASSERT(source(e, g) == x);
-                        vertex_t y = target(e, g);
+                        BOOST_ASSERT(source(e, *g) == x);
+                        vertex_t y = target(e, *g);
                         blossom_t* by = vertex_top_blossom[y];
                         if (by->label == LABEL_S)
                             blossom_recompute_best_edge[by->base_vertex] = 1;
@@ -1103,14 +1104,14 @@ struct maximum_weighted_matching_context
         }
 
         // Recompute delta3 tracking of affected S-blossoms.
-        for (vertex_t x : make_iterator_range(vertices(g)))
+        for (vertex_t x : make_iterator_range(vertices(*g)))
         {
             if (blossom_recompute_best_edge[x])
                 refresh_delta3_blossom(vertex_top_blossom[x]);
         }
 
         // Recompute vertex_best_edge of affected non-S-vertices.
-        for (vertex_t x : make_iterator_range(vertices(g)))
+        for (vertex_t x : make_iterator_range(vertices(*g)))
         {
             if (vertex_recompute_best_edge[x])
                 recompute_vertex_best_edge(x);
@@ -1204,10 +1205,10 @@ struct maximum_weighted_matching_context
 
             BOOST_ASSERT(vertex_top_blossom[x]->label == LABEL_S);
 
-            for (const edge_t& e : make_iterator_range(out_edges(x, g)))
+            for (const edge_t& e : make_iterator_range(out_edges(x, *g)))
             {
-                BOOST_ASSERT(source(e, g) == x);
-                vertex_t y = target(e, g);
+                BOOST_ASSERT(source(e, *g) == x);
+                vertex_t y = target(e, *g);
 
                 // Note: top level blossom of x may change during this loop,
                 // so we must look it up on each pass.
@@ -1259,7 +1260,7 @@ struct maximum_weighted_matching_context
         // Compute delta1: minimum dual variable of any S-vertex.
         delta.kind = 1;
         delta.value = (std::numeric_limits<weight_t>::max)();
-        for (vertex_t x : make_iterator_range(vertices(g)))
+        for (vertex_t x : make_iterator_range(vertices(*g)))
         {
             if (vertex_top_blossom[x]->label == LABEL_S)
                 delta.value = (std::min)(delta.value, vertex_dual[x]);
@@ -1302,7 +1303,7 @@ struct maximum_weighted_matching_context
     /** Apply a delta step to the dual LPP variables. */
     void apply_delta_step(weight_t delta)
     {
-        for (vertex_t x : make_iterator_range(vertices(g)))
+        for (vertex_t x : make_iterator_range(vertices(*g)))
         {
             blossom_t* b = vertex_top_blossom[x];
             if (b->label == LABEL_S)
@@ -1342,16 +1343,16 @@ struct maximum_weighted_matching_context
 
             if (delta.kind == 2)
             {
-                vertex_t x = source(delta.edge, g);
-                vertex_t y = target(delta.edge, g);
+                vertex_t x = source(delta.edge, *g);
+                vertex_t y = target(delta.edge, *g);
                 if (vertex_top_blossom[x]->label != LABEL_S)
                     std::swap(x, y);
                 extend_tree_s_to_t(x, y);
             }
             else if (delta.kind == 3)
             {
-                vertex_t x = source(delta.edge, g);
-                vertex_t y = target(delta.edge, g);
+                vertex_t x = source(delta.edge, *g);
+                vertex_t y = target(delta.edge, *g);
                 augmented = add_s_to_s_edge(x, y);
                 if (augmented)
                     return true;
@@ -1374,7 +1375,7 @@ struct maximum_weighted_matching_context
     void run()
     {
         // Assign label S to all vertices and put them in the queue.
-        for (vertex_t x : make_iterator_range(vertices(g)))
+        for (vertex_t x : make_iterator_range(vertices(*g)))
         {
             BOOST_ASSERT(vertex_mate[x] == null_vertex);
             blossom_t* bx = vertex_top_blossom[x];
@@ -1398,7 +1399,7 @@ struct maximum_weighted_matching_context
     template <typename MateMap>
     void extract_matching(MateMap mate)
     {
-        for (vertex_t x : make_iterator_range(vertices(g)))
+        for (vertex_t x : make_iterator_range(vertices(*g)))
             put(mate, x, vertex_mate[x]);
     }
 };
