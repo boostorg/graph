@@ -189,7 +189,7 @@ void check_maximum_weighted_matching_edge_weights(
     {
         auto w = get(edge_weights, e);
         auto max_weight = (std::numeric_limits<decltype(w)>::max)() / 4;
-        if (! (w <= max_weight))  // inverted logic to catch NaN
+        if (!(w <= max_weight))  // inverted logic to catch NaN
             throw bad_graph("Edge weight exceeds maximum supported value.");
     }
 }
@@ -390,7 +390,7 @@ struct maximum_weighted_matching_context
 
         void update(const edge_t& e, weight_t s)
         {
-            if ((! edge.has_value()) || (s < slack))
+            if ((!edge.has_value()) || (s < slack))
             {
                 edge = e;
                 slack = s;
@@ -482,7 +482,7 @@ struct maximum_weighted_matching_context
             // Use an explicit stack to avoid deep call chains.
             std::vector<const nontrivial_blossom_t*> stack;
             stack.push_back(ntb);
-            while (! stack.empty()) {
+            while (!stack.empty()) {
                 auto cur = stack.back();
                 stack.pop_back();
                 for (const auto& sub : cur->subblossoms) {
@@ -503,7 +503,7 @@ struct maximum_weighted_matching_context
     /** Mark blossom as the top-level blossom of its vertices. */
     void update_top_level_blossom(blossom_t* blossom)
     {
-        BOOST_ASSERT(! blossom->parent);
+        BOOST_ASSERT(!blossom->parent);
         for_vertices_in_blossom(blossom,
             [this,blossom](vertex_t x)
             {
@@ -544,7 +544,7 @@ struct maximum_weighted_matching_context
     void add_delta2_edge(vertex_t y, const edge_t& e, weight_t slack)
     {
         auto& best_edge = vertex_best_edge[y];
-        if ((! best_edge.has_value()) || slack < edge_slack(*best_edge))
+        if ((!best_edge.has_value()) || slack < edge_slack(*best_edge))
             best_edge = e;
     }
 
@@ -568,7 +568,7 @@ struct maximum_weighted_matching_context
     void add_delta3_edge(blossom_t* b, const edge_t& e, weight_t slack)
     {
         auto& best_edge = b->best_edge;
-        if ((! best_edge.has_value()) || slack < edge_slack(*best_edge))
+        if ((!best_edge.has_value()) || slack < edge_slack(*best_edge))
             best_edge = e;
 
         auto ntb = b->nontrivial();
@@ -636,7 +636,7 @@ struct maximum_weighted_matching_context
         // Build a compact list of edges from the temporary array.
         // Also find the overall least-slack edge to any other S-blossom.
         BOOST_ASSERT(blossom->best_edge_set.empty());
-        BOOST_ASSERT(! blossom->best_edge.has_value());
+        BOOST_ASSERT(!blossom->best_edge.has_value());
         least_slack_edge_t best_edge;
         for (const least_slack_edge_t& item : tmp_best_edge)
         {
@@ -657,7 +657,7 @@ struct maximum_weighted_matching_context
         for (vertex_t x : make_iterator_range(vertices(*g)))
         {
             blossom_t* b = vertex_top_blossom[x];
-            BOOST_ASSERT(! b->parent);
+            BOOST_ASSERT(!b->parent);
             if ((b->label == LABEL_S) && (b->best_edge.has_value()))
                 best_edge.update(*b->best_edge, edge_slack(*b->best_edge));
         }
@@ -742,7 +742,7 @@ struct maximum_weighted_matching_context
         // Insert former T-vertices into the scan queue.
         for (blossom_t* b : subblossoms)
         {
-            BOOST_ASSERT(! b->parent);
+            BOOST_ASSERT(!b->parent);
             b->parent = blossom;
             if (b->label == LABEL_T)
                 add_vertices_to_scan_queue(b);
@@ -764,7 +764,7 @@ struct maximum_weighted_matching_context
     /** Expand a T-blossom. */
     void expand_t_blossom(nontrivial_blossom_t* blossom)
     {
-        BOOST_ASSERT(! blossom->parent);
+        BOOST_ASSERT(!blossom->parent);
         BOOST_ASSERT(blossom->label == LABEL_T);
 
         // Convert sub-blossoms into top-level blossoms.
@@ -903,7 +903,7 @@ struct maximum_weighted_matching_context
         std::stack<std::pair<nontrivial_blossom_t*, blossom_t*>> stack;
         stack.emplace(blossom, entry);
 
-        while (! stack.empty()) {
+        while (!stack.empty()) {
             nontrivial_blossom_t* outer_blossom;
             blossom_t* inner_entry;
             std::tie(outer_blossom, inner_entry) = stack.top();
@@ -975,7 +975,7 @@ struct maximum_weighted_matching_context
     void refresh_delta3_blossom(blossom_t* b)
     {
         // Do nothing if this blossom was not tracking any delta3 edge.
-        if (! b->best_edge.has_value())
+        if (!b->best_edge.has_value())
             return;
 
         auto ntb = b->nontrivial();
@@ -1052,7 +1052,7 @@ struct maximum_weighted_matching_context
         for (vertex_t x : make_iterator_range(vertices(*g)))
         {
             blossom_t* b = vertex_top_blossom[x];
-            if ((! b->parent)
+            if ((!b->parent)
                 && (b->label != LABEL_NONE)
                 && (b->tree_root == r1 || b->tree_root == r2))
             {
@@ -1147,7 +1147,7 @@ struct maximum_weighted_matching_context
 
         blossom_t* bz = vertex_top_blossom[z];
         BOOST_ASSERT(bz->label == LABEL_NONE);
-        BOOST_ASSERT(! bz->best_edge.has_value());
+        BOOST_ASSERT(!bz->best_edge.has_value());
         bz->label = LABEL_S;
         bz->tree_edge = std::make_pair(y2, z);
         bz->tree_root = by->tree_root;
@@ -1201,7 +1201,7 @@ struct maximum_weighted_matching_context
      */
     bool scan_new_s_vertices()
     {
-        while (! scan_queue.empty())
+        while (!scan_queue.empty())
         {
             vertex_t x = scan_queue.front();
             scan_queue.pop_front();
@@ -1290,7 +1290,7 @@ struct maximum_weighted_matching_context
         // Compute delta4: half minimum dual of a top-level T-blossom.
         for (nontrivial_blossom_t& blossom : nontrivial_blossom)
         {
-            if ((! blossom.parent)
+            if ((!blossom.parent)
                 && (blossom.label == LABEL_T)
                 && (blossom.dual_var / 2 <= delta.value))
             {
@@ -1317,7 +1317,7 @@ struct maximum_weighted_matching_context
 
         for (nontrivial_blossom_t& blossom : nontrivial_blossom)
         {
-            if (! blossom.parent)
+            if (!blossom.parent)
             {
                 if (blossom.label == LABEL_S)
                     blossom.dual_var += 2 * delta;
