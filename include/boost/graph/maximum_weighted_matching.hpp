@@ -476,14 +476,14 @@ struct maximum_weighted_matching_context
     template <typename Func>
     static void for_vertices_in_blossom(const blossom_t* blossom, Func func)
     {
-        const nontrivial_blossom_t* ntb = blossom->nontrivial();
+        auto ntb = blossom->nontrivial();
         if (ntb) {
             // Visit all vertices in the non-trivial blossom.
             // Use an explicit stack to avoid deep call chains.
             std::vector<const nontrivial_blossom_t*> stack;
             stack.push_back(ntb);
             while (! stack.empty()) {
-                const nontrivial_blossom_t* cur = stack.back();
+                auto cur = stack.back();
                 stack.pop_back();
                 for (const auto& sub : cur->subblossoms) {
                     ntb = sub.blossom->nontrivial();
@@ -571,7 +571,7 @@ struct maximum_weighted_matching_context
         if ((! best_edge.has_value()) || slack < edge_slack(*best_edge))
             best_edge = e;
 
-        nontrivial_blossom_t* ntb = b->nontrivial();
+        auto ntb = b->nontrivial();
         if (ntb)
             ntb->best_edge_set.push_back(e);
     }
@@ -590,7 +590,7 @@ struct maximum_weighted_matching_context
             if (b->label == LABEL_S)
             {
                 b->best_edge.reset();
-                nontrivial_blossom_t* ntb = b->nontrivial();
+                auto ntb = b->nontrivial();
                 if (ntb)
                 {
                     // Use least-slack edges from subblossom.
@@ -881,11 +881,11 @@ struct maximum_weighted_matching_context
             vertex_mate[y] = x;
 
             // Augment through any non-trivial subblossoms touching this edge.
-            nontrivial_blossom_t* bx_ntb = bx->nontrivial();
+            auto bx_ntb = bx->nontrivial();
             if (bx_ntb)
                 stack.emplace(bx_ntb, &trivial_blossom[x]);
 
-            nontrivial_blossom_t* by_ntb = by->nontrivial();
+            auto by_ntb = by->nontrivial();
             if (by_ntb)
                 stack.emplace(by_ntb, &trivial_blossom[y]);
         }
@@ -935,12 +935,12 @@ struct maximum_weighted_matching_context
 
             // Augment any non-trivial blossoms that touch this edge.
             blossom_t* bx = vertex_top_blossom[x];
-            nontrivial_blossom_t* bx_ntb = bx->nontrivial();
+            auto bx_ntb = bx->nontrivial();
             if (bx_ntb)
                 augment_blossom(bx_ntb, &trivial_blossom[x]);
 
             blossom_t* by = vertex_top_blossom[y];
-            nontrivial_blossom_t* by_ntb = by->nontrivial();
+            auto by_ntb = by->nontrivial();
             if (by_ntb)
                 augment_blossom(by_ntb, &trivial_blossom[y]);
 
@@ -978,7 +978,7 @@ struct maximum_weighted_matching_context
         if (! b->best_edge.has_value())
             return;
 
-        nontrivial_blossom_t* ntb = b->nontrivial();
+        auto ntb = b->nontrivial();
         if (ntb)
         {
             // Remove bad edges from best_edge_set and refresh best_edge.
@@ -1073,7 +1073,7 @@ struct maximum_weighted_matching_context
         {
             // Clear best_edge tracking.
             b->best_edge.reset();
-            nontrivial_blossom_t* ntb = b->nontrivial();
+            auto ntb = b->nontrivial();
             if (ntb)
                 ntb->best_edge_set.clear();
 
