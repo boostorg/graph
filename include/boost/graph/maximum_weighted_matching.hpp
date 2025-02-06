@@ -474,9 +474,9 @@ struct maximum_weighted_matching_context
 
     /** Call a function for every vertex inside the specified blossom. */
     template <typename Func>
-    static void for_vertices_in_blossom(const blossom_t* blossom, Func func)
+    static void for_vertices_in_blossom(const blossom_t& blossom, Func func)
     {
-        auto ntb = blossom->nontrivial();
+        auto ntb = blossom.nontrivial();
         if (ntb) {
             // Visit all vertices in the non-trivial blossom.
             // Use an explicit stack to avoid deep call chains.
@@ -496,18 +496,18 @@ struct maximum_weighted_matching_context
             }
         } else {
             // A trivial blossom contains just one vertex.
-            func(blossom->base_vertex);
+            func(blossom.base_vertex);
         }
     }
 
     /** Mark blossom as the top-level blossom of its vertices. */
-    void update_top_level_blossom(blossom_t* blossom)
+    void update_top_level_blossom(blossom_t& blossom)
     {
-        BOOST_ASSERT(!blossom->parent);
+        BOOST_ASSERT(!blossom.parent);
         for_vertices_in_blossom(blossom,
-            [this,blossom](vertex_t x)
+            [this,&blossom](vertex_t x)
             {
-                vertex_top_blossom[x] = blossom;
+                vertex_top_blossom[x] = &blossom;
             });
     }
 
@@ -565,26 +565,26 @@ struct maximum_weighted_matching_context
     }
 
     /** Add edge between different S-blossoms. */
-    void add_delta3_edge(blossom_t* b, const edge_t& e, weight_t slack)
+    void add_delta3_edge(blossom_t& b, const edge_t& e, weight_t slack)
     {
-        auto& best_edge = b->best_edge;
+        auto& best_edge = b.best_edge;
         if ((!best_edge.has_value()) || slack < edge_slack(*best_edge))
             best_edge = e;
 
-        auto ntb = b->nontrivial();
+        auto ntb = b.nontrivial();
         if (ntb)
             ntb->best_edge_set.push_back(e);
     }
 
     /** Update least-slack edge tracking after merging blossoms. */
-    void merge_delta3_blossoms(nontrivial_blossom_t* blossom)
+    void merge_delta3_blossoms(nontrivial_blossom_t& blossom)
     {
         // Build a temporary array holding the least-slack edges to
         // other S-blossoms. The array is indexed by base vertex.
         std::vector<least_slack_edge_t> tmp_best_edge(num_vertices(*g));
 
         // Collect edges from sub-blossoms that were S-blossoms.
-        for (auto& sub : blossom->subblossoms)
+        for (auto& sub : blossom.subblossoms)
         {
             blossom_t* b = sub.blossom;
             if (b->label == LABEL_S)
@@ -598,7 +598,7 @@ struct maximum_weighted_matching_context
                     {
                         blossom_t* bx = vertex_top_blossom[source(e, *g)];
                         blossom_t* by = vertex_top_blossom[target(e, *g)];
-                        BOOST_ASSERT(bx == blossom);
+                        BOOST_ASSERT(bx == &blossom);
                         // Only use edges between top-level blossoms.
                         if (bx != by)
                         {
@@ -621,7 +621,7 @@ struct maximum_weighted_matching_context
                         blossom_t* by = vertex_top_blossom[y];
                         // Only use edges to different S-blossoms.
                         // Ignore edges with negative weight.
-                        if ((by != blossom)
+                        if ((by != &blossom)
                             && (by->label == LABEL_S)
                             && (get(edge_weights, e) >= 0))
                         {
@@ -635,18 +635,18 @@ struct maximum_weighted_matching_context
 
         // Build a compact list of edges from the temporary array.
         // Also find the overall least-slack edge to any other S-blossom.
-        BOOST_ASSERT(blossom->best_edge_set.empty());
-        BOOST_ASSERT(!blossom->best_edge.has_value());
+        BOOST_ASSERT(blossom.best_edge_set.empty());
+        BOOST_ASSERT(!blossom.best_edge.has_value());
         least_slack_edge_t best_edge;
         for (const least_slack_edge_t& item : tmp_best_edge)
         {
             if (item.edge.has_value())
             {
-                blossom->best_edge_set.push_back(*item.edge);
+                blossom.best_edge_set.push_back(*item.edge);
                 best_edge.update(*item.edge, item.slack);
             }
         }
-        blossom->best_edge = best_edge.edge;
+        blossom.best_edge = best_edge.edge;
     }
 
     /** Return least-slack edge between any pair of S-blossoms. */
@@ -666,7 +666,7 @@ struct maximum_weighted_matching_context
     }
 
     /** Add the vertices in a blossom to the scan queue. */
-    void add_vertices_to_scan_queue(blossom_t* blossom)
+    void add_vertices_to_scan_queue(blossom_t& blossom)
     {
         for_vertices_in_blossom(blossom,
             [this](vertex_t x)
@@ -736,16 +736,16 @@ struct maximum_weighted_matching_context
 
         // Create the new blossom.
         nontrivial_blossom.emplace_back(subblossoms, path);
-        nontrivial_blossom_t* blossom = &nontrivial_blossom.back();
+        nontrivial_blossom_t& blossom = nontrivial_blossom.back();
 
         // Link the subblossoms to the new parent.
         // Insert former T-vertices into the scan queue.
         for (blossom_t* b : subblossoms)
         {
             BOOST_ASSERT(!b->parent);
-            b->parent = blossom;
+            b->parent = &blossom;
             if (b->label == LABEL_T)
-                add_vertices_to_scan_queue(b);
+                add_vertices_to_scan_queue(*b);
         }
 
         // Mark vertices as belonging to the new blossom.
@@ -753,15 +753,15 @@ struct maximum_weighted_matching_context
 
         // Assign label S to the new blossom and link to the alternating tree.
         BOOST_ASSERT(subblossoms.front()->label == LABEL_S);
-        blossom->label = LABEL_S;
-        blossom->tree_edge = subblossoms.front()->tree_edge;
-        blossom->tree_root = subblossoms.front()->tree_root;
+        blossom.label = LABEL_S;
+        blossom.tree_edge = subblossoms.front()->tree_edge;
+        blossom.tree_root = subblossoms.front()->tree_root;
 
         // Merge least-slack edges for the S-sub-blossoms.
         merge_delta3_blossoms(blossom);
     }
 
-    /** Expand a T-blossom. */
+    /** Expand and delete a T-blossom. */
     void expand_t_blossom(nontrivial_blossom_t* blossom)
     {
         BOOST_ASSERT(!blossom->parent);
@@ -774,7 +774,7 @@ struct maximum_weighted_matching_context
             BOOST_ASSERT(b->parent == blossom);
             b->parent = nullptr;
             b->label = LABEL_NONE;
-            update_top_level_blossom(b);
+            update_top_level_blossom(*b);
         }
 
         // Reconstruct the alternating tree via the sub-blossoms.
@@ -837,16 +837,16 @@ struct maximum_weighted_matching_context
     }
 
     void augment_blossom_rec(
-        nontrivial_blossom_t* blossom, blossom_t* entry,
+        nontrivial_blossom_t& blossom, blossom_t& entry,
         std::stack<std::pair<nontrivial_blossom_t*, blossom_t*>>& stack)
     {
-        auto subblossom_loc = blossom->find_subblossom(entry);
+        auto subblossom_loc = blossom.find_subblossom(&entry);
         auto entry_pos = subblossom_loc.first;
         auto entry_it = subblossom_loc.second;
 
         // Walk from entry to the base in an even number of steps.
-        auto sub_begin = blossom->subblossoms.begin();
-        auto sub_end = blossom->subblossoms.end();
+        auto sub_begin = blossom.subblossoms.begin();
+        auto sub_end = blossom.subblossoms.end();
         auto sub_it = entry_it;
         while ((sub_it != sub_begin) && (sub_it != sub_end)) {
             vertex_t x, y;
@@ -872,7 +872,7 @@ struct maximum_weighted_matching_context
                 bx = sub_it->blossom;
                 ++sub_it;
                 by = (sub_it == sub_end) ?
-                    blossom->subblossoms.front().blossom :
+                    blossom.subblossoms.front().blossom :
                     sub_it->blossom;
             }
 
@@ -892,16 +892,16 @@ struct maximum_weighted_matching_context
 
         // Re-orient the blossom.
         if (entry_it != sub_begin)
-            blossom->subblossoms.splice(
-                sub_begin, blossom->subblossoms, entry_it, sub_end);
-        blossom->base_vertex = entry->base_vertex;
+            blossom.subblossoms.splice(
+                sub_begin, blossom.subblossoms, entry_it, sub_end);
+        blossom.base_vertex = entry.base_vertex;
     }
 
-    void augment_blossom(nontrivial_blossom_t* blossom, blossom_t* entry)
+    void augment_blossom(nontrivial_blossom_t& blossom, blossom_t& entry)
     {
         // Use an explicit stack to avoid deep call chains.
         std::stack<std::pair<nontrivial_blossom_t*, blossom_t*>> stack;
-        stack.emplace(blossom, entry);
+        stack.emplace(&blossom, &entry);
 
         while (!stack.empty()) {
             nontrivial_blossom_t* outer_blossom;
@@ -916,7 +916,7 @@ struct maximum_weighted_matching_context
             else
                 stack.pop();
 
-            augment_blossom_rec(inner_blossom, inner_entry, stack);
+            augment_blossom_rec(*inner_blossom, *inner_entry, stack);
         }
     }
 
@@ -937,12 +937,12 @@ struct maximum_weighted_matching_context
             blossom_t* bx = vertex_top_blossom[x];
             auto bx_ntb = bx->nontrivial();
             if (bx_ntb)
-                augment_blossom(bx_ntb, &trivial_blossom[x]);
+                augment_blossom(*bx_ntb, trivial_blossom[x]);
 
             blossom_t* by = vertex_top_blossom[y];
             auto by_ntb = by->nontrivial();
             if (by_ntb)
-                augment_blossom(by_ntb, &trivial_blossom[y]);
+                augment_blossom(*by_ntb, trivial_blossom[y]);
 
             // Pull this edge into the matching.
             vertex_mate[x] = y;
@@ -972,13 +972,13 @@ struct maximum_weighted_matching_context
     }
 
     /** Remove edges to non-S-vertices from delta3 edge tracking. */
-    void refresh_delta3_blossom(blossom_t* b)
+    void refresh_delta3_blossom(blossom_t& b)
     {
         // Do nothing if this blossom was not tracking any delta3 edge.
-        if (!b->best_edge.has_value())
+        if (!b.best_edge.has_value())
             return;
 
-        auto ntb = b->nontrivial();
+        auto ntb = b.nontrivial();
         if (ntb)
         {
             // Remove bad edges from best_edge_set and refresh best_edge.
@@ -989,7 +989,7 @@ struct maximum_weighted_matching_context
             {
                 vertex_t y = target(*it, *g);
                 blossom_t* by = vertex_top_blossom[y];
-                BOOST_ASSERT(by != b);
+                BOOST_ASSERT(by != &b);
                 if (by->label == LABEL_S)
                 {
                     best_edge.update(*it, edge_slack(*it));
@@ -1001,16 +1001,16 @@ struct maximum_weighted_matching_context
                     it = ntb->best_edge_set.erase(it);
                 }
             }
-            b->best_edge = best_edge.edge;
+            b.best_edge = best_edge.edge;
         }
         else
         {
             // Trivial blossom does not maintain best_edge_set.
             // If its current best_edge is invalid, recompute it.
-            vertex_t x = b->base_vertex;
-            vertex_t y = target(*b->best_edge, *g);
+            vertex_t x = b.base_vertex;
+            vertex_t y = target(*b.best_edge, *g);
             blossom_t* by = vertex_top_blossom[y];
-            BOOST_ASSERT(by != b);
+            BOOST_ASSERT(by != &b);
             if (by->label != LABEL_S)
             {
                 // Consider all incident edges to recompute best_edge.
@@ -1020,10 +1020,10 @@ struct maximum_weighted_matching_context
                     BOOST_ASSERT(source(e, *g) == x);
                     y = target(e, *g);
                     by = vertex_top_blossom[y];
-                    if ((by != b) && (by->label == LABEL_S))
+                    if ((by != &b) && (by->label == LABEL_S))
                         best_edge.update(e, edge_slack(e));
                 }
-                b->best_edge = best_edge.edge;
+                b.best_edge = best_edge.edge;
             }
         }
     }
@@ -1078,7 +1078,7 @@ struct maximum_weighted_matching_context
                 ntb->best_edge_set.clear();
 
             // Visit edges that touch this blossom.
-            for_vertices_in_blossom(b,
+            for_vertices_in_blossom(*b,
                 [&](vertex_t x)
                 {
                     // Mark former S-vertices.
@@ -1110,7 +1110,7 @@ struct maximum_weighted_matching_context
         for (vertex_t x : make_iterator_range(vertices(*g)))
         {
             if (blossom_recompute_best_edge[x])
-                refresh_delta3_blossom(vertex_top_blossom[x]);
+                refresh_delta3_blossom(*vertex_top_blossom[x]);
         }
 
         // Recompute vertex_best_edge of affected non-S-vertices.
@@ -1151,7 +1151,7 @@ struct maximum_weighted_matching_context
         bz->label = LABEL_S;
         bz->tree_edge = std::make_pair(y2, z);
         bz->tree_root = by->tree_root;
-        add_vertices_to_scan_queue(bz);
+        add_vertices_to_scan_queue(*bz);
     }
 
     /**
@@ -1243,7 +1243,7 @@ struct maximum_weighted_matching_context
                 {
                     // Track non-tight edges between S-blossoms.
                     if (by->label == LABEL_S)
-                        add_delta3_edge(bx, e, slack);
+                        add_delta3_edge(*bx, e, slack);
                 }
 
                 // Track all edges between S-blossom and non-S-blossom.
