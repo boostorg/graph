@@ -46,8 +46,8 @@ namespace serialization
         typedef adjacency_list< OEL, VL, D, VP, EP, GP, EL > Graph;
         typedef typename graph_traits< Graph >::vertex_descriptor Vertex;
 
-        int V = num_vertices(graph);
-        int E = num_edges(graph);
+        unsigned int V = num_vertices(graph);
+        unsigned int E = num_edges(graph);
         ar << BOOST_SERIALIZATION_NVP(V);
         ar << BOOST_SERIALIZATION_NVP(E);
 
