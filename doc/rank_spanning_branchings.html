@@ -1,0 +1,378 @@
+<HTML>
+<!--
+     Copyright (c) Bradley S. Meyer 2015
+    
+     Distributed under the Boost Software License, Version 1.0.
+     (See accompanying file LICENSE_1_0.txt or copy at
+     http://www.boost.org/LICENSE_1_0.txt)
+  -->
+<Head>
+<Title>Boost Graph Library: Rank Spanning Branchings</Title>
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
+        ALINK="#ff0000"> 
+<IMG SRC="../../../boost.png" 
+     ALT="C++ Boost" width="277" height="86"> 
+
+<BR Clear>
+
+
+<H1><A NAME="sec:rank_spanning">
+<TT>rank_spanning_branchings</TT>
+</H1>
+
+<PRE>
+template &lt;class Graph, class BranchingProcessor, class P, class T, class R&gt;
+void
+rank_spanning_branchings(Graph&amp; g, BranchingProcessor bp, 
+    const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>);
+</PRE>
+
+<p>
+The <tt>rank_spanning_branchings()</tt> function finds, in order by branching
+weight, the spanning branchings in a directed graph with weighted edges.
+If the order of a directed graph is <tt>N</tt>, a spanning branching is an
+acyclic subgraph of 
+that graph with <tt>N-1</tt> edges such that no vertex has indegree larger than
+one.  The weight of the branching is the sum of the weights of the edges
+in the branching.
+This function uses the Camerini et al. algorithm
+[<a href="bibliography.html#camerini80">77</a>]
+to compute the
+branchings in order by branching weight.  Once the routine finds a branching,
+the routine calls a user-supplied 
+<a href="./rank_spanning_branchings.html#concept:BranchingProcessor">BranchingProcessor</a>
+to process the branching and then
+moves on to find the next branching.  The
+user-supplied
+<a href="./rank_spanning_branchings.html#concept:BranchingProcessor">BranchingProcessor</a>
+must take as input
+a <a href="filtered_graph.html">filtered view</a> of the parent graph
+that gives the branching.
+</p>
+<p>
+The Camerini et al. algorithm starts with a directed graph that has
+a single root vertex (that is, a vertex that has indegree equal to zero
+and outdegree not equal to zero).  The procedure <tt>RANK</tt>
+finds from the procedure <tt>BEST</tt> the spanning
+branching <i>A</i> with the largest
+branching weight, denoted <i>d(A)</i>.
+The 
+<a href="./rank_spanning_branchings.html#concept:BranchingProcessor">BranchingProcessor</a>
+is invoked on <i>A</i>, and if it returns true, the procedure continues.
+The procedure <tt>NEXT</tt> is then invoked to find
+the edge <i>e</i> such that when <i>e</i> is removed from <i>G</i>,
+<tt>BEST</tt> will find the next largest branching.
+<tt>NEXT</tt> also returns <i>&delta;</i>
+such that <i>d(A)-&delta;</i> is the weight of the next largest branching.
+</p>
+
+<p>
+<tt>RANK</tt> keeps a priority queue of tuples with elements <i>(weight, edge,
+branching, Y, Z)</i>.  The element
+<i>branching</i> is a set of edges giving a branching.  <i>Y</i> is a set of
+edges that must be included in a branching.
+<i>Z</i> is a set of edges that must be excluded from a branching.  After
+each evaluation of <tt>NEXT</tt>,
+the appropriate tuple is inserted into <i>Q</i>.
+The priority queue ranks tuples by the <i>weight</i> entry.
+Once the maximum weight branching is found, <tt>RANK</tt> finds subsequent
+branchings by popping a tuple off the top of <i>Q</i> and running
+<tt>BEST</tt>.  Possible descendants are then evaluated with <tt>NEXT</tt>.
+</p>
+
+<pre>
+RANK(<i>G, BranchingProcessor()</i>)
+  <i>A</i> := BEST(<i>G</i>, &Oslash;, &Oslash;)
+  <b>if</b> (<i>!BranchingProcessor(A)</i>) return
+  <i>(e,&delta;)</i> := NEXT(<i>G, A, &Oslash;, &Oslash;</i>)
+  INSERT( <i>Q, (d(A) - &delta;, e, A, &Oslash;, &Oslash;)</i> )
+  <b>while</b> (<i>Q != &Oslash;</i>)
+    (<i>w, e, A, Y, Z</i>) := POP(<i>Q</i>)
+    <i>Y'</i> := <i>Y U e</i>
+    <i>Z'</i> := <i>Z U e</i>
+    <i>A'</i> := BEST(<i>G, Y, Z'</i>)
+    <b>if</b> (<i>!BranchingProcessor(A')</i>) return
+    <i>(e',&delta;)</i> := NEXT(<i>G, A, Y', Z</i>)
+    INSERT( <i>Q, (d(A) - &delta;, e', A, Y', Z)</i>)
+    <i>(e',&delta;)</i> := NEXT(<i>G, A', Y, Z'</i>)
+    INSERT( <i>Q, (w - &delta;, e', A', Y, Z')</i>)
+  <b>end while</b> 
+  return
+</pre>
+
+<p>
+The procedure <tt>BEST</tt> is the Chu-Liu/Edmond's algorithm
+[<a HREF="bibliography.html#chu-liu65">78</A>,
+<a HREF="bibliography.html#edmonds67">79</A>]
+in the form adopted by
+Tarjan [<a HREF="bibliography.html#tarjan77">80</A>] and
+Camerini et al.
+[<a HREF="bibliography.html#camerini79">81</A>].
+The procedure begins by
+constructing a subgraph <i>H</i> of <i>G</i>.  To construct <i>H</i>,
+the procedure loops over each edge in <i>Y</i> and removes from the graph
+every other edge with the same target.  This ensures that the edges in
+<i>Y</i> will be part of the branching found in this invocation of
+<tt>BEST</tt>.  The procedure then removes the edges in <i>Z</i> from the
+graph; thus, the edges in <i>Z</i> will not be part of the branching.
+<tt>BEST</tt> finds the largest edge into each vertex.  When a cycle forms,
+the cycle is condensed to a new vertex (such that the graph becomes
+<i>H<sub>C</sub></i>) and the weight of
+edges into the cycle (that is, into the new vertex)
+are modified.  The modification is such that, if <i>v</i> is a vertex
+in the cycle and is the invertex for edge <i>e</i> whose source is outside
+the cycle, the weight of <i>e</i> is modified
+by adding the weight of the least costly edge within the cycle and
+subtracting the weight of the cycle edge into <i>v</i>.
+This proceeds until all
+vertices have been examined.  The condensed graph is then expanded to give the
+best branching given the constraints <i>Y</i> and </i>Z</i>.
+</p>
+
+<pre>
+BEST(<i>G, Y, Z</i>)
+  <i>H := G<sub>YZ</sub></i>
+  <i>B := &Oslash;</i>
+  <i>&Gamma; := (V,&Oslash;)</i>
+  <b>while</b> there exists an exposed vertex <i>v &ne; root</i> in <i>H</i> with respect to <i>B</i>
+    let w<sub>H</sub></i> be the weighting function of <i>H</i>
+    let <i>Q</i> be a priority queue of in edges of <i>v</i> ordered by <i>w<sub>H</sub></i>
+    <i>b := TOP(Q)</i>
+    <i>B := B U b</i>
+    <i>&beta;(v) := b</i>
+    <b>if</b> <i>B</i> contains a cycle <i>C</i> of <i>H</i> then
+      <i>H := H<sub>C</sub></i>
+      let <i>u</i> be the vertex of <i>H<sub>C</sub></i> corresponding to <i>C</i>
+      add <i>u</i> to <i>&Gamma;</i>
+      <b>for</b> each vertex <i>v'</i> in <i>C</i>
+        make <i>v'</i> a child of <i>u</i> in <i>&Gamma;</i>
+      </b>end for</b>
+      <i>B := B - C</i>
+    </b>end if</b>
+  <b>end while</b>
+  <b>while</b> <i>&Gamma;</i> contains non-isolated vertices
+    find path in <i>&Gamma;</i> with vertices <i>v<sub>1</sub>, v<sub>2</sub>, ... v<sub>k</sub></i> such that <i>v<sub>1</sub></i> is any non-isolated root of <i>&Gamma;</i> and <i>v<sub>k</sub> = t(&beta;(v<sub>1</sub>))</i>
+    <b>for</b> <i>h = 1, k - 1</i>
+      &beta;(v<sub>h+1</sub>) := &beta;(v<sub>h</sub>)
+      remove from <i>&Gamma;</i> vertex <i>v<sub>h</sub></i> and all edges directed out of <i>v<sub>h</sub></i>
+    <b>end for</b>
+  <b>end while</b>
+  <i>A := {&beta;(v):v &ne; root is a vertex of G}</i>
+  return <i>A</i>
+</pre>
+
+<p>
+The procedure <tt>NEXT</tt> constructs the constrained graph <i>H</i> as
+in <tt>BEST</tt>.  It examines each edge in the branching to determine
+whether swapping an edge not in the input branching for an edge in the
+branching results in a smaller
+weight difference.  Only those alternative
+edges for which the target of the
+branching edge (to be replaced) is not an ancestor of the source of the
+alternative edge in the branching are allowed as possible
+swapped edges (as determined by procedure <tt>SEEK</tt>).
+Cycles are handled as in <tt>BEST</tt>.   <tt>NEXT</tt>
+returns the edge <i>e</i> that when removed from the input graph to
+<tt>BEST</tt> will
+give the next best branching and the weight difference between the current
+best branching and the next best descendent.
+</p>
+
+<pre>
+NEXT(<i>G, A, Y, Z</i>)
+  <i>H := G<sub>YZ</sub></i>
+  <i>B := &Oslash;</i>
+  <i>&delta; := &infin;</i>
+  <b>while</b> there exists an exposed vertex <i>v &ne; root</i> in <i>H</i> with respect to <i>B</i>
+    let w<sub>H</sub></i> be the weighting function of <i>H</i>
+    let <i>Q</i> be a priority queue of in edges of <i>v</i> ordered by <i>w<sub>H</sub></i>
+    <i>b := TOP(Q)</i> (ties among edges must be solved in favor of edges in <i>A</i>)
+    <i>B := B U b</i>
+    <b>if</b> <i>b &in; A - Y</i> 
+       <i>w' := SEEK(b, Q, A, H)</i>
+       <b>if</b> <i>w<sub>H</sub>(b) - w' < &delta;</i>
+         <i>e := b</i>
+         <i>&delta; := w<sub>H</sub>(b) - w'</i>
+       <b>end if</b>
+    <b>end if</b>
+    <b>if</b> <i>B</i> contains a cycle <i>C</i> of <i>H</i>
+      H := H<sub>C</sub>
+      B := B - C
+    <b>end if</b>
+  <b>end while</b>
+  return <i>(e, &delta;)</i>
+</pre>
+
+<pre>
+SEEK(<i>b, Q, A, H </i>)
+  <b>for</b> <i>f in Q</i> (ordered iteration by <i>w<sub>H</sub></i>)
+    <b>if</b> <i>f != b</i> and target of <i>b</i> is not an ancestor of source of <i>f</i> in <i>A</i>
+      return <i>w<sub>H</sub>(f)</i>
+    <b>end if</b>
+  <b>end for</b>
+  return -&infin;
+</pre>
+
+<H3>Where Defined</H3>
+
+<P>
+<a href="../../../boost/graph/rank_spanning_branchings.hpp"><TT>boost/graph/rank_spanning_branchings.hpp</TT></a>
+
+<P>
+
+<h3><A NAME="concept:BranchingProcessor">
+BranchingProcessor
+</h3>
+
+<p>
+BranchingProcessor is used in the <tt>rank_spanning_branchings()</tt>
+function to process the current branching.  It is a functor that is called with
+a <a href="filtered_graph.html">filtered view</a> of the parent graph.
+The processor must return a boolean.  If the return value is
+true, <tt>rank_spanning_branchings()</tt>
+continues and seeks the next branching.
+If the return value is false, <tt>rank_spanning_branchings()</tt> stops.
+</p>
+
+<p>
+The following functor is an example 
+<a href="./rank_spanning_branchings.html#concept:BranchingProcessor">BranchingProcessor</a> that prints out the edges in a branching.
+<pre>
+struct print_branching
+{
+
+  print_branching() {} 
+
+  template&lt;class BranchingGraph&gt;
+  bool operator()( const BranchingGraph& bg )
+  {
+    std::cout << "Branching:";
+    BGL_FORALL_EDGES_T( e, bg, BranchingGraph )
+    {
+      std::cout << " (" << source( e, bg ) << "," << target( e, bg ) << ")";
+    }
+    std::cout << std::endl;
+    return true;
+  }
+};
+</pre>
+It returns true, so <tt>rank_spanning_branchings()</tt> would always continue
+on to find the next branching.
+</p>
+
+<p>
+This example
+<a href="./rank_spanning_branchings.html#concept:BranchingProcessor">BranchingProcessor</a> could be called on a <tt>Graph g</tt> as
+<pre>
+rank_spanning_branchings( g, print_branching() );
+</pre>
+This would print out all spanning branchings in the graph in descending order
+by branching weight.
+</p>
+   
+<h3>Parameters</h3>
+
+IN: <tt>const Graph&amp; g</tt> 
+<blockquote>
+  A directed graph. The graph type must be a model of
+  <a href="VertexAndEdgeListGraph.html">VertexAndEdgeListGraph</a>.
+  The graph should
+  have a single root vertex, that is, a single vertex that has indegree
+  equal to zero and an edge directed to at least one other vertex.
+  No other vertex should have indegree equal to zero.
+  A graph with at least one spanning branching
+  can always be constructed from a general
+  directed graph by adding a vertex (the root vertex) and then adding edges
+  with weight zero directed from the root vertex to every other vertex.<br>
+</blockquote>
+
+</blockquote>
+ IN: <tt>BranchingProcessor bp</tt>
+<blockquote>
+  A functor that models <a href="./rank_spanning_branchings.html#concept:BranchingProcessor">BranchingProcessor</a> to process the edges in a branching.<br>
+</blockquote>
+
+<h3>Named Parameters</h3>
+
+IN: <tt>weight_map(WeightMap w_map)</tt> 
+<blockquote>
+The weight or ``length'' of
+  each edge in the graph.
+  The <tt>WeightMap</tt> type must be a model
+  of <a href="../../property_map/doc/ReadablePropertyMap.html">Readable
+  Property Map</a>.  If no edge weight comparison function is supplied,
+  its value type must be <a
+  href="http://www.sgi.com/tech/stl/LessThanComparable.html">Less Than
+  Comparable</a>. The key type of this map needs to be the graph's
+  edge descriptor type.<br>
+  <b>Default:</b> <tt>get(edge_weight, g)</tt><br>
+</blockquote>
+
+IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt> 
+<blockquote>
+  This maps each vertex to an integer in the range <tt>[0,
+  num_vertices(g))</tt>.
+  The type <tt>VertexIndexMap</tt>
+  must be a model of <a
+  href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
+  Map</a>. The value type of the map must be an integer type. The
+  vertex descriptor type of the graph needs to be usable as the key
+  type of the map.<br>
+  <b>Default:</b> <tt>get(vertex_index, g)</tt>
+    Note: if you use this default, make sure your graph has
+    an internal <tt>vertex_index</tt> property. For example,
+    <tt>adjacenty_list</tt> with <tt>VertexList=listS</tt> does
+    not have an internal <tt>vertex_index</tt> property.
+   <br>
+</blockquote>
+
+IN: <tt>distance_compare(CompareFunction cmp)</tt>
+<blockquote>
+  This function is used to compare edge weights to determine which
+  edges to include
+  in the next best branching.  It is also used to compare the weights of
+  branchings.  The weight of a branching is the sum of weights of its edges.
+  The <tt>CompareFunction</tt> type must be a model of <a
+  href="http://www.sgi.com/tech/stl/BinaryPredicate.html">Binary
+  Predicate</a> and have argument types that match the value type of
+  the <tt>WeightMap</tt> property map.<br>
+
+  <b>Default:</b>
+  <tt>std::less&lt;W&gt;</tt> with <tt>W=typename
+  property_traits&lt;WeightMap&gt;::value_type</tt><br>
+</blockquote>
+
+<H3>Complexity</H3>
+
+<P>
+The time complexity is <i>O(kE log V)</i>, where <i>k</i> is the number
+of spanning branchings found.
+
+<H3>Example</H3>
+
+<P>
+The files <a
+href="../example/rank-branchings1.cpp"><TT>example/rank-branching1.cpp</TT></a>
+and
+<a
+href="../example/rank-branchings2.cpp"><TT>example/rank-branching2.cpp</TT></a>
+contain examples of using the Camerini et al. algorithm.
+
+<H3>Acknowledgments</H3>
+
+<p>
+The development of <tt>rank_spanning_branchings()</tt> was inspired by
+the C++ <a href="http://edmonds-alg.sourceforge.net">implementation</a> of
+Edmond's algorithm by Ali Tofigh and Erik Sj&ouml;lund.
+</p>
+
+<br>
+<HR>
+<TABLE>
+<TR valign=top>
+<TD nowrap>Copyright &copy; 2015</TD><TD>
+Clemson University, Bradley S. Meyer (<A HREF="mailto:mbradle@clemson.edu">mbradle@clemson.edu</A>)
+</TD></TR></TABLE>
+
+</BODY>
+</HTML> 

@@ -128,6 +128,8 @@ exe push-relable : push-relabel-eg.cpp ;
 run put-get-helper-eg.cpp ;
 run quick_tour.cpp ;
 run quick-tour.cpp ;
+exe rank-branchings1 : rank-branchings1.cpp ;
+exe rank-branchings2 : rank-branchings2.cpp ;
 run r_c_shortest_paths_example.cpp ;
 run read_graphviz.cpp ../build//boost_graph ;
 exe read_write_dimacs : read_write_dimacs-eg.cpp ;

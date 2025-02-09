@@ -159,6 +159,8 @@ alias graph_test_regular :
     [ run delete_edge.cpp ]
     [ run johnson-test.cpp ]
     [ run lvalue_pmap.cpp ]
+    [ run rank_branchings_test.cpp : 4 10 ]
+    [ run fibonacci_test.cpp ]
     ;
 
 alias graph_test_with_filesystem : :
