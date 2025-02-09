@@ -24,15 +24,15 @@
 <P>
 <PRE>
 template &lt;class <a href="./IncidenceGraph.html">IncidenceGraph</a>, class <a href="./DFSVisitor.html">DFSVisitor</a>, class ColorMap&gt;
-void depth_first_visit(IncidenceGraph& g,
+DFSVisitor depth_first_visit(IncidenceGraph& g,
   typename graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor s,
-  DFSVisitor&amp; vis, ColorMap color)
+  DFSVisitor vis, ColorMap color)
 
 template &lt;class <a href="./IncidenceGraph.html">IncidenceGraph</a>, class <a href="./DFSVisitor.html">DFSVisitor</a>, class ColorMap,
           class TerminatorFunc&gt;
-void depth_first_visit(IncidenceGraph& g,
+DFSVisitor depth_first_visit(IncidenceGraph& g,
   typename graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor s,
-  DFSVisitor&amp; vis, ColorMap color, TerminatorFunc func = TerminatorFunc())
+  DFSVisitor vis, ColorMap color, TerminatorFunc func = TerminatorFunc())
 </PRE>
 
 <P>

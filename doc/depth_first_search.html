@@ -28,10 +28,10 @@ void depth_first_search(Graph&amp; G,
 
 <i>// non-named parameter version</i>
 template &lt;class Graph, class <a href="DFSVisitor.html">DFSVisitor</a>, class ColorMap&gt;
-void depth_first_search(const Graph&amp; g, DFSVisitor vis, ColorMap color)
+DFSVisitor depth_first_search(const Graph&amp; g, DFSVisitor vis, ColorMap color)
 
 template &lt;class Graph, class <a href="DFSVisitor.html">DFSVisitor</a>, class ColorMap&gt;
-void depth_first_search(const Graph&amp; g, DFSVisitor vis, ColorMap color,
+DFSVisitor depth_first_search(const Graph&amp; g, DFSVisitor vis, ColorMap color,
                         typename graph_traits&lt;Graph&gt;::vertex_descriptor start)
 
 </PRE>
