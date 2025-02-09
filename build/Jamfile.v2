@@ -6,9 +6,15 @@
 
 import mpi ;
 
-project boost/graph
-    : requirements <include>../src
+constant boost_dependencies_private :
+    /boost/regex//boost_regex
+    ;
+
+project
+    : common-requirements <library>$(boost_dependencies)
+    : requirements <include>../src <library>$(boost_dependencies_private)
     : source-location ../src
+    : usage-requirements <define>BOOST_GRAPH_NO_LIB=1
     ;
 
 lib boost_graph
@@ -24,5 +30,3 @@ lib boost_graph
     :
     :
     ;
-
-boost-install boost_graph ;

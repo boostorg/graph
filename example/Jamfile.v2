@@ -3,11 +3,16 @@
 # Distributed under the Boost Software License, Version 1.0. (See accompanying
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-import ../../config/checks/config : requires ;
+require-b2 5.0.1 ;
+import-search /boost/config/checks ;
+
+import config : requires ;
 import modules ;
 import path ;
 
 path-constant TEST_DIR : . ;
+
+project : requirements <library>/boost/graph//boost_graph ;
 
 run accum-compile-times.cpp : $(TEST_DIR)/makefile-dependencies.dat $(TEST_DIR)/makefile-target-names.dat $(TEST_DIR)/target-compile-costs.dat ;
 exe actor_clustering : actor_clustering.cpp ;
@@ -75,15 +80,15 @@ run filtered_graph.cpp ;
 run filtered_graph_edge_range.cpp ;
 run filtered_vec_as_graph.cpp ;
 run filtered-copy-example.cpp ;
-exe fr_layout : fr_layout.cpp : [ requires cxx11_noexcept cxx11_rvalue_references sfinae_expr cxx11_auto_declarations cxx11_lambdas cxx11_unified_initialization_syntax cxx11_hdr_tuple cxx11_hdr_initializer_list cxx11_hdr_chrono cxx11_thread_local cxx11_constexpr cxx11_nullptr cxx11_numeric_limits cxx11_decltype cxx11_hdr_array cxx11_hdr_atomic cxx11_hdr_type_traits cxx11_allocator cxx11_explicit_conversion_operators ] ;
+exe fr_layout : fr_layout.cpp /boost/timer//boost_timer : [ requires cxx11_noexcept cxx11_rvalue_references sfinae_expr cxx11_auto_declarations cxx11_lambdas cxx11_unified_initialization_syntax cxx11_hdr_tuple cxx11_hdr_initializer_list cxx11_hdr_chrono cxx11_thread_local cxx11_constexpr cxx11_nullptr cxx11_numeric_limits cxx11_decltype cxx11_hdr_array cxx11_hdr_atomic cxx11_hdr_type_traits cxx11_allocator cxx11_explicit_conversion_operators ] ;
 run gerdemann.cpp ;
 run graph.cpp ;
 run graph_as_tree.cpp ;
 run graph_property.cpp ;
 run graph-assoc-types.cpp ;
 run graph-property-iter-eg.cpp ;
-run graph-thingie.cpp ../build//boost_graph ;
-run graphviz.cpp ../build//boost_graph : $(TEST_DIR)/graphviz_example.dot ;
+run graph-thingie.cpp /boost/graph//boost_graph ;
+run graphviz.cpp /boost/graph//boost_graph : $(TEST_DIR)/graphviz_example.dot ;
 run grid_graph_example.cpp ;
 run grid_graph_properties.cpp ;
 exe hawick_circuits : hawick_circuits.cpp ;
@@ -114,7 +119,7 @@ exe mean_geodesic : mean_geodesic.cpp ;
 exe minimum_degree_ordering : minimum_degree_ordering.cpp ;
 run modify_graph.cpp ;
 run neighbor_bfs.cpp ;
-run ospf-example.cpp ../build//boost_graph : $(TEST_DIR)/figs/ospf-graph.dot $(TEST_DIR)/figs/ospf-sptree.dot $(TEST_DIR)/routing-table.dat ;
+run ospf-example.cpp /boost/graph//boost_graph : $(TEST_DIR)/figs/ospf-graph.dot $(TEST_DIR)/figs/ospf-sptree.dot $(TEST_DIR)/routing-table.dat ;
 run parallel-compile-time.cpp : $(TEST_DIR)/makefile-dependencies.dat $(TEST_DIR)/makefile-target-names.dat $(TEST_DIR)/target-compile-costs.dat ;
 run planar_face_traversal.cpp ;
 run prim-example.cpp ;
@@ -129,7 +134,7 @@ run put-get-helper-eg.cpp ;
 run quick_tour.cpp ;
 run quick-tour.cpp ;
 run r_c_shortest_paths_example.cpp ;
-run read_graphviz.cpp ../build//boost_graph ;
+run read_graphviz.cpp /boost/graph//boost_graph ;
 exe read_write_dimacs : read_write_dimacs-eg.cpp ;
 run remove_edge_if_bidir.cpp ;
 run remove_edge_if_dir.cpp ;
@@ -207,7 +212,7 @@ explicit girth ;
 #run edge-connectivity.cpp ;
 #
 # These compile, but still use the old graphviz interface and die and runtime:
-# run strong_components.cpp ../build//boost_graph ;
+# run strong_components.cpp /boost/graph//boost_graph ;
 
 
 #

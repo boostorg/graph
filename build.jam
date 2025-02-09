@@ -1,0 +1,63 @@
+# Copyright René Ferdinand Rivera Morell 2024
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+require-b2 5.2 ;
+
+constant boost_dependencies :
+    /boost/algorithm//boost_algorithm
+    /boost/any//boost_any
+    /boost/array//boost_array
+    /boost/assert//boost_assert
+    /boost/bimap//boost_bimap
+    /boost/bind//boost_bind
+    /boost/concept_check//boost_concept_check
+    /boost/config//boost_config
+    /boost/container_hash//boost_container_hash
+    /boost/conversion//boost_conversion
+    /boost/core//boost_core
+    /boost/detail//boost_detail
+    /boost/foreach//boost_foreach
+    /boost/function//boost_function
+    /boost/integer//boost_integer
+    /boost/iterator//boost_iterator
+    /boost/lexical_cast//boost_lexical_cast
+    /boost/math//boost_math_tr1
+    /boost/move//boost_move
+    /boost/mpl//boost_mpl
+    /boost/multi_index//boost_multi_index
+    /boost/optional//boost_optional
+    /boost/parameter//boost_parameter
+    /boost/preprocessor//boost_preprocessor
+    /boost/property_map//boost_property_map
+    /boost/property_tree//boost_property_tree
+    /boost/random//boost_random
+    /boost/range//boost_range
+    /boost/serialization//boost_serialization
+    /boost/smart_ptr//boost_smart_ptr
+    /boost/spirit//boost_spirit
+    /boost/static_assert//boost_static_assert
+    /boost/throw_exception//boost_throw_exception
+    /boost/tti//boost_tti
+    /boost/tuple//boost_tuple
+    /boost/type_traits//boost_type_traits
+    /boost/typeof//boost_typeof
+    /boost/unordered//boost_unordered
+    /boost/utility//boost_utility
+    /boost/xpressive//boost_xpressive ;
+
+project /boost/graph
+    : common-requirements
+        <include>include
+    ;
+
+explicit
+    [ alias boost_graph : build//boost_graph ]
+    [ alias all : boost_graph example test ]
+    ;
+
+call-if : boost-library graph
+    : install boost_graph
+    ;
+
