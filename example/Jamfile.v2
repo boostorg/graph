@@ -163,6 +163,7 @@ run vertex-name-property.cpp : $(TEST_DIR)/makefile-dependencies.dat $(TEST_DIR)
 run vf2_sub_graph_iso_example.cpp ;
 run vf2_sub_graph_iso_multi_example.cpp ;
 run visitor.cpp ;
+run weighted_matching_example.cpp ;
 run write_graphviz.cpp ;
 
 #

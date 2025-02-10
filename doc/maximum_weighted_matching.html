@@ -1,5 +1,6 @@
 <html><head><!--
      Copyright 2018 Yi Ji
+     Copyright 2025 Joris van Rantwijk
 
      Use, modification and distribution is subject to the Boost Software
      License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -19,6 +20,9 @@ void maximum_weighted_matching(const Graph&amp; g, MateMap mate);
 
 template &lt;typename Graph, typename MateMap, typename VertexIndexMap&gt;
 void maximum_weighted_matching(const Graph&amp; g, MateMap mate, VertexIndexMap vm);
+
+template &lt;typename Graph, typename MateMap, typename VertexIndexMap, typename EdgeWeightMap&gt;
+void maximum_weighted_matching(const Graph&amp; g, MateMap mate, VertexIndexMap vm, EdgeWeightMap weights);
 
 template &lt;typename Graph, typename MateMap&gt;
 void brute_force_maximum_weighted_matching(const Graph&amp; g, MateMap mate);
@@ -56,77 +60,126 @@ maximum weighted matching in any undirected graph. The matching is returned in a
 <a href="../../property_map/doc/ReadWritePropertyMap.html">ReadWritePropertyMap</a>
 that maps vertices to vertices. In the mapping returned, each vertex is either mapped
 to the vertex it's matched to, or to <tt>graph_traits&lt;Graph&gt;::null_vertex()</tt> if it
-doesn't participate in the matching. If no <tt>VertexIndexMap</tt> is provided, both functions
-assume that the <tt>VertexIndexMap</tt> is provided as an internal graph property accessible
-by calling <tt>get(vertex_index, g)</tt>.
+doesn't participate in the matching.
+</p>
+
+<h3>Algorithm Description</h3>
 
 <p>
-The maximum weighted matching problem was solved by Edmonds in [<a href="bibliography.html#edmonds65:_max_weighted_match">74</a>].
-The implementation of <tt>maximum_weighted_matching</tt> followed Chapter 6, Section 10 of [<a href="bibliography.html#lawler76:_comb_opt">20</a>] and
-was written in a consistent style with <tt>edmonds_maximum_cardinality_matching</tt> because of their algorithmic similarity.
-In addition, a brute-force verifier <tt>brute_force_maximum_weighted_matching</tt> simply searches all possible matchings in any graph and selects one with the maximum weight sum.
-
-</p><h3>Algorithm Description</h3>
-
-Primal-dual method in linear programming is introduced to solve weighted matching problems. Edmonds proved that for any graph,
-the maximum number of edges in a matching is equal to the minimum capacity of an odd-set cover; this further enable us to prove a max-min duality theorem for weighted matching.
-Let <i>H<sub>k-1</sub></i> denote any graph obtained from G by contracting odd sets of three or more nodes and deleting single nodes,
-where the capacity of the family of odd sets (not necessarily a cover of G) is <i>k-1</i>. Let <i>X<sub>k</sub></i> denote any matching containing <i>k</i> edges.
-Each edge <i>(i, j)</i> has a weight <i>w<sub>ij</sub></i>. We have:
-<math>
-max<i><sub>X<sub>k</sub></sub></i> min {<i>w<sub>ij</sub>|(i, j) ϵ X<sub>k</sub></i>} = min<i><sub>H<sub>k-1</sub></sub></i> max {<i>w<sub>ij</sub>|(i, j) ϵ H<sub>k-1</sub></i>}.
-</math>
-This matching duality theorem gives an indication of how the matching problem should be formulated as a linear programming problem. That is,
-the theorem suggests a set of linear inequalities which are satisfied by any matching, and it is anticipated that these inequalities describe a convex polyhedron
-with integer vertices corresponding to feasible matchings.
+The maximum weighted matching problem was solved by Edmonds in
+[<a href="bibliography.html#edmonds65:_max_weighted_match">74</a>].
+Subsequently, Gabow [<a href="bibliography.html#gabow76">75</a>] and
+Lawler [<a href="bibliography.html#lawler76:_comb_opt">20</a>] developed methods
+to reduce the run time from <i>O(V<sup>4</sup>)</i> to <i>O(V<sup>3</sup>)</i>.
+The implementation of <tt>maximum_weighted_matching</tt> follows a description
+of the <i>O(V<sup>3</sup>)</i> algorithm by Galil [<a href="bibliography.html#galil86">77</a>].
+</p>
 
 <p>
-For <tt>maximum_weighted_matching</tt>, the management of blossoms is much more involved than in the case of <tt>max_cardinality_matching</tt>.
-It is not sufficient to record only the outermost blossoms. When an outermost blossom is expanded,
-it is necessary to know which blossom are nested immediately with it, so that these blossoms can be restored to the status of the outermost blossoms.
-When augmentation occurs, blossoms with strictly positive dual variables must be maintained for use in the next application of the labeling procedure.
+Starting from an empty matching, the algorithm repeatedly augments the matching until no further improvement is possible.
+Alternating trees and blossoms are used to find an augmenting path, in a way that is similar to maximum cardinality matching.
+A linear programming technique is used to ensure that the selected augmenting path has maximum weight.
+This involves assigning dual variables to vertices and blossoms, and computing slack values for edges.
+</p>
 
 <p>
-The outline of the algorithm is as follow:
+The outline of the algorithm is as follows:
+</p>
 
 <ol start="0">
-<li>Start with an empty matching and initialize dual variables as a half of maximum edge weight.</li>
-<li>(Labeling) Root an alternate tree at each exposed node, and proceed to construct alternate trees by labeling, using only edges with zero slack value.
+<li>Start with an empty matching and initialize dual variables to half of the maximum edge weight.</li>
+<li>(Labeling) Root a tree at each non-matched vertex, and proceed to construct alternating trees by labeling, using only edges with zero slack value.
 If an augmenting path is found, go to step 2. If a blossom is formed, go to step 3. Otherwise, go to step 4. </li>
-<li>(Augmentation) Find the augmenting path, tracing the path through shrunken blossoms. Augment the matching,
-correct labels on nodes in the augmenting path, expand blossoms with zero dual variables and remove labels from all base nodes. Go to step 1.</li>
-<li>(Blossoming) Determine the membership and base node of the new blossom and supply missing labels for all non-base nodes in the blossom.
+<li>(Augmentation) Find the augmenting path, tracing the path through shrunken blossoms. Augment the matching.
+Deconstruct and unlabel the alternating trees traversed by the augmenting path.
+Go to step 1.</li>
+<li>(Blossoming) Identify the blossoms in the alternating cycle and shrink these into a newly formed blossom.
 Return to step 1.</li>
-<li>(Revision of Dual Solution) Adjust the dual variables based on the primal-dual method. Go to step 1 or halt, accordingly.</li>
+<li>(Updating dual variables) Adjust the dual variables based on the primal-dual method.
+If this enables further growth of the alternating trees, return to step 1.
+Otherwise, halt the algorithm; the matching has maximum weight.</li>
 </ol>
 
-Note that in <tt>maximum_weighted_matching</tt>, all edge weights are multiplied by 4, so that all dual variables always remain as integers if all edge weights are integers.
-Unlike <tt>max_cardinality_matching</tt>, the initial matching and augmenting path finder are not parameterized,
-because the algorithm maintains blossoms, dual variables and node labels across all augmentations.
+<p>
+The implementation deviates from the description in [<a href="bibliography.html#galil86">77</a>] on a few points:
+</p>
 
-The algorithm's time complexity is reduced from <i>O(V<sup>4</sup>)</i> (naive implementation of [<a href="bibliography.html#edmonds65:_max_weighted_match">74</a>])
-to <i>O(V<sup>3</sup>)</i>, by a delicate labeling procedure [<a href="bibliography.html#gabow76">75</a>] to avoid re-scanning labels after revision of the dual solution.
-Special variables <i>pi, tau, gamma</i> and two arrays <i>critical_edge, tau_idx</i> are introduced for this purpose.
-Please refer to [<a href="bibliography.html#lawler76:_comb_opt">20</a>] and code comments for more implementation details.
+<ul>
+<li>
+After augmenting the matching, [<a href="bibliography.html#galil86">77</a>] expands all blossoms with zero dual.
+This is correct but potentially unnecessary; some of the expanded blossoms will be recreated during the next stage.
+The implementation holds off on the expansion of such blossoms.
+In any scenario where a blossom <i>must</i> be expanded to make progress, label T will be assigned to it.
+At that point, the blossom will be expanded through a zero-delta dual step.
+The additional cost is <i>O(V)</i> per expanded blossom, and the total number of blossom expansions is <i>O(V<sup>2</sup>)</i>,
+therefore this does not change the overall time complexity of the algorithm.
+</li>
+<li>
+The algorithm records a minimum-slack edge <i>e<sub>k,l</sub></i> for every pair of blossoms <i>B<sub>k</sub>, B<sub>l</sub></i>.
+Storing these edges in a 2-dimensional array would increase the space complexity to <i>O(V<sup>2</sup>)</i>;
+an unfortunate cost for large sparse graphs.
+The implementation of <tt>maximum_weighted_matching</tt> avoids this by maintaining, for each blossom <i>B<sub>k</sub></i>,
+a list <tt>B<sub>k</sub>.best_edge_set</tt> that contains the non-empty elements of <i>e<sub>k,l</sub></i>,
+plus edges between <i>B<sub>k</sub></i> and <i>B<sub>l</sub></i> discovered after shrinking <i>B<sub>k</sub></i>.
+The combined length of these lists is <i>O(E)</i>, since any edge is contained in at most two lists.
+The algorithm only ever examines <i>e<sub>k,l</sub></i> during the process of merging <i>B<sub>k</sub></i> into a larger blossom.
+In that case, it sequentially examines <i>e<sub>k,l</sub></i> for all <i>l</i>, taking time <i>O(V)</i>.
+The implementation handles this by examining every element of <tt>B<sub>k</sub>.best_edge_set</tt>,
+taking time <i>O(V)</i> plus a constant time per newly discovered edge.
+This does not change the overall time complexity of the algorithm.
+</li>
+<li>
+After augmenting, [<a href="bibliography.html#galil86">77</a>] removes all labels and alternating trees.
+This keeps the algorithm simple, but it causes many trees and labels to be rediscovered at the beginning of the new stage.
+To avoid such redundent work, <tt>maximum_weighted_matching</tt> removes labels only from the two alternating trees that are touched by the augmenting path.
+All other labels and trees are reused in the next stage.
+Erasing labels from a subset of the graph, requires updating the data structures that track minimum-slack edges.
+This involves examining all edges that either touch a blossom which loses its label or touch a vertex which depended on a lost label.
+These steps take <i>O(V + E)</i> per stage, adding up to <i>O(V<sup>3</sup>)</i> in total.
+Although this strategy does not improve the worst-case time complexity of the algorithm, it achieves a significant speedup in benchmarks on random graphs.
+</li>
+</ul>
+
+<p>
+If edge weights are integers, the algorithm uses only integer computations.
+This is achieved by internally multiplying edge weights by 2, which ensures that all dual variables are also integers.
+</p>
+
+<p>
+A brute-force implementation <tt>brute_force_maximum_weighted_matching</tt> is also provided.
+This algorithm simply searches all possible matchings and selects one with the maximum weight sum.
+</p>
 
 </p><h3>Where Defined</h3>
 
 <p>
 <a href="../../../boost/graph/maximum_weighted_matching.hpp"><tt>boost/graph/maximum_weighted_matching.hpp</tt></a>
+</p>
 
-</p><h3>Parameters</h3>
+<h3>Parameters</h3>
 
 IN: <tt>const Graph&amp; g</tt>
 <blockquote>
 An undirected graph. The graph type must be a model of
 <a href="VertexAndEdgeListGraph.html">Vertex and Edge List Graph</a> and
 <a href="IncidenceGraph.html">Incidence Graph</a>.
-The edge property of the graph <tt>property_map&lt;Graph, edge_weight_t&gt;</tt> must exist and have numeric value type.<br>
+The graph may not contain parallel edges.
 </blockquote>
 
 IN: <tt>VertexIndexMap vm</tt>
 <blockquote>
-Must be a model of <a href="../../property_map/doc/ReadablePropertyMap.html">ReadablePropertyMap</a>, mapping vertices to integer indices.
+Must be a model of <a href="../../property_map/doc/ReadablePropertyMap.html">ReadablePropertyMap</a>,
+mapping vertices to integer indices in the range <tt>[0, num_vertices(g))</tt>.
+If this parameter is not explicitly specified, it is obtained from the internal vertex property of the graph
+by calling <tt>get(vertex_index, g)</tt>.
+</blockquote>
+
+IN: <tt>EdgeWeightMap weights</tt>
+<blockquote>
+Must be a model of <a href="../../property_map/doc/ReadablePropertyMap.html">ReadablePropertyMap</a>, mapping edges to weights.
+Edge weights must be integers or floating point values.
+If this parameter is not explicitly specified, it is obtained from the internal edge property of the graph
+by calling <tt>get(edge_weight, g)</tt>.
 </blockquote>
 
 OUT: <tt>MateMap mate</tt>
@@ -140,24 +193,29 @@ vertices to vertices. For any vertex v in the graph, <tt>get(mate,v)</tt> will b
 
 <p>
 Let <i>m</i> and <i>n</i> be the number of edges and vertices in the input graph, respectively. Assuming the
-<tt>VertexIndexMap</tt> supplied allows constant-time lookup, the time complexity for
-<tt>maximum_weighted_matching</tt> is <i>O(n<sup>3</sup>)</i>. For <tt>brute_force_maximum_weighted_matching</tt>, the time complexity is exponential of <i>m</i>.
+<tt>VertexIndexMap</tt> and <tt>EdgeWeightMap</tt> both provide constant-time lookup, the time complexity for
+<tt>maximum_weighted_matching</tt> is <i>O(n<sup>3</sup>)</i>.
+For <tt>brute_force_maximum_weighted_matching</tt>, the time complexity is exponential in <i>m</i>.
+</p>
+
+<p>
 Note that the best known time complexity for maximum weighted matching in general graph
 is <i>O(nm+n<sup>2</sup>log(n))</i> by [<a href="bibliography.html#gabow90">76</a>], but relies on an
 efficient algorithm for solving nearest ancestor problem on trees, which is not provided in Boost C++ libraries.
-</p><p>
+</p>
 
-</p><h3>Example</h3>
+<h3>Example</h3>
 
-<p> The file <a href="../example/weighted_matching_example.cpp"><tt>example/weighted_matching_example.cpp</tt></a>
+<p>The file <a href="../example/weighted_matching_example.cpp"><tt>example/weighted_matching_example.cpp</tt></a>
 contains an example.
+</p>
 
-<br>
-</p><hr>
+<hr>
 <table>
 <tbody><tr valign="top">
-<td nowrap="nowrap">Copyright © 2018</td><td>
-Yi Ji (<a href="mailto:jiy@pku.edu.cn">jiy@pku.edu.cn</a>)<br>
+<td nowrap="nowrap">Copyright © 2018, 2025</td><td>
+Yi Ji (<a href="mailto:jiy@pku.edu.cn">jiy@pku.edu.cn</a>),
+Joris van Rantwijk
 </td></tr></tbody></table>
 
 </body></html>
