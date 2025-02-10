@@ -132,6 +132,8 @@ int main()
             Graph;
         BOOST_META_ASSERT(is_directed_graph< Graph >);
         BOOST_META_ASSERT(!is_multigraph< Graph >);
+        BOOST_META_ASSERT(is_bidirectional_graph< Graph >);
+        BOOST_META_ASSERT(is_directed_bidirectional_graph< Graph >);
         BOOST_META_ASSERT(has_vertex_property< Graph >);
         BOOST_META_ASSERT(has_bundled_vertex_property< Graph >);
         BOOST_META_ASSERT(has_edge_property< Graph >);
@@ -145,6 +147,8 @@ int main()
         typedef adjacency_matrix< directedS, VertexBundle, EdgeBundle > Graph;
         BOOST_META_ASSERT(is_directed_graph< Graph >);
         BOOST_META_ASSERT(!is_multigraph< Graph >);
+        BOOST_META_ASSERT(is_bidirectional_graph< Graph >);
+        BOOST_META_ASSERT(is_directed_bidirectional_graph< Graph >);
         BOOST_META_ASSERT(has_vertex_property< Graph >);
         BOOST_META_ASSERT(has_bundled_vertex_property< Graph >);
         BOOST_META_ASSERT(has_edge_property< Graph >);
