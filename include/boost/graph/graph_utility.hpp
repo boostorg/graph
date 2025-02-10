@@ -23,6 +23,8 @@
 #include <boost/graph/properties.hpp>
 #include <boost/pending/container_traits.hpp>
 #include <boost/graph/depth_first_search.hpp>
+// only for backward-compatibility error message
+#include <boost/graph/is_connected.hpp>
 // iota moved to detail/algorithm.hpp
 #include <boost/detail/algorithm.hpp>
 
@@ -339,26 +341,7 @@ inline bool is_reachable(
     return get(color, y) != color_traits< ColorValue >::white();
 }
 
-// Is the undirected graph connected?
-// Is the directed graph strongly connected?
-template < typename VertexListGraph, typename VertexColorMap >
-inline bool is_connected(const VertexListGraph& g, VertexColorMap color)
-{
-    typedef typename property_traits< VertexColorMap >::value_type ColorValue;
-    typedef color_traits< ColorValue > Color;
-    typename graph_traits< VertexListGraph >::vertex_iterator ui, ui_end, vi,
-        vi_end, ci, ci_end;
-    for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
-        for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
-            if (*ui != *vi)
-            {
-                for (boost::tie(ci, ci_end) = vertices(g); ci != ci_end; ++ci)
-                    put(color, *ci, Color::white());
-                if (!is_reachable(*ui, *vi, g, color))
-                    return false;
-            }
-    return true;
-}
+// is_connected is moved to `is_connected.hpp`
 
 template < typename Graph >
 bool is_self_loop(

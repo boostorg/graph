@@ -160,6 +160,7 @@ alias graph_test_regular :
     [ run delete_edge.cpp ]
     [ run johnson-test.cpp ]
     [ run lvalue_pmap.cpp ]
+    [ run is_connected.cpp ]
     ;
 
 alias graph_test_with_filesystem : :
