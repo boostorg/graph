@@ -797,6 +797,32 @@ namespace detail
                 }
             g.m_edges.erase(edge_iter_to_erase);
         }
+
+        // O(1)
+        template < class OutEdgeList_iterator, class Config >
+        static void apply(OutEdgeList_iterator iter1,
+            OutEdgeList_iterator iter2,
+            undirected_graph_helper< Config >& g_, StoredProperty&)
+        {
+            typedef typename Config::global_edgelist_selector EdgeListS;
+            BOOST_STATIC_ASSERT((is_same< EdgeListS, listS >::value));
+
+            typedef typename Config::graph_type graph_type;
+            graph_type& g = static_cast< graph_type& >(g_);
+            typename Config::edge_descriptor e = *iter1;
+            typename Config::edge_descriptor f = *iter2;
+            BOOST_ASSERT(source(e, g) == target(f, g));
+            BOOST_ASSERT(source(f, g) == target(e, g));
+
+            typename Config::OutEdgeList& out_el
+                = g.out_edge_list(source(e, g));
+            typename Config::EdgeIter edge_iter_to_erase;
+            edge_iter_to_erase = (*iter1.base()).get_iter();
+            out_el.erase(iter1.base());
+            typename Config::OutEdgeList& in_el = g.out_edge_list(target(e, g));
+            in_el.erase(iter2.base());
+            g.m_edges.erase(edge_iter_to_erase);
+        }
     };
 
     template <> struct remove_undirected_edge_dispatch< no_property >
@@ -831,6 +857,32 @@ namespace detail
                     in_el.erase(in_i);
                     break;
                 }
+            g.m_edges.erase(edge_iter_to_erase);
+        }
+
+        // O(1)
+        template < class OutEdgeList_iterator, class Config >
+        static void apply(OutEdgeList_iterator iter1,
+            OutEdgeList_iterator iter2,
+            undirected_graph_helper< Config >& g_, no_property&)
+        {
+            typedef typename Config::global_edgelist_selector EdgeListS;
+            BOOST_STATIC_ASSERT((is_same< EdgeListS, listS >::value));
+
+            typedef typename Config::graph_type graph_type;
+            graph_type& g = static_cast< graph_type& >(g_);
+            typename Config::edge_descriptor e = *iter1;
+            typename Config::edge_descriptor f = *iter2;
+            BOOST_ASSERT(source(e, g) == target(f, g));
+            BOOST_ASSERT(source(f, g) == target(e, g));
+
+            typename Config::OutEdgeList& out_el
+                = g.out_edge_list(source(e, g));
+            typename Config::EdgeIter edge_iter_to_erase;
+            edge_iter_to_erase = (*iter1.base()).get_iter();
+            out_el.erase(iter1.base());
+            typename Config::OutEdgeList& in_el = g.out_edge_list(target(e, g));
+            in_el.erase(iter2.base());
             g.m_edges.erase(edge_iter_to_erase);
         }
     };
@@ -924,6 +976,17 @@ template < class Config > struct undirected_graph_helper
     {
         this->remove_edge(*iter);
     }
+    // O(1)
+    inline void remove_edge(typename Config::out_edge_iterator iter1,
+                            typename Config::out_edge_iterator iter2)
+    {
+        typedef typename Config::global_edgelist_selector EdgeListS;
+        BOOST_STATIC_ASSERT((!is_same< EdgeListS, vecS >::value));
+
+        typedef typename Config::OutEdgeList::value_type::property_type PType;
+        detail::remove_undirected_edge_dispatch< PType >::apply(
+            iter1, iter2, *this, *(PType*)((*iter1).get_property()));
+    }
 };
 
 // Had to make these non-members to avoid accidental instantiation
@@ -951,6 +1014,17 @@ inline void remove_edge(EdgeOrIter e, undirected_graph_helper< Config >& g_)
     BOOST_STATIC_ASSERT((!is_same< EdgeListS, vecS >::value));
 
     g_.remove_edge(e);
+}
+
+// O(1)
+template < class OutEdgeIter, class Config >
+inline void remove_edge_(OutEdgeIter i1, OutEdgeIter i2,
+    undirected_graph_helper< Config >& g_)
+{
+    typedef typename Config::global_edgelist_selector EdgeListS;
+    BOOST_STATIC_ASSERT((is_same< EdgeListS, listS >::value));
+
+    g_.remove_edge(i1, i2);
 }
 
 // O(E/V) or O(log(E/V))
