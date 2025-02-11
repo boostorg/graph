@@ -13,7 +13,6 @@
 #include <algorithm> // for std::min and std::max
 #include <functional>
 #include <boost/config.hpp>
-#include <boost/bind/bind.hpp>
 #include <boost/graph/strong_components.hpp>
 #include <boost/graph/topological_sort.hpp>
 #include <boost/graph/graph_concepts.hpp>
@@ -130,16 +129,16 @@ void transitive_closure(const Graph& g, GraphTC& tc,
     std::vector< std::vector< cg_vertex > > CG_vec(num_vertices(CG));
     for (size_type i = 0; i < num_vertices(CG); ++i)
     {
-        using namespace boost::placeholders;
+        using namespace std::placeholders;
 
         typedef typename boost::graph_traits< CG_t >::adjacency_iterator
             cg_adj_iter;
         std::pair< cg_adj_iter, cg_adj_iter > pr = adjacent_vertices(i, CG);
         CG_vec[i].assign(pr.first, pr.second);
         std::sort(CG_vec[i].begin(), CG_vec[i].end(),
-            boost::bind(std::less< cg_vertex >(),
-                boost::bind(detail::subscript(topo_number), _1),
-                boost::bind(detail::subscript(topo_number), _2)));
+            std::bind(std::less< cg_vertex >(),
+                std::bind(detail::subscript(topo_number), _1),
+                std::bind(detail::subscript(topo_number), _2)));
     }
 
     std::vector< std::vector< cg_vertex > > chains;
