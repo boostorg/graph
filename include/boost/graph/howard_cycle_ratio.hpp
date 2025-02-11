@@ -240,14 +240,10 @@ namespace detail
             typename graph_traits< Graph >::out_edge_iterator oei, oeie;
             for (boost::tie(vi, vie) = vertices(m_g); vi != vie; ++vi)
             {
-                using namespace std::placeholders;
-
                 boost::tie(oei, oeie) = out_edges(*vi, m_g);
-                typename graph_traits< Graph >::out_edge_iterator mei
-                    = boost::first_max_element(oei, oeie,
-                        std::bind(m_cmp,
-                            std::bind(&EdgeWeight1::operator[], m_ew1m, _1),
-                            std::bind(&EdgeWeight1::operator[], m_ew1m, _2)));
+                auto mei = boost::first_max_element(oei, oeie,
+                    [this](const auto& first, const auto& second)
+                    { return m_cmp(m_ew1m[first], m_ew1m[second]); });
                 if (mei == oeie)
                 {
                     if (m_sink == graph_traits< Graph >().null_vertex())
