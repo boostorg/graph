@@ -351,16 +351,17 @@ namespace detail
          */
         float_t policy_mcr()
         {
-            using std::placeholders::_1;
-
             std::fill(m_col_bfs.begin(), m_col_bfs.end(), my_white);
             color_map_t vcm_ = color_map_t(m_col_bfs.begin(), m_vim);
             typename graph_traits< Graph >::vertex_iterator uv_itr, vie;
             boost::tie(uv_itr, vie) = vertices(m_g);
             float_t mcr = m_bound;
             while ((uv_itr = std::find_if(uv_itr, vie,
-                        std::bind(std::equal_to< my_color_type >(), my_white,
-                            std::bind(&color_map_t::operator[], vcm_, _1))))
+                        [this, &vcm_](const auto& uv)
+                        {
+                            return std::equal_to< my_color_type >()(
+                                my_white, vcm_[uv]);
+                        }))
                 != vie)
             /// While there are undiscovered vertices
             {

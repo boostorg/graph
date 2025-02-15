@@ -48,9 +48,6 @@ namespace detail
         template < typename Vertex, typename Graph >
         void finish_vertex(Vertex, Graph& g)
         {
-            using std::placeholders::_1;
-            using std::placeholders::_2;
-
             typename graph_traits< Graph >::out_edge_iterator ei, ei_end;
             Vertex v, w;
 
@@ -61,7 +58,7 @@ namespace detail
             reverse_iterator rbegin = Qptr->rbegin();
 
             // heap the vertices already there
-            std::make_heap(rbegin, rend, std::bind(comp, _2, _1));
+            std::make_heap(rbegin, rend, [this](const auto& first, const auto& second) { return comp(second, first); });
 
             unsigned i = 0;
 
