@@ -62,8 +62,7 @@ int main(int argc, char** argv)
     boost::two_graphs_common_spanning_trees(
         iG, iG_o, vG, vG_o, tree_collector, inL);
 
-    std::vector< std::vector< bool > >::iterator it;
-    for (it = coll.begin(); it != coll.end(); ++it)
+    for (auto const & vec : coll)
     {
         // Here you can play with the trees that the algorithm has found.
     }

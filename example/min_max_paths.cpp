@@ -59,7 +59,7 @@ int main(int, char*[])
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
     // VC++ can't handle iterator constructors
     Graph G(num_nodes);
-    property_map< Graph, edge_weight_t >::type weightmap = get(edge_weight, G);
+    auto weightmap = get(edge_weight, G);
     for (std::size_t j = 0; j < sizeof(edges) / sizeof(E); ++j)
     {
         graph_traits< Graph >::edge_descriptor e;
@@ -69,7 +69,7 @@ int main(int, char*[])
     }
 #else
     Graph G(edges, edges + n_edges, weights, num_nodes);
-    property_map< Graph, edge_weight_t >::type weightmap = get(edge_weight, G);
+    auto weightmap = get(edge_weight, G);
 #endif
 
     std::vector< Vertex > p(num_vertices(G));

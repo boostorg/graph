@@ -45,8 +45,7 @@ int main()
 
     std::reverse(topo_order.begin(), topo_order.end());
     int n = 1;
-    for (std::vector< vertex_t >::iterator i = topo_order.begin();
-         i != topo_order.end(); ++i, ++n)
+    for (auto i = topo_order.begin(); i != topo_order.end(); ++i, ++n)
         std::cout << n << ": " << leda_g[*i] << std::endl;
 
     return EXIT_SUCCESS;

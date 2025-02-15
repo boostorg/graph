@@ -24,8 +24,7 @@ template < class Graph > struct exercise_vertex
     void operator()(const Vertex& v) const
     {
         using namespace boost;
-        typename property_map< Graph, vertex_index_t >::type vertex_id
-            = get(vertex_index, g);
+        auto vertex_id = get(vertex_index, g);
         std::cout << "vertex: " << name[get(vertex_id, v)] << std::endl;
 
         // Write out the outgoing edges
@@ -36,7 +35,7 @@ template < class Graph > struct exercise_vertex
              ++out_i)
         {
             e = *out_i;
-            Vertex src = source(e, g), targ = target(e, g);
+            auto src = source(e, g), targ = target(e, g);
             std::cout << "(" << name[get(vertex_id, src)] << ","
                       << name[get(vertex_id, targ)] << ") ";
         }
@@ -106,7 +105,7 @@ int main(int, char*[])
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
     // VC++ can't handle the iterator constructor
     Graph g(num_vertices);
-    property_map< Graph, edge_weight_t >::type weightmap = get(edge_weight, g);
+    auto weightmap = get(edge_weight, g);
     for (std::size_t j = 0; j < num_edges; ++j)
     {
         graph_traits< Graph >::edge_descriptor e;

@@ -49,7 +49,7 @@ int main(int argc, const char** argv)
     graph_traits< g_dot_type >::edge_iterator ei, ei_end;
     for (boost::tie(ei, ei_end) = edges(g_dot); ei != ei_end; ++ei)
     {
-        int weight = get(edge_weight, g_dot, *ei);
+        auto weight = get(edge_weight, g_dot, *ei);
         property< edge_weight_t, int > edge_property(weight);
         add_edge(source(*ei, g_dot), target(*ei, g_dot), edge_property, g);
     }
@@ -71,8 +71,8 @@ int main(int argc, const char** argv)
 
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
     std::vector< int > distance(num_vertices(g));
-    property_map< Graph, edge_weight_t >::type weightmap = get(edge_weight, g);
-    property_map< Graph, vertex_index_t >::type indexmap = get(vertex_index, g);
+    auto weightmap = get(edge_weight, g);
+    auto indexmap = get(vertex_index, g);
     dijkstra_shortest_paths(g, router_six, &parent[0], &distance[0], weightmap,
         indexmap, std::less< int >(), closed_plus< int >(),
         (std::numeric_limits< int >::max)(), 0, default_dijkstra_visitor());

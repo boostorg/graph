@@ -23,8 +23,7 @@ template < typename Graph, typename ParentMap > struct edge_writer
     void operator()(std::ostream& out, const Edge& e) const
     {
         out << "[label=\"" << get(edge_weight, m_g, e) << "\"";
-        typename graph_traits< Graph >::vertex_descriptor u = source(e, m_g),
-                                                          v = target(e, m_g);
+        auto u = source(e, m_g), v = target(e, m_g);
         if (m_parent[v] == u)
             out << ", color=\"black\"";
         else
@@ -74,8 +73,7 @@ int main()
     Graph g(edge_array, edge_array + n_edges, N);
 #endif
     graph_traits< Graph >::edge_iterator ei, ei_end;
-    property_map< Graph, int EdgeProperties::* >::type weight_pmap
-        = get(&EdgeProperties::weight, g);
+    auto weight_pmap = get(&EdgeProperties::weight, g);
     int i = 0;
     for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei, ++i)
         weight_pmap[*ei] = weight[i];
@@ -115,9 +113,8 @@ int main()
     {
         for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
         {
-            graph_traits< Graph >::edge_descriptor e = *ei;
-            graph_traits< Graph >::vertex_descriptor u = source(e, g),
-                                                     v = target(e, g);
+            auto e = *ei;
+            auto u = source(e, g), v = target(e, g);
             // VC++ doesn't like the 3-argument get function, so here
             // we workaround by using 2-nested get()'s.
             dot_file << name[u] << " -> " << name[v] << "[label=\""

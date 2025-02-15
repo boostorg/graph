@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
     // so-called small-world distance) as a result.
     GeodesicContainer geodesics(num_vertices(g));
     GeodesicMap gm(geodesics, g);
-    float sw = all_mean_geodesics(g, dm, gm);
+    auto sw = all_mean_geodesics(g, dm, gm);
 
     // Print the mean geodesic distance of each vertex and finally,
     // the graph itself.

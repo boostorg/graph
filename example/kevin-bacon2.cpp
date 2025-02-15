@@ -65,7 +65,7 @@ public:
 
     void tree_edge(Edge e, const Graph& g) const
     {
-        Vertex u = source(e, g), v = target(e, g);
+        auto u = source(e, g), v = target(e, g);
         d[v] = d[u] + 1;
     }
 

@@ -39,13 +39,12 @@ int main()
 
     graph_t g;
 
-    vertex_t a = add_vertex(g), b = add_vertex(g), c = add_vertex(g);
+    auto a = add_vertex(g), b = add_vertex(g), c = add_vertex(g);
 
     add_edge(a, b, g);
     add_edge(a, c, g);
 
-    typedef property_map< graph_t, vertex_name_t >::type vertex_name_map_t;
-    vertex_name_map_t name = get(vertex_name, g);
+    auto name = get(vertex_name, g);
     name[a] = "A";
     name[b] = "B";
     name[c] = "C";
