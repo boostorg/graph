@@ -52,8 +52,8 @@ int main(int, char*[])
     const char name[] = "abcdef";
 
     const int num_nodes = 6;
-    E edges[] = { E(0, 2), E(1, 1), E(1, 3), E(1, 4), E(2, 1), E(2, 3), E(3, 4),
-        E(4, 0), E(4, 1) };
+    const auto edges = { E(0, 2), E(1, 1), E(1, 3), E(1, 4), E(2, 1), E(2, 3),
+        E(3, 4), E(4, 0), E(4, 1) };
     int weights[] = { 1, 2, 1, 2, 7, 3, 1, 1, 1 };
     const int n_edges = sizeof(edges) / sizeof(E);
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
@@ -68,8 +68,8 @@ int main(int, char*[])
         weightmap[e] = weights[j];
     }
 #else
-    Graph G(edges, edges + n_edges, weights, num_nodes);
-    auto weightmap = get(edge_weight, G);
+    Graph G(std::begin(edges), std::end(edges), weights, num_nodes);
+    auto = get(edge_weight, G);
 #endif
 
     std::vector< Vertex > p(num_vertices(G));
