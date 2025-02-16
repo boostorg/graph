@@ -91,7 +91,7 @@ alias graph_test_regular :
     [ run subgraph_add.cpp : $(TEST_DIR) ]
     [ run subgraph_props.cpp ]
 
-    [ run isomorphism.cpp ]
+    [ run isomorphism.cpp ../../test/build//boost_test_exec_monitor ]
     [ run adjacency_matrix_test.cpp ]
     [ compile vector_graph_cc.cpp ]
     [ compile copy.cpp ]
@@ -160,6 +160,7 @@ alias graph_test_regular :
     [ run delete_edge.cpp ]
     [ run johnson-test.cpp ]
     [ run lvalue_pmap.cpp ]
+    [ run k-ary_tree.cpp ]
     ;
 
 alias graph_test_with_filesystem : :
