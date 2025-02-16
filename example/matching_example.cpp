@@ -75,8 +75,8 @@ int main()
 
     std::cout << "In the following graph:" << std::endl << std::endl;
 
-    for (auto itr = ascii_graph.begin(); itr != ascii_graph.end(); ++itr)
-        std::cout << *itr << std::endl;
+    for (auto const& str : ascii_graph)
+        std::cout << str << std::endl;
 
     std::cout << std::endl
               << "Found a matching of size " << matching_size(g, &mate[0])

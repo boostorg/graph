@@ -46,14 +46,14 @@ int main()
 
     auto weight = get(edge_weight, g);
     int total_weight = 0;
-    for (size_type e = 0; e < mst.size(); ++e)
-        total_weight += get(weight, mst[e]);
+    for (auto const& edge : mst)
+        total_weight += get(weight, edge);
     std::cout << "total weight: " << total_weight << std::endl;
 
     typedef graph_traits< Graph >::vertex_descriptor Vertex;
-    for (size_type i = 0; i < mst.size(); ++i)
+    for (auto const& edge : mst)
     {
-        auto u = source(mst[i], g), v = target(mst[i], g);
+        auto u = source(edge, g), v = target(edge, g);
         edge_attr_map[edge(u, v, g_dot).first]["color"] = "black";
     }
     std::ofstream out("figs/telephone-mst-kruskal.dot");
