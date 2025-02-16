@@ -26,7 +26,7 @@ int main()
     GraphvizDigraph g;
     read_graphviz("figs/scc.dot", g);
 
-    typedef graph_traits< GraphvizDigraph >::vertex_descriptor vertex_t;
+    using vertex_t = graph_traits< GraphvizDigraph >::vertex_descriptor;
     std::map< vertex_t, int > component;
 
     strong_components(g, make_assoc_property_map(component));

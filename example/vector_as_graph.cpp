@@ -31,7 +31,7 @@ int main()
         N
     };
     char name[] = "rstuvwxy";
-    typedef std::vector< std::list< int > > Graph;
+    using Graph = std::vector< std::list< int > >;
     Graph g(N);
     g[r].push_back(v);
     g[s].push_back(r);

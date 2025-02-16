@@ -15,9 +15,8 @@
 int main()
 {
     using namespace boost;
-    typedef adjacency_list< listS, vecS, directedS,
-        property< vertex_name_t, std::string > >
-        graph_t;
+    using graph_t = adjacency_list< listS, vecS, directedS,
+        property< vertex_name_t, std::string > >;
     graph_t g(3);
 
     const char* vertex_names[] = { "Kubrick", "Clark", "Hal" };

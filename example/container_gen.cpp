@@ -21,24 +21,24 @@ template < class Alloc, class ValueType >
 struct container_gen< list_with_allocatorS< Alloc >, ValueType >
 {
 #ifdef BOOST_NO_CXX11_ALLOCATOR
-    typedef typename Alloc::template rebind< ValueType >::other Allocator;
+    using Allocator = typename Alloc::template rebind< ValueType >::other;
 #else
-    typedef typename std::allocator_traits<Alloc>::template rebind_alloc<ValueType> Allocator;
+    using Allocator = typename std::allocator_traits<
+        Alloc >::template rebind_alloc< ValueType >;
 #endif
-    typedef std::list< ValueType, Allocator > type;
+    using type = std::list< ValueType, Allocator >;
 };
 template < class Alloc >
 struct parallel_edge_traits< list_with_allocatorS< Alloc > >
 {
-    typedef allow_parallel_edge_tag type;
+    using type = allow_parallel_edge_tag;
 };
-
 }
 
 // now you can define a graph using std::list and a specific allocator
-typedef boost::adjacency_list< list_with_allocatorS< std::allocator< int > >,
-    boost::vecS, boost::directedS >
-    MyGraph;
+using MyGraph
+    = boost::adjacency_list< list_with_allocatorS< std::allocator< int > >,
+        boost::vecS, boost::directedS >;
 
 int main(int, char*[])
 {

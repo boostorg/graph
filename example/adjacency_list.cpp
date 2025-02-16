@@ -54,9 +54,8 @@ int main(int, char*[])
     using namespace boost;
     using namespace std;
 
-    typedef adjacency_list< vecS, listS, undirectedS, VertexProperties,
-        EdgeProperties >
-        Graph;
+    using Graph = adjacency_list< vecS, listS, undirectedS, VertexProperties,
+        EdgeProperties >;
 
     const int V = 5;
     Graph g(V);

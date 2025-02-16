@@ -14,7 +14,7 @@
 int main()
 {
     using namespace boost;
-    typedef adjacency_list< vecS, vecS, undirectedS > Graph;
+    using Graph = adjacency_list< vecS, vecS, undirectedS >;
 
     const int N = 6;
     Graph G(N);

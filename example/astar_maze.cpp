@@ -45,12 +45,12 @@
 boost::mt19937 random_generator;
 
 // Distance traveled in the maze
-typedef double distance;
+using distance = double;
 
 #define GRID_RANK 2
-typedef boost::grid_graph< GRID_RANK > grid;
-typedef boost::graph_traits< grid >::vertex_descriptor vertex_descriptor;
-typedef boost::graph_traits< grid >::vertices_size_type vertices_size_type;
+using grid = boost::grid_graph< GRID_RANK >;
+using vertex_descriptor = boost::graph_traits< grid >::vertex_descriptor;
+using vertices_size_type = boost::graph_traits< grid >::vertices_size_type;
 
 // A hash function for vertices.
 struct vertex_hash
@@ -66,9 +66,9 @@ struct vertex_hash
     }
 };
 
-typedef boost::unordered_set< vertex_descriptor, vertex_hash > vertex_set;
-typedef boost::vertex_subset_complement_filter< grid, vertex_set >::type
-    filtered_grid;
+using vertex_set = boost::unordered_set< vertex_descriptor, vertex_hash >;
+using filtered_grid
+    = boost::vertex_subset_complement_filter< grid, vertex_set >::type;
 
 // A searchable maze
 //
@@ -190,14 +190,13 @@ bool maze::solve()
 {
     boost::static_property_map< distance > weight(1);
     // The predecessor map is a vertex-to-vertex mapping.
-    typedef boost::unordered_map< vertex_descriptor, vertex_descriptor,
-        vertex_hash >
-        pred_map;
+    using pred_map = boost::unordered_map< vertex_descriptor, vertex_descriptor,
+        vertex_hash >;
     pred_map predecessor;
     boost::associative_property_map< pred_map > pred_pmap(predecessor);
     // The distance map is a vertex-to-distance mapping.
-    typedef boost::unordered_map< vertex_descriptor, distance, vertex_hash >
-        dist_map;
+    using dist_map
+        = boost::unordered_map< vertex_descriptor, distance, vertex_hash >;
     dist_map distance;
     boost::associative_property_map< dist_map > dist_pmap(distance);
 

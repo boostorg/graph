@@ -26,7 +26,7 @@ using namespace boost;
 
 int main()
 {
-    typedef indirect_cmp< float*, std::less< float > > ICmp;
+    using ICmp = indirect_cmp< float*, std::less< float > >;
     int i;
     random_ns::mt19937 gen;
     for (int N = 2; N < 200; ++N)

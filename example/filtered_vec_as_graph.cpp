@@ -49,7 +49,7 @@ int main()
         N
     };
     const char* name = "ABCDE";
-    typedef std::vector< std::list< int > > Graph;
+    using Graph = std::vector< std::list< int > >;
     Graph g(N);
     g[A].push_back(B);
     g[A].push_back(C);

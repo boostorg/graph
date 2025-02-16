@@ -26,9 +26,8 @@ int main()
     GraphvizGraph g_dot;
     read_graphviz("figs/telephone-network.dot", g_dot);
 
-    typedef adjacency_list< vecS, vecS, undirectedS, no_property,
-        property< edge_weight_t, int > >
-        Graph;
+    using Graph = adjacency_list< vecS, vecS, undirectedS, no_property,
+        property< edge_weight_t, int > >;
     Graph g(num_vertices(g_dot));
     auto edge_attr_map = get(edge_attribute, g_dot);
     graph_traits< GraphvizGraph >::edge_iterator ei, ei_end;
@@ -40,8 +39,8 @@ int main()
     }
 
     std::vector< graph_traits< Graph >::edge_descriptor > mst;
-    typedef std::vector< graph_traits< Graph >::edge_descriptor >::size_type
-        size_type;
+    using size_type
+        = std::vector< graph_traits< Graph >::edge_descriptor >::size_type;
     kruskal_minimum_spanning_tree(g, std::back_inserter(mst));
 
     auto weight = get(edge_weight, g);
@@ -50,7 +49,7 @@ int main()
         total_weight += get(weight, mst[e]);
     std::cout << "total weight: " << total_weight << std::endl;
 
-    typedef graph_traits< Graph >::vertex_descriptor Vertex;
+    using Vertex = graph_traits< Graph >::vertex_descriptor;
     for (size_type i = 0; i < mst.size(); ++i)
     {
         auto u = source(mst[i], g), v = target(mst[i], g);

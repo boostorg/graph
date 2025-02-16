@@ -13,10 +13,9 @@
 int main()
 {
     using namespace boost;
-    typedef adjacency_list< vecS, vecS, undirectedS,
-        property< vertex_distance_t, int >, property< edge_weight_t, int > >
-        Graph;
-    typedef std::pair< int, int > E;
+    using Graph = adjacency_list< vecS, vecS, undirectedS,
+        property< vertex_distance_t, int >, property< edge_weight_t, int > >;
+    using E = std::pair< int, int >;
     const int num_nodes = 5;
     E edges[]
         = { E(0, 2), E(1, 3), E(1, 4), E(2, 1), E(2, 3), E(3, 4), E(4, 0) };

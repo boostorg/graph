@@ -49,20 +49,20 @@
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/graph_utility.hpp>
 
-typedef boost::graph_traits< Graph* > Traits;
-typedef Traits::vertex_descriptor vertex_descriptor;
-typedef Traits::edge_descriptor edge_descriptor;
-typedef Traits::vertex_iterator vertex_iterator;
+using Traits = boost::graph_traits< Graph* >;
+using vertex_descriptor = Traits::vertex_descriptor;
+using edge_descriptor = Traits::edge_descriptor;
+using vertex_iterator = Traits::vertex_iterator;
 
 std::vector< std::size_t > distance_list;
 
-typedef boost::v_property< long > dist_t;
+using dist_t = boost::v_property< long >;
 boost::property_map< Graph*, dist_t >::type d_map;
 
-typedef boost::u_property< vertex_descriptor > pred_t;
+using pred_t = boost::u_property< vertex_descriptor >;
 boost::property_map< Graph*, pred_t >::type p_map;
 
-typedef boost::w_property< long > color_t;
+using color_t = boost::w_property< long >;
 boost::property_map< Graph*, color_t >::type c_map;
 
 class diameter_and_girth_visitor : public boost::bfs_visitor<>

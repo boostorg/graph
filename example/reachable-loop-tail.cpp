@@ -34,14 +34,13 @@ int main(int argc, char* argv[])
     GraphvizDigraph g_in;
     read_graphviz(argv[1], g_in);
 
-    typedef adjacency_list< vecS, vecS, bidirectionalS, GraphvizVertexProperty,
-        GraphvizEdgeProperty, GraphvizGraphProperty >
-        Graph;
+    using Graph = adjacency_list< vecS, vecS, bidirectionalS,
+        GraphvizVertexProperty, GraphvizEdgeProperty, GraphvizGraphProperty >;
     Graph g;
     copy_graph(g_in, g);
 
     graph_traits< GraphvizDigraph >::vertex_descriptor loop_tail = 6;
-    typedef color_traits< default_color_type > Color;
+    using Color = color_traits< default_color_type >;
     default_color_type c;
 
     std::vector< default_color_type > reachable_to_tail(num_vertices(g));
