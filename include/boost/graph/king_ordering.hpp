@@ -15,7 +15,6 @@
 #include <vector>
 #include <algorithm>
 #include <boost/config.hpp>
-#include <boost/bind/bind.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/graph/detail/sparse_ordering.hpp>
 #include <boost/graph/graph_utility.hpp>
@@ -49,8 +48,6 @@ namespace detail
         template < typename Vertex, typename Graph >
         void finish_vertex(Vertex, Graph& g)
         {
-            using namespace boost::placeholders;
-
             typename graph_traits< Graph >::out_edge_iterator ei, ei_end;
             Vertex v, w;
 
@@ -61,7 +58,7 @@ namespace detail
             reverse_iterator rbegin = Qptr->rbegin();
 
             // heap the vertices already there
-            std::make_heap(rbegin, rend, boost::bind< bool >(comp, _2, _1));
+            std::make_heap(rbegin, rend, [this](const auto& first, const auto& second) { return comp(second, first); });
 
             unsigned i = 0;
 
