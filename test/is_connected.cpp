@@ -173,7 +173,6 @@ int main(int argc, char* argv[])
         
     }
 
-    /*
     {
         // test that adjacency matrix implements bidirectional graph
         // (see another PR [todo: link]
@@ -214,7 +213,6 @@ int main(int argc, char* argv[])
         add_edge(0, 2, g3);
         BOOST_TEST(is_connected(g3, connected_kind::unilateral) == true);
     }
-    */
 
     // consider testing it if we decide to preserve the old interface
     // test_colormap_reuse(size);
