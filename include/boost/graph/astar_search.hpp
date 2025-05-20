@@ -280,6 +280,10 @@ inline void astar_search_no_init(const VertexListGraph& g,
         bfs_vis(h, vis, Q, predecessor, cost, distance, weight, color, combine,
             compare, inf, zero);
 
+    bfs_vis.initialize_vertex(s, g);
+    put(distance, s, zero);
+    put(cost, s, h(s));
+
     breadth_first_visit(g, s, Q, bfs_vis, color);
 }
 
@@ -365,10 +369,6 @@ inline void astar_search(const VertexListGraph& g,
     VertexIndexMap index_map, ColorMap color, CompareFunction compare,
     CombineFunction combine, CostInf inf, CostZero zero)
 {
-
-    vis.initialize_vertex(s, g);
-    put(distance, s, zero);
-    put(cost, s, h(s));
 
     astar_search_no_init(g, s, h, vis, predecessor, cost, distance, weight,
         color, index_map, compare, combine, inf, zero);
