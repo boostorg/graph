@@ -329,6 +329,11 @@ If <tt>vis</tt> is an object of a type modelling the ResourceConstrainedShortest
 <table border>
 <tr>
 <td>
+<tt>vis.on_enter_loop(unprocessed_labels, const Graph&amp; g )</tt>
+</td>
+</tr>
+<tr>
+<td>
 <tt>vis.on_label_popped( const Label&amp; l, const Graph&amp; g )</tt>
 </td>
 </tr>
@@ -353,7 +358,7 @@ If <tt>vis</tt> is an object of a type modelling the ResourceConstrainedShortest
 </td>
 </tr>
 </table>
-See the <a href="#Label">description of the Label concept</a> for the interface of a Label. See the <a href="#FunctionsDescription">algorithm description</a> for information on when these functions are called.
+Note that <i>on_enter_loop</i> returns a boolean that signals whether the main loop should continue (see the <i>default_r_c_shortest_paths_visitor</i> in the <a href="../../../boost/graph/r_c_shortest_paths.hpp"><tt>source code</tt></a> for inspiration). See the <a href="#Label">description of the Label concept</a> for the interface of a Label. See the <a href="#FunctionsDescription">algorithm description</a> for information on when these functions are called.
 <p>
 
 <a name="FunctionsDescription"><h3>Functions Description</h3></a>
