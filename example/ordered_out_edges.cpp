@@ -112,8 +112,8 @@ int main()
     add_edge(3, 4, EdgeProperty("harry"), g);
     add_edge(0, 1, EdgeProperty("chandler"), g);
 
-    property_map< graph_type, vertex_index_t >::type id = get(vertex_index, g);
-    property_map< graph_type, edge_name_t >::type name = get(edge_name, g);
+    auto id = get(vertex_index, g);
+    auto name = get(edge_name, g);
 
     graph_traits< graph_type >::vertex_iterator i, end;
     graph_traits< graph_type >::out_edge_iterator ei, edge_end;

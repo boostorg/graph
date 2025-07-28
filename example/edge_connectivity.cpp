@@ -49,8 +49,7 @@ int main()
     typedef graph_traits< UndirectedGraph >::degree_size_type degree_size_type;
     std::vector< edge_descriptor > disconnecting_set;
 
-    degree_size_type c
-        = edge_connectivity(g, std::back_inserter(disconnecting_set));
+    auto c = edge_connectivity(g, std::back_inserter(disconnecting_set));
 
     std::cout << "The edge connectivity is " << c << "." << std::endl;
     std::cout << "The disconnecting set is {";

@@ -63,11 +63,9 @@ int main(int argc, char* argv[])
     //   a separate field for marking colors, so we use the w field.
 
     std::vector< int > comp(num_vertices(g));
-    property_map< Graph*, vertex_index_t >::type index_map
-        = get(vertex_index, g);
+    auto index_map = get(vertex_index, g);
 
-    property_map< Graph*, v_property< vertex_t > >::type root
-        = get(v_property< vertex_t >(), g);
+    auto root = get(v_property< vertex_t >(), g);
 
     int num_comp = strong_components(g,
         make_iterator_property_map(comp.begin(), index_map),
@@ -131,8 +129,8 @@ int main(int argc, char* argv[])
             graph_traits< Graph* >::out_edge_iterator ei, ei_end;
             for (boost::tie(ei, ei_end) = out_edges(v, g); ei != ei_end; ++ei)
             {
-                vertex_t x = target(*ei, g);
-                int comp_x = comp[index_map[x]];
+                auto x = target(*ei, g);
+                auto comp_x = comp[index_map[x]];
                 if (comp_x != c && mark[comp_x] != c)
                 {
                     mark[comp_x] = c;

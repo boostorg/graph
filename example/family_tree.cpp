@@ -38,8 +38,7 @@ int main()
 
     graph_traits< adjacency_list<> >::vertex_iterator i, end;
     graph_traits< adjacency_list<> >::adjacency_iterator ai, a_end;
-    property_map< adjacency_list<>, vertex_index_t >::type index_map
-        = get(vertex_index, g);
+    auto index_map = get(vertex_index, g);
 
     for (boost::tie(i, end) = vertices(g); i != end; ++i)
     {

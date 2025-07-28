@@ -60,7 +60,7 @@ int main(int, char*[])
         F
     }; // for conveniently refering to vertices in G0
 
-    property_map< Graph, vertex_name_t >::type name = get(vertex_name_t(), G0);
+    auto name = get(vertex_name_t(), G0);
     name[A] = "A";
     name[B] = "B";
     name[C] = "C";
@@ -80,7 +80,7 @@ int main(int, char*[])
     add_vertex(E, G1); // global vertex E becomes local B1 for G1
     add_vertex(F, G1); // global vertex F becomes local C1 for G1
 
-    property_map< Graph, vertex_name_t >::type name1 = get(vertex_name_t(), G1);
+    auto name1 = get(vertex_name_t(), G1);
     name1[A1] = "A1";
 
     std::cout << std::endl
@@ -120,7 +120,7 @@ int main(int, char*[])
     add_vertex(A, G2); // global vertex A becomes local A2 for G2
     add_vertex(C, G2); // global vertex C becomes local B2 for G2
 
-    property_map< Graph, vertex_name_t >::type name2 = get(vertex_name_t(), G2);
+    auto name2 = get(vertex_name_t(), G2);
     name2[A2] = "A2";
 
     std::cout << std::endl

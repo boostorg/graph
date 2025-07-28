@@ -45,12 +45,12 @@ template < class Graph > struct exercise_edge
     void operator()(Edge e) const
     {
         // begin
-        // Get the associated vertex type out of the edge using the
-        // edge_traits class
-        // Use the source() and target() functions to access the vertices
-        // that belong to Edge e
-        Vertex src = source(e, G);
-        Vertex targ = target(e, G);
+        //  Get the associated vertex type out of the edge using the
+        //  edge_traits class
+        //  Use the source() and target() functions to access the vertices
+        //  that belong to Edge e
+        auto src = source(e, G);
+        auto targ = target(e, G);
 
         // print out the vertex id's just because
         cout << "(" << src << "," << targ << ") ";

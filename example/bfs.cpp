@@ -129,7 +129,7 @@ int main(int, char*[])
     std::fill_n(d, 5, 0);
 
     // The source vertex
-    Vertex s = *(boost::vertices(G).first);
+    auto s = *(boost::vertices(G).first);
     p[s] = s;
     boost::breadth_first_search(G, s,
         boost::visitor(boost::make_bfs_visitor(

@@ -32,8 +32,7 @@ int main()
         make_iterator_property_map(
             component.begin(), get(vertex_index, g), component[0]));
 
-    property_map< GraphvizGraph, vertex_attribute_t >::type vertex_attr_map
-        = get(vertex_attribute, g);
+    auto vertex_attr_map = get(vertex_attribute, g);
     std::string color[] = { "white", "gray", "black", "lightgray" };
     graph_traits< GraphvizGraph >::vertex_iterator vi, vi_end;
     for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)

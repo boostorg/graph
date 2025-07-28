@@ -22,7 +22,6 @@ target_link_libraries(boost_graph
     Boost::array
     Boost::assert
     Boost::bimap
-    Boost::bind
     Boost::concept_check
     Boost::config
     Boost::container_hash

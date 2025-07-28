@@ -85,17 +85,15 @@ int main()
         Graph;
 
     Graph g;
-    property_map< Graph, edge_capacity_t >::type capacity
-        = get(edge_capacity, g);
-    property_map< Graph, edge_residual_capacity_t >::type residual_capacity
-        = get(edge_residual_capacity, g);
-    property_map< Graph, edge_reverse_t >::type rev = get(edge_reverse, g);
+    auto capacity = get(edge_capacity, g);
+    auto residual_capacity = get(edge_residual_capacity, g);
+    auto rev = get(edge_reverse, g);
     Traits::vertex_descriptor s, t;
     read_dimacs_max_flow(g, capacity, rev, s, t);
 
     std::vector< default_color_type > color(num_vertices(g));
     std::vector< long > distance(num_vertices(g));
-    long flow = boykov_kolmogorov_max_flow(g, s, t);
+    auto flow = boykov_kolmogorov_max_flow(g, s, t);
 
     std::cout << "c  The total flow:" << std::endl;
     std::cout << "s " << flow << std::endl << std::endl;

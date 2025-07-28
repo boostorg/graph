@@ -31,6 +31,10 @@
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/lexical_cast.hpp>
 
+#define BOOST_GRAPH_USE_SPIRIT_PARSER
+#include <boost/property_map/dynamic_property_map.hpp>
+#include <boost/graph/graphviz.hpp>
+
 #ifndef BOOST_NO_CXX11_HDR_RANDOM
 #include <random>
 typedef std::mt19937 random_generator_type;
@@ -404,12 +408,51 @@ void test_colored_isomorphism(int n, double edge_probability)
     }
 }
 
+struct VertexProps
+{
+  std::string node_id; // will store "0", "1", ..., "74"
+};
+
+using Graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::bidirectionalS, VertexProps>;
+void loadGraphFromDOT(const std::string& filename, Graph& g)
+{
+   std::ifstream in(filename);
+   if (!in)
+   {
+        throw std::runtime_error("Error: Cannot open file ");
+
+   }
+   auto node_id_map = boost::get(&VertexProps::node_id, g);
+   boost::dynamic_properties dp;
+   dp.property("node_id", node_id_map);
+
+   if (!boost::read_graphviz(in, g, dp))
+   {
+        throw std::runtime_error("Error: Failed to read DOT ");
+   }
+}
+
+
+
+void test_github_issue_428()
+{
+   using Graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::bidirectionalS, VertexProps>;
+   Graph g0;
+   Graph g1;
+   loadGraphFromDOT("github-428-0.dot", g0);
+   loadGraphFromDOT("github-428-1.dot", g1);
+
+   const bool iso = boost::isomorphism(g0, g1);
+   BOOST_TEST(iso);
+}
+
 int main(int argc, char* argv[])
 {
     int n = argc < 3 ? 30 : boost::lexical_cast< int >(argv[1]);
     double edge_prob = argc < 3 ? 0.45 : boost::lexical_cast< double >(argv[2]);
     test_isomorphism(n, edge_prob);
     test_colored_isomorphism(n, edge_prob);
+    test_github_issue_428();
 
     return boost::report_errors();
 }
