@@ -261,16 +261,16 @@ int main(int argc, char* argv[])
         
         // block of parallel edges
         add_edge(0, 1, g);
-        //add_edge(0, 1, g);
-        //add_edge(0, 1, g);
+        add_edge(0, 1, g);
+        add_edge(0, 1, g);
         
         // bridge
         add_edge(1, 2, g);
         
         // block of parallel edges
         add_edge(2, 3, g);
-        //add_edge(2, 3, g);
-        //add_edge(2, 3, g);
+        add_edge(2, 3, g);
+        add_edge(2, 3, g);
         
         // another bridges
         add_edge(3, 4, g);
