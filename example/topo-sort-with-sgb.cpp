@@ -36,8 +36,7 @@ int main()
     topological_sort(sgb_g, std::back_inserter(topo_order),
         vertex_index_map(get(vertex_index, sgb_g)));
     int n = 1;
-    for (std::vector< vertex_t >::reverse_iterator i = topo_order.rbegin();
-         i != topo_order.rend(); ++i, ++n)
+    for (auto i = topo_order.rbegin(); i != topo_order.rend(); ++i, ++n)
         std::cout << n << ": " << tasks[get(vertex_index, sgb_g)[*i]]
                   << std::endl;
 

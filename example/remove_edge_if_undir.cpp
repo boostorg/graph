@@ -49,7 +49,7 @@ struct has_weight_greater_than
     bool operator()(graph_traits< Graph >::edge_descriptor e)
     {
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
-        property_map< Graph, edge_weight_t >::type weight = get(edge_weight, g);
+        auto weight = get(edge_weight, g);
         return get(weight, e) > w;
 #else
         // This version of get breaks VC++

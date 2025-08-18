@@ -13,8 +13,6 @@
 
 #define BOOST_GRAPHVIZ_USE_ISTREAM
 #include <boost/graph/graphviz.hpp>
-#include <boost/assign/std/map.hpp>
-#include <boost/assign.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/compressed_sparse_row_graph.hpp>
 #include <boost/core/lightweight_test.hpp>
@@ -29,8 +27,6 @@ typedef float Mass;
 typedef double Weight;
 typedef std::map< node_t, Mass > expected_masses_t;
 typedef std::map< edge_t, Weight > expected_weights_t;
-#define MAP_MASSES boost::assign::list_of< std::pair< node_t, Mass > >
-#define MAP_WEIGHTS boost::assign::list_of< std::pair< edge_t, Weight > >
 
 struct Fixture
 {
@@ -47,14 +43,14 @@ namespace Directed
     static Fixture const basic {
         "digraph { a  node [mass = 7.7] c e [mass = 6.66] }",
         3,
-        MAP_MASSES("a", 0.0f)("c", 7.7f)("e", 6.66f),
+        { { "a", 0.0f }, { "c", 7.7f }, { "e", 6.66f } },
         expected_weights_t(),
     };
 
     static Fixture const basic_aliased {
         "digraph { a  node [mass = 7.7] \"a\" e [mass = 6.66] }",
         2,
-        MAP_MASSES("a", 0.0f)("e", 6.66f),
+        { { "a", 0.0f }, { "e", 6.66f } },
         expected_weights_t(),
     };
 
@@ -64,9 +60,11 @@ namespace Directed
         "d ->e->a [weight=.5]}",
         6,
         expected_masses_t(),
-        MAP_WEIGHTS(edge_t("a", "b"), 0.0)(edge_t("c", "d"), 7.7)(
-            edge_t("e", "f"), 6.66)(edge_t("d", "e"), 0.5)(
-            edge_t("e", "a"), 0.5),
+        {
+            { edge_t("a", "b"), 0.0 }, { edge_t("c", "d"), 7.7 },
+            { edge_t("e", "f"), 6.66 }, { edge_t("d", "e"), 0.5 },
+            { edge_t("e", "a"), 0.5 } //
+        },
     };
 }
 
@@ -75,7 +73,7 @@ namespace Undirected
     static Fixture const basic {
         "graph { a  nodE [mass = 7.7] c e [mass =\\\n6.66] }",
         3,
-        MAP_MASSES("a", 0.0f)("c", 7.7f)("e", 6.66f),
+        { { "a", 0.0f }, { "c", 7.7f }, { "e", 6.66f } },
         expected_weights_t(),
     };
 
@@ -84,8 +82,10 @@ namespace Undirected
         "c -- d e -- f [weight = 6.66] }",
         6,
         expected_masses_t(),
-        MAP_WEIGHTS(edge_t("a", "b"), 0.0)(edge_t("c", "d"), 7.7)(
-            edge_t("e", "f"), 6.66),
+        {
+            { edge_t("a", "b"), 0.0 }, { edge_t("c", "d"), 7.7 },
+            { edge_t("e", "f"), 6.66 } //
+        },
     };
 }
 
@@ -331,7 +331,7 @@ void test_parallel_edges()
         "diGraph { a -> b [weight = 7.7]  a -> b [weight = 7.7] }",
         2,
         expected_masses_t(),
-        MAP_WEIGHTS(edge_t("a", "b"), 7.7),
+        { { edge_t("a", "b"), 7.7 } },
     };
     TEST_GRAPH(Models::DiGraph, parallel);
     BOOST_TEST_THROWS(TEST_GRAPH(Models::DiGraphNoParallel, parallel),
@@ -345,7 +345,7 @@ void test_graph_property_test_1()
         "digraph { graph [name=\"foo \\\"escaped\\\"\"]  a  c e [mass = 6.66] "
         "}",
         3,
-        MAP_MASSES("a", 0.0f)("c", 0.0f)("e", 6.66f),
+        { { "a", 0.0f }, { "c", 0.0f }, { "e", 6.66f } },
         expected_weights_t(),
     };
     TEST_GRAPH(Models::DiGraph, named, "", "foo \"escaped\"");
@@ -357,7 +357,7 @@ void test_graph_property_test_2()
     Fixture named {
         "digraph { name=\"fo\"+ \"\\\no\"  a  c e [mass = 6.66] }",
         3,
-        MAP_MASSES("a", 0.0f)("c", 0.0f)("e", 6.66f),
+        { { "a", 0.0f }, { "c", 0.0f }, { "e", 6.66f } },
         expected_weights_t(),
     };
     TEST_GRAPH(Models::DiGraph, named, "", "foo"); // SEHE why not "foo\no"?
@@ -372,7 +372,7 @@ void test_graph_property_test_3()
     Fixture html_named {
         "digraph { name=" + graph_name + "  a  c e [mass = 6.66] }",
         3,
-        MAP_MASSES("a", 0.0f)("c", 0.0f)("e", 6.66f),
+        { { "a", 0.0f }, { "c", 0.0f }, { "e", 6.66f } },
         expected_weights_t(),
     };
     TEST_GRAPH(Models::DiGraph, html_named, "", graph_name);

@@ -80,10 +80,8 @@ template < class Graph > void print_network(const Graph& G)
         typename boost::graph_traits< Graph >::out_edge_iterator OutEdgeIter;
     typedef typename boost::graph_traits< Graph >::in_edge_iterator InEdgeIter;
 
-    typename property_map< Graph, edge_mycapacity_t >::const_type capacity
-        = get(edge_mycapacity, G);
-    typename property_map< Graph, edge_myflow_t >::const_type flow
-        = get(edge_myflow, G);
+    auto capacity = get(edge_mycapacity, G);
+    auto flow = get(edge_myflow, G);
 
     Viter ui, uiend;
     boost::tie(ui, uiend) = vertices(G);

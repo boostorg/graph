@@ -27,22 +27,18 @@ int main()
         v,
         w,
         x,
-        y,
-        N
+        y
     };
     char name[] = "rstuvwxy";
     typedef std::vector< std::list< int > > Graph;
-    Graph g(N);
-    g[r].push_back(v);
-    g[s].push_back(r);
-    g[s].push_back(r);
-    g[s].push_back(w);
-    g[t].push_back(x);
-    g[u].push_back(t);
-    g[w].push_back(t);
-    g[w].push_back(x);
-    g[x].push_back(y);
-    g[y].push_back(u);
+    Graph g = { { v }, // r
+        { r, r, w }, // s
+        { x }, // t
+        { t }, // u
+        {}, // v
+        { t, x }, // w
+        { y }, // x
+        { u } }; // y
     boost::print_graph(g, name);
     return 0;
 }

@@ -137,7 +137,7 @@ int main(int, char*[])
     cout << endl;
 
     /* Get the source vertex */
-    boost::graph_traits< Graph >::vertex_descriptor s = vertex(SanJose, G);
+    auto s = vertex(SanJose, G);
 
     cout << "*** Breadth First ***" << endl;
     breadth_first_search(G, s,

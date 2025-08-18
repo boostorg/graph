@@ -62,26 +62,24 @@ int main(int, char*[])
 
     graph_traits< Graph >::vertex_iterator ui, ui_end;
 
-    property_map< Graph, vertex_degree_t >::type deg = get(vertex_degree, G);
+    auto deg = get(vertex_degree, G);
     for (boost::tie(ui, ui_end) = vertices(G); ui != ui_end; ++ui)
         deg[*ui] = degree(*ui, G);
 
-    property_map< Graph, vertex_index_t >::type index_map
-        = get(vertex_index, G);
+    auto index_map = get(vertex_index, G);
 
     std::cout << "original bandwidth: " << bandwidth(G) << std::endl;
 
     std::vector< Vertex > inv_perm(num_vertices(G));
     std::vector< size_type > perm(num_vertices(G));
     {
-        Vertex s = vertex(6, G);
+        auto s = vertex(6, G);
         // king_ordering
         king_ordering(G, s, inv_perm.rbegin(), get(vertex_color, G),
             get(vertex_degree, G), get(vertex_index, G));
         cout << "King ordering starting at: " << s << endl;
         cout << "  ";
-        for (std::vector< Vertex >::const_iterator i = inv_perm.begin();
-             i != inv_perm.end(); ++i)
+        for (auto i = inv_perm.begin(); i != inv_perm.end(); ++i)
             cout << index_map[*i] << " ";
         cout << endl;
 
@@ -100,9 +98,8 @@ int main(int, char*[])
             get(vertex_degree, G), get(vertex_index, G));
         cout << "King ordering starting at: " << s << endl;
         cout << "  ";
-        for (std::vector< Vertex >::const_iterator i = inv_perm.begin();
-             i != inv_perm.end(); ++i)
-            cout << index_map[*i] << " ";
+        for (auto const& vertex : inv_perm)
+            cout << index_map[vertex] << " ";
         cout << endl;
 
         for (size_type c = 0; c != inv_perm.size(); ++c)
@@ -121,9 +118,8 @@ int main(int, char*[])
 
         cout << "King ordering:" << endl;
         cout << "  ";
-        for (std::vector< Vertex >::const_iterator i = inv_perm.begin();
-             i != inv_perm.end(); ++i)
-            cout << index_map[*i] << " ";
+        for (auto const& vertex : inv_perm)
+            cout << index_map[vertex] << " ";
         cout << endl;
 
         for (size_type c = 0; c != inv_perm.size(); ++c)

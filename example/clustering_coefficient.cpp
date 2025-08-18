@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
     // computation.
     ClusteringContainer coefs(num_vertices(g));
     ClusteringMap cm(coefs, g);
-    float cc = all_clustering_coefficients(g, cm);
+    auto cc = all_clustering_coefficients(g, cm);
 
     // Print the clustering coefficient of each vertex.
     graph_traits< Graph >::vertex_iterator i, end;

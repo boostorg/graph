@@ -42,8 +42,7 @@ int main(int argc, char* argv[])
         make_iterator_property_map(
             reachable_from_head.begin(), get(vertex_index, g), c));
 
-    property_map< GraphvizDigraph, vertex_attribute_t >::type vattr_map
-        = get(vertex_attribute, g);
+    auto vattr_map = get(vertex_attribute, g);
 
     graph_traits< GraphvizDigraph >::vertex_iterator i, i_end;
     for (boost::tie(i, i_end) = vertices(g); i != i_end; ++i)
@@ -64,9 +63,7 @@ int main(int argc, char* argv[])
     for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
     {
         loops_out << *vi << "[";
-        for (std::map< std::string, std::string >::iterator ai
-             = vattr_map[*vi].begin();
-             ai != vattr_map[*vi].end(); ++ai)
+        for (auto ai = vattr_map[*vi].begin(); ai != vattr_map[*vi].end(); ++ai)
         {
             loops_out << ai->first << "=" << ai->second;
             if (next(ai) != vattr_map[*vi].end())
@@ -81,9 +78,7 @@ int main(int argc, char* argv[])
     {
         loops_out << source(*ei, g) << " -> " << target(*ei, g) << "[";
         std::map< std::string, std::string >& attr_map = eattr_map[*ei];
-        for (std::map< std::string, std::string >::iterator eai
-             = attr_map.begin();
-             eai != attr_map.end(); ++eai)
+        for (auto eai = attr_map.begin(); eai != attr_map.end(); ++eai)
         {
             loops_out << eai->first << "=" << eai->second;
             if (next(eai) != attr_map.end())

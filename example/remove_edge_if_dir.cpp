@@ -41,17 +41,10 @@ typedef adjacency_list< vecS, vecS, directedS > Graph;
 int main()
 {
     typedef std::pair< std::size_t, std::size_t > Edge;
-    Edge edges[6] = { Edge(0, 3), Edge(0, 2), Edge(0, 3), Edge(1, 3),
+    const auto edges = { Edge(0, 3), Edge(0, 2), Edge(0, 3), Edge(1, 3),
         Edge(2, 0), Edge(3, 2) };
 
-#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
-    // VC++ can't handle iterator constructor
-    Graph g(4);
-    for (std::size_t j = 0; j < 6; ++j)
-        add_edge(edges[j].first, edges[j].second, g);
-#else
-    Graph g(edges, edges + 6, 4);
-#endif
+    Graph g(std::begin(edges), std::end(edges), 4);
 
     std::cout << "original graph:" << std::endl;
     print_graph(g, get(vertex_index, g));

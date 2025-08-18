@@ -81,14 +81,12 @@ int main(int argc, char* argv[])
         property< edge_name_t, unsigned int > >
         Graph;
 
-    typedef property_map< Graph, vertex_name_t >::type VertexNameMap;
-
     // Test maximum and unique variants on known graphs
     Graph graph_simple1, graph_simple2;
     example_callback< Graph > user_callback(graph_simple1);
 
-    VertexNameMap vname_map_simple1 = get(vertex_name, graph_simple1);
-    VertexNameMap vname_map_simple2 = get(vertex_name, graph_simple2);
+    auto vname_map_simple1 = get(vertex_name, graph_simple1);
+    auto vname_map_simple2 = get(vertex_name, graph_simple2);
 
     // Graph that looks like a triangle
     put(vname_map_simple1, add_vertex(graph_simple1), 1);

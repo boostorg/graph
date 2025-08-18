@@ -57,32 +57,30 @@ int main(int, char*[])
         Pair(6, 7) }; // g-h
 
     Graph G(10);
-    for (int i = 0; i < 14; ++i)
-        add_edge(edges[i].first, edges[i].second, G);
+    for (auto const& edge : edges)
+        add_edge(edge.first, edge.second, G);
 
     graph_traits< Graph >::vertex_iterator ui, ui_end;
 
-    property_map< Graph, vertex_degree_t >::type deg = get(vertex_degree, G);
+    auto deg = get(vertex_degree, G);
     for (boost::tie(ui, ui_end) = vertices(G); ui != ui_end; ++ui)
         deg[*ui] = degree(*ui, G);
 
-    property_map< Graph, vertex_index_t >::type index_map
-        = get(vertex_index, G);
+    auto index_map = get(vertex_index, G);
 
     std::cout << "original bandwidth: " << bandwidth(G) << std::endl;
 
     std::vector< Vertex > inv_perm(num_vertices(G));
     std::vector< size_type > perm(num_vertices(G));
     {
-        Vertex s = vertex(6, G);
+        auto s = vertex(6, G);
         // reverse cuthill_mckee_ordering
         cuthill_mckee_ordering(G, s, inv_perm.rbegin(), get(vertex_color, G),
             get(vertex_degree, G));
         cout << "Reverse Cuthill-McKee ordering starting at: " << s << endl;
         cout << "  ";
-        for (std::vector< Vertex >::const_iterator i = inv_perm.begin();
-             i != inv_perm.end(); ++i)
-            cout << index_map[*i] << " ";
+        for (auto const& vertex : inv_perm)
+            cout << index_map[vertex] << " ";
         cout << endl;
 
         for (size_type c = 0; c != inv_perm.size(); ++c)
@@ -94,15 +92,14 @@ int main(int, char*[])
                   << std::endl;
     }
     {
-        Vertex s = vertex(0, G);
+        auto s = vertex(0, G);
         // reverse cuthill_mckee_ordering
         cuthill_mckee_ordering(G, s, inv_perm.rbegin(), get(vertex_color, G),
             get(vertex_degree, G));
         cout << "Reverse Cuthill-McKee ordering starting at: " << s << endl;
         cout << "  ";
-        for (std::vector< Vertex >::const_iterator i = inv_perm.begin();
-             i != inv_perm.end(); ++i)
-            cout << index_map[*i] << " ";
+        for (auto const& vertex : inv_perm)
+            cout << index_map[vertex] << " ";
         cout << endl;
 
         for (size_type c = 0; c != inv_perm.size(); ++c)
@@ -121,9 +118,8 @@ int main(int, char*[])
 
         cout << "Reverse Cuthill-McKee ordering:" << endl;
         cout << "  ";
-        for (std::vector< Vertex >::const_iterator i = inv_perm.begin();
-             i != inv_perm.end(); ++i)
-            cout << index_map[*i] << " ";
+        for (auto const& vertex : inv_perm)
+            cout << index_map[vertex] << " ";
         cout << endl;
 
         for (size_type c = 0; c != inv_perm.size(); ++c)

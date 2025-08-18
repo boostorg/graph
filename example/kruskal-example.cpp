@@ -26,7 +26,7 @@ int main()
     std::size_t num_edges = sizeof(edge_array) / sizeof(E);
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
     Graph g(num_nodes);
-    property_map< Graph, edge_weight_t >::type weightmap = get(edge_weight, g);
+    auto = get(edge_weight, g);
     for (std::size_t j = 0; j < num_edges; ++j)
     {
         Edge e;
@@ -38,14 +38,14 @@ int main()
 #else
     Graph g(edge_array, edge_array + num_edges, weights, num_nodes);
 #endif
-    property_map< Graph, edge_weight_t >::type weight = get(edge_weight, g);
+
+    auto weight = get(edge_weight, g);
     std::vector< Edge > spanning_tree;
 
     kruskal_minimum_spanning_tree(g, std::back_inserter(spanning_tree));
 
     std::cout << "Print the edges in the MST:" << std::endl;
-    for (std::vector< Edge >::iterator ei = spanning_tree.begin();
-         ei != spanning_tree.end(); ++ei)
+    for (auto ei = spanning_tree.begin(); ei != spanning_tree.end(); ++ei)
     {
         std::cout << source(*ei, g) << " <--> " << target(*ei, g)
                   << " with weight of " << weight[*ei] << std::endl;

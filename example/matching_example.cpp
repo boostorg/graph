@@ -25,15 +25,14 @@ int main()
 
     const int n_vertices = 18;
 
-    std::vector< std::string > ascii_graph;
-
-    ascii_graph.push_back("           0       1---2       3       ");
-    ascii_graph.push_back("            \\     /     \\     /        ");
-    ascii_graph.push_back("             4---5       6---7         ");
-    ascii_graph.push_back("             |   |       |   |         ");
-    ascii_graph.push_back("             8---9      10---11        ");
-    ascii_graph.push_back("            /     \\     /     \\        ");
-    ascii_graph.push_back("     12   13      14---15      16   17 ");
+    std::vector< std::string > ascii_graph
+        = { "           0       1---2       3       ",
+              "            \\     /     \\     /        ",
+              "             4---5       6---7         ",
+              "             |   |       |   |         ",
+              "             8---9      10---11        ",
+              "            /     \\     /     \\        ",
+              "     12   13      14---15      16   17 " };
 
     // It has a perfect matching of size 8. There are two isolated
     // vertices that we'll use later...
@@ -75,9 +74,8 @@ int main()
 
     std::cout << "In the following graph:" << std::endl << std::endl;
 
-    for (std::vector< std::string >::iterator itr = ascii_graph.begin();
-         itr != ascii_graph.end(); ++itr)
-        std::cout << *itr << std::endl;
+    for (auto const& str : ascii_graph)
+        std::cout << str << std::endl;
 
     std::cout << std::endl
               << "Found a matching of size " << matching_size(g, &mate[0])
@@ -106,8 +104,7 @@ int main()
 
     std::cout << "In the following graph:" << std::endl << std::endl;
 
-    for (std::vector< std::string >::iterator itr = ascii_graph.begin();
-         itr != ascii_graph.end(); ++itr)
+    for (auto itr = ascii_graph.begin(); itr != ascii_graph.end(); ++itr)
         std::cout << *itr << std::endl;
 
     std::cout << std::endl

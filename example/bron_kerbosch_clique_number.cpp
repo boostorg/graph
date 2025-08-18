@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
     read_graph(g, cin);
 
     // Use the Bron-Kerbosch algorithm to find all cliques, and
-    size_t c = bron_kerbosch_clique_number(g);
+    auto c = bron_kerbosch_clique_number(g);
     cout << "clique number: " << c << endl;
 
     return 0;

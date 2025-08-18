@@ -36,7 +36,7 @@ int main()
     Graph g(edge_array, edge_array + E, V);
 #endif
 
-    property_map< Graph, edge_weight_t >::type w = get(edge_weight, g);
+    auto w = get(edge_weight, g);
     int weights[] = { 0, 0, 0, 0, 0, 3, -4, 8, 1, 7, 4, -5, 2, 6 };
     int* wp = weights;
 

@@ -17,7 +17,7 @@ int main()
         graph_t;
     graph_t g;
     graph_traits< graph_t >::vertex_descriptor u = add_vertex(g);
-    property_map< graph_t, vertex_name_t >::type name_map = get(vertex_name, g);
+    auto name_map = get(vertex_name, g);
     name_map[u] = "Joe";
     std::cout << name_map[u] << std::endl;
     return EXIT_SUCCESS;

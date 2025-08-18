@@ -223,7 +223,7 @@ private:
         static const int ring_offset[] = { 1, -1 };
         vertex_descriptor v;
 
-        std::size_t p = *this->base_reference();
+        auto p = *this->base_reference();
         if (m_u == 0 && p == 1)
             v = m_n - 1; // Vertex n-1 precedes vertex 0.
         else

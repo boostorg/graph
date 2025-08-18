@@ -50,7 +50,7 @@ struct has_weight_greater_than
     bool operator()(graph_traits< Graph >::edge_descriptor e)
     {
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
-        property_map< Graph, edge_weight_t >::type weight = get(edge_weight, g);
+        auto weight = get(edge_weight, g);
         return get(weight, e) > w;
 #else
         // This version of get() breaks VC++
@@ -81,7 +81,7 @@ int main()
     for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
         weight[*ei] = ++w;
 
-    property_map< Graph, vertex_index_t >::type indexmap = get(vertex_index, g);
+    auto indexmap = get(vertex_index, g);
 
     std::cout << "original graph:" << std::endl;
     print_graph(g, indexmap);

@@ -56,20 +56,17 @@ int main()
         Graph;
     Graph g;
 
-    property_map< Graph, edge_capacity_t >::type capacity
-        = get(edge_capacity, g);
-    property_map< Graph, edge_residual_capacity_t >::type residual_capacity
-        = get(edge_residual_capacity, g);
-    property_map< Graph, edge_reverse_t >::type rev = get(edge_reverse, g);
+    auto capacity = get(edge_capacity, g);
+    auto residual_capacity = get(edge_residual_capacity, g);
+    auto rev = get(edge_reverse, g);
     Traits::vertex_descriptor s, t;
     read_dimacs_max_flow(g, capacity, rev, s, t);
 
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
-    property_map< Graph, vertex_index_t >::type indexmap = get(vertex_index, g);
-    long flow = push_relabel_max_flow(
+    auto flow = push_relabel_max_flow(
         g, s, t, capacity, residual_capacity, rev, indexmap);
 #else
-    long flow = push_relabel_max_flow(g, s, t);
+    auto flow = push_relabel_max_flow(g, s, t);
 #endif
 
     std::cout << "c  The total flow:" << std::endl;

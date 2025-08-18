@@ -52,18 +52,16 @@ int main()
     graph_t graph(0);
     dynamic_properties dp;
 
-    property_map< graph_t, vertex_name_t >::type vname
-        = get(vertex_name, graph);
+    auto vname = get(vertex_name, graph);
     dp.property("node_id", vname);
 
-    property_map< graph_t, vertex_label_t >::type vlabel
-        = get(vertex_label_t(), graph);
+    auto vlabel = get(vertex_label_t(), graph);
     dp.property("label", vlabel);
 
-    property_map< graph_t, vertex_root_t >::type root = get(vertex_root, graph);
+    auto root = get(vertex_root, graph);
     dp.property("root", root);
 
-    property_map< graph_t, edge_name_t >::type elabel = get(edge_name, graph);
+    auto elabel = get(edge_name, graph);
     dp.property("label", elabel);
 
     // Use ref_property_map to turn a graph property into a property map
