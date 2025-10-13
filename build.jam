@@ -20,6 +20,7 @@ constant boost_dependencies :
     /boost/detail//boost_detail
     /boost/foreach//boost_foreach
     /boost/function//boost_function
+    /boost/geometry//boost_geometry
     /boost/integer//boost_integer
     /boost/iterator//boost_iterator
     /boost/lexical_cast//boost_lexical_cast
