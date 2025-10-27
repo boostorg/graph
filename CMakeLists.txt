@@ -30,7 +30,6 @@ target_link_libraries(boost_graph
     Boost::detail
     Boost::foreach
     Boost::function
-    Boost::geometry
     Boost::integer
     Boost::iterator
     Boost::lexical_cast
