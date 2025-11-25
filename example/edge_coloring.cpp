@@ -36,11 +36,10 @@ int main(int, char*[])
 {
     using namespace boost;
     using namespace std;
-    typedef adjacency_list< vecS, vecS, undirectedS, no_property, size_t,
-        no_property >
-        Graph;
+    using Graph = adjacency_list< vecS, vecS, undirectedS, no_property, size_t,
+        no_property >;
 
-    typedef std::pair< std::size_t, std::size_t > Pair;
+    using Pair = std::pair< std::size_t, std::size_t >;
     Pair edges[14] = { Pair(0, 3), // a-d
         Pair(0, 5), // a-f
         Pair(1, 2), // b-c

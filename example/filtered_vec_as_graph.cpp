@@ -48,7 +48,7 @@ int main()
         E
     };
     const char* name = "ABCDE";
-    typedef std::vector< std::list< int > > Graph;
+    using Graph = std::vector< std::list< int > >;
     Graph g = { { B, C }, // A
         {}, // B
         { D, E }, // C

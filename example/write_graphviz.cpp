@@ -37,7 +37,7 @@ const char* name[] = { "dax.h", "yow.h", "boz.h", "zow.h", "foo.cpp", "foo.o",
 int main(int, char*[])
 {
 
-    typedef std::pair< int, int > Edge;
+    using Edge = std::pair< int, int >;
     Edge used_by[] = { Edge(dax_h, foo_cpp), Edge(dax_h, bar_cpp),
         Edge(dax_h, yow_h), Edge(yow_h, bar_cpp), Edge(yow_h, zag_cpp),
         Edge(boz_h, bar_cpp), Edge(boz_h, zig_cpp), Edge(boz_h, zag_cpp),
@@ -52,10 +52,9 @@ int main(int, char*[])
 
     using namespace boost;
 
-    typedef adjacency_list< vecS, vecS, directedS,
+    using Graph = adjacency_list< vecS, vecS, directedS,
         property< vertex_color_t, default_color_type >,
-        property< edge_weight_t, int > >
-        Graph;
+        property< edge_weight_t, int > >;
     Graph g(used_by, used_by + nedges, weights, N);
 
     write_graphviz(std::cout, g, make_label_writer(name));

@@ -24,14 +24,14 @@ std::istream& operator>>(std::istream& in, std::pair< T, T >& p)
 }
 }
 
-typedef adjacency_list< listS, // Store out-edges of each vertex in a std::list
-    vecS, // Store vertex set in a std::vector
-    directedS // The file dependency graph is directed
-    >
-    file_dep_graph;
+using file_dep_graph
+    = adjacency_list< listS, // Store out-edges of each vertex in a std::list
+        vecS, // Store vertex set in a std::vector
+        directedS // The file dependency graph is directed
+        >;
 
-typedef graph_traits< file_dep_graph >::vertex_descriptor vertex_t;
-typedef graph_traits< file_dep_graph >::edge_descriptor edge_t;
+using vertex_t = graph_traits< file_dep_graph >::vertex_descriptor;
+using edge_t = graph_traits< file_dep_graph >::edge_descriptor;
 
 bool has_cycle_dfs(
     const file_dep_graph& g, vertex_t u, default_color_type* color)
@@ -64,7 +64,7 @@ bool has_cycle(const file_dep_graph& g)
 int main(int argc, const char** argv)
 {
     std::ifstream file_in(argc >= 2 ? argv[1] : "makefile-dependencies.dat");
-    typedef graph_traits< file_dep_graph >::vertices_size_type size_type;
+    using size_type = graph_traits< file_dep_graph >::vertices_size_type;
     size_type n_vertices;
     file_in >> n_vertices; // read in number of vertices
     std::istream_iterator< std::pair< size_type, size_type > > input_begin(
