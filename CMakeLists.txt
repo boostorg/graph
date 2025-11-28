@@ -37,6 +37,7 @@ target_link_libraries(boost_graph
     Boost::move
     Boost::mpl
     Boost::multi_index
+    Boost::multiprecision
     Boost::optional
     Boost::parameter
     Boost::preprocessor
