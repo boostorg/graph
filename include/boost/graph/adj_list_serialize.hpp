@@ -45,8 +45,7 @@ namespace serialization
     {
         typedef adjacency_list< OEL, VL, D, VP, EP, GP, EL > Graph;
         typedef typename graph_traits< Graph >::vertex_descriptor Vertex;
-
-        typedef typename boost::graph_traits<Graph>::vertices_size_type VerticesSize;
+        typedef typename graph_traits< Graph >::vertices_size_type VerticesSize;
 
         VerticesSize V = num_vertices(graph);
         VerticesSize E = num_edges(graph);
@@ -86,10 +85,11 @@ namespace serialization
         typedef adjacency_list< OEL, VL, D, VP, EP, GP, EL > Graph;
         typedef typename graph_traits< Graph >::vertex_descriptor Vertex;
         typedef typename graph_traits< Graph >::edge_descriptor Edge;
+        typedef typename graph_traits< Graph >::vertices_size_type VerticesSize;
 
-        unsigned int V;
+        VerticesSize V;
         ar >> BOOST_SERIALIZATION_NVP(V);
-        unsigned int E;
+        VerticesSize E;
         ar >> BOOST_SERIALIZATION_NVP(E);
 
         std::vector< Vertex > verts(V);
