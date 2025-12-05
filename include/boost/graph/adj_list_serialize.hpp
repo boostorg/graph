@@ -46,14 +46,16 @@ namespace serialization
         typedef adjacency_list< OEL, VL, D, VP, EP, GP, EL > Graph;
         typedef typename graph_traits< Graph >::vertex_descriptor Vertex;
 
-        int V = num_vertices(graph);
-        int E = num_edges(graph);
+        typedef typename boost::graph_traits<Graph>::vertices_size_type VerticesSize;
+
+        VerticesSize V = num_vertices(graph);
+        VerticesSize E = num_edges(graph);
         ar << BOOST_SERIALIZATION_NVP(V);
         ar << BOOST_SERIALIZATION_NVP(E);
 
         // assign indices to vertices
-        std::map< Vertex, int > indices;
-        int num = 0;
+        std::map< Vertex, size_t > indices;
+        size_t num = 0;
         BGL_FORALL_VERTICES_T(v, graph, Graph)
         {
             indices[v] = num++;
@@ -91,7 +93,7 @@ namespace serialization
         ar >> BOOST_SERIALIZATION_NVP(E);
 
         std::vector< Vertex > verts(V);
-        int i = 0;
+        size_t i = 0;
         while (V-- > 0)
         {
             Vertex v = add_vertex(graph);
@@ -101,8 +103,8 @@ namespace serialization
         }
         while (E-- > 0)
         {
-            int u;
-            int v;
+            Vertex u;
+            Vertex v;
             ar >> BOOST_SERIALIZATION_NVP(u);
             ar >> BOOST_SERIALIZATION_NVP(v);
             Edge e;
