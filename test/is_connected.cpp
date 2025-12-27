@@ -37,6 +37,28 @@ void fill_square_graph(Graph& graph, size_t size)
     }
 }
 
+template <typename Graph>
+void test_directed_graph() {
+		// todo: call this function
+        Graph g3(3);
+        BOOST_TEST(is_connected(g3, connected_kind::weak) == false);
+        BOOST_TEST(is_connected(g3, connected_kind::unilateral) == false);
+        BOOST_TEST(is_connected(g3, connected_kind::strong) == false);
+        add_edge(0, 1, g3);
+        add_edge(2, 1, g3);
+        BOOST_TEST(is_connected(g3, connected_kind::weak) == true);
+        BOOST_TEST(is_connected(g3, connected_kind::unilateral) == false);
+        BOOST_TEST(is_connected(g3, connected_kind::strong) == false);
+        add_edge(0, 2, g3);
+        BOOST_TEST(is_connected(g3, connected_kind::weak) == true);
+        BOOST_TEST(is_connected(g3, connected_kind::unilateral) == true);
+        BOOST_TEST(is_connected(g3, connected_kind::strong) == false);
+        add_edge(1, 0, g3);
+        BOOST_TEST(is_connected(g3, connected_kind::weak) == true);
+        BOOST_TEST(is_connected(g3, connected_kind::unilateral) == true);
+        BOOST_TEST(is_connected(g3, connected_kind::strong) == true);
+}
+
 int main(int argc, char* argv[])
 {
     // the side length of the square graph
@@ -137,7 +159,6 @@ int main(int argc, char* argv[])
         BOOST_TEST(is_connected(g2, connected_kind::strong) == false);
         BOOST_TEST(is_connected(g2, connected_kind::unilateral) == true);
 
-
         // test making a graph weakly, then unilaterally, then strongly connected
         bidir_graph_t g3(3);
         BOOST_TEST(is_connected(g3, connected_kind::weak) == false);
@@ -168,14 +189,50 @@ int main(int argc, char* argv[])
     }
 
     {
-        // check that we don't need the vertex_index
+        // test with an external vertex_index
         typedef adjacency_list< listS, listS, bidirectionalS > bidir_graph_t;
-        
+        bidir_graph_t g(size * size);
+
+        map<typename bidir_graph_t::vertex_descriptor, size_t> vertex_index_map;
+        size_t n = 0;
+		for (auto [v, ve] = vertices(g); v != ve; ++v) {
+			vertex_index_map[*v] = n++;
+		}
+
+		auto vertex_index = make_assoc_property_map(vertex_index_map);
+
+        BOOST_TEST(is_connected(g, vertex_index, connected_kind::weak) == false);
+        BOOST_TEST(is_connected(g, vertex_index, connected_kind::unilateral) == false);
+        BOOST_TEST(is_connected(g, vertex_index, connected_kind::strong) == false);
+
+        BOOST_TEST(is_weakly_connected(g, vertex_index) == false);
+        BOOST_TEST(is_strongly_connected(g, vertex_index) == false);
+        BOOST_TEST(is_unilaterally_connected(g, vertex_index) == false);
     }
+
+	{
+		// test undirected graph with an external vertex_index
+        typedef adjacency_list< listS, listS, undirectedS > undir_graph_t;
+        undir_graph_t g(size * size);
+
+        map<typename undir_graph_t::vertex_descriptor, size_t> vertex_index_map;
+        size_t n = 0;
+		for (auto [v, ve] = vertices(g); v != ve; ++v) {
+			vertex_index_map[*v] = n++;
+		}
+
+		auto vertex_index = make_assoc_property_map(vertex_index_map);
+
+        // BOOST_TEST(is_connected(g, vertex_index) == false);
+        BOOST_TEST(is_connected(g, vertex_index, connected_kind::unspecified) == false);
+        BOOST_TEST(is_connected(g, vertex_index, connected_kind::weak) == false);
+        BOOST_TEST(is_connected(g, vertex_index, connected_kind::unilateral) == false);
+        BOOST_TEST(is_connected(g, vertex_index, connected_kind::strong) == false);
+	}
+
 
     {
         // test that adjacency matrix implements bidirectional graph
-        // (see another PR [todo: link]
         typedef boost::adjacency_matrix<> bidir_graph_t;
         bidir_graph_t g(size * size);
         fill_square_graph(g, size);
@@ -213,9 +270,6 @@ int main(int argc, char* argv[])
         add_edge(0, 2, g3);
         BOOST_TEST(is_connected(g3, connected_kind::unilateral) == true);
     }
-
-    // consider testing it if we decide to preserve the old interface
-    // test_colormap_reuse(size);
 
     return boost::report_errors();
 }

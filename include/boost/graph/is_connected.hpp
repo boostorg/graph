@@ -33,23 +33,54 @@ inline bool is_connected(const Graph& g, ConnectedKind kind = connected_kind::un
         "argument for undirected graphs or specify connected_kind::strong "
         "to preserve the old behavior.");
 
-    typedef typename graph_traits< Graph >::directed_category Cat;
     BOOST_STATIC_ASSERT_MSG(
         (mpl::not_< mpl::and_ <
                 is_same < ConnectedKind, connected_kind::unspecified_t >,
                 is_directed_graph< Graph > > >::value),
         "connected_kind must be specified for directed graphs");
 
-    return is_connected_dispatch(g, Cat(), kind);
+/*
+// all wrong
+    // BOOST_CONCEPT_ASSERT((VertexIndexGraphConcept< Graph >));
+    BOOST_STATIC_ASSERT_MSG(
+        (mpl::not_< is_same<
+//            typename property_map< Graph, vertex_index_t >::const_type,
+//             typename property_value< Graph, vertex_index_t >::type,
+            typename property_value< vertex_property_type< Graph >, vertex_index_t >::type,
+            void > >::value),
+        "graph has no vertex_index map");
+*/
+
+    // typedef typename graph_traits< Graph >::directed_category Cat;
+    return is_connected(g, get(boost::vertex_index, g), kind);
 }
 
-// Undirected graph
-template < typename IncidenceGraph, typename ConnectedKind >
-inline bool is_connected_dispatch(const IncidenceGraph& g, undirected_tag,
-                                  ConnectedKind)
+
+template < typename Graph, typename VertexIndex, typename ConnectedKind >
+inline bool is_connected(const Graph& g, VertexIndex vertex_index, ConnectedKind kind)
 {
-    // ignore the connection kind for undirected graph
-    return is_connected_undirected(g);
+    BOOST_STATIC_ASSERT_MSG(
+        (mpl::not_< mpl::and_ <
+                is_same < ConnectedKind, connected_kind::unspecified_t >,
+                is_directed_graph< Graph > > >::value),
+        "connected_kind must be specified for directed graphs");
+
+    typedef typename graph_traits< Graph >::directed_category Cat;
+    return is_connected_dispatch(g, Cat(), kind, vertex_index);
+}
+
+
+
+
+
+
+// Undirected graph
+template < typename IncidenceGraph, typename ConnectedKind, typename VertexIndexMap >
+inline bool is_connected_dispatch(const IncidenceGraph& g, undirected_tag,
+                                  ConnectedKind, VertexIndexMap vertex_index)
+{
+    // ignore the connection kind and vertex_index for undirected graph
+    return is_connected_undirected(g, vertex_index);
 }
 
 template < typename IncidenceGraph >
@@ -57,14 +88,23 @@ inline bool is_connected_undirected(const IncidenceGraph& g)
 {
     BOOST_CONCEPT_ASSERT((IncidenceGraphConcept< IncidenceGraph >));
 
-    return is_connected_undirected(g,
-        make_two_bit_color_map(num_vertices(g), get(boost::vertex_index, g)));
+    return is_connected_undirected(g, get(vertex_index, g));
 }
 
+template < typename IncidenceGraph, typename VertexIndexMap >
+inline bool is_connected_undirected(const IncidenceGraph& g, VertexIndexMap vertex_index)
+{
+    BOOST_CONCEPT_ASSERT((IncidenceGraphConcept< IncidenceGraph >));
+
+    return is_connected_undirected(g,
+        make_two_bit_color_map(num_vertices(g), vertex_index), vertex_index);
+}
+
+
 // color should start out white for every vertex
-template < typename IncidenceGraph, typename VertexColorMap >
+template < typename IncidenceGraph, typename VertexColorMap, typename VertexIndexMap >
 inline bool is_connected_undirected(const IncidenceGraph& g,
-    VertexColorMap colormap)
+    VertexColorMap colormap, VertexIndexMap)
 {
     typedef typename property_traits< VertexColorMap >::value_type ColorValue;
     typedef color_traits< ColorValue > Color;
@@ -82,15 +122,21 @@ inline bool is_connected_undirected(const IncidenceGraph& g,
 }
 
 // Directed graph, strongly connected
-template < typename IncidenceGraph >
+template < typename IncidenceGraph, typename VertexIndexMap >
 inline bool is_connected_dispatch(const IncidenceGraph& g, directed_tag,
-                                  connected_kind::strong_t)
+                                  connected_kind::strong_t, VertexIndexMap vertex_index)
 {
-    return is_strongly_connected(g);
+    return is_strongly_connected(g, vertex_index);
 }
 
 template < typename Graph >
 inline bool is_strongly_connected(const Graph& g)
+{
+    return is_strongly_connected(g, get(vertex_index, g));
+}
+
+template < typename Graph, typename VertexIndexMap >
+inline bool is_strongly_connected(const Graph& g, VertexIndexMap vertex_index)
 {
     // A directed graph is stronly connected if and only if all its vertices
     // are in a sinlge stronly connected component
@@ -101,31 +147,40 @@ inline bool is_strongly_connected(const Graph& g)
     // Run the Tarjan's SCC algorithm
     std::vector< size_t > comp_map(num_vertices(g));
     size_t num_scc = strong_components(
-        g, make_iterator_property_map(comp_map.begin(), get(vertex_index, g)));
+        g, make_iterator_property_map(comp_map.begin(), vertex_index), 
+//        g, make_safe_iterator_property_map(comp_map.begin(), vertex_index), 
+        vertex_index_map(vertex_index));
 
     return num_scc == 1;
 }
 
+
 // Directed graph, weakly connected
-template < typename IncidenceGraph >
+template < typename IncidenceGraph, typename VertexIndexMap >
 inline bool is_connected_dispatch(const IncidenceGraph& g, directed_tag,
-                                  connected_kind::weak_t)
+                                  connected_kind::weak_t, VertexIndexMap vertex_index)
 {
-    return is_weakly_connected(g);
+    return is_weakly_connected(g, vertex_index);
 }
 
 template < typename BidirectionalGraph >
 inline bool is_weakly_connected(const BidirectionalGraph& g)
 {
+    return is_weakly_connected(g, get(boost::vertex_index, g));
+}
+
+template < typename BidirectionalGraph, typename VertexIndexMap >
+inline bool is_weakly_connected(const BidirectionalGraph& g, VertexIndexMap vertex_index)
+{
     BOOST_CONCEPT_ASSERT((BidirectionalGraphConcept< BidirectionalGraph >));
 
     // For now do an undirected BFS walk
     return is_weakly_connected(g,
-        make_two_bit_color_map(num_vertices(g), get(boost::vertex_index, g)));
+        make_two_bit_color_map(num_vertices(g), vertex_index), vertex_index);
 }
 
-template < typename BidirectionalGraph , typename VertexColorMap >
-inline bool is_weakly_connected(const BidirectionalGraph& g, VertexColorMap colormap)
+template < typename BidirectionalGraph , typename VertexColorMap, typename VertexIndexMap >
+inline bool is_weakly_connected(const BidirectionalGraph& g, VertexColorMap colormap, VertexIndexMap vertex_index)
 {
     // A directed graph is weakly connected if and only if all its vertices
     // can be reached in a single undirected BFS (or DFS) visit.
@@ -149,11 +204,12 @@ inline bool is_weakly_connected(const BidirectionalGraph& g, VertexColorMap colo
 }
 
 // Directed graph, unilaterally connected
-template < typename IncidenceGraph >
+template < typename IncidenceGraph, typename VertexIndexMap>
 inline bool is_connected_dispatch(const IncidenceGraph& g, directed_tag,
-                                  connected_kind::unilateral_t)
+                                  connected_kind::unilateral_t,
+                                  VertexIndexMap vertex_index_map)
 {
-    return is_unilaterally_connected(g);
+    return is_unilaterally_connected(g, vertex_index_map);
 }
 
 namespace detail {
@@ -208,27 +264,34 @@ bool has_unique_topological_order(const Graph& g)
 template < typename Graph >
 inline bool is_unilaterally_connected(const Graph& g)
 {
+    return is_unilaterally_connected(g, get(vertex_index, g));
+}
+
+
+template < typename Graph, typename VertexIndexMap >
+inline bool is_unilaterally_connected(const Graph& g, VertexIndexMap vertex_index)
+{
     // A directed graph is unilaterally connected if and only if its
     // condensation graph is in unique topological order.
     // Warning: condensation might be slow and consume 2x memory for the graph.
 
     BOOST_CONCEPT_ASSERT((IncidenceGraphConcept< Graph >));
-    // See comment about renumber_vertex_indices above
-    // BOOST_CONCEPT_ASSERT((VertexIndexGraphConcept< Graph >));
     BOOST_STATIC_ASSERT((is_directed_graph< Graph >::value));
 
     // Run the Tarjan's SCC algorithm
-    std::vector< size_t > comp_number(num_vertices(g));
-    size_t num_scc = strong_components(
-        g, make_iterator_property_map(comp_number.begin(), get(vertex_index, g)));
+    std::vector< size_t > comp_number_store(num_vertices(g));
+    auto comp_number = make_iterator_property_map(comp_number_store.begin(), vertex_index);
+
+    size_t num_scc = strong_components(g, comp_number, vertex_index_map(vertex_index));
     if (num_scc == 1) // strongly connected case
         return true;
 
     // Build the condensation graph
     adjacency_list<> c;
-    std::vector< std::vector< typename graph_traits< Graph >::vertices_size_type > > components;
+    std::vector< std::vector< typename graph_traits< Graph >::vertex_descriptor > > components;
     build_component_lists(g, num_scc, comp_number, components);
     create_condensation_graph(g, components, comp_number, c);
+
     // Check if the condensation is linear
     return has_unique_topological_order(c);
 }
