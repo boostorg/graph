@@ -43,13 +43,11 @@ namespace serialization
         const unsigned int /* file_version */
     )
     {
-        typedef adjacency_list< OEL, VL, D, VP, EP, GP, EL > Graph;
-        typedef typename graph_traits< Graph >::vertex_descriptor Vertex;
-        typedef typename graph_traits< Graph >::vertices_size_type VerticesSize;
-        typedef typename graph_traits< Graph >::edges_size_type EdgesSize;
+        using Graph = adjacency_list< OEL, VL, D, VP, EP, GP, EL >;
+        using Vertex = typename graph_traits< Graph >::vertex_descriptor;
 
-        VerticesSize V = num_vertices(graph);
-        EdgesSize E = num_edges(graph);
+        unsigned int V = num_vertices(graph);
+        unsigned int E = num_edges(graph);
         ar << BOOST_SERIALIZATION_NVP(V);
         ar << BOOST_SERIALIZATION_NVP(E);
 
@@ -83,15 +81,12 @@ namespace serialization
         const unsigned int /* file_version */
     )
     {
-        typedef adjacency_list< OEL, VL, D, VP, EP, GP, EL > Graph;
-        typedef typename graph_traits< Graph >::vertex_descriptor Vertex;
-        typedef typename graph_traits< Graph >::edge_descriptor Edge;
-        typedef typename graph_traits< Graph >::vertices_size_type VerticesSize;
-        typedef typename graph_traits< Graph >::edges_size_type EdgesSize;
+        using Graph = adjacency_list< OEL, VL, D, VP, EP, GP, EL >;
+        using Vertex = typename graph_traits< Graph >::vertex_descriptor;
 
-        VerticesSize V;
+        unsigned int V;
         ar >> BOOST_SERIALIZATION_NVP(V);
-        EdgesSize E;
+        unsigned int E;
         ar >> BOOST_SERIALIZATION_NVP(E);
 
         std::vector< Vertex > verts(V);
@@ -109,9 +104,8 @@ namespace serialization
             Vertex v;
             ar >> BOOST_SERIALIZATION_NVP(u);
             ar >> BOOST_SERIALIZATION_NVP(v);
-            Edge e;
-            bool inserted;
-            boost::tie(e, inserted) = add_edge(verts[u], verts[v], graph);
+            
+            auto [e, inserted] = add_edge(verts[u], verts[v], graph);
             ar >> serialization::make_nvp(
                 "edge_property", get(edge_all_t(), graph, e));
         }
