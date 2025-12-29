@@ -105,7 +105,9 @@ namespace serialization
             ar >> BOOST_SERIALIZATION_NVP(u);
             ar >> BOOST_SERIALIZATION_NVP(v);
             
-            auto [e, inserted] = add_edge(verts[u], verts[v], graph);
+            Edge e;
+            bool inserted;
+            boost::tie(e, inserted)= add_edge(verts[u], verts[v], graph);
             ar >> serialization::make_nvp(
                 "edge_property", get(edge_all_t(), graph, e));
         }
