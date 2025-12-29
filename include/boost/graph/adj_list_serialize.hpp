@@ -83,7 +83,8 @@ namespace serialization
     {
         using Graph = adjacency_list< OEL, VL, D, VP, EP, GP, EL >;
         using Vertex = typename graph_traits< Graph >::vertex_descriptor;
-
+        using Edge = typename graph_traits< Graph >::edge_descriptor;
+        
         unsigned int V;
         ar >> BOOST_SERIALIZATION_NVP(V);
         unsigned int E;
