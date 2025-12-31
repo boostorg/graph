@@ -30,7 +30,7 @@ struct location
 {
     float y, x; // lat, long
 };
-typedef float cost;
+using cost = float;
 
 template < class Name, class LocMap > class city_writer
 {
@@ -82,12 +82,12 @@ template < class Graph, class CostType, class LocMap >
 class distance_heuristic : public astar_heuristic< Graph, CostType >
 {
 public:
-    typedef typename graph_traits< Graph >::vertex_descriptor Vertex;
+    using Vertex = typename graph_traits< Graph >::vertex_descriptor;
     distance_heuristic(LocMap l, Vertex goal) : m_location(l), m_goal(goal) {}
     CostType operator()(Vertex u)
     {
-        CostType dx = m_location[m_goal].x - m_location[u].x;
-        CostType dy = m_location[m_goal].y - m_location[u].y;
+        auto dx = m_location[m_goal].x - m_location[u].x;
+        auto dy = m_location[m_goal].y - m_location[u].y;
         return ::sqrt(dx * dx + dy * dy);
     }
 
@@ -120,13 +120,12 @@ int main(int argc, char** argv)
 {
 
     // specify some types
-    typedef adjacency_list< listS, vecS, undirectedS, no_property,
-        property< edge_weight_t, cost > >
-        mygraph_t;
-    typedef property_map< mygraph_t, edge_weight_t >::type WeightMap;
-    typedef mygraph_t::vertex_descriptor vertex;
-    typedef mygraph_t::edge_descriptor edge_descriptor;
-    typedef std::pair< int, int > edge;
+    using mygraph_t = adjacency_list< listS, vecS, undirectedS, no_property,
+        property< edge_weight_t, cost > >;
+    using WeightMap = property_map< mygraph_t, edge_weight_t >::type;
+    using vertex = mygraph_t::vertex_descriptor;
+    using edge_descriptor = mygraph_t::edge_descriptor;
+    using edge = std::pair< int, int >;
 
     // specify data
     enum nodes
@@ -174,7 +173,7 @@ int main(int argc, char** argv)
 
     // create graph
     mygraph_t g(N);
-    WeightMap weightmap = get(edge_weight, g);
+    auto weightmap = get(edge_weight, g);
     for (std::size_t j = 0; j < num_edges; ++j)
     {
         edge_descriptor e;
@@ -185,9 +184,9 @@ int main(int argc, char** argv)
     }
 
     // pick random start/goal
-    boost::mt19937 gen(std::time(0));
-    vertex start = random_vertex(g, gen);
-    vertex goal = random_vertex(g, gen);
+    boost::mt19937 gen(time(0));
+    auto start = random_vertex(g, gen);
+    auto goal = random_vertex(g, gen);
 
     cout << "Start vertex: " << name[start] << endl;
     cout << "Goal vertex: " << name[goal] << endl;
@@ -215,7 +214,7 @@ int main(int argc, char** argv)
     catch (found_goal fg)
     { // found a path to the goal
         list< vertex > shortest_path;
-        for (vertex v = goal;; v = p[v])
+        for (auto v = goal;; v = p[v])
         {
             shortest_path.push_front(v);
             if (p[v] == v)
@@ -223,7 +222,7 @@ int main(int argc, char** argv)
         }
         cout << "Shortest path from " << name[start] << " to " << name[goal]
              << ": ";
-        list< vertex >::iterator spi = shortest_path.begin();
+        auto spi = shortest_path.begin();
         cout << name[start];
         for (++spi; spi != shortest_path.end(); ++spi)
             cout << " -> " << name[*spi];

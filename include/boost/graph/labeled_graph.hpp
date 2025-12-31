@@ -18,7 +18,9 @@
 #include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/is_unsigned.hpp>
 #include <boost/pending/container_traits.hpp>
+#include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_traits.hpp>
+#include <boost/property_map/property_map.hpp>
 
 // This file implements a utility for creating mappings from arbitrary
 // identifiers to the vertices of a graph.
@@ -260,6 +262,54 @@ namespace graph_detail
     }
     //@}
 
+    /** @name Remove Labeled Vertex */
+    //@{
+    // Tag dispatch on random access containers (i.e., vectors)
+    template <typename Container, typename Label, typename Graph>
+    void remove_labeled_vertex(Container& c, Graph& g, Label const& l,
+        random_access_container_tag)
+    {
+        if (l < c.size())
+        {
+            boost::remove_vertex(c[l], g);
+            c.erase(c.begin() + l);
+        }
+    }
+
+    // Tag dispatch on multi associative containers (i.e. multimaps).
+    template <typename Container, typename Label, typename Graph>
+    void remove_labeled_vertex(Container& c, Graph& g, Label const& l,
+        multiple_associative_container_tag)
+    {
+        typename Container::iterator c_it = c.find(l);
+        if (c_it != c.end())
+        {
+            boost::remove_vertex(c_it->second, g);
+            c.erase(c_it);
+        }
+    }
+
+    // Tag dispatch on unique associative containers (i.e. maps).
+    template <typename Container, typename Label, typename Graph>
+    void remove_labeled_vertex(Container& c, Graph& g, Label const& l,
+        unique_associative_container_tag)
+    {
+        typename Container::iterator c_it = c.find(l);
+        if (c_it != c.end())
+        {
+            boost::remove_vertex(c_it->second, g);
+            c.erase(c_it);
+        }
+    }
+
+    // Dispatcher
+    template <typename Container, typename Label, typename Graph>
+    void remove_labeled_vertex(Container& c, Graph& g, Label const& l)
+    {
+        remove_labeled_vertex(c, g, l, container_category(c));
+    }
+    //@}
+
 } // namespace detail
 
 struct labeled_graph_class_tag
@@ -451,7 +501,7 @@ public:
     /** Remove the vertex with the given label. */
     void remove_vertex(Label const& l)
     {
-        return boost::remove_vertex(vertex(l), _graph);
+        return graph_detail::remove_labeled_vertex(_map, _graph, l);
     }
 
     /** Return a descriptor for the given label. */
@@ -734,7 +784,7 @@ inline typename LABELED_GRAPH::degree_size_type degree(
 template < LABELED_GRAPH_PARAMS >
 inline std::pair< typename LABELED_GRAPH::adjacency_iterator,
     typename LABELED_GRAPH::adjacency_iterator >
-adjacenct_vertices(
+adjacent_vertices(
     typename LABELED_GRAPH::vertex_descriptor v, LABELED_GRAPH const& g)
 {
     return adjacent_vertices(v, g.graph());

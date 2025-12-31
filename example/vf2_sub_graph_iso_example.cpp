@@ -13,7 +13,7 @@ using namespace boost;
 int main()
 {
 
-    typedef adjacency_list< setS, vecS, bidirectionalS > graph_type;
+    using graph_type = adjacency_list< setS, vecS, bidirectionalS >;
 
     // Build graph1
     int num_vertices1 = 8;

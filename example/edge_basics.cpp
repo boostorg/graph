@@ -40,17 +40,17 @@ template < class Graph > struct exercise_edge
 {
     exercise_edge(Graph& g) : G(g) {}
 
-    typedef typename boost::graph_traits< Graph >::edge_descriptor Edge;
-    typedef typename boost::graph_traits< Graph >::vertex_descriptor Vertex;
+    using Edge = typename boost::graph_traits< Graph >::edge_descriptor;
+    using Vertex = typename boost::graph_traits< Graph >::vertex_descriptor;
     void operator()(Edge e) const
     {
         // begin
-        // Get the associated vertex type out of the edge using the
-        // edge_traits class
-        // Use the source() and target() functions to access the vertices
-        // that belong to Edge e
-        Vertex src = source(e, G);
-        Vertex targ = target(e, G);
+        //  Get the associated vertex type out of the edge using the
+        //  edge_traits class
+        //  Use the source() and target() functions to access the vertices
+        //  that belong to Edge e
+        auto src = source(e, G);
+        auto targ = target(e, G);
 
         // print out the vertex id's just because
         cout << "(" << src << "," << targ << ") ";
@@ -62,9 +62,9 @@ template < class Graph > struct exercise_edge
 
 int main()
 {
-    typedef adjacency_list<> MyGraph;
+    using MyGraph = adjacency_list<>;
 
-    typedef pair< int, int > Pair;
+    using Pair = pair< int, int >;
     Pair edge_array[8] = { Pair(0, 1), Pair(0, 2), Pair(0, 3), Pair(0, 4),
         Pair(2, 0), Pair(3, 0), Pair(2, 4), Pair(3, 1) };
 

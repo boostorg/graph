@@ -40,7 +40,7 @@ int main(int, char*[])
 {
     using namespace boost;
     {
-        typedef adjacency_list< vecS, vecS, undirectedS > Graph;
+        using Graph = adjacency_list< vecS, vecS, undirectedS >;
 
         Graph G;
         add_edge(0, 1, G);
@@ -49,7 +49,7 @@ int main(int, char*[])
         add_edge(2, 5, G);
 
         std::vector< int > component(num_vertices(G));
-        int num = connected_components(G, &component[0]);
+        auto num = connected_components(G, &component[0]);
 
         std::vector< int >::size_type i;
         cout << "Total number of components: " << num << endl;

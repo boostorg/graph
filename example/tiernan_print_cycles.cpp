@@ -28,9 +28,7 @@ template < typename OutputStream > struct cycle_printer
     {
         // Get the property map containing the vertex indices
         // so we can print them.
-        typedef
-            typename property_map< Graph, vertex_index_t >::const_type IndexMap;
-        IndexMap indices = get(vertex_index, g);
+        auto indices = get(vertex_index, g);
 
         // Iterate over path printing each vertex that forms the cycle.
         typename Path::const_iterator i, end = p.end();
@@ -44,9 +42,9 @@ template < typename OutputStream > struct cycle_printer
 };
 
 // Declare the graph type and its vertex and edge types.
-typedef directed_graph<> Graph;
-typedef graph_traits< Graph >::vertex_descriptor Vertex;
-typedef graph_traits< Graph >::edge_descriptor Edge;
+using Graph = directed_graph<>;
+using Vertex = graph_traits< Graph >::vertex_descriptor;
+using Edge = graph_traits< Graph >::edge_descriptor;
 
 int main(int argc, char* argv[])
 {

@@ -57,7 +57,7 @@ void find_loops(typename graph_traits< Graph >::vertex_descriptor entry,
     Loops& loops) // A container of sets of vertices
 {
     BOOST_CONCEPT_ASSERT((BidirectionalGraphConcept< Graph >));
-    typedef typename graph_traits< Graph >::edge_descriptor Edge;
+    using Edge = typename graph_traits< Graph >::edge_descriptor;
     std::vector< Edge > back_edges;
     std::vector< default_color_type > color_map(num_vertices(g));
     depth_first_visit(g, entry,
@@ -80,8 +80,8 @@ void compute_loop_extent(
     Set& loop_set)
 {
     BOOST_CONCEPT_ASSERT((BidirectionalGraphConcept< Graph >));
-    typedef typename graph_traits< Graph >::vertex_descriptor Vertex;
-    typedef color_traits< default_color_type > Color;
+    using Vertex = typename graph_traits< Graph >::vertex_descriptor;
+    using Color = color_traits< default_color_type >;
 
     Vertex loop_head, loop_tail;
     loop_tail = source(back_edge, g);
@@ -117,10 +117,9 @@ int main(int argc, char* argv[])
     GraphvizDigraph g_in;
     read_graphviz(argv[1], g_in);
 
-    typedef adjacency_list< vecS, vecS, bidirectionalS, GraphvizVertexProperty,
-        GraphvizEdgeProperty, GraphvizGraphProperty >
-        Graph;
-    typedef graph_traits< Graph >::vertex_descriptor Vertex;
+    using Graph = adjacency_list< vecS, vecS, bidirectionalS,
+        GraphvizVertexProperty, GraphvizEdgeProperty, GraphvizGraphProperty >;
+    using Vertex = graph_traits< Graph >::vertex_descriptor;
 
     Graph g;
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
@@ -130,23 +129,21 @@ int main(int argc, char* argv[])
 
     copy_graph(g_in, g);
 
-    typedef std::set< Vertex > set_t;
-    typedef std::list< set_t > list_of_sets_t;
+    using set_t = std::set< Vertex >;
+    using list_of_sets_t = std::list< set_t >;
     list_of_sets_t loops;
-    Vertex entry = *vertices(g).first;
+    auto entry = *vertices(g).first;
 
     find_loops(entry, g, loops);
 
-    property_map< Graph, vertex_attribute_t >::type vattr_map
-        = get(vertex_attribute, g);
-    property_map< Graph, edge_attribute_t >::type eattr_map
-        = get(edge_attribute, g);
+    auto vattr_map = get(vertex_attribute, g);
+    auto eattr_map = get(edge_attribute, g);
     graph_traits< Graph >::edge_iterator ei, ei_end;
 
-    for (list_of_sets_t::iterator i = loops.begin(); i != loops.end(); ++i)
+    for (auto i = loops.begin(); i != loops.end(); ++i)
     {
         std::vector< bool > in_loop(num_vertices(g), false);
-        for (set_t::iterator j = (*i).begin(); j != (*i).end(); ++j)
+        for (auto j = (*i).begin(); j != (*i).end(); ++j)
         {
             vattr_map[*j]["color"] = "gray";
             in_loop[*j] = true;
@@ -167,9 +164,7 @@ int main(int argc, char* argv[])
     for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
     {
         loops_out << *vi << "[";
-        for (std::map< std::string, std::string >::iterator ai
-             = vattr_map[*vi].begin();
-             ai != vattr_map[*vi].end(); ++ai)
+        for (auto ai = vattr_map[*vi].begin(); ai != vattr_map[*vi].end(); ++ai)
         {
             loops_out << ai->first << "=" << ai->second;
             if (next(ai) != vattr_map[*vi].end())
@@ -181,10 +176,8 @@ int main(int argc, char* argv[])
     for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
     {
         loops_out << source(*ei, g) << " -> " << target(*ei, g) << "[";
-        std::map< std::string, std::string >& attr_map = eattr_map[*ei];
-        for (std::map< std::string, std::string >::iterator eai
-             = attr_map.begin();
-             eai != attr_map.end(); ++eai)
+        auto& attr_map = eattr_map[*ei];
+        for (auto eai = attr_map.begin(); eai != attr_map.end(); ++eai)
         {
             loops_out << eai->first << "=" << eai->second;
             if (next(eai) != attr_map.end())

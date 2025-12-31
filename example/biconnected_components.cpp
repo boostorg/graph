@@ -21,17 +21,16 @@ struct edge_component_t
     {
         num = 555
     };
-    typedef edge_property_tag kind;
+    using kind = edge_property_tag;
 } edge_component;
 }
 
 int main()
 {
     using namespace boost;
-    typedef adjacency_list< vecS, vecS, undirectedS, no_property,
-        property< edge_component_t, std::size_t > >
-        graph_t;
-    typedef graph_traits< graph_t >::vertex_descriptor vertex_t;
+    using graph_t = adjacency_list< vecS, vecS, undirectedS, no_property,
+        property< edge_component_t, std::size_t > >;
+    using vertex_t = graph_traits< graph_t >::vertex_descriptor;
     graph_t g(9);
     add_edge(0, 5, g);
     add_edge(0, 1, g);
@@ -45,10 +44,9 @@ int main()
     add_edge(6, 7, g);
     add_edge(7, 8, g);
 
-    property_map< graph_t, edge_component_t >::type component
-        = get(edge_component, g);
+    auto component = get(edge_component, g);
 
-    std::size_t num_comps = biconnected_components(g, component);
+    auto num_comps = biconnected_components(g, component);
     std::cerr << "Found " << num_comps << " biconnected components.\n";
 
     std::vector< vertex_t > art_points;

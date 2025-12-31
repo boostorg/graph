@@ -16,7 +16,7 @@
 #include <map>
 #include <vector>
 #include <boost/random/linear_congruential.hpp>
-#include <boost/progress.hpp>
+#include <boost/timer/progress_display.hpp>
 #include <boost/shared_ptr.hpp>
 
 using namespace boost;
@@ -41,16 +41,15 @@ void usage()
                  "vertex on each line, separated by spaces.\n";
 }
 
-typedef boost::rectangle_topology<> topology_type;
-typedef topology_type::point_type point_type;
+using topology_type = boost::rectangle_topology<>;
+using point_type = topology_type::point_type;
 
-typedef adjacency_list< listS, vecS, undirectedS,
-    property< vertex_name_t, std::string > >
-    Graph;
+using Graph = adjacency_list< listS, vecS, undirectedS,
+    property< vertex_name_t, std::string > >;
 
-typedef graph_traits< Graph >::vertex_descriptor Vertex;
+using Vertex = graph_traits< Graph >::vertex_descriptor;
 
-typedef std::map< std::string, Vertex > NameToVertex;
+using NameToVertex = std::map< std::string, Vertex >;
 
 Vertex get_vertex(const std::string& name, Graph& g, NameToVertex& names)
 {
@@ -62,12 +61,12 @@ Vertex get_vertex(const std::string& name, Graph& g, NameToVertex& names)
 
 class progress_cooling : public linear_cooling< double >
 {
-    typedef linear_cooling< double > inherited;
+    using inherited = linear_cooling< double >;
 
 public:
     explicit progress_cooling(std::size_t iterations) : inherited(iterations)
     {
-        display.reset(new progress_display(iterations + 1, std::cerr));
+        display.reset(new boost::timer::progress_display(iterations + 1, std::cerr));
     }
 
     double operator()()
@@ -77,7 +76,7 @@ public:
     }
 
 private:
-    shared_ptr< boost::progress_display > display;
+    shared_ptr< boost::timer::progress_display > display;
 };
 
 int main(int argc, char* argv[])
@@ -135,11 +134,10 @@ int main(int argc, char* argv[])
         add_edge(get_vertex(source, g, names), get_vertex(target, g, names), g);
     }
 
-    typedef std::vector< point_type > PositionVec;
+    using PositionVec = std::vector< point_type >;
     PositionVec position_vec(num_vertices(g));
-    typedef iterator_property_map< PositionVec::iterator,
-        property_map< Graph, vertex_index_t >::type >
-        PositionMap;
+    using PositionMap = iterator_property_map< PositionVec::iterator,
+        property_map< Graph, vertex_index_t >::type >;
     PositionMap position(position_vec.begin(), get(vertex_index, g));
 
     minstd_rand gen;

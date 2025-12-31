@@ -45,7 +45,7 @@ template < typename Graph > void test()
 {
     typedef erdos_renyi_iterator< boost::minstd_rand, Graph > er;
 
-    // Generate random graphs with 15 vertices and 15% probability
+    // Generate random graph with N vertices and probability P
     // of edge connection.
     static const size_t N = 20;
     static const double P = 0.1;

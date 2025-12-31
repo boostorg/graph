@@ -18,10 +18,9 @@
  */
 
 using namespace boost;
-typedef adjacency_list< listS, listS, directedS,
-    property< vertex_index_t, int >,
-    property< edge_weight_t, double, property< edge_weight2_t, double > > >
-    grap_real_t;
+using grap_real_t
+    = adjacency_list< listS, listS, directedS, property< vertex_index_t, int >,
+        property< edge_weight_t, double, property< edge_weight2_t, double > > >;
 
 template < typename TG > void gen_rand_graph(TG& g, size_t nV, size_t nE)
 {
@@ -45,17 +44,14 @@ int main(int argc, char* argv[])
     using std::endl;
     const double epsilon = 0.0000001;
     double min_cr, max_cr; /// Minimum and maximum cycle ratio
-    typedef std::vector< graph_traits< grap_real_t >::edge_descriptor >
-        ccReal_t;
+    using ccReal_t
+        = std::vector< graph_traits< grap_real_t >::edge_descriptor >;
     ccReal_t cc; /// critical cycle
 
     grap_real_t tgr;
-    property_map< grap_real_t, vertex_index_t >::type vim
-        = get(vertex_index, tgr);
-    property_map< grap_real_t, edge_weight_t >::type ew1
-        = get(edge_weight, tgr);
-    property_map< grap_real_t, edge_weight2_t >::type ew2
-        = get(edge_weight2, tgr);
+    auto vim = get(vertex_index, tgr);
+    auto ew1 = get(edge_weight, tgr);
+    auto ew2 = get(edge_weight2, tgr);
 
     gen_rand_graph(tgr, 1000, 30000);
     cout << "Vertices number: " << num_vertices(tgr) << endl;
@@ -72,12 +68,12 @@ int main(int argc, char* argv[])
     cout << "Minimum cycle ratio is " << min_cr << endl;
     std::pair< double, double > cr(.0, .0);
     cout << "Critical cycle:\n";
-    for (ccReal_t::iterator itr = cc.begin(); itr != cc.end(); ++itr)
+    for (auto const & edge : cc)
     {
-        cr.first += ew1[*itr];
-        cr.second += ew2[*itr];
-        std::cout << "(" << vim[source(*itr, tgr)] << ","
-                  << vim[target(*itr, tgr)] << ") ";
+        cr.first += ew1[edge];
+        cr.second += ew2[edge];
+        std::cout << "(" << vim[source(edge, tgr)] << ","
+                  << vim[target(edge, tgr)] << ") ";
     }
     cout << endl;
     assert(std::abs(cr.first / cr.second - min_cr) < epsilon * 2);

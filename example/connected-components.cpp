@@ -14,7 +14,7 @@
 int main()
 {
     using namespace boost;
-    typedef adjacency_list< vecS, vecS, undirectedS > Graph;
+    using Graph = adjacency_list< vecS, vecS, undirectedS >;
 
     const int N = 6;
     Graph G(N);
@@ -24,7 +24,7 @@ int main()
     add_edge(2, 5, G);
 
     std::vector< int > c(num_vertices(G));
-    int num = connected_components(
+    auto num = connected_components(
         G, make_iterator_property_map(c.begin(), get(vertex_index, G), c[0]));
 
     std::cout << std::endl;

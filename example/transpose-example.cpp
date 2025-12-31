@@ -14,9 +14,8 @@
 int main()
 {
     using namespace boost;
-    typedef adjacency_list< vecS, vecS, bidirectionalS,
-        property< vertex_name_t, char > >
-        graph_t;
+    using graph_t = adjacency_list< vecS, vecS, bidirectionalS,
+        property< vertex_name_t, char > >;
 
     enum
     {
@@ -30,13 +29,13 @@ int main()
         N
     };
     graph_t G(N);
-    property_map< graph_t, vertex_name_t >::type name_map = get(vertex_name, G);
+    auto name_map = get(vertex_name, G);
     char name = 'a';
     graph_traits< graph_t >::vertex_iterator v, v_end;
     for (boost::tie(v, v_end) = vertices(G); v != v_end; ++v, ++name)
         name_map[*v] = name;
 
-    typedef std::pair< int, int > E;
+    using E = std::pair< int, int >;
     E edge_array[] = { E(a, c), E(a, d), E(b, a), E(b, d), E(c, f), E(d, c),
         E(d, e), E(d, f), E(e, b), E(e, g), E(f, e), E(f, g) };
     for (int i = 0; i < 12; ++i)

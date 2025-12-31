@@ -18,6 +18,7 @@
 #include <vector>
 #include <queue>
 #include <boost/assert.hpp>
+#include <boost/throw_exception.hpp>
 
 namespace boost
 {

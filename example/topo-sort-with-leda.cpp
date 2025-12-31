@@ -16,9 +16,9 @@
 int main()
 {
     using namespace boost;
-    typedef GRAPH< std::string, char > graph_t;
+    using graph_t = GRAPH< std::string, char >;
     graph_t leda_g;
-    typedef graph_traits< graph_t >::vertex_descriptor vertex_t;
+    using vertex_t = graph_traits< graph_t >::vertex_descriptor;
     std::vector< vertex_t > vert(7);
     vert[0] = add_vertex(std::string("pick up kids from school"), leda_g);
     vert[1] = add_vertex(std::string("buy groceries (and snacks)"), leda_g);
@@ -45,8 +45,7 @@ int main()
 
     std::reverse(topo_order.begin(), topo_order.end());
     int n = 1;
-    for (std::vector< vertex_t >::iterator i = topo_order.begin();
-         i != topo_order.end(); ++i, ++n)
+    for (auto i = topo_order.begin(); i != topo_order.end(); ++i, ++n)
         std::cout << n << ": " << leda_g[*i] << std::endl;
 
     return EXIT_SUCCESS;

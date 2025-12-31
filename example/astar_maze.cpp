@@ -45,18 +45,18 @@
 boost::mt19937 random_generator;
 
 // Distance traveled in the maze
-typedef double distance;
+using distance = double;
 
 #define GRID_RANK 2
-typedef boost::grid_graph< GRID_RANK > grid;
-typedef boost::graph_traits< grid >::vertex_descriptor vertex_descriptor;
-typedef boost::graph_traits< grid >::vertices_size_type vertices_size_type;
+using grid = boost::grid_graph< GRID_RANK >;
+using vertex_descriptor = boost::graph_traits< grid >::vertex_descriptor;
+using vertices_size_type = boost::graph_traits< grid >::vertices_size_type;
 
 // A hash function for vertices.
 struct vertex_hash
 {
-    typedef vertex_descriptor argument_type;
-    typedef std::size_t result_type;
+    using argument_type = vertex_descriptor;
+    using result_type = std::size_t;
     std::size_t operator()(vertex_descriptor const& u) const
     {
         std::size_t seed = 0;
@@ -66,9 +66,9 @@ struct vertex_hash
     }
 };
 
-typedef boost::unordered_set< vertex_descriptor, vertex_hash > vertex_set;
-typedef boost::vertex_subset_complement_filter< grid, vertex_set >::type
-    filtered_grid;
+using vertex_set = boost::unordered_set< vertex_descriptor, vertex_hash >;
+using filtered_grid
+    = boost::vertex_subset_complement_filter< grid, vertex_set >::type;
 
 // A searchable maze
 //
@@ -190,19 +190,18 @@ bool maze::solve()
 {
     boost::static_property_map< distance > weight(1);
     // The predecessor map is a vertex-to-vertex mapping.
-    typedef boost::unordered_map< vertex_descriptor, vertex_descriptor,
-        vertex_hash >
-        pred_map;
+    using pred_map = boost::unordered_map< vertex_descriptor, vertex_descriptor,
+        vertex_hash >;
     pred_map predecessor;
     boost::associative_property_map< pred_map > pred_pmap(predecessor);
     // The distance map is a vertex-to-distance mapping.
-    typedef boost::unordered_map< vertex_descriptor, distance, vertex_hash >
-        dist_map;
+    using dist_map
+        = boost::unordered_map< vertex_descriptor, distance, vertex_hash >;
     dist_map distance;
     boost::associative_property_map< dist_map > dist_pmap(distance);
 
-    vertex_descriptor s = source();
-    vertex_descriptor g = goal();
+    auto s = source();
+    auto g = goal();
     euclidean_heuristic heuristic(g);
     astar_goal_visitor visitor(g);
 
@@ -218,7 +217,7 @@ bool maze::solve()
     {
         // Walk backwards from the goal through the predecessor chain adding
         // vertices to the solution path.
-        for (vertex_descriptor u = g; u != s; u = predecessor[u])
+        for (auto u = g; u != s; u = predecessor[u])
             m_solution.insert(u);
         m_solution.insert(s);
         m_solution_length = distance[g];
@@ -285,9 +284,9 @@ std::size_t random_int(std::size_t a, std::size_t b)
 // Generate a maze with a random assignment of barriers.
 void random_maze(maze& m)
 {
-    vertices_size_type n = num_vertices(m.m_grid);
-    vertex_descriptor s = m.source();
-    vertex_descriptor g = m.goal();
+    auto n = num_vertices(m.m_grid);
+    auto s = m.source();
+    auto g = m.goal();
     // One quarter of the cells in the maze should be barriers.
     int barriers = n / 4;
     while (barriers > 0)
@@ -297,7 +296,7 @@ void random_maze(maze& m)
         // Walls range up to one quarter the dimension length in this direction.
         vertices_size_type wall = random_int(1, m.length(direction) / 4);
         // Create the wall while decrementing the total barrier count.
-        vertex_descriptor u = vertex(random_int(0, n - 1), m.m_grid);
+        auto u = vertex(random_int(0, n - 1), m.m_grid);
         while (wall)
         {
             // Start and goal spaces should never be barriers.
@@ -310,7 +309,7 @@ void random_maze(maze& m)
                     barriers--;
                 }
             }
-            vertex_descriptor v = m.m_grid.next(u, direction);
+            auto v = m.m_grid.next(u, direction);
             // Stop creating this wall if we reached the maze's edge.
             if (u == v)
                 break;

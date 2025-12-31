@@ -29,10 +29,9 @@ int main()
         cout << "Number " << i << " is in bucket " << bucket[i] << endl;
     }
 
-    typedef boost::identity_property_map ID;
-    typedef bucket_sorter< std::size_t, int, vector< std::size_t >::iterator,
-        ID >
-        BS;
+    using ID = boost::identity_property_map;
+    using BS = bucket_sorter< std::size_t, int, vector< std::size_t >::iterator,
+        ID >;
     BS my_bucket_sorter(N, N, bucket.begin());
 
     for (std::size_t ii = 0; ii < N; ii++)
@@ -47,7 +46,7 @@ int main()
             cout << " has number ";
             do
             {
-                int v = my_bucket_sorter[j].top();
+                auto v = my_bucket_sorter[j].top();
                 my_bucket_sorter[j].pop();
                 cout << v << " ";
             } while (!my_bucket_sorter[j].empty());
@@ -75,7 +74,7 @@ int main()
             cout << " has number ";
             do
             {
-                int v = my_bucket_sorter[j].top();
+                auto v = my_bucket_sorter[j].top();
                 my_bucket_sorter[j].pop();
                 cout << v << " ";
             } while (!my_bucket_sorter[j].empty());
@@ -93,7 +92,7 @@ int main()
         std::size_t current = rand() % N;
         if (!my_bucket_sorter[current].empty())
         {
-            int v = my_bucket_sorter[current].top();
+            auto v = my_bucket_sorter[current].top();
             my_bucket_sorter[current].pop();
             bucket[v] = rand() % N;
             my_bucket_sorter.push(v);
@@ -105,7 +104,7 @@ int main()
         std::size_t current = rand() % N;
         if (!my_bucket_sorter[current].empty())
         {
-            int v = my_bucket_sorter[current].top();
+            auto v = my_bucket_sorter[current].top();
             bucket[v] = rand() % N;
             my_bucket_sorter.update(v);
         }

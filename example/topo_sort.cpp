@@ -15,7 +15,7 @@
 #include <iterator>
 #include <utility>
 
-typedef std::pair< std::size_t, std::size_t > Pair;
+using Pair = std::pair< std::size_t, std::size_t >;
 
 /*
   Topological sort example
@@ -38,31 +38,23 @@ int main(int, char*[])
     /* Topological sort will need to color the graph.  Here we use an
        internal decorator, so we "property" the color to the graph.
        */
-    typedef adjacency_list< vecS, vecS, directedS,
-        property< vertex_color_t, default_color_type > >
-        Graph;
+    using Graph = adjacency_list< vecS, vecS, directedS,
+        property< vertex_color_t, default_color_type > >;
 
-    typedef boost::graph_traits< Graph >::vertex_descriptor Vertex;
-    Pair edges[6] = { Pair(0, 1), Pair(2, 4), Pair(2, 5), Pair(0, 3),
+    using Vertex = boost::graph_traits< Graph >::vertex_descriptor;
+    const auto edges = { Pair(0, 1), Pair(2, 4), Pair(2, 5), Pair(0, 3),
         Pair(1, 4), Pair(4, 3) };
-#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
-    // VC++ can't handle the iterator constructor
-    Graph G(6);
-    for (std::size_t j = 0; j < 6; ++j)
-        add_edge(edges[j].first, edges[j].second, G);
-#else
-    Graph G(edges, edges + 6, 6);
-#endif
 
-    boost::property_map< Graph, vertex_index_t >::type id
-        = get(vertex_index, G);
+    Graph G(std::begin(edges), std::end(edges), 6 /* vertices count */);
 
-    typedef std::vector< Vertex > container;
+    auto id = get(vertex_index, G);
+
+    using container = std::vector< Vertex >;
     container c;
     topological_sort(G, std::back_inserter(c));
 
     std::cout << "A topological ordering: ";
-    for (container::reverse_iterator ii = c.rbegin(); ii != c.rend(); ++ii)
+    for (auto ii = c.rbegin(); ii != c.rend(); ++ii)
         std::cout << id[*ii] << " ";
     std::cout << std::endl;
 

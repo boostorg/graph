@@ -18,9 +18,9 @@ using namespace std;
 using namespace boost;
 
 // Declare the graph type and its vertex and edge types.
-typedef undirected_graph<> Graph;
-typedef graph_traits< Graph >::vertex_descriptor Vertex;
-typedef graph_traits< Graph >::edge_descriptor Edge;
+using Graph = undirected_graph<>;
+using Vertex = graph_traits< Graph >::vertex_descriptor;
+using Edge = graph_traits< Graph >::edge_descriptor;
 
 int main(int argc, char* argv[])
 {
@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
     read_graph(g, cin);
 
     // Use the Bron-Kerbosch algorithm to find all cliques, and
-    size_t c = bron_kerbosch_clique_number(g);
+    auto c = bron_kerbosch_clique_number(g);
     cout << "clique number: " << c << endl;
 
     return 0;

@@ -11,9 +11,8 @@
 
 #include <vector>
 #include <algorithm> // for std::min and std::max
-#include <functional>
+#include <functional> //for std::less
 #include <boost/config.hpp>
-#include <boost/bind/bind.hpp>
 #include <boost/graph/strong_components.hpp>
 #include <boost/graph/topological_sort.hpp>
 #include <boost/graph/graph_concepts.hpp>
@@ -82,7 +81,7 @@ void transitive_closure(const Graph& g, GraphTC& tc,
     iterator_property_map< cg_vertex*, VertexIndexMap, cg_vertex, cg_vertex& >
         component_number(&component_number_vec[0], index_map);
 
-    int num_scc
+    const cg_vertex num_scc
         = strong_components(g, component_number, vertex_index_map(index_map));
 
     std::vector< std::vector< vertex > > components;
@@ -107,12 +106,11 @@ void transitive_closure(const Graph& g, GraphTC& tc,
             }
         }
         std::sort(adj.begin(), adj.end());
-        typename std::vector< cg_vertex >::iterator di
+        const typename std::vector< cg_vertex >::iterator di
             = std::unique(adj.begin(), adj.end());
-        if (di != adj.end())
-            adj.erase(di, adj.end());
+
         for (typename std::vector< cg_vertex >::const_iterator i = adj.begin();
-             i != adj.end(); ++i)
+             i != di; ++i)
         {
             add_edge(s, *i, CG);
         }
@@ -131,16 +129,16 @@ void transitive_closure(const Graph& g, GraphTC& tc,
     std::vector< std::vector< cg_vertex > > CG_vec(num_vertices(CG));
     for (size_type i = 0; i < num_vertices(CG); ++i)
     {
-        using namespace boost::placeholders;
-
         typedef typename boost::graph_traits< CG_t >::adjacency_iterator
             cg_adj_iter;
         std::pair< cg_adj_iter, cg_adj_iter > pr = adjacent_vertices(i, CG);
         CG_vec[i].assign(pr.first, pr.second);
         std::sort(CG_vec[i].begin(), CG_vec[i].end(),
-            boost::bind(std::less< cg_vertex >(),
-                boost::bind(detail::subscript(topo_number), _1),
-                boost::bind(detail::subscript(topo_number), _2)));
+            [&topo_number](const auto& cg_0, const auto& cg_1)
+            {
+                return std::less< cg_vertex >()(
+                    topo_number[cg_0], topo_number[cg_1]);
+            });
     }
 
     std::vector< std::vector< cg_vertex > > chains;
@@ -152,15 +150,22 @@ void transitive_closure(const Graph& g, GraphTC& tc,
             cg_vertex v = *i;
             if (!in_a_chain[v])
             {
-                chains.resize(chains.size() + 1);
+                chains.emplace_back();
                 std::vector< cg_vertex >& chain = chains.back();
                 for (;;)
                 {
                     chain.push_back(v);
                     in_a_chain[v] = true;
+
                     typename std::vector< cg_vertex >::const_iterator next
+                    #ifdef __cpp_lib_not_fn
                         = std::find_if(CG_vec[v].begin(), CG_vec[v].end(),
-                            std::not1(detail::subscript(in_a_chain)));
+                                       std::not_fn(detail::subscript(in_a_chain)));
+                    #else
+                        = std::find_if(CG_vec[v].begin(), CG_vec[v].end(),
+                                       std::not1(detail::subscript(in_a_chain)));
+                    #endif
+
                     if (next != CG_vec[v].end())
                         v = *next;
                     else

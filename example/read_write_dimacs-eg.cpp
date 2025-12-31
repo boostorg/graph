@@ -63,25 +63,22 @@ template < typename EdgeCapacityMap > struct zero_edge_capacity
 int main()
 {
     using namespace boost;
-    typedef adjacency_list_traits< vecS, vecS, directedS > Traits;
-    typedef adjacency_list< vecS, vecS, directedS, no_property,
+    using Traits = adjacency_list_traits< vecS, vecS, directedS >;
+    using Graph = adjacency_list< vecS, vecS, directedS, no_property,
         property< edge_capacity_t, long,
-            property< edge_reverse_t, Traits::edge_descriptor > > >
-        Graph;
+            property< edge_reverse_t, Traits::edge_descriptor > > >;
 
-    typedef graph_traits< Graph >::out_edge_iterator out_edge_iterator;
-    typedef graph_traits< Graph >::edge_descriptor edge_descriptor;
-    typedef graph_traits< Graph >::vertex_descriptor vertex_descriptor;
+    using out_edge_iterator = graph_traits< Graph >::out_edge_iterator;
+    using edge_descriptor = graph_traits< Graph >::edge_descriptor;
+    using vertex_descriptor = graph_traits< Graph >::vertex_descriptor;
 
     Graph g;
 
-    typedef property_map< Graph, edge_capacity_t >::type tCapMap;
-    typedef tCapMap::value_type tCapMapValue;
+    using tCapMap = property_map< Graph, edge_capacity_t >::type;
+    using tCapMapValue = tCapMap::value_type;
 
-    typedef property_map< Graph, edge_reverse_t >::type tRevEdgeMap;
-
-    tCapMap capacity = get(edge_capacity, g);
-    tRevEdgeMap rev = get(edge_reverse, g);
+    auto capacity = get(edge_capacity, g);
+    auto rev = get(edge_reverse, g);
 
     vertex_descriptor s, t;
     /*reading the graph from stdin*/
@@ -95,8 +92,8 @@ int main()
     out_edge_iterator oei, oe_end;
     for (boost::tie(oei, oe_end) = out_edges(s, g); oei != oe_end; ++oei)
     {
-        edge_descriptor from_source = *oei;
-        vertex_descriptor v = target(from_source, g);
+        auto from_source = *oei;
+        auto v = target(from_source, g);
         edge_descriptor to_sink;
         bool is_there;
         boost::tie(to_sink, is_there) = edge(v, t, g);
@@ -104,7 +101,7 @@ int main()
         {
             if (get(capacity, to_sink) > get(capacity, from_source))
             {
-                tCapMapValue to_augment = get(capacity, from_source);
+                auto to_augment = get(capacity, from_source);
                 capacity[from_source] = 0;
                 capacity[to_sink] -= to_augment;
                 augmented_flow += to_augment;

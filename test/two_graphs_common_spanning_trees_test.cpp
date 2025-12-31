@@ -8,16 +8,11 @@
 //     Efficient Algorithm for Common Spanning Tree Problem
 // Electron. Lett., 28 April 1983, Volume 19, Issue 9, p.346-347
 
-#include <boost/type_traits.hpp>
 #include <boost/concept/requires.hpp>
-#include <boost/assign/std/vector.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/compressed_pair.hpp>
 #include <boost/core/lightweight_test.hpp>
 #include <boost/graph/two_graphs_common_spanning_trees.hpp>
 #include <vector>
-
-using namespace boost::assign;
 
 namespace boost
 {
@@ -32,13 +27,7 @@ typedef boost::adjacency_list< boost::vecS, // OutEdgeList
     >
     Graph;
 
-typedef boost::graph_traits< Graph >::vertex_descriptor vertex_descriptor;
-
 typedef boost::graph_traits< Graph >::edge_descriptor edge_descriptor;
-
-typedef boost::graph_traits< Graph >::vertex_iterator vertex_iterator;
-
-typedef boost::graph_traits< Graph >::edge_iterator edge_iterator;
 
 template < typename Coll, typename Seq > struct check_edge
 {
@@ -56,8 +45,8 @@ public:
     {
         bool found = false;
 
-        for (typename Coll::iterator iterator = coll.begin();
-             !found && iterator != coll.end(); ++iterator)
+        for (auto iterator = coll.begin(); !found && iterator != coll.end();
+            ++iterator)
         {
             Seq& coll_seq = *iterator;
 
@@ -65,7 +54,7 @@ public:
 
             found = true;
             for (typename Seq::size_type pos = 0; found && pos < seq.size();
-                 ++pos)
+                ++pos)
             {
                 found &= coll_seq[pos] == seq[pos];
             }
@@ -78,28 +67,17 @@ public:
 void two_graphs_common_spanning_trees_test()
 {
     Graph iG, vG;
-    std::vector< edge_descriptor > iG_o;
-    std::vector< edge_descriptor > vG_o;
+    std::vector< edge_descriptor > iG_o { boost::add_edge(0, 1, iG).first,
+        boost::add_edge(1, 3, iG).first, boost::add_edge(3, 2, iG).first,
+        boost::add_edge(1, 5, iG).first, boost::add_edge(5, 4, iG).first,
+        boost::add_edge(5, 6, iG).first, boost::add_edge(5, 3, iG).first,
+        boost::add_edge(3, 1, iG).first, boost::add_edge(1, 3, iG).first };
 
-    iG_o.push_back(boost::add_edge(0, 1, iG).first);
-    iG_o.push_back(boost::add_edge(1, 3, iG).first);
-    iG_o.push_back(boost::add_edge(3, 2, iG).first);
-    iG_o.push_back(boost::add_edge(1, 5, iG).first);
-    iG_o.push_back(boost::add_edge(5, 4, iG).first);
-    iG_o.push_back(boost::add_edge(5, 6, iG).first);
-    iG_o.push_back(boost::add_edge(5, 3, iG).first);
-    iG_o.push_back(boost::add_edge(3, 1, iG).first);
-    iG_o.push_back(boost::add_edge(1, 3, iG).first);
-
-    vG_o.push_back(boost::add_edge(0, 2, vG).first);
-    vG_o.push_back(boost::add_edge(0, 4, vG).first);
-    vG_o.push_back(boost::add_edge(0, 5, vG).first);
-    vG_o.push_back(boost::add_edge(5, 1, vG).first);
-    vG_o.push_back(boost::add_edge(5, 3, vG).first);
-    vG_o.push_back(boost::add_edge(5, 6, vG).first);
-    vG_o.push_back(boost::add_edge(5, 4, vG).first);
-    vG_o.push_back(boost::add_edge(5, 2, vG).first);
-    vG_o.push_back(boost::add_edge(2, 6, vG).first);
+    std::vector< edge_descriptor > vG_o { boost::add_edge(0, 2, vG).first,
+        boost::add_edge(0, 4, vG).first, boost::add_edge(0, 5, vG).first,
+        boost::add_edge(5, 1, vG).first, boost::add_edge(5, 3, vG).first,
+        boost::add_edge(5, 6, vG).first, boost::add_edge(5, 4, vG).first,
+        boost::add_edge(5, 2, vG).first, boost::add_edge(2, 6, vG).first };
 
     std::vector< std::vector< bool > > coll;
     boost::tree_collector< std::vector< std::vector< bool > >,
@@ -113,12 +91,10 @@ void two_graphs_common_spanning_trees_test()
         checker;
     std::vector< bool > check;
 
-    check.clear();
-    check += true, true, true, true, true, true, false, false, false;
+    check.assign({ true, true, true, true, true, true, false, false, false });
     checker(coll, check);
 
-    check.clear();
-    check += true, true, true, true, true, true, false, false, false;
+    check.assign({ true, true, true, true, true, true, false, false, false });
     checker(coll, check);
 }
 

@@ -118,7 +118,7 @@ int main(int argc, char* argv[])
     harwell_boeing hbs(argv[1]);
 
     // must be BGL directed graph now
-    typedef adjacency_list< vecS, vecS, directedS > Graph;
+    using Graph = adjacency_list< vecS, vecS, directedS >;
 
     int n = hbs.nrows();
 
@@ -139,15 +139,14 @@ int main(int argc, char* argv[])
 
     cout << "number of off-diagnal elements: " << num_edge << endl;
 
-    typedef std::vector< int > Vector;
+    using Vector = std::vector< int >;
 
     Vector inverse_perm(n, 0);
     Vector perm(n, 0);
 
     Vector supernode_sizes(n, 1); // init has to be 1
 
-    boost::property_map< Graph, vertex_index_t >::type id
-        = get(vertex_index, G);
+    auto id = get(vertex_index, G);
 
     Vector degree(n, 0);
 

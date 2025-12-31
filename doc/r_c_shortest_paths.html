@@ -57,7 +57,7 @@ void r_c_shortest_paths( const Graph&amp; g,
                          typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
                          typename graph_traits&lt;Graph&gt;::vertex_descriptor t,
                          std::vector&lt;typename graph_traits&lt;Graph&gt;::edge_descriptor&gt;&amp; pareto_optimal_solution,
-                         Resource_Container&gt;&amp; pareto_optimal_resource_container,
+                         Resource_Container&amp; pareto_optimal_resource_container,
                          const Resource_Container&amp; rc,
                          const Resource_Extension_Function&amp; ref,
                          const Dominance_Function&amp; dominance,
@@ -93,7 +93,7 @@ void r_c_shortest_paths( const Graph&amp; g,
                          typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
                          typename graph_traits&lt;Graph&gt;::vertex_descriptor t,
                          std::vector&lt;typename graph_traits&lt;Graph&gt;::edge_descriptor&gt;&amp; pareto_optimal_solution,
-                         Resource_Container&gt;&amp; pareto_optimal_resource_container,
+                         Resource_Container&amp; pareto_optimal_resource_container,
                          const Resource_Container&amp; rc,
                          const Resource_Extension_Function&amp; ref,
                          const Dominance_Function&amp; dominance )
@@ -329,6 +329,11 @@ If <tt>vis</tt> is an object of a type modelling the ResourceConstrainedShortest
 <table border>
 <tr>
 <td>
+<tt>vis.on_enter_loop(const Queue&amp; queue, const Graph&amp; g )</tt>
+</td>
+</tr>
+<tr>
+<td>
 <tt>vis.on_label_popped( const Label&amp; l, const Graph&amp; g )</tt>
 </td>
 </tr>
@@ -353,7 +358,7 @@ If <tt>vis</tt> is an object of a type modelling the ResourceConstrainedShortest
 </td>
 </tr>
 </table>
-See the <a href="#Label">description of the Label concept</a> for the interface of a Label. See the <a href="#FunctionsDescription">algorithm description</a> for information on when these functions are called.
+Note that <i>on_enter_loop</i> returns a boolean that signals whether the main loop should continue (see the <i>default_r_c_shortest_paths_visitor</i> in the <a href="../../../boost/graph/r_c_shortest_paths.hpp"><tt>source code</tt></a> for inspiration). See the <a href="#Label">description of the Label concept</a> for the interface of a Label. See the <a href="#FunctionsDescription">algorithm description</a> for information on when these functions are called.
 <p>
 
 <a name="FunctionsDescription"><h3>Functions Description</h3></a>
@@ -554,7 +559,7 @@ When <tt>b_result_must_be_equal_to_desired_final_resource_levels==true</tt> (<tt
 
 <p>
 The file <a href="../example/r_c_shortest_paths_example.cpp">
-<rr>example/r_c_shortest_paths_example.cpp</tt></a> provides examples for how SPPRCs can be solved with the <tt>r_c_shortest_paths</tt> functions. There is an example for an SPP without resource constraints and an example for a shortest path problem with time windows.<br>
+<tt>example/r_c_shortest_paths_example.cpp</tt></a> provides examples for how SPPRCs can be solved with the <tt>r_c_shortest_paths</tt> functions. There is an example for an SPP without resource constraints and an example for a shortest path problem with time windows.<br>
 It is obvious that one would not use the algorithm for SPPs without resource constraints, because there are faster algorithms for this problem, but one would expect a code for the SPP with resource constraints to be able to handle such a case.
 </p>
 

@@ -92,8 +92,8 @@ href="./VertexListGraph.html">Vertex List Graph</a>.
 
 OUT: <tt>isomorphism_map(IsoMap f)</tt>
 <blockquote>
-The mapping from vertices in graph 1 to vertices in graph 2. This must
-be a <a href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
+The mapping from vertices in graph 1 to vertices in graph 2. <tt>IsoMap</tt>
+must be a <a href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write 
 Property Map</a>.<br> <b>Default:</b> an <a
 href="../../property_map/doc/iterator_property_map.html"><tt>iterator_property_map</tt></a>
 constructed from a <tt>std::vector</tt> of graph 2's vertex
@@ -111,12 +111,11 @@ This mapping can be used either to speed up the search (as is done by the
 default value, which requires that the degrees of <i>v1</i> and <i>v2</i> are
 equal) or to impose extra conditions on the result.  The
 <tt>VertexInvariant1</tt> and <tt>VertexInvariant2</tt> types must model <a
-href="http://www.boost.org/sgi/stl/UnaryFunction.html">UnaryFunction</a>, with
-the argument type of <tt>vertex_invariant1</tt> being <tt>Graph1</tt>'s vertex
+href="http://www.boost.org/sgi/stl/AdaptableUnaryFunction.html">AdaptableUnaryFunction</a>,
+with the argument type of <tt>vertex_invariant1</tt> being <tt>Graph1</tt>'s vertex
 descriptor type, the argument type of <tt>vertex_invariant2</tt> being
-<tt>Graph2</tt>'s vertex descriptor type, and both functions having integral
-result types.  The values returned by these two functions must be in the range
-[0, <tt>vertex_max_invariant</tt>).
+<tt>Graph2</tt>'s vertex descriptor type, and both functions sharing a 
+result type that is totally ordered and hashable, such as an integer.
 <br>
 <b>Default:</b> <tt>degree_vertex_invariant</tt> for both arguments<br>
 <b>Python</b>: Unsupported parameter.
@@ -124,14 +123,8 @@ result types.  The values returned by these two functions must be in the range
 
 IN: <tt>vertex_max_invariant(std::size_t max_invariant)</tt>
 <blockquote>
-An upper bound on the possible values returned from either
-vertex_invariant1 or vertex_invariant2.
-<br>
-<b>Default:</b> <tt>vertex_invariant2.max()</tt>. The default
-<tt>vertex_invariant2</tt> parameter, an instance of
-<tt>degree_vertex_invariant</tt>, defines this function to
-return <tt>num_vertices(g2) * (num_vertices(g2)+1)</tt>.<br>
-<b>Python</b>: Unsupported parameter.
+This parameter is ignored as it is no longer necessary, but kept for backwards
+compatibility.
 </blockquote>
 
 IN: <tt>vertex_index1_map(VertexIndex1Map i1_map)</tt>

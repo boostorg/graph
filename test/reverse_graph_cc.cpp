@@ -9,6 +9,7 @@
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/graph_archetypes.hpp>
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/adjacency_matrix.hpp>
 #include <boost/graph/reverse_graph.hpp>
 #include <boost/concept/assert.hpp>
 #include <string>
@@ -58,6 +59,27 @@ int main(int, char*[])
         Graph gr(g);
         get_property(gr, graph_name_t());
         set_property(gr, graph_name_t(), "foo");
+    }
+    // Check matrix
+    {
+        typedef adjacency_matrix< directedS,
+            property< vertex_color_t, int >, property< edge_weight_t, int >,
+            property< graph_name_t, std::string > >
+            AdjMatrix;
+        typedef reverse_graph< AdjMatrix > Graph;
+        BOOST_CONCEPT_ASSERT((VertexListGraphConcept< Graph >));
+        BOOST_CONCEPT_ASSERT((BidirectionalGraphConcept< Graph >));
+        typedef graph_traits< Graph >::vertex_descriptor Vertex;
+        typedef graph_traits< Graph >::edge_descriptor Edge;
+        BOOST_CONCEPT_ASSERT(
+            (ReadablePropertyGraphConcept< Graph, Vertex, vertex_color_t >));
+        BOOST_CONCEPT_ASSERT(
+            (ReadablePropertyGraphConcept< Graph, Edge, edge_weight_t >));
+        BOOST_CONCEPT_ASSERT(
+            (ReadablePropertyGraphConcept< Graph, Edge, edge_underlying_t >));
+        AdjMatrix g(42);
+        Graph gr(g);
+        get_property(gr, graph_name_t());
     }
     return 0;
 }

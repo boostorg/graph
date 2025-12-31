@@ -11,13 +11,14 @@
 #define BOOST_GRAPHVIZ_HPP
 
 #include <boost/config.hpp>
-#include <string>
-#include <map>
-#include <iostream>
+#include <cstdio> // for FILE
 #include <fstream>
-#include <stdio.h> // for FILE
+#include <iostream>
+#include <map>
+#include <string>
 #include <boost/property_map/property_map.hpp>
 #include <boost/tuple/tuple.hpp>
+#include <boost/graph/exception.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/subgraph.hpp>
@@ -649,59 +650,12 @@ void write_graphviz_dp(std::ostream& out, const Graph& g,
 /////////////////////////////////////////////////////////////////////////////
 // Graph reader exceptions
 /////////////////////////////////////////////////////////////////////////////
-struct BOOST_SYMBOL_VISIBLE graph_exception : public std::exception
-{
-    virtual ~graph_exception() throw() {}
-    virtual const char* what() const throw() = 0;
-};
-
-struct BOOST_SYMBOL_VISIBLE bad_parallel_edge : public graph_exception
-{
-    std::string from;
-    std::string to;
-    mutable std::string statement;
-    bad_parallel_edge(const std::string& i, const std::string& j)
-    : from(i), to(j)
-    {
-    }
-
-    virtual ~bad_parallel_edge() throw() {}
-    const char* what() const throw()
-    {
-        if (statement.empty())
-            statement = std::string("Failed to add parallel edge: (") + from
-                + "," + to + ")\n";
-
-        return statement.c_str();
-    }
-};
-
-struct BOOST_SYMBOL_VISIBLE directed_graph_error : public graph_exception
-{
-    virtual ~directed_graph_error() throw() {}
-    virtual const char* what() const throw()
-    {
-        return "read_graphviz: "
-               "Tried to read a directed graph into an undirected graph.";
-    }
-};
-
-struct BOOST_SYMBOL_VISIBLE undirected_graph_error : public graph_exception
-{
-    virtual ~undirected_graph_error() throw() {}
-    virtual const char* what() const throw()
-    {
-        return "read_graphviz: "
-               "Tried to read an undirected graph into a directed graph.";
-    }
-};
-
 struct BOOST_SYMBOL_VISIBLE bad_graphviz_syntax : public graph_exception
 {
     std::string errmsg;
     bad_graphviz_syntax(const std::string& errmsg) : errmsg(errmsg) {}
-    const char* what() const throw() { return errmsg.c_str(); }
-    ~bad_graphviz_syntax() throw() {};
+    const char* what() const throw() BOOST_OVERRIDE { return errmsg.c_str(); }
+    ~bad_graphviz_syntax() throw() BOOST_OVERRIDE {}
 };
 
 namespace detail
@@ -723,7 +677,7 @@ namespace detail
             {
                 static int idx = 0;
                 return edge_t(idx++);
-            };
+            }
 
             bool operator==(const edge_t& rhs) const
             {
@@ -774,9 +728,9 @@ namespace detail
             {
             }
 
-            ~mutate_graph_impl() {}
+            ~mutate_graph_impl() BOOST_OVERRIDE {}
 
-            bool is_directed() const
+            bool is_directed() const BOOST_OVERRIDE
             {
                 return boost::is_convertible<
                     typename boost::graph_traits<
@@ -784,7 +738,7 @@ namespace detail
                     boost::directed_tag >::value;
             }
 
-            virtual void do_add_vertex(const node_t& node)
+            void do_add_vertex(const node_t& node) BOOST_OVERRIDE
             {
                 // Add the node to the graph.
                 bgl_vertex_t v = add_vertex(graph_);
@@ -797,8 +751,8 @@ namespace detail
                 put(node_id_prop_, dp_, v, node);
             }
 
-            void do_add_edge(
-                const edge_t& edge, const node_t& source, const node_t& target)
+            void do_add_edge(const edge_t& edge, const node_t& source,
+                const node_t& target) BOOST_OVERRIDE
             {
                 std::pair< bgl_edge_t, bool > result
                     = add_edge(bgl_nodes[source], bgl_nodes[target], graph_);
@@ -814,25 +768,26 @@ namespace detail
                 }
             }
 
-            void set_node_property(
-                const id_t& key, const node_t& node, const id_t& value)
+            void set_node_property(const id_t& key, const node_t& node,
+                const id_t& value) BOOST_OVERRIDE
             {
                 put(key, dp_, bgl_nodes[node], value);
             }
 
-            void set_edge_property(
-                const id_t& key, const edge_t& edge, const id_t& value)
+            void set_edge_property(const id_t& key, const edge_t& edge,
+                const id_t& value) BOOST_OVERRIDE
             {
                 put(key, dp_, bgl_edges[edge], value);
             }
 
-            void set_graph_property(const id_t& key, const id_t& value)
+            void set_graph_property(const id_t& key,
+                const id_t& value) BOOST_OVERRIDE
             {
                 /* RG: pointer to graph prevents copying */
                 put(key, dp_, &graph_, value);
             }
 
-            void finish_building_graph() {}
+            void finish_building_graph() BOOST_OVERRIDE {}
 
         protected:
             MutableGraph& graph_;
@@ -869,9 +824,9 @@ namespace detail
             {
             }
 
-            ~mutate_graph_impl() {}
+            ~mutate_graph_impl() BOOST_OVERRIDE {}
 
-            void finish_building_graph()
+            void finish_building_graph() BOOST_OVERRIDE
             {
                 typedef compressed_sparse_row_graph< directedS, no_property,
                     bgl_edge_t, GraphProperty, Vertex, EdgeIndex >
@@ -902,14 +857,14 @@ namespace detail
                 }
             }
 
-            bool is_directed() const
+            bool is_directed() const BOOST_OVERRIDE
             {
                 return boost::is_convertible<
                     typename boost::graph_traits< CSRGraph >::directed_category,
                     boost::directed_tag >::value;
             }
 
-            virtual void do_add_vertex(const node_t& node)
+            void do_add_vertex(const node_t& node) BOOST_OVERRIDE
             {
                 // Add the node to the graph.
                 bgl_vertex_t v = vertex_count++;
@@ -923,8 +878,8 @@ namespace detail
                     boost::make_tuple(node_id_prop_, v, node));
             }
 
-            void do_add_edge(
-                const edge_t& edge, const node_t& source, const node_t& target)
+            void do_add_edge(const edge_t& edge, const node_t& source,
+                const node_t& target) BOOST_OVERRIDE
             {
                 bgl_edge_t result = edges_to_add.size();
                 edges_to_add.push_back(
@@ -932,21 +887,22 @@ namespace detail
                 bgl_edges.insert(std::make_pair(edge, result));
             }
 
-            void set_node_property(
-                const id_t& key, const node_t& node, const id_t& value)
+            void set_node_property(const id_t& key, const node_t& node,
+                const id_t& value) BOOST_OVERRIDE
             {
                 vertex_props.push_back(
                     boost::make_tuple(key, bgl_nodes[node], value));
             }
 
-            void set_edge_property(
-                const id_t& key, const edge_t& edge, const id_t& value)
+            void set_edge_property(const id_t& key, const edge_t& edge,
+                const id_t& value) BOOST_OVERRIDE
             {
                 edge_props.push_back(
                     boost::make_tuple(key, bgl_edges[edge], value));
             }
 
-            void set_graph_property(const id_t& key, const id_t& value)
+            void set_graph_property(const id_t& key,
+                const id_t& value) BOOST_OVERRIDE
             {
                 /* RG: pointer to graph prevents copying */
                 put(key, dp_, &graph_, value);
@@ -1025,6 +981,6 @@ bool read_graphviz(std::istream& in, MutableGraph& graph,
 
 } // namespace boost
 
-#include BOOST_GRAPH_MPI_INCLUDE(< boost / graph / distributed / graphviz.hpp >)
+#include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/graphviz.hpp>)
 
 #endif // BOOST_GRAPHVIZ_HPP

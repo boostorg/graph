@@ -14,6 +14,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/graph/topology.hpp>
+#include <boost/property_map/property_map.hpp>
 #include <boost/static_assert.hpp>
 
 namespace boost

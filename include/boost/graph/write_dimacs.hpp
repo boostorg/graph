@@ -41,6 +41,8 @@
 #include <string>
 #include <ostream>
 
+#include <boost/graph/graph_traits.hpp>
+
 namespace boost
 {
 

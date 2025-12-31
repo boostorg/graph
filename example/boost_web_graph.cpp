@@ -29,9 +29,8 @@ public:
     void tree_edge(
         typename boost::graph_traits< Graph >::edge_descriptor e, Graph& g)
     {
-        typename boost::graph_traits< Graph >::vertex_descriptor u, v;
-        u = boost::source(e, g);
-        v = boost::target(e, g);
+        auto u = boost::source(e, g);
+        auto v = boost::target(e, g);
         distance[v] = distance[u] + 1;
     }
 
@@ -48,7 +47,7 @@ public:
     void discover_vertex(
         typename boost::graph_traits< Graph >::vertex_descriptor v, Graph&)
     {
-        typedef typename boost::property_traits< DistanceMap >::value_type Dist;
+        using Dist = typename boost::property_traits< DistanceMap >::value_type;
         // indentation based on depth
         for (Dist i = 0; i < distance[v]; ++i)
             std::cout << "  ";
@@ -81,23 +80,21 @@ int main(int argc, const char** argv)
     //===========================================================================
     // Declare the graph type and object, and some property maps.
 
-    typedef adjacency_list< vecS, vecS, directedS,
+    using Graph = adjacency_list< vecS, vecS, directedS,
         property< vertex_name_t, std::string,
             property< vertex_color_t, default_color_type > >,
-        property< edge_name_t, std::string, property< edge_weight_t, int > > >
-        Graph;
+        property< edge_name_t, std::string, property< edge_weight_t, int > > >;
 
-    typedef graph_traits< Graph > Traits;
-    typedef Traits::vertex_descriptor Vertex;
-    typedef Traits::edge_descriptor Edge;
+    using Traits = graph_traits< Graph >;
+    using Vertex = Traits::vertex_descriptor;
+    using Edge = Traits::edge_descriptor;
 
-    typedef std::map< std::string, Vertex > NameVertexMap;
+    using NameVertexMap = std::map< std::string, Vertex >;
     NameVertexMap name2vertex;
     Graph g;
 
-    typedef property_map< Graph, vertex_name_t >::type NameMap;
-    NameMap node_name = get(vertex_name, g);
-    property_map< Graph, edge_name_t >::type link_name = get(edge_name, g);
+    auto node_name = get(vertex_name, g);
+    auto link_name = get(edge_name, g);
 
     //===========================================================================
     // Read the data file and construct the graph.
@@ -113,7 +110,7 @@ int main(int argc, const char** argv)
         bool inserted;
         Vertex u, v;
 
-        std::list< std::string >::iterator i = line_toks.begin();
+        auto i = line_toks.begin();
 
         boost::tie(pos, inserted)
             = name2vertex.insert(std::make_pair(*i, Vertex()));
@@ -151,8 +148,8 @@ int main(int argc, const char** argv)
     //===========================================================================
     // Calculate the diameter of the graph.
 
-    typedef Traits::vertices_size_type size_type;
-    typedef std::vector< size_type > IntVector;
+    using size_type = Traits::vertices_size_type;
+    using IntVector = std::vector< size_type >;
     // Create N x N matrix for storing the shortest distances
     // between each vertex. Initialize all distances to zero.
     std::vector< IntVector > d_matrix(
@@ -210,6 +207,8 @@ int main(int argc, const char** argv)
     // the tree nodes in the order that we want to print out:
     // a directory-structure like format.
     std::vector< size_type > dfs_distances(num_vertices(g), 0);
+
+    using NameMap = property_map< Graph, vertex_name_t >::type;
     print_tree_visitor< NameMap, size_type* > tree_printer(
         node_name, &dfs_distances[0]);
     for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)

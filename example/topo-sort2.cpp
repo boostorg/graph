@@ -35,10 +35,8 @@ int main()
     topological_sort(g, std::front_inserter(topo_order),
         vertex_index_map(identity_property_map()));
 
-    int n = 1;
-    for (std::deque< int >::iterator i = topo_order.begin();
-         i != topo_order.end(); ++i, ++n)
-        std::cout << tasks[*i] << std::endl;
+    for (auto const& vertex : topo_order)
+        std::cout << tasks[vertex] << std::endl;
 
     return EXIT_SUCCESS;
 }

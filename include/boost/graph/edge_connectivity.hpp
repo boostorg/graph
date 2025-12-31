@@ -16,6 +16,7 @@
 #include <vector>
 #include <set>
 #include <algorithm>
+#include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/edmonds_karp_max_flow.hpp>
 
 namespace boost

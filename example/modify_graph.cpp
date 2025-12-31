@@ -40,15 +40,14 @@ inline name_equals_predicate< NamePropertyMap > name_equals(
 
 template < class MutableGraph > void modify_demo(MutableGraph& g)
 {
-    typedef graph_traits< MutableGraph > GraphTraits;
-    typedef typename GraphTraits::vertices_size_type size_type;
-    typedef typename GraphTraits::edge_descriptor edge_descriptor;
+    using GraphTraits = graph_traits< MutableGraph >;
+    using size_type = typename GraphTraits::vertices_size_type;
+    using edge_descriptor = typename GraphTraits::edge_descriptor;
     size_type n = 0;
     typename GraphTraits::edges_size_type m = 0;
     typename GraphTraits::vertex_descriptor u, v, w;
     edge_descriptor e, e1, e2;
-    typename property_map< MutableGraph, edge_name_t >::type name_map
-        = get(edge_name, g);
+    auto name_map = get(edge_name, g);
     bool added;
     typename GraphTraits::vertex_iterator vi, vi_end;
 

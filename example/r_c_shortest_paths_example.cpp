@@ -43,9 +43,8 @@ struct SPPRC_Example_Graph_Arc_Prop
     int time;
 };
 
-typedef adjacency_list< vecS, vecS, directedS, SPPRC_Example_Graph_Vert_Prop,
-    SPPRC_Example_Graph_Arc_Prop >
-    SPPRC_Example_Graph;
+using SPPRC_Example_Graph = adjacency_list< vecS, vecS, directedS,
+    SPPRC_Example_Graph_Vert_Prop, SPPRC_Example_Graph_Arc_Prop >;
 
 // data structures for spp without resource constraints:
 // ResourceContainer model
@@ -288,8 +287,8 @@ int main()
 
     std::cout << "SPP with time windows:" << std::endl;
     std::cout << "Number of optimal solutions: ";
-    std::cout << static_cast< int >(opt_solutions.size()) << std::endl;
-    for (int i = 0; i < static_cast< int >(opt_solutions.size()); ++i)
+    std::cout << static_cast< int >(opt_solutions_spptw.size()) << std::endl;
+    for (int i = 0; i < static_cast< int >(opt_solutions_spptw.size()); ++i)
     {
         std::cout << "The " << i << "th shortest path from A to E is: ";
         std::cout << std::endl;
