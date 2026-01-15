@@ -380,7 +380,7 @@ namespace detail
             {
                 cur_label->b_is_processed = true;
                 vis.on_label_not_dominated(*cur_label, g);
-                auto cur_vertex = cur_label->resident_vertex;
+                const auto cur_vertex = cur_label->resident_vertex;
                 typename graph_traits< Graph >::out_edge_iterator oei, oei_end;
                 for (std::tie(oei, oei_end) = out_edges(cur_vertex, g);
                      oei != oei_end; ++oei)
