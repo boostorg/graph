@@ -1,0 +1,304 @@
+//=======================================================================
+// Copyright 2026 Becheler Code Labs for C++ Alliance
+// Authors: Arnaud Becheler
+//
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
+//=======================================================================
+
+#ifndef BOOST_GRAPH_LOUVAIN_QUALITY_FUNCTIONS_HPP
+#define BOOST_GRAPH_LOUVAIN_QUALITY_FUNCTIONS_HPP
+
+#include <boost/graph/graph_traits.hpp>
+#include <boost/graph/graph_concepts.hpp>
+#include <boost/property_map/property_map.hpp>
+#include <boost/property_map/vector_property_map.hpp>
+#include <boost/static_assert.hpp>
+#include <boost/type_traits/is_same.hpp>
+#include <map>
+#include <unordered_map>
+
+namespace boost 
+{
+
+namespace centrality_detail {
+
+    // Detect if vertex_descriptor is integral (vecS) or pointer-like (listS/setS)
+    template <typename Graph>
+    struct uses_vector_storage : std::is_integral<typename graph_traits<Graph>::vertex_descriptor> {};
+    
+    // Detect if type is hashable, but naive, for BGL integral types are hashable
+    template <typename T>
+    struct is_hashable : std::is_integral<T> {};
+    
+    // Vertex property map selector
+    template <typename Graph, typename ValueType, bool IsIntegral = uses_vector_storage<Graph>::value>
+    struct vertex_pmap_selector;
+
+    // vecS specialization uses vector: get(k,v) O(1), put(k, v, val) O(1), space O(V) pre-allocated array
+    template <typename Graph, typename ValueType>
+    struct vertex_pmap_selector<Graph, ValueType, true> {
+        using type = vector_property_map<ValueType>;
+    };
+
+    // listS/setS specialization uses map for safety: get(k,v) O(log V), put(k, v, val) O(log V), space O(V) pre-allocated array
+    template <typename Graph, typename ValueType>
+    struct vertex_pmap_selector<Graph, ValueType, false> {
+        using type = associative_property_map<std::map<typename graph_traits<Graph>::vertex_descriptor, ValueType>>;
+    };
+    
+    // Community storage selector: picks optimal container based on hashability
+    template <typename CommunityType, typename ValueType, bool IsHashable = is_hashable<CommunityType>::value>
+    struct community_storage_selector;
+    
+    // Hashable types use unordered_map: get/put O(1) average
+    template <typename CommunityType, typename ValueType>
+    struct community_storage_selector<CommunityType, ValueType, true> {
+        using type = std::unordered_map<CommunityType, ValueType>;
+    };
+    
+    // Non-hashable types use map: get/put O(log C)
+    template <typename CommunityType, typename ValueType>
+    struct community_storage_selector<CommunityType, ValueType, false> {
+        using type = std::map<CommunityType, ValueType>;
+    };
+}
+
+// Modularity: Q = sum_c [ (L_c/m) - (k_c/2m)^2 ]
+// L_c = internal edge weight for community c
+// k_c = sum of degrees in community c
+// m = total edge weight / 2
+struct newman_and_girvan
+{
+
+    /// Compute modularity quality with provided property maps
+    template <typename Graph, 
+              typename CommunityMap, 
+              typename WeightMap, 
+              typename VertexDegreeMap, 
+              typename CommunityInMap,
+              typename CommunityTotMap
+             >
+    static inline
+    typename property_traits<WeightMap>::value_type
+    quality(
+        const Graph& g, 
+        const CommunityMap& communities, 
+        const WeightMap& weights,
+        VertexDegreeMap k,
+        CommunityInMap in,
+        CommunityTotMap tot,
+        typename property_traits<WeightMap>::value_type& m
+    )
+    {
+        using community_type = typename property_traits<CommunityMap>::value_type;
+        using weight_type = typename property_traits<WeightMap>::value_type;
+        using vertex_descriptor = typename graph_traits<Graph>::vertex_descriptor;
+        using edge_iterator = typename graph_traits<Graph>::edge_iterator;
+
+        // Clear all property maps
+        m = weight_type(0);
+        
+        // Collect all communities and initialize maps
+        std::set<community_type> communities_set;
+        typename graph_traits<Graph>::vertex_iterator vi, vi_end;
+        for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
+            put(k, *vi, weight_type(0));
+            community_type c = get(communities, *vi);
+            if (communities_set.insert(c).second) {
+                // First time seeing this community
+                put(in, c, weight_type(0));
+                put(tot, c, weight_type(0));
+            }
+        }
+
+        edge_iterator ei, ei_end;
+        for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
+        {
+            vertex_descriptor src = source(*ei, g);
+            vertex_descriptor trg = target(*ei, g);
+
+            weight_type w = get(weights, *ei);
+            
+            community_type c_src = get(communities, src);
+            community_type c_trg = get(communities, trg);
+            
+            if (src == trg) {
+                // Self-loop counts twice (once per endpoint)
+                put(k, src, get(k, src) + 2 * w);
+                put(tot, c_src, get(tot, c_src) + 2 * w);
+                put(in, c_src, get(in, c_src) + 2 * w);
+                m += 2 * w;
+            } else {
+                // Regular edge
+                put(k, src, get(k, src) + w);
+                put(k, trg, get(k, trg) + w);
+                put(tot, c_src, get(tot, c_src) + w);
+                put(tot, c_trg, get(tot, c_trg) + w);
+                m += 2 * w;
+                
+                if (c_src == c_trg) {
+                    put(in, c_src, get(in, c_src) + 2 * w);
+                }
+            }
+        }
+
+        // m = (sum of all degrees) / 2
+        m /= weight_type(2);
+
+        weight_type two_m = weight_type(2) * m;
+        
+        // Empty graphs have zero modularity
+        if (two_m == weight_type(0)){
+            return weight_type(0);  
+        }
+
+        // Q formula: sum_c [ (2*L_c - K_c^2/(2m)) ] / (2m)
+        weight_type Q(0);
+        for (const auto& c : communities_set)
+        {
+            weight_type K_c = get(tot, c);
+            weight_type two_L_c = get(in, c);
+            Q += two_L_c - (K_c * K_c) / two_m;
+        }
+        Q /= two_m;
+        return Q;
+    }
+    
+    /// Compute modularity quality (allocates property maps internally)
+    template <typename Graph, typename CommunityMap, typename WeightMap>
+    static inline
+    typename property_traits<WeightMap>::value_type
+    quality(const Graph& g, const CommunityMap& communities, const WeightMap& weights)
+    {
+        using community_type = typename property_traits<CommunityMap>::value_type;
+        using weight_type = typename property_traits<WeightMap>::value_type;
+        using vertex_descriptor = typename graph_traits<Graph>::vertex_descriptor;
+        using k_map_t = typename centrality_detail::vertex_pmap_selector<Graph, weight_type>::type;
+        using community_storage_t = typename centrality_detail::community_storage_selector<community_type, weight_type>::type;
+
+        k_map_t k;
+        community_storage_t in_map;
+        community_storage_t tot_map;
+        auto in = make_assoc_property_map(in_map);
+        auto tot = make_assoc_property_map(tot_map);
+        weight_type m;
+        
+        return quality(g, communities, weights, k, in, tot, m);
+    }
+
+    // Incremental updates for local optimization
+
+    /**
+     * Remove vertex from community.
+     * @param in Property map: community -> internal edge weights
+     * @param tot Property map: community -> total edge weights
+     * @param old_comm Community to remove from
+     * @param k_v vertex total degree
+     * @param k_v_in_old Sum of edge weights from vertex to vertices in old_comm
+     * @param w_selfloop Self-loop weight (default 0)
+     */
+    template<typename CommunityInMap, typename CommunityTotMap, typename CommunityType, typename WeightType>
+    static inline void remove(
+        CommunityInMap in,
+        CommunityTotMap tot,
+        CommunityType old_comm,
+        WeightType k_v,
+        WeightType k_v_in_old,
+        WeightType w_selfloop = WeightType(0)
+    )
+    {
+        put(in, old_comm, get(in, old_comm) - (2 * k_v_in_old + w_selfloop));
+        put(tot, old_comm, get(tot, old_comm) - k_v);
+    }
+    
+    /**
+     * Insert node into community.
+     * @param in Property map: community -> internal edge weights
+     * @param tot Property map: community -> total edge weights
+     * @param new_comm Community to insert into
+     * @param k_v Node's total degree
+     * @param k_v_in_new Sum of edge weights from node to vertices in new_comm
+     * @param w_selfloop Self-loop weight (default 0)
+     */
+    template<typename CommunityInMap, typename CommunityTotMap, typename CommunityType, typename WeightType>
+    static inline void insert(
+        CommunityInMap in,
+        CommunityTotMap tot,
+        CommunityType new_comm,
+        WeightType k_v,
+        WeightType k_v_in_new,
+        WeightType w_selfloop = WeightType(0)
+    )
+    {
+        put(in, new_comm, get(in, new_comm) + (2 * k_v_in_new + w_selfloop));
+        put(tot, new_comm, get(tot, new_comm) + k_v);
+    }
+    
+    /**
+     * Compute modularity from incrementally maintained in/tot maps.
+     * Faster than quality() as it doesn't traverse the graph.
+     * @param in Property map: community -> internal edge weights
+     * @param tot Property map: community -> total edge weights  
+     * @param m Total edge weight (half sum of all degrees)
+     * @param num_communities Number of communities to check
+     * @return Modularity Q
+     */
+    template<typename CommunityInMap, typename CommunityTotMap, typename WeightType>
+    static inline WeightType quality_from_incremental(
+        CommunityInMap in,
+        CommunityTotMap tot,
+        WeightType m,
+        std::size_t num_communities
+    ) {
+        if (m == WeightType(0)) {
+            return WeightType(0);
+        }
+        
+        WeightType Q = 0;
+        WeightType two_m = WeightType(2) * m;
+        
+        for (std::size_t c = 0; c < num_communities; ++c) {
+            WeightType K_c = get(tot, c);
+            if (K_c > WeightType(0)) {
+                WeightType two_L_c = get(in, c);
+                Q += two_L_c - (K_c * K_c) / two_m;
+            }
+        }
+        
+        return Q / two_m;
+    }
+    
+    /**
+     * Compute modularity gain of moving node to target community.
+     * @param tot Property map: community -> total edge weights
+     * @param m Total edge weight (half sum of all degrees)
+     * @param target_comm Community to evaluate
+     * @param k_v_in_target Sum of edge weights from node to vertices in target_comm
+     * @param k_v Node's total degree
+     * @return Modularity gain
+     */
+    template<typename CommunityTotMap, typename CommunityType, typename WeightType>
+    static inline WeightType gain(
+        CommunityTotMap tot,
+        WeightType m,
+        CommunityType target_comm,
+        WeightType k_v_in_target,
+        WeightType k_v
+    ) {
+        // Empty graph check
+        if (m == WeightType(0)) {
+            return WeightType(0);
+        }
+        
+        // Gain = k_v_in_target - tot[target] * k_v / (2m)
+        WeightType tot_target = get(tot, target_comm);
+        return k_v_in_target - (tot_target * k_v) / (WeightType(2) * m);
+    }
+
+}; // newman_and_girvan
+
+} // namespace boost
+
+#endif // BOOST_GRAPH_LOUVAIN_QUALITY_FUNCTIONS_HPP
