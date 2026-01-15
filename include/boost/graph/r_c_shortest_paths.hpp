@@ -8,6 +8,7 @@
 #ifndef BOOST_GRAPH_R_C_SHORTEST_PATHS_HPP
 #define BOOST_GRAPH_R_C_SHORTEST_PATHS_HPP
 
+#include <tuple>
 #include <queue>
 #include <vector>
 #include <list>
@@ -193,13 +194,9 @@ namespace detail
         pareto_optimal_solutions.clear();
 
         size_t i_label_num = 0;
-#if defined(BOOST_NO_CXX11_ALLOCATOR)
-        typedef typename Label_Allocator::template rebind<
-            Label >::other
-            LAlloc;
-#else
+
         typedef typename std::allocator_traits< Label_Allocator >::template rebind_alloc< Label > LAlloc;
-#endif
+
         LAlloc l_alloc;
 
         std::priority_queue< Splabel, std::vector< Splabel >,
@@ -274,7 +271,7 @@ namespace detail
                         < list_labels_cur_vertex.size())
                 {
                     auto outer_iter = list_labels_cur_vertex.begin();
-                    bool b_outer_iter_at_or_beyond_last_valid_pos_for_dominance = false;
+                    auto b_outer_iter_at_or_beyond_last_valid_pos_for_dominance = false;
                     while (outer_iter != list_labels_cur_vertex.end())
                     {
                         auto cur_outer_splabel = *outer_iter;
@@ -385,7 +382,7 @@ namespace detail
                 vis.on_label_not_dominated(*cur_label, g);
                 auto cur_vertex = cur_label->resident_vertex;
                 typename graph_traits< Graph >::out_edge_iterator oei, oei_end;
-                for (boost::tie(oei, oei_end) = out_edges(cur_vertex, g);
+                for (std::tie(oei, oei_end) = out_edges(cur_vertex, g);
                      oei != oei_end; ++oei)
                 {
                     auto new_label = boost::allocate_shared<
@@ -482,27 +479,27 @@ namespace detail
 struct default_r_c_shortest_paths_visitor
 {
     template < class Label, class Graph >
-    void on_label_popped(const Label&, const Graph&)
+    void on_label_popped(const Label&, const Graph&) const
     {
     }
     template < class Label, class Graph >
-    void on_label_feasible(const Label&, const Graph&)
+    void on_label_feasible(const Label&, const Graph&) const
     {
     }
     template < class Label, class Graph >
-    void on_label_not_feasible(const Label&, const Graph&)
+    void on_label_not_feasible(const Label&, const Graph&) const
     {
     }
     template < class Label, class Graph >
-    void on_label_dominated(const Label&, const Graph&)
+    void on_label_dominated(const Label&, const Graph&) const
     {
     }
     template < class Label, class Graph >
-    void on_label_not_dominated(const Label&, const Graph&)
+    void on_label_not_dominated(const Label&, const Graph&) const 
     {
     }
     template < class Queue, class Graph >
-    bool on_enter_loop(const Queue&, const Graph&)
+    bool on_enter_loop(const Queue&, const Graph&) const
     {
         return true;
     }
@@ -627,9 +624,9 @@ void r_c_shortest_paths(const Graph& g, const VertexIndexMap& vertex_index_map,
         default_r_c_shortest_paths_visitor());
     if (!pareto_optimal_solutions.empty())
     {
-        pareto_optimal_solution = pareto_optimal_solutions[0];
+        pareto_optimal_solution = std::move(pareto_optimal_solutions[0]);
         pareto_optimal_resource_container
-            = pareto_optimal_resource_containers[0];
+            = std::move(pareto_optimal_resource_containers[0]);
     }
 }
 // r_c_shortest_paths
