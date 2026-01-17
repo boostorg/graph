@@ -24,7 +24,6 @@
 
 template&lt;class Graph,
          class VertexIndexMap,
-         class EdgeIndexMap,
          class Resource_Container,
          class Resource_Extension_Function,
          class Dominance_Function,
@@ -32,7 +31,6 @@ template&lt;class Graph,
          class Visitor&gt;
 void r_c_shortest_paths( const Graph&amp; g,
                          const VertexIndexMap&amp; vertex_index_map,
-                         const EdgeIndexMap&amp; edge_index_map,
                          typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
                          typename graph_traits&lt;Graph&gt;::vertex_descriptor t,
                          std::vector&lt;std::vector&lt;typename graph_traits&lt;Graph&gt;::edge_descriptor&gt; &gt;&amp; pareto_optimal_solutions,
@@ -45,7 +43,6 @@ void r_c_shortest_paths( const Graph&amp; g,
 
 template&lt;class Graph,
          class VertexIndexMap,
-         class EdgeIndexMap,
          class Resource_Container,
          class Resource_Extension_Function,
          class Dominance_Function,
@@ -53,7 +50,6 @@ template&lt;class Graph,
          class Visitor&gt;
 void r_c_shortest_paths( const Graph&amp; g,
                          const VertexIndexMap&amp; vertex_index_map,
-                         const EdgeIndexMap&amp; edge_index_map,
                          typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
                          typename graph_traits&lt;Graph&gt;::vertex_descriptor t,
                          std::vector&lt;typename graph_traits&lt;Graph&gt;::edge_descriptor&gt;&amp; pareto_optimal_solution,
@@ -66,13 +62,11 @@ void r_c_shortest_paths( const Graph&amp; g,
 
 template&lt;class Graph,
          class VertexIndexMap,
-         class EdgeIndexMap,
          class Resource_Container,
          class Resource_Extension_Function,
          class Dominance_Function&gt;
 void r_c_shortest_paths( const Graph&amp; g,
                          const VertexIndexMap&amp; vertex_index_map,
-                         const EdgeIndexMap&amp; edge_index_map,
                          typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
                          typename graph_traits&lt;Graph&gt;::vertex_descriptor t,
                          std::vector&lt;std::vector&lt;typename graph_traits&lt;Graph&gt;::edge_descriptor&gt; &gt;&amp; pareto_optimal_solutions,
@@ -83,13 +77,11 @@ void r_c_shortest_paths( const Graph&amp; g,
 
 template&lt;class Graph,
          class VertexIndexMap,
-         class EdgeIndexMap,
          class Resource_Container,
          class Resource_Extension_Function,
          class Dominance_Function&gt;
 void r_c_shortest_paths( const Graph&amp; g,
                          const VertexIndexMap&amp; vertex_index_map,
-                         const EdgeIndexMap&amp; edge_index_map,
                          typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
                          typename graph_traits&lt;Graph&gt;::vertex_descriptor t,
                          std::vector&lt;typename graph_traits&lt;Graph&gt;::edge_descriptor&gt;&amp; pareto_optimal_solution,
@@ -370,7 +362,6 @@ The functions are an implementation of a priority-queue-based label-setting algo
 <pre>
 r_c_shortest_paths( g,
                     vertex_index_map,
-                    edge_index_map,
                     s,
                     t,
                     pareto_optimal_solutions,
@@ -426,10 +417,6 @@ The graph object on which the algorithm is applied. The type <tt>Graph</tt> must
 IN: <tt>const VertexIndexMap&amp; vertex_index_map</tt>
 <blockquote>
 A <a href="../../property_map/doc/ReadablePropertyMap.html">ReadablePropertyMap</a> mapping vertex descriptors to integers in [0, <tt>num_vertices(g)</tt>).
-</blockquote>
-IN: <tt>const EdgeIndexMap&amp; edge_index_map</tt>
-<blockquote>
-A <a href="../../property_map/doc/ReadablePropertyMap.html">ReadablePropertyMap</a> mapping edge descriptors to integers in [0, <tt>num_edges(g)</tt>).
 </blockquote>
 IN: <tt>typename graph_traits&lt;Graph&gt;::vertex_descriptor s</tt>
 <blockquote>
