@@ -363,7 +363,7 @@ namespace detail
                 {
                     cur_label.reset();
                 }
-                while (unprocessed_labels.size())
+                while (!unprocessed_labels.empty())
                 {
                     auto l = unprocessed_labels.top();
                     unprocessed_labels.pop();
