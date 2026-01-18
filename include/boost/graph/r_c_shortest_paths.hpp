@@ -195,7 +195,7 @@ namespace detail
 
         size_t i_label_num = 0;
 
-        typedef typename std::allocator_traits< Label_Allocator >::template rebind_alloc< Label > LAlloc;
+        using LAlloc = typename std::allocator_traits< Label_Allocator >::template rebind_alloc< Label >;
 
         LAlloc l_alloc;
 
@@ -506,7 +506,7 @@ struct default_r_c_shortest_paths_visitor
 }; // default_r_c_shortest_paths_visitor
 
 // default_r_c_shortest_paths_allocator
-typedef std::allocator< int > default_r_c_shortest_paths_allocator;
+using default_r_c_shortest_paths_allocator = std::allocator< int >;
 // default_r_c_shortest_paths_allocator
 
 // r_c_shortest_paths functions (handle/interface)
