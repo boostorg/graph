@@ -69,13 +69,13 @@ auto aggregate(
     std::map<community_type, vertex_descriptor> comm_to_vertex;
     std::map<vertex_descriptor, std::set<vertex_descriptor>> vertex_to_originals;
 
-    // unique communities
+    // collect unique communities
     vertex_iterator vi, vi_end;
     for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
         unique_communities.insert(get(communities, *vi));
     }
     
-    // super-nodes
+    // create super-nodes with each their own community
     for (const community_type& comm : unique_communities) {
         vertex_descriptor new_v = add_vertex(new_g);
         comm_to_vertex[comm] = new_v;
@@ -83,12 +83,12 @@ auto aggregate(
         put(new_community_map, new_v, new_v);
     }
     
-    // remember mapping
+    // records which original vertices belong to which super-node
     for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
         community_type c = get(communities, *vi);
         vertex_descriptor new_v = comm_to_vertex[c];
         vertex_to_originals[new_v].insert(*vi);
-    }
+    } 
     
     // Build edges with accumulated weights
     std::map<std::pair<vertex_descriptor, vertex_descriptor>, weight_type> temp_edge_weights;
@@ -107,6 +107,7 @@ auto aggregate(
         
         weight_type w = get(weight, *edge_it);
         
+        // vertices in same community = self loop on super node
         if (new_u == new_v) {
             auto edge_key = std::make_pair(new_u, new_u);
             temp_edge_weights[edge_key] += w;
@@ -117,7 +118,7 @@ auto aggregate(
         }
     }
     
-    // add edges
+    // add edges to connect super nodes
     for (const auto& kv : temp_edge_weights) {
         edge_descriptor e;
         bool inserted;
@@ -234,6 +235,7 @@ louvain_local_optimization(
     vector_property_map<weight_type> tot;
     weight_type m;
     
+    // populates k[c], in[c], tot[c]
     weight_type Q = QualityFunction::quality(g, communities, w, k, in, tot, m);
     weight_type Q_new = Q;
     std::size_t num_moves = 0;
@@ -340,7 +342,8 @@ louvain_local_optimization(
         // Compute quality from incremental in/tot (no graph traversal)
         Q_new = QualityFunction::quality_from_incremental(in, tot, m, n);
         
-        // Rollback if quality didn't improve
+        // Rollback if quality didn't improve after moving nodes
+        // Prevent endless oscillations of vertices: algo gets one extra pass before giving up
         if (num_moves > 0 && Q_new <= Q) {
             if (has_rolled_back) {
                 vertex_iterator vi_restore, vi_restore_end;
