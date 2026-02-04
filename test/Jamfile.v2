@@ -144,6 +144,8 @@ alias graph_test_regular :
     [ run eccentricity.cpp ]
     [ run clustering_coefficient.cpp ]
     [ run core_numbers_test.cpp ]
+    [ run louvain_quality_function_test.cpp ]
+    [ run louvain_clustering_test.cpp ]
     [ run read_propmap.cpp ]
     [ run mcgregor_subgraphs_test.cpp /boost/graph//boost_graph ]
     [ compile grid_graph_cc.cpp ]
