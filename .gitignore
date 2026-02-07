@@ -10,3 +10,6 @@ test/*.dot
 example/routing-table.dat
 example/figs/ospf-sptree.dot
 CMakeFiles/
+/graph_fork.vcxproj
+/graph_fork.vcxproj.filters
+/graph_fork.sln
