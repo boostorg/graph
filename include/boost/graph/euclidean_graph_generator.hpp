@@ -137,8 +137,7 @@ std::size_t generate_random_points(
         (std::is_same< CoordType, typename YDistribution::result_type >::value),
         "X and Y distributions must have the same result type");
 
-    // If max_attempts is not specified, set a default: 10 * num_points (minimum 100)
-    // this avoids the rare case in which the while loop runs indefinitely due to collisions 
+    // This avoids the rare case in which the while loop runs indefinitely due to collisions 
     // when num_points is large and the distribution is narrow.
     if (max_attempts == 0)
         max_attempts = std::max<std::size_t>(10 * num_points, 100);
