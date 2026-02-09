@@ -1,15 +1,10 @@
 //=======================================================================
-// Copyright 2026 Becheler Code Labs for C++ Alliance
-// Authors: Arnaud Becheler
+// Copyright (C) 2026 Arnaud Becheler
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
-//
-//
-// Revision History:
-//
 
 #ifndef BOOST_GRAPH_LOUVAIN_CLUSTERING_HPP
 #define BOOST_GRAPH_LOUVAIN_CLUSTERING_HPP
@@ -18,11 +13,15 @@
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/louvain_quality_functions.hpp>
+
 #include <boost/property_map/property_map.hpp>
 #include <boost/property_map/vector_property_map.hpp>
 #include <boost/range/iterator_range.hpp>
+
+#include <boost/assert.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/type_traits/is_same.hpp>
+
 #include <map>
 #include <set>
 #include <random>
@@ -159,7 +158,7 @@ struct hierarchy_t
     template <typename CommunityMap>
     auto unfold(const CommunityMap& final_partition) const
     {
-        assert(!empty());
+        BOOST_ASSERT(!empty());
 
         std::map<VertexDescriptor, VertexDescriptor> original_partition;
         
@@ -168,12 +167,12 @@ struct hierarchy_t
             current_nodes.insert(kv.first);
             
             // From coarse to fine
-            for (int level = size() - 1; level >= 0; --level) {
+            for(auto level = size(); level--; ) {
                 std::set<VertexDescriptor> next_nodes;
                 
                 for (VertexDescriptor node : current_nodes) {
                     auto it = levels[level].find(node);
-                    assert(it != levels[level].end());
+                    BOOST_ASSERT(it != levels[level].end());
                     next_nodes.insert(it->second.begin(), it->second.end());
                 }
                 
@@ -206,14 +205,10 @@ auto get_vertex_vector(const Graph& g)
     return vertices_vec;
 }
 
-}} // namespace boost::louvain_detail
-
-namespace boost 
-{
 
 template <typename Graph, typename CommunityMap, typename WeightMap, typename QualityFunction = newman_and_girvan>
 typename property_traits<WeightMap>::value_type
-louvain_local_optimization(
+local_optimization(
     const Graph& g, 
     CommunityMap& communities, 
     const WeightMap& w,
@@ -364,6 +359,11 @@ louvain_local_optimization(
     return Q_new;
 }
 
+}} // namespace boost::louvain_detail
+
+namespace boost 
+{
+
 template <typename Graph, typename ComponentMap, typename WeightMap, typename QualityFunction = newman_and_girvan>
 typename property_traits<WeightMap>::value_type
 louvain_clustering(
@@ -385,7 +385,7 @@ louvain_clustering(
     }
     
     // Run local optimization
-    weight_type Q = louvain_local_optimization<Graph, ComponentMap, WeightMap, QualityFunction>(
+    weight_type Q = louvain_detail::local_optimization<Graph, ComponentMap, WeightMap, QualityFunction>(
         g0, components, w0, min_improvement_inner, seed);
     
     // Build partition vector from current component map
@@ -417,7 +417,7 @@ louvain_clustering(
         
         hierarchy.push_level(std::move(agg_result.vertex_mapping));
         weight_type Q_old = Q;
-        weight_type Q_agg = louvain_local_optimization(
+        weight_type Q_agg = louvain_detail::local_optimization(
             agg_result.graph, 
             agg_result.partition, 
             get(edge_weight, agg_result.graph), 
