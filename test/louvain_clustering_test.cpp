@@ -12,6 +12,7 @@
 #include <boost/core/lightweight_test.hpp>
 #include <cmath>
 #include <set>
+#include <random>
 
 using Graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS>;
 using vertex_descriptor = boost::graph_traits<Graph>::vertex_descriptor;
@@ -83,7 +84,8 @@ void test_ring_of_cliques() {
     
     std::vector<vertex_descriptor> clusters(total_nodes);
     auto cluster_map = boost::make_iterator_property_map(clusters.begin(), boost::get(boost::vertex_index, g));
-    double Q = boost::louvain_clustering(g, cluster_map, weight_map, 1e-7, 0.0, 42);
+    std::mt19937 gen(42);
+    double Q = boost::louvain_clustering(g, cluster_map, weight_map, gen, 1e-7, 0.0);
     
     std::set<std::size_t> unique_communities(clusters.begin(), clusters.end());
     
@@ -133,7 +135,8 @@ void test_karate_club() {
     
     std::vector<vertex_descriptor> clusters(34);
     auto cluster_map = boost::make_iterator_property_map(clusters.begin(), boost::get(boost::vertex_index, g));
-    double Q = boost::louvain_clustering(g, cluster_map, weight_map, 1e-6, 0.0, 42);
+    std::mt19937 gen(42);
+    double Q = boost::louvain_clustering(g, cluster_map, weight_map, gen, 1e-6, 0.0);
     
     std::set<std::size_t> unique_communities(clusters.begin(), clusters.end());
     

@@ -24,7 +24,6 @@
 
 #include <map>
 #include <set>
-#include <random>
 #include <algorithm>
 #include <iostream>
 
@@ -206,14 +205,14 @@ auto get_vertex_vector(const Graph& g)
 }
 
 
-template <typename Graph, typename CommunityMap, typename WeightMap, typename QualityFunction = newman_and_girvan>
+template <typename Graph, typename CommunityMap, typename WeightMap, typename URBG, typename QualityFunction = newman_and_girvan>
 typename property_traits<WeightMap>::value_type
 local_optimization(
     const Graph& g, 
     CommunityMap& communities, 
     const WeightMap& w,
-    typename property_traits<WeightMap>::value_type min_improvement_inner = typename property_traits<WeightMap>::value_type(0.0),
-    unsigned int seed = 0
+    URBG&& gen,
+    typename property_traits<WeightMap>::value_type min_improvement_inner = typename property_traits<WeightMap>::value_type(0.0)
 )
 {
     using community_type = typename property_traits<CommunityMap>::value_type;
@@ -238,7 +237,6 @@ local_optimization(
     bool has_rolled_back = false;
     
     // Randomize vertex order once
-    std::mt19937 gen(seed);
     std::vector<vertex_descriptor> vertex_order = louvain_detail::get_vertex_vector(g);
     std::shuffle(vertex_order.begin(), vertex_order.end(), gen);
     
@@ -364,15 +362,15 @@ local_optimization(
 namespace boost 
 {
 
-template <typename Graph, typename ComponentMap, typename WeightMap, typename QualityFunction = newman_and_girvan>
+template <typename Graph, typename ComponentMap, typename WeightMap, typename URBG, typename QualityFunction = newman_and_girvan>
 typename property_traits<WeightMap>::value_type
 louvain_clustering(
     const Graph& g0,
     ComponentMap components,
     const WeightMap& w0,
+    URBG&& gen,
     typename property_traits<WeightMap>::value_type min_improvement_inner = typename property_traits<WeightMap>::value_type(0.0),
-    typename property_traits<WeightMap>::value_type min_improvement_outer = typename property_traits<WeightMap>::value_type(0.0),
-    unsigned int seed = 0
+    typename property_traits<WeightMap>::value_type min_improvement_outer = typename property_traits<WeightMap>::value_type(0.0)
 ){
     using vertex_descriptor = typename graph_traits<Graph>::vertex_descriptor;
     using weight_type = typename property_traits<WeightMap>::value_type;
@@ -385,8 +383,7 @@ louvain_clustering(
     }
     
     // Run local optimization
-    weight_type Q = louvain_detail::local_optimization<Graph, ComponentMap, WeightMap, QualityFunction>(
-        g0, components, w0, min_improvement_inner, seed);
+    weight_type Q = louvain_detail::local_optimization(g0, components, w0, gen, min_improvement_inner);
     
     // Build partition vector from current component map
     std::vector<vertex_descriptor> partition_vec(num_vertices(g0));
@@ -420,9 +417,9 @@ louvain_clustering(
         weight_type Q_agg = louvain_detail::local_optimization(
             agg_result.graph, 
             agg_result.partition, 
-            get(edge_weight, agg_result.graph), 
-            min_improvement_inner,
-            seed  // Same seed across levels
+            get(edge_weight, agg_result.graph),
+            gen,
+            min_improvement_inner
         );
         
         // Unfold partition to original graph to compute actual Q
