@@ -16,6 +16,7 @@
 #include <boost/property_map/vector_property_map.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/type_traits/is_same.hpp>
+#include <boost/concept/assert.hpp>
 #include <map>
 #include <unordered_map>
 
@@ -64,6 +65,35 @@ namespace centrality_detail {
         using type = std::map<CommunityType, ValueType>;
     };
 }
+
+template <typename QualityFunction, typename Graph, typename CommunityMap, typename WeightMap>
+struct LouvainQualityFunctionConcept
+{
+    using weight_type = typename property_traits<WeightMap>::value_type;
+    using community_type = typename property_traits<CommunityMap>::value_type;
+    using vertex_descriptor = typename graph_traits<Graph>::vertex_descriptor;
+    
+    void constraints()
+    {
+        weight_type q1 = QualityFunction::quality(g, cmap, wmap);
+        weight_type q2 = QualityFunction::quality(g, cmap, wmap, k, in, tot, m);
+        weight_type q3 = QualityFunction::quality_from_incremental(in, tot, m, num_communities);
+        QualityFunction::remove(in, tot, comm, weight_val, weight_val, weight_val);
+        QualityFunction::insert(in, tot, comm, weight_val, weight_val, weight_val);
+        weight_type gain = QualityFunction::gain(tot, m, comm, weight_val, weight_val);
+    }
+        
+    Graph g;
+    CommunityMap cmap;
+    WeightMap wmap;
+    vector_property_map<weight_type> k;
+    associative_property_map<std::map<community_type, weight_type>> in;
+    associative_property_map<std::map<community_type, weight_type>> tot;
+    weight_type m;
+    weight_type weight_val;
+    community_type comm;
+    std::size_t num_communities;
+};
 
 // Modularity: Q = sum_c [ (L_c/m) - (k_c/2m)^2 ]
 // L_c = internal edge weight for community c

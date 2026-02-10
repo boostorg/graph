@@ -21,6 +21,7 @@
 #include <boost/assert.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/type_traits/is_same.hpp>
+#include <boost/concept/assert.hpp>
 
 #include <map>
 #include <set>
@@ -215,6 +216,9 @@ local_optimization(
     typename property_traits<WeightMap>::value_type min_improvement_inner = typename property_traits<WeightMap>::value_type(0.0)
 )
 {
+    // Concept checking
+    BOOST_CONCEPT_ASSERT((LouvainQualityFunctionConcept<QualityFunction, Graph, CommunityMap, WeightMap>));
+    
     using community_type = typename property_traits<CommunityMap>::value_type;
     using weight_type = typename property_traits<WeightMap>::value_type;
     using vertex_descriptor = typename graph_traits<Graph>::vertex_descriptor;
@@ -372,6 +376,9 @@ louvain_clustering(
     typename property_traits<WeightMap>::value_type min_improvement_inner = typename property_traits<WeightMap>::value_type(0.0),
     typename property_traits<WeightMap>::value_type min_improvement_outer = typename property_traits<WeightMap>::value_type(0.0)
 ){
+    // Concept checking
+    BOOST_CONCEPT_ASSERT((LouvainQualityFunctionConcept<QualityFunction, Graph, ComponentMap, WeightMap>));
+    
     using vertex_descriptor = typename graph_traits<Graph>::vertex_descriptor;
     using weight_type = typename property_traits<WeightMap>::value_type;
     using vertex_iterator = typename graph_traits<Graph>::vertex_iterator;
