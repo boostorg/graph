@@ -105,26 +105,6 @@ void example_custom_distribution()
         boost::get(boost::vertex_index, g));
 }
 
-void example_separate_point_generation()
-{
-    using Graph = boost::adjacency_matrix< boost::undirectedS,
-        boost::no_property, boost::property< boost::edge_weight_t, double > >;
-    using Point = boost::simple_point< double >;
-
-    const std::size_t num_vertices = 15;
-    Graph g(num_vertices);
-
-    // Generate and store points
-    std::vector< Point > points;
-    points.reserve(num_vertices);
-    boost::generate_random_points(
-        num_vertices, 100, std::back_inserter(points));
-
-    // Connect all the points that were generated
-    boost::connect_all_euclidean(g, points, boost::get(boost::edge_weight, g),
-        boost::get(boost::vertex_index, g));
-}
-
 void example_mst_on_euclidean_graph()
 {
     // Use adjacency_list to make graphML printing possible
@@ -169,16 +149,31 @@ void example_mst_on_euclidean_graph()
     write_graph_to_graphml(mst_graph, "mst_graph.graphml", points);
 }
 
+void example_make_convenient_euclidean_graph()
+{
+    using Graph = boost::adjacency_matrix< boost::undirectedS,
+        boost::no_property, boost::property< boost::edge_weight_t, double > >;
+
+    const std::size_t num_vertices = 10;
+    const std::size_t coord_max = 100;
+    Graph g(num_vertices);
+
+    // Use simple convenience function to create complete graph
+    boost::make_random_euclidean_graph(g, num_vertices, coord_max,
+        boost::get(boost::edge_weight, g), boost::get(boost::vertex_index, g));
+}
+
 int main()
 {
-    // Generates a basic random Euclidean graph
+    // Generates a basic random Euclidean graph from convenience function
+    example_make_convenient_euclidean_graph();
+
+    // Generates a basic random Euclidean graph from building blocks
     example_basic_random_graph();
 
-    // Shows how to use custom distributions (e.g. normal)
+    // Shows how to use custom distributions (e.g. normal) with separate 
+    // point generation and graph construction steps
     example_custom_distribution();
-
-    // Separates point generation from graph creation
-    example_separate_point_generation();
 
     // Computes MST on a 
     // generated Euclidean graph and output

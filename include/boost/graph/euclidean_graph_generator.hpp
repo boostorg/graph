@@ -36,7 +36,7 @@ namespace boost
 // distance between their corresponding points in the point container.
 // This is a common preprocessing step for TSP algorithms.
 //
-// Preconditions: g must have num_vertices(g) == points.size()
+// Preconditions: g must have num_vertices(g) == points.size() and no edges
 // Postconditions: g will be a complete graph with Euclidean distance weights
 // Complexity: O(V^2) where V is the number of vertices
 
@@ -50,6 +50,10 @@ void connect_all_euclidean(VertexListGraph& g, const PointContainer& points,
         typename graph_traits< VertexListGraph >::edge_descriptor >));
     BOOST_CONCEPT_ASSERT((ReadablePropertyMapConcept< VertexIndexMap,
         typename graph_traits< VertexListGraph >::vertex_descriptor >));
+
+        // Precondition: Graph should have no edges
+    BOOST_ASSERT_MSG(boost::num_edges(g) == 0,
+        "connect_all_euclidean requires an empty graph (no edges)");
 
     using Edge = typename graph_traits< VertexListGraph >::edge_descriptor;
     using VItr = typename graph_traits< VertexListGraph >::vertex_iterator;
@@ -76,14 +80,14 @@ void connect_all_euclidean(VertexListGraph& g, const PointContainer& points,
 
     for (VItr src(verts.first); src != verts.second; ++src)
     {
-        const IndexType src_idx = get(vmap, *src);  // Cache source index lookup
+        const IndexType src_idx = boost::get(vmap, *src);  // Cache source index lookup
 
         VItr dest(src);
         ++dest;  // Skip self-edge
 
         for (; dest != verts.second; ++dest)
         {
-            const IndexType dest_idx = get(vmap, *dest);  // Cache destination index lookup
+            const IndexType dest_idx = boost::get(vmap, *dest);  // Cache destination index lookup
 
             // Promote to WeightType for calculation precision and to avoid overflow
             const WeightType dx =
@@ -97,8 +101,8 @@ void connect_all_euclidean(VertexListGraph& g, const PointContainer& points,
             const WeightType weight = static_cast<WeightType>(std::hypot(dx, dy));
 
             // No need to check 'inserted' - building fresh complete graph
-            Edge e = add_edge(*src, *dest, g).first;
-            put(wmap, e, weight);
+            Edge e = boost::add_edge(*src, *dest, g).first;
+            boost::put(wmap, e, weight);
         }
     }
 }
