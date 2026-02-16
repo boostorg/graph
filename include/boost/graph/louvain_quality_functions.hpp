@@ -17,57 +17,81 @@
 #include <boost/static_assert.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/concept/assert.hpp>
-#include <map>
-#include <unordered_map>
+#include <boost/unordered/unordered_flat_map.hpp>
+#include <boost/unordered/unordered_flat_set.hpp>
+#include <boost/type_traits/make_void.hpp>
+#include <utility>
 
 namespace boost 
 {
 
 namespace centrality_detail {
 
-    // Detect if vertex_descriptor is integral (vecS) or pointer-like (listS/setS)
+    /// @brief Detect if vertex_descriptor is integral (vecS) or pointer-like (listS/setS)
     template <typename Graph>
     struct uses_vector_storage : std::is_integral<typename graph_traits<Graph>::vertex_descriptor> {};
     
-    // Detect if type is hashable, but naive, for BGL integral types are hashable
+    /// @brief Detect if type is hashable, but naive, for BGL integral types are hashable
     template <typename T>
     struct is_hashable : std::is_integral<T> {};
     
-    // Vertex property map selector
+    /// @brief Vertex property map selector
     template <typename Graph, typename ValueType, bool IsIntegral = uses_vector_storage<Graph>::value>
     struct vertex_pmap_selector;
 
-    // vecS specialization uses vector: get(k,v) O(1), put(k, v, val) O(1), space O(V) pre-allocated array
+    /// @brief vecS specialization uses vector: get(k,v) O(1), put(k, v, val) O(1), space O(V) pre-allocated array
     template <typename Graph, typename ValueType>
     struct vertex_pmap_selector<Graph, ValueType, true> {
         using type = vector_property_map<ValueType>;
     };
 
-    // listS/setS specialization uses map for safety: get(k,v) O(log V), put(k, v, val) O(log V), space O(V) pre-allocated array
+    /// @brief listS/setS specialization uses flat_map for safety: get(k,v) O(1) average, put(k, v, val) O(1) average, space O(V)
     template <typename Graph, typename ValueType>
     struct vertex_pmap_selector<Graph, ValueType, false> {
-        using type = associative_property_map<std::map<typename graph_traits<Graph>::vertex_descriptor, ValueType>>;
+        using type = associative_property_map<boost::unordered_flat_map<typename graph_traits<Graph>::vertex_descriptor, ValueType>>;
     };
     
-    // Community storage selector: picks optimal container based on hashability
+    /// @brief Community storage selector: picks optimal container based on hashability
     template <typename CommunityType, typename ValueType, bool IsHashable = is_hashable<CommunityType>::value>
     struct community_storage_selector;
     
-    // Hashable types use unordered_map: get/put O(1) average
+    /// @brief Hashable types use unordered_flat_map: get/put O(1) average, better cache locality
     template <typename CommunityType, typename ValueType>
     struct community_storage_selector<CommunityType, ValueType, true> {
-        using type = std::unordered_map<CommunityType, ValueType>;
+        using type = boost::unordered_flat_map<CommunityType, ValueType>;
     };
     
-    // Non-hashable types use map: get/put O(log C)
+    /// @brief Non-hashable types use flat_map: get/put O(1) average
     template <typename CommunityType, typename ValueType>
     struct community_storage_selector<CommunityType, ValueType, false> {
-        using type = std::map<CommunityType, ValueType>;
+        using type = boost::unordered_flat_map<CommunityType, ValueType>;
     };
 }
 
+/// @brief Quality Function concept for graph partition quality metrics (e.g., Louvain algorithm)
+/// @see Campigotto, R., Céspedes, P. C., & Guillaume, J. L. (2014). A generalized and adaptive method for community detection.
+template<class QualityFunction, class Graph, class CommunityMap, class WeightMap>
+struct GraphPartitionQualityFunctionConcept
+{
+    using vertex_descriptor = typename graph_traits<Graph>::vertex_descriptor;
+    using weight_type = typename property_traits<WeightMap>::value_type;
+    using community_type = typename property_traits<CommunityMap>::value_type;
+
+    Graph g;
+    CommunityMap cmap;
+    WeightMap wmap;
+
+    void constraints()
+    {
+        // Full computation from graph traversal, defaulting to internally allocated maps
+        weight_type q1 = QualityFunction::quality(g, cmap, wmap);
+    }
+};
+
+/// @brief Quality Function concept for incremental versions of graph partition quality metrics (e.g., used in Louvain algorithm)
+/// @see Campigotto, R., Céspedes, P. C., & Guillaume, J. L. (2014). A generalized and adaptive method for community detection.
 template <typename QualityFunction, typename Graph, typename CommunityMap, typename WeightMap>
-struct LouvainQualityFunctionConcept
+struct GraphPartitionQualityFunctionIncrementalConcept : GraphPartitionQualityFunctionConcept<QualityFunction, Graph, CommunityMap, WeightMap>
 {
     using weight_type = typename property_traits<WeightMap>::value_type;
     using community_type = typename property_traits<CommunityMap>::value_type;
@@ -75,11 +99,21 @@ struct LouvainQualityFunctionConcept
     
     void constraints()
     {
-        weight_type q1 = QualityFunction::quality(g, cmap, wmap);
+        GraphPartitionQualityFunctionConcept<QualityFunction, Graph, CommunityMap, WeightMap>::constraints();
+
+        // Full computation from graph traversal, user-provided maps
         weight_type q2 = QualityFunction::quality(g, cmap, wmap, k, in, tot, m);
-        weight_type q3 = QualityFunction::quality_from_incremental(in, tot, m, num_communities);
+        
+        // Fast computation from pre-maintained community maps (no traversal)
+        weight_type q3 = QualityFunction::quality(in, tot, m, num_communities);
+
+        // Incremental update: remove vertex from its community
         QualityFunction::remove(in, tot, comm, weight_val, weight_val, weight_val);
+        
+        // Incremental update: insert vertex into a community
         QualityFunction::insert(in, tot, comm, weight_val, weight_val, weight_val);
+        
+        // Incremental update: Modularity gain of moving a vertex to a target community
         weight_type gain = QualityFunction::gain(tot, m, comm, weight_val, weight_val);
     }
         
@@ -87,13 +121,43 @@ struct LouvainQualityFunctionConcept
     CommunityMap cmap;
     WeightMap wmap;
     vector_property_map<weight_type> k;
-    associative_property_map<std::map<community_type, weight_type>> in;
-    associative_property_map<std::map<community_type, weight_type>> tot;
+    associative_property_map<boost::unordered_flat_map<community_type, weight_type>> in;
+    associative_property_map<boost::unordered_flat_map<community_type, weight_type>> tot;
     weight_type m;
     weight_type weight_val;
     community_type comm;
     std::size_t num_communities;
 };
+
+/// @brief Type trait to detect if a quality function supports incremental updates.
+/// Uses SFINAE to check for the existence of QualityFunction::gain(...).
+template<class QualityFunction, class Graph, class CommunityMap, class WeightMap, typename=void>
+struct is_incremental_quality_function : std::false_type{};
+
+template<class QualityFunction, class Graph, class CommunityMap, class WeightMap>
+struct is_incremental_quality_function<
+    QualityFunction, 
+    Graph, 
+    CommunityMap, 
+    WeightMap,
+    boost::void_t<decltype(
+        QualityFunction::gain(
+            std::declval<
+                associative_property_map<
+                    boost::unordered_flat_map<
+                        typename property_traits<CommunityMap>::value_type,
+                        typename property_traits<WeightMap>::value_type
+                    >
+                >
+            >(),
+            std::declval<typename property_traits<WeightMap>::value_type>(),
+            std::declval<typename property_traits<CommunityMap>::value_type>(),
+            std::declval<typename property_traits<WeightMap>::value_type>(),
+            std::declval<typename property_traits<WeightMap>::value_type>()
+        )
+    )>
+> : std::true_type{};
+
 
 // Modularity: Q = sum_c [ (L_c/m) - (k_c/2m)^2 ]
 // L_c = internal edge weight for community c
@@ -102,16 +166,9 @@ struct LouvainQualityFunctionConcept
 struct newman_and_girvan
 {
 
-    /// Compute modularity quality with provided property maps
-    template <typename Graph, 
-              typename CommunityMap, 
-              typename WeightMap, 
-              typename VertexDegreeMap, 
-              typename CommunityInMap,
-              typename CommunityTotMap
-             >
-    static inline
-    typename property_traits<WeightMap>::value_type
+    /// @brief Traverse the graph to compute partition quality with user-provided property maps
+    template <class Graph, class CommunityMap, class WeightMap, class VertexDegreeMap, class CommunityInMap, class CommunityTotMap>
+    static inline typename property_traits<WeightMap>::value_type
     quality(
         const Graph& g, 
         const CommunityMap& communities, 
@@ -127,13 +184,13 @@ struct newman_and_girvan
         using vertex_descriptor = typename graph_traits<Graph>::vertex_descriptor;
         using edge_iterator = typename graph_traits<Graph>::edge_iterator;
 
-        // Clear all property maps
         m = weight_type(0);
         
         // Collect all communities and initialize maps
-        std::set<community_type> communities_set;
+        boost::unordered_flat_set<community_type> communities_set;
         typename graph_traits<Graph>::vertex_iterator vi, vi_end;
         for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
+            // init user provided maps
             put(k, *vi, weight_type(0));
             community_type c = get(communities, *vi);
             if (communities_set.insert(c).second) {
@@ -143,14 +200,18 @@ struct newman_and_girvan
             }
         }
 
+        for(const auto&c : communities_set){
+            // init user provided maps
+            put(in, c, weight_type(0));
+            put(tot, c, weight_type(0));
+        }
+
         edge_iterator ei, ei_end;
         for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
         {
             vertex_descriptor src = source(*ei, g);
             vertex_descriptor trg = target(*ei, g);
-
             weight_type w = get(weights, *ei);
-            
             community_type c_src = get(communities, src);
             community_type c_trg = get(communities, trg);
             
@@ -196,10 +257,9 @@ struct newman_and_girvan
         return Q;
     }
     
-    /// Compute modularity quality (allocates property maps internally)
+    /// @brief Traverse the graph to compute partition quality with internally allocated property maps
     template <typename Graph, typename CommunityMap, typename WeightMap>
-    static inline
-    typename property_traits<WeightMap>::value_type
+    static inline typename property_traits<WeightMap>::value_type
     quality(const Graph& g, const CommunityMap& communities, const WeightMap& weights)
     {
         using community_type = typename property_traits<CommunityMap>::value_type;
@@ -218,7 +278,35 @@ struct newman_and_girvan
         return quality(g, communities, weights, k, in, tot, m);
     }
 
-    // Incremental updates for local optimization
+        
+    /**
+     * Compute modularity from incrementally maintained maps:
+     * Faster than quality() as it doesn't traverse the graph.
+     * @param in Property map: community -> internal edge weights
+     * @param tot Property map: community -> total edge weights  
+     * @param m Total edge weight (half sum of all degrees)
+     * @param num_communities Number of communities to check
+     * @return Modularity Q
+     */
+    template<typename CommunityInMap, typename CommunityTotMap, typename WeightType>
+    static inline WeightType quality(CommunityInMap in, CommunityTotMap tot, WeightType m, std::size_t num_communities) {
+        if (m == WeightType(0)) {
+            return WeightType(0);
+        }
+        
+        WeightType Q = 0;
+        WeightType two_m = WeightType(2) * m;
+        
+        for (std::size_t c = 0; c < num_communities; ++c) {
+            WeightType K_c = get(tot, c);
+            if (K_c > WeightType(0)) {
+                WeightType two_L_c = get(in, c);
+                Q += two_L_c - (K_c * K_c) / two_m;
+            }
+        }
+        
+        return Q / two_m;
+    }
 
     /**
      * Remove vertex from community.
@@ -264,40 +352,6 @@ struct newman_and_girvan
     {
         put(in, new_comm, get(in, new_comm) + (2 * k_v_in_new + w_selfloop));
         put(tot, new_comm, get(tot, new_comm) + k_v);
-    }
-    
-    /**
-     * Compute modularity from incrementally maintained in/tot maps.
-     * Faster than quality() as it doesn't traverse the graph.
-     * @param in Property map: community -> internal edge weights
-     * @param tot Property map: community -> total edge weights  
-     * @param m Total edge weight (half sum of all degrees)
-     * @param num_communities Number of communities to check
-     * @return Modularity Q
-     */
-    template<typename CommunityInMap, typename CommunityTotMap, typename WeightType>
-    static inline WeightType quality_from_incremental(
-        CommunityInMap in,
-        CommunityTotMap tot,
-        WeightType m,
-        std::size_t num_communities
-    ) {
-        if (m == WeightType(0)) {
-            return WeightType(0);
-        }
-        
-        WeightType Q = 0;
-        WeightType two_m = WeightType(2) * m;
-        
-        for (std::size_t c = 0; c < num_communities; ++c) {
-            WeightType K_c = get(tot, c);
-            if (K_c > WeightType(0)) {
-                WeightType two_L_c = get(in, c);
-                Q += two_L_c - (K_c * K_c) / two_m;
-            }
-        }
-        
-        return Q / two_m;
     }
     
     /**
