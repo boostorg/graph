@@ -119,13 +119,13 @@ void test_trait_detection()
     using CMap = boost::vector_property_map<vertex_t, idx_t>;
     using WMap = boost::property_map<Graph, boost::edge_weight_t>::const_type;
 
-    using ng_inc = boost::louvain_detail::is_incremental_quality_function<boost::newman_and_girvan, Graph, CMap, WMap>;
+    using ng_inc = boost::is_incremental_quality_function<boost::newman_and_girvan, Graph, CMap, WMap>;
     BOOST_TEST(ng_inc::value == true);
 
-    using custom_inc = boost::louvain_detail::is_incremental_quality_function<custom_incremental_modularity, Graph, CMap, WMap>;
+    using custom_inc = boost::is_incremental_quality_function<custom_incremental_modularity, Graph, CMap, WMap>;
     BOOST_TEST(custom_inc::value == true);
 
-    using custom_non_inc = boost::louvain_detail::is_incremental_quality_function<custom_non_incremental_modularity, Graph, CMap, WMap>;
+    using custom_non_inc = boost::is_incremental_quality_function<custom_non_incremental_modularity, Graph, CMap, WMap>;
     BOOST_TEST(custom_non_inc::value == false);
 }
 
