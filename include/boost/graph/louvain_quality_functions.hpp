@@ -20,6 +20,7 @@
 #include <boost/unordered/unordered_flat_map.hpp>
 #include <boost/unordered/unordered_flat_set.hpp>
 #include <boost/type_traits/make_void.hpp>
+#include <boost/core/ignore_unused.hpp>
 #include <utility>
 
 namespace boost 
@@ -83,8 +84,9 @@ struct GraphPartitionQualityFunctionConcept
 
     void constraints()
     {
-        // Full computation from graph traversal, defaulting to internally allocated maps
+        // Full computation from graph traversal
         weight_type q1 = QualityFunction::quality(g, cmap, wmap);
+        boost::ignore_unused(q1);
     }
 };
 
@@ -115,6 +117,9 @@ struct GraphPartitionQualityFunctionIncrementalConcept : GraphPartitionQualityFu
         
         // Incremental update: Modularity gain of moving a vertex to a target community
         weight_type gain = QualityFunction::gain(tot, m, comm, weight_val, weight_val);
+        boost::ignore_unused(q2);
+        boost::ignore_unused(q3);
+        boost::ignore_unused(gain);
     }
         
     Graph g;
