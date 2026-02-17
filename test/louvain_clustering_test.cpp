@@ -285,9 +285,9 @@ void test_incremental_trait_detection()
     using CMap = boost::vector_property_map<vd, idx_t>;
     using WMap = boost::property_map<WeightedGraph, boost::edge_weight_t>::const_type;
 
-    using inc = boost::is_incremental_quality_function<
+    using inc = boost::louvain_detail::is_incremental_quality_function<
         boost::newman_and_girvan, WeightedGraph, CMap, WMap>;
-    using non_inc = boost::is_incremental_quality_function<
+    using non_inc = boost::louvain_detail::is_incremental_quality_function<
         non_incremental_modularity, WeightedGraph, CMap, WMap>;
 
     BOOST_TEST(inc::value == true);

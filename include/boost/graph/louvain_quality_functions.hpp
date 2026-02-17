@@ -134,6 +134,8 @@ struct GraphPartitionQualityFunctionIncrementalConcept : GraphPartitionQualityFu
     std::size_t num_communities;
 };
 
+namespace louvain_detail {
+
 /// @brief Type trait to detect if a quality function supports incremental updates.
 /// Uses SFINAE to check for the existence of QualityFunction::gain(...).
 template<class QualityFunction, class Graph, class CommunityMap, class WeightMap, typename=void>
@@ -163,6 +165,7 @@ struct is_incremental_quality_function<
     )>
 > : std::true_type{};
 
+} // namespace louvain_detail
 
 // Modularity: Q = sum_c [ (L_c/m) - (k_c/2m)^2 ]
 // L_c = internal edge weight for community c

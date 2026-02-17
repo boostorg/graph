@@ -503,7 +503,7 @@ local_optimization(
     URBG&& gen,
     typename property_traits<WeightMap>::value_type min_improvement_inner = typename property_traits<WeightMap>::value_type(0.0)
 ){
-    using is_incremental = is_incremental_quality_function<QualityFunction, Graph, CommunityMap, WeightMap>;
+    using is_incremental = louvain_detail::is_incremental_quality_function<QualityFunction, Graph, CommunityMap, WeightMap>;
     return local_optimization_impl<QualityFunction>(g, communities, w, std::forward<URBG>(gen), min_improvement_inner, is_incremental{});
 }
 
