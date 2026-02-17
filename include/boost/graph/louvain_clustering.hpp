@@ -141,67 +141,39 @@ auto aggregate(
     return result_t{std::move(new_g), std::move(new_community_map), std::move(temp_internal_weights), std::move(vertex_to_originals)};
 }
 
-/// @brief Track hierarchy of aggregation levels for unfolding partitions.
-template <typename VertexDescriptor>
-struct hierarchy_t
+/// @brief Unfold a coarse partition back to the original vertices through hierarchy levels.
+template <typename CommunityMap, typename VertexDescriptor>
+auto unfold(const CommunityMap& final_partition, const std::vector<boost::unordered_flat_map<VertexDescriptor, boost::unordered_flat_set<VertexDescriptor>>>& levels)
 {
-    // Each level maps super-nodes to their constituent vertices from the previous level.
-    using level_t = boost::unordered_flat_map<VertexDescriptor, boost::unordered_flat_set<VertexDescriptor>>;
-    std::vector<level_t> levels;
-    
-    void push_level(const level_t& mapping) {
-        levels.push_back(mapping);
-    }
-    
-    void push_level(level_t&& mapping) {
-        levels.push_back(std::move(mapping));
-    }
-    
-    std::size_t size() const {
-        return levels.size();
-    }
-    
-    bool empty() const {
-        return levels.empty();
-    }
-    
-    const level_t& operator[](std::size_t i) const {
-        return levels[i];
-    }
-    
-    template <typename CommunityMap>
-    auto unfold(const CommunityMap& final_partition) const
-    {
-        BOOST_ASSERT(!empty());
+    BOOST_ASSERT(!levels.empty());
 
-        boost::unordered_flat_map<VertexDescriptor, VertexDescriptor> original_partition;
+    boost::unordered_flat_map<VertexDescriptor, VertexDescriptor> original_partition;
+    
+    for (const auto& kv : final_partition) {
+        boost::unordered_flat_set<VertexDescriptor> current_nodes;
+        current_nodes.insert(kv.first);
         
-        for (const auto& kv : final_partition) {
-            boost::unordered_flat_set<VertexDescriptor> current_nodes;
-            current_nodes.insert(kv.first);
+        // From coarse to fine
+        for(auto level = levels.size(); level--; ) {
+            boost::unordered_flat_set<VertexDescriptor> next_nodes;
             
-            // From coarse to fine
-            for(auto level = size(); level--; ) {
-                boost::unordered_flat_set<VertexDescriptor> next_nodes;
-                
-                for (VertexDescriptor node : current_nodes) {
-                    auto it = levels[level].find(node);
-                    BOOST_ASSERT(it != levels[level].end());
-                    next_nodes.insert(it->second.begin(), it->second.end());
-                }
-                
-                current_nodes = std::move(next_nodes);
+            for (VertexDescriptor node : current_nodes) {
+                auto it = levels[level].find(node);
+                BOOST_ASSERT(it != levels[level].end());
+                next_nodes.insert(it->second.begin(), it->second.end());
             }
             
-            // Assign all original vertices to community
-            for (VertexDescriptor original_v : current_nodes) {
-                original_partition[original_v] = kv.second;
-            }
+            current_nodes = std::move(next_nodes);
         }
         
-        return original_partition;
+        // Assign all original vertices to community
+        for (VertexDescriptor original_v : current_nodes) {
+            original_partition[original_v] = kv.second;
+        }
     }
-};
+    
+    return original_partition;
+}
 
 // Create vector of all vertices.
 template <typename Graph>
@@ -580,7 +552,9 @@ louvain_clustering(
         partition_vec[get(vertex_index, g0, *vi)] = get(components, *vi);
     }
     
-    louvain_detail::hierarchy_t<vertex_descriptor> hierarchy;    
+    using level_t = boost::unordered_flat_map<vertex_descriptor, boost::unordered_flat_set<vertex_descriptor>>;
+    std::vector<level_t> levels;
+    
     auto partition_map_g0 = make_iterator_property_map(partition_vec.begin(), get(vertex_index, g0));    
     auto coarse = louvain_detail::aggregate(g0, partition_map_g0, w0);
     
@@ -601,7 +575,7 @@ louvain_clustering(
             break;
         }
         
-        hierarchy.push_level(std::move(coarse.vertex_mapping));
+        levels.push_back(std::move(coarse.vertex_mapping));
         weight_type Q_old = Q;
 
         // Dispatch the local optimization using the incremental or non-incremental variant
@@ -614,7 +588,7 @@ louvain_clustering(
             agg_partition_map[*vi_agg] = get(coarse.partition, *vi_agg);
         }
         
-        auto unfolded_map = hierarchy.unfold(agg_partition_map);
+        auto unfolded_map = louvain_detail::unfold(agg_partition_map, levels);
         vertex_iterator vi_orig, vi_orig_end;
         for (boost::tie(vi_orig, vi_orig_end) = vertices(g0); vi_orig != vi_orig_end; ++vi_orig) {
             partition_vec[get(vertex_index, g0, *vi_orig)] = unfolded_map[*vi_orig];
