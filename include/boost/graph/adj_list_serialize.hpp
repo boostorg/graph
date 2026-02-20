@@ -9,6 +9,8 @@
 #ifndef BOOST_GRAPH_ADJ_LIST_SERIALIZE_HPP
 #define BOOST_GRAPH_ADJ_LIST_SERIALIZE_HPP
 
+#include <unordered_map>
+
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/pending/property_serialize.hpp>
@@ -45,16 +47,15 @@ namespace serialization
     {
         using Graph = adjacency_list< OEL, VL, D, VP, EP, GP, EL >;
         using Vertex = typename graph_traits< Graph >::vertex_descriptor;
-        using SerializedInteger = unsigned int;
 
-        const SerializedInteger V = num_vertices(graph);
-        const SerializedInteger E = num_edges(graph);
+        const auto V = num_vertices(graph);
+        const auto E = num_edges(graph);
         ar << BOOST_SERIALIZATION_NVP(V);
         ar << BOOST_SERIALIZATION_NVP(E);
 
         // assign indices to vertices
-        std::map< Vertex, SerializedInteger > indices;
-        SerializedInteger num = 0;
+        std::unordered_map< Vertex, Vertex > indices(V);
+        Vertex num = 0;
         BGL_FORALL_VERTICES_T(v, graph, Graph)
         {
             indices[v] = num++;
@@ -85,12 +86,12 @@ namespace serialization
         using Graph = adjacency_list< OEL, VL, D, VP, EP, GP, EL >;
         using Vertex = typename graph_traits< Graph >::vertex_descriptor;
         using Edge = typename graph_traits< Graph >::edge_descriptor;
-        using SerializedInteger = unsigned int;
+        using VertexSizeType = typename graph_traits< Graph >::vertices_size_type;
 
-        SerializedInteger V;
+        VertexSizeType V;
         ar >> BOOST_SERIALIZATION_NVP(V);
         
-        SerializedInteger E;
+        VertexSizeType E;
         ar >> BOOST_SERIALIZATION_NVP(E);
 
         std::vector< Vertex > verts(V);
@@ -102,18 +103,17 @@ namespace serialization
             ar >> serialization::make_nvp(
                 "vertex_property", get(vertex_all_t(), graph, v));
         }
+        
         while (E-- > 0)
         {
-            SerializedInteger u;
-            SerializedInteger v;
+            Vertex u;
+            Vertex v;
             ar >> BOOST_SERIALIZATION_NVP(u);
             ar >> BOOST_SERIALIZATION_NVP(v);
-            const auto uu = static_cast<Vertex>(u);
-            const auto vv = static_cast<Vertex>(v);
 
             Edge e;
             bool inserted;
-            boost::tie(e, inserted)= add_edge(verts[uu], verts[vv], graph);
+            boost::tie(e, inserted)= add_edge(verts[u], verts[v], graph);
             ar >> serialization::make_nvp(
                 "edge_property", get(edge_all_t(), graph, e));
         }
