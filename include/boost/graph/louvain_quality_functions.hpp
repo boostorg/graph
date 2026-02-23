@@ -273,10 +273,13 @@ struct newman_and_girvan
         using community_type = typename property_traits<CommunityMap>::value_type;
         using weight_type = typename property_traits<WeightMap>::value_type;
         using vertex_descriptor = typename graph_traits<Graph>::vertex_descriptor;
-        using k_map_t = typename centrality_detail::vertex_pmap_selector<Graph, weight_type>::type;
         using community_storage_t = typename centrality_detail::community_storage_selector<community_type, weight_type>::type;
 
-        k_map_t k;
+        // Use unordered_flat_map for vertex degree storage
+        // (associative_property_map's default ctor wraps a null pointer, so
+        //  we must create the underlying storage first)
+        boost::unordered_flat_map<vertex_descriptor, weight_type> k_storage;
+        auto k = make_assoc_property_map(k_storage);
         community_storage_t in_map;
         community_storage_t tot_map;
         auto in = make_assoc_property_map(in_map);

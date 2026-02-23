@@ -72,7 +72,7 @@ void test_aggregation() {
     std::vector<vertex_descriptor> partition = {0, 0, 0, 1, 1, 1};
     auto pmap = boost::make_iterator_property_map(partition.begin(), boost::get(boost::vertex_index, g));
     
-    auto agg = boost::louvain_detail::aggregate(g, pmap, weight_map);
+    auto agg = boost::louvain_detail::aggregate(g, pmap, weight_map, boost::get(boost::vertex_index, g));
     
     BOOST_TEST(boost::num_vertices(agg.graph) == 2);
     BOOST_TEST(boost::num_edges(agg.graph) == 3);

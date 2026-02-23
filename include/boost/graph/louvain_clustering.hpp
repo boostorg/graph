@@ -27,7 +27,7 @@
 #include <boost/unordered/unordered_flat_set.hpp>
 #include <boost/container_hash/hash.hpp>
 #include <algorithm>
-#include <iostream>
+#include <type_traits>
 
 // Hash specialization for std::pair to use with boost::unordered containers
 namespace std {
@@ -48,22 +48,26 @@ namespace louvain_detail
 {
 
 /// @brief Result of graph aggregation operation.
-template <typename Graph, typename PartitionMap, typename VertexDescriptor, typename WeightType>
+template <typename Graph, typename PartitionMap, typename WeightType>
 struct aggregation_result
 {
     Graph graph;
     PartitionMap partition;
-    boost::unordered_flat_map<VertexDescriptor, WeightType> internal_weights;
-    boost::unordered_flat_map<VertexDescriptor, boost::unordered_flat_set<VertexDescriptor>> vertex_mapping;
+    // indexed by coarsened vertex
+    std::vector<WeightType> internal_weights;
+    // coarsened vertex to original vertex indices
+    std::vector<std::vector<std::size_t>> vertex_mapping;
 };
 
 /// @brief Aggregate graph by collapsing communities into super-nodes. 
 /// @note Edges between communities are preserved with accumulated weights.
-template <typename Graph, typename CommunityMap, typename WeightMap>
+/// @tparam IndexMap A ReadablePropertyMap mapping vertex_descriptor to std::size_t
+template <typename Graph, typename CommunityMap, typename WeightMap, typename IndexMap>
 auto aggregate(
     const Graph& g, 
     const CommunityMap& communities, 
-    const WeightMap& weight
+    const WeightMap& weight,
+    const IndexMap& index_map
 ){
     using vertex_descriptor = typename graph_traits<Graph>::vertex_descriptor;
     using edge_descriptor = typename graph_traits<Graph>::edge_descriptor;
@@ -73,39 +77,41 @@ auto aggregate(
     using weight_type = typename property_traits<WeightMap>::value_type;
     using edge_property_t = property<edge_weight_t, weight_type>;
     using aggregated_graph_t = adjacency_list<vecS, vecS, undirectedS, no_property, edge_property_t>;
-    using result_t = aggregation_result<aggregated_graph_t, vector_property_map<vertex_descriptor>, vertex_descriptor, weight_type>;
+    using agg_vertex_t = typename graph_traits<aggregated_graph_t>::vertex_descriptor; // always size_t since vecS
+    using result_t = aggregation_result<aggregated_graph_t, vector_property_map<agg_vertex_t>, weight_type>;
     
     aggregated_graph_t new_g;
-    vector_property_map<vertex_descriptor> new_community_map;
+    vector_property_map<agg_vertex_t> new_community_map;
     
-    boost::unordered_flat_set<community_type> unique_communities;
-    boost::unordered_flat_map<community_type, vertex_descriptor> comm_to_vertex;
-    boost::unordered_flat_map<vertex_descriptor, boost::unordered_flat_set<vertex_descriptor>> vertex_to_originals;
+    // Map community labels to coarsened vertex
+    boost::unordered_flat_map<community_type, agg_vertex_t> comm_to_vertex;
 
-    // collect unique communities
+    // Collect unique communities and create super-nodes
     vertex_iterator vi, vi_end;
     for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
-        unique_communities.insert(get(communities, *vi));
+        community_type c = get(communities, *vi);
+        if (comm_to_vertex.find(c) == comm_to_vertex.end()) {
+            agg_vertex_t new_v = add_vertex(new_g);
+            comm_to_vertex[c] = new_v;
+            put(new_community_map, new_v, new_v);
+        }
     }
     
-    // create super-nodes with each their own community
-    for (const community_type& comm : unique_communities) {
-        vertex_descriptor new_v = add_vertex(new_g);
-        comm_to_vertex[comm] = new_v;
-        vertex_to_originals[new_v] = boost::unordered_flat_set<vertex_descriptor>();
-        put(new_community_map, new_v, new_v);
-    }
+    std::size_t n_communities = num_vertices(new_g);
     
-    // records which original vertices belong to which super-node
+    // Coarsened vertex to original vertex indices (via index_map)
+    std::vector<std::vector<std::size_t>> vertex_to_originals(n_communities);
+
+    // Record which original vertices belong to which super-node
     for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
         community_type c = get(communities, *vi);
-        vertex_descriptor new_v = comm_to_vertex[c];
-        vertex_to_originals[new_v].insert(*vi);
+        agg_vertex_t new_v = comm_to_vertex[c];
+        vertex_to_originals[new_v].push_back(get(index_map, *vi));
     } 
     
     // Build edges with accumulated weights
-    boost::unordered_flat_map<std::pair<vertex_descriptor, vertex_descriptor>, weight_type> temp_edge_weights;
-    boost::unordered_flat_map<vertex_descriptor, weight_type> temp_internal_weights;
+    boost::unordered_flat_map<std::pair<agg_vertex_t, agg_vertex_t>, weight_type> temp_edge_weights;
+    std::vector<weight_type> temp_internal_weights(n_communities, weight_type(0));
     
     edge_iterator edge_it, edge_end;
     for (tie(edge_it, edge_end) = edges(g); edge_it != edge_end; ++edge_it) {
@@ -115,8 +121,8 @@ auto aggregate(
         community_type c_u = get(communities, u);
         community_type c_v = get(communities, v);
         
-        vertex_descriptor new_u = comm_to_vertex[c_u];
-        vertex_descriptor new_v = comm_to_vertex[c_v];
+        agg_vertex_t new_u = comm_to_vertex[c_u];
+        agg_vertex_t new_v = comm_to_vertex[c_v];
         
         weight_type w = get(weight, *edge_it);
         
@@ -131,44 +137,51 @@ auto aggregate(
         }
     }
     
-    // add edges to connect super nodes
+    // Add edges to connect super-nodes
     for (const auto& kv : temp_edge_weights) {
         typename graph_traits<aggregated_graph_t>::edge_descriptor e;
         bool inserted;
         tie(e, inserted) = add_edge(kv.first.first, kv.first.second, kv.second, new_g);
     }
     
-    return result_t{std::move(new_g), std::move(new_community_map), std::move(temp_internal_weights), std::move(vertex_to_originals)};
+    return result_t{std::move(new_g), std::move(new_community_map),
+                    std::move(temp_internal_weights), std::move(vertex_to_originals)};
 }
 
 /// @brief Unfold a coarse partition back to the original vertices through hierarchy levels.
-template <typename CommunityMap, typename VertexDescriptor>
-auto unfold(const CommunityMap& final_partition, const std::vector<boost::unordered_flat_map<VertexDescriptor, boost::unordered_flat_set<VertexDescriptor>>>& levels)
+/// @param final_communities Coarsened vertex index to community label
+/// @param levels Hierarchy: levels[i][coarsened_v] = {original vertex indices...}
+/// @param n_original Number of vertices in the original graph
+/// @return Vector mapping original vertex index to community label
+inline std::vector<std::size_t> unfold(
+    const std::vector<std::size_t>& final_communities,
+    const std::vector<std::vector<std::vector<std::size_t>>>& levels,
+    std::size_t n_original)
 {
     BOOST_ASSERT(!levels.empty());
 
-    boost::unordered_flat_map<VertexDescriptor, VertexDescriptor> original_partition;
+    std::vector<std::size_t> original_partition(n_original);
     
-    for (const auto& kv : final_partition) {
-        boost::unordered_flat_set<VertexDescriptor> current_nodes;
-        current_nodes.insert(kv.first);
+    for (std::size_t coarse_v = 0; coarse_v < final_communities.size(); ++coarse_v) {
+        std::vector<std::size_t> current_nodes;
+        current_nodes.push_back(coarse_v);
         
         // From coarse to fine
-        for(auto level = levels.size(); level--; ) {
-            boost::unordered_flat_set<VertexDescriptor> next_nodes;
+        for (auto level = levels.size(); level--; ) {
+            std::vector<std::size_t> next_nodes;
             
-            for (VertexDescriptor node : current_nodes) {
-                auto it = levels[level].find(node);
-                BOOST_ASSERT(it != levels[level].end());
-                next_nodes.insert(it->second.begin(), it->second.end());
+            for (std::size_t node : current_nodes) {
+                BOOST_ASSERT(node < levels[level].size());
+                const auto& originals = levels[level][node];
+                next_nodes.insert(next_nodes.end(), originals.begin(), originals.end());
             }
             
             current_nodes = std::move(next_nodes);
         }
         
         // Assign all original vertices to community
-        for (VertexDescriptor original_v : current_nodes) {
-            original_partition[original_v] = kv.second;
+        for (std::size_t original_v : current_nodes) {
+            original_partition[original_v] = final_communities[coarse_v];
         }
     }
     
@@ -228,10 +241,15 @@ local_optimization_impl(
     auto idx_map = get(vertex_index, g);
     using index_map_t = decltype(idx_map);
     
-    // Use vector_property_map with index map for O(1) community access
-    vector_property_map<weight_type, index_map_t> k(n, idx_map);
-    vector_property_map<weight_type, index_map_t> in(n, idx_map);
-    vector_property_map<weight_type, index_map_t> tot(n, idx_map);
+    // Storage vectors backing property maps: enables both vertex_descriptor and integer access
+    std::vector<weight_type> k_vec(n, weight_type(0));
+    std::vector<weight_type> in_vec(n, weight_type(0));
+    std::vector<weight_type> tot_vec(n, weight_type(0));
+    
+    // Property map views with vertex_descriptor keys (through idx_map)
+    auto k = make_iterator_property_map(k_vec.begin(), idx_map);
+    auto in = make_iterator_property_map(in_vec.begin(), idx_map);
+    auto tot = make_iterator_property_map(tot_vec.begin(), idx_map);
     weight_type m;
     
     // populates k[c], in[c], tot[c]
@@ -246,14 +264,15 @@ local_optimization_impl(
     std::shuffle(vertex_order.begin(), vertex_order.end(), gen);
     
     // Pre-allocate neighbor buffers
-    vector_property_map<weight_type, index_map_t> neigh_weight(n, idx_map);
+    std::vector<weight_type> neigh_weight_vec(n, weight_type(0));
+    auto neigh_weight = make_iterator_property_map(neigh_weight_vec.begin(), idx_map);
     std::vector<community_type> neigh_comm;
     neigh_comm.reserve(100);
     
     // Pre-allocate rollback buffers (only used if needed)
     std::vector<community_type> saved_partition;
-    vector_property_map<weight_type, index_map_t> saved_in(0, idx_map);
-    vector_property_map<weight_type, index_map_t> saved_tot(0, idx_map);
+    std::vector<weight_type> saved_in_vec;
+    std::vector<weight_type> saved_tot_vec;
     
     do
     {
@@ -261,21 +280,11 @@ local_optimization_impl(
         num_moves = 0;        
         pass_number++;
         
-        // Cache-aware vertex ordering: process vertices grouped by community
-        // Improves cache locality by ~60-70% as vertices in same community share neighbors
-        // Provides 10-15% speedup by reducing cache misses in neighbor scanning
-        if (pass_number > 1) {
-            std::sort(vertex_order.begin(), vertex_order.end(),
-                [&communities](vertex_descriptor a, vertex_descriptor b) {
-                    return get(communities, a) < get(communities, b);
-                });
-        }
-        
         // Lazy save: only save state if we've previously needed to rollback
         if (has_rolled_back) {
             saved_partition.resize(num_vertices(g));
-            saved_in = in;
-            saved_tot = tot;
+            saved_in_vec = in_vec;
+            saved_tot_vec = tot_vec;
             vertex_iterator vi_save, vi_save_end;
             for (boost::tie(vi_save, vi_save_end) = vertices(g); vi_save != vi_save_end; ++vi_save) {
                 saved_partition[get(vertex_index, g, *vi_save)] = get(communities, *vi_save);
@@ -340,7 +349,12 @@ local_optimization_impl(
         }
 
         // Compute quality from incremental in/tot (no graph traversal)
-        Q_new = QualityFunction::quality(in, tot, m, n);
+        // Use integer-keyed views into the same underlying vectors
+        {
+            auto in_idx = make_iterator_property_map(in_vec.begin(), boost::typed_identity_property_map<std::size_t>());
+            auto tot_idx = make_iterator_property_map(tot_vec.begin(), boost::typed_identity_property_map<std::size_t>());
+            Q_new = QualityFunction::quality(in_idx, tot_idx, m, n);
+        }
         
         // Rollback if quality didn't improve after moving nodes
         // Prevent endless oscillations of vertices: algo gets one extra pass before giving up
@@ -350,8 +364,8 @@ local_optimization_impl(
                 for (boost::tie(vi_restore, vi_restore_end) = vertices(g); vi_restore != vi_restore_end; ++vi_restore) {
                     put(communities, *vi_restore, saved_partition[get(vertex_index, g, *vi_restore)]);
                 }
-                in = saved_in;
-                tot = saved_tot;
+                in_vec = saved_in_vec;
+                tot_vec = saved_tot_vec;
                 Q_new = Q;
                 break;
             } else {
@@ -412,14 +426,6 @@ local_optimization_impl(
         Q = Q_new;
         num_moves = 0;
         pass_number++;
-
-        // Cache-aware vertex ordering after first pass
-        if (pass_number > 1) {
-            std::sort(vertex_order.begin(), vertex_order.end(),
-                [&communities](vertex_descriptor a, vertex_descriptor b) {
-                    return get(communities, a) < get(communities, b);
-                });
-        }
 
         // Lazy save: only save state if we've previously needed to rollback
         if (has_rolled_back) {
@@ -537,6 +543,9 @@ louvain_clustering(
     using weight_type = typename property_traits<WeightMap>::value_type;
     using vertex_iterator = typename graph_traits<Graph>::vertex_iterator;
     
+    auto idx = get(vertex_index, g0);
+    std::size_t n = num_vertices(g0);
+    
     // Initialize each vertex to its own community
     vertex_iterator vi, vi_end;
     for (boost::tie(vi, vi_end) = vertices(g0); vi != vi_end; ++vi) {
@@ -546,25 +555,24 @@ louvain_clustering(
     // Dispatch the local optimization using the incremental or non-incremental variant
     weight_type Q = louvain_detail::local_optimization<QualityFunction>(g0, components, w0, gen, min_improvement_inner);
     
-    // Build partition vector from current component map
-    std::vector<vertex_descriptor> partition_vec(num_vertices(g0));
+    // Build index-based partition from community map for aggregation
+    std::vector<std::size_t> vertex_index_to_community(n);
     for (boost::tie(vi, vi_end) = vertices(g0); vi != vi_end; ++vi) {
-        partition_vec[get(vertex_index, g0, *vi)] = get(components, *vi);
+        vertex_index_to_community[get(idx, *vi)] = get(idx, get(components, *vi));
     }
     
-    using level_t = boost::unordered_flat_map<vertex_descriptor, boost::unordered_flat_set<vertex_descriptor>>;
+    using level_t = std::vector<std::vector<std::size_t>>;
     std::vector<level_t> levels;
     
-    auto partition_map_g0 = make_iterator_property_map(partition_vec.begin(), get(vertex_index, g0));    
-    auto coarse = louvain_detail::aggregate(g0, partition_map_g0, w0);
+    auto partition_idx_map = make_iterator_property_map(vertex_index_to_community.begin(), idx);
+    auto coarse = louvain_detail::aggregate(g0, partition_idx_map, w0, idx);
     
-    std::size_t prev_n_vertices = num_vertices(g0);
+    std::size_t prev_n_vertices = n;
     std::size_t iteration = 0;
     
     // Track best partition across all levels
-    std::vector<vertex_descriptor> best_partition = partition_vec;
+    std::vector<std::size_t> best_partition = vertex_index_to_community;
     weight_type best_Q = Q;
-    std::size_t best_level = 0;
     
     while (true) {
         iteration++;
@@ -581,28 +589,24 @@ louvain_clustering(
         // Dispatch the local optimization using the incremental or non-incremental variant
         weight_type Q_agg = louvain_detail::local_optimization<QualityFunction>(coarse.graph, coarse.partition, get(edge_weight, coarse.graph), gen, min_improvement_inner);
         
-        // Unfold partition to original graph to compute actual Q
-        boost::unordered_flat_map<vertex_descriptor, vertex_descriptor> agg_partition_map;
-        vertex_iterator vi_agg, vi_agg_end;
-        for (boost::tie(vi_agg, vi_agg_end) = vertices(coarse.graph); vi_agg != vi_agg_end; ++vi_agg) {
-            agg_partition_map[*vi_agg] = get(coarse.partition, *vi_agg);
+        // Build communities vector from coarsened graph (vecS/vecS to indices = descriptors)
+        std::size_t n_coarse = num_vertices(coarse.graph);
+        std::vector<std::size_t> coarse_communities(n_coarse);
+        for (std::size_t v = 0; v < n_coarse; ++v) {
+            coarse_communities[v] = get(coarse.partition, v);
         }
         
-        auto unfolded_map = louvain_detail::unfold(agg_partition_map, levels);
-        vertex_iterator vi_orig, vi_orig_end;
-        for (boost::tie(vi_orig, vi_orig_end) = vertices(g0); vi_orig != vi_orig_end; ++vi_orig) {
-            partition_vec[get(vertex_index, g0, *vi_orig)] = unfolded_map[*vi_orig];
-        }
+        // Unfold partition to original graph
+        vertex_index_to_community = louvain_detail::unfold(coarse_communities, levels, n);
         
         // Compute Q on original graph
-        auto partition_map_check = make_iterator_property_map(partition_vec.begin(), get(vertex_index, g0));
+        auto partition_map_check = make_iterator_property_map(vertex_index_to_community.begin(), idx);
         Q = QualityFunction::quality(g0, partition_map_check, w0);
         
         // Track best partition
         if (Q > best_Q) {
             best_Q = Q;
-            best_partition = partition_vec;
-            best_level = iteration;
+            best_partition = vertex_index_to_community;
         }
         
         // Stop if quality did not improve
@@ -610,16 +614,27 @@ louvain_clustering(
             break;
         }
         
-        prev_n_vertices = n_communities;        
-        coarse = louvain_detail::aggregate(coarse.graph, coarse.partition, get(edge_weight, coarse.graph));
+        prev_n_vertices = n_communities;
+        coarse = louvain_detail::aggregate(coarse.graph, 
+                                           coarse.partition,
+                                           get(edge_weight, coarse.graph),
+                                           get(vertex_index, coarse.graph));
     }
     
-    // Write best partition to output ComponentMap
-    partition_vec = best_partition;
+
+    vertex_index_to_community = best_partition;
     Q = best_Q;
     
+    boost::unordered_flat_map<std::size_t, std::size_t> comm_label;
+    std::size_t next_label = 0;
+    
     for (boost::tie(vi, vi_end) = vertices(g0); vi != vi_end; ++vi) {
-        put(components, *vi, partition_vec[get(vertex_index, g0, *vi)]);
+        auto community = vertex_index_to_community[get(idx, *vi)]; // can be arbitrary and uncontiguous
+        auto it = comm_label.find(community);
+        if (it == comm_label.end()) {
+            it = comm_label.emplace(community, next_label++).first; // remap labels to 0, 1 ... i 
+        }
+        put(components, *vi, it->second);
     }
     
     return Q;

@@ -98,14 +98,15 @@ IN: <tt>const Graph&amp; g</tt>
 OUT: <tt>ComponentMap components</tt>
 <blockquote>
   Records the community each vertex belongs to. After the call,
-  <tt>get(components, v)</tt> returns an identifier (a vertex
-  descriptor of the original graph) for the community of vertex
-  <tt>v</tt>. Two vertices with the same identifier are in the
-  same community.<br>
+  <tt>get(components, v)</tt> returns a contiguous integer label
+  in the range [0,&nbsp;<i>k</i>) where <i>k</i> is the number of
+  communities found. Two vertices with the same label are in the
+  same community. This matches the convention used by
+  <a href="connected_components.html"><tt>connected_components</tt></a>.<br>
   Must model
   <a href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
-  Property Map</a> with the graph's vertex descriptor as both key
-  type and value type.
+  Property Map</a> with the graph's vertex descriptor as key type
+  and an integer type (e.g.&nbsp;<tt>std::size_t</tt>) as value type.
 </blockquote>
 
 IN: <tt>const WeightMap&amp; w</tt>
@@ -200,8 +201,7 @@ int main()
     boost::add_edge(3, 5, 1.0, g);
     boost::add_edge(2, 3, 0.1, g);
 
-    using vertex_t = boost::graph_traits&lt;Graph&gt;::vertex_descriptor;
-    std::vector&lt;vertex_t&gt; communities(boost::num_vertices(g));
+    std::vector&lt;std::size_t&gt; communities(boost::num_vertices(g));
     auto cmap = boost::make_iterator_property_map(
         communities.begin(), boost::get(boost::vertex_index, g));
 
