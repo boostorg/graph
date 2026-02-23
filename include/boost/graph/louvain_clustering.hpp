@@ -29,19 +29,6 @@
 #include <algorithm>
 #include <type_traits>
 
-// Hash specialization for std::pair to use with boost::unordered containers
-namespace std {
-    template <typename T1, typename T2>
-    struct hash<std::pair<T1, T2>> {
-        std::size_t operator()(const std::pair<T1, T2>& p) const {
-            std::size_t seed = 0;
-            boost::hash_combine(seed, p.first);
-            boost::hash_combine(seed, p.second);
-            return seed;
-        }
-    };
-}
-
 namespace boost
 {
 namespace louvain_detail 
