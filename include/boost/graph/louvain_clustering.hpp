@@ -378,7 +378,7 @@ local_optimization_impl(
     return Q_new;
 }
 
-/// @brief Fast version, requires the QualityFunction to implement GraphPartitionQualityFunctionIncrementalConcept
+/// @brief Slow version, requires the QualityFunction to implement GraphPartitionQualityFunctionConcept
 template <typename QualityFunction = newman_and_girvan, typename Graph, typename CommunityMap, typename WeightMap, typename URBG>
 typename property_traits<WeightMap>::value_type
 local_optimization_impl(
