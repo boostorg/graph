@@ -321,8 +321,8 @@ struct newman_and_girvan
 
     /**
      * Remove vertex from community.
-     * @param in Property map: community -> internal edge weights
-     * @param tot Property map: community -> total edge weights
+     * @param in Property map: community to internal edge weights
+     * @param tot Property map: community to total edge weights
      * @param old_comm Community to remove from
      * @param k_v vertex total degree
      * @param k_v_in_old Sum of edge weights from vertex to vertices in old_comm
@@ -344,8 +344,8 @@ struct newman_and_girvan
     
     /**
      * Insert node into community.
-     * @param in Property map: community -> internal edge weights
-     * @param tot Property map: community -> total edge weights
+     * @param in Property map: community to internal edge weights
+     * @param tot Property map: community to total edge weights
      * @param new_comm Community to insert into
      * @param k_v Node's total degree
      * @param k_v_in_new Sum of edge weights from node to vertices in new_comm
@@ -367,7 +367,7 @@ struct newman_and_girvan
     
     /**
      * Compute modularity gain of moving node to target community.
-     * @param tot Property map: community -> total edge weights
+     * @param tot Property map: community to total edge weights
      * @param m Total edge weight (half sum of all degrees)
      * @param target_comm Community to evaluate
      * @param k_v_in_target Sum of edge weights from node to vertices in target_comm
