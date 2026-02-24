@@ -25,28 +25,24 @@ using edge_descriptor = boost::graph_traits<Graph>::edge_descriptor;
 // but deliberately omits remove/insert/gain to force the slow path.
 struct non_incremental_modularity
 {
-    template <typename G, typename CMap, typename WMap, typename KMap,
-              typename InMap, typename TotMap>
-    static typename boost::property_traits<WMap>::value_type
-    quality(const G& g, const CMap& c, const WMap& w,
-            KMap& k, InMap& in, TotMap& tot,
-            typename boost::property_traits<WMap>::value_type& m)
+    template <typename G, typename CMap, typename WMap, typename KMap, typename InMap, typename TotMap>
+    typename boost::property_traits<WMap>::value_type
+    quality(const G& g, const CMap& c, const WMap& w, KMap& k, InMap& in, TotMap& tot, typename boost::property_traits<WMap>::value_type& m)
     {
-        return boost::newman_and_girvan::quality(g, c, w, k, in, tot, m);
+        return boost::newman_and_girvan{}.quality(g, c, w, k, in, tot, m);
     }
 
     template <typename G, typename CMap, typename WMap>
-    static typename boost::property_traits<WMap>::value_type
+    typename boost::property_traits<WMap>::value_type
     quality(const G& g, const CMap& c, const WMap& w)
     {
-        return boost::newman_and_girvan::quality(g, c, w);
+        return boost::newman_and_girvan{}.quality(g, c, w);
     }
 
     template <typename InMap, typename TotMap, typename WeightType>
-    static WeightType
-    quality(InMap in, TotMap tot, WeightType m, std::size_t n)
+    WeightType quality(InMap in, TotMap tot, WeightType m, std::size_t n)
     {
-        return boost::newman_and_girvan::quality(in, tot, m, n);
+        return boost::newman_and_girvan{}.quality(in, tot, m, n);
     }
 
     // No remove(), insert(), gain() -- forces non-incremental dispatch
@@ -119,7 +115,7 @@ void test_ring_of_cliques() {
     std::vector<vertex_descriptor> clusters(total_nodes);
     auto cluster_map = boost::make_iterator_property_map(clusters.begin(), boost::get(boost::vertex_index, g));
     std::mt19937 gen(42);
-    double Q = boost::louvain_clustering(g, cluster_map, weight_map, gen, 1e-7, 0.0);
+    double Q = boost::louvain_clustering(g, cluster_map, weight_map, gen, boost::newman_and_girvan{}, 1e-7, 0.0);
     
     std::set<std::size_t> unique_communities(clusters.begin(), clusters.end());
     
@@ -170,7 +166,7 @@ void test_karate_club() {
     std::vector<vertex_descriptor> clusters(34);
     auto cluster_map = boost::make_iterator_property_map(clusters.begin(), boost::get(boost::vertex_index, g));
     std::mt19937 gen(42);
-    double Q = boost::louvain_clustering(g, cluster_map, weight_map, gen, 1e-6, 0.0);
+    double Q = boost::louvain_clustering(g, cluster_map, weight_map, gen, boost::newman_and_girvan{}, 1e-6, 0.0);
     
     std::set<std::size_t> unique_communities(clusters.begin(), clusters.end());
     
@@ -225,8 +221,7 @@ run_local_opt(const WeightedGraph& g, unsigned seed)
         boost::put(communities, *vi, *vi);
 
     std::mt19937 gen(seed);
-    double Q = boost::louvain_detail::local_optimization<QualityFunction>(
-        g, communities, wmap, gen, 0.0);
+    double Q = boost::louvain_detail::local_optimization(g, communities, wmap, gen, QualityFunction{}, 0.0);
 
     std::vector<std::size_t> partition(n);
     for (boost::tie(vi, vi_end) = boost::vertices(g); vi != vi_end; ++vi)

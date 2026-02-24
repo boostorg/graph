@@ -19,13 +19,13 @@
 struct incremental_but_no_quality
 {
     template<typename InMap, typename TotMap, typename C, typename W>
-    static void remove(InMap, TotMap, C, W, W, W) {}
+    void remove(InMap, TotMap, C, W, W, W) {}
 
     template<typename InMap, typename TotMap, typename C, typename W>
-    static void insert(InMap, TotMap, C, W, W, W) {}
+    void insert(InMap, TotMap, C, W, W, W) {}
 
     template<typename TotMap, typename W, typename C>
-    static W gain(TotMap, W, C, W, W) { return W(0); }
+    W gain(TotMap, W, C, W, W) { return W(0); }
 };
 
 int main()
@@ -48,5 +48,5 @@ int main()
 
     std::mt19937 rng(42);
 
-    boost::louvain_clustering<incremental_but_no_quality>(g, clusters, weight_map, rng);
+    boost::louvain_clustering(g, clusters, weight_map, rng, incremental_but_no_quality{});
 }

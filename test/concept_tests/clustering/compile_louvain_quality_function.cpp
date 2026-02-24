@@ -25,7 +25,7 @@ struct custom_non_incremental_modularity
     static typename boost::property_traits<WeightMap>::value_type
     quality(const Graph& g, const CommunityMap& communities, const WeightMap& w)
     {
-        return boost::newman_and_girvan::quality(g, communities, w);
+        return boost::newman_and_girvan{}.quality(g, communities, w);
     }
 };
 
@@ -35,39 +35,39 @@ struct custom_incremental_modularity
     static typename boost::property_traits<WeightMap>::value_type
     quality(const Graph& g, const CommunityMap& communities, const WeightMap& w)
     {
-        return boost::newman_and_girvan::quality(g, communities, w);
+        return boost::newman_and_girvan{}.quality(g, communities, w);
     }
 
     template <typename Graph, typename CommunityMap, typename WeightMap, typename KMap, typename InMap, typename TotMap>
     static typename boost::property_traits<WeightMap>::value_type
     quality(const Graph& g, const CommunityMap& communities, const WeightMap& w, KMap& k, InMap& in, TotMap& tot, typename boost::property_traits<WeightMap>::value_type& m)
     {
-        return boost::newman_and_girvan::quality(g, communities, w, k, in, tot, m);
+        return boost::newman_and_girvan{}.quality(g, communities, w, k, in, tot, m);
     }
 
     template <typename InMap, typename TotMap>
     static typename boost::property_traits<InMap>::value_type
     quality(const InMap& in, const TotMap& tot, typename boost::property_traits<InMap>::value_type m, std::size_t n)
     {
-        return boost::newman_and_girvan::quality(in, tot, m, n);
+        return boost::newman_and_girvan.{}quality(in, tot, m, n);
     }
 
     template <typename InMap, typename TotMap, typename CommunityType, typename WeightType>
     static void remove(InMap& in, TotMap& tot, CommunityType c, WeightType k_v, WeightType k_v_in, WeightType w_selfloop)
     {
-        boost::newman_and_girvan::remove(in, tot, c, k_v, k_v_in, w_selfloop);
+        boost::newman_and_girvan{}.remove(in, tot, c, k_v, k_v_in, w_selfloop);
     }
 
     template <typename InMap, typename TotMap, typename CommunityType, typename WeightType>
     static void insert(InMap& in, TotMap& tot, CommunityType c, WeightType k_v, WeightType k_v_in, WeightType w_selfloop)
     {
-        boost::newman_and_girvan::insert(in, tot, c, k_v, k_v_in, w_selfloop);
+        boost::newman_and_girvan{}.insert(in, tot, c, k_v, k_v_in, w_selfloop);
     }
 
     template <typename TotMap, typename WeightType, typename CommunityType>
     static WeightType gain(const TotMap& tot, WeightType m, CommunityType c, WeightType k_v_in, WeightType k_v)
     {
-        return boost::newman_and_girvan::gain(tot, m, c, k_v_in, k_v);
+        return boost::newman_and_girvan{}.gain(tot, m, c, k_v_in, k_v);
     }
 };
 
@@ -103,7 +103,7 @@ void run_with_quality_function(const Graph& g, const char* name)
     auto wmap = boost::get(boost::edge_weight, g);
 
     std::mt19937 rng(42);
-    double Q = boost::louvain_clustering<QualityFunction>(g, cmap, wmap, rng);
+    double Q = boost::louvain_clustering(g, cmap, wmap, rng, QualityFunction{});
 
     BOOST_TEST(Q >= 0.0);
     BOOST_TEST(Q <= 1.0);

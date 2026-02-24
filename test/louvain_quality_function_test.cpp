@@ -29,23 +29,24 @@ void test_modularity_different_partitions() {
     add_edge(3, 0, g);
     
     boost::static_property_map<double, edge_descriptor> weight_map(1.0);
-    
+    boost::newman_and_girvan f;
+
     // All in same community : Q = 0
     std::vector<vertex_descriptor> partition1 = {0, 0, 0, 0};
     auto pmap1 = boost::make_iterator_property_map(partition1.begin(), boost::get(boost::vertex_index, g));
-    double Q1 = boost::newman_and_girvan::quality(g, pmap1, weight_map);
+    double Q1 = f.quality(g, pmap1, weight_map);
     BOOST_TEST(approx_equal(Q1, 0.0));
 
     // Two communities (0,1) and (2,3), symetric partition : Q = 0
     std::vector<vertex_descriptor> partition2 = {0, 0, 1, 1};
     auto pmap2 = boost::make_iterator_property_map(partition2.begin(), boost::get(boost::vertex_index, g));
-    double Q2 = boost::newman_and_girvan::quality(g, pmap2, weight_map);
+    double Q2 = f.quality(g, pmap2, weight_map);
     BOOST_TEST(approx_equal(Q2, 0.0)); 
 
     // All separate communities, many inter-community edges: Q negative
     std::vector<vertex_descriptor> partition3 = {0, 1, 2, 3};
     auto pmap3 = boost::make_iterator_property_map(partition3.begin(), boost::get(boost::vertex_index, g));
-    double Q3 = boost::newman_and_girvan::quality(g, pmap3, weight_map);
+    double Q3 = f.quality(g, pmap3, weight_map);
     BOOST_TEST(Q3 < 0.0);
 }
 
@@ -57,7 +58,8 @@ void test_state_operations() {
     add_edge(2, 3, g);
     
     boost::static_property_map<double, edge_descriptor> weight_map(1.0);
-    
+    boost::newman_and_girvan f;
+
     // Initial partition: two communities {0,1} and {2,3}
     std::vector<vertex_descriptor> partition = {0, 0, 1, 1};
     auto pmap = boost::make_iterator_property_map(partition.begin(), boost::get(boost::vertex_index, g));
@@ -69,7 +71,7 @@ void test_state_operations() {
     auto tot = boost::make_assoc_property_map(tot_map);
     double m;
     
-    double Q_initial = boost::newman_and_girvan::quality(g, pmap, weight_map, k, in, tot, m);
+    double Q_initial = f.quality(g, pmap, weight_map, k, in, tot, m);
 
     BOOST_TEST(approx_equal(Q_initial, 0.166667, 1e-5));
 
@@ -79,7 +81,7 @@ void test_state_operations() {
     double k_v = get(k, node_to_move); // degree of vertex 1 is 2
     double k_v_in_old = 1.0; // edge to vertex 0
 
-    boost::newman_and_girvan::remove(in, tot, old_comm, k_v, k_v_in_old);
+    f.remove(in, tot, old_comm, k_v, k_v_in_old);
     
     // Community 0 originally had vertices {0,1} with tot = 1+2 = 3 (vertex 0 degree 1, vertex 1 degree 2)
     // After removing vertex 1 (degree 2), tot should be 3-2 = 1
@@ -87,7 +89,7 @@ void test_state_operations() {
     
     vertex_descriptor new_comm = 1;
     double k_v_in_new = 1.0;
-    boost::newman_and_girvan::insert(in, tot, new_comm, k_v, k_v_in_new);
+    f.insert(in, tot, new_comm, k_v, k_v_in_new);
     
     // Original community 1 was {2,3} with tot = 2+1 = 3 (vertex 2 : degree 2, vertex 3 : degree 1)
     // After adding vertex 1 (degree 2), tot should be 3+2 = 5
@@ -95,7 +97,7 @@ void test_state_operations() {
     
     // gain = k_v_in_new - (tot[new_comm] * k_v) / (2*m)
     //      = 1.0 - (5.0 * 2.0) / (2 * 3.0) = 1.0 - 10.0/6.0 ~= -0.667
-    double gain = boost::newman_and_girvan::gain(tot, m, new_comm, k_v_in_new, k_v);
+    double gain = f.gain(tot, m, new_comm, k_v_in_new, k_v);
     BOOST_TEST(approx_equal(gain, -0.666667, 1e-5));
 }
 
@@ -122,7 +124,8 @@ void test_modularity_weighted() {
     auto tot = boost::make_assoc_property_map(tot_map);
     double m;
     
-    double Q = boost::newman_and_girvan::quality(g, pmap, weight_map, k, in, tot, m);
+    boost::newman_and_girvan f;
+    double Q = f.quality(g, pmap, weight_map, k, in, tot, m);
     
     // Complete graph in one community : Q=0
     BOOST_TEST(approx_equal(Q, 0.0));
@@ -163,7 +166,8 @@ void test_modularity_with_selfloop() {
     auto tot = boost::make_assoc_property_map(tot_map);
     double m;
     
-    double Q = boost::newman_and_girvan::quality(g, pmap, weight_map, k, in, tot, m);
+    boost::newman_and_girvan f;
+    double Q = f.quality(g, pmap, weight_map, k, in, tot, m);
     
     double expected_Q = 0.0;
     

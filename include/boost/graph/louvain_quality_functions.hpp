@@ -85,7 +85,8 @@ struct GraphPartitionQualityFunctionConcept
     void constraints()
     {
         // Full computation from graph traversal
-        weight_type q1 = QualityFunction::quality(g, cmap, wmap);
+        QualityFunction f;
+        weight_type q1 = f.quality(g, cmap, wmap);
         boost::ignore_unused(q1);
     }
 };
@@ -103,20 +104,22 @@ struct GraphPartitionQualityFunctionIncrementalConcept : GraphPartitionQualityFu
     {
         GraphPartitionQualityFunctionConcept<QualityFunction, Graph, CommunityMap, WeightMap>::constraints();
 
+        QualityFunction f;
+
         // Full computation from graph traversal, user-provided maps
-        weight_type q2 = QualityFunction::quality(g, cmap, wmap, k, in, tot, m);
+        weight_type q2 = f.quality(g, cmap, wmap, k, in, tot, m);
         
         // Fast computation from pre-maintained community maps (no traversal)
-        weight_type q3 = QualityFunction::quality(in, tot, m, num_communities);
+        weight_type q3 = f.quality(in, tot, m, num_communities);
 
         // Incremental update: remove vertex from its community
-        QualityFunction::remove(in, tot, comm, weight_val, weight_val, weight_val);
+        f.remove(in, tot, comm, weight_val, weight_val, weight_val);
         
         // Incremental update: insert vertex into a community
-        QualityFunction::insert(in, tot, comm, weight_val, weight_val, weight_val);
+        f.insert(in, tot, comm, weight_val, weight_val, weight_val);
         
         // Incremental update: Modularity gain of moving a vertex to a target community
-        weight_type gain = QualityFunction::gain(tot, m, comm, weight_val, weight_val);
+        weight_type gain = f.gain(tot, m, comm, weight_val, weight_val);
         boost::ignore_unused(q2);
         boost::ignore_unused(q3);
         boost::ignore_unused(gain);
@@ -137,7 +140,7 @@ struct GraphPartitionQualityFunctionIncrementalConcept : GraphPartitionQualityFu
 namespace louvain_detail {
 
 /// @brief Type trait to detect if a quality function supports incremental updates.
-/// Uses SFINAE to check for the existence of QualityFunction::gain(...).
+/// Uses SFINAE to check for the existence of f.gain(...).
 template<class QualityFunction, class Graph, class CommunityMap, class WeightMap, typename=void>
 struct is_incremental_quality_function : std::false_type{};
 
@@ -148,7 +151,7 @@ struct is_incremental_quality_function<
     CommunityMap, 
     WeightMap,
     boost::void_t<decltype(
-        QualityFunction::gain(
+        std::declval<QualityFunction>().gain(
             std::declval<
                 associative_property_map<
                     boost::unordered_flat_map<
@@ -176,7 +179,7 @@ struct newman_and_girvan
 
     /// @brief Traverse the graph to compute partition quality with user-provided property maps
     template <class Graph, class CommunityMap, class WeightMap, class VertexDegreeMap, class CommunityInMap, class CommunityTotMap>
-    static inline typename property_traits<WeightMap>::value_type
+    inline typename property_traits<WeightMap>::value_type
     quality(
         const Graph& g, 
         const CommunityMap& communities, 
@@ -267,7 +270,7 @@ struct newman_and_girvan
     
     /// @brief Traverse the graph to compute partition quality with internally allocated property maps
     template <typename Graph, typename CommunityMap, typename WeightMap>
-    static inline typename property_traits<WeightMap>::value_type
+    inline typename property_traits<WeightMap>::value_type
     quality(const Graph& g, const CommunityMap& communities, const WeightMap& weights)
     {
         using community_type = typename property_traits<CommunityMap>::value_type;
@@ -300,7 +303,7 @@ struct newman_and_girvan
      * @return Modularity Q
      */
     template<typename CommunityInMap, typename CommunityTotMap, typename WeightType>
-    static inline WeightType quality(CommunityInMap in, CommunityTotMap tot, WeightType m, std::size_t num_communities) {
+    inline WeightType quality(CommunityInMap in, CommunityTotMap tot, WeightType m, std::size_t num_communities) {
         if (m == WeightType(0)) {
             return WeightType(0);
         }
@@ -352,7 +355,7 @@ struct newman_and_girvan
      * @param w_selfloop Self-loop weight (default 0)
      */
     template<typename CommunityInMap, typename CommunityTotMap, typename CommunityType, typename WeightType>
-    static inline void insert(
+    inline void insert(
         CommunityInMap in,
         CommunityTotMap tot,
         CommunityType new_comm,
@@ -375,7 +378,7 @@ struct newman_and_girvan
      * @return Modularity gain
      */
     template<typename CommunityTotMap, typename CommunityType, typename WeightType>
-    static inline WeightType gain(
+    inline WeightType gain(
         CommunityTotMap tot,
         WeightType m,
         CommunityType target_comm,

@@ -199,6 +199,7 @@ local_optimization_impl(
     CommunityMap& communities, 
     const WeightMap& w,
     URBG&& gen,
+    QualityFunction f,
     typename property_traits<WeightMap>::value_type min_improvement_inner,
     std::true_type /* incremental */
 )
@@ -240,7 +241,7 @@ local_optimization_impl(
     weight_type m;
     
     // populates k[c], in[c], tot[c]
-    weight_type Q = QualityFunction::quality(g, communities, w, k, in, tot, m);
+    weight_type Q = f.quality(g, communities, w, k, in, tot, m);
     weight_type Q_new = Q;
     std::size_t num_moves = 0;
     std::size_t pass_number = 0;
@@ -303,7 +304,7 @@ local_optimization_impl(
             
             // Remove v from community
             weight_type k_v_in_old = get(neigh_weight, c_old);
-            QualityFunction::remove(in, tot, c_old, k_v, k_v_in_old, w_selfloop);
+            f.remove(in, tot, c_old, k_v, k_v_in_old, w_selfloop);
             
             // Find best community
             community_type c_best = c_old;
@@ -312,7 +313,7 @@ local_optimization_impl(
             for(community_type c_neighbor : neigh_comm)
             {
                 weight_type k_v_in_neighbor = get(neigh_weight, c_neighbor);
-                weight_type gain = QualityFunction::gain(tot, m, c_neighbor, k_v_in_neighbor, k_v);
+                weight_type gain = f.gain(tot, m, c_neighbor, k_v_in_neighbor, k_v);
                 
                 if (gain > best_gain) {
                     best_gain = gain;
@@ -327,7 +328,7 @@ local_optimization_impl(
             }
             
             weight_type k_v_in_best = get(neigh_weight, c_best);
-            QualityFunction::insert(in, tot, c_best, k_v, k_v_in_best, w_selfloop);
+            f.insert(in, tot, c_best, k_v, k_v_in_best, w_selfloop);
             
             // Clear neighbor weights for next vertex
             for(community_type c : neigh_comm) {
@@ -340,7 +341,7 @@ local_optimization_impl(
         {
             auto in_idx = make_iterator_property_map(in_vec.begin(), boost::typed_identity_property_map<std::size_t>());
             auto tot_idx = make_iterator_property_map(tot_vec.begin(), boost::typed_identity_property_map<std::size_t>());
-            Q_new = QualityFunction::quality(in_idx, tot_idx, m, n);
+            Q_new = f.quality(in_idx, tot_idx, m, n);
         }
         
         // Rollback if quality didn't improve after moving nodes
@@ -373,6 +374,7 @@ local_optimization_impl(
     CommunityMap& communities, 
     const WeightMap& w,
     URBG&& gen,
+    QualityFunction f,
     typename property_traits<WeightMap>::value_type min_improvement_inner,
     std::false_type /* non incremental */
 )
@@ -399,7 +401,7 @@ local_optimization_impl(
     std::vector<vertex_descriptor> vertex_order = louvain_detail::get_vertex_vector(g);
     std::shuffle(vertex_order.begin(), vertex_order.end(), gen);
 
-    weight_type Q = QualityFunction::quality(g, communities, w);
+    weight_type Q = f.quality(g, communities, w);
     weight_type Q_new = Q;
     std::size_t num_moves = 0;
     std::size_t pass_number = 0;
@@ -447,7 +449,7 @@ local_optimization_impl(
                     continue;
 
                 put(communities, v, c_try);
-                weight_type Q_try = QualityFunction::quality(g, communities, w);
+                weight_type Q_try = f.quality(g, communities, w);
 
                 if (Q_try > best_Q)
                 {
@@ -466,7 +468,7 @@ local_optimization_impl(
         }
 
         // Recompute quality (might differ from tracked Q_new due to interaction effects)
-        Q_new = QualityFunction::quality(g, communities, w);
+        Q_new = f.quality(g, communities, w);
 
         // Rollback if quality didn't improve after moving nodes
         if (num_moves > 0 && Q_new <= Q) {
@@ -494,10 +496,11 @@ local_optimization(
     CommunityMap& communities, 
     const WeightMap& w,
     URBG&& gen,
+    QualityFunction f,
     typename property_traits<WeightMap>::value_type min_improvement_inner = typename property_traits<WeightMap>::value_type(0.0)
 ){
     using is_incremental = louvain_detail::is_incremental_quality_function<QualityFunction, Graph, CommunityMap, WeightMap>;
-    return local_optimization_impl<QualityFunction>(g, communities, w, std::forward<URBG>(gen), min_improvement_inner, is_incremental{});
+    return local_optimization_impl(g, communities, w, std::forward<URBG>(gen), f, min_improvement_inner, is_incremental{});
 }
 
 } // namespace louvain_detail
@@ -511,6 +514,7 @@ louvain_clustering(
     ComponentMap components,
     const WeightMap& w0,
     URBG&& gen,
+    QualityFunction f,
     typename property_traits<WeightMap>::value_type min_improvement_inner = typename property_traits<WeightMap>::value_type(0.0),
     typename property_traits<WeightMap>::value_type min_improvement_outer = typename property_traits<WeightMap>::value_type(0.0)
 ){
@@ -540,7 +544,7 @@ louvain_clustering(
     }
     
     // Dispatch the local optimization using the incremental or non-incremental variant
-    weight_type Q = louvain_detail::local_optimization<QualityFunction>(g0, components, w0, gen, min_improvement_inner);
+    weight_type Q = louvain_detail::local_optimization(g0, components, w0, gen, f, min_improvement_inner);
     
     // Build index-based partition from community map for aggregation
     std::vector<std::size_t> vertex_index_to_community(n);
@@ -574,7 +578,7 @@ louvain_clustering(
         weight_type Q_old = Q;
 
         // Dispatch the local optimization using the incremental or non-incremental variant
-        weight_type Q_agg = louvain_detail::local_optimization<QualityFunction>(coarse.graph, coarse.partition, get(edge_weight, coarse.graph), gen, min_improvement_inner);
+        weight_type Q_agg = louvain_detail::local_optimization(coarse.graph, coarse.partition, get(edge_weight, coarse.graph), gen, f, min_improvement_inner);
         
         // Build communities vector from coarsened graph (vecS/vecS to indices = descriptors)
         std::size_t n_coarse = num_vertices(coarse.graph);
@@ -588,7 +592,7 @@ louvain_clustering(
         
         // Compute Q on original graph
         auto partition_map_check = make_iterator_property_map(vertex_index_to_community.begin(), idx);
-        Q = QualityFunction::quality(g0, partition_map_check, w0);
+        Q = f.quality(g0, partition_map_check, w0);
         
         // Track best partition
         if (Q > best_Q) {

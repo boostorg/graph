@@ -38,5 +38,5 @@ int main()
 
     std::mt19937 rng(42);
 
-    boost::louvain_clustering<empty_quality_function>(g, clusters, weight_map, rng);
+    boost::louvain_clustering(g, clusters, weight_map, rng, empty_quality_function{});
 }
