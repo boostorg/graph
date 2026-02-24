@@ -496,7 +496,7 @@ local_optimization(
     CommunityMap& communities, 
     const WeightMap& w,
     URBG&& gen,
-    QualityFunction f,
+    QualityFunction f = QualityFunction{},
     typename property_traits<WeightMap>::value_type min_improvement_inner = typename property_traits<WeightMap>::value_type(0.0)
 ){
     using is_incremental = louvain_detail::is_incremental_quality_function<QualityFunction, Graph, CommunityMap, WeightMap>;
@@ -514,7 +514,7 @@ louvain_clustering(
     ComponentMap components,
     const WeightMap& w0,
     URBG&& gen,
-    QualityFunction f,
+    QualityFunction f = QualityFunction{},
     typename property_traits<WeightMap>::value_type min_improvement_inner = typename property_traits<WeightMap>::value_type(0.0),
     typename property_traits<WeightMap>::value_type min_improvement_outer = typename property_traits<WeightMap>::value_type(0.0)
 ){
