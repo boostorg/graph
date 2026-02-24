@@ -49,7 +49,7 @@ struct custom_incremental_modularity
     static typename boost::property_traits<InMap>::value_type
     quality(const InMap& in, const TotMap& tot, typename boost::property_traits<InMap>::value_type m, std::size_t n)
     {
-        return boost::newman_and_girvan.{}quality(in, tot, m, n);
+        return boost::newman_and_girvan{}.quality(in, tot, m, n);
     }
 
     template <typename InMap, typename TotMap, typename CommunityType, typename WeightType>
