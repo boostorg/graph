@@ -30,6 +30,7 @@ louvain_clustering(const Graph&amp; g,
                    ComponentMap components,
                    const WeightMap&amp; w,
                    URBG&amp;&amp; gen,
+                   QualityFunction f = QualityFunction{},
                    typename property_traits&lt;WeightMap&gt;::value_type min_improvement_inner = 0,
                    typename property_traits&lt;WeightMap&gt;::value_type min_improvement_outer = 0);
 </PRE>
@@ -123,6 +124,13 @@ IN: <tt>URBG&amp;&amp; gen</tt>
   order at each pass. Any type meeting the C++
   <i>UniformRandomBitGenerator</i> requirements works
   (e.g.&nbsp;<tt>std::mt19937</tt>).
+</blockquote>
+
+IN: <tt>QualityFunction f</tt>
+<blockquote>
+  An instance of the quality function to use for evaluating and
+  incrementally updating partition quality.<br>
+  <b>Default:</b> <tt>QualityFunction{}</tt>
 </blockquote>
 
 IN: <tt>weight_type min_improvement_inner</tt>

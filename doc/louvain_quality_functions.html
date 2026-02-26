@@ -39,9 +39,15 @@ Concept GraphPartitionQualityFunctionConcept
 </H1>
 
 <P>
-A type <TT>QF</TT> models this concept if it provides a static
+A type <TT>QF</TT> models this concept if it provides a
 member function that evaluates the quality of a vertex partition by
 traversing the graph.
+
+<H3>Refinement of</H3>
+
+<a href="../../utility/CopyConstructible.html">Copy Constructible</a>
+(copying a quality function should be a lightweight operation).
+The type must also be Default Constructible.
 
 <H3>Notation</H3>
 
@@ -49,6 +55,11 @@ traversing the graph.
 <TR>
 <TD><tt>QF</tt></TD>
 <TD>A type that is a model of GraphPartitionQualityFunctionConcept.</TD>
+</TR>
+
+<TR>
+<TD><tt>f</tt></TD>
+<TD>An object of type <tt>QF</tt>.</TD>
 </TR>
 
 <TR>
@@ -93,6 +104,11 @@ with edge descriptor as key type.</TD>
 
 </Table>
 
+<H3>Associated Types</H3>
+
+none
+<p>
+
 <H3>Valid Expressions</H3>
 
 <Table border>
@@ -102,7 +118,7 @@ with edge descriptor as key type.</TD>
 
 <TR>
 <TD>Full evaluation</TD>
-<TD><TT>QF::quality(g, c, w)</TT></TD>
+<TD><TT>f.quality(g, c, w)</TT></TD>
 <TD><TT>weight_type</TT></TD>
 <TD>
 Evaluate the quality of the partition defined by <TT>c</TT> on
@@ -112,6 +128,25 @@ Traverses the entire graph.
 </TR>
 
 </Table>
+
+<H3>Concept Checking Class</H3>
+
+<PRE>
+  template &lt;class QualityFunction, class Graph,
+            class CommunityMap, class WeightMap&gt;
+  struct GraphPartitionQualityFunctionConcept
+  {
+      void constraints()
+      {
+          QualityFunction f;
+          weight_type q = f.quality(g, cmap, wmap);
+          boost::ignore_unused(q);
+      }
+      Graph g;
+      CommunityMap cmap;
+      WeightMap wmap;
+  };
+</PRE>
 
 <H3>Models</H3>
 
@@ -191,6 +226,11 @@ candidate move during local optimization.
 
 </Table>
 
+<H3>Associated Types</H3>
+
+none
+<p>
+
 <H3>Valid Expressions</H3>
 
 <P>
@@ -204,7 +244,7 @@ In addition to the expressions required by
 
 <TR>
 <TD>Full evaluation with auxiliary maps</TD>
-<TD><TT>QF::quality(g, c, w, k, in, tot, m)</TT></TD>
+<TD><TT>f.quality(g, c, w, k, in, tot, m)</TT></TD>
 <TD><TT>weight_type</TT></TD>
 <TD>
 Evaluate partition quality by traversing the graph while populating the
@@ -214,7 +254,7 @@ auxiliary maps <TT>k</TT>, <TT>in</TT>, <TT>tot</TT>, and <TT>m</TT>.
 
 <TR>
 <TD>Fast evaluation from statistics</TD>
-<TD><TT>QF::quality(in, tot, m, n)</TT></TD>
+<TD><TT>f.quality(in, tot, m, n)</TT></TD>
 <TD><TT>weight_type</TT></TD>
 <TD>
 Compute quality from the incrementally maintained community-level
@@ -224,7 +264,7 @@ statistics without traversing the graph.
 
 <TR>
 <TD>Remove vertex</TD>
-<TD><TT>QF::remove(in, tot, comm, k_v, k_v_in, w_self)</TT></TD>
+<TD><TT>f.remove(in, tot, comm, k_v, k_v_in, w_self)</TT></TD>
 <TD><TT>void</TT></TD>
 <TD>
 Update <TT>in</TT> and <TT>tot</TT> to reflect the removal of a
@@ -234,7 +274,7 @@ vertex with weighted degree <TT>k_v</TT> from community <TT>comm</TT>.
 
 <TR>
 <TD>Insert vertex</TD>
-<TD><TT>QF::insert(in, tot, comm, k_v, k_v_in, w_self)</TT></TD>
+<TD><TT>f.insert(in, tot, comm, k_v, k_v_in, w_self)</TT></TD>
 <TD><TT>void</TT></TD>
 <TD>
 Update <TT>in</TT> and <TT>tot</TT> to reflect the insertion of a
@@ -244,7 +284,7 @@ vertex into community <TT>comm</TT>.
 
 <TR>
 <TD>Gain</TD>
-<TD><TT>QF::gain(tot, m, comm, k_v_in, k_v)</TT></TD>
+<TD><TT>f.gain(tot, m, comm, k_v_in, k_v)</TT></TD>
 <TD><TT>weight_type</TT></TD>
 <TD>
 Compute the change in quality that would result from moving a vertex
@@ -253,6 +293,40 @@ Compute the change in quality that would result from moving a vertex
 </TR>
 
 </Table>
+
+<H3>Concept Checking Class</H3>
+
+<PRE>
+  template &lt;class QualityFunction, class Graph,
+            class CommunityMap, class WeightMap&gt;
+  struct GraphPartitionQualityFunctionIncrementalConcept
+    : GraphPartitionQualityFunctionConcept&lt;QualityFunction, Graph,
+                                           CommunityMap, WeightMap&gt;
+  {
+      void constraints()
+      {
+          GraphPartitionQualityFunctionConcept&lt;
+              QualityFunction, Graph, CommunityMap, WeightMap
+          &gt;::constraints();
+
+          QualityFunction f;
+          weight_type q2 = f.quality(g, cmap, wmap, k, in, tot, m);
+          weight_type q3 = f.quality(in, tot, m, num_communities);
+          f.remove(in, tot, comm, weight_val, weight_val, weight_val);
+          f.insert(in, tot, comm, weight_val, weight_val, weight_val);
+          weight_type gain = f.gain(tot, m, comm, weight_val, weight_val);
+          boost::ignore_unused(q2, q3, gain);
+      }
+      Graph g;
+      CommunityMap cmap;
+      WeightMap wmap;
+      vector_property_map&lt;weight_type&gt; k;
+      associative_property_map&lt;...&gt; in, tot;
+      weight_type m, weight_val;
+      community_type comm;
+      std::size_t num_communities;
+  };
+</PRE>
 
 <H3>Models</H3>
 
@@ -301,7 +375,7 @@ Writing a Custom Quality Function
 <P>
 To use a custom quality metric with
 <a href="louvain_clustering.html"><TT>louvain_clustering()</TT></a>,
-define a struct with the required static member functions.
+define a struct with the required member functions.
 
 <P>
 <b>Minimal (non-incremental):</b> Implement only
@@ -312,7 +386,7 @@ at each step, which is correct but slow.
 struct my_quality
 {
     template &lt;typename Graph, typename CommunityMap, typename WeightMap&gt;
-    static typename boost::property_traits&lt;WeightMap&gt;::value_type
+    typename boost::property_traits&lt;WeightMap&gt;::value_type
     quality(const Graph&amp; g, const CommunityMap&amp; c, const WeightMap&amp; w)
     {
         <i>// compute and return your metric</i>
@@ -325,8 +399,8 @@ boost::louvain_clustering&lt;my_quality&gt;(g, components, weights, rng);
 <P>
 <b>Full (incremental):</b> Also implement the three <TT>quality</TT>
 overloads plus <TT>remove</TT>, <TT>insert</TT>, and
-<TT>gain</TT>. The algorithm will automatically detect this and use
-the fast path.
+<TT>gain</TT> as member functions. The algorithm will automatically
+detect this and use the fast path.
 
 
 <!-- ============================================================ -->
