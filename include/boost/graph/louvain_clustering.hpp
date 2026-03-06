@@ -129,6 +129,7 @@ auto aggregate(
         typename graph_traits<aggregated_graph_t>::edge_descriptor e;
         bool inserted;
         tie(e, inserted) = add_edge(kv.first.first, kv.first.second, kv.second, new_g);
+        BOOST_ASSERT(inserted);
     }
     
     return result_t{std::move(new_g), std::move(new_community_map),
