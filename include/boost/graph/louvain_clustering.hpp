@@ -13,6 +13,10 @@
 #define BOOST_GRAPH_LOUVAIN_TRUST_AGGREGATED_Q 0
 #endif
 
+#ifndef BOOST_GRAPH_LOUVAIN_TRACK_PEAK_Q
+#define BOOST_GRAPH_LOUVAIN_TRACK_PEAK_Q 0
+#endif
+
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -561,7 +565,7 @@ louvain_clustering(
     std::size_t prev_n_vertices = n;
     std::size_t iteration = 0;
     
-    #if !BOOST_GRAPH_LOUVAIN_TRUST_AGGREGATED_Q
+    #if BOOST_GRAPH_LOUVAIN_TRACK_PEAK_Q
         // Track best partition across all levels
         std::vector<std::size_t> best_partition = vertex_index_to_community;
         weight_type best_Q = Q;
@@ -596,12 +600,15 @@ louvain_clustering(
             // Compute Q on original graph
             auto partition_map_check = make_iterator_property_map(vertex_index_to_community.begin(), idx);
             Q = f.quality(g0, partition_map_check, w0);
+        #endif 
+
+        #if BOOST_GRAPH_LOUVAIN_TRACK_PEAK_Q
             // Track best partition
             if (Q > best_Q) {
                 best_Q = Q;
                 best_partition = vertex_index_to_community;
             }
-            #endif
+        #endif
 
         // Stop if quality did not improve
         if (Q - Q_old <= min_improvement_outer) {
@@ -616,7 +623,7 @@ louvain_clustering(
     }
     
 
-    #if !BOOST_GRAPH_LOUVAIN_TRUST_AGGREGATED_Q
+    #if BOOST_GRAPH_LOUVAIN_TRACK_PEAK_Q
         vertex_index_to_community = best_partition;
         Q = best_Q;
     #endif
