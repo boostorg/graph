@@ -40,8 +40,6 @@ struct aggregation_result
 {
     Graph graph;
     PartitionMap partition;
-    // indexed by coarsened vertex
-    std::vector<WeightType> internal_weights;
     // coarsened vertex to original vertex indices
     std::vector<std::vector<std::size_t>> vertex_mapping;
 };
@@ -98,7 +96,6 @@ auto aggregate(
     
     // Build edges with accumulated weights
     boost::unordered_flat_map<std::pair<agg_vertex_t, agg_vertex_t>, weight_type> temp_edge_weights;
-    std::vector<weight_type> temp_internal_weights(n_communities, weight_type(0));
     
     edge_iterator edge_it, edge_end;
     for (tie(edge_it, edge_end) = edges(g); edge_it != edge_end; ++edge_it) {
@@ -117,7 +114,6 @@ auto aggregate(
         if (new_u == new_v) {
             auto edge_key = std::make_pair(new_u, new_u);
             temp_edge_weights[edge_key] += w;
-            temp_internal_weights[new_u] += w;
         } else {
             auto edge_key = std::make_pair(std::min(new_u, new_v), std::max(new_u, new_v));
             temp_edge_weights[edge_key] += w;
@@ -132,8 +128,7 @@ auto aggregate(
         BOOST_ASSERT(inserted);
     }
     
-    return result_t{std::move(new_g), std::move(new_community_map),
-                    std::move(temp_internal_weights), std::move(vertex_to_originals)};
+    return result_t{std::move(new_g), std::move(new_community_map), std::move(vertex_to_originals)};
 }
 
 /// @brief Unfold a coarse partition back to the original vertices through hierarchy levels.
