@@ -110,7 +110,7 @@ void connect_all_euclidean(VertexListGraph& g, const PointContainer& points,
 // generate_random_points
 //
 // Generates a set of random unique 2D points for TSP testing.
-// Uses std::unordered_set to ensure uniqueness and avoid duplicate points.
+// Uses unordered_set to ensure uniqueness and avoid duplicate points.
 // This involves copying points into the output iterator...
 // but simplifies uniqueness handling.
 // Supports custom random distributions for flexible point generation patterns.
