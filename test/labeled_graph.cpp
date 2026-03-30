@@ -26,6 +26,7 @@ void test_temp();
 void test_bacon();
 void test_remove_labeled_vertex();
 void test_multiple_associative_container();
+void test_remove_vertex_all_types();
 
 int main()
 {
@@ -35,6 +36,7 @@ int main()
     test_bacon();
     test_remove_labeled_vertex();
     test_multiple_associative_container();
+    test_remove_vertex_all_types();
 }
 
 //////////////////////////////////////
@@ -207,4 +209,217 @@ void test_multiple_associative_container()
 
     g.remove_vertex("test");
     BOOST_ASSERT(num_vertices(g) == 0);
+}
+
+template <typename LabeledGraph, typename Label>
+void test_remove_vertex_suite(Label l1, Label l2, Label l3)
+{
+    // remove + label cleanup
+    {
+        LabeledGraph g;
+        g.add_vertex(l1);
+        BOOST_ASSERT(num_vertices(g) == 1);
+        BOOST_ASSERT(g.vertex(l1) != LabeledGraph::null_vertex());
+
+        g.remove_vertex(l1);
+        BOOST_ASSERT(num_vertices(g) == 0);
+        BOOST_ASSERT(g.vertex(l1) == LabeledGraph::null_vertex());
+    }
+
+    // remove one + keep others
+    {
+        LabeledGraph g;
+        g.add_vertex(l1);
+        g.add_vertex(l2);
+        g.add_vertex(l3);
+        BOOST_ASSERT(num_vertices(g) == 3);
+
+        g.remove_vertex(l2);
+        BOOST_ASSERT(num_vertices(g) == 2);
+        BOOST_ASSERT(g.vertex(l2) == LabeledGraph::null_vertex());
+        BOOST_ASSERT(g.vertex(l1) != LabeledGraph::null_vertex());
+        BOOST_ASSERT(g.vertex(l3) != LabeledGraph::null_vertex());
+    }
+
+    // reuse label after removal
+    {
+        LabeledGraph g;
+        g.add_vertex(l1);
+        g.remove_vertex(l1);
+        g.add_vertex(l1);
+        BOOST_ASSERT(num_vertices(g) == 1);
+        BOOST_ASSERT(g.vertex(l1) != LabeledGraph::null_vertex());
+    }
+
+    // Remove all
+    {
+        LabeledGraph g;
+        g.add_vertex(l1);
+        g.add_vertex(l2);
+        g.add_vertex(l3);
+
+        g.remove_vertex(l1);
+        g.remove_vertex(l2);
+        g.remove_vertex(l3);
+        BOOST_ASSERT(num_vertices(g) == 0);
+    }
+
+    // Remove vertex with incident edges
+    {
+        LabeledGraph g;
+        g.add_vertex(l1);
+        g.add_vertex(l2);
+        add_edge_by_label(l1, l2, g);
+        BOOST_ASSERT(num_edges(g) == 1);
+
+        // BGL requires clearing edges before removing a vertex
+        clear_vertex_by_label(l1,g);
+        g.remove_vertex(l1);
+        BOOST_ASSERT(g.vertex(l1) == LabeledGraph::null_vertex());
+        BOOST_ASSERT(num_edges(g) == 0);
+    }    
+}
+
+template <typename Graph, typename LabeledGraph, typename Label>
+void test_remove_vertex_suite_ptr_variant(Label l1, Label l2, Label l3)
+{
+    // remove + label cleanup
+    {
+        Graph graph;
+        LabeledGraph g(&graph);
+        g.add_vertex(l1);
+        BOOST_ASSERT(num_vertices(g) == 1);
+        BOOST_ASSERT(g.vertex(l1) != LabeledGraph::null_vertex());
+
+        g.remove_vertex(l1);
+        BOOST_ASSERT(num_vertices(g) == 0);
+        BOOST_ASSERT(g.vertex(l1) == LabeledGraph::null_vertex());
+    }
+
+    // remove one + keep others
+    {
+        Graph graph;
+        LabeledGraph g(&graph);
+        g.add_vertex(l1);
+        g.add_vertex(l2);
+        g.add_vertex(l3);
+        BOOST_ASSERT(num_vertices(g) == 3);
+
+        g.remove_vertex(l2);
+        BOOST_ASSERT(num_vertices(g) == 2);
+        BOOST_ASSERT(g.vertex(l2) == LabeledGraph::null_vertex());
+        BOOST_ASSERT(g.vertex(l1) != LabeledGraph::null_vertex());
+        BOOST_ASSERT(g.vertex(l3) != LabeledGraph::null_vertex());
+    }
+
+    // reuse label after removal
+    {
+        Graph graph;
+        LabeledGraph g(&graph);
+        g.add_vertex(l1);
+        g.remove_vertex(l1);
+        g.add_vertex(l1);
+        BOOST_ASSERT(num_vertices(g) == 1);
+        BOOST_ASSERT(g.vertex(l1) != LabeledGraph::null_vertex());
+    }
+
+    // Remove all
+    {
+        Graph graph;
+        LabeledGraph g(&graph);
+        g.add_vertex(l1);
+        g.add_vertex(l2);
+        g.add_vertex(l3);
+
+        g.remove_vertex(l1);
+        g.remove_vertex(l2);
+        g.remove_vertex(l3);
+        BOOST_ASSERT(num_vertices(g) == 0);
+    }
+
+    // Remove vertex with incident edges
+    {
+        Graph graph;
+        LabeledGraph g(&graph);
+        g.add_vertex(l1);
+        g.add_vertex(l2);
+        add_edge_by_label(l1, l2, g);
+        BOOST_ASSERT(num_edges(g) == 1);
+
+        // BGL requires clearing edges before removing a vertex
+        clear_vertex_by_label(l1,g); 
+        g.remove_vertex(l1);
+        BOOST_ASSERT(g.vertex(l1) == LabeledGraph::null_vertex());
+        BOOST_ASSERT(num_edges(g) == 0);
+    }    
+}
+
+void test_remove_vertex_all_types()
+{
+    // defaultS
+    test_remove_vertex_suite<
+        labeled_graph<directed_graph<>, string>
+    >("a", "b", "c");
+
+    test_remove_vertex_suite<
+        labeled_graph<undirected_graph<>, string>
+    >("a", "b", "c");
+
+    // mapS
+    test_remove_vertex_suite<
+        labeled_graph<directed_graph<>, string, mapS>
+    >("a", "b", "c");
+
+    test_remove_vertex_suite<
+        labeled_graph<undirected_graph<>, string, mapS>
+    >("a", "b", "c");
+
+    // hash_mapS
+    test_remove_vertex_suite<
+        labeled_graph<directed_graph<>, string, hash_mapS>
+    >("a", "b", "c");
+
+    test_remove_vertex_suite<
+        labeled_graph<undirected_graph<>, string, hash_mapS>
+    >("a", "b", "c");
+
+    // adjacency_list + vecS not supported (unstable removal would require remapping the map)
+    
+    // adjacency_list + listS (stable removal)
+    test_remove_vertex_suite<
+        labeled_graph<adjacency_list<listS, listS, directedS>, string, mapS>
+    >("a", "b", "c");
+
+    test_remove_vertex_suite<
+        labeled_graph<adjacency_list<listS, listS, undirectedS>, string, mapS>
+    >("a", "b", "c");
+
+    // unsigned labels (vecS)
+    test_remove_vertex_suite<
+        labeled_graph<adjacency_list<listS, listS, directedS>, unsigned, vecS>
+    >(0u, 1u, 2u);
+
+    // Pointer specialization: 
+    // temporarily attach labels to it without copying.
+
+    test_remove_vertex_suite_ptr_variant<
+        directed_graph<>,
+        labeled_graph<directed_graph<>*, string>
+    >("a", "b", "c");
+
+    test_remove_vertex_suite_ptr_variant<
+        undirected_graph<>,
+        labeled_graph<undirected_graph<>*, string>
+    >("a", "b", "c");
+
+    test_remove_vertex_suite_ptr_variant<
+        directed_graph<>,
+        labeled_graph<directed_graph<>*, string, hash_mapS>
+    >("a", "b", "c");
+
+    // unsigned labels
+    test_remove_vertex_suite_ptr_variant<
+        adjacency_list<listS, listS, directedS>,
+        labeled_graph<adjacency_list<listS, listS, directedS>*, unsigned, vecS>
+    >(0u, 1u, 2u);
 }
