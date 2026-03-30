@@ -10,7 +10,6 @@
 #define BOOST_GRAPH_CIRCLE_LAYOUT_HPP
 #include <boost/config/no_tr1/cmath.hpp>
 #include <boost/math/constants/constants.hpp>
-#include <utility>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/graph/topology.hpp>
@@ -42,8 +41,7 @@ void circle_graph_layout(
     using std::sin;
 #endif // BOOST_NO_STDC_NAMESPACE
 
-    typedef typename graph_traits< VertexListGraph >::vertices_size_type
-        vertices_size_type;
+    using vertices_size_type = typename graph_traits< VertexListGraph >::vertices_size_type;
 
     vertices_size_type n = num_vertices(g);
 
