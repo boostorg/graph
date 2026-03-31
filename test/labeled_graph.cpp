@@ -385,9 +385,6 @@ void test_remove_vertex_all_types()
         labeled_graph<undirected_graph<>, string, hash_mapS>
     >("a", "b", "c");
 
-    // adjacency_list + vecS not supported (unstable removal would require remapping the map)
-    // TODO: fix or not but document
-
     // adjacency_list + listS (stable removal)
     test_remove_vertex_suite<
         labeled_graph<adjacency_list<listS, listS, directedS>, string, mapS>
@@ -397,13 +394,16 @@ void test_remove_vertex_all_types()
         labeled_graph<adjacency_list<listS, listS, undirectedS>, string, mapS>
     >("a", "b", "c");
 
-    // unsigned labels (vecS) : should not compile because static assert prevents removing vertices now
-    // test_remove_vertex_suite<
-    //     labeled_graph<adjacency_list<listS, listS, directedS>, unsigned, vecS>
-    // >(0u, 1u, 2u);
+    // adjacency_list + hash_multimapS
+    test_remove_vertex_suite<
+        labeled_graph<adjacency_list<listS, listS, directedS>, string, hash_multimapS>
+    >("a", "b", "c");
 
-    // Pointer specialization: 
-    // temporarily attach labels to it without copying.
+    test_remove_vertex_suite<
+        labeled_graph<adjacency_list<listS, listS, directedS>, string, multimapS>
+    >("a", "b", "c");
+
+    // Pointer specialization
 
     test_remove_vertex_suite_ptr_variant<
         directed_graph<>,
@@ -419,6 +419,35 @@ void test_remove_vertex_all_types()
         directed_graph<>,
         labeled_graph<directed_graph<>*, string, hash_mapS>
     >("a", "b", "c");
+
+    test_remove_vertex_suite_ptr_variant<
+        directed_graph<>,
+        labeled_graph<directed_graph<>*, string, mapS>
+    >("a", "b", "c");
+
+    test_remove_vertex_suite_ptr_variant<
+        adjacency_list<listS, listS, directedS>,
+        labeled_graph<adjacency_list<listS, listS, directedS>*, string, multimapS>
+    >("a", "b", "c");
+
+    test_remove_vertex_suite_ptr_variant<
+        adjacency_list<listS, listS, directedS>,
+        labeled_graph<adjacency_list<listS, listS, directedS>*, string, hash_multimapS>
+    >("a", "b", "c");
+
+    test_remove_vertex_suite_ptr_variant<
+        adjacency_list<listS, listS, directedS>,
+        labeled_graph<adjacency_list<listS, listS, directedS>*, string, mapS>
+    >("a", "b", "c");
+
+    // Unsupported cases
+
+    // adjacency_list + vecS not supported (unstable removal would require remapping the map)
+    
+    // unsigned labels (vecS) : should not compile because static assert prevents removing vertices now
+    // test_remove_vertex_suite<
+    //     labeled_graph<adjacency_list<listS, listS, directedS>, unsigned, vecS>
+    // >(0u, 1u, 2u);
 
     // unsigned labels (vecS) : should not compile because static assert prevents removing vertices now
     // test_remove_vertex_suite_ptr_variant<
