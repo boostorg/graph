@@ -501,6 +501,13 @@ public:
     /** Remove the vertex with the given label. */
     void remove_vertex(Label const& l)
     {
+        static_assert(
+            !is_same<
+                typename graph_detail::container_traits<map_type>::category,
+                graph_detail::vector_tag
+            >::value,
+            "remove_vertex is not supported with vecS label storage: erasing from the underlying vector invalidates all label-to-vertex mappings after the erased position"
+        );
         return graph_detail::remove_labeled_vertex(_map, _graph, l);
     }
 
@@ -642,6 +649,13 @@ public:
     /** Remove the vertex with the given label. */
     void remove_vertex(Label const& l)
     {
+        static_assert(
+            !is_same<
+                typename graph_detail::container_traits<map_type>::category,
+                graph_detail::vector_tag
+            >::value,
+            "remove_vertex is not supported with vecS label storage: erasing from the underlying vector invalidates all label-to-vertex mappings after the erased position"
+        );
         return boost::remove_vertex(vertex(l), *_graph);
     }
 

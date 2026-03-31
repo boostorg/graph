@@ -234,6 +234,8 @@ void test_remove_vertex_suite(Label l1, Label l2, Label l3)
         g.add_vertex(l3);
         BOOST_ASSERT(num_vertices(g) == 3);
 
+        // TODO: this is broken when backed by vecS + unsigned because
+        // erasing middle element invalidates others.
         g.remove_vertex(l2);
         BOOST_ASSERT(num_vertices(g) == 2);
         BOOST_ASSERT(g.vertex(l2) == LabeledGraph::null_vertex());
@@ -384,7 +386,8 @@ void test_remove_vertex_all_types()
     >("a", "b", "c");
 
     // adjacency_list + vecS not supported (unstable removal would require remapping the map)
-    
+    // TODO: fix or not but document
+
     // adjacency_list + listS (stable removal)
     test_remove_vertex_suite<
         labeled_graph<adjacency_list<listS, listS, directedS>, string, mapS>
@@ -394,10 +397,10 @@ void test_remove_vertex_all_types()
         labeled_graph<adjacency_list<listS, listS, undirectedS>, string, mapS>
     >("a", "b", "c");
 
-    // unsigned labels (vecS)
-    test_remove_vertex_suite<
-        labeled_graph<adjacency_list<listS, listS, directedS>, unsigned, vecS>
-    >(0u, 1u, 2u);
+    // unsigned labels (vecS) : should not compile because static assert prevents removing vertices now
+    // test_remove_vertex_suite<
+    //     labeled_graph<adjacency_list<listS, listS, directedS>, unsigned, vecS>
+    // >(0u, 1u, 2u);
 
     // Pointer specialization: 
     // temporarily attach labels to it without copying.
@@ -417,9 +420,9 @@ void test_remove_vertex_all_types()
         labeled_graph<directed_graph<>*, string, hash_mapS>
     >("a", "b", "c");
 
-    // unsigned labels
-    test_remove_vertex_suite_ptr_variant<
-        adjacency_list<listS, listS, directedS>,
-        labeled_graph<adjacency_list<listS, listS, directedS>*, unsigned, vecS>
-    >(0u, 1u, 2u);
+    // unsigned labels (vecS) : should not compile because static assert prevents removing vertices now
+    // test_remove_vertex_suite_ptr_variant<
+    //     adjacency_list<listS, listS, directedS>,
+    //     labeled_graph<adjacency_list<listS, listS, directedS>*, unsigned, vecS>
+    // >(0u, 1u, 2u);
 }
