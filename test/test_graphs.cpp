@@ -159,7 +159,9 @@ int main()
         test_graph(g);
     }
     {
-        typedef labeled_graph< directed_graph<>, unsigned > Graph;
+        // @note: must not use defaultS/vecS label storage because vertex
+        // removal invalidates label-to-vertex mappings in vector-backed maps
+        typedef labeled_graph< directed_graph<>, unsigned, mapS > Graph;
         BOOST_META_ASSERT(is_directed_graph< Graph >);
         BOOST_META_ASSERT(is_multigraph< Graph >);
         BOOST_META_ASSERT(is_incidence_graph< Graph >);
