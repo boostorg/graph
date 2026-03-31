@@ -508,6 +508,7 @@ public:
             >::value,
             "remove_vertex is not supported with vecS label storage: erasing from the underlying vector invalidates all label-to-vertex mappings after the erased position"
         );
+        // use dispatcher: removes the vertex from the graph and its label from _map
         return graph_detail::remove_labeled_vertex(_map, _graph, l);
     }
 
@@ -656,7 +657,8 @@ public:
             >::value,
             "remove_vertex is not supported with vecS label storage: erasing from the underlying vector invalidates all label-to-vertex mappings after the erased position"
         );
-        return boost::remove_vertex(vertex(l), *_graph);
+        // use dispatcher: removes the vertex from the graph and its label from _map
+        return graph_detail::remove_labeled_vertex(_map, *_graph, l);
     }
 
     /** Return a descriptor for the given label. */
