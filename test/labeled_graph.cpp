@@ -194,23 +194,6 @@ void test_remove_labeled_vertex()
     BOOST_ASSERT(v2 == nullptr);
 }
 
-void test_multiple_associative_container()
-{
-    typedef labeled_graph<adjacency_list<listS, multisetS, directedS>, string, multimapS> Graph;
-
-    Graph g;
-    g.add_vertex("test");
-    g.add_vertex("test");
-
-    BOOST_ASSERT(num_vertices(g) == 2);
-
-    g.remove_vertex("test");
-    BOOST_ASSERT(num_vertices(g) == 1);
-
-    g.remove_vertex("test");
-    BOOST_ASSERT(num_vertices(g) == 0);
-}
-
 template <typename LabeledGraph, typename Label>
 void test_remove_vertex_suite(Label l1, Label l2, Label l3)
 {
@@ -454,4 +437,130 @@ void test_remove_vertex_all_types()
     //     adjacency_list<listS, listS, directedS>,
     //     labeled_graph<adjacency_list<listS, listS, directedS>*, unsigned, vecS>
     // >(0u, 1u, 2u);
+}
+
+template <typename LabeledGraph, typename Label>
+void test_multimap_suite(Label l1, Label l2)
+{
+    // Duplicate labels, remove one at a time
+    {
+        LabeledGraph g;
+        g.add_vertex(l1);
+        g.add_vertex(l1);
+        BOOST_ASSERT(num_vertices(g) == 2);
+
+        g.remove_vertex(l1);
+        BOOST_ASSERT(num_vertices(g) == 1);
+
+        g.remove_vertex(l1);
+        BOOST_ASSERT(num_vertices(g) == 0);
+    }
+
+    // Duplicates + unique mixed
+    {
+        LabeledGraph g;
+        g.add_vertex(l1);
+        g.add_vertex(l1);
+        g.add_vertex(l2);
+        BOOST_ASSERT(num_vertices(g) == 3);
+
+        g.remove_vertex(l1);
+        BOOST_ASSERT(num_vertices(g) == 2);
+        BOOST_ASSERT(g.vertex(l2) != LabeledGraph::null_vertex());
+
+        g.remove_vertex(l1);
+        BOOST_ASSERT(num_vertices(g) == 1);
+        BOOST_ASSERT(g.vertex(l2) != LabeledGraph::null_vertex());
+    }
+
+    // Reuse label after removing all duplicates
+    {
+        LabeledGraph g;
+        g.add_vertex(l1);
+        g.add_vertex(l1);
+        g.remove_vertex(l1);
+        g.remove_vertex(l1);
+        BOOST_ASSERT(num_vertices(g) == 0);
+
+        g.add_vertex(l1);
+        BOOST_ASSERT(num_vertices(g) == 1);
+        BOOST_ASSERT(g.vertex(l1) != LabeledGraph::null_vertex());
+    }
+}
+
+template <typename Graph, typename LabeledGraph, typename Label>
+void test_multimap_suite_ptr(Label l1, Label l2)
+{
+    // Duplicate labels, remove one at a time
+    {
+        Graph graph;
+        LabeledGraph g(&graph);
+        g.add_vertex(l1);
+        g.add_vertex(l1);
+        BOOST_ASSERT(num_vertices(g) == 2);
+
+        g.remove_vertex(l1);
+        BOOST_ASSERT(num_vertices(g) == 1);
+
+        g.remove_vertex(l1);
+        BOOST_ASSERT(num_vertices(g) == 0);
+    }
+
+    // Duplicates + unique mixed
+    {
+        Graph graph;
+        LabeledGraph g(&graph);
+        g.add_vertex(l1);
+        g.add_vertex(l1);
+        g.add_vertex(l2);
+        BOOST_ASSERT(num_vertices(g) == 3);
+
+        g.remove_vertex(l1);
+        BOOST_ASSERT(num_vertices(g) == 2);
+        BOOST_ASSERT(g.vertex(l2) != LabeledGraph::null_vertex());
+
+        g.remove_vertex(l1);
+        BOOST_ASSERT(num_vertices(g) == 1);
+        BOOST_ASSERT(g.vertex(l2) != LabeledGraph::null_vertex());
+    }
+
+    // Reuse label after removing all duplicates
+    {
+        Graph graph;
+        LabeledGraph g(&graph);
+        g.add_vertex(l1);
+        g.add_vertex(l1);
+        g.remove_vertex(l1);
+        g.remove_vertex(l1);
+        BOOST_ASSERT(num_vertices(g) == 0);
+
+        g.add_vertex(l1);
+        BOOST_ASSERT(num_vertices(g) == 1);
+        BOOST_ASSERT(g.vertex(l1) != LabeledGraph::null_vertex());
+    }
+}
+
+void test_multiple_associative_container()
+{
+    // Owning multimapS
+    test_multimap_suite<
+        labeled_graph<adjacency_list<listS, multisetS, directedS>, string, multimapS>
+    >("a", "b");
+
+    // Owning hash_multimapS
+    test_multimap_suite<
+        labeled_graph<adjacency_list<listS, multisetS, directedS>, string, hash_multimapS>
+    >("a", "b");
+
+    // Pointer multimapS
+    test_multimap_suite_ptr<
+        adjacency_list<listS, multisetS, directedS>,
+        labeled_graph<adjacency_list<listS, multisetS, directedS>*, string, multimapS>
+    >("a", "b");
+
+    // Pointer hash_multimapS
+    test_multimap_suite_ptr<
+        adjacency_list<listS, multisetS, directedS>,
+        labeled_graph<adjacency_list<listS, multisetS, directedS>*, string, hash_multimapS>
+    >("a", "b");
 }
