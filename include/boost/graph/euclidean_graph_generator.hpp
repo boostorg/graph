@@ -46,14 +46,18 @@ void connect_all_euclidean(VertexListGraph& g, const PointContainer& points,
     WeightMap wmap, VertexIndexMap vmap)
 {
     BOOST_CONCEPT_ASSERT((VertexListGraphConcept< VertexListGraph >));
+    BOOST_CONCEPT_ASSERT((MutableGraphConcept< VertexListGraph >));
     BOOST_CONCEPT_ASSERT((WritablePropertyMapConcept< WeightMap,
         typename graph_traits< VertexListGraph >::edge_descriptor >));
     BOOST_CONCEPT_ASSERT((ReadablePropertyMapConcept< VertexIndexMap,
         typename graph_traits< VertexListGraph >::vertex_descriptor >));
 
-        // Precondition: Graph should have no edges
+    // Precondition: Graph should have no edges and size of points should match
+    // num_vertices(g)
     BOOST_ASSERT_MSG(boost::num_edges(g) == 0,
-        "connect_all_euclidean requires an empty graph (no edges)");
+        "connect_all_euclidean requires a graph with no edges)");
+    BOOST_ASSERT_MSG(boost::num_vertices(g) == points.size(),
+        "connect_all_euclidean requires num_vertices(g) == points.size()");
 
     using Edge = typename graph_traits< VertexListGraph >::edge_descriptor;
     using VItr = typename graph_traits< VertexListGraph >::vertex_iterator;
@@ -61,11 +65,7 @@ void connect_all_euclidean(VertexListGraph& g, const PointContainer& points,
     // Deduce the weight type from the WeightMap's value type
     using WeightType = typename boost::property_traits< WeightMap >::value_type;
 
-    // Deduce coordinate type from the point container
-    using PointType = typename PointContainer::value_type;
-    using CoordType = decltype(std::declval<PointType>().x);
     using IndexType = typename boost::property_traits<VertexIndexMap>::value_type;
-
 
     // Compile-time assertion: Prevent integer weight types
     BOOST_STATIC_ASSERT_MSG(
@@ -74,7 +74,6 @@ void connect_all_euclidean(VertexListGraph& g, const PointContainer& points,
         "Integer types cause truncation and produce non-useful incorrect tour lengths. "
         "e.g. Use property<edge_weight_t, double> instead of property<edge_weight_t, int>."
     );
-
 
     std::pair< VItr, VItr > verts(vertices(g));
 
