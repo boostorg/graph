@@ -1,0 +1,96 @@
+// ============================================================================
+// TEMPLATE: BGL Algorithm Documentation Page
+// ============================================================================
+//
+// Copy, rename to function name, place in pages/algorithms/.
+// Delete all // comment lines when done.
+//
+// ---- SIGNATURE FORMATTING ----
+//
+//   template <typename A, typename B, typename C,
+//             typename D, typename E>
+//   ReturnType function_name(
+//       const Graph& g,
+//       WeightMap weight, DistanceMap distance);
+//
+//   - Align template continuations under first param
+//   - Return type + name on one line, opening ( at end
+//   - Function params: 4-space indent, 1-2 per line, ~80 cols
+//
+// ---- GUIDELINES ----
+//
+//   - One overload = one signature block + one parameter table
+//   - Put named-param overload LAST (it will be deprecated)
+//   - If only a named-param version exists, it's just (1)
+//   - All sections below "Description" are optional — skip if N/A
+//   - For pages with multiple related functions (e.g., foo + bar),
+//     repeat the signature+table pattern under separate === headings
+//
+// ============================================================================
+
+[#sec:function-name]
+= Function Name
+
+One-line summary.
+
+Defined in `<boost/graph/header.hpp>`
+
+'''
+
+=== (1)
+
+[source,cpp]
+----
+template <typename Graph, typename WeightMap, typename DistanceMap>
+ReturnType function_name(
+    const Graph& g,
+    WeightMap weight, DistanceMap distance);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN       | `const Graph& g`       | ...
+| IN       | `WeightMap weight`     | ...
+| UTIL/OUT | `DistanceMap distance`  | ...
+|===
+
+// Repeat === (2), (3), etc. for additional overloads.
+// Put named-param overload last.
+
+'''
+
+== Description
+
+...
+
+== Complexity
+
+...
+
+// ---- OPTIONAL SECTIONS (include only if applicable) ----
+
+== Returns
+
+...
+
+== Throws
+
+...
+
+== Visitor Event Points
+
+* *`vis.discover_vertex(u, g)`* ...
+
+== Example
+
+See link:../example/foo.cpp[`example/foo.cpp`].
+
+== See Also
+
+* xref:algorithms/related.adoc[Related Algorithm]
+
+== Notes
+
+. ...

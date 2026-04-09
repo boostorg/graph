@@ -1,0 +1,207 @@
+= Reverse Graph Adaptor
+
+....
+
+reverse_graph<BidirectionalGraph, GraphReference>
+....
+
+The `reverse_graph` adaptor flips the in-edges and out-edges of a
+xref:concepts/BidirectionalGraph.adoc[BidirectionalGraph], effectively
+transposing the graph. The construction of the `reverse_graph` is
+constant time, providing a highly efficient way to obtain a transposed
+view of a graph.
+
+==== Example
+
+The example from
+link:../example/reverse_graph.cpp[`example/reverse_graph.cpp`].
+
+[source,cpp]
+----
+
+int
+main()
+{
+  typedef boost::adjacency_list<
+    boost::vecS, boost::vecS, boost::bidirectionalS,
+  > Graph;
+
+  Graph G(5);
+  boost::add_edge(0, 2, G);
+  boost::add_edge(1, 1, G);
+  boost::add_edge(1, 3, G);
+  boost::add_edge(1, 4, G);
+  boost::add_edge(2, 1, G);
+  boost::add_edge(2, 3, G);
+  boost::add_edge(2, 4, G);
+  boost::add_edge(3, 1, G);
+  boost::add_edge(3, 4, G);
+  boost::add_edge(4, 0, G);
+  boost::add_edge(4, 1, G);
+
+  std::cout << "original graph:" << std::endl;
+  boost::print_graph(G, boost::get(boost::vertex_index, G));
+
+  std::cout << std::endl << "reversed graph:" << std::endl;
+  boost::print_graph(boost::make_reverse_graph(G),
+                     boost::get(boost::vertex_index, G));
+
+  return 0;
+}
+----
+
+The output is:
+
+....
+
+original graph:
+0 --> 2
+1 --> 1 3 4
+2 --> 1 3 4
+3 --> 1 4
+4 --> 0 1
+
+reversed graph:
+0 --> 4
+1 --> 1 2 3 4
+2 --> 0
+3 --> 1 2
+4 --> 1 2 3
+....
+
+==== Template Parameters
+
+[cols=",,",options="header",]
+|===
+|Parameter |Description |Default
+|`BidirectionalGraph` |The graph type to be adapted. | 
+
+|`GraphReference` |This type should be `const BidirectionalGraph&` if
+you want to create a const reverse graph, or `BidirectionalGraph&` if
+you want to create a non-const reverse graph.
+|`const BidirectionalGraph&`
+|===
+
+==== Model of
+
+xref:concepts/BidirectionalGraph.adoc[BidirectionalGraph] and optionally
+xref:concepts/VertexListGraph.adoc[VertexListGraph] and
+xref:concepts/PropertyGraph.adoc[PropertyGraph]
+
+==== Where Defined
+
+link:../../../boost/graph/reverse_graph.hpp[`boost/graph/reverse_graph.hpp`]
+
+=== Associated Types
+
+'''''
+
+`graph_traits<reverse_graph>::vertex_descriptor` +
+ +
+The type for the vertex descriptors associated with the
+`reverse_graph`.
+
+'''''
+
+`graph_traits<reverse_graph>::edge_descriptor` +
+ +
+The type for the edge descriptors associated with the
+`reverse_graph`.
+
+'''''
+
+`graph_traits<reverse_graph>::vertex_iterator` +
+ +
+The type for the iterators returned by `vertices()`.
+
+'''''
+
+`graph_traits<reverse_graph>::edge_iterator` +
+ +
+The type for the iterators returned by `edges()`.
+
+'''''
+
+`graph_traits<reverse_graph>::out_edge_iterator` +
+ +
+The type for the iterators returned by `out_edges()`.
+
+'''''
+
+`graph_traits<reverse_graph>::adjacency_iterator` +
+ +
+The type for the iterators returned by `adjacent_vertices()`.
+
+'''''
+
+`graph_traits<reverse_graph>::directed_category` +
+ +
+Provides information about whether the graph is directed
+(`directed_tag`) or undirected (`undirected_tag`).
+
+'''''
+
+`graph_traits<reverse_graph>::edge_parallel_category` +
+ +
+This describes whether the graph class allows the insertion of parallel
+edges (edges with the same source and target). The two tags are
+`allow_parallel_edge-_tag` and
+`disallow_parallel_edge_tag`. The `setS` and `hash_setS`
+variants disallow parallel edges while the others allow parallel edges.
+
+'''''
+
+`graph_traits<reverse_graph>::vertices_size_type` +
+ +
+The type used for dealing with the number of vertices in the graph.
+
+'''''
+
+`graph_traits<reverse_graph>::edges_size_type` +
+ +
+The type used for dealing with the number of edges in the graph.
+
+'''''
+
+`graph_traits<reverse_graph>::degree_size_type` +
+ +
+The type used for dealing with the number of edges incident to a vertex
+in the graph.
+
+'''''
+
+`property_map<reverse_graph, PropertyTag>::type` +
+and +
+`property_map<reverse_graph, PropertyTag>::const_type` +
+ +
+The property map type for vertex or edge properties in the graph. The
+specific property is specified by the `PropertyTag` template argument,
+and must match one of the properties specified in the `VertexProperty`
+or `EdgeProperty` for the graph.
+
+'''''
+
+`property_map<reverse_graph, edge_underlying_t>::type` +
+and +
+`property_map<reverse_graph, edge_underlying_t>::const_type` +
+ +
+An edge property type mapping from edge descriptors in the
+`reverse_graph` to edge descriptors in the underlying
+`BidirectionalGraph` object.
+
+'''''
+
+=== Member Functions
+
+'''''
+
+....
+
+reverse_graph(BidirectionalGraph& g)
+....
+
+Constructor. Create a reversed (transposed) view of the graph `g`.
+
+'''''
+
+=== Non-Member Functions

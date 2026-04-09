@@ -1,0 +1,257 @@
+= The Boost Graph Library (BGL)
+
+Graphs are mathematical abstractions that are useful for solving many
+types of problems in computer science. Consequently, these abstractions
+must also be represented in computer programs. A standardized generic
+interface for traversing graphs is of utmost importance to encourage
+reuse of graph algorithms and data structures. Part of the Boost Graph
+Library is a generic interface that allows access to a graph's
+structure, but hides the details of the implementation. This is an
+“open” interface in the sense that any graph library that implements
+this interface will be interoperable with the BGL generic algorithms and
+with other algorithms that also use this interface. The BGL provides
+some general purpose graph classes that conform to this interface, but
+they are not meant to be the “only” graph classes; there certainly will
+be other graph classes that are better for certain situations. We
+believe that the main contribution of the The BGL is the formulation of
+this interface.
+
+The BGL graph interface and graph components are _generic_, in the same
+sense as the Standard Template Library
+(STL) [xref:about/bibliography.adoc#austern99:_gener_progr_stl[2]]. In
+the following sections, we review the role that generic programming
+plays in the STL and compare that to how we applied generic programming
+in the context of graphs.
+
+Of course, if you are already familiar with generic programming, please
+dive right in! Here's the the sidebar navigation to explore.
+Contents]. For distributed-memory parallelism, you can also look at the
+link:../../graph_parallel/doc/html/index.html[Parallel BGL].
+
+The source for the BGL is available as part of the Boost distribution,
+which you can
+http://sourceforge.net/project/showfiles.php?group_id=7586[download from
+here].
+
+=== How to Build the BGL
+
+*DON'T!* The Boost Graph Library is a header-only library and does not
+need to be built to be used. The only exceptions are the
+xref:io/read_graphviz.adoc[GraphViz input parser] and the
+xref:io/read_graphml.adoc[GraphML parser].
+
+When compiling programs that use the BGL, *be sure to compile with
+optimization*. For instance, select “Release” mode with Microsoft Visual
+C{plus}{plus} or supply the flag `-O2` or `-O3` to GCC.
+
+=== Genericity in STL
+
+There are three ways in which the STL is generic.
+
+==== Algorithm/Data-Structure Interoperability
+
+First, each algorithm is written in a data-structure neutral way,
+allowing a single template function to operate on many different classes
+of containers. The concept of an iterator is the key ingredient in this
+decoupling of algorithms and data-structures. The impact of this
+technique is a reduction in the STL's code size from _O(M*N)_ to
+_O(M+N)_, where _M_ is the number of algorithms and _N_ is the
+number of containers. Considering a situation of 20 algorithms and 5
+data-structures, this would be the difference between writing 100
+functions versus only 25 functions! And the differences continues to
+grow faster and faster as the number of algorithms and data-structures
+increase.
+
+==== Extension through Function Objects
+
+The second way that STL is generic is that its algorithms and containers
+are extensible. The user can adapt and customize the STL through the use
+of function objects. This flexibility is what makes STL such a great
+tool for solving real-world problems. Each programming problem brings
+its own set of entities and interactions that must be modeled. Function
+objects provide a mechanism for extending the STL to handle the
+specifics of each problem domain.
+
+==== Element Type Parameterization
+
+The third way that STL is generic is that its containers are
+parameterized on the element type. Though hugely important, this is
+perhaps the least “interesting” way in which STL is generic. Generic
+programming is often summarized by a brief description of parameterized
+lists such as `std::list<T>`. This hardly scratches the surface!
+
+=== Genericity in the Boost Graph Library
+
+Like the STL, there are three ways in which the BGL is generic.
+
+==== Algorithm/Data-Structure Interoperability
+
+First, the graph algorithms of the BGL are written to an interface that
+abstracts away the details of the particular graph data-structure. Like
+the STL, the BGL uses iterators to define the interface for
+data-structure traversal. There are three distinct graph traversal
+patterns: traversal of all vertices in the graph, through all of the
+edges, and along the adjacency structure of the graph (from a vertex to
+each of its neighbors). There are separate iterators for each pattern of
+traversal.
+
+This generic interface allows template functions such as
+xref:algorithms/breadth_first_search.adoc[`breadth_first_search()`] to
+work on a large variety of graph data-structures, from graphs
+implemented with pointer-linked nodes to graphs encoded in arrays. This
+flexibility is especially important in the domain of graphs. Graph
+data-structures are often custom-made for a particular application.
+Traditionally, if programmers want to reuse an algorithm implementation
+they must convert/copy their graph data into the graph library's
+prescribed graph structure. This is the case with libraries such as
+LEDA, GTL, Stanford GraphBase; it is especially true of graph algorithms
+written in Fortran. This severely limits the reuse of their graph
+algorithms.
+
+In contrast, custom-made (or even legacy) graph structures can be used
+as-is with the generic graph algorithms of the BGL, using _external
+adaptation_ (see Section xref:extending/leda_conversion.adoc[How to Convert
+Existing Graphs to the BGL]). External adaptation wraps a new interface
+around a data-structure without copying and without placing the data
+inside adaptor objects. The BGL interface was carefully designed to make
+this adaptation easy. To demonstrate this, we have built interfacing
+code for using a variety of graph structures (LEDA graphs, Stanford
+GraphBase graphs, and even Fortran-style arrays) in BGL graph
+algorithms.
+
+==== Extension through Visitors
+
+Second, the graph algorithms of the BGL are extensible. The BGL
+introduces the notion of a _visitor_, which is just a function object
+with multiple methods. In graph algorithms, there are often several key
+“event points” at which it is useful to insert user-defined operations.
+The visitor object has a different method that is invoked at each event
+point. The particular event points and corresponding visitor methods
+depend on the particular algorithm. They often include methods like
+`start_vertex()`, `discover_vertex()`, `examine_edge()`,
+`tree_edge()`, and `finish_vertex()`.
+
+==== Vertex and Edge Property Multi-Parameterization
+
+The third way that the BGL is generic is analogous to the
+parameterization of the element-type in STL containers, though again the
+story is a bit more complicated for graphs. We need to associate values
+(called “properties”) with both the vertices and the edges of the graph.
+In addition, it will often be necessary to associate multiple properties
+with each vertex and edge; this is what we mean by
+multi-parameterization. The STL `std::list<T>` class has a
+parameter `T` for its element type. Similarly, BGL graph classes have
+template parameters for vertex and edge “properties”. A property
+specifies the parameterized type of the property and also assigns an
+identifying tag to the property. This tag is used to distinguish between
+the multiple properties which an edge or vertex may have. A property
+value that is attached to a particular vertex or edge can be obtained
+via a _property map_. There is a separate property map for each
+property.
+
+Traditional graph libraries and graph structures fall down when it comes
+to the parameterization of graph properties. This is one of the primary
+reasons that graph data-structures must be custom-built for
+applications. The parameterization of properties in the BGL graph
+classes makes them well suited for re-use.
+
+=== Algorithms
+
+The BGL algorithms consist of a core set of algorithm _patterns_
+(implemented as generic algorithms) and a larger set of graph
+algorithms. The core algorithm patterns are
+
+* Breadth First Search
+* Depth First Search
+* Uniform Cost Search
+
+By themselves, the algorithm patterns do not compute any meaningful
+quantities over graphs; they are merely building blocks for constructing
+graph algorithms. The graph algorithms in the BGL currently include
+
+* Dijkstra's Shortest Paths
+* Bellman-Ford Shortest Paths
+* Johnson's All-Pairs Shortest Paths
+* Kruskal's Minimum Spanning Tree
+* Prim's Minimum Spanning Tree
+* Connected Components
+* Strongly Connected Components
+* Dynamic Connected Components (using Disjoint Sets)
+* Topological Sort
+* Transpose
+* Reverse Cuthill Mckee Ordering
+* Smallest Last Vertex Ordering
+* Sequential Vertex Coloring
+
+=== Data Structures
+
+The BGL currently provides two graph classes and an edge list adaptor:
+
+* xref:graph_classes/adjacency_list.adoc[`adjacency_list`]
+* xref:graph_classes/adjacency_matrix.adoc[`adjacency_matrix`]
+* xref:adaptors/edge_list.adoc[`edge_list`]
+
+The `adjacency_list` class is the general purpose “swiss army knife”
+of graph classes. It is highly parameterized so that it can be optimized
+for different situations: the graph is directed or undirected, allow or
+disallow parallel edges, efficient access to just the out-edges or also
+to the in-edges, fast vertex insertion and removal at the cost of extra
+space overhead, etc.
+
+The `adjacency_matrix` class stores edges in a _++|++V++|++ x
+++|++V++|++_ matrix (where _++|++V++|++_ is the number of vertices). The
+elements of this matrix represent edges in the graph. Adjacency matrix
+representations are especially suitable for very dense graphs, i.e.,
+those where the number of edges approaches _++|++V++|++^2^_.
+
+The `edge_list` class is an adaptor that takes any kind of edge
+iterator and implements an xref:concepts/EdgeListGraph.adoc[Edge List Graph].
+
+=== History
+
+The Boost Graph Library began its life as the Generic Graph Component
+Library (GGCL), a software project at the
+https://web.archive.org/web/20010516042117/http://www.lsc.nd.edu/[Lab
+for Scientific Computing (LSC)] at the University of Notre Dame, under
+the direction of Professor https://homes.cs.washington.edu/~al75[Andrew
+Lumsdaine]. The Lab's research directions include numerical linear
+algebra, parallel computing, and software engineering (including generic
+programming).
+
+Soon after the Standard Template Library was released, work began at the
+LSC to apply generic programming to scientific computing. The
+https://en.wikipedia.org/wiki/Matrix_Template_Library[Matrix Template
+Library] (Jeremy Siek's masters thesis) was one of the first projects.
+Many of the lessons learned during construction of the MTL were applied
+to the design and implementation of the GGCL.
+
+Graph algorithms play an important role in sparse matrix computations,
+so the LSC had a need for a good graph library. However, none of the
+available graph libraries (LEDA, GTL, Stanford GraphBase) were written
+using the generic programming style of the STL, and hence did not
+fulfill the flexibility and high-performance requirements of the LSC.
+Others were also expressing interest in a generic C++ graph library.
+There had also been earlier work in the area of generic graph algorithms,
+including some codes written by Alexander Stepanov, and Dietmar Kühl's
+masters thesis.
+
+With this in mind, and motivated by homework assignments in his
+algorithms class, Jeremy began prototyping an interface and some graph
+classes in the spring of 1998. Lie-Quan Lee then developed the first
+version of GGCL, which became his masters thesis project.
+
+The following year, Jeremy went to work for SGI with Alexander Stepanov
+and Matt Austern. During this time Alex's disjoint-sets based connected
+components algorithm was added to GGCL, and Jeremy began working on the
+concept documentation for GGCL similar to Matt's STL documentation.
+
+While working at SGI, Jeremy heard about Boost and was excited to find a
+group of people interested in creating high-quality C++ libraries. At
+Boost there were several people interested in generic graph algorithms,
+most notably Dietmar Kühl. Some discussions about generic interfaces for
+graph structures resulted in a revision of GGCL which closely resembles
+the current Boost Graph Library interface.
+
+On September 4, 2000 GGCL passed the Boost formal review and became the
+Boost Graph Library (BGL). The first release of BGL was September 27,
+2000.

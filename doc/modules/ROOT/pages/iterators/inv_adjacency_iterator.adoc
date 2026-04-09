@@ -1,0 +1,101 @@
+= Inverse Adjacency Iterator Adaptor
+
+Defined in header
+link:../../../boost/graph/adjacency_iterator.hpp[boost/graph/adjacency_iterator.hpp]
+
+The inverse adjacency iterator adaptor transforms an
+`in_edge_iterator` into an inverse adjacency iterator. That is,
+it takes an iterator that traverses over edges, and creates an iterator
+that traverses over the *_source_* vertices of those edges.
+
+=== Synopsis
+
+[source,cpp]
+----
+
+namespace boost {
+  template <class Graph, class VertexDescriptor, class InEdgeIter>
+  class inv_adjacency_iterator_generator {
+  public:
+    typedef iterator_adaptor<...> type;
+  };
+}
+----
+
+'''''
+
+==== Example
+
+The following is an example of how to use the
+`inv_adjacency_iterator_generator` class.
+
+[source,cpp]
+----
+
+#include <boost/graph/adjacency_iterator.hpp>
+
+class my_graph {
+  // ...
+  typedef ... in_edge_iterator;
+  typedef ... vertex_descriptor;
+  typedef boost::inv_adjacency_iterator_generator<my_graph, vertex_descriptor, in_edge_iterator>::type inv_adjacency_iterator;
+  // ...
+};
+----
+
+==== Template Parameters
+
+[width="100%",cols="50%,50%",options="header",]
+|===
+|Parameter |Description
+|`Graph` |The graph type, which must model
+xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+|`VertexDescriptor` |This must be the same type as
+`graph_traits<Graph>::vertex_descriptor`. The reason why
+this is a template parameter is that the primary use of
+`inv_adjacency_iterator_generator` is *_inside_* the
+definition of the graph class, and in that context we can not use
+`graph_traits` on the not yet fully defined graph class. +
+*Default:* `graph_traits<Graph>::vertex_descriptor`
+
+|`InEdgeIter` a|
+This must be the same type as
+`graph_traits<Graph>::in_edge_iterator`. +
+*Default:*
+
+graph_traits<Graph>::in_edge_iterator
+
+|===
+
+==== Model of
+
+The inverse adjacency iterator adaptor (the type
+`inv_adjacency_iterator_generator<...>::type`) is a
+model of link:../../utility/MultiPassInputIterator.html[Multi-Pass Input
+Iterator] .
+
+==== Members
+
+The inverse adjacency iterator type implements the member functions and
+operators required of the
+http://www.boost.org/sgi/stl/RandomAccessIterator.html[Random Access
+Iterator] concept, except that the `reference` type is the same as the
+`value_type` so `operator*()` returns by-value. In addition it
+has the following constructor:
+
+[source,cpp]
+----
+
+inv_adjacency_iterator_generator::type(const InEdgeIter& it, const Graph* g)
+----
+
+'''''
+
+Revised 19 Aug 2001
+
+© Copyright Jeremy Siek 2000. Permission to copy, use, modify, sell and
+distribute this document is granted provided this copyright notice
+appears in all copies. This document is provided "as is" without express
+or implied warranty, and with no claim as to its suitability for any
+purpose.

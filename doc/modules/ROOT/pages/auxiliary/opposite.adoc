@@ -1,0 +1,39 @@
+[#sec:opposite]
+= opposite
+
+
+*Complexity:*
+
+_O(1)_
+
+*Where Defined:*
+
+link:../../../boost/graph/graph_utility.hpp[`boost/graph/graph_utility.hpp`]
+
+[source,cpp]
+----
+
+  template <class Graph>
+  typename graph_traits<Graph>::vertex_descriptor
+  opposite(typename graph_traits<Graph>::edge_descriptor e,
+           typename graph_traits<Graph>::vertex_descriptor v,
+           const Graph& g)
+----
+
+Given an edge and a vertex which must be incident to the edge, this
+function returns the opposite vertex. So if `v` is the source vertex,
+this function returns the target vertex. If `v` is the target, then this
+function returns the source vertex.
+
+==== Example
+
+[source,cpp]
+----
+
+edge_descriptor e;
+...
+vertex_descriptor u, v;
+boost::tie(u, v) = incident(e, g);
+assert(v == opposite(e, u, g));
+assert(u == opposite(e, v, g));
+----

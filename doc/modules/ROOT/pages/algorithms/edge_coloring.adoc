@@ -1,0 +1,54 @@
+= `edge_coloring`
+
+[cols=",",]
+|===
+|*Graphs:* |undirected, loop-free
+|*Properties:* |color
+|*Complexity:* |time: _O({vbar}E{vbar} {vbar}V{vbar})_
+|===
+
+[source,cpp]
+----
+
+  template <class Graph, class ColorMap>
+  typename boost::property_traits::value_type
+  edge_coloring(const Graph &g, ColorMap color);
+----
+
+Computes an edge coloring for the vertices in the graph, using an
+algorithm proposed by Misra et al. ++[]++. Given edges ordered e~1~,
+e~2~, ..., e~n~ it assignes a colors c~1~, c~2~, ..., c~n~ in a way that
+no vertex connects with 2 edges of the same color. Furthermore at most m
++ 1 colors are used.
+
+==== Where defined
+
+link:../../../boost/graph/edge_coloring.hpp[`boost/graph/edge_coloring.hpp`]
+
+==== Parameters
+
+IN: `const Graph& g`
+
+____
+The graph object on which the algorithm will be applied. The type
+`Graph` must be a model of xref:concepts/EdgeListGraph.adoc[Edge List Graph] and
+xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+____
+
+OUT: `ColorMap color`
+
+____
+This property map records the colors of each edges. It must be a model
+of link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write
+Property Map] whose key type is the same as the edge descriptor type of
+the graph and whose value type is an integral type that can store all
+values smaller or equal to m.
+____
+
+==== Example
+
+See link:../example/edge_coloring.cpp[`example/edge_coloring.cpp`].
+
+==== See Also
+
+xref:algorithms/sequential_vertex_coloring.adoc[sequential vertex ordering].

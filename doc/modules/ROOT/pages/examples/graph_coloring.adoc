@@ -1,0 +1,142 @@
+= Graph Coloring
+
+The graph (or vertex) coloring problem, which involves assigning colors
+to vertices in a graph such that adjacenct vertices have distinct
+colors, arises in a number of scientific and engineering applications
+such as scheduling , register allocation , optimization  and parallel
+numerical computation.
+
+Mathmatically, a proper vertex coloring of an undirected graph _G=(V,E)_
+is a map _c: V -> S_ such that _c(u) != c(v)_ whenever there exists
+an edge _(u,v)_ in _G_. The elements of set _S_ are called the available
+colors. The problem is often to determine the minimum cardinality (the
+number of colors) of _S_ for a given graph _G_ or to ask whether it is
+able to color graph _G_ with a certain number of colors. For example,
+how many color do we need to color the United States on a map in such a
+way that adjacent states have different color? A compiler needs to
+decide whether variables and temporaries could be allocated in fixed
+number of registers at some point. If a target machine has _K_
+registers, can a particular interference graph be colored with _K_
+colors? (Each vertex in the interference graph represents a temporary
+value; each edge indicates a pair of temporaries that cannot be assigned
+to the same register.)
+
+Another example is in the estimation of sparse Jacobian matrix by
+differences in large scale nonlinear problems in optimization and
+differential equations. Given a nonlinear function _F_, the estimation
+of Jacobian matrix _J_ can be obtained by estimating _Jd_ for suitable
+choices of vector _d_. Curtis, Powell and
+Reid [xref:about/bibliography.adoc#curtis74:_jacob[9]] observed that a
+group of columns of _J_ can be determined by one evaluation of _Jd_ if
+no two columns in this group have a nonzero in the same row position.
+Therefore, a question is emerged: what is the number of function
+evaluations need to compute approximate Jacobian matrix? As a matter of
+fact this question is the same as to compute the minimum numbers of
+colors for coloring a graph if we construct the graph in the following
+matter: A vertex represents a column of _J_ and there is an edge if and
+only if the two column have a nonzero in the same row position.
+
+However, coloring a general graph with the minimum number of colors (the
+cardinality of set _S_) is known to be an NP-complete
+problem [xref:about/bibliography.adoc#garey79:computers-and-intractability[30]].
+One often relies on heuristics to find a solution. A widely-used general
+greedy based approach is starting from an ordered vertex enumeration
+_v~1~, ..., v~n~_ of _G_, to assign _v~i~_ to the smallest possible
+color for _i_ from _1_ to _n_. In section
+xref:extending/constructing_algorithms.adoc[Constructing graph algorithms with
+BGL] we have shown how to write this algorithm in the generic
+programming paradigm. However, the ordering of the vertices dramatically
+affects the coloring. The arbitrary order may perform very poorly while
+another ordering may produces an optimal coloring. Several ordering
+algorithms have been studied to help the greedy coloring heuristics
+including largest-first ordering, smallest-last ordering and incidence
+degree ordering.
+
+In the BGL framework, the process of constructing/prototyping such a
+ordering is fairly easy because writing such a ordering follows the
+algorithm description closely. As an example, we present the
+smallest-last ordering algorithm.
+
+The basic idea of the smallest-last
+ordering [xref:about/bibliography.adoc#matula72:_graph_theory_computing[29]]
+is as follows: Assuming that the vertices _v~k{plus}1~, ..., v~n~_ have
+been selected, choose _v~k~_ so that the degree of _v~k~_ in the
+subgraph induced by _V - {v~k{plus}1~, ..., v~n~}_ is minimal.
+
+The algorithm uses a bucket sorter for the vertices in the graph where
+bucket is the degree. Two vertex property maps, `degree` and `marker`,
+are used in the algorithm. The former is to store degree of every vertex
+while the latter is to mark whether a vertex has been ordered or
+processed during traversing adjacent vertices. The ordering is stored in
+the `order`. The algorithm is as follows:
+
+* put all vertices in the bucket sorter
+* find the vertex `node` with smallest degree in the bucket sorter
+* number `node` and traverse through its adjacent vertices to update its
+degree and the position in the bucket sorter.
+* go to the step 2 until all vertices are numbered.
+
+[source,cpp]
+----
+
+namespace boost {
+  template <class VertexListGraph, class Order, class Degree,
+            class Marker, class BucketSorter>
+  void
+  smallest_last_ordering(const VertexListGraph& G, Order order,
+                         Degree degree, Marker marker,
+                         BucketSorter& degree_buckets) {
+    typedef typename graph_traits<VertexListGraph> GraphTraits;
+
+    typedef typename GraphTraits::vertex_descriptor Vertex;
+    //typedef typename GraphTraits::size_type size_type;
+    typedef size_t size_type;
+
+    const size_type num = num_vertices(G);
+
+    typename GraphTraits::vertex_iterator v, vend;
+    for (boost::tie(v, vend) = vertices(G); v != vend; ++v) {
+      put(marker, *v, num);
+      put(degree, *v, out_degree(*v, G));
+      degree_buckets.push(*v);
+    }
+
+    size_type minimum_degree = 1;
+    size_type current_order = num - 1;
+
+    while ( 1 ) {
+      typedef typename BucketSorter::stack MDStack;
+      MDStack minimum_degree_stack = degree_buckets[minimum_degree];
+      while (minimum_degree_stack.empty())
+        minimum_degree_stack = degree_buckets[++minimum_degree];
+
+      Vertex node = minimum_degree_stack.top();
+      put(order, current_order, node);
+
+      if ( current_order == 0 ) //find all vertices
+        break;
+
+      minimum_degree_stack.pop();
+      put(marker, node, 0); //node has been ordered.
+
+      typename GraphTraits::adjacency_iterator v, vend;
+      for (boost::tie(v,vend) = adjacent_vertices(node, G); v != vend; ++v)
+
+        if ( get(marker, *v) > current_order ) { //*v is unordered vertex
+          put(marker, *v, current_order);   //mark the columns adjacent to node
+
+          //It is possible minimum degree goes down
+          //Here we keep tracking it.
+          put(degree, *v, get(degree, *v) - 1);
+          minimum_degree = std::min(minimum_degree, get(degree, *v));
+
+          //update the position of *v in the bucket sorter
+          degree_buckets.update(*v);
+        }
+
+      current_order--;
+    }
+    //at this point, get(order, i) == vertex(i, g);
+  }
+} // namespace boost
+----

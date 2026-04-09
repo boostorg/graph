@@ -1,0 +1,80 @@
+= Graph Traits
+
+....
+
+adjacency_list_traits<EdgeList, VertexList, Directed>
+....
+
+This class provides an alternate method for accessing some of the
+associated types of the `adjacency_list` class. The main reason for
+this class is that sometimes one would like to create graph properties
+whose values are vertex or edge descriptors. If you try to use
+`graph_traits` for this you will run into a problem with mutually
+recursive types. To get around this problem, the
+`adjacency_list_traits` class is provided, which gives the user
+access to the vertex and edge descriptor types without requiring the
+user to provide the property types for the graph.
+
+[source,cpp]
+----
+
+  template <class EdgeList, class VertexList, class Directed>
+  struct adjacency_list_traits {
+    typedef ... vertex_descriptor;
+    typedef ... edge_descriptor;
+    typedef ... directed_category;
+    typedef ... edge_parallel_category;
+  };
+----
+
+==== Where Defined
+
+link:../../../boost/graph/adjacency_list.hpp[`boost/graph/adjacency_list.hpp`]
+
+==== Template Parameters
+
+[cols=",,",options="header",]
+|===
+|Parameter |Description |Default
+|`EdgeList` |The selector type for the edge container implementation.
+|`vecS`
+
+|`VertexList` |The selector type for the vertex container
+implementation. |`vecS`
+
+|`Directed` |The selector type whether the graph is directed or
+undirected. |`directedS`
+|===
+
+==== Model of
+
+http://www.boost.org/sgi/stl/DefaultConstructible.html[DefaultConstructible]
+and http://www.boost.org/sgi/stl/Assignable.html[Assignable]
+
+==== Type Requirements
+
+Under construction.
+
+=== Members
+
+[cols=",",options="header",]
+|===
+|Member |Description
+|` vertex_descriptor ` |The type for the objects used to identify
+vertices in the graph.
+
+|` edge_descriptor ` |The type for the objects used to identify
+edges in the graph.
+
+|` directed_category ` |This says whether the graph is undirected
+(`undirected_tag`) or directed (`directed_tag`).
+
+|` edge_parallel_category ` |This says whether the graph allows
+parallel edges to be inserted (`allow_parallel_edge_tag`) or
+if it automatically removes parallel edges
+(`disallow_parallel_edge_tag`).
+|===
+
+==== See Also
+
+xref:graph_classes/adjacency_list.adoc[`adjacency_list`]

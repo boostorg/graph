@@ -1,0 +1,22 @@
+output:
+  dir: ./build/site
+
+site:
+  title: Boost.Graph Documentation
+  start_page: graph::index.adoc
+
+content:
+  sources:
+    - url: ..
+      start_path: doc
+      branches: HEAD
+
+asciidoc:
+  attributes:
+    source-highlighter: highlight.js
+
+ui:
+  bundle:
+    url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/HEAD/raw/build/ui-bundle.zip?job=bundle-stable
+    snapshot: true
+  supplemental_files: ./supplemental-ui

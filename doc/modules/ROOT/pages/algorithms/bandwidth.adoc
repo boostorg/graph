@@ -1,0 +1,67 @@
+= Bandwidth
+
+`bandwidth`
+
+[source,cpp]
+----
+
+  (1)
+  template <typename Graph>
+  typename graph_traits<Graph>::vertices_size_type
+  bandwidth(const Graph& g)
+
+  (2)
+  template <typename Graph, typename VertexIndexMap>
+  typename graph_traits<Graph>::vertices_size_type
+  bandwidth(const Graph& g, VertexIndexMap index_map)
+----
+
+The *_bandwidth_* of a graph is the maximum distance between two
+adjacent vertices, with distance measured on a line upon which the
+vertices have been placed at unit intervals. To put it another way, if
+the vertices of a graph _G=(V,E)_ are each assigned an index from zero
+to _++|++V++|++ - 1_ given by _index[v]_, then the bandwidth of
+_G_ is +
+ +
+_B(G) = max { ++|++index[u] - index[v++]|++  ++|++ (u,v)
+in E }_ 
+
+==== Defined in
+
+link:../../../boost/graph/bandwidth.hpp[`boost/graph/bandwidth.hpp`]
+
+'''''
+
+`ith_bandwidth`
+
+[source,cpp]
+----
+
+  (1)
+  template <typename Graph>
+  typename graph_traits<Graph>::vertices_size_type
+  ith_bandwidth(typename graph_traits<Graph>::vertex_descriptor i,
+        const Graph& g)
+
+  (2)
+  template <typename Graph, typename VertexIndexMap>
+  typename graph_traits<Graph>::vertices_size_type
+  ith_bandwidth(typename graph_traits<Graph>::vertex_descriptor i,
+        const Graph& g,
+        VertexIndexMap index)
+----
+
+The *_i-th bandwidth_* a graph is the maximum distance between the
+_i-th_ vertex and any of its neighbors. +
+ +
+_B~i~(G) = max { ++|++index[i] - index[j++]|++  ++|++
+(i,j) in E }_ +
+ +
+So the bandwidth _B(G)_ can be expressed as the maximum of the i-th
+bandwidths _B~i~(G)_. +
+ +
+_B(G) = max { B~i~(G)   ++|++ i=0...++|++V++|++-1 }_ 
+
+==== Defined in
+
+link:../../../boost/graph/bandwidth.hpp[`boost/graph/bandwidth.hpp`]

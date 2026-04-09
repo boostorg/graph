@@ -1,0 +1,31 @@
+= Boost Utility Library: Bibliography
+
+=== Bibliography
+
+[#tarjan83:_data_struct_network_algo]#1#::
+  R. E. Tarjan. +
+  _Data Structures and Network Algorithms_. +
+  Society for Industrial and Applied Mathematics, 1983.
+  +
+[#clr90]#2#::
+  T. Cormen, C. Leiserson, and R. Rivest. +
+  _Introduction to Algorithms_. +
+  McGraw-Hill, 1990.
+
+ 
+
+'''''
+
+HTML 4.01 Transitional,width=88,height=31]]
+
+Revised 01 December, 2006
+
+[cols=",",]
+|===
+|_Copyright © 2000_ |_http://www.boost.org/people/jeremy_siek.htm[Jeremy
+Siek], Univ.of Notre Dame (jsiek@lsc.nd.edu)_
+|===
+
+_Distributed under the Boost Software License, Version 1.0. (See
+accompanying file link:../../LICENSE_1_0.txt[LICENSE_1_0.txt] or
+copy at http://www.boost.org/LICENSE_1_0.txt)_

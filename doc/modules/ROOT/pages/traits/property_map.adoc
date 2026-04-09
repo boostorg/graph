@@ -1,0 +1,49 @@
+= Property Map Traits
+
+ 
+
+....
+
+property_map<PropertyGraph, PropertyTag>
+....
+
+This is the traits class that produces the type for a
+link:../../property_map/doc/property_map.html[property map] object for a
+particular graph type. The property is specified by the
+xref:auxiliary/PropertyTag.adoc[PropertyTag] template parameter. Graph classes
+must specialize this traits class to provide their own implementation
+for property maps.
+
+[source,cpp]
+----
+
+  template <class Graph, class PropertyTag>
+  struct property_map {
+    typedef ... type;
+    typedef ... const_type;
+  };
+----
+
+==== Where Defined
+
+link:../../../boost/graph/properties.hpp[`boost/graph/properties.hpp`]
+
+==== Associated Types
+
+Map Type
+
+`type`
+
+The (mutable) property map type for mapping vertex or edge desriptors of
+the graph to their associated property values, where the property is
+specified by `PropertyTag`. This type is a
+link:../../property_map/doc/property_map.html[property map].
+
+Const Map Type
+
+`const_type`
+
+The (non-mutable) property map type for mapping vertex or edge
+desriptors of the graph to their associated property values, where the
+property is specified by `PropertyTag`. This type is a
+link:../../property_map/doc/property_map.html[property map].

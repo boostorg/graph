@@ -1,0 +1,125 @@
+= Incremental Connected Components
+
+This section describes a family of functions and classes that work
+together to calculate the connected components of an undirected graph.
+The algorithm used here is based on the disjoint-sets (fast union-find)
+data
+structure [xref:about/bibliography.adoc#clr90[8],xref:about/bibliography.adoc#tarjan83:_data_struct_network_algo[27]]
+which is a good method to use for situations where the graph is growing
+(edges are being added) and the connected components information needs
+to be updated repeatedly. This method does not cover the situation where
+edges are both added and removed from the graph, hence it is called
+**_incremental_**xref:about/bibliography.adoc#eppstein97:dynamic_graph[[42]]
+(and not fully dynamic). The disjoint-sets class is described in Section
+xref:auxiliary/disjoint_sets.adoc[Disjoint Sets].
+
+The following five operations are the primary functions that you will
+use to calculate and maintain the connected components. The objects used
+here are a graph `g`, a disjoint-sets structure `ds`, and vertices `u`
+and `v`.
+
+* `initialize_incremental_components(g, ds)` +
+Basic initialization of the disjoint-sets structure. Each vertex in the
+graph `g` is in its own set.
+* `incremental_components(g, ds)` +
+The connected components are calculated based on the edges in the graph
+`g` and the information is embedded in `ds`.
+* `ds.find_set(v)` +
+Extracts the component information for vertex `v` from the
+disjoint-sets.
+* `ds.union_set(u, v)` +
+Update the disjoint-sets structure when edge _(u,v)_ is added to the
+graph.
+
+==== Complexity
+
+The time complexity for the whole process is _O(V + E alpha(E,V))_
+where _E_ is the total number of edges in the graph (by the end of the
+process) and _V_ is the number of vertices. _alpha_ is the inverse of
+Ackermann's function which has explosive recursively exponential growth.
+Therefore its inverse function grows _very_ slowly. For all practical
+purposes _alpha(m,n) <= 4_ which means the time complexity is only
+slightly larger than _O(V + E)_.
+
+==== Example
+
+Maintain the connected components of a graph while adding edges using
+the disjoint-sets data structure. The full source code for this example
+can be found in
+link:../example/incremental_components.cpp[`examples/incremental_components.cpp`].
+
+[source,code]
+----
+
+using namespace boost;
+
+int main(int argc, char* argv[])
+{
+  typedef adjacency_list  Graph;
+  typedef graph_traits::vertex_descriptor Vertex;
+  typedef graph_traits::vertices_size_type VertexIndex;
+
+  const int VERTEX_COUNT = 6;
+  Graph graph(VERTEX_COUNT);
+
+  std::vector rank(num_vertices(graph));
+  std::vector parent(num_vertices(graph));
+
+  typedef VertexIndex* Rank;
+  typedef Vertex* Parent;
+
+  disjoint_sets ds(&rank[0], &parent[0]);
+
+  initialize_incremental_components(graph, ds);
+  incremental_components(graph, ds);
+
+  graph_traits::edge_descriptor edge;
+  bool flag;
+
+  boost::tie(edge, flag) = add_edge(0, 1, graph);
+  ds.union_set(0,1);
+
+  boost::tie(edge, flag) = add_edge(1, 4, graph);
+  ds.union_set(1,4);
+
+  boost::tie(edge, flag) = add_edge(4, 0, graph);
+  ds.union_set(4,0);
+
+  boost::tie(edge, flag) = add_edge(2, 5, graph);
+  ds.union_set(2,5);
+
+  std::cout << "An undirected graph:" << std::endl;
+  print_graph(graph, get(boost::vertex_index, graph));
+  std::cout << std::endl;
+
+  BOOST_FOREACH(Vertex current_vertex, vertices(graph)) {
+    std::cout << "representative[" << current_vertex << "] = " <<
+      ds.find_set(current_vertex) << std::endl;
+  }
+
+  std::cout << std::endl;
+
+  typedef component_index Components;
+
+  // NOTE: Because we're using vecS for the graph type, we're
+  // effectively using identity_property_map for a vertex index map.
+  // If we were to use listS instead, the index map would need to be
+  // explicity passed to the component_index constructor.
+  Components components(parent.begin(), parent.end());
+
+  // Iterate through the component indices
+  BOOST_FOREACH(VertexIndex current_index, components) {
+    std::cout << "component " << current_index << " contains: ";
+
+    // Iterate through the child vertex indices for [current_index]
+    BOOST_FOREACH(VertexIndex child_index,
+                  components[current_index]) {
+      std::cout << child_index << " ";
+    }
+
+    std::cout << std::endl;
+  }
+
+  return (0);
+}
+----

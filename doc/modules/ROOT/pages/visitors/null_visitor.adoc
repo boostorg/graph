@@ -1,0 +1,30 @@
+= null_visitor
+
+....
+
+null_visitor
+....
+
+This is an xref:visitors/EventVisitor.adoc[EventVisitor] that does nothing.
+
+==== Model of
+
+xref:visitors/EventVisitor.adoc[EventVisitor]
+
+=== Associated Types
+
+[cols=",",options="header",]
+|===
+|Type |Description
+|`null_visitor::event_filter` |This type is `void`
+|===
+
+==== Member Functions
+
+[width="100%",cols="50%,50%",options="header",]
+|===
+|Member |Description
+|` null_visitor(); ` |Default constructor.
+|` template <class X, class Graph>` +
+`void operator()(X x, const Graph& g); ` |This does nothing.
+|===

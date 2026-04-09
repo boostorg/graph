@@ -1,0 +1,118 @@
+= Chrobak-Payne Straight Line Drawing
+
+[source,cpp]
+----
+
+template<typename Graph,
+         typename PlanarEmbedding,
+         typename ForwardIterator,
+         typename PositionMap,
+         typename VertexIndexMap>
+void chrobak_payne_straight_line_drawing(const Graph& g,
+                                         PlanarEmbedding perm,
+                                         ForwardIterator ordering_begin,
+                                         ForwardIterator ordering_end,
+                                         PositionMap drawing,
+                                         VertexIndexMap vm
+                                         );
+----
+
+ 
+
+A _straight line drawing_ of a xref:algorithms/planar_graphs.adoc#planar[planar
+graph] is a xref:algorithms/planar_graphs.adoc#plane_drawing[plane drawing] where
+each edge is drawn using a straight line segment. Since all edges are
+line segments, the drawing is completely determined by the placement of
+vertices in the plane.
+`chrobak_payne_straight_line_drawing` uses an algorithm
+of Chrobak and Payne
+[xref:about/bibliography.adoc#chrobakpayne95[71]] to form a straight
+line drawing of a planar graph by mapping all _n_ vertices in a planar
+graph to integer coordinates in a _(2n - 4) x (n - 2)_ grid.
+
+image:figs/straight_line_drawing.png[figs/straight_line_drawing]
+
+The input graph passed to
+`chrobak_payne_straight_line_drawing` must be a
+xref:algorithms/make_maximal_planar.adoc[maximal planar graph] with at least 3
+vertices. Self-loops and parallel edges are ignored by this function.
+Note that the restriction that the graph be maximal planar does not mean
+that this function can only draw maximal planar graphs (the graph
+pictured above is not maximal planar, for example). If you want to draw
+a graph _g_, you can create a copy _g'_ of _g_, store a mapping _m_ of
+vertices in _g'_ to vertices in _g_,
+xref:algorithms/make_maximal_planar.adoc[triangulate] _g'_, and then send _g'_ in
+as the input to `chrobak_payne_straight_line_drawing`.
+The drawing returned can then be applied to _g_ using _m_ to translate
+vertices from one graph to another, since _g_ contains a subset of the
+edges in _g'_.
+
+==== Complexity
+
+If the vertex index map provides constant-time access to indices, this
+function takes time _O(n + m)_ for a planar graph with _n_ vertices
+and _m_ edges. Note that in a simple planar graph with _f_ faces, _m_
+edges, and _n_ vertices, both _f_ and _m_ are _O(n)_.
+
+==== Where Defined
+
+link:../../../boost/graph/chrobak_payne_drawing.hpp[`boost/graph/chrobak_payne_drawing.hpp`]
+
+==== Parameters
+
+IN: `Graph& g`
+
+____
+An undirected graph. The graph type must be a model of
+xref:concepts/VertexListGraph.adoc[Vertex List Graph]
+____
+
+IN `PlanarEmbedding embedding`
+
+____
+A link:../../property_map/doc/ReadablePropertyMap.html[Readable Property
+Map] that models the xref:auxiliary/PlanarEmbedding.adoc[PlanarEmbedding] concept.
+____
+
+IN `ForwardIterator`
+
+____
+A ForwardIterator that has `value_type` equal to
+`graph_traits<Graph>::vertex_descriptor`.
+____
+
+OUT: `PositionMap`
+
+____
+A link:../../property_map/doc/LvaluePropertyMap.html[Writable LValue
+Property Map] that models the Position Map concept. The Position Map
+concept requires that the value mapped to be an object that has members
+`x` and `y`. For example, if `p` models PositionMap and `v` is a vertex
+in the graph, `p[v].x` and `p[v].y` are valid
+expressions. The type of `x` and `y` must be implicitly convertable to
+`std::size_t`.
+____
+
+IN: `VertexIndexMap vm`
+
+____
+A link:../../property_map/doc/ReadablePropertyMap.html[Readable Property
+Map] that maps vertices from `g` to distinct integers in the range
+`[0, num_vertices(g) )` +
+*Default*: `get(vertex_index,g)` +
+____
+
+==== Example
+
+link:../example/straight_line_drawing.cpp[`examples/straight_line_drawing.cpp`]
+
+==== See Also
+
+* xref:algorithms/planar_graphs.adoc[Planar Graphs in the Boost Graph Library]
+* xref:algorithms/is_straight_line_drawing.adoc[`is_straight_line_drawing`]
+
+ 
+
+'''''
+
+Copyright © 2007 Aaron Windsor ( aaron.windsor@gmail.com)

@@ -1,0 +1,74 @@
+= Struct template layout_tolerance
+
+link:../../../index.htm[Home]
+
+link:../../libraries.htm[Libraries]
+
+http://www.boost.org/people/people.htm[People]
+
+http://www.boost.org/more/faq.htm[FAQ]
+
+link:../../../more/index.htm[More]
+
+'''''
+
+[#struct.boost.layout_tolerance]##
+
+=== [.refentrytitle]#Struct template layout_tolerance#
+
+boost::layout_tolerance — Determines when to terminate layout of a
+particular graph based on a given relative tolerance.
+
+=== Synopsis
+
+[source,synopsis]
+----
+template<typename T = double>
+struct layout_tolerance {
+  // construct/copy/destruct
+  layout_tolerance(const T & = T(0.001));
+
+  // public member functions
+  template<typename Graph>
+    bool operator()(T,
+                    typename boost::graph_traits< Graph >::vertex_descriptor,
+                    const Graph &, bool) ;
+};
+----
+
+[#id822409]
+=== Where Defined
+
+link:../../../boost/graph/kamada_kawai_spring_layout.hpp[boost/graph/kamada_kawai_spring_layout.hpp]
+
+[#id822420]
+[#layout_toleranceconstruct-copy-destruct]
+==== `layout_tolerance` construct/copy/destruct
+
+[arabic]
+. {blank}
++
+[source,literallayout]
+----
+layout_tolerance(const T & tolerance = T(0.001));
+----
+
+[#id822461]
+[#id103692-bb]
+==== `layout_tolerance` public member functions
+
+[arabic]
+. {blank}
++
+[source,literallayout]
+----
+template<typename Graph>
+  bool operator()(T delta_p,
+                  typename boost::graph_traits< Graph >::vertex_descriptor p,
+                  const Graph & g, bool global) ;
+----
+
+[cols="<,>",]
+|===
+<| >|[.small]##
+|===

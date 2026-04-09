@@ -1,0 +1,28 @@
+[#sec:wavefront]
+= ith_wavefront
+
+
+[source,cpp]
+----
+  (1)
+  template <typename Graph>
+  typename graph_traits<Graph>::vertices_size_type
+  ith_wavefront(typename graph_traits<Graph>::vertex_descriptor i,
+                const Graph& g)
+
+  (2)
+  template <typename Graph, typename VertexIndexMap>
+  typename graph_traits<Graph>::vertices_size_type
+  ith_wavefront(typename graph_traits<Graph>::vertex_descriptor i,
+                const Graph& g,
+                VertexIndexMap index)
+----
+
+ 
+
+Calculates the wavefront of the _ith_-vertex. +
+ 
+
+==== Defined in
+
+http://www.boost.org/boost/graph/wavefront.hpp[`boost/graph/wavefront.hpp`]

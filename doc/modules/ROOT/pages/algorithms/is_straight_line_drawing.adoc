@@ -1,0 +1,68 @@
+= `is_straight_line_drawing`
+
+[source,cpp]
+----
+
+template <typename Graph, typename GridPositionMap, typename VertexIndexMap>
+bool is_straight_line_drawing(const Graph& g, GridPositionMap drawing, VertexIndexMap vm);
+----
+
+If `drawing` is a property map modeling the PositionMap concept,
+`is_straight_line_drawing` returns true exactly when no two
+of the line segments induced by edges in the graph under `drawing`
+intersect. This function works correctly in the presence of self-loops
+and parallel edges, and can be used to verify the output of the function
+` `xref:algorithms/straight_line_drawing.adoc[`chrobak_payne_straight_line_embedding.`]` `
+
+==== Complexity
+
+Runs in time _O(n log n)_ on a planar graph with _n_ vertices.
+
+==== Where Defined
+
+link:../../../boost/graph/is_straight_line_drawing.hpp[`boost/graph/is_straight_line_drawing.hpp`]
+
+==== Parameters
+
+IN: `Graph& g`
+
+____
+An undirected graph. The graph type must be a model of
+xref:concepts/EdgeListGraph.adoc[Edge List Graph]
+____
+
+IN: `PositionMap`
+
+____
+A link:../../property_map/doc/LvaluePropertyMap.html[Readable LValue
+Property Map] that models the Position Map concept. The Position Map
+concept requires that the value mapped to be an object that has members
+`x` and `y`. For example, if `p` models PositionMap and `v` is a vertex
+in the graph, `p[v].x` and `p[v].y` are valid
+expressions. The type of `x` and `y` must be implicitly convertable to
+`std::size_t`.
+____
+
+IN: `VertexIndexMap vm`
+
+____
+A link:../../property_map/doc/ReadablePropertyMap.html[Readable Property
+Map] that maps vertices from `g` to distinct integers in the range
+`[0, num_vertices(g) )` +
+*Default*: `get(vertex_index,g)` +
+____
+
+==== Example
+
+link:../example/straight_line_drawing.cpp[`examples/straight_line_drawing.cpp`]
+
+==== See Also
+
+* xref:algorithms/planar_graphs.adoc[Planar Graphs in the Boost Graph Library]
+* xref:algorithms/straight_line_drawing.adoc[`chrobak_payne_straight_line_drawing`]
+
+ 
+
+'''''
+
+Copyright © 2007 Aaron Windsor (aaron.windsor@gmail.com)

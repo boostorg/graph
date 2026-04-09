@@ -1,0 +1,55 @@
+= Random Graph Layout
+
+`random_graph_layout`
+
+[source,cpp]
+----
+
+// non-named parameter version
+template<typename Graph, typename PositionMap, typename Topology>
+void
+random_graph_layout(const Graph& g, PositionMap position_map,
+                    const Topology& space);
+----
+
+This algorithm places the points of the graph at random locations within
+a given space.
+
+==== Where Defined
+
+link:../../../boost/graph/random_layout.hpp[`boost/graph/random_layout.hpp`]
+
+==== Parameters
+
+IN: `const Graph& g`
+
+____
+The graph object on which the algorithm will be applied. The type
+`Graph` must be a model of xref:concepts/VertexAndEdgeListGraph.adoc[Vertex And
+Edge List Graph].
+____
+
+IN/OUT: `PositionMap position`
+
+____
+The property map that stores the position of each vertex. The type
+`PositionMap` must be a model of
+link:../../property_map/doc/LvaluePropertyMap.html[Lvalue Property Map]
+such that the vertex descriptor type of `Graph` is convertible to its
+key type. Its value type must be `Topology::point_type`,
+representing the coordinates of the vertex.
+____
+
+IN: `const Topology& space`
+
+____
+The topology used to lay out the vertices. This parameter describes both
+the size and shape of the layout area and provides a random number
+generator used to create random positions within the space. Topologies
+are described in more detail (with a list of BGL-provided topologies)
+xref:algorithms/topology.adoc[in separate documentation].
+____
+
+==== Complexity
+
+The time complexity is _O(++|++V++|++)_.

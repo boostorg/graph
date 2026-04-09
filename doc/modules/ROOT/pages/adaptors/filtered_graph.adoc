@@ -1,0 +1,302 @@
+[#sec:filtered-graph-class]
+= Filtered Graph
+
+....
+
+filtered_graph<Graph, EdgePredicate, VertexPredicate>
+....
+
+The `filtered_graph` class template is an adaptor that creates a
+filtered view of a graph. The predicate function objects determine which
+edges and vertices of the original graph will show up in the filtered
+graph. If the edge predicate returns `true` for an edge then it shows up
+in the filtered graph, and if the predicate returns `false` then the
+edge does not appear in the filtered graph. Likewise for vertices. The
+`filtered_graph` class does not create a copy of the original graph,
+but uses a reference to the original graph. The lifetime of the original
+graph must extend past any use of the filtered graph. The filtered graph
+does not change the structure of the original graph, though vertex and
+edge properties of the original graph can be changed through property
+maps of the filtered graph. Vertex and edge descriptors of the filtered
+graph are the same as, and interchangeable with, the vertex and edge
+descriptors of the original graph.
+
+The <<num_vertices,`num_vertices`>> and
+<<num_edges,`num_edges`>> functions do not filter before
+returning results, so they return the number of vertices or edges in the
+underlying graph, unfiltered <<2,[2>>].
+
+==== Example
+
+In this example we will filter a graph's edges based on edge weight. We
+will keep all edges with positive edge weight. First, we create a
+predicate function object.
+
+[source,cpp]
+----
+
+template <typename EdgeWeightMap>
+struct positive_edge_weight {
+  positive_edge_weight() { }
+  positive_edge_weight(EdgeWeightMap weight) : m_weight(weight) { }
+  template <typename Edge>
+  bool operator()(const Edge& e) const {
+    return 0 < get(m_weight, e);
+  }
+  EdgeWeightMap m_weight;
+};
+----
+
+Now we create a graph and print out the filtered graph.
+
+[source,cpp]
+----
+
+int main()
+{
+  using namespace boost;
+
+  typedef adjacency_list<vecS, vecS, directedS,
+    no_property, property<edge_weight_t, int> > Graph;
+  typedef property_map<Graph, edge_weight_t>::type EdgeWeightMap;
+
+  enum { A, B, C, D, E, N };
+  const char* name = "ABCDE";
+  Graph g(N);
+  add_edge(A, B, 2, g);
+  add_edge(A, C, 0, g);
+  add_edge(C, D, 1, g);
+  add_edge(C, E, 0, g);
+  add_edge(D, B, 3, g);
+  add_edge(E, C, 0, g);
+
+  positive_edge_weight<EdgeWeightMap> filter(get(edge_weight, g));
+  filtered_graph<Graph, positive_edge_weight<EdgeWeightMap> >
+    fg(g, filter);
+
+  std::cout << "filtered edge set: ";
+  print_edges(fg, name);
+
+  std::cout << "filtered out-edges:" << std::endl;
+  print_graph(fg, name);
+
+  return 0;
+}
+----
+
+The output is:
+
+....
+
+filtered edge set: (A,B) (C,D) (D,B)
+filtered out-edges:
+A --> B
+B -->
+C --> D
+D --> B
+E -->
+....
+
+==== Template Parameters
+
+[cols=",,",options="header",]
+|===
+|Parameter |Description |Default
+|`Graph` |The underlying graph type. | 
+
+|`EdgePredicate` |A function object that selects which edges from the
+original graph will appear in the filtered graph. The function object
+must model http://www.boost.org/sgi/stl/Predicate.html[Predicate]. The
+argument type for the function object must be the edge descriptor type
+of the graph. Also, the predicate must be
+http://www.boost.org/sgi/stl/DefaultConstructible.html[Default
+Constructible] <<1,[1>>]. | 
+
+|`VertexPredicate` |A function object that selects which vertices from
+the original graph will appear in the filtered graph. The function
+object must model
+http://www.boost.org/sgi/stl/Predicate.html[Predicate]. The argument
+type for the function object must be the vertex descriptor type of the
+graph. Also, the predicate must be
+http://www.boost.org/sgi/stl/DefaultConstructible.html[Default
+Constructible] <<1,[1>>]. |`keep_all`
+|===
+
+==== Model of
+
+This depends on the underlying graph type. If the underlying `Graph`
+type models xref:concepts/VertexAndEdgeListGraph.adoc[VertexAndEdgeListGraph]
+and xref:concepts/PropertyGraph.adoc[PropertyGraph] then so does the filtered
+graph. If the underlying `Graph` type models fewer or smaller concepts
+than these, then so does the filtered graph.
+
+==== Where Defined
+
+link:../../../boost/graph/filtered_graph.hpp[`boost/graph/filtered_graph.hpp`]
+
+=== Associated Types
+
+'''''
+
+`graph_traits<filtered_graph>::vertex_descriptor` +
+ +
+The type for the vertex descriptors associated with the
+`filtered_graph`, which is the same type as the
+`vertex_descriptor` for the original `Graph`.
+
+'''''
+
+`graph_traits<filtered_graph>::edge_descriptor` +
+ +
+ +
+The type for the edge descriptors associated with the
+`filtered_graph`, which is the same type as the
+`edge_descriptor` for the original `Graph`.
+
+'''''
+
+`graph_traits<filtered_graph>::vertex_iterator` +
+ +
+ +
+The type for the iterators returned by `vertices()`, which is:
+
+[source,cpp]
+----
+
+filter_iterator<VertexPredicate, graph_traits<Graph>::vertex_iterator>
+----
+
+The iterator is a model of
+link:../../utility/MultiPassInputIterator.html[MultiPassInputIterator].
+
+'''''
+
+`graph_traits<filtered_graph>::edge_iterator` +
+ +
+The type for the iterators returned by `edges()`, which is:
+
+[source,cpp]
+----
+
+filter_iterator<EdgePredicate, graph_traits<Graph>::edge_iterator>
+----
+
+The iterator is a model of
+link:../../utility/MultiPassInputIterator.html[MultiPassInputIterator].
+
+'''''
+
+`graph_traits<filtered_graph>::out_edge_iterator` +
+ +
+The type for the iterators returned by `out_edges()`, which is:
+
+[source,cpp]
+----
+
+filter_iterator<EdgePredicate, graph_traits<Graph>::out_edge_iterator>
+----
+
+The iterator is a model of
+link:../../utility/MultiPassInputIterator.html[MultiPassInputIterator].
+
+'''''
+
+`graph_traits<filtered_graph>::adjacency_iterator` +
+ +
+The type for the iterators returned by `adjacent_vertices()`. The
+`adjacency_iterator` models the same iterator concept as
+`out_edge_iterator`.
+
+'''''
+
+`graph_traits<filtered_graph>::directed_category` +
+ +
+ +
+Provides information about whether the graph is directed
+(`directed_tag`) or undirected (`undirected_tag`).
+
+'''''
+
+`graph_traits<filtered_graph>::edge_parallel_category` +
+ +
+ +
+This describes whether the graph class allows the insertion of parallel
+edges (edges with the same source and target). The two tags are
+`allow_parallel_edge_tag` and
+`disallow_parallel_edge_tag`.
+
+'''''
+
+`graph_traits<filtered_graph>::vertices_size_type` +
+ +
+The type used for dealing with the number of vertices in the graph.
+
+'''''
+
+`graph_traits<filtered_graph>::edges_size_type` +
+ +
+The type used for dealing with the number of edges in the graph.
+
+'''''
+
+`graph_traits<filtered_graph>::degree_size_type` +
+ +
+The type used for dealing with the number of edges incident to a vertex
+in the graph.
+
+'''''
+
+`property_map<filtered_graph, Property>::type` +
+and +
+`property_map<filtered_graph, Property>::const_type` +
+ +
+The property map type for vertex or edge properties in the graph. The
+same property maps from the adapted graph are available in the filtered
+graph.
+
+'''''
+
+=== Member Functions
+
+'''''
+
+....
+
+filtered_graph(Graph& g, EdgePredicate ep, VertexPredicate vp)
+....
+
+Create a filtered graph based on the graph _g_ and the edge filter _ep_
+and vertex filter _vp_.
+
+'''''
+
+....
+
+filtered_graph(Graph& g, EdgePredicate ep)
+....
+
+Create a filtered graph based on the graph _g_ and the edge filter _ep_.
+All vertices from the original graph are retained.
+
+'''''
+
+filtered_graph(const filtered_graph& x)
+
+This creates a filtered graph for the same underlying graph as _x_.
+Anotherwords, this is a shallow copy.
+
+'''''
+
+....
+
+filtered_graph& operator=(const filtered_graph& x)
+....
+
+This creates a filtered graph for the same underlying graph as _x_.
+Anotherwords, this is a shallow copy.
+
+'''''
+
+=== Non-Member Functions
+
+===== Structure Access

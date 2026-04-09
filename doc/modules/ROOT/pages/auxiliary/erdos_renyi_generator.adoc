@@ -1,0 +1,115 @@
+= Erdös-Renyi Generator
+
+`erdos_renyi_iterator` 
+
+[source,cpp]
+----
+
+template<typename RandomGenerator, typename Graph>
+class erdos_renyi_iterator
+{
+public:
+  typedef std::input_iterator_tag iterator_category;
+  typedef std::pair<vertices_size_type, vertices_size_type> value_type;
+  typedef const value_type& reference;
+  typedef const value_type* pointer;
+  typedef void difference_type;
+
+  erdos_renyi_iterator();
+  erdos_renyi_iterator(RandomGenerator& gen, vertices_size_type n,
+                       double fraction = 0.0, bool allow_self_loops = false);
+  erdos_renyi_iterator(RandomGenerator& gen, vertices_size_type n,
+                       edges_size_type m, bool allow_self_loops = false);
+
+  // Iterator operations
+  reference operator*() const;
+  pointer operator->() const;
+  erdos_renyi_iterator& operator++();
+  erdos_renyi_iterator operator++(int);
+  bool operator==(const erdos_renyi_iterator& other) const;
+  bool operator!=(const erdos_renyi_iterator& other) const;
+};
+----
+
+This class template implements a generator for Erdös-Renyi graphs,
+suitable for initializing an
+xref:graph_classes/adjacency_list.adoc[`adjacency_list`] or other graph structure
+with iterator-based initialization. An Erdös-Renyi graph _G = (n, p)_ is
+a graph with _n_ vertices that. The probability of having an edge _(u,
+v)_ in _G_ is _p_ for any vertices _u_ and _v_. Typically, there are no
+self-loops, but the generator can optionally introduce self-loops with
+probability _p_. This generator will not produce any parallel edges and
+will produce edges in sorted order (as required by, e.g., the
+xref:graph_classes/compressed_sparse_row.adoc[`compressed_sparse_row_graph`]).
+
+Erdös-Renyi graphs typically exhibit very little structure. For this
+reason, they are rarely useful in modeling real-world problems. However,
+they are often used when determining the theoretical complexity of
+complex graph algorithms.
+
+If you want the possibility of generating parallel edges and don't care
+about sorted order, use the
+xref:auxiliary/erdos_renyi_generator.adoc[`erdos_renyi_iterator`].
+
+==== Where Defined
+
+link:../../../boost/graph/erdos_renyi_generator.hpp[`boost/graph/erdos_renyi_generator.hpp`]
+
+==== Constructors
+
+[#default-constructor]
+....
+erdos_renyi_iterator();
+....
+
+____
+Constructs a past-the-end iterator.
+____
+
+....
+
+erdos_renyi_iterator(RandomGenerator& gen, vertices_size_type n,
+                     double fraction = 0.0, bool allow_self_loops = false);
+....
+
+____
+Constructs an Erdös-Renyi generator iterator that creates a graph with
+`n` vertices and a given `fraction` of the total number of edges that a
+simple graph may have. `probability`. Random vertices and edges are
+selected using the random number generator `gen`. Self-loops are
+permitted only when `allow_self_loops` is `true`.
+____
+
+....
+
+erdos_renyi_iterator(RandomGenerator& gen, vertices_size_type n,
+                     edges_size_type m, bool allow_self_loops = false);
+....
+
+____
+Constructs an Erdös-Renyi generator iterator that creates a graph with
+`n` vertices and `m` edges. `probability`. Random vertices and edges are
+selected using the random number generator `gen`. Self-loops are
+permitted only when `allow_self_loops` is `true`.
+____
+
+==== Example
+
+[source,cpp]
+----
+
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/erdos_renyi_generator.hpp>
+#include <boost/random/linear_congruential.hpp>
+
+typedef boost::adjacency_list<> Graph;
+typedef boost::erdos_renyi_iterator<boost::minstd_rand, Graph> ERGen;
+
+int main()
+{
+  boost::minstd_rand gen;
+  // Create graph with 100 nodes and edges with probability 0.05
+  Graph g(ERGen(gen, 100, 0.05), ERGen(), 100);
+  return 0;
+}
+----

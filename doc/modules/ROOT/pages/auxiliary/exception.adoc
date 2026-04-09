@@ -1,0 +1,28 @@
+= link:../../../boost/graph/exception.hpp[`boost/graph/exception.hpp`]
+
+The BGL defines several exception classes for reporting errors from BGL
+algorithms. Many of the BGL algorithms place certain requirements on the
+input graph. If these requirements are not met then the algorithm can
+not successfully complete, and instead throws the appropriate exception.
+
+==== Synopsis
+
+[source,cpp]
+----
+
+  struct bad_graph : public invalid_argument {
+    bad_graph(const string& what_arg);
+  };
+  struct not_a_dag : public bad_graph {
+    not_a_dag();
+  };
+  struct negative_edge : public bad_graph {
+    negative_edge();
+  };
+  struct negative_cycle : public bad_graph {
+    negative_cycle();
+  };
+  struct not_connected : public bad_graph {
+    not_connected();
+  };
+----

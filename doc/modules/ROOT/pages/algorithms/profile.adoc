@@ -1,0 +1,27 @@
+[#sec:bandwidth]
+= profile
+
+
+[source,cpp]
+----
+  (1)
+  template <typename Graph>
+  typename graph_traits<Graph>::vertices_size_type
+  profile(const Graph& g)
+
+  (2)
+  template <typename Graph, typename VertexIndexMap>
+  typename graph_traits<Graph>::vertices_size_type
+  profile(const Graph& g, VertexIndexMap index_map)
+----
+
+The *profile* is the sum of all the maximum distances between the _i-th_
+vertex and any of its neighbors with an index _j>i_.
+
+ +
+_B(G) = max { ++|++index[u] - index[v++]|++  ++|++ (u,v)
+in E }_ 
+
+==== Defined in
+
+http://www.boost.org/boost/graph/bandwidth.hpp[`boost/graph/profile.hpp`]

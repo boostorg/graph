@@ -1,0 +1,111 @@
+= Random Graph Utilities
+
+The header `<boost/graph/random>` provides routines to create
+random graph, select random vertices and edges, and randomize
+properties.
+
+== Synopsis
+
+[source,cpp]
+----
+
+  template <class Graph, class RandomNumGen>
+  typename graph_traits<Graph>::vertex_descriptor
+  random_vertex(Graph& g, RandomNumGen& gen);
+
+  template <class Graph, class RandomNumGen>
+  typename graph_traits<Graph>::edge_descriptor
+  random_edge(Graph& g, RandomNumGen& gen);
+
+  template <typename MutableGraph, class RandNumGen>
+  void generate_random_graph
+    (MutableGraph& g,
+     typename graph_traits<MutableGraph>::vertices_size_type V,
+     typename graph_traits<MutableGraph>::vertices_size_type E,
+     RandNumGen& gen,
+     bool self_edges = false);
+
+  template<class Property, class G, class RandomGenerator>
+    void randomize_property(G& g, RandomGenerator rg);
+----
+
+== Description
+
+=== random_vertex
+
+[source,cpp]
+----
+
+  template <class Graph, class RandomNumGen>
+  typename graph_traits<Graph>::vertex_descriptor
+  random_vertex(Graph& g, RandomNumGen& gen);
+----
+
+*Effects:* Selects a random vertex in a graph and returns it.
+
+*Preconditions:* `num_vertices(g) != 0`
+
+*Complexity:* `O(num_vertices(g))`
+
+=== random_edge
+
+[source,cpp]
+----
+
+  template <class Graph, class RandomNumGen>
+  typename graph_traits<Graph>::edge_descriptor
+  random_edge(Graph& g, RandomNumGen& gen);
+----
+
+*Effects:* Selects a random edge in a graph and returns it.
+
+*Preconditions:* `num_edges(g) != 0`
+
+*Complexity:* `O(num_edges(g))`
+
+=== generate_random_graph
+
+[source,cpp]
+----
+
+  template <typename MutableGraph, class RandNumGen>
+  void generate_random_graph
+    (MutableGraph& g,
+     typename graph_traits<MutableGraph>::vertices_size_type V,
+     typename graph_traits<MutableGraph>::vertices_size_type E,
+     RandNumGen& gen,
+     bool allow_parallel = true,
+     bool self_edges = false);
+----
+
+*Effects:* Adds `V` vertices and `E` edges, to `g`. Source and target
+vertices of each edge are randomly choosen. If `self_edges` is
+false, then no edge will have the same source and targets.
+
+*Precondition:* `num_vertices(g) == 0`
+
+*Compleixity:* `O(V*E)`
+
+=== randomize_property
+
+[source,cpp]
+----
+
+  template<class Property, class G, class RandomGenerator>
+    void randomize_property(G& g, RandomGenerator& rg);
+----
+
+*Effects:* Sets the random value of property on either all vertices, or
+all edges, depending on property kind.
+
+*Complexity:* `O(V)` or `O(E)`, depending on property kind.
+
+'''''
+
+Last modified: Feb 05, 2003
+
+© Copyright Vladimir Prus 2003. Permission to copy, use, modify, sell
+and distribute this document is granted provided this copyright notice
+appears in all copies. This document is provided ++``++as is'' without
+express or implied warranty, and with no claim as to its suitability for
+any purpose.

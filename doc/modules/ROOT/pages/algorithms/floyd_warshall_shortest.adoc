@@ -1,0 +1,145 @@
+= Floyd-Warshall All Pairs Shortest Paths
+
+`floyd_warshall_all_pairs_shortest_paths`
+
+[source,cpp]
+----
+// Named parameters version
+template <class VertexListGraph, class DistanceMatrix,
+    class P, class T, class R>
+bool floyd_warshall_initialized_all_pairs_shortest_paths(
+    const VertexListGraph& g, DistanceMatrix& d,
+    const bgl_named_params<P, T, R>& params)
+
+template <class VertexAndEdgeListGraph, class DistanceMatrix,
+    class P, class T, class R>
+bool floyd_warshall_all_pairs_shortest_paths(
+    const VertexAndEdgeListGraph& g, DistanceMatrix& d,
+    const bgl_named_params<P, T, R>& params)
+
+// Positional parameter versions
+\begin{verbatim}
+template <typename VertexListGraph, typename DistanceMatrix,
+    typename BinaryPredicate, typename BinaryFunction,
+    typename Infinity, typename Zero>
+bool floyd_warshall_initialized_all_pairs_shortest_paths(
+    const VertexListGraph& g, DistanceMatrix& d,
+    const BinaryPredicate& compare, const BinaryFunction& combine,
+    const Infinity& inf, const Zero& zero)
+
+template <typename VertexAndEdgeListGraph, typename DistanceMatrix,
+    typename WeightMap, typename BinaryPredicate,
+    typename BinaryFunction, typename Infinity, typename Zero>
+bool floyd_warshall_all_pairs_shortest_paths(
+    const VertexAndEdgeListGraph& g, DistanceMatrix& d,
+    const WeightMap& w, const BinaryPredicate& compare,
+    const BinaryFunction& combine,
+    const Infinity& inf, const Zero& zero)
+----
+
+These algorithms find the shortest distance between every pair of
+vertices in the graph. The algorithms return false if there is a
+negative weight cycle in the graph, true otherwise. The shortest
+distance between each pair of vertices is stored in the distance matrix
+`d`. The difference between the two algorithms is in whether the
+distance matrix is assumed to be initialized or not, as discussed below
+under the OUT parameter description.
+
+This algorithm should be used to compute shortest paths between every
+pair of vertices for dense graphs. For sparse graphs, use
+xref:algorithms/johnson_all_pairs_shortest.adoc[`johnson_all_pairs_shortest_paths`].
+
+==== Where Defined
+
+link:../../../boost/graph/floyd_warshall_shortest.hpp[`boost/graph/floyd_warshall_shortest.hpp`]
+
+==== Parameters
+
+IN: `Graph& g`
+
+____
+A directed or undirected graph. The graph must be a model of
+xref:concepts/VertexListGraph.adoc[Vertex List Graph] for calls to
+`floyd_warshall_initialized_all_pairs_shortest_paths`,
+and xref:concepts/VertexAndEdgeListGraph.adoc[Vertex And Edge List Graph] for
+calls to
+`floyd_warshall_all_pairs_shortest_paths`. +
+____
+
+OUT: `DistanceMatrix& d`
+
+____
+The length of the shortest path between each pair of vertices `u`,`v`
+are stored in the matrix at location `D[u++][++v]`. The
+DistanceMatrix must be of type `{M, I, V}` where `I` is of type
+`vertex_descriptor` and `V` is the type of the `weight_map`. The
+set of types must be a model of xref:auxiliary/BasicMatrix.adoc[BasicMatrix], with
+the exceptions that it isn't required to run in constant time, and it
+must be mutable. The matrix must be properly initialized when it is
+passed to the function
+`floyd_warshall_initialized_all_pairs_shortest_paths`.
+If the function
+`floyd_warshall_all_pairs_shortest_paths` is used
+then the matrix will be initialized for the user.
+____
+
+==== Named Parameters
+
+IN: `weight_map(WeightMap w)`
+
+____
+The weight of length of each edge in the graph. The `WeightMap` must be
+a model of link:../../property_map/doc/ReadablePropertyMap.html[Readable
+Property Map]. The edge descriptor type of the graph needs to be usable
+as the key type for the weight map. The `value_type` of the weight
+map must be the type of the `DistanceMatrix`, and must always either be
+part of the graph passed to the function, or passed in as a parameter. +
+*Default:* `get(edge_weight, g)`
+____
+
+IN: `distance_compare(CompareFunction cmp)`
+
+____
+The function used to compare distances to determine which target vertex
+is closer to the source vertex. The CompareFunction must be a model of
+`BinaryPredicate`. The argument types must match the value type of the
+`WeightMap`. +
+*Default:* `std::less<WM>`with
+`WM = typename property_traits<WeightMap>::value_type`
+____
+
+IN: `distance_combine(CombineFunction cmb)`
+
+____
+The function used to combine distance to compute the distance of a path.
+The CombineFunction must be a model of `BinaryFunction`. The argument
+types must match the value type of the `WeightMap`. The result type must
+be the same as the distance value type. +
+*Default:* `boost::closed_plus<WM>` with
+`WM = typename property_traits<WeightMap>::value_type`
+____
+
+IN: `distance_inf(WM inf)`
+
+____
+The value used to initialize the distance for each vertex before
+starting the algorithm, and to represent the distance between vertices
+for which there is no path. Should be larger than any possible valid
+path length. The argument type must match the value type of the
+` WeightMap`. +
+*Default:* `std::numeric_limits<WM>::max()` with
+`WM = typename property_traits<WeightMap>::value_type`
+____
+
+IN: `distance_zero(WM zero)`
+
+____
+The value used to represent the distance from a vertex to itself, and to
+determine if a value is negative. The argument type must match the value
+type of the `WeightMap`. +
+*Default:* `0`
+____
+
+==== Complexity
+
+The time complexity is _O(V^3^)_.

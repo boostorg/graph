@@ -1,0 +1,66 @@
+= `hawick_circuits`
+
+[source,cpp]
+----
+template <typename Graph, typename Visitor, typename VertexIndexMap>
+void hawick_circuits(Graph const& graph, Visitor visitor, VertexIndexMap const& vim = get(vertex_index, graph), unsigned int max_length = 0);
+
+template <typename Graph, typename Visitor, typename VertexIndexMap>
+void hawick_unique_circuits(Graph const& graph, Visitor visitor, VertexIndexMap const& vim = get(vertex_index, graph), unsigned int max_length = 0);
+----
+
+Enumerate all the elementary circuits (of length ≤ `max_length`, if
+nonzero) in a directed multigraph. Specifically, self-loops and
+redundant circuits caused by parallel edges are enumerated too.
+`hawick_unique_circuits` may be used if redundant circuits
+caused by parallel edges are not desired.
+
+The algorithm is described in detail in
+https://www.researchgate.net/publication/221440635_Enumerating_Circuits_and_Loops_in_Graphs_with_Self-Arcs_and_Multiple-Arcs.
+
+==== Where defined
+
+link:../../../boost/graph/hawick_circuits.hpp[`++#++include <boost/graph/hawick_circuits.hpp>`]
+
+==== Parameters
+
+*IN:* `Graph const& graph`
+
+____
+The graph on which the algorithm is to be performed. It must be a model
+of the `VertexListGraph` and `AdjacencyGraph` concepts.
+____
+
+*IN:* `Visitor visitor`
+
+____
+The visitor that will be notified on each circuit found by the
+algorithm. The `visitor.cycle(circuit, graph)` expression must be valid,
+with `circuit` being a `const`-reference to a random access sequence of
+`vertex_descriptor`s.
+
+For example, if a circuit `u -> v -> w -> u` exists in the
+graph, the visitor will be called with a sequence consisting of
+`(u, v, w)`.
+____
+
+*IN:* `VertexIndexMap const& vim = get(vertex_index, graph)`
+
+____
+A model of the `ReadablePropertyMap` concept mapping each
+`vertex_descriptor` to an integer in the range
+`[0, num_vertices(graph))`. It defaults to using the vertex
+index map provided by the `graph`.
+____
+
+*IN:* `unsigned int max_length = 0`
+
+____
+The maximum circuit length to consider. Beyond this it truncates the
+depth-first search, reducing the computation time by ignoring longer
+circuits. The default value of `max_length = 0` implies no maximum.
+____
+
+'''''
+
+© 2013-2015 Louis Dionne

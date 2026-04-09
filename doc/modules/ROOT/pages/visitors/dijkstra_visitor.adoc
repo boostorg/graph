@@ -1,0 +1,71 @@
+= dijkstra_visitor
+
+....
+
+dijkstra_visitor<EventVisitorList>
+....
+
+This class is an adapter that converts a list of
+xref:visitors/EventVisitor.adoc[EventVisitor]s (constructed using `std::pair`)
+into a xref:visitors/DijkstraVisitor.adoc[DijkstraVisitor].
+
+==== Example
+
+This is an excerpt from link:../example/dave.cpp[`examples/dave.cpp`]
+where the `copy_graph` single-event visitor is used to create a copy
+the shortest-paths search-tree calculated by Dijkstra's algorithm.
+
+[source,cpp]
+----
+
+boost::dijkstra_shortest_paths
+  (G, vertex(a, G),
+   distance_map(make_iterator_property_map(distance.begin(), vertex_id, distance[0])).
+   predecessor_map(make_iterator_property_map(parent.begin(), vertex_id, parent[0])).
+   visitor(make_dijkstra_visitor(copy_graph(G_copy, on_examine_edge()))));
+----
+
+==== Model of
+
+xref:visitors/DijkstraVisitor.adoc[Dijkstra Visitor]
+
+==== Template Parameters
+
+[cols=",,",options="header",]
+|===
+|Parameter |Description |Default
+|`EventVisitorList` |A list of xref:visitors/EventVisitor.adoc[EventVisitor]'s
+created with `std::pair`. |xref:visitors/null_visitor.adoc[`null_visitor`]
+|===
+
+==== Where Defined
+
+link:../../../boost/graph/dijkstra_shortest_paths.hpp[`boost/graph/dijkstra_shortest_paths.hpp`]
+
+==== Member Functions
+
+This class implements all of the member functions required by
+xref:visitors/DijkstraVisitor.adoc[DijkstraVisitor]. In each function the
+appropriate event is dispatched to the
+xref:visitors/EventVisitor.adoc[EventVisitor] in the EventVisitorList.
+
+==== Non-Member Functions
+
+[width="100%",cols="50%,50%",options="header",]
+|===
+|Function |Description
+|` template <class EventVisitorList>` +
+`dijkstra_visitor<EventVisitorList>` +
+`make_dijkstra_visitor(EventVisitorList ev_list); ` |Returns
+the event visitor list adapted to be a Dijkstra Visitor.
+|===
+
+==== See Also
+
+xref:visitors/visitor_concepts.adoc[Visitor concepts]
+
+The following are event visitors:
+xref:visitors/predecessor_recorder.adoc[`predecessor_recorder`],
+xref:visitors/distance_recorder.adoc[`distance_recorder`]
+xref:visitors/time_stamper.adoc[`time_stamper`], and
+xref:visitors/property_writer.adoc[`property_writer`].

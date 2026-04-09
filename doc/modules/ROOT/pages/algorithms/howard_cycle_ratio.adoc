@@ -1,0 +1,214 @@
+= `[maximum++|++minimum++]_++cycle_ratio`
+
+[source,cpp]
+----
+
+template <typename Graph, typename VertexIndexMap,
+          typename EdgeWeight1, typename EdgeWeight2>
+dobule
+maximum_cycle_ratio(const Graph &g, VertexIndexMap vim,
+                    EdgeWeight1 ewm, EdgeWeight2 ew2m,
+                    std::vector<typename boost::graph_traits<Graph>::edge_descriptor> *pcc = 0);
+
+template <typename FloatTraits, Graph, typename VertexIndexMap,
+          typename EdgeWeight1, typename EdgeWeight2>
+typename FloatTraits::float_type
+maximum_cycle_ratio(const Graph &g, VertexIndexMap vim,
+                    EdgeWeight1 ewm, EdgeWeight2 ew2m,
+                    std::vector<typename boost::graph_traits<Graph>::edge_descriptor> *pcc = 0,
+                    FloatTraits = FloatTraits());
+
+template <typename Graph, typename VertexIndexMap,
+          typename EdgeWeight1, typename EdgeWeight2>
+dobule
+minimum_cycle_ratio(const Graph &g, VertexIndexMap vim,
+                    EdgeWeight1 ewm, EdgeWeight2 ew2m,
+                    std::vector<typename boost::graph_traits<Graph>::edge_descriptor> *pcc = 0);
+
+template <typename FloatTraits, typename Graph, typename VertexIndexMap,
+          typename EdgeWeight1, typename EdgeWeight2>
+typename FloatTraits::float_type
+minimum_cycle_ratio(const Graph &g, VertexIndexMap vim,
+                    EdgeWeight1 ewm, EdgeWeight2 ew2m,
+                    std::vector<typename boost::graph_traits<Graph>::edge_descriptor> *pcc = 0,
+                    FloatTraits = FloatTraits());
+----
+
+The `maximum_cycle_ratio()` function calculates the maximum
+cycle ratio of a weighted directed multigraph _G=(V,E,W1,W2)_, where _V_
+is a vertex set, _E_ is an edge set, W1 and W2 are edge weight
+functions, W2 is nonnegative. As a multigraph, _G_ can have multiple
+edges connecting a pair of vertices.
+
+Let every edge _e_ has two weights _W1(e)_ and _W2(e)_. Let _c_ be a
+cycle of the graph__g__. Then, the _cycle ratio_, _cr(c)_, is defined
+as:
+
+image:figs/cr.jpg[Cycle ratio definition]
+
+The _maximum (minimum) cycle ratio_ (mcr) is the maximum (minimum) cycle
+ratio of all cycles of the graph. A cycle is called _critical_ if its
+ratio is equal to the _mcr_. The calculated maximum cycle ratio will be
+the return value of the function. The
+`maximum_cycle_ratio()/minimum_cycle_ratio()` returns
+`-FloatTraits::infinity()/FloatTraits::infinity()` if graph has no
+cycles. If the _pcc_ parameter is not zero then one critical cycle will
+be written to the corresponding `std::vector` of edge descriptors. The
+edges in the vector stored in the way such that
+`*pcc[0], *ppc[1], ..., *ppc[n]` is
+a correct path.
+
+The algorithm is due to Howard's iteration policy algorithm, descibed in
+link:./cochet-terrasson98numerical.pdf[[1]]. Ali Dasdan, Sandy
+S. Irani and Rajesh K.Gupta in their paper
+link:./dasdan-dac99.pdf[Efficient Algorithms for Optimum Cycle Mean and
+Optimum Cost to Time Ratio Problems] state that this is the most
+efficient algorithm to the time being (1999).
+
+For the convenience, functions `maximum_cycle_mean()` and
+`minimum_cycle_mean()` are also provided. They have the
+following signatures:
+
+[source,cpp]
+----
+
+template <typename Graph, typename VertexIndexMap,
+          typename EdgeWeightMap, typename EdgeIndexMap>
+double
+maximum_cycle_mean(const Graph &g, VertexIndexMap vim,
+                   EdgeWeightMap ewm, EdgeIndexMap eim,
+                   std::vector<typename graph_traits<Graph>::edge_descriptor> *pcc = 0);
+template <typename FloatTraits, typename Graph, typename VertexIndexMap,
+          typename EdgeWeightMap, typename EdgeIndexMap>
+
+typename FloatTraits::float_type
+maximum_cycle_mean(const Graph &g, VertexIndexMap vim,
+                   EdgeWeightMap ewm, EdgeIndexMap eim,
+                   std::vector<typename graph_traits<Graph>::edge_descriptor> *pcc = 0,
+                   FloatTraits = FloatTraits());
+
+template <typename Graph, typename VertexIndexMap,
+          typename EdgeWeightMap, typename EdgeIndexMap>
+double
+minimum_cycle_mean(const Graph &g, VertexIndexMap vim,
+                   EdgeWeightMap ewm, EdgeIndexMap eim,
+                   std::vector<typename graph_traits<Graph>::edge_descriptor> *pcc = 0);
+template <typename FloatTraits, typename Graph, typename VertexIndexMap,
+          typename EdgeWeightMap, typename EdgeIndexMap>
+
+typename FloatTraits::float_type
+minimum_cycle_mean(const Graph &g, VertexIndexMap vim,
+                   EdgeWeightMap ewm, EdgeIndexMap eim,
+                   std::vector<typename graph_traits<Graph>::edge_descriptor> *pcc = 0,
+                   FloatTraits = FloatTraits());
+----
+
+==== Where Defined
+
+link:../../../boost/graph/howard_cycle_ratio.hpp[`boost/graph/howard_cycle_ratio.hpp`]
+
+==== Parameters
+
+IN: `FloatTraits`
+
+____
+The `FloatTrats` encapsulates customizable limits-like information for
+floating point types. This type _must_ provide an associated type,
+`value_type` for the floating point type. The default value is
+`boost::mcr_float++<>++`which has the following definition: 
+
+[source,cpp]
+----
+
+ template <typename Float = double>
+ struct mcr_float {
+    typedef Float value_type;
+
+    static Float infinity()
+    { return (std::numeric_limits<value_type>::max)(); }
+
+    static Float epsilon()
+    { return Float(-0.005); }
+  };
+----
+
+The value `FloatTraits::epsilon()` controls the "tolerance" of the
+algorithm. By increasing the absolute value of epsilon you may slightly
+decrease the execution time but there is a risk to skip a global optima.
+By decreasing the absolute value you may fall to the infinite loop. The
+best option is to leave this parameter unchanged.
+____
+
+IN: `const Graph& g `
+
+____
+A weighted directed multigraph. The graph's type must be a model of
+http://boost.org/libs/graph/doc/VertexListGraph.html[VertexListGraph]
+and http://boost.org/libs/graph/doc/IncidenceGraph.html[IncidenceGraph]
+____
+
+IN: `VertexIndexMap vim`
+
+____
+Maps each vertex of the graph to a unique integer in the range [0,
+num_vertices(g)).
+____
+
+IN:
+
+EdgeWeight1 ew1m
+
+____
+The W1 edge weight function.
+____
+
+IN: `EdgeWeight2 ew2m`
+
+____
+The W2 edge weight function. Should be nonnegative. The actual
+limitation of the algorithm is the positivity of the total weight of
+each directed cycle of the graph.
+____
+
+OUT:
+`std::vector<typename boost::graph_traits<Graph>::edge_descriptor++>*++ pcc`
+
+____
+If non zero then one critical cycle will be stored in the std::vector.
+Default value is 0.
+____
+
+IN (only for maximum/minimal_cycle_mean()): `EdgeIndexMap eim`
+
+____
+Maps each edge of the graph to a unique integer in the range [0,
+num_edges(g)).
+____
+
+____
+All property maps must be models of
+http://boost.org/libs/property_map/ReadablePropertyMap.html[Readable
+Property Map]
+____
+
+==== Complexity
+
+There is no known precise upper bound for the time complexity of the
+algorithm. Imperical time complexity is _O(++|++E++|++)_, where the
+constant tends to be pretty small (about 20-30). Space complexity is
+equal to _7++*|++V++|++_ plus the space required to store a graph.
+
+==== Example
+
+The program in
+link:../example/cycle_ratio_example.cpp[libs/graph/example/cycle_ratio_example.cpp]
+generates a random graph and computes its maximum cycle ratio.
+
+'''''
+
+[cols=",",]
+|===
+|Copyright © 2006-2009
+|https://web.archive.org/web/20081122083634/http://www.lsi.upc.edu/~dmitry[Dmitry
+Bufistov], Andrey Parfenov
+|===

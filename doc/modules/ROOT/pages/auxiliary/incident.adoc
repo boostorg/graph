@@ -1,0 +1,37 @@
+[#sec:incident]
+= incident
+
+
+*Complexity:*
+
+_O(1)_
+
+*Where Defined:*
+
+link:../../../boost/graph/graph_utility.hpp[`boost/graph/graph_utility.hpp`]
+
+[source,cpp]
+----
+
+  template <class Graph>
+  std::pair<typename graph_traits<Graph>::vertex_descriptor,
+            typename graph_traits<Graph>::vertex_descriptor>
+  incident(typename graph_traits<Graph>::edge_descriptor e, Graph& g)
+----
+
+This function takes an edge descriptor and returns the pair of vertices
+that are _incident_ to the edge. For directed graphs, the `first` vertex
+is the source and the `second` vertex is the target. This function is
+equivalent to the expression
+`std::make_pair(source(e, g), target(e, g))`.
+
+==== Example
+
+[source,cpp]
+----
+
+  edge_descriptor e;
+  vertex_descriptor u, v;
+  ...
+  boost::tie(u, v) = incident(e, g);
+----

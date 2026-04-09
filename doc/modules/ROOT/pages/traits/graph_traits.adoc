@@ -1,0 +1,118 @@
+= Graph Traits
+
+....
+
+graph_traits<Graph>
+....
+
+Just like the
+http://www.boost.org/sgi/stl/iterator_traits.html[iterators] of STL,
+graphs have *associated types*. As stated in the various
+xref:concepts/graph_concepts.adoc[graph concepts], a graph has quite a few
+associated types: `vertex_descriptor`, `edge_descriptor`,
+`out_edge_iterator`, etc.. Any particular graph concepts will
+not require that all of the following associated types be defined. When
+implementing a graph class that fullfils one or more graph concepts, for
+associated types that are not required by the concepts, it is ok to use
+`void` as the type (when using nested typedefs inside the graph class),
+or to leave the typedef out of the `graph_traits` specialization for
+the graph class. Note that because of the use of traits classes rather
+than member types, it is not safe (and often will not work) to define
+subclasses of BGL graph types; those types may be missing important
+traits and properties that were defined externally to the class
+definition.
+
+[source,cpp]
+----
+
+  template <typename Graph>
+  struct graph_traits {
+    typedef typename Graph::vertex_descriptor      vertex_descriptor;
+    typedef typename Graph::edge_descriptor        edge_descriptor;
+    typedef typename Graph::adjacency_iterator     adjacency_iterator;
+    typedef typename Graph::out_edge_iterator      out_edge_iterator;
+    typedef typename Graph::in_edge_iterator       in_edge_iterator;
+    typedef typename Graph::vertex_iterator        vertex_iterator;
+    typedef typename Graph::edge_iterator          edge_iterator;
+
+    typedef typename Graph::directed_category      directed_category;
+    typedef typename Graph::edge_parallel_category edge_parallel_category;
+    typedef typename Graph::traversal_category     traversal_category;
+
+    typedef typename Graph::vertices_size_type     vertices_size_type;
+    typedef typename Graph::edges_size_type        edges_size_type;
+    typedef typename Graph::degree_size_type       degree_size_type;
+  };
+----
+
+==== Where Defined
+
+link:../../../boost/graph/graph_traits.hpp[`boost/graph/graph_traits.hpp`]
+
+==== Template Parameters
+
+[cols=",",options="header",]
+|===
+|Parameter |Description
+|`Graph` |The graph type whose associated types are being accessed.
+|===
+
+==== Model of
+
+http://www.boost.org/sgi/stl/DefaultConstructible.html[DefaultConstructible]
+and http://www.boost.org/sgi/stl/Assignable.html[Assignable]
+
+==== Type Requirements
+
+* `Graph` is a model of one of the xref:concepts/graph_concepts.adoc[graph
+concepts].
+
+=== Members
+
+[cols=",",options="header",]
+|===
+|Member |Description
+|` vertex_descriptor ` |The type for the objects used to identity
+vertices in the graph.
+
+|` edge_descriptor ` |The type for the objects used to identity
+edges in the graph.
+
+|` adjacency_iterator ` |The type for the iterators that traverse
+the vertices adjacent to a vertex.
+
+|` out_edge_iterator ` |The type for the iterators that traverse
+through the out-edges of a vertex.
+
+|` in_edge_iterator ` |The type for the iterators that traverse
+through the in-edges of a vertex.
+
+|` vertex_iterator ` |The type for the iterators that traverse
+through the complete vertex set of the graph.
+
+|` edge_iterator ` |The type for the iterators that traverse through
+the complete edge set of the graph.
+
+|` directed_category ` |This says whether the graph is undirected
+(`undirected_tag`) or directed (`directed_tag`).
+
+|` edge_parallel_category ` |This says whether the graph allows
+parallel edges to be inserted (`allow_parallel_edge_tag`) or
+if it automatically removes parallel edges
+(`disallow_parallel_edge_tag`).
+
+|` traversal_category ` |The ways in which the vertices in the graph
+can be traversed. The traversal category tags are:
+`incidence_graph_tag, adjacency_graph_tag, bidirectional_graph_tag, vertex_list_graph_tag, edge_list_graph_tag, adjacency_matrix_tag`.
+You can also create your own tag which should inherit from one or more
+of the above.
+
+|` vertices_size_type ` |The unsigned integer type used for
+representing the number of vertices in the graph.
+
+|` edges_size_type ` |The unsigned integer type used for
+representing the number of edge in the graph.
+
+|` degree_size_type ` |The unsigned integer type used for
+representing the degree of vertices in the graph.
+|===

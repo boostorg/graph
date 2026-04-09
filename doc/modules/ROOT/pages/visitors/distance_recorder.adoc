@@ -1,0 +1,90 @@
+= distance_recorder
+
+....
+
+distance_recorder<DistanceMap, EventTag>
+....
+
+This is an xref:visitors/EventVisitor.adoc[EventVisitor] that records the
+distance of a vertex (using a xref:traits/property_map.adoc[property map]) from
+some source vertex during a graph search. When applied to edge _e =
+(u,v)_, the distance of _v_ is recorded to be one more than the distance
+of _u_. The distance recorder is typically used with the
+`on_tree_edge` or `on_relax_edge` events and cannot be
+used with vertex events.
+
+`distance_recorder` can be used with graph algorithms by wrapping it
+with the algorithm specific adaptor, such as
+xref:visitors/bfs_visitor.adoc[`bfs_visitor`] and
+xref:visitors/dfs_visitor.adoc[`dfs_visitor`]. Also, this event visitor can
+be combined with other event visitors using `std::pair` to form an
+EventVisitorList.
+
+==== Example
+
+See the example for xref:visitors/bfs_visitor.adoc[`bfs_visitor`].
+
+==== Model of
+
+xref:visitors/EventVisitor.adoc[EventVisitor]
+
+==== Where Defined
+
+link:../../../boost/graph/visitors.hpp[`boost/graph/visitors.hpp`]
+
+==== Template Parameters
+
+[cols=",,",options="header",]
+|===
+|Parameter |Description |Default
+|`DistanceMap` |A
+link:../../property_map/doc/WritablePropertyMap.html[WritablePropertyMap]
+where the key type and the value type are the vertex descriptor type of
+the graph. | 
+
+|`EventTag` |The tag to specify when the `distance_recorder` should
+be applied during the graph algorithm. `EventTag` must be an edge event.
+| 
+|===
+
+=== Associated Types
+
+[cols=",",options="header",]
+|===
+|Type |Description
+|`distance_recorder::event_filter` |This will be the same type
+as the template parameter `EventTag`.
+|===
+
+==== Member Functions
+
+[width="100%",cols="50%,50%",options="header",]
+|===
+|Member |Description
+|` distance_recorder(DistanceMap pa); ` |Construct a distance
+recorder object with distance property map `pa`.
+
+|` template <class Edge, class Graph>` +
+`void operator()(Edge e, const Graph& g); ` |Given edge _e = (u,v)_,
+this records the distance of _v_ as one plus the distance of _u_.
+|===
+
+==== Non-Member Functions
+
+[width="100%",cols="50%,50%",options="header",]
+|===
+|Function |Description
+|` template <class DistanceMap, class Tag>` +
+`distance_recorder<DistanceMap, Tag>` +
+`record_distances(DistanceMap pa, Tag); ` |A convenient way to
+create a `distance_recorder`.
+|===
+
+==== See Also
+
+xref:visitors/visitor_concepts.adoc[Visitor concepts]
+
+The following are other event visitors:
+xref:visitors/predecessor_recorder.adoc[`predecessor_recorder`],
+xref:visitors/time_stamper.adoc[`time_stamper`], and
+xref:visitors/property_writer.adoc[`property_writer`].

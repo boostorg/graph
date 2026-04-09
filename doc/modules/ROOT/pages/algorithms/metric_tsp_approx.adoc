@@ -1,0 +1,165 @@
+[#sec:metric_tsp_approx]
+= Metric Traveling Salesperson Approximation
+
+
+[source,cpp]
+----
+
+template <typename VertexListGraph,
+          typename WeightMap,
+          typename VertexIndexMap,
+          typename TSPVertexVisitor>
+void metric_tsp_approx_from_vertex(
+        const VertexListGraph& g,
+        typename graph_traits<VertexListGraph>::vertex_descriptor start,
+        WeightMap weightmap,
+        VertexIndexMap indexmap,
+        TSPVertexVisitor vis)
+
+// Overloads
+template<typename VertexListGraph, typename OutputIterator>
+void metric_tsp_approx_tour(VertexListGraph& g, OutputIterator o)
+
+template<typename VertexListGraph, typename WeightMap, typename OutputIterator>
+void metric_tsp_approx_tour(VertexListGraph& g, WeightMap w,
+    OutputIterator o)
+
+template<typename VertexListGraph, typename OutputIterator>
+void metric_tsp_approx_tour_from_vertex(VertexListGraph& g,
+    typename graph_traits<VertexListGraph>::vertex_descriptor start,
+    OutputIterator o)
+
+template<typename VertexListGraph, typename WeightMap,
+    typename OutputIterator>
+void metric_tsp_approx_tour_from_vertex(VertexListGraph& g,
+    typename graph_traits<VertexListGraph>::vertex_descriptor start,
+    WeightMap w, OutputIterator o)
+
+// visitor versions
+template<typename VertexListGraph, typename TSPVertexVisitor>
+void metric_tsp_approx(VertexListGraph& g, TSPVertexVisitor vis)
+
+template<typename VertexListGraph, typename Weightmap,
+    typename VertexIndexMap, typename TSPVertexVisitor>
+void metric_tsp_approx(VertexListGraph& g, Weightmap w,
+    TSPVertexVisitor vis)
+
+template<typename VertexListGraph, typename WeightMap,
+    typename VertexIndexMap, typename TSPVertexVisitor>
+void metric_tsp_approx(VertexListGraph& g, WeightMap w, VertexIndexMap id,
+    TSPVertexVisitor vis)
+
+template<typename VertexListGraph, typename WeightMap,
+    typename TSPVertexVisitor>
+void metric_tsp_approx_from_vertex(VertexListGraph& g,
+    typename graph_traits<VertexListGraph>::vertex_descriptor start,
+    WeightMap w, TSPVertexVisitor vis)
+----
+
+This is a traveling salesperson heuristic for generating a tour of
+vertices for a fully connected undirected graph with weighted edges that
+obey the triangle inequality. The current implementation is based off of
+the algorithm presented in _Introduction to Algorithms_ on page 1029.
+This implementation generates solutions that are twice as long as the
+optimal tour in the worst case. The pseudo-code is listed below.
+
+[width="100%",cols="100%",]
+|===
+a|
+[source,cpp]
+----
+
+TSP-APPROX(G, w)
+  select a vertex r in V[G]
+  compute a minimum spanning tree T for G from root r
+    using PRIM-MST(G, r, w)
+  let L be the list of vertices visited in a preorder traversal of T
+  return (the Hamiltonian cycle H that visites the vertices in the order L)
+----
+
+|===
+
+==== Where Defined
+
+link:../../../boost/graph/metric_tsp_approx.hpp[`boost/graph/metric_tsp_approx.hpp`]
+
+==== Parameters
+
+IN: `const Graph& g`
+
+____
+An undirected graph. The type `Graph` must be a model of
+xref:concepts/VertexListGraph.adoc[Vertex List Graph] and
+xref:concepts/IncidenceGraph.adoc[Incidence Graph] <<2,[2>>]. +
+____
+
+IN: `vertex_descriptor start`
+
+____
+The vertex that will be the start (and end) of the tour. +
+*Default:* `*vertices(g).first`
+____
+
+IN: `WeightMap weightmap`
+
+____
+The weight of each edge in the graph. The type `WeightMap` must be a
+model of link:../../property_map/doc/ReadablePropertyMap.html[Readable
+Property Map]. The edge descriptor type of the graph needs to be usable
+as the key type for the weight map. +
+*Default:* `get(edge_weight, g)` +
+____
+
+IN: `VertexIndexMap indexmap`
+
+____
+This maps each vertex to an integer in the range
+`[0, num_vertices(g))`. This is necessary for efficient updates
+of the heap data structure when an edge is relaxed. The type
+`VertexIndexMap` must be a model of
+link:../../property_map/doc/ReadablePropertyMap.html[Readable Property
+Map]. The value type of the map must be an integer type. The vertex
+descriptor type of the graph needs to be usable as the key type of the
+map. +
+*Default:* `get(vertex_index, g)` Note: if you use this default,
+make sure your graph has an internal `vertex_index` property. For
+example, `adjacency_list` with `VertexList=listS` does not have an
+internal `vertex_index` property. +
+____
+
+OUT: `OutputIterator o`
+
+____
+The OutputIterator holds the vertices of the tour. The type
+`OutputIterator` must be a model of the OutputIterator concept.
+____
+
+OUT: `TSPTourVisitor vis`
+
+____
+Use this to specify actions that you would like to happen when the
+algorithm visits a vertex of the tour. The type `TSPTourVisitor` must be
+a model of the xref:visitors/TSPTourVisitor.adoc[TSP Tour Visitor] concept. The
+visitor object is passed by value <<1,[1>>]. +
+____
+
+==== Complexity
+
+The time complexity is _O(E log V)_.
+
+==== Example
+
+The file
+link:../test/metric_tsp_approx.cpp[`test/metric_tsp_approx.cpp`]
+contains an example of using this TSP approximation algorithm.
+
+==== Notes
+
+[#1]#[1]# Since the visitor parameter is passed by value, if
+your visitor contains state then any changes to the state during the
+algorithm will be made to a copy of the visitor object, not the visitor
+object passed in. Therefore you may want the visitor to hold this state
+by pointer or reference.
+
+[#2]#[2]# Passing an `adjacency_list` with a vertex _not_
+set selected by `vecS` will result in _O(n^2^)_ performance.

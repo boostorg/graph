@@ -1,0 +1,93 @@
+= Find Flow Cost
+
+`find_flow_cost`
+
+[source,cpp]
+----
+
+// named parameter version
+template <class Graph>
+typename property_traits<typename property_map < Graph, edge_capacity_t >::type>::value_type
+find_flow_cost(const Graph & g,
+        const bgl_named_params<P, T, R> & params  = all defaults)
+
+// non-named parameter version
+template<class Graph, class Capacity, class ResidualCapacity, class Weight>
+typename property_traits<typename property_map < Graph, edge_capacity_t >::type>::value_type
+find_flow_cost(const Graph & g, Capacity capacity, ResidualCapacity residual_capacity, Weight weight)
+----
+
+The `find_flow_cost()` function calculates the minimum cost
+maximum flow value of a network and given flow. See Section
+xref:overview/graph_theory_review.adoc#sec:network-flow-algorithms[Network Flow
+Algorithms] for a description of maximum flow. The function calculates
+the cost from the flow values _f(u,v)_ for _(u,v)_ in _E_, which are
+passed in the form of the residual capacity _r(u,v) = c(u,v) - f(u,v)_.
+
+In order to compute the min cost max flow use :
+xref:algorithms/successive_shortest_path_nonnegative_weights.adoc[`successive_shortest_path_nonnegative_weights()`]
+or xref:algorithms/cycle_canceling.adoc[`cycle_canceling()`].
+
+==== Where Defined
+
+link:../../../boost/graph/successive_shortest_path_nonnegative_weights.hpp[`boost/graph/successive_shortest_path_nonnegative_weights.hpp`]
+
+==== Parameters
+
+IN: `const Graph& g`
+
+____
+A directed graph. The graph's type must be a model of
+xref:concepts/VertexListGraph.adoc[VertexListGraph] and
+xref:concepts/IncidenceGraph.adoc[IncidenceGraph] For each edge _(u,v)_ in the
+graph, the reverse edge _(v,u)_ must also be in the graph.
+____
+
+==== Named Parameters
+
+IN: `capacity_map(CapacityEdgeMap cap)`
+
+____
+The edge capacity property map. The type must be a model of a constant
+link:../../property_map/doc/LvaluePropertyMap.html[Lvalue Property Map].
+The key type of the map must be the graph's edge descriptor type. +
+*Default:* `get(edge_capacity, g)`
+____
+
+IN: `residual_capacity_map(ResidualCapacityEdgeMap res)`
+
+____
+This maps edges to their residual capacity. The type must be a model of
+a mutable link:../../property_map/doc/LvaluePropertyMap.html[Lvalue
+Property Map]. The key type of the map must be the graph's edge
+descriptor type. +
+*Default:* `get(edge_residual_capacity, g)`
+____
+
+IN: `weight_map(WeightMap w_map)`
+
+____
+The weight or ++``++cost'' of each edge in the graph. The type
+`WeightMap` must be a model of
+link:../../property_map/doc/ReadablePropertyMap.html[Readable Property
+Map]. The edge descriptor type of the graph needs to be usable as the
+key type for the weight map. The value type for this map must be the
+same as the value type of the distance map. +
+*Default:* `get(edge_weight, g)` +
+____
+
+==== Complexity
+
+The complexity is _O(++|++E++|++)_,
+
+==== Example
+
+The function is used in the
+successive_shortest_path_nonnegative_weights example.
+The program in
+link:../example/successive_shortest_path_nonnegative_weights_example.cpp[`example/successive_shortest_path_nonnegative_weights_example.cpp`].
+
+==== See Also
+
+xref:algorithms/cycle_canceling.adoc[`cycle_canceling()`] +
+xref:algorithms/successive_shortest_path_nonnegative_weights.adoc[`successive_shortest_path_nonnegative_weights()`].

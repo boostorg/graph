@@ -1,0 +1,57 @@
+= bellman_visitor
+
+....
+
+bellman_visitor<EventVisitorList>
+....
+
+This class is an adapter that converts a list of
+xref:visitors/EventVisitor.adoc[EventVisitor]s (constructed using `std::pair`)
+into a xref:visitors/BellmanFordVisitor.adoc[BellmanFordVisitor].
+
+==== Example
+
+==== Model of
+
+xref:visitors/BellmanFordVisitor.adoc[BellmanFordVisitor]
+
+==== Template Parameters
+
+[cols=",,",options="header",]
+|===
+|Parameter |Description |Default
+|`EventVisitorList` |A list of xref:visitors/EventVisitor.adoc[EventVisitor]'s
+created with `std::pair`. |xref:visitors/null_visitor.adoc[`null_visitor`]
+|===
+
+==== Where Defined
+
+link:../../../boost/graph/bellman_ford_shortest_paths.hpp[`boost/graph/bellman_ford_shortest_paths.hpp`]
+
+==== Member Functions
+
+This class implements all of the member functions required by
+xref:visitors/BellmanFordVisitor.adoc[BellmanFordVisitor]. In each function the
+appropriate event is dispatched to the
+xref:visitors/EventVisitor.adoc[EventVisitor] in the EventVisitorList.
+
+==== Non-Member Functions
+
+[width="100%",cols="50%,50%",options="header",]
+|===
+|Function |Description
+|` template <class EventVisitorList>` +
+`bellman_visitor<EventVisitorList>` +
+`make_bellman_visitor(EventVisitorList ev_list); ` |Returns
+the event visitor list adapted to be a BellmanFordVisitor.
+|===
+
+==== See Also
+
+xref:visitors/visitor_concepts.adoc[Visitor concepts]
+
+The following are event visitors:
+xref:visitors/predecessor_recorder.adoc[`predecessor_recorder`],
+xref:visitors/distance_recorder.adoc[`distance_recorder`]
+xref:visitors/time_stamper.adoc[`time_stamper`], and
+xref:visitors/property_writer.adoc[`property_writer`].
