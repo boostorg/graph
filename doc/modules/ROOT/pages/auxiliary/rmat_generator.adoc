@@ -1,0 +1,100 @@
+= R-MAT Graph Generators
+
+Generate scale-free graphs using the Recursive Matrix (R-MAT) model.
+
+Defined in `<boost/graph/rmat_graph_generator.hpp>`
+
+'''
+
+=== `rmat_iterator`
+
+[source,cpp]
+----
+template <typename RandomGenerator, typename Graph>
+class rmat_iterator;
+
+rmat_iterator(RandomGenerator& gen, vertices_size_type n,
+    edges_size_type m, double a, double b, double c, double d,
+    bool permute_vertices = true);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `RandomGenerator& gen` | A random number generator.
+| IN | `vertices_size_type n` | Number of vertices. Must be a power of 2.
+| IN | `edges_size_type m`    | Number of edges to generate.
+| IN | `double a`             | Probability for quadrant (low, low). Typically ~0.57.
+| IN | `double b`             | Probability for quadrant (low, high). Typically ~0.19.
+| IN | `double c`             | Probability for quadrant (high, low). Typically ~0.19.
+| IN | `double d`             | Probability for quadrant (high, high). Typically ~0.05.
+| IN | `bool permute_vertices` | If `true`, randomly permute vertex labels. Default: `true`.
+|===
+
+NOTE: `a + b + c + d` should equal 1.0. May produce parallel edges and self-loops.
+
+'''
+
+=== `unique_rmat_iterator`
+
+Same interface as `rmat_iterator`, but filters out duplicate edges.
+
+'''
+
+=== `sorted_rmat_iterator`
+
+Same interface as `rmat_iterator`, but produces edges in sorted order.
+
+'''
+
+=== `sorted_unique_rmat_iterator`
+
+[source,cpp]
+----
+template <typename RandomGenerator, typename Graph>
+class sorted_unique_rmat_iterator;
+
+sorted_unique_rmat_iterator(RandomGenerator& gen, vertices_size_type n,
+    edges_size_type m, double a, double b, double c, double d,
+    bool bidirectional = false);
+----
+
+Produces edges sorted and deduplicated. If `bidirectional` is `true`, generates
+edges in both directions.
+
+'''
+
+== Description
+
+The R-MAT (Recursive MATrix) model generates graphs with a power-law degree
+distribution and community structure, similar to many real-world networks. The
+algorithm recursively partitions the adjacency matrix into four quadrants,
+choosing each quadrant with probabilities _a_, _b_, _c_, _d_ respectively.
+
+Typical parameters for a Graph500-style generator: `a=0.57, b=0.19, c=0.19, d=0.05`.
+
+== Example
+
+[source,cpp]
+----
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/rmat_graph_generator.hpp>
+#include <boost/random/mersenne_twister.hpp>
+
+typedef boost::adjacency_list<> Graph;
+boost::mt19937 gen;
+
+// Generate a graph with 1024 vertices and 4096 edges
+boost::rmat_iterator<boost::mt19937, Graph> start(
+    gen, 1024, 4096, 0.57, 0.19, 0.19, 0.05);
+boost::rmat_iterator<boost::mt19937, Graph> end;
+
+Graph g(start, end, 1024);
+----
+
+== See Also
+
+* xref:auxiliary/erdos_renyi_generator.adoc[Erdős-Rényi] -- uniform random graphs
+* xref:auxiliary/plod_generator.adoc[PLOD] -- another power-law generator
+* xref:auxiliary/small_world_generator.adoc[Small World] -- Watts-Strogatz model

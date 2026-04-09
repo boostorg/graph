@@ -1,78 +1,49 @@
 = Topologies for Graph Drawing
 
-==== Synopsis
+Various topologies for use with graph layout algorithms, providing different spatial structures for vertex placement.
 
-[source,cpp]
-----
+Defined in `<boost/graph/topology.hpp>`
 
-template<std::size_t Dims> class convex_topology;
-template<std::size_t Dims, typename RandomNumberGenerator = minstd_rand> class hypercube_topology;
-template<typename RandomNumberGenerator = minstd_rand> class square_topology;
-template<typename RandomNumberGenerator = minstd_rand> class cube_topology;
-template<std::size_t Dims, typename RandomNumberGenerator = minstd_rand> class ball_topology;
-template<typename RandomNumberGenerator = minstd_rand> class circle_topology;
-template<typename RandomNumberGenerator = minstd_rand> class sphere_topology;
-template<typename RandomNumberGenerator = minstd_rand> class heart_topology;
-----
+== Description
 
-==== Summary
+Various topologies are provided that produce different, interesting results for graph layout algorithms. The <<square_topology,square topology>> can be used for normal display of graphs or distributing vertices for parallel computation on a process array, for instance. Other topologies, such as the <<sphere_topology,sphere topology>> (or N-dimensional <<ball_topology,ball topology>>) make sense for different problems, whereas the <<heart_topology,heart topology>> is just plain fun. One can also <<topology-concept,define a topology>> to suit other particular needs.
 
-<<topologies,Various topologies>> are provided that produce
-different, interesting results for graph layout algorithms. The
-<<square_topology,square topology>> can be used for normal display of
-graphs or distributing vertices for parallel computation on a process
-array, for instance. Other topologies, such as the
-<<sphere_topology,sphere topology>> (or N-dimensional
-<<ball_topology,ball topology>>) make sense for different problems,
-whereas the <<heart_topology,heart topology>> is just plain fun. One
-can also <<topology-concept,define a topology>> to suit other
-particular needs. +
-[#topologies]
-==== Topologies
+A topology is a description of a space on which layout can be performed. Some common two, three, and multidimensional topologies are provided, or you may create your own so long as it meets the requirements of the <<topology-concept,Topology concept>>.
 
-A topology is a description of a space on which layout can be performed.
-Some common two, three, and multidimensional topologies are provided, or
-you may create your own so long as it meets the requirements of the
-<<topology-concept,Topology concept>>. [#topology-concept]
-===== Topology Concept
+[#topology-concept]
+=== Topology Concept
 
-Let `Topology` be a model of the Topology concept and let `space` be an
-object of type `Topology`. `p1` and `p2` are objects of associated type
-`point_type` (see below). The following expressions must be valid:
+Let `Topology` be a model of the Topology concept and let `space` be an object of type `Topology`. `p1` and `p2` are objects of associated type `point_type` (see below). The following expressions must be valid:
 
-[cols=",,",options="header",]
+[cols="1,2,5"]
 |===
-|Expression |Type |Description
-|`Topology::point_type` |type |The type of points in the space.
+| Expression | Type | Description
 
-|`space.random_point()` |point_type |Returns a random point
-(usually uniformly distributed) within the space.
+| `Topology::point_type`
+| type
+| The type of points in the space.
 
-|`space.distance(p1, p2)` |double |Get a quantity representing the
-distance between `p1` and `p2` using a path going completely inside the
-space. This only needs to have the same < relation as actual
-distances, and does not need to satisfy the other properties of a norm
-in a Banach space.
+| `space.random_point()`
+| point_type
+| Returns a random point (usually uniformly distributed) within the space.
 
-|`space.move_position_toward(p1, fraction, p2)` |point_type
-|Returns a point that is a fraction of the way from `p1` to `p2`, moving
-along a "line" in the space according to the distance measure.
-`fraction` is a `double` between 0 and 1, inclusive.
+| `space.distance(p1, p2)`
+| double
+| Get a quantity representing the distance between `p1` and `p2` using a path going completely inside the space. This only needs to have the same < relation as actual distances, and does not need to satisfy the other properties of a norm in a Banach space.
+
+| `space.move_position_toward(p1, fraction, p2)`
+| point_type
+| Returns a point that is a fraction of the way from `p1` to `p2`, moving along a "line" in the space according to the distance measure. `fraction` is a `double` between 0 and 1, inclusive.
+
 |===
 
 [#convex_topology]
-==== Class template `convex_topology`
+=== Class template `convex_topology`
 
-Class template `convex_topology` implements the basic distance and
-point movement functions for any convex topology in `Dims` dimensions.
-It is not itself a topology, but is intended as a base class that any
-convex topology can derive from. The derived topology need only provide
-a suitable `random_point` function that returns a random point
-within the space.
+Class template `convex_topology` implements the basic distance and point movement functions for any convex topology in `Dims` dimensions. It is not itself a topology, but is intended as a base class that any convex topology can derive from. The derived topology need only provide a suitable `random_point` function that returns a random point within the space.
 
 [source,cpp]
 ----
-
 template<std::size_t Dims>
 class convex_topology
 {
@@ -95,21 +66,14 @@ class convex_topology
 ----
 
 [#hypercube_topology]
-==== Class template `hypercube_topology`
+=== Class template `hypercube_topology`
 
-Class template `hypercube_topology` implements a `Dims`-dimensional
-hypercube. It is a convex topology whose points are drawn from a random
-number generator of type `RandomNumberGenerator`. The
-`hypercube_topology` can be constructed with a given random number
-generator; if omitted, a new, default-constructed random number
-generator will be used. The resulting layout will be contained within
-the hypercube, whose sides measure 2*`scaling` long (points will
-fall in the range [-`scaling`, `scaling`] in each dimension).
+Class template `hypercube_topology` implements a `Dims`-dimensional hypercube. It is a convex topology whose points are drawn from a random number generator of type `RandomNumberGenerator`. The `hypercube_topology` can be constructed with a given random number generator; if omitted, a new, default-constructed random number generator will be used. The resulting layout will be contained within the hypercube, whose sides measure 2*`scaling` long (points will fall in the range [-`scaling`, `scaling`] in each dimension).
 
 [source,cpp]
 ----
-
-template<std::size_t Dims, typename RandomNumberGenerator = minstd_rand>
+template<std::size_t Dims,
+         typename RandomNumberGenerator = minstd_rand>
 class hypercube_topology : public convex_topology<Dims>
 {
 public:
@@ -120,14 +84,12 @@ public:
 ----
 
 [#square_topology]
-==== Class template `square_topology`
+=== Class template `square_topology`
 
-Class template `square_topology` is a two-dimensional hypercube
-topology.
+Class template `square_topology` is a two-dimensional hypercube topology.
 
 [source,cpp]
 ----
-
 template<typename RandomNumberGenerator = minstd_rand>
 class square_topology : public hypercube_topology<2, RandomNumberGenerator>
 {
@@ -138,14 +100,12 @@ class square_topology : public hypercube_topology<2, RandomNumberGenerator>
 ----
 
 [#cube_topology]
-==== Class template `cube_topology`
+=== Class template `cube_topology`
 
-Class template `cube_topology` is a three-dimensional hypercube
-topology.
+Class template `cube_topology` is a three-dimensional hypercube topology.
 
 [source,cpp]
 ----
-
 template<typename RandomNumberGenerator = minstd_rand>
 class cube_topology : public hypercube_topology<3, RandomNumberGenerator>
 {
@@ -156,20 +116,14 @@ class cube_topology : public hypercube_topology<3, RandomNumberGenerator>
 ----
 
 [#ball_topology]
-==== Class template `ball_topology`
+=== Class template `ball_topology`
 
-Class template `ball_topology` implements a `Dims`-dimensional ball.
-It is a convex topology whose points are drawn from a random number
-generator of type `RandomNumberGenerator` but reside inside the ball.
-The `ball_topology` can be constructed with a given random number
-generator; if omitted, a new, default-constructed random number
-generator will be used. The resulting layout will be contained within
-the ball with the given `radius`.
+Class template `ball_topology` implements a `Dims`-dimensional ball. It is a convex topology whose points are drawn from a random number generator of type `RandomNumberGenerator` but reside inside the ball. The `ball_topology` can be constructed with a given random number generator; if omitted, a new, default-constructed random number generator will be used. The resulting layout will be contained within the ball with the given `radius`.
 
 [source,cpp]
 ----
-
-template<std::size_t Dims, typename RandomNumberGenerator = minstd_rand>
+template<std::size_t Dims,
+         typename RandomNumberGenerator = minstd_rand>
 class ball_topology : public convex_topology<Dims>
 {
 public:
@@ -180,13 +134,12 @@ public:
 ----
 
 [#circle_topology]
-==== Class template `circle_topology`
+=== Class template `circle_topology`
 
 Class template `circle_topology` is a two-dimensional ball topology.
 
 [source,cpp]
 ----
-
 template<typename RandomNumberGenerator = minstd_rand>
 class circle_topology : public ball_topology<2, RandomNumberGenerator>
 {
@@ -197,14 +150,12 @@ class circle_topology : public ball_topology<2, RandomNumberGenerator>
 ----
 
 [#sphere_topology]
-==== Class template `sphere_topology`
+=== Class template `sphere_topology`
 
-Class template `sphere_topology` is a three-dimensional ball
-topology.
+Class template `sphere_topology` is a three-dimensional ball topology.
 
 [source,cpp]
 ----
-
 template<typename RandomNumberGenerator = minstd_rand>
 class sphere_topology : public ball_topology<3, RandomNumberGenerator>
 {
@@ -215,14 +166,12 @@ class sphere_topology : public ball_topology<3, RandomNumberGenerator>
 ----
 
 [#heart_topology]
-==== Class template `heart_topology`
+=== Class template `heart_topology`
 
-Class template `heart_topology` is topology in the shape of a heart.
-It serves as an example of a non-convex, nontrivial topology for layout.
+Class template `heart_topology` is topology in the shape of a heart. It serves as an example of a non-convex, nontrivial topology for layout.
 
 [source,cpp]
 ----
-
 template<typename RandomNumberGenerator = minstd_rand>
 class heart_topology
 {

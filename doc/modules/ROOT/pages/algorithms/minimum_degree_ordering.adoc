@@ -1,23 +1,94 @@
+[#sec:mmd]
 = Minimum Degree Ordering
 
- `minimum_degree_ordering`
+A fill-in reduction matrix reordering algorithm for sparse Cholesky factorization.
+
+Complexity: UNDER CONSTRUCTION +
+Defined in `<boost/graph/minimum_degree_ordering.hpp>`
+
+'''
+
+=== (1) Non-named parameter version
 
 [source,cpp]
 ----
-
-  template <class AdjacencyGraph, class OutDegreeMap,
-           class InversePermutationMap,
-           class PermutationMap, class SuperNodeSizeMap, class VertexIndexMap>
-  void minimum_degree_ordering
-    (AdjacencyGraph& G,
-     OutDegreeMap outdegree,
-     InversePermutationMap inverse_perm,
-     PermutationMap perm,
-     SuperNodeSizeMap supernode_size, int delta, VertexIndexMap id)
+template <class AdjacencyGraph, class OutDegreeMap,
+          class InversePermutationMap,
+          class PermutationMap, class SuperNodeSizeMap,
+          class VertexIndexMap>
+void minimum_degree_ordering(
+    AdjacencyGraph& G,
+    OutDegreeMap outdegree,
+    InversePermutationMap inverse_perm,
+    PermutationMap perm,
+    SuperNodeSizeMap supernode_size,
+    int delta,
+    VertexIndexMap id);
 ----
 
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `AdjacencyGraph& G`
+| A directed graph. The graph's type must be a model of
+  xref:concepts/AdjacencyGraph.adoc[Adjacency Graph],
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph],
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph], and
+  xref:concepts/MutableGraph.adoc[Mutable Graph].
+  In addition, the functions `num_vertices()` and `out_degree()` are required.
+
+| WORK
+| `OutDegreeMap outdegree`
+| This is used internally to store the out degree of vertices. This must be a
+  link:../../property_map/doc/LvaluePropertyMap.html[LvaluePropertyMap]
+  with key type the same as the vertex descriptor type of the graph, and
+  with a value type that is an integer type.
+
+| OUT
+| `InversePermutationMap inverse_perm`
+| The new vertex ordering, given as the mapping from the new indices to
+  the old indices (an inverse permutation). This must be an
+  link:../../property_map/doc/LvaluePropertyMap.html[LvaluePropertyMap]
+  with a value type and key type a signed integer.
+
+| OUT
+| `PermutationMap perm`
+| The new vertex ordering, given as the mapping from the old indices to
+  the new indices (a permutation). This must be an
+  link:../../property_map/doc/LvaluePropertyMap.html[LvaluePropertyMap]
+  with a value type and key type a signed integer.
+
+| WORK/OUT
+| `SuperNodeSizeMap supernode_size`
+| This is used internally to record the size of supernodes and is also
+  useful information to have. This is a
+  link:../../property_map/doc/LvaluePropertyMap.html[LvaluePropertyMap]
+  with an unsigned integer value type and key type of vertex descriptor.
+
+| IN
+| `int delta`
+| Multiple elimination control variable. If it is larger than or equal to
+  zero then multiple elimination is enabled. The value of `delta`
+  specifies the difference between the minimum degree and the degree of
+  vertices that are to be eliminated.
+
+| IN
+| `VertexIndexMap id`
+| Used internally to map vertices to their indices. This must be a
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map]
+  with key type the same as the vertex descriptor of the graph and a
+  value type that is some unsigned integer type.
+
+|===
+
+'''
+
+== Description
+
 The minimum degree ordering
-algorithm [xref:about/bibliography.adoc#LIU:MMD[21],
+algorithm [xref:about/bibliography.adoc#LIU:MMD[21],
 xref:about/bibliography.adoc#George:evolution[35]] is a fill-in reduction
 matrix reordering algorithm. When solving a system of equations such as
 _A x = b_ using a sparse version of Cholesky factorization (which is a
@@ -42,75 +113,36 @@ directed edges (`e(i,j)` and `e(j,i)`) in `G`.
 
 The output of the algorithm are the vertices in the new ordering.
 
-....
-
-  inverse_perm[new_index[u]] == old_index[u]
-....
+[source,cpp]
+----
+inverse_perm[new_index[u]] == old_index[u]
+----
 
 and the permutation from the old index to the new index.
 
-....
-
-  perm[old_index[u]] == new_index[u]
-....
+[source,cpp]
+----
+perm[old_index[u]] == new_index[u]
+----
 
 The following equations are always held.
 
-....
+[source,cpp]
+----
+for (size_type i = 0; i != inverse_perm.size(); ++i)
+  perm[inverse_perm[i]] == i;
+----
 
-  for (size_type i = 0; i != inverse_perm.size(); ++i)
-    perm[inverse_perm[i]] == i;
-....
+== Example
 
-==== Parameters
+See link:../example/minimum_degree_ordering.cpp[`example/minimum_degree_ordering.cpp`].
 
-* `AdjacencyGraph& G`  (IN) +
-A directed graph. The graph's type must be a model of
-xref:concepts/AdjacencyGraph.adoc[Adjacency Graph],
-xref:concepts/VertexListGraph.adoc[Vertex List Graph],
-xref:concepts/IncidenceGraph.adoc[Incidence Graph], and
-xref:concepts/MutableGraph.adoc[Mutable Graph]. In addition, the functions
-`num_vertices()` and `out_degree()` are required.
-* `OutDegreeMap outdegree`  (WORK) +
-This is used internally to store the out degree of vertices. This must
-be a
-link:../../property_map/doc/LvaluePropertyMap.html[LvaluePropertyMap]
-with key type the same as the vertex descriptor type of the graph, and
-with a value type that is an integer type.
-* `InversePermutationMap inverse_perm`  (OUT) +
-The new vertex ordering, given as the mapping from the new indices to
-the old indices (an inverse permutation). This must be an
-link:../../property_map/doc/LvaluePropertyMap.html[LvaluePropertyMap]
-with a value type and key type a signed integer.
-* `PermutationMap perm`  (OUT) +
-The new vertex ordering, given as the mapping from the old indices to
-the new indices (a permutation). This must be an
-link:../../property_map/doc/LvaluePropertyMap.html[LvaluePropertyMap]
-with a value type and key type a signed integer.
-* `SuperNodeSizeMap supernode_size`  (WORK/OUT) +
-This is used internally to record the size of supernodes and is also
-useful information to have. This is a
-link:../../property_map/doc/LvaluePropertyMap.html[LvaluePropertyMap]
-with an unsigned integer value type and key type of vertex descriptor.
-* `int delta`  (IN) +
-Multiple elimination control variable. If it is larger than or equal to
-zero then multiple elimination is enabled. The value of `delta`
-specifies the difference between the minimum degree and the degree of
-vertices that are to be eliminated.
-* `VertexIndexMap id`  (IN) +
-Used internally to map vertices to their indices. This must be a
-link:../../property_map/doc/ReadablePropertyMap.html[Readable Property
-Map] with key type the same as the vertex descriptor of the graph and a
-value type that is some unsigned integer type.
+== See Also
 
-==== Example
+* xref:about/bibliography.adoc#LIU:MMD[[21\] LIU:MMD]
+* xref:about/bibliography.adoc#George:evolution[[35\] George:evolution]
 
-See
-link:../example/minimum_degree_ordering.cpp[`example/minimum_degree_ordering.cpp`].
-
-==== Implementation Notes
-
-UNDER CONSTRUCTION
+== Notes
 
 It chooses the vertex with minimum degree in the graph at each step of
 simulating Gaussian elimination process.
@@ -118,7 +150,7 @@ simulating Gaussian elimination process.
 This implementation provided a number of enhancements including mass
 elimination, incomplete degree update, multiple elimination, and
 external degree.
-See [xref:about/bibliography.adoc#George:evolution[35]] for a
+See xref:about/bibliography.adoc#George:evolution[[35\]] for a
 historical survey of the minimum degree algorithm.
 
 An *elimination graph* _G~v~_ is obtained from the graph _G_ by removing

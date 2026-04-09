@@ -1,45 +1,195 @@
 [#sec:maximum-adjacency-search]
 = Maximum Adjacency Search
 
+Traverses vertices of an undirected graph, always visiting next the vertex with the most visited neighbors.
+
+Complexity: _O(E + V)_ +
+Defined in `<boost/graph/maximum_adjacency_search.hpp>`
+
+'''
+
+=== (1) Non-named parameter version
 
 [source,cpp]
 ----
-
-// named parameter versions
-template <class Graph, class class P, class T, class R>
-void
-maximum_adjacency_search(const Graph& g,
-       const bgl_named_params<P, T, R>& params);
-
-// non-named parameter versions
 template <class Graph, class WeightMap, class MASVisitor>
-void
-maximum_adjacency_search(const Graph& g, WeightMap weights, MASVisitor vis,
-       const typename graph_traits<Graph>::vertex_descriptor start);
+void maximum_adjacency_search(
+    const Graph& g, WeightMap weights, MASVisitor vis,
+    const typename graph_traits<Graph>::vertex_descriptor start);
 ----
 
-The `maximum_adjacency_search()` function performs a traversal
-of the vertices in an undirected graph. The next vertex visited is the
-vertex that has the most visited neighbors at any time. In the case of
-an unweighted, undirected graph, the number of visited neighbors of the
-very last vertex visited in the graph is also the number of
-edge-disjoint paths between that vertex and the next-to-last vertex
-visited. These can be retrieved from a visitor, an example of which is
-in the test harness mas_test.cpp.
-
-The `maximum_adjacency_search()` function invokes user-defined
-actions at certain event-points within the algorithm. This provides a
-mechanism for adapting the generic MAS algorithm to the many situations
-in which it can be used. In the pseudo-code below, the event points for
-MAS are the labels on the right. The user-defined actions must be
-provided in the form of a visitor object, that is, an object whose type
-meets the requirements for a MAS Visitor.
-
-[width="100%",cols="50%,50%",]
+[cols="1,2,5"]
 |===
-a|
-....
+| Direction | Parameter | Description
 
+| IN
+| `const Graph& g`
+| A connected, directed graph. The graph type must be a model of
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph] and
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph].
+
+| IN
+| `WeightMap weights`
+| The weight or length of each edge in the graph. The `WeightMap` type
+  must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map]
+  and its value type must be
+  http://www.boost.org/sgi/stl/LessThanComparable.html[Less Than Comparable]
+  and summable. The key type of this map needs to be the graph's edge
+  descriptor type.
+
+| IN
+| `MASVisitor vis`
+| A visitor object that is invoked inside the algorithm at the event-points
+  specified by the MAS Visitor concept. The visitor object is passed by
+  value <<1,[1]>>.
+
+| IN
+| `vertex_descriptor start`
+| This specifies the vertex that the search should originate from. The type
+  is the type of a vertex descriptor for the given graph.
+
+|===
+
+'''
+
+=== (2) Named parameter version
+
+[source,cpp]
+----
+template <class Graph, class P, class T, class R>
+void maximum_adjacency_search(
+    const Graph& g,
+    const bgl_named_params<P, T, R>& params);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| A connected, directed graph. The graph type must be a model of
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph] and
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph].
+
+| IN
+| `params`
+| Named parameters passed via `bgl_named_params`. The following are accepted:
+|===
+
+[cols="1,2,5"]
+|===
+| Direction | Named Parameter | Description / Default
+
+| IN
+| `weight_map(WeightMap weights)`
+| The weight or length of each edge in the graph. The `WeightMap` type
+  must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map]
+  and its value type must be
+  http://www.boost.org/sgi/stl/LessThanComparable.html[Less Than Comparable]
+  and summable. The key type of this map needs to be the graph's edge
+  descriptor type. +
+  *Default:* `get(edge_weight, g)`
+
+| IN
+| `visitor(MASVisitor vis)`
+| A visitor object that is invoked inside the algorithm at the event-points
+  specified by the MAS Visitor concept. The visitor object is passed by
+  value <<1,[1]>>. +
+  *Default:* `mas_visitor<null_visitor>`
+
+| IN
+| `root_vertex(typename graph_traits<VertexListGraph>::vertex_descriptor start)`
+| This specifies the vertex that the search should originate from. The type
+  is the type of a vertex descriptor for the given graph. +
+  *Default:* `*vertices(g).first`
+
+| IN
+| `vertex_index_map(VertexIndexMap vertexIndices)`
+| This maps each vertex to an integer in the range `[0, num_vertices(g))`.
+  This is only necessary if the default is used for the assignment,
+  index-in-heap, or distance maps. `VertexIndexMap` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The key type must be
+  the graph's vertex descriptor type. +
+  *Default:* `get(boost::vertex_index, g)`.
+  Note: if you use this default, make sure your graph has an internal
+  `vertex_index` property. For example, `adjacency_list` with
+  `VertexList=listS` does not have an internal `vertex_index` property.
+
+| UTIL
+| `vertex_assignment_map(AssignmentMap assignments)`
+| `AssignmentMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map].
+  The key and value types must be the graph's vertex descriptor type. +
+  *Default:* A `boost::iterator_property_map` using a `std::vector` of
+  `num_vertices(g)` vertex descriptors and `vertexIndices` for the index map.
+
+| UTIL
+| `max_priority_queue(MaxPriorityQueue& pq)`
+| `MaxPriorityQueue` must be a model of
+  xref:auxiliary/KeyedUpdatableQueue.adoc[Keyed Updatable Queue] and a
+  max-link:./UpdatableQueue.html#concept%3AUpdatablePriorityQueue[Updatable
+  Priority Queue]. The value type must be the graph's vertex descriptor and
+  the key type must be the weight type. +
+  *Default:* A `boost::d_ary_heap_indirect` using a default index-in-heap
+  and distance map.
+
+| UTIL
+| `index_in_heap_map(IndexInHeapMap indicesInHeap)`
+| This parameter only has an effect when the default max-priority queue is
+  used. +
+  `IndexInHeapMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map].
+  The key type must be the graph's vertex descriptor type. The value type
+  must be a size type
+  (`typename std::vector<vertex_descriptor>::size_type`). +
+  *Default:* A `boost::iterator_property_map` using a `std::vector` of
+  `num_vertices(g)` size type objects and `vertexIndices` for the index map.
+
+| UTIL
+| `distance_map(DistanceMap wAs)`
+| This parameter only has an effect when the default max-priority queue is
+  used. +
+  `DistanceMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map].
+  The key type must be the graph's vertex descriptor type. The value type
+  must be the weight type
+  (`typename boost::property_traits<WeightMap>::value_type`). +
+  *Default:* A `boost::iterator_property_map` using a `std::vector` of
+  `num_vertices(g)` weight type objects and `vertexIndices` for the index map.
+
+|===
+
+'''
+
+== Description
+
+The `maximum_adjacency_search()` function performs a traversal of the
+vertices in an undirected graph. The next vertex visited is the vertex
+that has the most visited neighbors at any time. In the case of an
+unweighted, undirected graph, the number of visited neighbors of the very
+last vertex visited in the graph is also the number of edge-disjoint
+paths between that vertex and the next-to-last vertex visited. These can
+be retrieved from a visitor, an example of which is in the test harness
+mas_test.cpp.
+
+The `maximum_adjacency_search()` function invokes user-defined actions at
+certain event-points within the algorithm. This provides a mechanism for
+adapting the generic MAS algorithm to the many situations in which it can
+be used. In the pseudo-code below, the event points for MAS are the
+labels on the right. The user-defined actions must be provided in the
+form of a visitor object, that is, an object whose type meets the
+requirements for a MAS Visitor.
+
+=== Pseudo-Code
+
+[cols="1a,1a"]
+|===
+|
+----
 MAS(G)
   for each vertex u in V
     reach_count[u] := 0
@@ -56,201 +206,66 @@ MAS(G)
     end for each out edge
     call MAS-VISIT(G, u)
   end for each unvisited vertex
-....
-
-a|
-....
-
--
--
+----
+|
+----
+.
+.
 initialize vertex u
--
--
--
--
+.
+.
+.
+.
 examine vertex u
--
+.
 examine edge (u,t)
--
--
--
--
+.
+.
+.
+.
 finish vertex u
--
-....
-
+.
+----
 |===
 
-==== Where Defined
+=== Returns
 
-link:../../../boost/graph/maximum_adjacency_search.hpp[`boost/graph/maximum_adjacency_search.hpp`]
+`void`
 
-==== Parameters
+=== Throws
 
-IN: `const UndirectedGraph& g`
+`bad_graph`:: If `num_vertices(g)` is less than 2.
+`std::invalid_argument`:: If a max-priority queue is given as an argument and it is not empty.
 
-____
-A connected, directed graph. The graph type must be a model of
-xref:concepts/IncidenceGraph.adoc[Incidence Graph] and
-xref:concepts/VertexListGraph.adoc[Vertex List Graph]. +
-____
-
-==== Named Parameters
-
-IN: `WeightMap weights`
-
-____
-The weight or length of each edge in the graph. The `WeightMap` type
-must be a model of
-link:../../property_map/doc/ReadablePropertyMap.html[Readable Property
-Map] and its value type must be
-http://www.boost.org/sgi/stl/LessThanComparable.html[Less Than
-Comparable] and summable. The key type of this map needs to be the
-graph's edge descriptor type. *Default:* `get(edge_weight, g)` +
-____
-
-IN: `visitor(MASVisitor vis)`
-
-____
-A visitor object that is invoked inside the algorithm at the
-event-points specified by the MAS Visitor concept. The visitor object is
-passed by value <<1,[1>>]. +
-*Default:* `mas_visitor<null_visitor>` +
-____
-
-IN:
-`root_vertex(typename graph_traits<VertexListGraph>::vertex_descriptor start)`
-
-____
-This specifies the vertex that the depth-first search should originate
-from. The type is the type of a vertex descriptor for the given graph. +
-*Default:* `*vertices(g).first` +
-____
-
-===== Expert Parameters
-
-IN: `vertex_index_map(VertexIndexMap vertexIndices)`
-
-____
-This maps each vertex to an integer in the range [0,
-`num_vertices(g)`). This is only necessary if the default is used
-for the assignment, index-in-heap, or distance maps. `VertexIndexMap`
-must be a model of
-link:../../property_map/doc/ReadablePropertyMap.html[Readable Property
-Map]. The value type of the map must be an integer type. The key type
-must be the graph's vertex descriptor type. +
-*Default:* `get(boost::vertex_index, g)` Note: if you use this
-default, make sure your graph has an internal `vertex_index`
-property. For example, `adjacency_list` with `VertexList=listS` does
-not have an internal `vertex_index` property.
-____
-
-UTIL: `vertex_assignment_map(AssignmentMap assignments)`
-
-____
-`AssignmentMap` must be a model of
-link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write
-Property Map]. The key and value types must be the graph's vertex
-descriptor type. +
-*Default:* A `boost::iterator_property_map` using a
-`std::vector` of `num_vertices(g)` vertex descriptors and
-`vertexIndices` for the index map.
-____
-
-UTIL: `max_priority_queue(MaxPriorityQueue& pq)`
-
-____
-`MaxPriorityQueue` must be a model of
-xref:auxiliary/KeyedUpdatableQueue.adoc[Keyed Updatable Queue] and a max-
-link:./UpdatableQueue.html#concept%3AUpdatablePriorityQueue[Updatable
-Priority Queue]. The value type must be the graph's vertex descriptor
-and the key type must be the weight type. *Default:* A
-`boost::d_ary_heap_indirect` using a default index-in-heap
-and distance map.
-____
-
-UTIL: `index_in_heap_map(IndexInHeapMap indicesInHeap)`
-
-____
-This parameter only has an effect when the default max-priority queue is
-used. +
-`IndexInHeapMap` must be a model of
-link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write
-Property Map]. The key type must be the graph's vertex descriptor type.
-The value type must be a size type
-(`typename std::vector<vertex_descriptor>::size_type`). +
-*Default:* A `boost::iterator_property_map` using a
-`std::vector` of `num_vertices(g)` size type objects and
-`vertexIndices` for the index map.
-____
-
-UTIL: `distance_map(DistanceMap wAs)`
-
-____
-This parameter only has an effect when the default max-priority queue is
-used. +
-`DistanceMap` must be a model of
-link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write
-Property Map]. The key type must be the graph's vertex descriptor type.
-The value type must be the weight type
-(`typename boost::property_traits<WeightMap>::value_type`). +
-*Default:* A `boost::iterator_property_map` using a
-`std::vector` of `num_vertices(g)` weight type objects and
-`vertexIndices` for the index map.
-____
-
-==== Returns
-
-void
-
-==== Throws
-
-`bad_graph`
-
-____
-If `num_vertices(g)` is less than 2
-____
-
-`std::invalid_argument`
-
-____
-If a max-priority queue is given as an argument and it is not empty
-____
-
-.
-
-==== #Complexity#
-
-The time complexity is _O(E + V)_.
-
-==== References
-
-* David Matula (1993).
-"`http://dl.acm.org/citation.cfm?id=313872&dl=ACM&coll=DL&CFID=85991501&CFTOKEN=44461131[A
-linear time 2 + epsilon approximation algorightm for edge
-connectivity]`"
-* Cai, Weiqing and Matula, David W. Partitioning by maximum adjacency
-search of graphs. Partitioning Data Sets: Dimacs Workshop, April 19-21,
-1993. Vol 19. Page 55. 1995. Amer Mathematical Society
-+
-}
-
-==== Visitor Event Points
+== Visitor Event Points
 
 * *`vis.initialize_vertex(s, g)`* is invoked on every vertex of the
-graph before the start of the graph search.
+  graph before the start of the graph search.
 * *`vis.start_vertex(s, g)`* is invoked on the source vertex once
-before processing its out edges.
+  before processing its out edges.
 * *`vis.examine_edge(e, g)`* is invoked on every out-edge of each
-vertex after it is started.
-* *`vis.finish_vertex(u, g)`* is invoked on a vertex after all of
-its out edges have been examined and the reach counts of the unvisited
-targets have been updated.
+  vertex after it is started.
+* *`vis.finish_vertex(u, g)`* is invoked on a vertex after all of its
+  out edges have been examined and the reach counts of the unvisited
+  targets have been updated.
 
-==== Notes
+== Example
 
-[#1]#[1]# Since the visitor parameter is passed by value, if
-your visitor contains state then any changes to the state during the
-algorithm will be made to a copy of the visitor object, not the visitor
-object passed in. Therefore you may want the visitor to hold this state
-by pointer or reference.
+See the test harness `mas_test.cpp` for an example of using maximum adjacency search.
+
+== See Also
+
+* xref:algorithms/stoer_wagner_min_cut.adoc[Stoer-Wagner Min Cut] -- uses maximum adjacency search internally.
+
+== Notes
+
+[#1]#[1]# Since the visitor parameter is passed by value, if your
+visitor contains state then any changes to the state during the algorithm
+will be made to a copy of the visitor object, not the visitor object
+passed in. Therefore you may want the visitor to hold this state by
+pointer or reference.
+
+== References
+
+* David Matula (1993). "http://dl.acm.org/citation.cfm?id=313872&dl=ACM&coll=DL&CFID=85991501&CFTOKEN=44461131[A linear time 2 + epsilon approximation algorithm for edge connectivity]"
+* Cai, Weiqing and Matula, David W. Partitioning by maximum adjacency search of graphs. Partitioning Data Sets: Dimacs Workshop, April 19-21, 1993. Vol 19. Page 55. 1995. Amer Mathematical Society.

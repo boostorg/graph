@@ -1,69 +1,80 @@
-[#sec:bfs]
-= sloan_start_end_vertices
+= `sloan_start_end_vertices`
 
+Finds good start and end vertices for the Sloan profile and wavefront reduction ordering algorithm.
 
-[cols="<,<",]
-|===
-<|*Graphs:* <|undirected
-<|*Properties:* <|color, degree
-<|*Complexity:* <| 
-|===
+Complexity: Depends on graph structure (multiple internal BFS traversals) +
+Defined in `<boost/graph/sloan_ordering.hpp>`
+
+'''
+
+=== (1) Single starting vertex
 
 [source,cpp]
 ----
-  (1)
-  template <class Graph, class ColorMap, class DegreeMap>
-  typename graph_traits<Graph>::vertex_descriptor
-  sloan_start_end_vertices(Graph& G,
-                           typename graph_traits<Graph>::vertex_descriptor &s,
-                           ColorMap color,
-                           DegreeMap degree )
+template <class Graph, class ColorMap, class DegreeMap>
+typename graph_traits<Graph>::vertex_descriptor
+sloan_start_end_vertices(
+    Graph& G,
+    typename graph_traits<Graph>::vertex_descriptor& s,
+    ColorMap color,
+    DegreeMap degree);
 ----
 
-The goal of the sloan_start_end_vertices algorithm[1,
-2] is to find good start- and end-vertices for the profile and
-wavefront reduction algorithm sloan_ordering. The algorithm is
-similar to pseudo_peripheral_pair and also based on
-breadth_first_search. With this breadth_first_search
-function a so-called rooted level structure (RLS) is formed, where the
-vertices with the same distance to the starting vertex are grouped
-together. The maximum number of vertices in one group is called the
-width of the RLS. Sloan_start_end_vertices tries to find a
-pseudoperipheral pair with a minimum RLS-width.
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
 
-==== Parameters
+| IN
+| `Graph& G`
+| An undirected graph. The graph's type must be a model of
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
 
-For version 1:
+| IN
+| `vertex_descriptor s`
+| The starting vertex.
 
-* `Graph& g`  (IN) +
-An undirected graph. The graph's type must be a model of
-http://www.boost.org/libs/graph/doc/IncidenceGraph.html[IncidenceGraph].
-* `vertex_descriptor s`  (IN) +
-The starting vertex.
-* `ColorMap color_map`  (WORK) +
-Used internally to keep track of the progress of the algorithm (to avoid
-visiting the same vertex twice).
-* `DegreeMap degree_map`  (IN) +
-This must map vertices to their degree.
+| WORK
+| `ColorMap color`
+| Used internally to keep track of the progress of the algorithm
+  (to avoid visiting the same vertex twice).
 
- 
+| IN
+| `DegreeMap degree`
+| This must map vertices to their degree.
 
-==== Example
+|===
 
-See
-http://www.boost.org/libs/graph/example/cuthill_mckee_ordering.cpp[`example/sloan_ordering.cpp`].
+'''
 
-==== See Also
+== Description
 
-http://www.boost.org/libs/graph/doc/sloan_start_end_vertices.htm[sloan_start_end_vertices],
-http://www.boost.org/libs/graph/doc/bandwidth.html[bandwidth],
-http://www.boost.org/libs/graph/doc/profile.htm[profile],
-http://www.boost.org/libs/graph/doc/wavefront.htm[wavefront] and
-`degree_property_map` in `boost/graph/properties.hpp`.
+The goal of the `sloan_start_end_vertices` algorithm [1, 2] is to find good
+start- and end-vertices for the profile and wavefront reduction algorithm
+xref:algorithms/sloan_ordering.adoc[`sloan_ordering`]. The algorithm is similar
+to `pseudo_peripheral_pair` and also based on
+xref:algorithms/breadth_first_search.adoc[`breadth_first_search`]. With this
+breadth-first search a so-called rooted level structure (RLS) is formed, where
+the vertices with the same distance to the starting vertex are grouped together.
+The maximum number of vertices in one group is called the width of the RLS.
+`sloan_start_end_vertices` tries to find a pseudoperipheral pair with a minimum
+RLS-width.
 
-[1] S. W. Sloan, _An algorithm for profile and wavefront
-reduction of sparse matrices_, Int. j. numer. methods eng., *23*, 239 -
-251 (1986)
+== Example
 
-[2] S. W. Sloan, _A fortran program for profile and wavefront
-reduction_, Int. j. numer. methods eng., *28*, 2651 - 2679 (1989)
+See link:../example/sloan_ordering.cpp[`example/sloan_ordering.cpp`].
+
+== See Also
+
+* xref:algorithms/sloan_ordering.adoc[`sloan_ordering`]
+* xref:algorithms/bandwidth.adoc[`bandwidth`]
+* xref:algorithms/profile.adoc[`profile`]
+* xref:algorithms/wavefront.adoc[`wavefront`]
+* `degree_property_map` in `boost/graph/properties.hpp`
+
+== Notes
+
+[1] S. W. Sloan, _An algorithm for profile and wavefront reduction of sparse
+matrices_, Int. j. numer. methods eng., *23*, 239-251 (1986)
+
+[2] S. W. Sloan, _A fortran program for profile and wavefront reduction_,
+Int. j. numer. methods eng., *28*, 2651-2679 (1989)

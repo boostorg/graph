@@ -1,135 +1,185 @@
+[#sec:push_relabel_max_flow]
 = Push-Relabel Maximum Flow
 
-`push_relabel_max_flow`
+Calculates the maximum flow of a network using the push-relabel algorithm.
+
+Complexity: _O(V^3^)_ +
+Defined in `<boost/graph/push_relabel_max_flow.hpp>`
+
+'''
+
+=== (1) Non-named parameter version
 
 [source,cpp]
 ----
-
-// named parameter version
-template <class Graph, class P, class T, class R>
-typename property_traits<CapacityEdgeMap>::value_type
-push_relabel_max_flow(Graph& g,
-   typename graph_traits<Graph>::vertex_descriptor src,
-   typename graph_traits<Graph>::vertex_descriptor sink,
-   const bgl_named_params<P, T, R>& params = all defaults)
-
-// non-named parameter version
 template <class Graph,
-      class CapacityEdgeMap, class ResidualCapacityEdgeMap,
-      class ReverseEdgeMap, class VertexIndexMap>
-typename property_traits<CapacityEdgeMap>::value_type
-push_relabel_max_flow(Graph& g,
-   typename graph_traits<Graph>::vertex_descriptor src,
-   typename graph_traits<Graph>::vertex_descriptor sink,
-   CapacityEdgeMap cap, ResidualCapacityEdgeMap res,
-   ReverseEdgeMap rev, VertexIndexMap index_map)
+          class CapacityEdgeMap, class ResidualCapacityEdgeMap,
+          class ReverseEdgeMap, class VertexIndexMap>
+typename property_traits<CapacityEdgeMap>::value_type push_relabel_max_flow(
+    Graph& g,
+    typename graph_traits<Graph>::vertex_descriptor src,
+    typename graph_traits<Graph>::vertex_descriptor sink,
+    CapacityEdgeMap cap, ResidualCapacityEdgeMap res,
+    ReverseEdgeMap rev, VertexIndexMap index_map)
 ----
 
-The `push_relabel_max_flow()` function calculates the
-maximum flow of a network. See Section
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `Graph& g`
+| A directed graph. The graph's type must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph]. For each edge
+  _(u,v)_ in the graph, the reverse edge _(v,u)_ must also be in the graph.
+
+| IN
+| `vertex_descriptor src`
+| The source vertex for the flow network graph.
+
+| IN
+| `vertex_descriptor sink`
+| The sink vertex for the flow network graph.
+
+| IN
+| `CapacityEdgeMap cap`
+| The edge capacity property map. The type must be a model of a constant
+  link:../../property_map/doc/LvaluePropertyMap.html[Lvalue Property Map].
+  The key type of the map must be the graph's edge descriptor type.
+
+| OUT
+| `ResidualCapacityEdgeMap res`
+| The edge residual capacity property map. The type must be a model of a
+  mutable link:../../property_map/doc/LvaluePropertyMap.html[Lvalue Property Map].
+  The key type of the map must be the graph's edge descriptor type.
+
+| IN
+| `ReverseEdgeMap rev`
+| An edge property map that maps every edge _(u,v)_ in the graph to the
+  reverse edge _(v,u)_. The map must be a model of constant
+  link:../../property_map/doc/LvaluePropertyMap.html[Lvalue Property Map].
+  The key type of the map must be the graph's edge descriptor type.
+
+| IN
+| `VertexIndexMap index_map`
+| Maps each vertex of the graph to a unique integer in the range
+  `[0, num_vertices(g))`. The map must be a model of constant
+  link:../../property_map/doc/LvaluePropertyMap.html[Lvalue Property Map].
+  The key type of the map must be the graph's vertex descriptor type.
+
+|===
+
+'''
+
+=== (2) Named parameter version
+
+[source,cpp]
+----
+template <class Graph, class P, class T, class R>
+typename property_traits<CapacityEdgeMap>::value_type push_relabel_max_flow(
+    Graph& g,
+    typename graph_traits<Graph>::vertex_descriptor src,
+    typename graph_traits<Graph>::vertex_descriptor sink,
+    const bgl_named_params<P, T, R>& params = all defaults)
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `Graph& g`
+| A directed graph. Must model xref:concepts/VertexListGraph.adoc[Vertex List Graph].
+  For each edge _(u,v)_ in the graph, the reverse edge _(v,u)_ must also be in the graph.
+
+| IN
+| `vertex_descriptor src`
+| The source vertex for the flow network graph.
+
+| IN
+| `vertex_descriptor sink`
+| The sink vertex for the flow network graph.
+
+| IN
+| `params`
+| Named parameters passed via `bgl_named_params`. The following are accepted:
+|===
+
+[cols="1,2,5"]
+|===
+| Direction | Named Parameter | Description / Default
+
+| IN
+| `capacity_map(EdgeCapacityMap cap)`
+| The edge capacity property map. The type must be a model of a constant
+  link:../../property_map/doc/LvaluePropertyMap.html[Lvalue Property Map].
+  The key type of the map must be the graph's edge descriptor type. +
+  *Default:* `get(edge_capacity, g)`
+
+| OUT
+| `residual_capacity_map(ResidualCapacityEdgeMap res)`
+| The edge residual capacity property map. The type must be a model of a
+  mutable link:../../property_map/doc/LvaluePropertyMap.html[Lvalue Property Map].
+  The key type of the map must be the graph's edge descriptor type. +
+  *Default:* `get(edge_residual_capacity, g)`
+
+| IN
+| `reverse_edge_map(ReverseEdgeMap rev)`
+| An edge property map that maps every edge _(u,v)_ in the graph to the
+  reverse edge _(v,u)_. The map must be a model of constant
+  link:../../property_map/doc/LvaluePropertyMap.html[Lvalue Property Map].
+  The key type of the map must be the graph's edge descriptor type. +
+  *Default:* `get(edge_reverse, g)`
+
+| IN
+| `vertex_index_map(VertexIndexMap index_map)`
+| Maps each vertex of the graph to a unique integer in the range
+  `[0, num_vertices(g))`. The map must be a model of constant
+  link:../../property_map/doc/LvaluePropertyMap.html[Lvalue Property Map].
+  The key type of the map must be the graph's vertex descriptor type. +
+  *Default:* `get(vertex_index, g)`.
+  Note: if you use this default, make sure your graph has an internal
+  `vertex_index` property. For example, `adjacency_list` with
+  `VertexList=listS` does not have an internal `vertex_index` property.
+
+|===
+
+'''
+
+== Description
+
+The `push_relabel_max_flow()` function calculates the maximum flow of a
+network. See Section
 xref:overview/graph_theory_review.adoc#sec:network-flow-algorithms[Network Flow
 Algorithms] for a description of maximum flow. The calculated maximum
 flow will be the return value of the function. The function also
 calculates the flow values _f(u,v)_ for all _(u,v)_ in _E_, which are
-returned in the form of the residual capacity _r(u,v) = c(u,v) -
-f(u,v)_.
+returned in the form of the residual capacity _r(u,v) = c(u,v) - f(u,v)_.
 
 There are several special requirements on the input graph and property
 map parameters for this algorithm. First, the directed graph _G=(V,E)_
 that represents the network must be augmented to include the reverse
 edge for every edge in _E_. That is, the input graph should be _G~in~ =
 (V,{E U E^T^})_. The `ReverseEdgeMap` argument `rev` must map each
-edge in the original graph to its reverse edge, that is _(u,v) ->
-(v,u)_ for all _(u,v)_ in _E_. The `CapacityEdgeMap` argument `cap` must
-map each edge in _E_ to a positive number, and each edge in _E^T^_ to 0.
+edge in the original graph to its reverse edge, that is _(u,v) -> (v,u)_
+for all _(u,v)_ in _E_. The `CapacityEdgeMap` argument `cap` must map
+each edge in _E_ to a positive number, and each edge in _E^T^_ to 0.
 
 This algorithm was developed by
 xref:about/bibliography.adoc#goldberg85:_new_max_flow_algor[Goldberg].
 
-==== Complexity
+== Returns
 
-The time complexity is _O(V^3^)_.
+The maximum flow value, of type `property_traits<CapacityEdgeMap>::value_type`.
 
-==== Where Defined
-
-link:../../../boost/graph/push_relabel_max_flow.hpp[`boost/graph/push_relabel_max_flow.hpp`]
-
-==== Parameters
-
-IN: `VertexListGraph& g`
-
-____
-A directed graph. The graph's type must be a model of
-xref:concepts/VertexListGraph.adoc[Vertex List Graph]. For each edge _(u,v)_ in
-the graph, the reverse edge _(v,u)_ must also be in the graph.
-____
-
-IN: `vertex_descriptor src`
-
-____
-The source vertex for the flow network graph.
-____
-
-IN: `vertex_descriptor sink`
-
-____
-The sink vertex for the flow network graph.
-____
-
-==== Named Parameters
-
-IN: `capacity_map(EdgeCapacityMap cap)`
-
-____
-The edge capacity property map. The type must be a model of a constant
-link:../../property_map/doc/LvaluePropertyMap.html[Lvalue Property Map].
-The key type of the map must be the graph's edge descriptor type. +
-*Default:* `get(edge_capacity, g)`
-____
-
-OUT: `residual_capacity_map(ResidualCapacityEdgeMap res)`
-
-____
-The edge residual capacity property map. The type must be a model of a
-mutable link:../../property_map/doc/LvaluePropertyMap.html[Lvalue
-Property Map]. The key type of the map must be the graph's edge
-descriptor type. +
-*Default:* `get(edge_residual_capacity, g)`
-____
-
-IN: `reverse_edge_map(ReverseEdgeMap rev)`
-
-____
-An edge property map that maps every edge _(u,v)_ in the graph to the
-reverse edge _(v,u)_. The map must be a model of constant
-link:../../property_map/doc/LvaluePropertyMap.html[Lvalue Property Map].
-The key type of the map must be the graph's edge descriptor type. +
-*Default:* `get(edge_reverse, g)`
-____
-
-IN: `vertex_index_map(VertexIndexMap index_map)`
-
-____
-Maps each vertex of the graph to a unique integer in the range
-`[0, num_vertices(g))`. The map must be a model of constant
-link:../../property_map/doc/LvaluePropertyMap.html[LvaluePropertyMap].
-The key type of the map must be the graph's vertex descriptor type. +
-*Default:* `get(vertex_index, g)` Note: if you use this default,
-make sure your graph has an internal `vertex_index` property. For
-example, `adjacency_list` with `VertexList=listS` does not have an
-internal `vertex_index` property. +
-____
-
-==== Example
+== Example
 
 This reads in an example maximum flow problem (a graph with edge
 capacities) from a file in the DIMACS format. The source for this
-example can be found in
-link:../example/max_flow.cpp[`example/max_flow.cpp`].
+example can be found in link:../example/max_flow.cpp[`example/max_flow.cpp`].
 
 [source,cpp]
 ----
-
 #include <boost/config.hpp>
 #include <iostream>
 #include <string>
@@ -183,7 +233,6 @@ main()
 The output is:
 
 ....
-
 c  The total flow:
 s 4
 
@@ -201,7 +250,7 @@ f 6 4 1
 f 6 7 1
 ....
 
-==== See Also
+== See Also
 
-xref:algorithms/edmonds_karp_max_flow.adoc[`edmonds_karp_max_flow()`] +
-xref:algorithms/boykov_kolmogorov_max_flow.adoc[`boykov_kolmogorov_max_flow()`].
+* xref:algorithms/edmonds_karp_max_flow.adoc[`edmonds_karp_max_flow()`]
+* xref:algorithms/boykov_kolmogorov_max_flow.adoc[`boykov_kolmogorov_max_flow()`]

@@ -1,68 +1,64 @@
-= `is_straight_line_drawing`
+[#sec:is-straight-line-drawing]
+= is_straight_line_drawing
+
+Verifies that no two edges in a straight line drawing intersect.
+
+Complexity: _O(n log n)_ +
+Defined in `<boost/graph/is_straight_line_drawing.hpp>`
+
+'''
+
+=== Synopsis
 
 [source,cpp]
 ----
-
-template <typename Graph, typename GridPositionMap, typename VertexIndexMap>
-bool is_straight_line_drawing(const Graph& g, GridPositionMap drawing, VertexIndexMap vm);
+template <typename Graph, typename GridPositionMap,
+          typename VertexIndexMap>
+bool is_straight_line_drawing(
+    const Graph& g,
+    GridPositionMap drawing,
+    VertexIndexMap vm);
 ----
 
-If `drawing` is a property map modeling the PositionMap concept,
-`is_straight_line_drawing` returns true exactly when no two
-of the line segments induced by edges in the graph under `drawing`
-intersect. This function works correctly in the presence of self-loops
-and parallel edges, and can be used to verify the output of the function
-` `xref:algorithms/straight_line_drawing.adoc[`chrobak_payne_straight_line_embedding.`]` `
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
 
-==== Complexity
+| IN
+| `const Graph& g`
+| An undirected graph. The type `Graph` must be a model of
+  xref:concepts/EdgeListGraph.adoc[EdgeListGraph].
 
-Runs in time _O(n log n)_ on a planar graph with _n_ vertices.
+| IN
+| `GridPositionMap drawing`
+| A Readable LValue Property Map that models the Position Map concept. The value mapped to
+  must be an object with members `x` and `y`. For example, if `p` models PositionMap and
+  `v` is a vertex, `p[v].x` and `p[v].y` are valid expressions. The type of `x` and `y`
+  must be implicitly convertible to `std::size_t`.
 
-==== Where Defined
+| IN
+| `VertexIndexMap vm`
+| A Readable Property Map that maps vertices from `g` to distinct integers in the range
+  `[0, num_vertices(g))`. +
+  *Default*: `get(vertex_index, g)`
+|===
 
-link:../../../boost/graph/is_straight_line_drawing.hpp[`boost/graph/is_straight_line_drawing.hpp`]
+'''
 
-==== Parameters
+== Description
 
-IN: `Graph& g`
+If `drawing` is a property map modeling the Position Map concept, `is_straight_line_drawing` returns `true` exactly when no two of the line segments induced by edges in the graph under `drawing` intersect.
+This function works correctly in the presence of self-loops and parallel edges, and can be used to verify the output of the function xref:algorithms/straight_line_drawing.adoc[`chrobak_payne_straight_line_drawing`].
 
-____
-An undirected graph. The graph type must be a model of
-xref:concepts/EdgeListGraph.adoc[Edge List Graph]
-____
+== Returns
 
-IN: `PositionMap`
+`true` if no two edge segments in the drawing intersect, `false` otherwise.
 
-____
-A link:../../property_map/doc/LvaluePropertyMap.html[Readable LValue
-Property Map] that models the Position Map concept. The Position Map
-concept requires that the value mapped to be an object that has members
-`x` and `y`. For example, if `p` models PositionMap and `v` is a vertex
-in the graph, `p[v].x` and `p[v].y` are valid
-expressions. The type of `x` and `y` must be implicitly convertable to
-`std::size_t`.
-____
+== Example
 
-IN: `VertexIndexMap vm`
+See link:../example/straight_line_drawing.cpp[`example/straight_line_drawing.cpp`].
 
-____
-A link:../../property_map/doc/ReadablePropertyMap.html[Readable Property
-Map] that maps vertices from `g` to distinct integers in the range
-`[0, num_vertices(g) )` +
-*Default*: `get(vertex_index,g)` +
-____
-
-==== Example
-
-link:../example/straight_line_drawing.cpp[`examples/straight_line_drawing.cpp`]
-
-==== See Also
+== See Also
 
 * xref:algorithms/planar_graphs.adoc[Planar Graphs in the Boost Graph Library]
 * xref:algorithms/straight_line_drawing.adoc[`chrobak_payne_straight_line_drawing`]
-
- 
-
-'''''
-
-Copyright © 2007 Aaron Windsor (aaron.windsor@gmail.com)

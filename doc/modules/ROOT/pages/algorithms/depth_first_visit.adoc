@@ -1,22 +1,100 @@
 [#sec:dfs]
-= Depth-First Visit
+= depth_first_visit
 
-===  `depth_first_visit`
+Visits all vertices in the same connected component as a source vertex using a depth-first pattern.
+
+Complexity: _O(E)_ +
+Defined in `<boost/graph/depth_first_search.hpp>`
+
+'''
+
+=== (1) Basic version
 
 [source,cpp]
 ----
-
-template <class IncidenceGraph, class DFSVisitor, class ColorMap>
+template <class IncidenceGraph,
+          class DFSVisitor,
+          class ColorMap>
 void depth_first_visit(IncidenceGraph& g,
-  typename graph_traits<IncidenceGraph>::vertex_descriptor s,
-  DFSVisitor& vis, ColorMap color)
+    typename graph_traits<IncidenceGraph>::vertex_descriptor s,
+    DFSVisitor& vis,
+    ColorMap color);
+----
 
-template <class IncidenceGraph, class DFSVisitor, class ColorMap,
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `IncidenceGraph& g`
+| A directed or undirected graph. The graph type must be a model of
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| IN | `vertex_descriptor s`
+| The source vertex from which to start the search.
+
+| IN | `DFSVisitor vis`
+| A visitor object that is invoked inside the algorithm at the
+  event-points specified by the xref:visitors/DFSVisitor.adoc[DFS Visitor] concept.
+  The visitor object is passed by value <<notes,[1]>>.
+
+| UTIL | `ColorMap color`
+| This is used by the algorithm to keep track of its progress through the
+  graph. The type `ColorMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]
+  and its key type must be the graph's vertex descriptor type and the value type
+  of the color map must model xref:auxiliary/ColorValue.adoc[ColorValue].
+|===
+
+'''
+
+=== (2) With terminator function
+
+[source,cpp]
+----
+template <class IncidenceGraph,
+          class DFSVisitor,
+          class ColorMap,
           class TerminatorFunc>
 void depth_first_visit(IncidenceGraph& g,
-  typename graph_traits<IncidenceGraph>::vertex_descriptor s,
-  DFSVisitor& vis, ColorMap color, TerminatorFunc func = TerminatorFunc())
+    typename graph_traits<IncidenceGraph>::vertex_descriptor s,
+    DFSVisitor& vis,
+    ColorMap color,
+    TerminatorFunc func = TerminatorFunc());
 ----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `IncidenceGraph& g`
+| A directed or undirected graph. The graph type must be a model of
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| IN | `vertex_descriptor s`
+| The source vertex from which to start the search.
+
+| IN | `DFSVisitor vis`
+| A visitor object that is invoked inside the algorithm at the
+  event-points specified by the xref:visitors/DFSVisitor.adoc[DFS Visitor] concept.
+  The visitor object is passed by value <<notes,[1]>>.
+
+| UTIL | `ColorMap color`
+| This is used by the algorithm to keep track of its progress through the
+  graph. The type `ColorMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]
+  and its key type must be the graph's vertex descriptor type and the value type
+  of the color map must model xref:auxiliary/ColorValue.adoc[ColorValue].
+
+| IN | `TerminatorFunc func`
+| A function object callable with two parameters -- the descriptor of a
+  vertex and the graph instance -- and returning `bool`. The call is made
+  immediately after the `discover_vertex` visitor event. If `true` is returned,
+  the out edges of the vertex are not examined, as if they don't exist.
+|===
+
+'''
+
+== Description
 
 This function visits all of the vertices in the same connected component
 as the source vertex `s`, using the
@@ -34,64 +112,16 @@ The second variant can be used, for example, to find all marked vertices
 reachable from a start vertex by a path which does not contain any
 another marked vertices.
 
-==== Where Defined:
+== See Also
 
-link:../../../boost/graph/depth_first_search.hpp[`boost/graph/depth_first_search.hpp`]
+xref:algorithms/depth_first_search.adoc[`depth_first_search`],
+xref:algorithms/undirected_dfs.adoc[`undirected_dfs`]
 
-==== Parameters
+== Notes
 
-IN `IncidenceGraph& g`
-
-____
-A directed or undirected graph. The graph's type must be a model of
-xref:concepts/IncidenceGraph.adoc[Incidence Graph]. +
-____
-
-IN: `vertex_descriptor s`
-
-____
-The source vertex from which to start the search. +
-____
-
-IN: `DFSVisitor visitor`
-
-____
-A visitor object that is invoked inside the algorithm at the
-event-points specified by the xref:visitors/DFSVisitor.adoc[DFS Visitor]
-concept. The visitor object is passed by value <<1,[1>>]. +
-xref:visitors/DFSVisitor.adoc#python[`DFSVisitor`] type of the graph.
-____
-
-UTIL: `ColorMap color`
-
-____
-This is used by the algorithm to keep track of its progress through the
-graph. The type `ColorMap` must be a model of
-link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write
-Property Map] and its key type must be the graph's vertex descriptor
-type and the value type of the color map map must model
-xref:auxiliary/ColorValue.adoc[Color Value]. +
-graph.
-____
-
-IN: `TerminatorFunc func`
-
-____
-A function object callable with two parameters - the descriptor of
-vertex and the graph instance - and returning bool. The call is made
-immediately after call to 'discover_vertex' visitor event. If `true`
-is returned, the out edges of the vertex are not examined, as if they
-don't exist. +
-____
-
-==== Complexity
-
-Time complexity is _O(E)_.
-
-==== Notes
-
-[#1]#[1]# Since the visitor parameter is passed by value, if
-your visitor contains state then any changes to the state during the
-algorithm will be made to a copy of the visitor object, not the visitor
-object passed in. Therefore you may want the visitor to hold this state
-by pointer or reference.
+[[notes]]
+[1] Since the visitor parameter is passed by value, if your visitor
+contains state then any changes to the state during the algorithm
+will be made to a copy of the visitor object, not the visitor object
+passed in. Therefore you may want the visitor to hold this state by
+pointer or reference.

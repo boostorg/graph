@@ -1,94 +1,68 @@
-= `transpose_graph`
+[#sec:transpose_graph]
+= transpose_graph
+
+Computes the transpose of a directed graph, reversing the direction of every edge.
+
+Complexity: _O(V + E)_ +
+Defined in `<boost/graph/transpose_graph.hpp>`
+
+'''
+
+=== Synopsis
 
 [source,cpp]
 ----
-
-template <class VertexListGraph, class MutableGraph>
-void transpose_graph(const VertexListGraph& G, MutableGraph& G_T,
+template <class VertexListGraph,
+          class MutableGraph>
+void transpose_graph(
+    const VertexListGraph& G, MutableGraph& G_T,
     const bgl_named_params<P, T, R>& params = all defaults)
 ----
 
-This function computes the transpose of a directed graph. The transpose
-of a directed graph __G = (V, E)__is the graph _G^T^ = (V, E^T^)_ ,
-where _E^T^ = {(v, u) in V x V: (u, v) in E}_ . i.e., _G^T^_ is _G_
-with all its edges reversed. Graph `G_T` passed into the algorithm
-must have no vertices and no edges. The vertices and edges will be added
-by `transpose_graph()` by calling `add_vertex` and
-`add_edge` as follows for each edge _(u,v)_ in `G`.
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
 
-==== Example
+| IN | `const VertexListGraph& G`
+| A directed graph.
+  The graph type must be a model of xref:concepts/VertexListGraph.adoc[Vertex List Graph].
 
-Here's an example of transposing a graph:
-link:../example/transpose-example.cpp[`example/transpose-example.cpp`].
+| OUT | `MutableGraph& G_T`
+| The transposed graph.
+  The graph type must be a model of xref:concepts/MutableGraph.adoc[Mutable Graph].
+|===
 
-==== Where Defined
+*Named Parameters*
 
-link:../../../boost/graph/transpose_graph.hpp[`boost/graph/transpose_graph.hpp`]
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
 
-==== Parameters
+| IN | `vertex_copy(VertexCopier vc)`
+| This is a link:http://www.boost.org/sgi/stl/BinaryFunction.html[Binary Function] that copies the properties of a vertex in the original graph into the corresponding vertex in the copy. +
+  *Default:* `vertex_copier<VertexListGraph, MutableGraph>` which uses the property tag `vertex_all` to access a property map from the graph.
 
-IN: `const VertexListGraph& G`
+| IN | `edge_copy(EdgeCopier ec)`
+| This is a link:http://www.boost.org/sgi/stl/BinaryFunction.html[Binary Function] that copies the properties of an edge in the original graph into the corresponding edge in the copy. +
+  *Default:* `edge_copier<VertexListGraph, MutableGraph>` which uses the property tag `edge_all` to access a property map from the graph.
 
-____
-A directed graph. The graph type must be a model of
-xref:concepts/VertexListGraph.adoc[Vertex List Graph].
-____
+| IN | `vertex_index_map(VertexIndexMap i_map)`
+| The vertex index map type must be a model of link:https://www.boost.org/libs/property_map/doc/ReadablePropertyMap.html[Readable Property Map] and must map the vertex descriptors of `G` to the integers from 0 to `num_vertices(G)`. +
+  *Default:* `get(vertex_index, G)`.
+  Note: if you use this default, make sure your graph has an internal `vertex_index` property.
+  For example, `adjacency_list` with `VertexList=listS` does not have an internal `vertex_index` property.
 
-OUT: `const MutableGraph& G_T`
+| UTIL/OUT | `orig_to_copy(Orig2CopyMap c)`
+| This maps vertices in the original graph to vertices in the copy. +
+  *Default:* an link:https://www.boost.org/libs/property_map/doc/iterator_property_map.html[iterator_property_map] created from a `std::vector` of the output graph's vertex descriptor type of size `num_vertices(g)` and using the `i_map` for the index map.
+|===
 
-____
-The transposed graph. The graph type must be a model of
-xref:concepts/MutableGraph.adoc[Mutable Graph].
-____
+'''
 
-==== Named Parameters
+== Description
 
-IN: `vertex_copy(VertexCopier vc)`
+This function computes the transpose of a directed graph. The transpose of a directed graph _G = (V, E)_ is the graph _G^T^ = (V, E^T^)_, where _E^T^ = {(v, u) in V x V: (u, v) in E}_. That is, _G^T^_ is _G_ with all its edges reversed. Graph `G_T` passed into the algorithm must have no vertices and no edges. The vertices and edges will be added by `transpose_graph()` by calling `add_vertex` and `add_edge` for each edge _(u,v)_ in `G`.
 
-____
-This is a http://www.boost.org/sgi/stl/BinaryFunction.html[Binary
-Function] that copies the properties of a vertex in the original graph
-into the corresponding vertex in the copy. +
-*Default:* `vertex_copier<VertexListGraph, MutableGraph>`
-which uses the property tag `vertex_all` to access a property map
-from the graph.
-____
+== Example
 
-IN: `edge_copy(EdgeCopier ec)`
-
-____
-This is a http://www.boost.org/sgi/stl/BinaryFunction.html[Binary
-Function] that copies the properties of an edge in the original graph
-into the corresponding edge in the copy. +
-*Default:* `edge_copier<VertexListGraph, MutableGraph>`
-which uses the property tag `edge_all` to access a property map from
-the graph.
-____
-
-IN: `vertex_index_map(VertexIndexMap i_map)`
-
-____
-The vertex index map type must be a model of
-link:../../property_map/doc/ReadablePropertyMap.html[Readable Property
-Map] and must map the vertex descriptors of `G` to the integers from 0
-to `num_vertices(G)`. +
-*Default:* `get(vertex_index, G)` Note: if you use this default,
-make sure your graph has an internal `vertex_index` property. For
-example, `adjacency_list` with `VertexList=listS` does not have an
-internal `vertex_index` property.
-____
-
-UTIL/OUT: `orig_to_copy(Orig2CopyMap c)`
-
-____
-This maps vertices in the original graph to vertices in the copy.
-*Default:* an
-link:../../property_map/doc/iterator_property_map.html[iterator_property_map]
-created from a `std::vector` of the output graph's vertex descriptor
-type of size `num_vertices(g)` and using the `i_map` for the
-index map.
-____
-
-==== Complexity
-
-The time complexity is _O(V {plus} E)_.
+Here's an example of transposing a graph: link:../example/transpose-example.cpp[`example/transpose-example.cpp`].

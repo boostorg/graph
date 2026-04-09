@@ -100,12 +100,9 @@ all edges, depending on property kind.
 
 *Complexity:* `O(V)` or `O(E)`, depending on property kind.
 
-'''''
+=== Additional Utilities
 
-Last modified: Feb 05, 2003
+The header also provides:
 
-© Copyright Vladimir Prus 2003. Permission to copy, use, modify, sell
-and distribute this document is granted provided this copyright notice
-appears in all copies. This document is provided ++``++as is'' without
-express or implied warranty, and with no claim as to its suitability for
-any purpose.
+* `random_out_edge(g, v, gen)` — returns a random out-edge of vertex `v`
+* `weighted_random_out_edge(g, v, weight_map, gen)` — returns a random out-edge of vertex `v`, weighted by edge weights

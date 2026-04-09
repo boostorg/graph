@@ -1,200 +1,197 @@
 = `gursoy_atun_layout`
 
-==== Synopsis
+Performs layout of directed graphs by distributing vertices uniformly within a topology using a self-organizing map approach.
+
+Defined in `<boost/graph/gursoy_atun_layout.hpp>`
+
+'''
+
+=== (1) Non-named parameter version
 
 [source,cpp]
 ----
-
-// Non-named parameter version
-template<typename VertexListAndIncidenceGraph,  typename Topology,
-     typename PositionMap, typename VertexIndexMap,
-         typename EdgeWeightMap>
-void
-gursoy_atun_layout(const VertexListAndIncidenceGraph& g,
-                   const Topology& space,
-           PositionMap position,
-           int nsteps = num_vertices(g),
-           double diameter_initial = sqrt((double)num_vertices(g)),
-           double diameter_final = 1,
-           double learning_constant_initial = 0.8,
-           double learning_constant_final = 0.2,
-           VertexIndexMap vertex_index_map = get(vertex_index, g),
-                   EdgeWeightMap weight = dummy_property_map());
-
-// Named parameter version
 template<typename VertexListAndIncidenceGraph, typename Topology,
-         typename PositionMap, typename P, typename T, typename R>
-void
-gursoy_atun_layout(const VertexListAndIncidenceGraph& g,
-                   const Topology& space,
-                   PositionMap position,
-                   const bgl_named_params<P,T,R>& params = all defaults);
+         typename PositionMap, typename VertexIndexMap,
+         typename EdgeWeightMap>
+void gursoy_atun_layout(
+    const VertexListAndIncidenceGraph& g,
+    const Topology& space,
+    PositionMap position,
+    int nsteps = num_vertices(g),
+    double diameter_initial = sqrt((double)num_vertices(g)),
+    double diameter_final = 1,
+    double learning_constant_initial = 0.8,
+    double learning_constant_final = 0.2,
+    VertexIndexMap vertex_index_map = get(vertex_index, g),
+    EdgeWeightMap weight = dummy_property_map());
 ----
 
-==== Description
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
 
-This algorithm [xref:about/bibliography.adoc#gursoy00[60]] performs
-layout of directed graphs, either weighted or unweighted. This algorithm
-is very different from the
-xref:algorithms/kamada_kawai_spring_layout.adoc[Kamada-Kawai] and
-xref:algorithms/fruchterman_reingold.adoc[Fruchterman-Reingold] algorithms, because
-it does not explicitly strive to layout graphs in a visually pleasing
-manner. Instead, it attempts to distribute the vertices uniformly within
-a _topology_ (e.g., rectangle, sphere, heart shape), keeping vertices
-close to their neighbors; xref:algorithms/topology.adoc[various topologies] are
-provided by BGL, and users can also create their own. The algorithm
-itself is based on
-http://davis.wpi.edu/~matt/courses/soms/[Self-Organizing Maps].
+| IN
+| `const VertexListAndIncidenceGraph& g`
+| The graph object on which the algorithm will be applied. The type
+  must be a model of xref:concepts/VertexAndEdgeListGraph.adoc[Vertex List Graph]
+  and xref:concepts/IncidenceGraph.adoc[Incidence Graph].
 
-xref:algorithms/topology.adoc#square_topology[image:figs/ga-square.png[figs/ga-square]]
-xref:algorithms/topology.adoc#heart_topology[image:figs/ga-heart.png[figs/ga-heart]]
-xref:algorithms/topology.adoc#circle_topology[image:figs/ga-circle.png[figs/ga-circle]]
+| IN
+| `const Topology& space`
+| The topology on which the graph will be laid out. The type must model the
+  xref:algorithms/topology.adoc#topology-concept[Topology] concept.
 
-==== Where Defined
+| OUT
+| `PositionMap position`
+| The property map that stores the position of each vertex. The type
+  `PositionMap` must be a model of
+  link:../../property_map/doc/LvaluePropertyMap.html[Lvalue Property Map]
+  such that the vertex descriptor type of the graph is convertible to its
+  key type. Its value type must be `Topology::point_type`.
 
-link:../../../boost/graph/gursoy_atun_layout.hpp[`boost/graph/gursoy_atun_layout.hpp`]
+| IN
+| `int nsteps`
+| The number of iterations to perform. +
+  *Default:* `num_vertices(g)`
 
-==== Parameters
+| IN
+| `double diameter_initial`
+| When a vertex is selected to be updated, all vertices that are reachable
+  from that vertex within a certain diameter (in graph terms) will also be
+  updated. This diameter begins at `diameter_initial` in the first iteration
+  and ends at `diameter_final` in the last iteration, progressing
+  exponentially. Generally the diameter decreases, in a manner similar to
+  the cooling schedule in
+  xref:algorithms/fruchterman_reingold.adoc[Fruchterman-Reingold]. The diameter
+  should typically decrease in later iterations, so this value should not be
+  less than `diameter_final`. +
+  *Default:* `sqrt((double)num_vertices(g))`
 
-IN: `const Graph& g`
+| IN
+| `double diameter_final`
+| The final value of the diameter. +
+  *Default:* 1.0
 
-____
-The graph object on which the algorithm will be applied. The type
-`Graph` must be a model of xref:concepts/VertexAndEdgeListGraph.adoc[Vertex
-List Graph] and xref:concepts/IncidenceGraph.adoc[Incidence Graph].
-____
+| IN
+| `double learning_constant_initial`
+| The learning rate affects how far vertices can be moved to rearrange
+  themselves in a given iteration. The learning rate progresses linearly
+  from the initial value to the final value, both of which should be between
+  0 and 1. The learning rate should typically decrease, so the initial value
+  should not exceed the final value. +
+  *Default:* 0.8
 
-IN: `const Topology& space`
+| IN
+| `double learning_constant_final`
+| The final learning rate constant. +
+  *Default:* 0.2
 
-____
-The topology on which the graph will be laid out. The type must model
-the xref:algorithms/topology.adoc#topology-concept[Topology] concept.
-____
+| IN
+| `VertexIndexMap vertex_index_map`
+| This maps each vertex to an integer in the range
+  `[0, num_vertices(g))`. The type `VertexIndexMap` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The vertex descriptor
+  type of the graph needs to be usable as the key type of the map. +
+  *Default:* `get(vertex_index, g)` Note: if you use this default, make
+  sure your graph has an internal `vertex_index` property. For example,
+  `adjacency_list` with `VertexList=listS` does not have an internal
+  `vertex_index` property.
 
-OUT: `PositionMap position`
+| IN
+| `EdgeWeightMap weight`
+| This maps each edge to a weight. The type `EdgeWeightMap` must be a model
+  of link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be a floating-point type compatible with
+  `double`. The edge descriptor type of the graph needs to be usable as the
+  key type of the map. When this map is a `dummy_property_map`, the
+  algorithm assumes the graph is unweighted. +
+  *Default:* `dummy_property_map()`
 
-____
-The property map that stores the position of each vertex. The type
-`PositionMap` must be a model of
-link:../../property_map/doc/LvaluePropertyMap.html[Lvalue Property Map]
-such that the vertex descriptor type of `Graph` is convertible to its
-key type. Its value type must be `Topology::point_type`.
-____
+|===
 
-IN: `int nsteps`
+'''
 
-____
-The number of iterations to perform. +
-*Default*: `num_vertices(g)`
-____
+=== (2) Named parameter version
 
-IN: `double diameter_initial`
+[source,cpp]
+----
+template<typename VertexListAndIncidenceGraph, typename Topology,
+         typename PositionMap, typename P, typename T, typename R>
+void gursoy_atun_layout(
+    const VertexListAndIncidenceGraph& g,
+    const Topology& space,
+    PositionMap position,
+    const bgl_named_params<P, T, R>& params = all defaults);
+----
 
-____
-When a vertex is selected to be updated, all vertices that are reachable
-from that vertex within a certain diameter (in graph terms) will also be
-updated. This diameter begins at `diameter_initial` in the first
-iteration and ends at `diameter_final` in the last iteration,
-progressing exponentially. Generally the diameter decreases, in a manner
-similar to the cooling schedule in
-xref:algorithms/fruchterman_reingold.adoc[Fruchterman-Reingold]. The diameter
-should typically decrease in later iterations, so this value should not
-be less than `diameter_final`. +
-*Default*: `sqrt((double)num_vertices(g))`
-____
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
 
-IN: `double diameter_final`
+| IN
+| `const VertexListAndIncidenceGraph& g`
+| The graph object. Same requirements as (1).
 
-____
-The final value of the diameter. +
-*Default*: 1.0
-____
+| IN
+| `const Topology& space`
+| The topology on which the graph will be laid out. Same requirements as (1).
 
-IN: `double learning_constant_initial`
+| OUT
+| `PositionMap position`
+| The position map for each vertex. Same requirements as (1).
 
-____
-The learning rate affects how far vertices can moved to rearrange
-themselves in a given iteration. The learning rate progresses linearly
-from the initial value to the final value, both of which should be
-between 0 and 1. The learning rate should typically decrease, so the
-initial value should not exceed the final value. +
-*Default*: 0.8
-____
+| IN
+| `params`
+| Named parameters passed via `bgl_named_params`. The following are accepted:
 
-IN: `double learning_constant_final`
+|===
 
-____
-The final learning rate constant. +
-*Default*: 0.2
-____
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
 
-IN: `VertexIndexMap vertex_index_map`
+| IN
+| `iterations(int n)`
+| Executes the algorithm for _n_ iterations. +
+  *Default:* `num_vertices(g)`
 
-____
-This maps each vertex to an integer in the range
-`[0, num_vertices(g))`. This is only necessary when no
-displacement map is provided. The type `VertexIndexMap` must be a model
-of link:../../property_map/doc/ReadablePropertyMap.html[Readable
-Property Map]. The value type of the map must be an integer type. The
-vertex descriptor type of the graph needs to be usable as the key type
-of the map. +
-*Default:* `get(vertex_index, g)` Note: if you use this default,
-make sure your graph has an internal `vertex_index` property. For
-example, `adjacency_list` with `VertexList=listS` does not have an
-internal `vertex_index` property.
-____
+| IN
+| `diameter_range(std::pair<T, T> range)`
+| Range specifying the parameters (`diameter_initial`, `diameter_final`). +
+  *Default:* `std::make_pair(sqrt((double)num_vertices(g)), 1.0)`
 
-IN: `EdgeWeightMap weight`
+| IN
+| `learning_constant_range(std::pair<T, T> range)`
+| Range specifying the parameters (`learning_constant_initial`,
+  `learning_constant_final`). +
+  *Default:* `std::make_pair(0.8, 0.2)`
 
-____
-This maps each edge to a weight. The type `EdgeWeightMap` must be a
-model of link:../../property_map/doc/ReadablePropertyMap.html[Readable
-Property Map]. The value type of the map must be an floating-point type
-compatible with `double`. The edge descriptor type of the graph needs to
-be usable as the key type of the map. When this map is a
-`dummy_property_map`, the algorithm assumes the graph is
-unweighted. +
-*Default:* `dummy_property_map()`
-____
+| IN
+| `edge_weight(EdgeWeightMap weight)`
+| Equivalent to the non-named `weight` parameter. +
+  *Default:* `dummy_property_map()`
 
-==== Named Parameters
+| IN
+| `vertex_index_map(VertexIndexMap i_map)`
+| Equivalent to the non-named `vertex_index_map` parameter. +
+  *Default:* `get(vertex_index, g)` Note: if you use this default, make
+  sure your graph has an internal `vertex_index` property. For example,
+  `adjacency_list` with `VertexList=listS` does not have an internal
+  `vertex_index` property.
 
-IN: `iterations(int n)`
+|===
 
-____
-Executes the algorithm for _n_ iterations. +
-*Default:* `num_vertices(g)`
-____
+== Description
 
-IN: `diameter_range(std::pair range)`
+This algorithm [xref:about/bibliography.adoc#gursoy00[60]] performs layout of directed graphs, either weighted or unweighted. This algorithm is very different from the xref:algorithms/kamada_kawai_spring_layout.adoc[Kamada-Kawai] and xref:algorithms/fruchterman_reingold.adoc[Fruchterman-Reingold] algorithms, because it does not explicitly strive to layout graphs in a visually pleasing manner. Instead, it attempts to distribute the vertices uniformly within a _topology_ (e.g., rectangle, sphere, heart shape), keeping vertices close to their neighbors; xref:algorithms/topology.adoc[various topologies] are provided by BGL, and users can also create their own. The algorithm itself is based on http://davis.wpi.edu/~matt/courses/soms/[Self-Organizing Maps].
 
-____
-Range specifying the parameters (`diameter_initial`,
-`diameter_final`). +
-*Default:* `std::make_pair(sqrt((double)num_vertices(g)), 1.0)`
-____
+xref:algorithms/topology.adoc#square_topology[image:figs/ga-square.png[ga-square]]
+xref:algorithms/topology.adoc#heart_topology[image:figs/ga-heart.png[ga-heart]]
+xref:algorithms/topology.adoc#circle_topology[image:figs/ga-circle.png[ga-circle]]
 
-IN: `learning_constant_range(std::pair range)`
+== See Also
 
-____
-Range specifying the parameters (`learning_constant_initial`,
-`learning_constant_final`). +
-*Default:* `std::make_pair(0.8, 0.2)`
-____
-
-IN: `edge_weight(EdgeWeightMap weight)`
-
-____
-Equivalent to the non-named `weight` parameter. +
-*Default:* `dummy_property_map()`
-____
-
-IN: `vertex_index_map(VertexIndexMap i_map)`
-
-____
-Equivalent to the non-named `vertex_index_map` parameter. +
-*Default:* `get(vertex_index, g)` Note: if you use this default,
-make sure your graph has an internal `vertex_index` property. For
-example, `adjacency_list` with `VertexList=listS` does not have an
-internal `vertex_index` property.
-____
+* xref:algorithms/kamada_kawai_spring_layout.adoc[`kamada_kawai_spring_layout`]
+* xref:algorithms/fruchterman_reingold.adoc[`fruchterman_reingold_force_directed_layout`]
+* xref:algorithms/topology.adoc[Topologies for Graph Drawing]

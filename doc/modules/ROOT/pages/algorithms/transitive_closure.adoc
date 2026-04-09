@@ -1,85 +1,132 @@
 = Transitive Closure
 
- `transitive_closure`
+Computes the transitive closure of a directed graph, adding an edge _(u,v)_ whenever there is a path from _u_ to _v_.
+
+Complexity: _O(|V||E|)_ +
+Defined in `<boost/graph/transitive_closure.hpp>`
+
+'''
+
+=== (1) Non-named parameter version
 
 [source,cpp]
 ----
-
 template <typename Graph, typename GraphTC,
-  typename P, typename T, typename R>
-void transitive_closure(const Graph& g, GraphTC& tc,
-  const bgl_named_params<P, T, R>& params = all defaults)
-
-template <typename Graph, typename GraphTC,
-  typename G_to_TC_VertexMap, typename VertexIndexMap>
-void transitive_closure(const Graph& g, GraphTC& tc,
-                        G_to_TC_VertexMap g_to_tc_map, VertexIndexMap index_map)
+          typename G_to_TC_VertexMap, typename VertexIndexMap>
+void transitive_closure(
+    const Graph& g, GraphTC& tc,
+    G_to_TC_VertexMap g_to_tc_map, VertexIndexMap index_map);
 ----
 
-The transitive closure of a graph _G = (V,E)_ is a graph _G* =
-(V,E*)_ such that _E*_ contains an edge _(u,v)_ if and only if
-_G_ contains a xref:overview/graph_theory_review.adoc#def:path[path] (of at least
-one edge) from _u_ to _v_. The `transitive_closure()` function
-transforms the input graph `g` into the transitive closure graph `tc`.
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| A directed graph. The type `Graph` must model the
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph],
+  xref:concepts/AdjacencyGraph.adoc[Adjacency Graph], and
+  xref:concepts/AdjacencyMatrix.adoc[Adjacency Matrix] concepts.
+
+| OUT
+| `GraphTC& tc`
+| A directed graph into which the transitive closure is written.
+  The type `GraphTC` must model the
+  xref:concepts/VertexMutableGraph.adoc[Vertex Mutable Graph] and
+  xref:concepts/EdgeMutableGraph.adoc[Edge Mutable Graph] concepts.
+
+| UTIL/OUT
+| `G_to_TC_VertexMap g_to_tc_map`
+| This maps each vertex in the input graph to the new matching
+  vertices in the output transitive closure graph.
+
+| IN
+| `VertexIndexMap index_map`
+| This maps each vertex to an integer in the range
+  `[0, num_vertices(g))`. This parameter is only necessary when
+  the default color property map is used. The type `VertexIndexMap` must
+  be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The vertex
+  descriptor type of the graph needs to be usable as the key type of the map.
+
+|===
+
+'''
+
+=== (2) Named parameter version
+
+[source,cpp]
+----
+template <typename Graph, typename GraphTC,
+          typename P, typename T, typename R>
+void transitive_closure(
+    const Graph& g, GraphTC& tc,
+    const bgl_named_params<P, T, R>& params = all defaults);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| A directed graph. The type `Graph` must model the
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph],
+  xref:concepts/AdjacencyGraph.adoc[Adjacency Graph], and
+  xref:concepts/AdjacencyMatrix.adoc[Adjacency Matrix] concepts.
+
+| OUT
+| `GraphTC& tc`
+| A directed graph into which the transitive closure is written.
+  The type `GraphTC` must model the
+  xref:concepts/VertexMutableGraph.adoc[Vertex Mutable Graph] and
+  xref:concepts/EdgeMutableGraph.adoc[Edge Mutable Graph] concepts.
+
+| IN
+| `params`
+| Named parameters passed via `bgl_named_params`. The following are accepted:
+|===
+
+[cols="1,2,5"]
+|===
+| Direction | Named Parameter | Description / Default
+
+| UTIL/OUT
+| `orig_to_copy(G_to_TC_VertexMap g_to_tc_map)`
+| This maps each vertex in the input graph to the new matching
+  vertices in the output transitive closure graph.
+
+| IN
+| `vertex_index_map(VertexIndexMap& index_map)`
+| This maps each vertex to an integer in the range
+  `[0, num_vertices(g))`. This parameter is only necessary when
+  the default color property map is used. The type `VertexIndexMap` must
+  be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The vertex
+  descriptor type of the graph needs to be usable as the key type of the map. +
+  *Default:* `get(vertex_index, g)`.
+  Note: if you use this default, make sure your graph has an internal
+  `vertex_index` property. For example, `adjacency_list` with
+  `VertexList=listS` does not have an internal `vertex_index` property.
+
+|===
+
+'''
+
+== Description
+
+The transitive closure of a graph _G = (V,E)_ is a graph _G* = (V,E*)_
+such that _E*_ contains an edge _(u,v)_ if and only if _G_ contains a
+xref:overview/graph_theory_review.adoc#def:path[path] (of at least one edge)
+from _u_ to _v_. The `transitive_closure()` function transforms the input
+graph `g` into the transitive closure graph `tc`.
 
 Thanks to Vladimir Prus for the implementation of this algorithm!
 
-==== Where Defined
-
-link:../../../boost/graph/transitive_closure.hpp[`boost/graph/transitive_closure.hpp`]
-
-==== Parameters
-
-IN: `const Graph& g`
-
-____
-A directed graph, where the `Graph` type must model the
-xref:concepts/VertexListGraph.adoc[Vertex List Graph],
-xref:concepts/AdjacencyGraph.adoc[Adjacency Graph], and
-xref:concepts/AdjacencyMatrix.adoc[Adjacency Matrix] concepts. +
-____
-
-OUT: `GraphTC& tc`
-
-____
-A directed graph, where the `GraphTC` type must model the
-xref:concepts/VertexMutableGraph.adoc[Vertex Mutable Graph] and
-xref:concepts/EdgeMutableGraph.adoc[Edge Mutable Graph] concepts. +
-the same type is returned.
-____
-
-==== Named Parameters
-
-UTIL/OUT:
-`orig_to_copy(G_to_TC_VertexMap g_to_tc_map)`
-
-____
-This maps each vertex in the input graph to the new matching vertices in
-the output transitive closure graph. +
-____
-
-IN: `vertex_index_map(VertexIndexMap& index_map)`
-
-____
-This maps each vertex to an integer in the range
-`[0, num_vertices(g))`. This parameter is only necessary when
-the default color property map is used. The type `VertexIndexMap` must
-be a model of
-link:../../property_map/doc/ReadablePropertyMap.html[Readable Property
-Map]. The value type of the map must be an integer type. The vertex
-descriptor type of the graph needs to be usable as the key type of the
-map. +
-*Default:* `get(vertex_index, g)` Note: if you use this default,
-make sure your graph has an internal `vertex_index` property. For
-example, `adjacency_list` with `VertexList=listS` does not have an
-internal `vertex_index` property. +
-____
-
-==== Complexity
-
-The time complexity (worst-case) is _O(++|++V++||++E++|++)_.
-
-==== Example
+== Example
 
 The following is the graph from the example
 link:../example/transitive_closure.cpp[`example/transitive_closure.cpp`]
@@ -91,7 +138,7 @@ and the transitive closure computed by the algorithm.
 |image:tc-out.gif[tc-out,width=200,height=360]
 |===
 
-==== Implementation Notes
+== Notes
 
 The algorithm used to implement the `transitive_closure()` function
 is based on the detection of strong
@@ -129,7 +176,6 @@ of _v_.
 using the following algorithm:
 +
 ....
-
  for each vertex u in G' in reverse topological order
    for each vertex v in Adj[u]
      if (v not in Succ(u))
@@ -159,9 +205,12 @@ Computing the union of two successor sets, _S~3~ = S~1~ U S~2~_, can
 then be computed in _O(k)_ time with the following operation:
 +
 ....
-
   for i = 0...k
     S3[i] = min(S1[i], S2[i]) // where min compares the topological number of the vertices
 ....
 . Create the graph _G*_ based on the transitive closure of the
 condensation graph _G'*_.
+
+== See Also
+
+* xref:algorithms/strong_components.adoc[strong_components]

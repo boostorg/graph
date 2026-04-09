@@ -3,6 +3,7 @@
 
 Solves the single-source shortest-paths problem on a weighted, directed or undirected graph for the case where all edge weights are nonnegative.
 
+Complexity: _O(V log V + E)_ +
 Defined in `<boost/graph/dijkstra_shortest_paths.hpp>`
 
 '''
@@ -356,33 +357,37 @@ DIJKSTRA(G, s, w)
   return (d, p)
 ----
 |
-....
+----
+.
+.
 initialize vertex u
-
-
-
-
+.
+.
+.
+.
+.
+.
 discover vertex s
-
+.
 examine vertex u
-
+.
 examine edge (u,v)
-
+.
 edge (u,v) relaxed
-
-
+.
+.
+.
 discover vertex v
-
-
+.
+.
+.
 edge (u,v) not relaxed
-
+.
 finish vertex u
-....
+.
+.
+----
 |===
-
-== Complexity
-
-The time complexity is _O(V log V + E)_.
 
 == Visitor Event Points
 
