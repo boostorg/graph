@@ -46,7 +46,7 @@ void circle_graph_layout(
     vertices_size_type n = num_vertices(g);
 
     vertices_size_type i = 0;
-    double two_pi_over_n = 2. * pi / n;
+    const auto two_pi_over_n = 2. * pi / n;
     BGL_FORALL_VERTICES_T(v, g, VertexListGraph)
     {
         position[v][0] = radius * cos(i * two_pi_over_n);
