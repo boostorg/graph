@@ -8,7 +8,7 @@ attached to the vertices and edges of a graph. A Property type is not
 the type of the actual property values. Objects of the Property type are
 not used except to carry the type information which specifies the
 property. See the section about
-xref:graph_classes/using_adjacency_list.adoc#sec:custom-edge-properties[Custom Edge
+xref:property_maps/overview.adoc[Custom Edge
 Properties] for a description of how to define your own property tags.
 
 ==== Associated Types

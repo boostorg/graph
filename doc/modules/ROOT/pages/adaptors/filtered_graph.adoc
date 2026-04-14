@@ -300,3 +300,223 @@ Anotherwords, this is a shallow copy.
 === Non-Member Functions
 
 ===== Structure Access
+
+'''''
+
+[source,cpp]
+----
+std::pair<vertex_iterator, vertex_iterator>
+vertices(const filtered_graph& g)
+----
+
+Returns an iterator-range providing access to the vertex set of graph
+`g`.
+
+'''''
+
+[source,cpp]
+----
+std::pair<edge_iterator, edge_iterator>
+edges(const filtered_graph& g)
+----
+
+Returns an iterator-range providing access to the edge set of graph
+`g`.
+
+'''''
+
+[source,cpp]
+----
+std::pair<adjacency_iterator, adjacency_iterator>
+adjacent_vertices(vertex_descriptor u, const filtered_graph& g)
+----
+
+Returns an iterator-range providing access to the vertices adjacent to
+vertex `u` in graph `g`.
+
+'''''
+
+[source,cpp]
+----
+std::pair<out_edge_iterator, out_edge_iterator>
+out_edges(vertex_descriptor u, const filtered_graph& g)
+----
+
+Returns an iterator-range providing access to the out-edges of vertex
+`u` in graph `g`. If the graph is undirected, this iterator-range
+provides access to all edges incident on vertex `u`. For both directed
+and undirected graphs, for an out-edge `e`, `source(e, g) == u` and
+`target(e, g) == v` where `v` is a vertex adjacent to `u`.
+
+'''''
+
+[source,cpp]
+----
+std::pair<in_edge_iterator, in_edge_iterator>
+in_edges(vertex_descriptor v, const filtered_graph& g)
+----
+
+Returns an iterator-range providing access to the in-edges of vertex
+`v` in graph `g`. For an in-edge `e`, `target(e, g) == v` and
+`source(e, g) == u` for some vertex `u` that is adjacent to `v`,
+whether the graph is directed or undirected.
+
+'''''
+
+[source,cpp]
+----
+vertex_descriptor
+source(edge_descriptor e, const filtered_graph& g)
+----
+
+Returns the source vertex of edge `e`.
+
+'''''
+
+[source,cpp]
+----
+vertex_descriptor
+target(edge_descriptor e, const filtered_graph& g)
+----
+
+Returns the target vertex of edge `e`.
+
+'''''
+
+[source,cpp]
+----
+degree_size_type
+out_degree(vertex_descriptor u, const filtered_graph& g)
+----
+
+Returns the number of edges leaving vertex `u`.
+
+'''''
+
+[source,cpp]
+----
+degree_size_type
+in_degree(vertex_descriptor u, const filtered_graph& g)
+----
+
+Returns the number of edges entering vertex `u`.
+
+'''''
+
+[[num_vertices]]
+[source,cpp]
+----
+vertices_size_type
+num_vertices(const filtered_graph& g)
+----
+
+Returns the number of vertices in the underlying graph <<2,[2]>>.
+
+'''''
+
+[[num_edges]]
+[source,cpp]
+----
+edges_size_type
+num_edges(const filtered_graph& g)
+----
+
+Returns the number of edges in the underlying graph <<2,[2]>>.
+
+'''''
+
+[source,cpp]
+----
+std::pair<edge_descriptor, bool>
+edge(vertex_descriptor u, vertex_descriptor v,
+     const filtered_graph& g)
+----
+
+Returns the edge connecting vertex `u` to vertex `v` in graph `g`.
+
+'''''
+
+[source,cpp]
+----
+template <typename G, typename EP, typename VP>
+std::pair<out_edge_iterator, out_edge_iterator>
+edge_range(vertex_descriptor u, vertex_descriptor v,
+           const filtered_graph& g)
+----
+
+Returns a pair of out-edge iterators that give the range for all the
+parallel edges from `u` to `v`. This function only works when the
+underlying graph supports `edge_range`, which requires that it sorts
+its out edges according to target vertex and allows parallel edges. The
+`adjacency_list` class with `OutEdgeList=multisetS` is an example of
+such a graph.
+
+'''''
+
+===== Property Map Access
+
+'''''
+
+[source,cpp]
+----
+template <typename PropertyTag>
+property_map<filtered_graph, PropertyTag>::type
+get(PropertyTag, filtered_graph& g)
+
+template <typename PropertyTag>
+property_map<filtered_graph, PropertyTag>::const_type
+get(PropertyTag, const filtered_graph& g)
+----
+
+Returns the property map object for the vertex property specified by
+`PropertyTag`. The `PropertyTag` must match one of the properties
+specified in the graph's `VertexProperty` template argument.
+
+'''''
+
+[source,cpp]
+----
+template <typename PropertyTag, typename X>
+typename property_traits<property_map<filtered_graph, PropertyTag>::const_type>::value_type
+get(PropertyTag, const filtered_graph& g, X x)
+----
+
+This returns the property value for `x`, where `x` is either a vertex
+or edge descriptor.
+
+'''''
+
+[source,cpp]
+----
+template <typename PropertyTag, typename X, typename Value>
+void
+put(PropertyTag, const filtered_graph& g, X x, const Value& value)
+----
+
+This sets the property value for `x` to `value`. `x` is either a
+vertex or edge descriptor. `Value` must be convertible to
+`typename property_traits<property_map<filtered_graph, PropertyTag>::type>::value_type`
+
+'''''
+
+==== See Also
+
+xref:helpers/property_map.adoc[`property_map`],
+xref:traits/graph_traits.adoc[`graph_traits`]
+
+==== Notes
+
+[[1]][1] The reason for requiring
+http://www.boost.org/sgi/stl/DefaultConstructible.html[Default
+Constructible] in the `EdgePredicate` and `VertexPredicate` types is
+that these predicates are stored by-value (for performance reasons) in
+the filter iterator adaptor, and iterators are required to be Default
+Constructible by the C++ Standard.
+
+[[2]][2] It would be nicer to return the number of vertices (or edges)
+remaining after the filter has been applied, but this has two problems.
+The first is that it would take longer to calculate, and the second is
+that it would interact badly with the underlying vertex/edge index
+mappings. The index mapping would no longer fall in the range
+`[0,num_vertices(g))` (resp. `[0, num_edges(g))`) which is assumed in
+many of the algorithms.

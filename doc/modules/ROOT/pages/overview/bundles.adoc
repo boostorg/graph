@@ -3,7 +3,7 @@
 Class templates xref:graph_classes/adjacency_list.adoc[`adjacency_list`] and
 xref:graph_classes/adjacency_matrix.adoc[`adjacency_matrix`] support the
 introduction of named properties via
-xref:graph_classes/using_adjacency_list.adoc#sec:adjacency-list-properties[internal
+xref:property_maps/overview.adoc[internal
 properties]. However, this method is cumbersome in many uses, where it
 would be more intuitive to just specify a structure or class that
 contains internal properties for edges or vertices. Bundled properties

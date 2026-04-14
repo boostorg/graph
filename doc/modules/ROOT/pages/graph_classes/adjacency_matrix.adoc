@@ -38,7 +38,7 @@ allowing objects to be attached to vertices and edges using the same
 property template parameters supported by
 xref:graph_classes/adjacency_list.adoc[`adjacency_list`]. These may be
 xref:overview/bundles.adoc[bundled properties] or standard (backward-compatible)
-xref:graph_classes/using_adjacency_list.adoc#sec:adjacency-list-properties[interior
+xref:property_maps/overview.adoc[interior
 properties]. The types of all property values must be Copy
 Constructible, Assignable and Default Constructible. In the case of an
 undirected graph, the `adjacency_matrix`. class does not use a full

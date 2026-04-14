@@ -22,9 +22,34 @@
 //   - One overload = one signature block + one parameter table
 //   - Put named-param overload LAST (it will be deprecated)
 //   - If only a named-param version exists, it's just (1)
+//   - Complexity goes in the header block (after Defined in, before ---)
 //   - All sections below "Description" are optional — skip if N/A
 //   - For pages with multiple related functions (e.g., foo + bar),
 //     repeat the signature+table pattern under separate === headings
+//
+// ---- PSEUDO-CODE WITH EVENT POINTS ----
+//
+//   Use two ---- code blocks in a [cols="1a,1a"] table.
+//   Use "." on blank lines to prevent line collapsing.
+//   Both columns MUST have the same number of lines.
+//
+//   [cols="1a,1a"]
+//   |===
+//   |
+//   ----
+//   ALGO(G, s)
+//     for each vertex u in V
+//       d[u] := infinity
+//     end for
+//   ----
+//   |
+//   ----
+//   .
+//   initialize vertex u
+//   .
+//   .
+//   ----
+//   |===
 //
 // ============================================================================
 
@@ -33,6 +58,7 @@
 
 One-line summary.
 
+Complexity: _O(V + E)_ +
 Defined in `<boost/graph/header.hpp>`
 
 '''
@@ -62,10 +88,6 @@ ReturnType function_name(
 '''
 
 == Description
-
-...
-
-== Complexity
 
 ...
 

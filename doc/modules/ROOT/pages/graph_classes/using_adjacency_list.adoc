@@ -363,7 +363,7 @@ The property values are then read from and written to using property
 maps. See Section
 xref:using_property_maps.adoc#sec:interior-properties[Interior
 Properties] for a description of how to obtain property maps from a
-graph, and read Section xref:using_property_maps.adoc[Property Maps]
+graph, and read Section xref:property_maps/overview.adoc[Property Maps]
 for how to use property maps.
 
 [#sec:custom-edge-properties]

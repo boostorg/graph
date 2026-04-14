@@ -240,7 +240,7 @@ visit the neighbors of _t_ and _x_, which are _u_ and _y_.
 
 For the algorithm to keep track of where it is in the graph, and which
 vertex to visit next, BFS needs to color the vertices (see the section
-on xref:using_property_maps.adoc[Property Maps] for more details about
+on xref:property_maps/overview.adoc[Property Maps] for more details about
 attaching properties to graphs). The place to put the color can either
 be inside the graph, or it can be passed into the algorithm as an
 argument.

@@ -205,3 +205,228 @@ Constructor. Create a reversed (transposed) view of the graph `g`.
 '''''
 
 === Non-Member Functions
+
+'''''
+
+[source,cpp]
+----
+template <typename BidirectionalGraph>
+reverse_graph<BidirectionalGraph, BidirectionalGraph&>
+make_reverse_graph(BidirectionalGraph& g);
+
+template <typename BidirectionalGraph>
+reverse_graph<BidirectionalGraph, const BidirectionalGraph&>
+make_reverse_graph(const BidirectionalGraph& g)
+----
+
+Helper function for creating a `reverse_graph`.
+
+'''''
+
+[source,cpp]
+----
+std::pair<vertex_iterator, vertex_iterator>
+vertices(const reverse_graph& g)
+----
+
+Returns an iterator-range providing access to the vertex set of graph
+`g`.
+
+'''''
+
+[source,cpp]
+----
+std::pair<out_edge_iterator, out_edge_iterator>
+out_edges(vertex_descriptor v, const reverse_graph& g)
+----
+
+Returns an iterator-range providing access to the out-edges of vertex
+`v` in graph `g`. These out-edges correspond to the in-edges of the
+adapted graph.
+
+'''''
+
+[source,cpp]
+----
+std::pair<in_edge_iterator, in_edge_iterator>
+in_edges(vertex_descriptor v, const reverse_graph& g)
+----
+
+Returns an iterator-range providing access to the in-edges of vertex
+`v` in graph `g`. These in-edges correspond to the out edges of the
+adapted graph.
+
+'''''
+
+[source,cpp]
+----
+std::pair<adjacency_iterator, adjacency_iterator>
+adjacent_vertices(vertex_descriptor v, const reverse_graph& g)
+----
+
+Returns an iterator-range providing access to the adjacent vertices of
+vertex `v` in graph `g`.
+
+'''''
+
+[source,cpp]
+----
+vertex_descriptor
+source(edge_descriptor e, const reverse_graph& g)
+----
+
+Returns the source vertex of edge `e`.
+
+'''''
+
+[source,cpp]
+----
+vertex_descriptor
+target(edge_descriptor e, const reverse_graph& g)
+----
+
+Returns the target vertex of edge `e`.
+
+'''''
+
+[source,cpp]
+----
+degree_size_type
+out_degree(vertex_descriptor u, const reverse_graph& g)
+----
+
+Returns the number of edges leaving vertex `u`.
+
+'''''
+
+[source,cpp]
+----
+degree_size_type
+in_degree(vertex_descriptor u, const reverse_graph& g)
+----
+
+Returns the number of edges entering vertex `u`. This operation is only
+available if `bidirectionalS` was specified for the `Directed` template
+parameter.
+
+'''''
+
+[source,cpp]
+----
+vertices_size_type
+num_vertices(const reverse_graph& g)
+----
+
+Returns the number of vertices in the graph `g`.
+
+'''''
+
+[source,cpp]
+----
+vertex_descriptor
+vertex(vertices_size_type n, const reverse_graph& g)
+----
+
+Returns the nth vertex in the graph's vertex list.
+
+'''''
+
+[source,cpp]
+----
+std::pair<edge_descriptor, bool>
+edge(vertex_descriptor u, vertex_descriptor v,
+     const reverse_graph& g)
+----
+
+Returns the edge connecting vertex `u` to vertex `v` in graph `g`.
+
+'''''
+
+[source,cpp]
+----
+template <typename PropertyTag>
+property_map<reverse_graph, PropertyTag>::type
+get(PropertyTag, reverse_graph& g)
+
+template <typename PropertyTag>
+property_map<reverse_graph, PropertyTag>::const_type
+get(PropertyTag, const reverse_graph& g)
+----
+
+Returns the property map object for the vertex property specified by
+`PropertyTag`. The `PropertyTag` must match one of the properties
+specified in the graph's `VertexProperty` template argument.
+
+'''''
+
+[source,cpp]
+----
+property_map<reverse_graph, edge_underlying_t>::const_type
+get(edge_underlying_t, const reverse_graph& g)
+----
+
+Returns a property map object that converts from edge descriptors in the
+`reverse_graph` to edge descriptors in the underlying
+`BidirectionalGraph` object.
+
+'''''
+
+[source,cpp]
+----
+template <typename PropertyTag, typename X>
+typename property_traits<property_map<reverse_graph, PropertyTag>::const_type>::value_type
+get(PropertyTag, const reverse_graph& g, X x)
+----
+
+This returns the property value for `x`, which is either a vertex or
+edge descriptor.
+
+'''''
+
+[source,cpp]
+----
+typename graph_traits<BidirectionalGraph>::edge_descriptor
+get(edge_underlying_t, const reverse_graph& g, edge_descriptor e)
+----
+
+This returns the underlying edge descriptor for the edge `e` in the
+`reverse_graph`.
+
+'''''
+
+[source,cpp]
+----
+template <typename PropertyTag, typename X, typename Value>
+void
+put(PropertyTag, const reverse_graph& g, X x, const Value& value)
+----
+
+This sets the property value for `x` to `value`. `x` is either a
+vertex or edge descriptor. `Value` must be convertible to
+`typename property_traits<property_map<reverse_graph, PropertyTag>::type>::value_type`
+
+'''''
+
+[source,cpp]
+----
+template <typename GraphProperties, typename GraphPropertyTag>
+typename property_value<GraphProperties, GraphPropertyTag>::type&
+get_property(reverse_graph& g, GraphPropertyTag)
+----
+
+Return the property specified by `GraphPropertyTag` that is attached to
+the graph object `g`. The `property_value` traits class is defined in
+link:../../../boost/pending/property.hpp[`boost/pending/property.hpp`].
+
+'''''
+
+[source,cpp]
+----
+template <typename GraphProperties, typename GraphPropertyTag>
+const typename property_value<GraphProperties, GraphPropertyTag>::type&
+get_property(const reverse_graph& g, GraphPropertyTag)
+----
+
+Return the property specified by `GraphPropertyTag` that is attached to
+the graph object `g`. The `property_value` traits class is defined in
+link:../../../boost/pending/property.hpp[`boost/pending/property.hpp`].

@@ -1,0 +1,122 @@
+= Visitors
+
+BGL algorithms are extensible through _visitors_: objects with methods that
+get called at specific event points during an algorithm's execution. Instead
+of rewriting an algorithm, you inject custom logic at the points you care about.
+
+== How visitors work
+
+Each algorithm defines its own set of event points. For example,
+`dijkstra_shortest_paths` calls:
+
+* `initialize_vertex(v, g)` on every vertex before the algorithm starts
+* `discover_vertex(v, g)` when a vertex is first reached
+* `examine_edge(e, g)` on each out-edge of a discovered vertex
+* `edge_relaxed(e, g)` when a shorter path to a vertex is found
+* `finish_vertex(v, g)` when all out-edges have been examined
+
+A visitor is a class with methods matching these event points. You only
+implement the methods you need; the rest can be inherited from a base
+visitor that provides empty defaults.
+
+== Example: recording predecessors
+
+Suppose you want to record the shortest-path tree while running Dijkstra.
+You need to know the predecessor (parent) of each vertex. Rather than
+modifying the algorithm, write a visitor that records the predecessor
+whenever an edge is relaxed:
+
+[source,cpp]
+----
+template <class PredecessorMap>
+class record_predecessors : public dijkstra_visitor<>
+{
+public:
+    record_predecessors(PredecessorMap p) : m_predecessor(p) {}
+
+    template <class Edge, class Graph>
+    void edge_relaxed(Edge e, Graph& g) {
+        put(m_predecessor, target(e, g), source(e, g));
+    }
+
+private:
+    PredecessorMap m_predecessor;
+};
+
+// Helper function for convenient creation
+template <class PredecessorMap>
+record_predecessors<PredecessorMap>
+make_predecessor_recorder(PredecessorMap p) {
+    return record_predecessors<PredecessorMap>(p);
+}
+----
+
+When Dijkstra relaxes an edge (potentially adding it to the shortest-path
+tree), `edge_relaxed` is called and we record the source as the predecessor
+of the target. If the edge is relaxed again later, the predecessor is
+overwritten with the new parent.
+
+== Visitor concepts
+
+Each algorithm type defines which event points are available:
+
+[cols="1,2"]
+|===
+| Visitor concept | Used by
+
+| xref:visitors/BFSVisitor.adoc[BFS Visitor]
+| `breadth_first_search`, `breadth_first_visit`
+
+| xref:visitors/DFSVisitor.adoc[DFS Visitor]
+| `depth_first_search`, `depth_first_visit`, `undirected_dfs`
+
+| xref:visitors/DijkstraVisitor.adoc[Dijkstra Visitor]
+| `dijkstra_shortest_paths`
+
+| xref:visitors/BellmanFordVisitor.adoc[Bellman-Ford Visitor]
+| `bellman_ford_shortest_paths`
+
+| xref:visitors/AStarVisitor.adoc[A* Visitor]
+| `astar_search`
+
+| xref:visitors/PlanarFaceVisitor.adoc[Planar Face Visitor]
+| `planar_face_traversal`
+|===
+
+== Visitor adaptors
+
+BGL provides pre-built visitor adaptors for common tasks so you do not need
+to write a full visitor class:
+
+[cols="1,2"]
+|===
+| Adaptor | What it does
+
+| xref:visitors/predecessor_recorder.adoc[`predecessor_recorder`]
+| Records the predecessor of each vertex in a property map
+
+| xref:visitors/distance_recorder.adoc[`distance_recorder`]
+| Records the distance to each vertex
+
+| xref:visitors/time_stamper.adoc[`time_stamper`]
+| Records discover/finish time stamps
+
+| xref:visitors/property_writer.adoc[`property_writer`]
+| Writes a property value to a stream
+
+| xref:visitors/property_put.adoc[`property_put`]
+| Assigns a fixed value to a property at an event point
+|===
+
+These are combined using `make_bfs_visitor()`, `make_dfs_visitor()`, or
+`make_dijkstra_visitor()`.
+
+WARNING: Visitors are passed by value. If your visitor has state, changes
+during the algorithm are made to a copy, not to your original object. Hold
+state by pointer or reference if you need to read it after the algorithm
+returns.
+
+== See also
+
+* xref:visitors/visitor_concepts.adoc[Visitor Concepts (detailed reference)]
+* xref:extending/overview.adoc[Writing Algorithms for BGL]

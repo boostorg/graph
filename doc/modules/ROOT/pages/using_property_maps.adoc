@@ -13,6 +13,69 @@ link:../../property_map/doc/property_map.html[Property Map Concepts]
 provides a generic method for accessing properties from graphs. This is
 the interface used in the BGL algorithms to access properties.
 
+== Quick Reference
+
+The following table summarizes the available property map types, organized by
+underlying storage strategy.
+
+[cols="2,3,4"]
+|===
+| Storage | Property Map | Example
+
+| Internal properties (built-in)
+| `get(tag, g)`
+| `auto wmap = get(edge_weight, g);`
+
+| Bundled struct member
+| `get(&Struct::member, g)`
+| `auto wmap = get(&Edge::weight, g);`
+
+| `std::vector` with vertex index
+| `make_iterator_property_map`
+| `auto pmap = make_iterator_property_map(vec.begin(), get(vertex_index, g));`
+
+| Raw array
+| Direct use (models LvaluePropertyMap)
+| `dijkstra_shortest_paths(g, s, distance_map(my_array));`
+
+| `std::map` (non-integer keys)
+| `make_assoc_property_map`
+| `auto pmap = make_assoc_property_map(my_map);`
+
+| Auto-growing vector
+| `vector_property_map`
+| `vector_property_map<double> pmap(num_vertices(g), get(vertex_index, g));`
+
+| Computed from a callable
+| `make_function_property_map`
+| `auto pmap = make_function_property_map<Vertex>([&](Vertex v){ return degree(v, g); });`
+
+| Transformed view of another map
+| `make_transform_value_property_map`
+| `auto pmap = make_transform_value_property_map([](double d){ return d*2; }, dist_map);`
+
+| Constant value for all keys
+| `static_property_map`
+| `static_property_map<double> pmap(1.0);`
+
+| Unused / discarded output
+| `dummy_property_map`
+| `dijkstra_shortest_paths(g, s, predecessor_map(dummy_property_map()));`
+
+|===
+
+=== Headers
+
+* `<boost/graph/properties.hpp>` — internal property tags, `get(tag, g)`
+* `<boost/property_map/property_map.hpp>` — `iterator_property_map`, `static_property_map`, `associative_property_map`
+* `<boost/property_map/vector_property_map.hpp>` — `vector_property_map`
+* `<boost/property_map/function_property_map.hpp>` — `make_function_property_map`
+* `<boost/property_map/transform_value_property_map.hpp>` — `make_transform_value_property_map`
+
+Additional BGL-specific types: `constant_property_map`, `null_property_map`, `container_property_map`, `degree_property_map` (see `<boost/graph/property_maps/>`).
+
+'''
+
 === Property Map Interface
 
 The property map interface specifies that each property is accessed
@@ -161,7 +224,7 @@ The next question is: how do interior properties become attached to a
 graph object in the first place? This depends on the graph class that
 you are using. The `adjacency_list` graph class of BGL uses a
 property mechanism (see Section
-xref:graph_classes/using_adjacency_list.adoc#sec:adjacency-list-properties[Internal
+xref:property_maps/overview.adoc[Internal
 Properties]) to allow an arbitrary number of properties to be stored on
 the edges and vertices of the graph.
 
