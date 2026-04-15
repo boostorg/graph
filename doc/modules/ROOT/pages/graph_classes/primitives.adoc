@@ -6,7 +6,7 @@ interact with graphs, regardless of the underlying data structure.
 
 [source,cpp]
 ----
-include::example$primitives_traversal.cpp[]
+include::example$primitives/primitives_traversal.cpp[]
 ----
 
 == Traversal
@@ -59,7 +59,7 @@ NOTE: All pairs can be used with `make_iterator_range` for range-based for loops
 
 [source,cpp]
 ----
-include::example$primitives_edge_access.cpp[]
+include::example$primitives/primitives_edge_access.cpp[]
 ----
 
 == Counts
@@ -126,7 +126,7 @@ xref:graph_classes/overview.adoc[Graph Data Structures] for details.
 
 [source,cpp]
 ----
-include::example$primitives_mutation.cpp[]
+include::example$primitives/primitives_mutation.cpp[]
 ----
 
 == Property access
@@ -153,7 +153,7 @@ include::example$primitives_mutation.cpp[]
 
 [source,cpp]
 ----
-include::example$primitives_properties.cpp[]
+include::example$primitives/primitives_properties.cpp[]
 ----
 
 == Types

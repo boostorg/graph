@@ -79,12 +79,12 @@ All 10 property map types in one file:
 
 [source,cpp]
 ----
-include::example$property_maps.cpp[]
+include::example$property_maps/property_maps.cpp[]
 ----
 
 Expected output:
 
-----
+....
 460 km
 42
 200
@@ -93,7 +93,7 @@ capital
 2
 285.831 miles
 1
-----
+....
 
 NOTE: Property maps are not iterable. There is no `begin()`/`end()`. To
 read all values, iterate over the graph's vertices or edges and look up each

@@ -3,19 +3,17 @@
 * Graph Classes
 ** xref:graph_classes/overview.adoc[Overview]
 ** xref:graph_classes/adjacency_list.adoc[Adjacency List]
-** xref:graph_classes/directed_graph.adoc[Directed Graph]
-** xref:graph_classes/undirected_graph.adoc[Undirected Graph]
 ** xref:graph_classes/adjacency_matrix.adoc[Adjacency Matrix]
 ** xref:graph_classes/compressed_sparse_row.adoc[Compressed Sparse Row Graph]
 * Graph Generators
-** xref:auxiliary/random.adoc[Random Graph Utilities]
-** xref:auxiliary/erdos_renyi_generator.adoc[Erdős-Rényi]
-** xref:auxiliary/sorted_erdos_renyi_gen.adoc[Erdős-Rényi (Sorted)]
-** xref:auxiliary/rmat_generator.adoc[Scale-Free (R-MAT)]
-** xref:auxiliary/plod_generator.adoc[PLOD (Power Law)]
-** xref:auxiliary/small_world_generator.adoc[Small World (Watts-Strogatz)]
-** xref:auxiliary/mesh_generator.adoc[Mesh (2D Grid)]
-** xref:auxiliary/ssca_generator.adoc[SSCA (Clustered Benchmark)]
+** xref:generators/overview.adoc[Overview]
+** xref:generators/random.adoc[Random Graph Utilities]
+** xref:generators/erdos_renyi_generator.adoc[Erdős-Rényi (Uniform Random)]
+** xref:generators/rmat_generator.adoc[Scale-Free (R-MAT)]
+** xref:generators/plod_generator.adoc[PLOD (Power Law)]
+** xref:generators/small_world_generator.adoc[Small World (Watts-Strogatz)]
+** xref:generators/mesh_generator.adoc[Mesh (2D Grid)]
+** xref:generators/ssca_generator.adoc[SSCA (Clustered Benchmark)]
 * Algorithms
 ** Traversal
 *** xref:algorithms/breadth_first_search.adoc[Breadth First Search]
