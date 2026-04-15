@@ -103,6 +103,10 @@
 *** xref:algorithms/bc_clustering.adoc[Betweenness Centrality Clustering]
 * Property Maps
 ** xref:property_maps/overview.adoc[Overview]
+** xref:property_maps/bundled.adoc[Bundled Properties]
+** xref:property_maps/external.adoc[External Properties]
+** xref:property_maps/tags.adoc[Internal Tags (Legacy)]
+** xref:property_maps/pitfalls.adoc[Common Mistakes]
 * Concepts
 ** xref:concepts/graph_concepts.adoc[Overview]
 ** Graph Structure
@@ -196,7 +200,6 @@
 ** xref:auxiliary/layout_tolerance.adoc[Layout Tolerance]
 * Background
 ** xref:overview/graph_theory_review.adoc[Graph Theory Review]
-** xref:overview/bundles.adoc[Bundled Properties]
 ** xref:auxiliary/bgl_named_params.adoc[Named Parameters]
 ** xref:overview/faq.adoc[FAQ]
 * Extending the BGL

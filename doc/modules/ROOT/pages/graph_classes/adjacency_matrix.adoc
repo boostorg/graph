@@ -35,7 +35,7 @@ whether there is an edge from vertex _i_ to vertex _j_.
   graphs, prefer xref:graph_classes/adjacency_list.adoc[`adjacency_list`].
 
 The class extends the traditional data-structure by allowing objects to be
-attached to vertices and edges via xref:overview/bundles.adoc[bundled properties]
+attached to vertices and edges via xref:property_maps/bundled.adoc[bundled properties]
 or xref:property_maps/overview.adoc[interior properties]. All property value
 types must be Copy Constructible, Assignable, and Default Constructible.
 

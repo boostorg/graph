@@ -273,13 +273,13 @@ parameters `VertexProperty` and `EdgeProperty` of the
 properties.
 
 *NOTE*: The Boost Graph Library supports two interchangeable methods for
-specifying interior properties: xref:overview/bundles.adoc[bundled properties]
+specifying interior properties: xref:property_maps/bundled.adoc[bundled properties]
 and property lists. The former is easier to use and requires less
 effort, whereas the latter is compatible with older, broken compilers
 and is backward-compatible with Boost versions prior to 1.32.0. If you
 absolutely require these compatibility features, read on to learn about
 property lists. Otherwise, we strongly suggest that you read about the
-xref:overview/bundles.adoc[bundled properties] mechanism.
+xref:property_maps/bundled.adoc[bundled properties] mechanism.
 
 One may specify internal properties via property lists, which are build
 from instances of the property class declared as follows.
@@ -361,8 +361,7 @@ weight property with values of type `float` to the edges of the graph.
 
 The property values are then read from and written to using property
 maps. See Section
-xref:using_property_maps.adoc#sec:interior-properties[Interior
-Properties] for a description of how to obtain property maps from a
+xref:property_maps/overview.adoc[Property Maps] for a description of how to obtain property maps from a
 graph, and read Section xref:property_maps/overview.adoc[Property Maps]
 for how to use property maps.
 

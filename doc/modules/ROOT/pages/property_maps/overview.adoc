@@ -73,27 +73,11 @@ do not compose well when you need multiple properties.
 NOTE: Most algorithms accept all three approaches interchangeably. The
 algorithm does not know or care where the data lives.
 
-== Complete example
-
-All 10 property map types in one file:
-
-[source,cpp]
-----
-include::example$property_maps/property_maps.cpp[]
-----
-
-Expected output:
-
-....
-460 km
-42
-200
-capital
-3.14
-2
-285.831 miles
-1
-....
+NOTE: When an algorithm parameter like `color_map` is not explicitly provided,
+most algorithms allocate a temporary `std::vector` internally and wrap it with
+the graph's `vertex_index` map. This is why many algorithms work out of the box
+with no property map arguments — but it requires `VertexList=vecS` (which
+provides the built-in vertex index).
 
 NOTE: Property maps are not iterable. There is no `begin()`/`end()`. To
 read all values, iterate over the graph's vertices or edges and look up each
@@ -137,6 +121,10 @@ one: `for (auto v : make_iterator_range(vertices(g))) std::cout << get(pm, v);`
 | `make_transform_value_property_map(f, pm)`
 | `auto pm2 = make_transform_value_property_map([](double d){ return d*2; }, pm);`
 
+| Vertex degree (read-only)
+| `make_degree_map(g)`
+| `auto deg = make_degree_map(g);`
+
 | Constant value for all keys
 | `static_property_map<T>(value)`
 | `static_property_map<double> pm(1.0);`
@@ -145,7 +133,40 @@ one: `for (auto v : make_iterator_range(vertices(g))) std::cout << get(pm, v);`
 | `dummy_property_map()`
 | `dummy_property_map pm;`
 
+| Memory-efficient 2-color map
+| `make_one_bit_color_map(n, index)`
+| `auto cm = make_one_bit_color_map(num_vertices(g), get(vertex_index, g));`
+
+| Memory-efficient 4-color map
+| `make_two_bit_color_map(n, index)`
+| `auto cm = make_two_bit_color_map(num_vertices(g), get(vertex_index, g));`
+
 |===
+
+== The interface
+
+Every property map supports at most three operations:
+
+[source,cpp]
+----
+value = get(pm, key);          // read (Readable)
+put(pm, key, value);           // write (Writable)
+reference = pm[key];           // reference access (Lvalue only)
+----
+
+`get()` returns a _copy_ of the value. For Lvalue property maps, `pm[key]`
+returns a reference (const or mutable depending on the map).
+
+To deduce types from a property map at compile time, use `property_traits`:
+
+[source,cpp]
+----
+using Value = typename property_traits<Map>::value_type;
+using Key   = typename property_traits<Map>::key_type;
+using Cat   = typename property_traits<Map>::category;
+----
+
+This is the property map equivalent of `std::iterator_traits`.
 
 == Property map categories
 
@@ -211,6 +232,12 @@ about these categories.
 | `<boost/graph/property_maps/null_property_map.hpp>`
 | `null_property_map`, `make_null_property`
 
+| `<boost/graph/one_bit_color_map.hpp>`
+| `one_bit_color_map`, `make_one_bit_color_map`
+
+| `<boost/graph/two_bit_color_map.hpp>`
+| `two_bit_color_map`, `make_two_bit_color_map`
+
 |===
 
 WARNING: Most algorithm headers pull in `<boost/graph/properties.hpp>`
@@ -219,9 +246,24 @@ automatically, but external property map adaptors (`iterator_property_map`,
 `<boost/property_map/>`. Forgetting this is a common source of confusing
 template errors.
 
-== See also
+== Complete example
 
-* xref:property_maps/overview.adoc[Using Property Maps (tutorial)]
-* xref:overview/bundles.adoc[Bundled Properties]
-* xref:traits/property_map.adoc[property_map trait]
-* xref:traits/property.adoc[property template]
+All property map types in one file:
+
+[source,cpp]
+----
+include::example$property_maps/property_maps.cpp[]
+----
+
+Expected output:
+
+....
+460 km
+42
+200
+capital
+3.14
+2
+285.831 miles
+1
+....

@@ -786,7 +786,7 @@ The subgraph template requires the underlying graph type to supply
 vertex and edge index properties. However, there is no default
 constructor of any adjacency list that satisfies both of these
 requirements. This is especially true of graphs using
-xref:overview/bundles.adoc[bundled properties], or any adjacency list whose
+xref:property_maps/bundled.adoc[bundled properties], or any adjacency list whose
 vertex set is selected by anything other that `vecS`. However, this
 problem can be overcome by embedding your bundled (or otherwise)
 properties into a `property` that contains an appropriate index. For
