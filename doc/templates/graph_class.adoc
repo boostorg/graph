@@ -1,0 +1,172 @@
+// ============================================================================
+// TEMPLATE: BGL Graph Data Structure Documentation Page
+// ============================================================================
+//
+// Copy, rename to the class name, place in pages/graph_classes/.
+// Delete all // comment lines when done.
+//
+// ---- SIGNATURE FORMATTING ----
+//
+//   Same rules as algorithm template:
+//   - Align template continuations under first param
+//   - Return type + name on one line, opening ( at end
+//   - Function params: 4-space indent, 1-2 per line, ~80 cols
+//
+// ---- GUIDELINES ----
+//
+//   - Header block: one-line summary, bold metadata (Defined in, Models)
+//   - Synopsis: full class template declaration
+//   - Quick Usage: compiled snippet from examples/ via include::example$
+//   - Template parameters table with Parameter / Description / Default
+//   - Member + Non-member functions: one entry per function, separated by '''
+//   - Non-member functions grouped: Structure Access, Structure Modification,
+//     Property Map Accessors (add more groups if needed, e.g., Serialization)
+//   - Associated Types: table with Type / Description
+//   - Operation Complexity: tables by selector choice if applicable
+//   - Stability/Invalidation: table + WARNING + code example (mutable types)
+//   - All sections are optional. Skip if N/A for this class.
+//   - No See Also section (the sidebar nav is sufficient)
+//
+// ============================================================================
+
+[#sec:class-name]
+= Class Name
+
+One-line summary.
+
+*Defined in:* `<boost/graph/header.hpp>` +
+*Models:* concept1, concept2, concept3
+
+== Synopsis
+
+[source,cpp]
+----
+template <class ParamA = defaultA,
+          class ParamB = defaultB>
+class class_name { ... };
+----
+
+Description of the class: what it is, what trade-offs the template
+parameters control. Keep it short (3-5 lines). Use bullet points for
+the key parameter choices if there are several.
+
+== Quick Usage
+
+// Compiled snippet from examples/. Shows the most common configuration:
+// create a graph, add edges, traverse. ~15 lines.
+
+[source,cpp]
+----
+include::example$class_name_usage.cpp[]
+----
+
+Expected output:
+
+----
+...
+----
+
+== Template Parameters
+
+[cols="1,3,1",options="header"]
+|===
+| Parameter | Description | Default
+
+| `ParamA` | ... | `defaultA`
+| `ParamB` | ... | `defaultB`
+|===
+
+// Add a NOTE after the table for important side-effects of parameter
+// choices (e.g., "With vecS, vertices have a builtin vertex_index").
+
+== Member Functions
+
+// One subsection per function group. Separate individual functions with '''.
+
+=== Constructors
+
+[source,cpp]
+----
+class_name();
+----
+
+...
+
+'''
+
+[source,cpp]
+----
+class_name(vertices_size_type n);
+----
+
+...
+
+== Non-Member Functions
+
+// Grouped by purpose. Separate individual functions with '''.
+
+=== Structure Access
+
+// vertices(), edges(), out_edges(), source(), target(), num_vertices(), etc.
+
+=== Structure Modification
+
+// add_vertex(), add_edge(), remove_vertex(), remove_edge(), clear_vertex()
+// Include invalidation notes per function.
+
+=== Property Map Accessors
+
+// get(property, g), put(property, g, key, value)
+
+== Associated Types
+
+// Explain briefly why users need these types (algorithms are templates,
+// you need concrete types for variables). Include a short code example.
+
+Algorithms are templates. To declare variables for vertices, edges, or
+iterators, extract the concrete types via `graph_traits`:
+
+[source,cpp]
+----
+using Vertex = graph_traits<Graph>::vertex_descriptor;
+----
+
+[cols="1,3",options="header"]
+|===
+| Type | Description
+
+| `vertex_descriptor` | ...
+| `edge_descriptor` | ...
+| `vertex_iterator` | ...
+|===
+
+== Operation Complexity
+
+// Tables showing time complexity per selector choice.
+// Add subsections for Traversal Speed and Memory Overhead if applicable.
+
+[cols="1,1,1"]
+|===
+| Operation | Selector A | Selector B
+
+| `add_vertex()` | O(...) | O(...)
+|===
+
+== Stability and Invalidation
+
+// CRITICAL for mutable graph types. Skip for immutable types (e.g., CSR).
+// Lead with TIP, then table, then WARNING with code example.
+
+TIP: ...
+
+// Invalidation summary table
+
+WARNING: ...
+
+// Code example showing wrong way and right way.
+
+// ---- OPTIONAL ----
+
+== Convenience Wrappers
+
+// If shorthand aliases exist (e.g., directed_graph, undirected_graph).
