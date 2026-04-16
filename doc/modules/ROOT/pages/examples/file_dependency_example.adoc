@@ -116,7 +116,7 @@ represented as edges. So if there is an edge _(u,v)_ in the graph then
 _v_ better not come before _u_ in the ordering. It turns out that this
 kind of constrained ordering is called a _topological sort_. Therefore,
 answering the question of compilation order is as easy as calling the
-BGL algorithm xref:algorithms/topological_sort.adoc[`topological_sort()`].
+BGL algorithm xref:algorithms/topological_sort/topological_sort.adoc[`topological_sort()`].
 The traditional form of the output for topological sort is a linked-list
 of the sorted vertices. The BGL algorithm instead puts the sorted
 vertices into any
@@ -240,7 +240,7 @@ Another question the compilation system needs to be able to answer is
 whether there are any cycles in the dependencies. If there are cycles,
 the system will need to report an error to the user so that the cycles
 can be removed. One easy way to detect a cycle is to run a
-xref:algorithms/depth_first_search.adoc[depth-first search], and if the search
+xref:algorithms/traversal/depth_first_search.adoc[depth-first search], and if the search
 runs into an already discovered vertex (of the current search tree),
 then there is a cycle. The BGL graph search algorithms (which includes
 `depth_first_search()`) are all extensible via the _visitor_

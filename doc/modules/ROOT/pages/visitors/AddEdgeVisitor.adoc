@@ -8,7 +8,7 @@ occurs. Replacing calls to to `add_edge` with calls to
 `AddEdgeVisitor::visit_vertex_pair` allows for such operations
 to be defined independently from the algorithm.
 
-==== Notation
+== Notation
 
 [cols=",",]
 |===
@@ -30,11 +30,11 @@ to be defined independently from the algorithm.
 | |
 |===
 
-==== Associated Types
+== Associated Types
 
 None
 
-==== Valid Expressions
+== Valid Expressions
 
 [cols=",,,",]
 |===
@@ -45,7 +45,7 @@ every time an edge between vertices `u` and `v` should be added to the
 graph `g`.
 |===
 
-==== Models
+== Models
 
 Two models of this concept are defined in the file
 link:../../../boost/graph/planar_detail/add_edge_visitors.hpp[`add_edge_visitors.hpp`]:
@@ -55,7 +55,7 @@ takes no arguments.`visit_vertex_pair(u, v, g)` is just a
 dispatch to `add_edge(u, v, g)`.
 * `edge_index_update_visitor`: The constructor of this class
 takes two arguments: the first, an EdgeIndexMap, is a
-link:../../property_map/doc/ReadWritePropertyMap.html[ReadWritePropertyMap]
+ReadWritePropertyMap
 that maps each edge in the associated graph `g` to a distinct integer in
 the range `[0, num_edges(g))`. The second argument is the number
 of edges in the underlying graph, which serves as the "next available
@@ -67,9 +67,3 @@ as the next available index. When `visit_vertex_pair(u, v, g)`
 is called, the `edge_index_update_visitor` will add the edge
 _(u,v)_ to the graph and update the edge index for the newly created
 edge.
-
- 
-
-'''''
-
-Copyright © 2007 Aaron Windsor ( aaron.windsor@gmail.com)

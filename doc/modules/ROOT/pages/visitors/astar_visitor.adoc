@@ -1,59 +1,51 @@
-= astar_visitor
+= A* Visitor Adaptor
+
+Converts a list of event visitors into an AStarVisitor for use with
+`astar_search`.
+
+*Defined in:* `<boost/graph/astar_search.hpp>` +
+*Models:* AStarVisitor
+
+== Example
+
+[source,cpp]
+----
+include::example$visitors/astar_visitor.cpp[]
+----
+
+Expected output:
 
 ....
+vertex 0  dist=0  pred=0
+vertex 1  dist=1  pred=0
+vertex 2  dist=3  pred=1
+vertex 3  dist=4  pred=2
+....
 
+== Synopsis
+
+[source,cpp]
+----
+template <typename EventVisitorList = null_visitor>
+class astar_visitor;
+
+template <typename EventVisitorList>
 astar_visitor<EventVisitorList>
-....
+make_astar_visitor(EventVisitorList ev_list);
+----
 
-This class is an adapter that converts a list of
-xref:visitors/EventVisitor.adoc[EventVisitor]'s (constructed using `std::pair`)
-into a xref:visitors/AStarVisitor.adoc[AStarVisitor].
+== Parameters
 
-==== Example
-
-See the example for xref:visitors/EventVisitor.adoc[EventVisitor].
-
-==== Model of
-
-xref:visitors/AStarVisitor.adoc[AStarVisitor]
-
-==== Template Parameters
-
-[cols=",,",options="header",]
+[cols="1,3,1",options="header"]
 |===
-|Parameter |Description |Default
-|`EventVisitorList` |A list of xref:visitors/EventVisitor.adoc[EventVisitor]'s
-created with `std::pair`. |xref:visitors/null_visitor.adoc[`null_visitor`]
+| Parameter | Description | Default
+
+| `EventVisitorList`
+| One or more EventVisitors combined with `std::pair`.
+| `null_visitor`
 |===
 
-==== Where Defined
+== Behavior
 
-link:../../../boost/graph/astar_search.hpp[`boost/graph/astar_search.hpp`]
-
-==== Member Functions
-
-This class implements all of the member functions required by
-xref:visitors/AStarVisitor.adoc[AStarVisitor]. In each function the appropriate
-event is dispatched to the xref:visitors/EventVisitor.adoc[EventVisitor]'s in
-the EventVisitorList.
-
-==== Non-Member Functions
-
-[width="100%",cols="50%,50%",options="header",]
-|===
-|Function |Description
-|` template <class EventVisitorList>` +
-`astar_visitor<EventVisitorList>` +
-`make_astar_visitor(EventVisitorList ev_list); ` |Returns
-the event visitor list adapted to be an A* visitor.
-|===
-
-==== See Also
-
-xref:visitors/visitor_concepts.adoc[Visitor concepts]
-
-The following are event visitors:
-xref:visitors/predecessor_recorder.adoc[`predecessor_recorder`],
-xref:visitors/distance_recorder.adoc[`distance_recorder`],
-xref:visitors/time_stamper.adoc[`time_stamper`], and
-xref:visitors/property_writer.adoc[`property_writer`].
+Implements all AStarVisitor event points. Each event is dispatched to the
+matching EventVisitor in the list. Events with no matching visitor are ignored.

@@ -1,7 +1,4 @@
-[#concept:PropertyGraph]
 = PropertyGraph
-
-=== PropertyGraph
 
 A PropertyGraph is a graph that has some property associated with each
 of the vertices or edges in the graph. As a given graph may have several
@@ -9,11 +6,11 @@ properties associated with each vertex or edge, a tag is used to
 identify which property is being accessed. The graph provides a function
 which returns a property map object.
 
-==== Refinement of
+== Refinement of
 
 xref:concepts/Graph.adoc[Graph]
 
-==== Notation
+== Notation
 
 [cols=",",]
 |===
@@ -39,7 +36,7 @@ xref:auxiliary/PropertyTag.adoc[PropertyTag] concept.
 |`pmap` |An object of type `Map`.
 |===
 
-==== Associated types
+== Associated types
 
 [width="100%",cols="100%",]
 |===
@@ -50,8 +47,7 @@ boost::property_map<G, PropertyTag>::type
 ----
 
 The type of the property map for the property specified by
-`PropertyTag`. This type must be a model of
-link:../../property_map/doc/ReadWritePropertyMap.html[ReadWritePropertyMap]
+`PropertyTag`. This type must be a model of `ReadWritePropertyMap`
 with a key type the same as the graph's vertex or edge descriptor type.
 
 a|
@@ -61,31 +57,30 @@ boost::property_map<G, PropertyTag>::const_type
 ----
 
 The type of the const property map for the property specified by
-`PropertyTag`. This type must be a model of
-link:../../property_map/doc/ReadablePropertyMap.html[ReadablePropertyMap]
+`PropertyTag`. This type must be a model of `ReadablePropertyMap`
 with a key type the same as the graph's vertex or edge descriptor type.
 
 |===
 
-==== Valid Expressions
+== Valid Expressions
 
 [width="100%",cols="50%,50%",]
 |===
-|`get(p, g)` |Returns the property map for the property specified by the
+|`get(p, g)` |Returns the property map for the property specified by the
 `PropertyTag` type. The object `p` is only used to carry the type. +
-Return type: `boost::property_map<G, PropertyTag>::type` if
+Return type: `boost::property_map<G, PropertyTag>::type` if
 `g` is mutable and +
-`boost::property_map<G, PropertyTag>::const_type`
+`boost::property_map<G, PropertyTag>::const_type`
 otherwise.
 
-|`get(p, g, x)` |Returns the property value (specified by the
+|`get(p, g, x)` |Returns the property value (specified by the
 `PropertyTag` type) associated with object `x` (a vertex or edge). The
 object `p` is only used to carry the type. This function is equivalent
 to: +
 `get(get(p, g), x)` +
 Return type: `boost::property_traits<Map>::value_type`
 
-|`put(p, g, x, v)` |Set the property (specified by the `PropertyTag`
+|`put(p, g, x, v)` |Set the property (specified by the `PropertyTag`
 type) associated with object `x` (a vertex or edge) to the value `v`.
 The object `p` is only used to carry the type. This function is
 equivalent to: +
@@ -94,11 +89,11 @@ equivalent to: +
 Return type: `void`
 |===
 
-==== Complexity
+== Complexity
 
 The `get()` property map function must be constant time.
 
-==== Models
+== Models
 
 * `adjacency_list` with
 `VertexProperty=property<vertex_distance_t,int,property<vertex_in_degree_t,int> >`
@@ -107,7 +102,7 @@ and `PropertyTag=vertex_distance_t`.
 `VertexPropertyTag=property<vertex_distance_t,int,property<vertex_in_degree_t,int> >`
 and `PropertyTag=vertex_in_degree_t`.
 
-==== Concept Checking Class
+== Concept Checking Class
 
 [source,cpp]
 ----
@@ -137,7 +132,3 @@ and `PropertyTag=vertex_in_degree_t`.
     typename property_traits<Map>::value_type pval;
   };
 ----
-
-==== See Also
-
-xref:traits/property_map.adoc[`property_map`]

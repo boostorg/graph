@@ -1,14 +1,11 @@
-[#concept:IteratorConstructibleGraph]
 = IteratorConstructibleGraph
-
 
 The IteratorConstructibleGraph concept describes the interface for graph
 types that can be constructed using a kind of edge iterator. The edge
-iterator can be any
-http://www.boost.org/sgi/stl/InputIterator.html[InputIterator] that
+iterator can be any InputIterator that
 dereferences to a pair of integers _(i,j)_, which represent an edge that
 should be in the graph. The two integers _i_ and _j_ represent vertices
-where _0 <= i < ++|++V++|++_ and _0 <= j < ++|++V++|++_.
+where _0 <= i < |V|_ and _0 <= j < |V|_.
 The edge iterator's value type should be `std::pair<T,T>` (or at
 least be a structure that has members `first` and `second`) and the
 value type `T` of the pair must be convertible to the
@@ -20,11 +17,11 @@ range and in addition requires the number of vertices and number of
 edges. For some graph and edge iterator types the second constructor can
 be more efficient than the first.
 
-==== Example
+== Example
 
 The following exampe creates two graph objects from an array of edges
 (vertex pairs). The type `Edge*` satisfies the requirements for an
-http://www.boost.org/sgi/stl/InputIterator.html[InputIterator] and can
+InputIterator and can
 therefore be used to construct a graph.
 
 [source,cpp]
@@ -53,11 +50,11 @@ therefore be used to construct a graph.
   // do something with G2 ...
 ----
 
-==== Refinement of
+== Refinement of
 
 xref:concepts/Graph.adoc[Graph]
 
-==== Notation
+== Notation
 
 `G`
 
@@ -83,7 +80,7 @@ is an object of type `Tr::vertices_size_type`.
 
 is an object of type `Tr::edges_size_type`.
 
-==== Valid Expressions
+== Valid Expressions
 
 ....
 G g(first, last);

@@ -1,17 +1,14 @@
-[#concept:EdgeListGraph]
 = EdgeListGraph
-
-=== EdgeListGraph
 
 The EdgeListGraph concept refines the xref:concepts/Graph.adoc[Graph] concept,
 and adds the requirement for efficient access to all the edges in the
 graph.
 
-==== Refinement of
+== Refinement of
 
 xref:concepts/Graph.adoc[Graph]
 
-==== Notation
+== Notation
 
 [cols=",",]
 |===
@@ -23,7 +20,7 @@ xref:concepts/Graph.adoc[Graph]
 `boost::graph_traits<G>::edge_descriptor`.
 |===
 
-==== Associated Types
+== Associated Types
 
 `boost::graph_traits<G>::traversal_category` +
  +
@@ -36,7 +33,7 @@ boost::graph_traits<G>::edge_iterator
 
 An edge iterator (obtained via `edges(g)`) provides access to all of the
 edges in a graph. An edge iterator type must meet the requirements of
-link:../../utility/MultiPassInputIterator.html[MultiPassInputIterator].
+`MultiPassInputIterator`.
 The value type of the edge iterator must be the same as the edge
 descriptor of the graph.
 
@@ -48,11 +45,11 @@ boost::graph_traits<G>::edges_size_type
 The unsigned integer type used to represent the number of edges in the
 graph.
 
-==== Valid Expressions
+== Valid Expressions
 
 [width="100%",cols="50%,50%",]
 |===
-|[#sec:edges]#`edges(g)`# |Returns an iterator-range providing access to
+|`edges(g)` |Returns an iterator-range providing access to
 all the edges in the graph `g`. +
 Return type: `std::pair<edge_iterator, edge_iterator>`
 
@@ -68,21 +65,17 @@ _(u,v)_ represented by `e`. +
 Return type: `vertex_descriptor`
 |===
 
-==== Models
+== Models
 
 * xref:graph_classes/adjacency_list.adoc[`adjacency_list`]
 * xref:adaptors/edge_list.adoc[`edge_list`]
 
-==== Complexity guarantees
+== Complexity guarantees
 
 The `edges()`, `source()`, and `target()` functions must all return in
 constant time.
 
-==== See Also
-
-xref:concepts/graph_concepts.adoc[Graph concepts]
-
-==== Concept Checking Class
+== Concept Checking Class
 
 [source,cpp]
 ----

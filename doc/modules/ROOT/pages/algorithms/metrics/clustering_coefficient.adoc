@@ -1,0 +1,60 @@
+= Clustering Coefficient
+
+Measures the density of triangles around a vertex. For vertex v, it is the
+fraction of pairs of v's neighbors that are also connected to each other.
+A high value means v's neighborhood is tightly knit.
+
+*Defined in:* `<boost/graph/clustering_coefficient.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/metrics/clustering_coefficient.cpp[]
+----
+
+Expected output:
+
+....
+vertex 0: clustering coeff = 1
+vertex 1: clustering coeff = 1
+vertex 2: clustering coeff = 0.333333
+vertex 3: clustering coeff = 0
+vertex 4: clustering coeff = 0
+....
+
+== Synopsis
+
+[source,cpp]
+----
+// Single vertex
+template <typename Graph>
+double clustering_coefficient(const Graph& g,
+    typename graph_traits<Graph>::vertex_descriptor v);
+
+// All vertices
+template <typename Graph, typename ClusteringMap>
+void all_clustering_coefficients(const Graph& g, ClusteringMap cm);
+
+// Graph-level average
+template <typename Graph, typename ClusteringMap>
+double mean_clustering_coefficient(const Graph& g, ClusteringMap cm);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| Must model AdjacencyGraph and IncidenceGraph. The single-vertex version also
+  requires AdjacencyMatrix (`edge()` function).
+
+| IN
+| `vertex_descriptor v`
+| (single-vertex version) The vertex to compute the coefficient for.
+
+| OUT
+| `ClusteringMap cm`
+| (all_clustering_coefficients) WritablePropertyMap for per-vertex results.
+|===

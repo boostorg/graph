@@ -1,7 +1,4 @@
-[#concept:BidirectionalGraph]
-= Bidirectional
-
-=== BidirectionalGraph
+= BidirectionalGraph
 
 The BidirectionalGraph concept refines
 xref:concepts/IncidenceGraph.adoc[IncidenceGraph] and adds the requirement for
@@ -13,11 +10,11 @@ For undirected graphs this is not an issue, since the `in_edges()`
 and `out_edges()` functions are the same, they both return the edges
 incident to the vertex.
 
-==== Refinement of
+== Refinement of
 
 xref:concepts/IncidenceGraph.adoc[IncidenceGraph]
 
-==== Notation
+== Notation
 
 [cols=",",]
 |===
@@ -29,7 +26,7 @@ xref:concepts/IncidenceGraph.adoc[IncidenceGraph]
 `boost::graph_traits<G>::vertex_descriptor`.
 |===
 
-==== Associated Types
+== Associated Types
 
 [width="100%",cols="100%",]
 |===
@@ -46,16 +43,15 @@ boost::graph_traits<G>::in_edge_iterator
 An in-edge iterator for a vertex _v_ provides access to the in-edges of
 _v_. As such, the value type of an in-edge iterator is the edge
 descriptor type of its graph. An in-edge iterator must meet the
-requirements of
-link:../../utility/MultiPassInputIterator.html[MultiPassInputIterator].
+requirements of `MultiPassInputIterator`.
 
 |===
 
-==== Valid Expressions
+== Valid Expressions
 
 [width="100%",cols="50%,50%",]
 |===
-|[#sec:in-edges]#`in_edges(v, g)`# |Returns an iterator-range
+|`in_edges(v, g)` |Returns an iterator-range
 providing access to the in-edges (for directed graphs) or incident edges
 (for undirected graphs) of vertex `v` in graph `g`. For both directed
 and undirected graphs, the target of an out-edge is required to be
@@ -75,25 +71,21 @@ of vertex `v` in graph `g`. +
 Return type: `degree_size_type`
 |===
 
-==== Models
+== Models
 
 * xref:graph_classes/adjacency_list.adoc[`adjacency_list`] with
 `Directed=bidirectionalS`
 * xref:graph_classes/adjacency_list.adoc[`adjacency_list`] with
 `Directed=undirectedS`
 
-==== Complexity guarantees
+== Complexity guarantees
 
 The `in_edges()` function is required to be constant time. The
 `in_degree()` and `degree()` functions must be linear in the number
 of in-edges (for directed graphs) or incident edges (for undirected
 graphs).
 
-==== See Also
-
-xref:concepts/graph_concepts.adoc[Graph concepts]
-
-==== Concept Checking Class
+== Concept Checking Class
 
 [source,cpp]
 ----

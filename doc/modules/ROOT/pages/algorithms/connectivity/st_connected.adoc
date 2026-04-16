@@ -1,0 +1,58 @@
+= ST Connected
+
+Tests whether two vertices s and t are connected by a path. Uses a
+bidirectional BFS that searches simultaneously from s and t.
+
+Complexity: O(V + E) worst case, typically much faster +
+*Defined in:* `<boost/graph/st_connected.hpp>`
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename Graph, typename ColorMap>
+bool st_connected(const Graph& g,
+    typename graph_traits<Graph>::vertex_descriptor s,
+    typename graph_traits<Graph>::vertex_descriptor t,
+    ColorMap color);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| Must model IncidenceGraph.
+
+| IN
+| `vertex_descriptor s`
+| Source vertex.
+
+| IN
+| `vertex_descriptor t`
+| Target vertex.
+
+| UTIL
+| `ColorMap color`
+| ReadWritePropertyMap for working storage. One entry per vertex, initialized
+  to white.
+|===
+
+Returns `true` if there is a path from `s` to `t`.
+
+TIP: This is faster than running a full BFS when you only need to check
+reachability between two specific vertices.
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/connectivity/st_connected.cpp[]
+----
+
+.Expected output
+----
+0 connected to 2: true
+0 connected to 3: false
+----

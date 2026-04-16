@@ -1,18 +1,15 @@
-[#sec:MutablePropertyGraph]
 = MutablePropertyGraph
-
-=== MutablePropertyGraph
 
 A MutablePropertyGraph is a xref:concepts/MutableGraph.adoc[MutableGraph] with
 properties attached internally to the vertices and edges. When adding
 vertices and edges the value of the properties can be given.
 
-==== Refinement of
+== Refinement of
 
 xref:concepts/MutableGraph.adoc[MutableGraph] and
 xref:concepts/PropertyGraph.adoc[PropertyGraph]
 
-==== Notation
+== Notation
 
 [cols=",",]
 |===
@@ -31,7 +28,7 @@ xref:concepts/PropertyGraph.adoc[PropertyGraph]
 |`vp` |is an object of type `G::vertex_property_type`
 |===
 
-==== Associated Types
+== Associated Types
 
 [cols=",",]
 |===
@@ -42,25 +39,25 @@ xref:concepts/PropertyGraph.adoc[PropertyGraph]
 |`graph_traits<G>::vertex_property_type`
 |===
 
-==== Valid Expressions
+== Valid Expressions
 
 [width="100%",cols="50%,50%",]
 |===
-|`add_edge(u, v, ep, g)` |Inserts the edge _(u,v)_ into the graph,
+|`add_edge(u, v, ep, g)` |Inserts the edge _(u,v)_ into the graph,
 and copies object `ep` into the property for that edge. +
 Return type: `std::pair<edge_descriptor, bool>`
 
-|`add_vertex(vp, g)` |Add a new vertex to the graph and copy `vp`
+|`add_vertex(vp, g)` |Add a new vertex to the graph and copy `vp`
 into the property for the new vertex. The `vertex_descriptor` for
 the new vertex is returned. +
 Return type: `vertex_descriptor`
 |===
 
-==== Models
+== Models
 
 * `adjacency_list`
 
-==== Concept Checking Class
+== Concept Checking Class
 
 [source,cpp]
 ----

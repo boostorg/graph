@@ -1,17 +1,17 @@
 = DFS Visitor Concept
 
 This concept defines the visitor interface for
-xref:algorithms/depth_first_search.adoc[`depth_first_search()`]. Users
+xref:algorithms/traversal/depth_first_search.adoc[`depth_first_search()`]. Users
 can define a class with the DFS Visitor interface and pass an object of
 the class to `depth_first_search()`, thereby augmenting the
 actions taken during the graph search.
 
-==== Refinement of
+== Refinement of
 
-link:../../utility/CopyConstructible.html[Copy Constructible] (copying a
+Copy Constructible (copying a
 visitor should be a lightweight operation).
 
-==== Notation
+== Notation
 
 [cols=",",]
 |===
@@ -30,11 +30,11 @@ visitor should be a lightweight operation).
 `boost::graph_traits<G>::vertex_descriptor`.
 |===
 
-==== Associated Types
+== Associated Types
 
 none
 
-==== Valid Expressions
+== Valid Expressions
 
 [cols=",,,",options="header",]
 |===
@@ -79,31 +79,6 @@ in the DFS-tree, then the `finish_vertex` function is called on `u`
 after all the out-edges of `u` have been examined.
 |===
 
-==== Models
+== Models
 
 * xref:visitors/dfs_visitor.adoc[`dfs_visitor`]
-
-[#python]
-==== Python
-
-To implement a model of the `DFSVisitor` concept in Python, create a new
-class that derives from the `DFSVisitor` type of the graph, which will
-be named __`GraphType`__`.DFSVisitor`. The events and syntax are the
-same as with visitors in C++. Here is an example for the
-Python `bgl.Graph` graph type:
-
-[source,cpp]
-----
-
-class count_tree_edges_dfs_visitor(bgl.Graph.DFSVisitor):
-  def __init__(self, name_map):
-    bgl.Graph.DFSVisitor.__init__(self)
-    self.name_map = name_map
-
-  def tree_edge(self, e, g):
-    (u, v) = (g.source(e), g.target(e))
-    print "Tree edge ",
-    print self.name_map[u],
-    print " -> ",
-    print self.name_map[v]
-----

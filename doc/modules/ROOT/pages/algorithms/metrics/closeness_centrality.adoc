@@ -1,0 +1,69 @@
+= Closeness Centrality
+
+Measures how close a vertex is to all other vertices. Computed as the inverse
+of the sum of shortest distances from that vertex to every other vertex. A
+high closeness means the vertex can reach all others quickly.
+
+Complexity: O(V * (V + E) log V) (Dijkstra per vertex) +
+*Defined in:* `<boost/graph/closeness_centrality.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/metrics/closeness_centrality.cpp[]
+----
+
+Expected output:
+
+....
+Closeness centrality (1 / sum of shortest distances):
+  vertex 0: 0.0909
+  vertex 1: 0.1000
+  vertex 2: 0.1111
+  vertex 3: 0.0833
+  vertex 4: 0.1000
+....
+
+'''
+
+== Synopsis
+
+[source,cpp]
+----
+// Single vertex (requires pre-computed distance map)
+template <typename Graph, typename DistanceMap, typename Measure>
+typename Measure::result_type
+closeness_centrality(const Graph& g, DistanceMap dist, Measure measure);
+
+// All vertices
+template <typename Graph, typename DistanceMatrixMap,
+          typename CentralityMap, typename Measure>
+void all_closeness_centralities(const Graph& g, DistanceMatrixMap dm,
+                                CentralityMap cm, Measure measure);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| Must model VertexListGraph.
+
+| IN
+| `DistanceMap dist`
+| Pre-computed distances from the vertex to all others. Run Dijkstra or BFS
+  first.
+
+| IN
+| `Measure measure`
+| Closeness measure functor. Default: reciprocal of sum of distances.
+
+| OUT
+| `CentralityMap cm`
+| (all_closeness_centralities only) WritablePropertyMap for per-vertex results.
+|===
+
+NOTE: `closeness_centrality` takes a pre-computed distance map, not the graph
+alone. Run a shortest-paths algorithm first to fill the distance map.

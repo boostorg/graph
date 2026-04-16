@@ -1,0 +1,70 @@
+= Loop-Erased Random Walk
+
+Performs a random walk from vertex `s` until it reaches a vertex that is
+already colored (not white) in the color map. Whenever the walk revisits a
+vertex already on the current path (creating a cycle), the cycle is erased
+and the walk continues from where the cycle started.
+
+This is the building block for Wilson's algorithm for generating uniformly
+random spanning trees. It is used internally by `random_spanning_tree`.
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/utility/loop_erased_random_walk.cpp[]
+----
+
+Expected output (with seed 42):
+
+....
+Path from 0 to 4: 0 1 3 4
+....
+
+Complexity: depends on graph structure, expected O(V) per walk on many graphs +
+*Defined in:* `<boost/graph/loop_erased_random_walk.hpp>`
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename Graph, typename ColorMap, typename NextEdge>
+void loop_erased_random_walk(
+    const Graph& g,
+    typename graph_traits<Graph>::vertex_descriptor s,
+    NextEdge next_edge,
+    ColorMap color,
+    std::vector<typename graph_traits<Graph>::vertex_descriptor>& path);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| Must model IncidenceGraph.
+
+| IN
+| `vertex_descriptor s`
+| Starting vertex. Must be colored white.
+
+| IN
+| `NextEdge next_edge`
+| Callable `(vertex_descriptor, Graph) -> edge_descriptor` that selects
+  the next edge to follow. Typically uses a random generator.
+
+| IN/OUT
+| `ColorMap color`
+| White = unvisited, gray = on current path, black (or other) = target.
+  The walk stops when it reaches a non-white, non-gray vertex.
+
+| OUT
+| `path`
+| Receives the loop-erased path from `s` to the target vertex.
+|===
+
+== Throws
+
+`loop_erased_random_walk_stuck` if the walk reaches a vertex with no
+out-edges.

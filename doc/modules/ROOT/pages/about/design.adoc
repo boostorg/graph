@@ -72,7 +72,7 @@ each of its neighbors). There are separate iterators for each pattern of
 traversal.
 
 This generic interface allows template functions such as
-xref:algorithms/breadth_first_search.adoc[`breadth_first_search()`] to
+xref:algorithms/traversal/breadth_first_search.adoc[`breadth_first_search()`] to
 work on a large variety of graph data-structures, from graphs
 implemented with pointer-linked nodes to graphs encoded in arrays. This
 flexibility is especially important in the domain of graphs. Graph

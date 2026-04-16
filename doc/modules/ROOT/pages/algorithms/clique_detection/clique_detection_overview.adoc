@@ -1,0 +1,18 @@
+= Clique Detection
+
+A clique is a subset of vertices that are all pairwise connected. A _maximal_
+clique cannot be extended by adding another vertex without breaking the
+all-connected property.
+
+[cols="1,3"]
+|===
+| Algorithm | What it does
+
+| xref:algorithms/clique_detection/bron_kerbosch.adoc[Bron-Kerbosch]
+| Enumerates all maximal cliques using backtracking with pivoting.
+  Worst-case O(3^(V/3)), but fast in practice on sparse graphs.
+|===
+
+TIP: Clique enumeration is exponential. If you only need to know whether the
+graph has a clique of size k, consider using the complement graph and
+checking for an independent set instead.

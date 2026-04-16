@@ -1,27 +1,20 @@
-[#concept:VertexAndEdgeListGraph]
 = VertexAndEdgeListGraph
-
-=== VertexAndEdgeListGraph
 
 The VertexAndEdgeListGraph concept refines the
 xref:concepts/VertexListGraph.adoc[VertexListGraph] and the
 xref:concepts/EdgeListGraph.adoc[EdgeListGraph] concepts. No further
 requirements are added.
 
-==== Refinement of
+== Refinement of
 
 xref:concepts/VertexListGraph.adoc[VertexListGraph],
 xref:concepts/EdgeListGraph.adoc[EdgeListGraph]
 
-==== Models
+== Models
 
 * `adjacency_list`
 
-==== See Also
-
-xref:concepts/graph_concepts.adoc[Graph concepts]
-
-==== Concept Checking Class
+== Concept Checking Class
 
 [source,cpp]
 ----

@@ -1,4 +1,3 @@
-[#concept:Monoid]
 = Monoid
 
 
@@ -9,15 +8,15 @@ a monoid consists of a function object that implements the binary
 operation, a set of objects that represent the elements of _S_, and an
 object that represents the identity element.
 
-==== Refinement of
+== Refinement of
 
 The element type must be a model of
-link:../../utility/Assignable.html[Assignable] and
-link:../../utility/CopyConstructible.html[CopyConstructible]. The
+Assignable and
+CopyConstructible. The
 function object type must be a model of
-http://www.boost.org/sgi/stl/BinaryFunction.html[BinaryFunction].
+BinaryFunction.
 
-==== Notation
+== Notation
 
 [cols=",",]
 |===
@@ -31,23 +30,23 @@ http://www.boost.org/sgi/stl/BinaryFunction.html[BinaryFunction].
 Monoid.
 |===
 
-==== Valid Expressions
+== Valid Expressions
 
 [width="100%",cols="50%,50%",]
 |===
-|[#sec:source]#`op(a, b)`# |See below for semantics. +
+|`op(a, b)` |See below for semantics. +
 Return type: `X`
 
-|`a == b` |Returns true if `a` and `b` represent the same element of
+|`a == b` |Returns true if `a` and `b` represent the same element of
 _S_. +
 Return type: `bool`
 
-|`a != b` |Returns true if `a` and `b` represent different elements of
+|`a != b` |Returns true if `a` and `b` represent different elements of
 _S_. +
 Return type: `bool`
 |===
 
-==== Invariants
+== Invariants
 
 * Closure +
 The result of `op(a, b)` is also an element of _S_.

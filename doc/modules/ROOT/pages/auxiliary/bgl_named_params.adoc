@@ -1,10 +1,7 @@
-[#sec:bgl-named-params]
 = Named Parameters
 
-....
-
-bgl_named_params<Param, Type, Rest>
-....
+WARNING: Named parameters are a legacy API. New code should use the positional
+overloads documented on each algorithm page.
 
 Many of the Boost.Graph algorithms have a long list of parameters, most
 of which have default values. This causes several problems. First,

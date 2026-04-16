@@ -1,16 +1,16 @@
 = TSP Tour Visitor concept
 
 This concept defines the visitor interface for
-xref:algorithms/metric_tsp_approx.adoc[`metric_tsp_approx()`] and related
+xref:algorithms/utility/metric_tsp_approx.adoc[`metric_tsp_approx()`] and related
 algorithms. The user can create a class that matches this interface, and
 then pass objects of the class into `metric_tsp_approx()` to
 augment the actions taken during the search.
 
-==== Refinement of
+== Refinement of
 
 none
 
-==== Notation
+== Notation
 
 [cols=",",]
 |===
@@ -26,11 +26,11 @@ none
 `boost::graph_traits<G>::vertex_descriptor`.
 |===
 
-==== Associated Types
+== Associated Types
 
 none
 
-==== Valid Expressions
+== Valid Expressions
 
 [cols=",,,",options="header",]
 |===
@@ -39,7 +39,7 @@ none
 each vertex of the graph when it is visited as part of the TSP tour.
 |===
 
-==== Models
+== Models
 
 * xref:visitors/tsp_tour_visitor.adoc[`tsp_tour_visitor`]
 * xref:visitors/tsp_tour_len_visitor.adoc[`tsp_tour_len_tsp_visitor`]

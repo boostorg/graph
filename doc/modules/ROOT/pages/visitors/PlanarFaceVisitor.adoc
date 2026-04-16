@@ -1,13 +1,13 @@
 = Planar Face Visitor Concept
 
 This concept defines the visitor interface for
-xref:algorithms/planar_face_traversal.adoc[`planar_face_traversal`].
+xref:algorithms/planar/planar_face_traversal.adoc[`planar_face_traversal`].
 Users can define a class with the Planar Face Visitor interface and pass
 an object of the class to `planar_face_traversal`, thereby
 augmenting the actions taken during the traversal. Note that objects
 passed to `planar_face_traversal` are passed by reference.
 
-==== Notation
+== Notation
 
 [cols=",",]
 |===
@@ -24,7 +24,7 @@ passed to `planar_face_traversal` are passed by reference.
 `boost::graph_traits<G>::vertex_descriptor`.
 |===
 
-==== Valid Expressions
+== Valid Expressions
 
 [cols=",,,",]
 |===
@@ -49,7 +49,7 @@ face, after all vertices and edges on the face are visited.
 per traversal, after the traversal ends.
 |===
 
-==== Models
+== Models
 
 * The file
 link:../../../boost/graph/planar_face_traversal.hpp[`planar_face_traversal.hpp`]
@@ -60,11 +60,5 @@ need to be implemented, one can derive from
 `planar_face_traversal_visitor` and only implement the
 necessary event points.
 * The implementation of
-xref:algorithms/make_maximal_planar.adoc[`make_maximal_planar`] uses a
+xref:algorithms/planar/make_maximal_planar.adoc[`make_maximal_planar`] uses a
 `triangulation_visitor` that is a model of Planar Face Visitor.
-
- 
-
-'''''
-
-Copyright © 2007 Aaron Windsor ( aaron.windsor@gmail.com)

@@ -1,4 +1,3 @@
-[#concept:ColorValue]
 = ColorValue Concept
 
 
@@ -6,13 +5,13 @@ This concept describes the requirements for the type used for color
 values, as in for coloring a graph during a breath-first search to mark
 which vertices have been visited.
 
-==== Refinement of
+== Refinement of
 
-http://www.boost.org/sgi/stl/EqualityComparable.html[EqualityComparable]
+EqualityComparable
 and
-http://www.boost.org/sgi/stl/DefaultConstructible.html[DefaultConstructible]
+DefaultConstructible
 
-==== Notation
+== Notation
 
 [cols=",",]
 |===
@@ -20,7 +19,7 @@ http://www.boost.org/sgi/stl/DefaultConstructible.html[DefaultConstructible]
 |`cv` |An object of type `T`.
 |===
 
-==== Valid Expressions
+== Valid Expressions
 
 [cols=",,,",options="header",]
 |===
@@ -35,7 +34,7 @@ object that represents the color gray.
 an object that represents the color black.
 |===
 
-==== Models
+== Models
 
 * `default_color_type` (in
 +

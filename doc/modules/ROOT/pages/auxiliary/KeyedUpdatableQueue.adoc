@@ -1,14 +1,11 @@
-[#concept:KeyedUpdatableQueue]
 = KeyedUpdatableQueue
-
-=== #KeyedUpdatableQueue#
 
 A _KeyedUpdatableQueue_ is a refinement of the
 xref:auxiliary/UpdatableQueue.adoc[UpdatableQueue] concept. It requires that
 models order the contained values by their _keys_, to which values are
 mapped via a read/write key map.
 
-==== Notation
+== Notation
 
 [cols=",",]
 |===
@@ -16,7 +13,7 @@ mapped via a read/write key map.
 |`T` |is the value type of `Q`.
 |===
 
-==== Members
+== Members
 
 For a type to model the KeyedUpdatableQueue concept it must have the
 following members in addition to the members that are required of types
@@ -29,15 +26,14 @@ that model xref:auxiliary/UpdatableQueue.adoc[UpdatableQueue]:
 |`key_type` |The type of keys that are associated with values
 
 |`key_map` |The key property map type. This type must model
-link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write
-Property Map].
+Read/Write Property Map.
 
 |`key_map keys() const` |Returns the key map
 |===
 
-==== Concept Checking Class
+== Concept Checking Class
 
-link:../../../boost/graph/buffer_concepts.hpp[`boost/graph/buffer_concepts.hpp`]
+`boost/graph/buffer_concepts.hpp`
 
 [source,cpp]
 ----
@@ -65,6 +61,6 @@ link:../../../boost/graph/buffer_concepts.hpp[`boost/graph/buffer_concepts.hpp`]
   };
 ----
 
-==== Models
+== Models
 
 * `boost::d_ary_heap_indirect`

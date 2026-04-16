@@ -1,94 +1,64 @@
-= EventVisitorList Concept
+= Event Visitor List
 
-An EventVisitorList is either an xref:visitors/EventVisitor.adoc[EventVisitor],
-or a list of EventVisitors combined using `std::pair`. Each graph
-algorithm defines visitor adaptors that convert an EventVisitorList into
-the particular kind of visitor needed by the algorithm. In the following
-example we will show how to combine event visitors into a list using
-`std::pair` and how to use an algorithm's visitor adaptor class.
+An EventVisitorList is how you pass multiple event visitors to an algorithm.
+It is either a single EventVisitor, or several EventVisitors combined with
+`std::make_pair`.
 
-Suppose we would like to print out the parenthesis structure of the
-discover/finish times of vertices in a
-xref:overview/graph_theory_review.adoc#sec:dfs-algorithm[depth-first search].
-We can use the BGL algorithm
-xref:algorithms/depth_first_search.adoc[`depth_first_search()`] and two
-event visitors to accomplish this. The complete source code for the
-following example is in
-link:../example/dfs_parenthesis.cpp[`examples/dfs_parenthesis.cpp`].
-First we define the two event visitors. We use
-`on_discover_vertex` and `on_finish_vertex` as the event
-points, selected from the list of event points specified in
-xref:visitors/DFSVisitor.adoc[DFSVisitor].
+== Combining two event visitors
 
 [source,cpp]
 ----
+auto vis = make_bfs_visitor(
+    std::make_pair(
+        record_predecessors(pred.data(), on_tree_edge()),
+        record_distances(dist.data(), on_tree_edge())
+    )
+);
+----
 
-struct open_paren : public base_visitor<open_paren> {
-  typedef on_discover_vertex event_filter;
-  template <class Vertex, class Graph>
-  void operator()(Vertex v, Graph& G) {
-    std::cout << "(" << v;
-  }
+== Combining three or more
+
+Nest the pairs:
+
+[source,cpp]
+----
+auto vis = make_dfs_visitor(
+    std::make_pair(
+        stamp_times(dtime.data(), on_discover_vertex()),
+        std::make_pair(
+            stamp_times(ftime.data(), on_finish_vertex()),
+            put_property(back_map, true, on_back_edge())
+        )
+    )
+);
+----
+
+== A single event visitor
+
+No pairing needed:
+
+[source,cpp]
+----
+auto vis = make_bfs_visitor(
+    record_predecessors(pred.data(), on_tree_edge())
+);
+----
+
+== Writing custom event visitors
+
+A custom event visitor is a struct with an `event_filter` typedef and an
+`operator()`:
+
+[source,cpp]
+----
+struct print_vertex : public boost::base_visitor<print_vertex> {
+    using event_filter = boost::on_discover_vertex;
+
+    template <typename Vertex, typename Graph>
+    void operator()(Vertex v, const Graph&) const {
+        std::cout << v << " ";
+    }
 };
-struct close_paren : public base_visitor<close_paren> {
-  typedef on_finish_vertex event_filter;
-  template <class Vertex, class Graph>
-  void operator()(Vertex v, Graph& G) {
-    std::cout << v << ")";
-  }
-};
 ----
 
-Next we create two event visitor objects and make an EventVisitorList
-out of them using a `std::pair` which created by `std::make_pair`.
-
-[source,cpp]
-----
-
-std::make_pair(open_paren(), close_paren())
-----
-
-Next we want to pass this list into `depth_first_search()`, but
-`depth_first_search()` is expecting a
-xref:visitors/DFSVisitor.adoc[DFSVisitor], not a EventVisitorList. We therefore
-use the xref:visitors/dfs_visitor.adoc[`dfs_visitor`] adaptor which turns
-an EventVisitor list into a DFSVisitor. Like all of the visitor
-adaptors, `dfs_visitor` has a creation function called
-`make_dfs_visitor()`.
-
-[source,cpp]
-----
-
-make_dfs_visitor(std::make_pair(open_paren(), close_paren()))
-----
-
-Now we can pass the resulting visitor object into
-`depth_first_search()` as follows.
-
-[source,cpp]
-----
-
-  // graph object G is created ...
-
-  std::vector<default_color_type> color(num_vertices(G));
-
-  depth_first_search(G, make_dfs_visitor(std::make_pair(open_paren(), close_paren())),
-                     color.begin());
-----
-
-For creating a list of more than two event visitors, you can nest calls
-to `std::make_pair` in the following way:
-
-[source,cpp]
-----
-
-std::make_pair(visitor1,
-  std::make_pair(visitor2,
-    ...
-    std::make_pair(visitorN-1, visitorN)...));
-----
-
-==== See Also
-
-xref:visitors/EventVisitor.adoc[EventVisitor],
-xref:visitors/visitor_concepts.adoc[Visitor concepts]
+Custom event visitors can be combined with pre-built ones in the same list.

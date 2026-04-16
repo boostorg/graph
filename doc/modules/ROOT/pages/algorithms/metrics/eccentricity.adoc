@@ -1,0 +1,72 @@
+= Eccentricity
+
+The eccentricity of a vertex is the maximum distance from it to any other
+vertex. From eccentricity values you can derive the graph's radius (minimum
+eccentricity) and diameter (maximum eccentricity).
+
+*Defined in:* `<boost/graph/eccentricity.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/metrics/eccentricity.cpp[]
+----
+
+Expected output:
+
+....
+Radius: 3, Diameter: 4
+eccentricity[0] = 4
+eccentricity[1] = 3
+eccentricity[2] = 3
+eccentricity[3] = 4
+....
+
+== Synopsis
+
+[source,cpp]
+----
+// Single vertex eccentricity (requires pre-computed distance map)
+template <typename Graph, typename DistanceMap>
+typename property_traits<DistanceMap>::value_type
+eccentricity(const Graph& g, DistanceMap dist);
+
+// All eccentricities
+template <typename Graph, typename DistanceMatrix, typename EccentricityMap>
+void all_eccentricities(const Graph& g, const DistanceMatrix& dm,
+                        EccentricityMap ecc);
+
+// Radius and diameter
+template <typename Graph, typename EccentricityMap>
+typename property_traits<EccentricityMap>::value_type
+radius(const Graph& g, EccentricityMap ecc);
+
+template <typename Graph, typename EccentricityMap>
+typename property_traits<EccentricityMap>::value_type
+diameter(const Graph& g, EccentricityMap ecc);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| Must model VertexListGraph.
+
+| IN
+| `DistanceMap dist`
+| (single-vertex) Pre-computed distances from this vertex to all others.
+
+| IN
+| `DistanceMatrix dm`
+| (all_eccentricities) Pre-computed all-pairs distance matrix.
+
+| OUT
+| `EccentricityMap ecc`
+| WritablePropertyMap for per-vertex eccentricity values.
+|===
+
+NOTE: These functions require pre-computed distance maps. Run an all-pairs
+shortest paths algorithm first (Johnson or Floyd-Warshall).

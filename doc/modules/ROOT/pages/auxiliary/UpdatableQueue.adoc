@@ -1,7 +1,4 @@
-[#concept:UpdatableQueue]
 = UpdatableQueue
-
-=== #UpdatableQueue#
 
 An _UpdatableQueue_ is a refinement of the xref:auxiliary/Buffer.adoc[Buffer]
 concept that additionally requires that the Buffer be updatable.
@@ -22,7 +19,7 @@ A program that modifies the order must notify the UpdatableQueue of
 values that may have different positions in the ordering since they were
 inserted or last updated.
 
-==== Notation
+== Notation
 
 [cols=",",]
 |===
@@ -30,7 +27,7 @@ inserted or last updated.
 |`T` |is the value type of `Q`.
 |===
 
-==== Members
+== Members
 
 For a type to model the UpdatableQueue concept it must have the
 following members in addition to the members that are required of types
@@ -40,7 +37,7 @@ that model xref:auxiliary/Buffer.adoc[Buffer]:
 |===
 |*Member* |*Description*
 
-|[#concept:UpdatableQueue:update]#`void update(const T& t)`# |Informs
+|`void update(const T& t)` |Informs
 the UpdatableQueue that the program has modified the position of `t` in
 the ordering
 
@@ -48,9 +45,9 @@ the ordering
 whether the queue contains `t`
 |===
 
-==== Concept Checking Class
+== Concept Checking Class
 
-link:../../../boost/graph/buffer_concepts.hpp[`boost/graph/buffer_concepts.hpp`]
+`boost/graph/buffer_concepts.hpp`
 
 [source,cpp]
 ----
@@ -73,20 +70,20 @@ link:../../../boost/graph/buffer_concepts.hpp[`boost/graph/buffer_concepts.hpp`]
   };
 ----
 
-==== Futher Refinements
+== Further Refinements
 
-* link:#concept%3AUpdatablePriorityQueue[UpdatablePriorityQueue]
+* UpdatablePriorityQueue
 * xref:auxiliary/KeyedUpdatableQueue.adoc[KeyedUpdatableQueue]
 
 [#concept:UpdatablePriorityQueue]
-=== #UpdatablePriorityQueue#
+== UpdatablePriorityQueue
 
 An _UpdatablePriorityQueue_ is a slight refinement of
-link:#concept%3AUpdatableQueue[UpdatableQueue] that imposes the
+UpdatableQueue that imposes the
 requirement that a program may not increase the position of a value that
 is held in the queue. That is, if a value `v` had position _n_ in the
 ordering, a program may update the position of `v` only to 0, 1, ...,
-_n_ - 1, or _n_, where 0 is the top of the queue.
+_n_ - 1, or _n_, where 0 is the top of the queue.
 
 The behavior when a program attempts to increase a value's position in
 the ordering is undefined.

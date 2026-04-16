@@ -1,70 +1,54 @@
 = tsp_tour_len_visitor
 
-....
+Records the vertices of a TSP tour into an output iterator and computes the
+total tour length.
 
-tsp_tour_len_visitor<Graph, WeightMap, OutputIterator, Length>
-....
+*Defined in:* `<boost/graph/metric_tsp_approx.hpp>` +
+*Models:* TSP Tour Visitor
 
-This type is a TSP tour visitor. It supplies the OutputIterator with the
-vertices of the tour and records the total length of the tour.
-
-==== Example
+== Usage
 
 [source,cpp]
 ----
-
-double d(0.0);
-std::vector<Vertex> c;
-boost::metric_tsp_approx
-  (g, get(edge_weight, g),
-  make_tsp_tour_len_visitor(g, std::back_inserter(c), d, get(edge_weight, g)));
+double total_length = 0.0;
+std::vector<Vertex> tour;
+metric_tsp_approx(g, get(edge_weight, g),
+                  make_tsp_tour_len_visitor(g, std::back_inserter(tour),
+                                           total_length, get(edge_weight, g)));
+std::cout << "Tour length: " << total_length << "\n";
 ----
 
-==== Model of
+== Synopsis
 
-xref:visitors/TSPTourVisitor.adoc[TSP Tour Visitor]
+[source,cpp]
+----
+template <typename Graph, typename WeightMap,
+          typename OutputIterator, typename Length>
+struct tsp_tour_len_visitor;
 
-==== Template Parameters
+template <typename Graph, typename WeightMap,
+          typename OutputIterator, typename Length>
+tsp_tour_len_visitor<Graph, WeightMap, OutputIterator, Length>
+make_tsp_tour_len_visitor(const Graph& g, OutputIterator iter,
+                          Length& len, WeightMap wmap);
+----
 
-[cols=",,",options="header",]
+== Parameters
+
+[cols="1,3",options="header"]
 |===
-|Parameter |Description |Default
-|`Graph` |The graph type |None
+| Parameter | Description
 
-|`WeightMap` |The weight of each edge in the graph. The type `WeightMap`
-must be a model of
-link:../../property_map/doc/ReadablePropertyMap.html[Readable Property
-Map]. The edge descriptor type of the graph needs to be usable as the
-key type for the weight map. |None
+| `Graph`
+| The graph type.
 
-|`OutputIterator` |An OutputIterator |None
+| `WeightMap`
+| ReadablePropertyMap. Key type is edge descriptor.
 
-|`Length` |A suitable container for the length of the tour. It must
-implement additive operators. |None
+| `OutputIterator`
+| Output iterator that receives vertex descriptors of the tour.
+
+| `Length`
+| Numeric type supporting `+=`. Accumulates the total tour length. Passed by
+  reference.
 |===
-
-==== Where Defined
-
-link:../../../boost/graph/metric_tsp_approx.hpp[`boost/graph/metric_tsp_approx.hpp`]
-
-==== Member Functions
-
-This class implements all of the member functions required by
-xref:visitors/TSPTourVisitor.adoc[TSPTourVisitor].
-
-==== Non-Member Functions
-
-[width="100%",cols="50%,50%",options="header",]
-|===
-|Function |Description
-|` template <typename Graph, typename WeightMap, typename OutputIterator, typename Length>` +
-`tsp_tour_len_visitor<OutputIterator>` +
-`make_tsp_tour_len_visitor(Graph const& g, OutIter iter, Length& l, WeightMap map) `
-|Returns a tour_len_visitor that records the TSP tour in the
-OutputIterator parameter and the length of the tour in the Length
-parameter.
-|===
-
-==== See Also
-
-None

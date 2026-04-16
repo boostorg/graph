@@ -1,18 +1,18 @@
 = Bellman Ford Visitor Concept
 
 This concept defines the visitor interface for
-xref:algorithms/bellman_ford_shortest.adoc[`bellman_ford_shortest_paths()`].
+xref:algorithms/shortest_paths/bellman_ford_shortest.adoc[`bellman_ford_shortest_paths()`].
 Users can define a class with the Bellman Ford Visitor interface and
 pass and object of the class to
 `bellman_ford_shortest_paths()`, thereby augmenting the
 actions taken during the graph search.
 
-==== Refinement of
+== Refinement of
 
-link:../../utility/CopyConstructible.html[Copy Constructible] (copying a
+Copy Constructible (copying a
 visitor should be a lightweight operation).
 
-==== Notation
+== Notation
 
 [cols=",",]
 |===
@@ -31,11 +31,11 @@ visitor should be a lightweight operation).
 `boost::graph_traits<G>::vertex_descriptor`.
 |===
 
-==== Associated Types
+== Associated Types
 
 none
 
-==== Valid Expressions
+== Valid Expressions
 
 [width="100%",cols="25%,25%,25%,25%",options="header",]
 |===
@@ -49,7 +49,7 @@ is reduced), and this method is invoked. +
 ` tie(u,v) = incident(e, g);` +
 `D d_u = get(d, u), d_v = get(d, v);` +
 `W w_e = get(w, e);` +
-`assert(compare(combine(d_u, w_e), d_v));` 
+`assert(compare(combine(d_u, w_e), d_v));`
 
 |Edge Not Relaxed |`edge_not_relaxed(e, g)` |`void` |Upon
 examination, if the edge is not relaxed (see above) then this method is
@@ -65,31 +65,6 @@ edge is not minimized, this function is invoked. This happens when there
 is a negative cycle in the graph.
 |===
 
-==== Models
+== Models
 
 * xref:visitors/bellman_visitor.adoc[`bellman_visitor`]
-
-[#python]
-==== Python
-
-To implement a model of the `BellmanFordVisitor` concept in Python,
-create a new class that derives from the `BellmanFordVisitor` type of
-the graph, which will be named __`GraphType`__`.BellmanFordVisitor`. The
-events and syntax are the same as with visitors in C++. Here
-is an example for the Python `bgl.Graph` graph type:
-
-[source,cpp]
-----
-
-class count_tree_edges_bellman_ford_visitor(bgl.Graph.BellmanFordVisitor):
-  def __init__(self, name_map):
-    bgl.Graph.BellmanFordVisitor.__init__(self)
-    self.name_map = name_map
-
-  def edge_relaxed(self, e, g):
-    (u, v) = (g.source(e), g.target(e))
-    print "Relaxed edge ",
-    print self.name_map[u],
-    print " -> ",
-    print self.name_map[v]
-----

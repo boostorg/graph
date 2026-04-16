@@ -1,16 +1,12 @@
-[#concept:Graph]
 = Graph
-
-=== Graph
 
 The Graph concept contains a few requirements that are common to all the
 graph concepts. These include some associated types for
 `vertex_descriptor`, `edge_descriptor`, etc. One should note
 that a model of Graph is *not* required to be a model of
-http://www.boost.org/sgi/stl/Assignable.html[Assignable], so algorithms
-should pass graph objects by reference.
+Assignable, so algorithms should pass graph objects by reference.
 
-==== Notation
+== Notation
 
 [cols=",",]
 |===
@@ -18,7 +14,7 @@ should pass graph objects by reference.
 |`g` |An object of type `G`.
 |===
 
-==== Associated Types
+== Associated Types
 
 [width="100%",cols="100%",]
 |===
@@ -30,11 +26,9 @@ boost::graph_traits<G>::vertex_descriptor
 
 A vertex descriptor corresponds to a unique vertex in an abstract graph
 instance. A vertex descriptor must be
-http://www.boost.org/sgi/stl/DefaultConstructible.html[Default
-Constructible],
-http://www.boost.org/sgi/stl/Assignable.html[Assignable], and
-http://www.boost.org/sgi/stl/EqualityComparable.html[Equality
-Comparable].
+Default Constructible,
+Assignable, and
+Equality Comparable.
 
 a|
 [source,cpp]
@@ -44,11 +38,9 @@ boost::graph_traits<G>::edge_descriptor
 
 An edge descriptor corresponds to a unique edge _(u,v)_ in a graph. An
 edge descriptor must be
-http://www.boost.org/sgi/stl/DefaultConstructible.html[Default
-Constructible&#44;]
-http://www.boost.org/sgi/stl/Assignable.html[Assignable], and
-http://www.boost.org/sgi/stl/EqualityComparable.html[Equality
-Comparable].
+Default Constructible,
+Assignable, and
+Equality Comparable.
 
 a|
 [source,cpp]
@@ -85,7 +77,7 @@ which should inherit from one or more of the above.
 
 |===
 
-==== Valid Expressions
+== Valid Expressions
 
 [source,cpp]
 ----
@@ -96,7 +88,7 @@ Returns a special
 `boost::graph_traits<G>::vertex_descriptor` object which
 does not refer to any vertex of graph object which type is `G`.
 
-==== Concept Checking Class
+== Concept Checking Class
 
 [source,cpp]
 ----
@@ -121,7 +113,3 @@ does not refer to any vertex of graph object which type is `G`.
     G g;
   };
 ----
-
-==== See Also
-
-xref:concepts/graph_concepts.adoc[Graph concepts]

@@ -1,71 +1,52 @@
-= dijkstra_visitor
+= Dijkstra Visitor Adaptor
 
-....
+Converts a list of event visitors into a DijkstraVisitor for use with
+`dijkstra_shortest_paths`.
 
-dijkstra_visitor<EventVisitorList>
-....
+*Defined in:* `<boost/graph/dijkstra_shortest_paths.hpp>` +
+*Models:* DijkstraVisitor
 
-This class is an adapter that converts a list of
-xref:visitors/EventVisitor.adoc[EventVisitor]s (constructed using `std::pair`)
-into a xref:visitors/DijkstraVisitor.adoc[DijkstraVisitor].
-
-==== Example
-
-This is an excerpt from link:../example/dave.cpp[`examples/dave.cpp`]
-where the `copy_graph` single-event visitor is used to create a copy
-the shortest-paths search-tree calculated by Dijkstra's algorithm.
+== Example
 
 [source,cpp]
 ----
-
-boost::dijkstra_shortest_paths
-  (G, vertex(a, G),
-   distance_map(make_iterator_property_map(distance.begin(), vertex_id, distance[0])).
-   predecessor_map(make_iterator_property_map(parent.begin(), vertex_id, parent[0])).
-   visitor(make_dijkstra_visitor(copy_graph(G_copy, on_examine_edge()))));
+include::example$visitors/dijkstra_visitor.cpp[]
 ----
 
-==== Model of
+Expected output:
 
-xref:visitors/DijkstraVisitor.adoc[Dijkstra Visitor]
+....
+vertex 0  dist=0  pred=0
+vertex 1  dist=1  pred=0
+vertex 2  dist=3  pred=1
+vertex 3  dist=6  pred=2
+vertex 4  dist=7  pred=3
+....
 
-==== Template Parameters
+== Synopsis
 
-[cols=",,",options="header",]
+[source,cpp]
+----
+template <typename EventVisitorList = null_visitor>
+class dijkstra_visitor;
+
+template <typename EventVisitorList>
+dijkstra_visitor<EventVisitorList>
+make_dijkstra_visitor(EventVisitorList ev_list);
+----
+
+== Parameters
+
+[cols="1,3,1",options="header"]
 |===
-|Parameter |Description |Default
-|`EventVisitorList` |A list of xref:visitors/EventVisitor.adoc[EventVisitor]'s
-created with `std::pair`. |xref:visitors/null_visitor.adoc[`null_visitor`]
-|===
+| Parameter | Description | Default
 
-==== Where Defined
-
-link:../../../boost/graph/dijkstra_shortest_paths.hpp[`boost/graph/dijkstra_shortest_paths.hpp`]
-
-==== Member Functions
-
-This class implements all of the member functions required by
-xref:visitors/DijkstraVisitor.adoc[DijkstraVisitor]. In each function the
-appropriate event is dispatched to the
-xref:visitors/EventVisitor.adoc[EventVisitor] in the EventVisitorList.
-
-==== Non-Member Functions
-
-[width="100%",cols="50%,50%",options="header",]
-|===
-|Function |Description
-|` template <class EventVisitorList>` +
-`dijkstra_visitor<EventVisitorList>` +
-`make_dijkstra_visitor(EventVisitorList ev_list); ` |Returns
-the event visitor list adapted to be a Dijkstra Visitor.
+| `EventVisitorList`
+| One or more EventVisitors combined with `std::pair`.
+| `null_visitor`
 |===
 
-==== See Also
+== Behavior
 
-xref:visitors/visitor_concepts.adoc[Visitor concepts]
-
-The following are event visitors:
-xref:visitors/predecessor_recorder.adoc[`predecessor_recorder`],
-xref:visitors/distance_recorder.adoc[`distance_recorder`]
-xref:visitors/time_stamper.adoc[`time_stamper`], and
-xref:visitors/property_writer.adoc[`property_writer`].
+Implements all DijkstraVisitor event points. Each event is dispatched to the
+matching EventVisitor in the list. Events with no matching visitor are ignored.

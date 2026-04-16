@@ -1,0 +1,20 @@
+= Connectivity
+
+Test and measure how well connected a graph is.
+
+[cols="1,3"]
+|===
+| Algorithm | What it does
+
+| xref:algorithms/connectivity/edge_connectivity.adoc[Edge Connectivity]
+| Minimum number of edges whose removal disconnects the graph.
+
+| xref:algorithms/connectivity/st_connected.adoc[ST Connected]
+| Test whether two specific vertices are connected by a path. Uses
+  bidirectional BFS for early termination.
+|===
+
+TIP: For connected components (grouping all vertices by reachability), see
+xref:algorithms/connected_components/connected_components_overview.adoc[Connected Components].
+Edge connectivity measures the "strength" of the connection between the
+most weakly connected pair.

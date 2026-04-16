@@ -1,18 +1,18 @@
 = Dijkstra Visitor Concept
 
 This concept defines the visitor interface for
-xref:algorithms/dijkstra_shortest_paths.adoc[`dijkstra_shortest_paths()`]
+xref:algorithms/shortest_paths/dijkstra_shortest_paths.adoc[`dijkstra_shortest_paths()`]
 and related algorithms. The user can create a class that matches this
 interface, and then pass objects of the class into
 `dijkstra_shortest_paths()` to augment the actions taken during
 the search.
 
-==== Refinement of
+== Refinement of
 
-link:../../utility/CopyConstructible.html[Copy Constructible] (copying a
+Copy Constructible (copying a
 visitor should be a lightweight operation).
 
-==== Notation
+== Notation
 
 [cols=",",]
 |===
@@ -31,23 +31,21 @@ visitor should be a lightweight operation).
 `boost::graph_traits<G>::vertex_descriptor`.
 
 |`DistanceMap` |A type that is a model of
-link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write
-Property Map].
+Read/Write Property Map.
 
 |`d` |An object of type `DistanceMap`.
 
 |`WeightMap` |A type that is a model of
-link:../../property_map/doc/ReadWritePropertyMap.html[Readable Property
-Map].
+Readable Property Map.
 
 |`w` |An object of type `WeightMap`.
 |===
 
-==== Associated Types
+== Associated Types
 
 none
 
-==== Valid Expressions
+== Valid Expressions
 
 [width="100%",cols="25%,25%,25%,25%",options="header",]
 |===
@@ -72,7 +70,7 @@ is reduced), and this method is invoked. +
 ` tie(u,v) = incident(e, g);` +
 `D d_u = get(d, u), d_v = get(d, v);` +
 `W w_e = get(w, e);` +
-`assert(compare(combine(d_u, w_e), d_v));` 
+`assert(compare(combine(d_u, w_e), d_v));`
 
 |Edge Not Relaxed |`vis.edge_not_relaxed(e, g)` |`void` |Upon
 examination, if the edge is not relaxed (see above) then this method is
@@ -84,31 +82,6 @@ all of the adjacent vertices have been discovered (but before their
 out-edges have been examined).
 |===
 
-==== Models
+== Models
 
 * xref:visitors/dijkstra_visitor.adoc[`dijkstra_visitor`]
-
-[#python]
-==== Python
-
-To implement a model of the `DijkstraVisitor` concept in Python, create
-a new class that derives from the `DijkstraVisitor` type of the graph,
-which will be named __`GraphType`__`.DijkstraVisitor`. The events and
-syntax are the same as with visitors in C++. Here is an
-example for the Python `bgl.Graph` graph type:
-
-[source,cpp]
-----
-
-class count_tree_edges_dijkstra_visitor(bgl.Graph.DijkstraVisitor):
-  def __init__(self, name_map):
-    bgl.Graph.DijkstraVisitor.__init__(self)
-    self.name_map = name_map
-
-  def edge_relaxed(self, e, g):
-    (u, v) = (g.source(e), g.target(e))
-    print "Relaxed edge ",
-    print self.name_map[u],
-    print " -> ",
-    print self.name_map[v]
-----

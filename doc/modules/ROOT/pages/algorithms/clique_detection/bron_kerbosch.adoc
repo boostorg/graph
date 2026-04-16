@@ -1,0 +1,55 @@
+= Bron-Kerbosch All Cliques
+
+Enumerates all maximal cliques in an undirected graph using the Bron-Kerbosch
+backtracking algorithm with pivoting.
+
+Complexity: O(3^(V/3)) worst case +
+*Defined in:* `<boost/graph/bron_kerbosch_all_cliques.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/clique_detection/bron_kerbosch.cpp[]
+----
+
+Expected output:
+
+....
+Finding all maximal cliques:
+Clique: {0, 1, 2}
+Clique: {1, 2, 3}
+....
+
+'''
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename Graph, typename Visitor>
+void bron_kerbosch_all_cliques(const Graph& g, Visitor vis,
+                               std::size_t min = 2);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| Must model AdjacencyMatrix and VertexListGraph. Undirected.
+
+| IN
+| `Visitor vis`
+| Called with `vis.clique(clique, g)` for each maximal clique found.
+  `clique` is a `std::deque<vertex_descriptor>`.
+
+| IN
+| `min`
+| Minimum clique size to report. Default: 2.
+|===
+
+NOTE: The graph must model AdjacencyMatrix (the `edge()` function must be
+available). `adjacency_list` with `vecS` satisfies this, but performance
+is better with `adjacency_matrix`.

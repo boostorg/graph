@@ -1,76 +1,53 @@
-= bfs_visitor
+= BFS Visitor Adaptor
 
-....
+Converts a list of event visitors into a BFSVisitor for use with
+`breadth_first_search`.
 
-bfs_visitor<EventVisitorList>
-....
+*Defined in:* `<boost/graph/breadth_first_search.hpp>` +
+*Models:* BFSVisitor
 
-This class is an adapter that converts a list of
-xref:visitors/EventVisitor.adoc[EventVisitor]s (constructed using `std::pair`)
-into a xref:visitors/BFSVisitor.adoc[BFSVisitor].
-
-==== Example
-
-This is an excerpt from link:../example/bfs.cpp[`examples/bfs.cpp`]
-where three event-visitors are combined to make a BFS visitor. The
-functions `boost::record_distances`,
-`boost::record_predecessors`, and `copy_graph` are all functions
-that create an event visitor.
+== Example
 
 [source,cpp]
 ----
-
-  // Construct graph G and obtain the source vertex s ...
-
-  boost::breadth_first_search(G, s,
-   boost::make_bfs_visitor(
-    std::make_pair(boost::record_distances(d, boost::on_tree_edge()),
-    std::make_pair(boost::record_predecessors(p.begin(),
-                                              boost::on_tree_edge()),
-                   copy_graph(G_copy, boost::on_examine_edge())))) );
+include::example$visitors/bfs_visitor.cpp[]
 ----
 
-==== Model of
+Expected output:
 
-xref:visitors/BFSVisitor.adoc[BFSVisitor]
+....
+vertex 0  pred=0  dist=0
+vertex 1  pred=0  dist=1
+vertex 2  pred=0  dist=1
+vertex 3  pred=1  dist=2
+vertex 4  pred=2  dist=2
+vertex 5  pred=3  dist=3
+....
 
-==== Template Parameters
+== Synopsis
 
-[cols=",,",options="header",]
+[source,cpp]
+----
+template <typename EventVisitorList = null_visitor>
+class bfs_visitor;
+
+template <typename EventVisitorList>
+bfs_visitor<EventVisitorList>
+make_bfs_visitor(EventVisitorList ev_list);
+----
+
+== Parameters
+
+[cols="1,3,1",options="header"]
 |===
-|Parameter |Description |Default
-|`EventVisitorList` |A list of xref:visitors/EventVisitor.adoc[EventVisitor]'s
-created with `std::pair`. |xref:visitors/null_visitor.adoc[`null_visitor`]
+| Parameter | Description | Default
+
+| `EventVisitorList`
+| One or more EventVisitors combined with `std::pair`.
+| `null_visitor`
 |===
 
-==== Where Defined
+== Behavior
 
-link:../../../boost/graph/breadth_first_search.hpp[`boost/graph/breadth_first_search.hpp`]
-
-==== Member Functions
-
-This class implements all of the member functions required by
-xref:visitors/BFSVisitor.adoc[BFSVisitor]. In each function the appropriate
-event is dispatched to the xref:visitors/EventVisitor.adoc[EventVisitor] in the
-EventVisitorList.
-
-==== Non-Member Functions
-
-[width="100%",cols="50%,50%",options="header",]
-|===
-|Function |Description
-|` template <class EventVisitorList>` +
-`bfs_visitor<EventVisitorList>` +
-`make_bfs_visitor(EventVisitorList ev_list); ` |Returns the
-event visitor list adapted to be a BFS visitor.
-|===
-
-==== See Also
-
-xref:visitors/visitor_concepts.adoc[Visitor concepts]
-
-The following are event visitors:
-xref:visitors/predecessor_recorder.adoc[`predecessor_recorder`],
-xref:visitors/distance_recorder.adoc[`distance_recorder`],
-xref:visitors/time_stamper.adoc[`time_stamper`], and
-xref:visitors/property_writer.adoc[`property_writer`].
+Implements all BFSVisitor event points. Each event is dispatched to the
+matching EventVisitor in the list. Events with no matching visitor are ignored.

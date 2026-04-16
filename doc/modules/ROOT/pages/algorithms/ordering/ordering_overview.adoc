@@ -1,0 +1,33 @@
+= Sparse Matrix Ordering
+
+Reorder the rows and columns of a sparse matrix (represented as a graph) to
+reduce fill-in during factorization or to improve cache locality. Each vertex
+represents a row/column; edges represent nonzero entries.
+
+[cols="1,3"]
+|===
+| Algorithm | When to use
+
+| xref:algorithms/ordering/cuthill_mckee_ordering.adoc[Cuthill-McKee]
+| Reduces bandwidth. The reverse Cuthill-McKee ordering (just reverse the
+  output) is widely used for FEM and sparse linear solvers.
+
+| xref:algorithms/ordering/king_ordering.adoc[King]
+| Similar to Cuthill-McKee but minimizes the profile instead of bandwidth.
+
+| xref:algorithms/ordering/minimum_degree_ordering.adoc[Minimum Degree]
+| Reduces fill-in during Cholesky factorization. Good for symmetric
+  positive definite systems.
+
+| xref:algorithms/ordering/sloan_ordering.adoc[Sloan]
+| Reduces both profile and wavefront simultaneously.
+
+| xref:algorithms/ordering/sloan_start_end_vertices.adoc[Sloan Start/End Vertices]
+| Selects good starting and ending vertices for the Sloan algorithm.
+|===
+
+These orderings are evaluated using the metrics in
+xref:algorithms/metrics/metrics_overview.adoc[Graph Metrics]:
+xref:algorithms/metrics/bandwidth.adoc[bandwidth],
+xref:algorithms/metrics/profile.adoc[profile], and
+xref:algorithms/metrics/wavefront.adoc[wavefront].

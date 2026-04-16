@@ -1,0 +1,68 @@
+= Degree Centrality
+
+Measures vertex importance by the number of connections. Out-degree (influence)
+counts outgoing edges; in-degree (prestige) counts incoming edges.
+
+Complexity: O(1) per vertex +
+*Defined in:* `<boost/graph/degree_centrality.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/metrics/degree_centrality.cpp[]
+----
+
+Expected output:
+
+....
+Degree centrality (influence = out-degree):
+  Alice: 3
+  Bob: 1
+  Carol: 2
+  Dave: 1
+  Eve: 0
+
+Degree centrality (prestige = in-degree):
+  Alice: 0
+  Bob: 1
+  Carol: 2
+  Dave: 2
+  Eve: 2
+....
+
+'''
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename Graph, typename Vertex, typename Measure>
+typename Measure::degree_type
+degree_centrality(const Graph& g, Vertex v, Measure measure);
+
+template <typename Graph, typename CentralityMap, typename Measure>
+void all_degree_centralities(const Graph& g, CentralityMap cm, Measure measure);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| Must model IncidenceGraph. BidirectionalGraph required for prestige.
+
+| IN
+| `Vertex v`
+| (single-vertex version) The vertex to compute centrality for.
+
+| IN
+| `Measure measure`
+| Use `measure_influence(g)` for out-degree or `measure_prestige(g)` for
+  in-degree.
+
+| OUT
+| `CentralityMap cm`
+| (all_degree_centralities) WritablePropertyMap for per-vertex results.
+|===

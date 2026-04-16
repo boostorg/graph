@@ -9,11 +9,11 @@ on that vertex in the order in which they are to be drawn around that
 vertex.
 
 A planar embedding is a refinement of
-link:../../property_map/doc/LvaluePropertyMap.html[LValuePropertyMap]
+LValuePropertyMap
 that places additional restrictions the `value_type` used in the
 property map.
 
-==== Notation
+== Notation
 
 [cols=",",]
 |===
@@ -32,7 +32,7 @@ property map.
 | |
 |===
 
-==== Associated Types
+== Associated Types
 
 [cols=",,",]
 |===
@@ -42,7 +42,7 @@ property map.
 planar embedding of a particular vertex
 |===
 
-==== Valid Expressions
+== Valid Expressions
 
 [cols=",,",]
 |===
@@ -65,12 +65,12 @@ embedding around a vertex `v`
 the end of the sequence of embedded edges around the vertex `v`
 |===
 
-==== Complexity Guarantees
+== Complexity Guarantees
 
 Starting with an empty embedding, any mixed sequence of _n_ calls to a
 particular vertex's `push_back` and `clear` should take _O(n)_ time.
 
-==== Models
+== Models
 
 Any LValue property map that maps vertices to a `std::vector`,
 `std::list`, or `std::deque` models this concept. Below is an example of
@@ -109,9 +109,3 @@ planar_embedding_t planar_embedding(planar_embedding_storage.begin(),
 // planar_embedding can now be passed to any function expecting a model
 // of PlanarEmbedding.
 ----
-
- 
-
-'''''
-
-Copyright © 2007 Aaron Windsor ( aaron.windsor@gmail.com)

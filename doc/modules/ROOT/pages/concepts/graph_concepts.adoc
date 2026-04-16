@@ -1,319 +1,123 @@
-[#chapter:graph-concepts]
-= Boost Graph Concepts
+= Graph Concepts
 
+BGL algorithms are templates. They do not depend on a specific graph class.
+Instead, each algorithm specifies its requirements as a _concept_: a set of
+types and functions the graph must provide. Any graph type that satisfies the
+concept works with the algorithm.
 
-The heart of the Boost Graph Library (BGL) is the interface, or concepts
-(in the parlance of generic programming), that define how a graph can be
-examined and manipulated in a data-structure neutral fashion. In fact,
-the BGL interface need not even be implemented using a data-structure,
-as for some problems it is easier or more efficient to define a graph
-implicitly based on some functions.
+The concepts are small and composable. An algorithm that only needs to walk
+out-edges requires IncidenceGraph. One that also needs to list all vertices
+requires VertexListGraph. This keeps algorithms reusable: a graph type only
+needs to support the operations the algorithm actually uses.
 
-The BGL interface does not appear as a single graph concept. Instead it
-is factored into much smaller pieces. The reason for this is that the
-purpose of a concept is to summarize the requirements for _particular_
-algorithms. Any one algorithm does not need every kind of graph
-operation, typically only a small subset. Furthermore, there are many
-graph data-structures that can not provide efficient implementations of
-all the operations, but provide highly efficient implementations of the
-operations necessary for a particular algorithm. By factoring the graph
-interface into many smaller concepts we provide the graph algorithm
-writer with a good selection from which to choose the concept that is
-the closest match for their algorithm. Note that because of the use of
-traits classes rather than member types, it is not safe (and often will
-not work) to define subclasses of BGL graph types; those types may be
-missing important traits and properties that were defined externally to
-the class definition.
+== Which concept does my algorithm need?
 
-=== Graph Structure Concepts Overview
-
-<<fig:graph-concepts,Figure 1>> shows the refinements relations
-between the graph concepts. The reason for factoring the graph interface
-into so many concepts is to encourage algorithm interfaces to require
-and use only the minimum interface of a graph, thereby increasing the
-reusability of the algorithm.
-
-[#fig:graph-concepts]
-.*Figure 1:* The graph concepts and refinement relationships.
-image:figs/concepts.gif[figs/concepts]
-
-<<tab:graph-concept-reqs,Table 1>> gives a summary of the valid
-expressions and associated types for the graph concepts and provides
-links to the detailed descriptions of each of the concepts. The notation
-used in the table is as follows.
-
-==== Notation
-
-[cols=",",]
+[cols="1,2"]
 |===
-|`G` |A type that is a model of Graph.
+| I need to... | Require this concept
 
-|`g` |An object of type `G`.
+| Walk out-edges of a vertex
+| xref:concepts/IncidenceGraph.adoc[IncidenceGraph]
 
-|`e` |An object of type
-`boost::graph_traits<G>::edge_descriptor`.
+| Walk both out-edges and in-edges
+| xref:concepts/BidirectionalGraph.adoc[BidirectionalGraph]
 
-|`e_iter` |An object of type
-`boost::graph_traits<G>::out_edge_iterator`.
+| List all vertices
+| xref:concepts/VertexListGraph.adoc[VertexListGraph]
 
-|`u,v` |Are objects of type
-`boost::graph_traits<G>::vertex_descriptor`.
+| List all edges
+| xref:concepts/EdgeListGraph.adoc[EdgeListGraph]
 
-|`ep` |is an object of type `G::edge_property_type`
+| Check if an edge exists between two vertices
+| xref:concepts/AdjacencyMatrix.adoc[AdjacencyMatrix]
 
-|`vp` |is an object of type `G::vertex_property_type`
+| Add/remove vertices and edges
+| xref:concepts/MutableGraph.adoc[MutableGraph]
 
-|`Property` |A type used to specify a vertex or edge property.
-
-|`property` |An object of type `Property`.
+| Read/write vertex or edge properties
+| xref:concepts/PropertyGraph.adoc[PropertyGraph]
 |===
 
- 
+== Concept hierarchy
 
-[#tab:graph-concept-reqs]
-*Table 1:* Summary of the graph concepts.
+image::figs/concepts.gif[Graph concept refinement hierarchy]
 
-[cols=",",options="header",]
+Each concept refines (extends) a simpler one. IncidenceGraph refines Graph.
+BidirectionalGraph refines IncidenceGraph. An algorithm that requires
+IncidenceGraph accepts any type that models BidirectionalGraph, VertexListGraph,
+or any other refinement.
+
+== Quick reference
+
+[cols="1,1"]
 |===
-|*Expression* |*Return Type or Description*
-2+|xref:concepts/Graph.adoc[Graph]
+| *Expression* | *Return type*
 
-|`boost::graph_traits<G>::vertex_descriptor` |The type
-for vertex representative objects.
+2+| *xref:concepts/Graph.adoc[Graph]* (base concept)
 
-|`boost::graph_traits<G>::edge_descriptor` |The type for
-edge representative objects.
+| `graph_traits<G>::vertex_descriptor` | Vertex handle
+| `graph_traits<G>::edge_descriptor` | Edge handle
+| `graph_traits<G>::directed_category` | `directed_tag` or `undirected_tag`
+| `graph_traits<G>::edge_parallel_category` | `allow_parallel_edge_tag` or `disallow_parallel_edge_tag`
 
-|`boost::graph_traits<G>::directed_category` |Directed
-or undirected?
+2+| *xref:concepts/IncidenceGraph.adoc[IncidenceGraph]* refines Graph
 
-|`boost::graph_traits<G>::edge_parallel_category`
-|Allow parallel edges?
+| `out_edges(v, g)` | `pair<out_edge_iterator, out_edge_iterator>`
+| `source(e, g)` | `vertex_descriptor`
+| `target(e, g)` | `vertex_descriptor`
+| `out_degree(v, g)` | `degree_size_type`
 
-|`boost::graph_traits<G>::traversal_category` |The ways
-in which the vertices and edges of the graph can be visited.
+2+| *xref:concepts/BidirectionalGraph.adoc[BidirectionalGraph]* refines IncidenceGraph
 
-2+|xref:concepts/IncidenceGraph.adoc[IncidenceGraph] refines Graph
+| `in_edges(v, g)` | `pair<in_edge_iterator, in_edge_iterator>`
+| `in_degree(v, g)` | `degree_size_type`
+| `degree(v, g)` | `degree_size_type`
 
-|`boost::graph_traits<G>::out_edge_iterator`
-|Iterate through the out-edges.
+2+| *xref:concepts/AdjacencyGraph.adoc[AdjacencyGraph]* refines Graph
 
-|`boost::graph_traits<G>::degree_size_type` |The
-integer type for vertex degree.
+| `adjacent_vertices(v, g)` | `pair<adjacency_iterator, adjacency_iterator>`
 
-|`out_edges(v, g)`
-|`std::pair<out_edge_iterator, out_edge_iterator>`
+2+| *xref:concepts/VertexListGraph.adoc[VertexListGraph]* refines Graph
 
-|`source(e, g)` |`vertex_descriptor`
+| `vertices(g)` | `pair<vertex_iterator, vertex_iterator>`
+| `num_vertices(g)` | `vertices_size_type`
 
-|`target(e, g)` |`vertex_descriptor`
+2+| *xref:concepts/EdgeListGraph.adoc[EdgeListGraph]* refines Graph
 
-|`out_degree(v, g)` |`degree_size_type`
+| `edges(g)` | `pair<edge_iterator, edge_iterator>`
+| `num_edges(g)` | `edges_size_type`
 
-2+|xref:concepts/BidirectionalGraph.adoc[BidirectionalGraph] refines
-IncidenceGraph
+2+| *xref:concepts/AdjacencyMatrix.adoc[AdjacencyMatrix]* refines Graph
 
-|`boost::graph_traits<G>::in_edge_iterator` |Iterate
-through the in-edges.
+| `edge(u, v, g)` | `pair<edge_descriptor, bool>`
 
-|`in_edges(v, g)`
-|`std::pair<in_edge_iterator, in_edge_iterator>`
+2+| *xref:concepts/MutableGraph.adoc[MutableGraph]* refines Graph
 
-|`in_degree(v, g)` |`degree_size_type`
+| `add_vertex(g)` | `vertex_descriptor`
+| `add_edge(u, v, g)` | `pair<edge_descriptor, bool>`
+| `remove_vertex(v, g)` | `void`
+| `remove_edge(u, v, g)` | `void`
+| `clear_vertex(v, g)` | `void`
 
-|`degree(e, g)` |`degree_size_type`
+2+| *xref:concepts/PropertyGraph.adoc[PropertyGraph]* refines Graph
 
-2+|xref:concepts/AdjacencyGraph.adoc[AdjacencyGraph] refines Graph
-
-|`boost::graph_traits<G>::adjacency_iterator` |Iterate
-through adjacent vertices.
-
-|`adjacent_vertices(v, g)`
-|`std::pair<adjacency_iterator, adjacency_iterator>`
-
-2+|xref:concepts/VertexListGraph.adoc[VertexListGraph] refines Graph
-
-|`boost::graph_traits<G>::vertex_iterator` |Iterate
-through the graph's vertex set.
-
-|`boost::graph_traits<G>::vertices_size_type` |The
-unsigned integer type for number of vertices in the graph.
-
-|`vertices(g)`
-|`std::pair<vertex_iterator, vertex_iterator>`
-
-|`num_vertices(g)` |`vertices_size_type`
-
-2+|xref:concepts/EdgeListGraph.adoc[EdgeListGraph] refines Graph
-
-|`boost::graph_traits<G>::edge_iterator` |Iterate
-through the graph's edge set.
-
-|`boost::graph_traits<G>::edges_size_type` |The
-unsigned integer type for number of edges in the graph.
-
-|`edges(g)` |`std::pair<edge_iterator, edge_iterator>`
-
-|`num_edges(g)` |`edges_size_type`
-
-|`source(e, g)` |`vertex_descriptor`
-
-|`target(e, g)` |`vertex_descriptor`
-
-2+|xref:concepts/AdjacencyMatrix.adoc[AdjacencyMatrix] refines Graph
-
-|`edge(u, v, g)` |`std::pair<edge_descriptor, bool>`
-
-2+|xref:concepts/MutableGraph.adoc[MutableGraph] refines Graph
-
-|`add_vertex(g)` |`vertex_descriptor`
-
-|`clear_vertex(v, g)` |`void`
-
-|`remove_vertex(v, g)` |`void`
-
-|`add_edge(u, v, g)` |`std::pair<edge_descriptor, bool>`
-
-|`remove_edge(u, v, g)` |`void`
-
-|`remove_edge(e, g)` |`void`
-
-|`remove_edge(e_iter, g)` |`void`
-
-2+|xref:concepts/MutablePropertyGraph.adoc[MutablePropertyGraph] refines Graph
-
-|`add_vertex(vp, g)` |`vertex_descriptor`
-
-|`add_edge(u, v, ep, g)`
-|`std::pair<edge_descriptor, bool>`
-
-2+|xref:concepts/PropertyGraph.adoc[PropertyGraph] refines Graph
-
-|`boost::property_map<G, Property>::type` |Type for a
-mutable property map.
-
-|`boost::property_map<G, Property>::const_type` |Type
-for a non-mutable property map.
-
-|`get(property, g)` |Function to get a property map.
-
-|`get(property, g, x)` |Get property value for vertex or edge `x`.
-
-|`put(property, g, x, v)` |Set property value for vertex or edge `x` to
-`v`.
+| `get(property, g)` | Property map object
+| `get(property, g, x)` | Property value for vertex/edge `x`
+| `put(property, g, x, v)` | Set property value
 |===
 
- 
+== Undirected graphs
 
-[#sec:undirected-graphs]
-=== Undirected Graphs
+BGL uses the same interface for directed and undirected graphs. `out_edges()`,
+`source()`, and `target()` work on undirected graphs too. In an undirected
+graph, `out_edges(v, g)` returns all edges incident to `v` (there is no
+distinction between "in" and "out").
 
-The interface that the BGL provides for accessing and manipulating an
-undirected graph is the same as the interface for directed graphs
-described in the following sections, however there are some differences
-in the behaviour and semantics. For example, in a directed graph we can
-talk about out-edges and in-edges of a vertex. In an undirected graph
-there is no ++``++in'' and ++``++out'', there are just edges incident to
-a vertex. Nevertheless, in the BGL we still use the `out_edges()`
-function (or `in_edges()`) to access the incident edges in an
-undirected graph. Similarly, an undirected edge has no ++``++source''
-and ++``++target'' but merely an unordered pair of vertices, but in the
-BGL we still use `source()` and `target()` to access these vertices. The
-reason the BGL does not provide a separate interface for undirected
-graphs is that many algorithms on directed graphs also work on
-undirected graphs, and it would be inconvenient to have to duplicate the
-algorithms just because of an interface difference. When using
-undirected graphs just mentally disregard the directionality in the
-function names. The example below demonstrates using the
-`out_edges()`, `source()`, and `target()` with an undirected graph.
-The source code for this example and the following one can be found in
-link:../example/undirected_adjacency_list.cpp[`example/undirected_adjacency_list.cpp`].
+The key difference is edge equality. In a directed graph, edge _(u,v)_ is
+never equal to _(v,u)_. In an undirected graph without parallel edges, they
+are the same edge. This also means edge properties are shared: `weight(u,v)`
+and `weight(v,u)` return the same value.
 
-[source,cpp]
-----
-
-  const int V = 2;
-  typedef ... UndirectedGraph;
-  UndirectedGraph undigraph(V);
-
-  std::cout << "the edges incident to v: ";
-  boost::graph_traits<UndirectedGraph>::out_edge_iterator e, e_end;
-  boost::graph_traits<UndirectedGraph>::vertex_descriptor
-    s = vertex(0, undigraph);
-  for (boost::tie(e, e_end) = out_edges(s, undigraph); e != e_end; ++e)
-    std::cout << "(" << source(*e, undigraph)
-              << "," << target(*e, undigraph) << ")" << endl;
-----
-
-Even though the interface is the same for undirected graphs, there are
-some behavioral differences because edge equality is defined
-differently. In a directed graph, edge _(u,v)_ is never equal to edge
-_(v,u)_, but in an undirected graph they may be equal. If the undirected
-graph is a multigraph then _(u,v)_ and _(v,u)_ might be parallel edges.
-If the graph is not a multigraph then _(u,v)_ and _(v,u)_ must be the
-same edge.
-
-In the example below the edge equality test will return `false` for the
-directed graph and `true` for the undirected graph. The difference also
-affects the meaning of `add_edge()`. In the example below, if we had
-also written `add_edge(v, u, undigraph)`, this would have added a
-parallel edge between _u_ and _v_ (provided the graph type allows
-parallel edges). The difference in edge equality also affects the
-association of edge properties. In the directed graph, the edges _(u,v)_
-and _(v,u)_ can have distinct weight values, whereas in the undirected
-graph the weight of _(u,v)_ is the same as the weight of _(v,u)_ since
-they are the same edge.
-
-[source,cpp]
-----
-
-  typedef ... DirectedGraph;
-  DirectedGraph digraph(V);
-  {
-    boost::graph_traits<DirectedGraph>::vertex_descriptor u, v;
-    u = vertex(0, digraph);
-    v = vertex(1, digraph);
-    add_edge(digraph, u, v, Weight(1.2));
-    add_edge(digraph, v, u, Weight(2.4));
-    boost::graph_traits<DirectedGraph>::edge_descriptor e1, e2;
-    bool found;
-    boost::tie(e1, found) = edge(u, v, digraph);
-    boost::tie(e2, found) = edge(v, u, digraph);
-    std::cout << "in a directed graph is ";
-    std::cout << "(u,v) == (v,u) ? " << (e1 == e2) << std::endl;
-
-    property_map<DirectedGraph, edge_weight_t>::type
-      weight = get(edge_weight, digraph);
-    cout << "weight[(u,v)] = " << get(weight, e1) << endl;
-    cout << "weight[(v,u)] = " << get(weight, e2) << endl;
-  }
-  {
-    boost::graph_traits<UndirectedGraph>::vertex_descriptor u, v;
-    u = vertex(0, undigraph);
-    v = vertex(1, undigraph);
-    add_edge(undigraph, u, v, Weight(3.1));
-    boost::graph_traits<UndirectedGraph>::edge_descriptor e1, e2;
-    bool found;
-    boost::tie(e1, found) = edge(u, v, undigraph);
-    boost::tie(e2, found) = edge(v, u, undigraph);
-    std::cout << "in an undirected graph is ";
-    std::cout << "(u,v) == (v,u) ? " << (e1 == e2) << std::endl;
-
-    property_map<UndirectedGraph, edge_weight_t>::type
-      weight = get(edge_weight, undigraph);
-    cout << "weight[(u,v)] = " << get(weight, e1) << endl;
-    cout << "weight[(v,u)] = " << get(weight, e2) << endl;
-  }
-----
-
-The output is:
-
-....
-
-in a directed graph is (u,v) == (v,u) ? 0
-weight[(u,v)] = 1.2
-weight[(v,u)] = 2.4
-in an undirected graph is (u,v) == (v,u) ? 1
-weight[(u,v)] = 3.1
-weight[(v,u)] = 3.1
-....
+WARNING: Do not subclass BGL graph types. Because `graph_traits` and
+`property_map` specializations are defined externally to the class, a subclass
+will not inherit them and many BGL functions will fail to compile.

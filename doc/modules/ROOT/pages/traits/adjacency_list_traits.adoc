@@ -1,9 +1,4 @@
-= Graph Traits
-
-....
-
-adjacency_list_traits<EdgeList, VertexList, Directed>
-....
+= adjacency_list_traits
 
 This class provides an alternate method for accessing some of the
 associated types of the `adjacency_list` class. The main reason for
@@ -27,11 +22,11 @@ user to provide the property types for the graph.
   };
 ----
 
-==== Where Defined
+== Where Defined
 
-link:../../../boost/graph/adjacency_list.hpp[`boost/graph/adjacency_list.hpp`]
+`boost/graph/adjacency_list.hpp`
 
-==== Template Parameters
+== Template Parameters
 
 [cols=",,",options="header",]
 |===
@@ -46,16 +41,16 @@ implementation. |`vecS`
 undirected. |`directedS`
 |===
 
-==== Model of
+== Model of
 
-http://www.boost.org/sgi/stl/DefaultConstructible.html[DefaultConstructible]
-and http://www.boost.org/sgi/stl/Assignable.html[Assignable]
+DefaultConstructible
+and Assignable
 
-==== Type Requirements
+== Type Requirements
 
 Under construction.
 
-=== Members
+== Members
 
 [cols=",",options="header",]
 |===
@@ -74,7 +69,3 @@ parallel edges to be inserted (`allow_parallel_edge_tag`) or
 if it automatically removes parallel edges
 (`disallow_parallel_edge_tag`).
 |===
-
-==== See Also
-
-xref:graph_classes/adjacency_list.adoc[`adjacency_list`]

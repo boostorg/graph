@@ -1,0 +1,61 @@
+= Smallest Last Ordering
+
+Produces a vertex ordering by repeatedly removing the vertex with the smallest
+degree. This ordering is a good heuristic for graph coloring: using it with
+`sequential_vertex_coloring` often produces near-optimal results.
+
+Complexity: O(V + E) +
+*Defined in:* `<boost/graph/smallest_last_ordering.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/utility/smallest_last.cpp[]
+----
+
+Expected output:
+
+....
+Smallest-last ordering:
+  position 0: vertex 0
+  position 1: vertex 1
+  position 2: vertex 2
+  position 3: vertex 3
+  position 4: vertex 4
+....
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename VertexListGraph, typename Order,
+          typename Degree, typename Marker>
+void smallest_last_vertex_ordering(const VertexListGraph& g,
+                                   Order order, Degree degree,
+                                   Marker marker);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const VertexListGraph& g`
+| Must model VertexListGraph and IncidenceGraph.
+
+| OUT
+| `Order order`
+| WritablePropertyMap. Vertex descriptor -> integer position in ordering.
+
+| UTIL
+| `Degree degree`
+| ReadWritePropertyMap for tracking current vertex degrees.
+
+| UTIL
+| `Marker marker`
+| ReadWritePropertyMap for marking removed vertices.
+|===
+
+TIP: Combine with `sequential_vertex_coloring` for a simple but effective
+graph coloring pipeline.

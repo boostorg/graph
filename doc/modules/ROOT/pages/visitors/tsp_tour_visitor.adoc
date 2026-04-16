@@ -1,56 +1,37 @@
 = tsp_tour_visitor
 
-....
+Records the vertices of a TSP tour into an output iterator.
 
-tsp_tour_visitor<OutputIterator>
-....
+*Defined in:* `<boost/graph/metric_tsp_approx.hpp>` +
+*Models:* TSP Tour Visitor
 
-This type is a simple TSP tour visitor. It supplies the OutputIterator
-with the vertices of the tour.
-
-==== Example
+== Usage
 
 [source,cpp]
 ----
-
-std::vector<Vertex> c;
-boost::metric_tsp_approx
-  (g, get(edge_weight, g), make_tsp_tour_visitor(std::back_inserter(c));
+std::vector<Vertex> tour;
+metric_tsp_approx(g, get(edge_weight, g),
+                  make_tsp_tour_visitor(std::back_inserter(tour)));
 ----
 
-==== Model of
+== Synopsis
 
-xref:visitors/TSPTourVisitor.adoc[TSP Tour Visitor]
+[source,cpp]
+----
+template <typename OutputIterator>
+struct tsp_tour_visitor;
 
-==== Template Parameters
+template <typename OutputIterator>
+tsp_tour_visitor<OutputIterator>
+make_tsp_tour_visitor(OutputIterator iter);
+----
 
-[cols=",,",options="header",]
+== Parameters
+
+[cols="1,3",options="header"]
 |===
-|Parameter |Description |Default
-|`OutputIterator` |An OutputIterator |None
+| Parameter | Description
+
+| `OutputIterator`
+| Output iterator that receives vertex descriptors of the tour.
 |===
-
-==== Where Defined
-
-link:../../../boost/graph/metric_tsp_approx.hpp[`boost/graph/metric_tsp_approx.hpp`]
-
-==== Member Functions
-
-This class implements all of the member functions required by
-xref:visitors/TSPTourVisitor.adoc[TSPTourVisitor].
-
-==== Non-Member Functions
-
-[width="100%",cols="50%,50%",options="header",]
-|===
-|Function |Description
-|` template <typename OutputIterator>` +
-`tsp_tour_visitor<OutputIterator>` +
-`make_tsp_tour_visitor(OutputIterator iter) ` |Returns a
-simple tsp_tour_visitor that records the TSP tour in the
-OutputIterator parameter
-|===
-
-==== See Also
-
-None

@@ -1,15 +1,14 @@
-[#concept:BasicMatrix]
 = BasicMatrix
 
 
 The BasicMatrix concept provides a minimalist interface for accessing
 elements from a 2 dimensional table of values.
 
-==== Refinement of
+== Refinement of
 
 none
 
-==== Notation
+== Notation
 
 [cols=",",]
 |===
@@ -21,24 +20,24 @@ the BasicMatrix concept.
 |`i, j` |Objects of type `I`.
 |===
 
-==== Associated Types
+== Associated Types
 
 none
 
-==== Valid Expressions
+== Valid Expressions
 
 [width="100%",cols="50%,50%",]
 |===
-|[#sec:elt-access]#`A[i++][++j]`# |Returns a reference to the
+|`A[i][j]` |Returns a reference to the
 element object stored at index `(i,j)` +
 Return type: `V&` for mutable `A` or `const V&` for constant `A`.
 |===
 
-==== Complexity guarantees
+== Complexity guarantees
 
 Element access is constant time.
 
-==== Concept Checking Class
+== Concept Checking Class
 
 [source,cpp]
 ----

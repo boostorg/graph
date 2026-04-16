@@ -1,0 +1,60 @@
+= Network Flow
+
+Compute the maximum amount of flow that can be sent through a network from a
+source to a sink, or the minimum-cost way to route a given amount of flow.
+
+== Max flow / min cut
+
+[cols="1,1,3"]
+|===
+| Algorithm | Complexity | When to use
+
+| xref:algorithms/network_flow/push_relabel_max_flow.adoc[Push-Relabel]
+| O(V^2 * sqrt(E))
+| General-purpose max flow. Fastest in practice for most graphs.
+
+| xref:algorithms/network_flow/edmonds_karp_max_flow.adoc[Edmonds-Karp]
+| O(V * E^2)
+| Augmenting-path based. Simpler to understand.
+
+| xref:algorithms/network_flow/boykov_kolmogorov_max_flow.adoc[Boykov-Kolmogorov]
+| O(V * E^2) worst case
+| Optimized for vision/segmentation graphs (grid-like structure).
+
+| xref:algorithms/network_flow/stoer_wagner_min_cut.adoc[Stoer-Wagner]
+| O(V * E + V^2 log V)
+| Global minimum cut (no source/sink). Undirected graphs only.
+|===
+
+== Min-cost flow
+
+[cols="1,3"]
+|===
+| Algorithm | When to use
+
+| xref:algorithms/network_flow/cycle_canceling.adoc[Cycle Canceling]
+| Simple min-cost flow. Slow but correct.
+
+| xref:algorithms/network_flow/successive_shortest_path_nonnegative_weights.adoc[Successive Shortest Path]
+| Min-cost flow with non-negative edge costs. Faster than cycle canceling.
+
+| xref:algorithms/network_flow/find_flow_cost.adoc[Find Flow Cost]
+| Computes the total cost of an existing flow solution.
+|===
+
+== Matching
+
+[cols="1,3"]
+|===
+| Algorithm | When to use
+
+| xref:algorithms/network_flow/maximum_matching.adoc[Edmonds Matching]
+| Maximum cardinality matching (most edges, ignoring weights).
+
+| xref:algorithms/network_flow/maximum_weighted_matching.adoc[Maximum Weighted Matching]
+| Maximum weight matching (highest total edge weight).
+|===
+
+TIP: For max flow, start with push-relabel. Use Boykov-Kolmogorov only for
+grid-like graphs (image segmentation). For minimum cut without a fixed
+source/sink, use Stoer-Wagner.

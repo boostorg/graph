@@ -9,7 +9,7 @@ as edge property and `get(&Road::cost, g)` to create the weight map.
 
 [source,cpp]
 ----
-include::example$algorithms/dijkstra_bundled.cpp[]
+include::example$algorithms/shortest_paths/dijkstra_bundled.cpp[]
 ----
 
 Expected output:

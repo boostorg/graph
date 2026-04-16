@@ -1,17 +1,17 @@
 = BFS Visitor Concept
 
 This concept defines the visitor interface for
-xref:algorithms/breadth_first_search.adoc[`breadth_first_search()`].
+xref:algorithms/traversal/breadth_first_search.adoc[`breadth_first_search()`].
 Users can define a class with the BFS Visitor interface and pass and
 object of the class to `breadth_first_search()`, thereby
 augmenting the actions taken during the graph search.
 
-==== Refinement of
+== Refinement of
 
-link:../../utility/CopyConstructible.html[Copy Constructible] (copying a
+Copy Constructible (copying a
 visitor should be a lightweight operation).
 
-==== Notation
+== Notation
 
 [cols=",",]
 |===
@@ -30,11 +30,11 @@ visitor should be a lightweight operation).
 `boost::graph_traits<G>::vertex_descriptor`.
 |===
 
-==== Associated Types
+== Associated Types
 
 none
 
-==== Valid Expressions
+== Valid Expressions
 
 [cols=",,,",options="header",]
 |===
@@ -77,35 +77,6 @@ all of the adjacent vertices have been discovered (but before the
 out-edges of the adjacent vertices have been examined).
 |===
 
-==== Models
+== Models
 
 * xref:visitors/bfs_visitor.adoc[`bfs_visitor`]
-
-[#python]
-==== Python
-
-To implement a model of the `BFSVisitor` concept in Python, create a new
-class that derives from the `BFSVisitor` type of the graph, which will
-be named __`GraphType`__`.BFSVisitor`. The events and syntax are the
-same as with visitors in C++. Here is an example for the
-Python `bgl.Graph` graph type:
-
-[source,cpp]
-----
-
-class count_tree_edges_bfs_visitor(bgl.Graph.BFSVisitor):
-  def __init__(self, name_map):
-    bgl.Graph.BFSVisitor.__init__(self)
-    self.name_map = name_map
-
-  def tree_edge(self, e, g):
-    (u, v) = (g.source(e), g.target(e))
-    print "Tree edge ",
-    print self.name_map[u],
-    print " -> ",
-    print self.name_map[v]
-----
-
-==== See also
-
-xref:visitors/visitor_concepts.adoc[Visitor concepts]

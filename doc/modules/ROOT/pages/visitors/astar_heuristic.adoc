@@ -1,20 +1,15 @@
 = astar_heuristic
 
-....
-
-astar_heuristic<Graph, CostType>
-....
-
 This class is a default implementation of the
 xref:visitors/AStarHeuristic.adoc[AStarHeuristic] concept. It implements a
 "zero" heuristic -- a heuristic function that returns a cost of zero
 regardless of the vertex it is passed.
 
-==== Model of
+== Model of
 
 xref:visitors/AStarHeuristic.adoc[AStarHeuristic]
 
-==== Template Parameters
+== Template Parameters
 
 [cols=",,",options="header",]
 |===
@@ -26,11 +21,11 @@ functions passed to A*. Typically an integer or floating point type.
 |
 |===
 
-==== Where Defined
+== Where Defined
 
-link:../../../boost/graph/astar_search.hpp[`boost/graph/astar_search.hpp`]
+`boost/graph/astar_search.hpp`
 
-==== Member Functions
+== Member Functions
 
 This class implements the single member function required by
 xref:visitors/AStarHeuristic.adoc[AStarHeuristic]:

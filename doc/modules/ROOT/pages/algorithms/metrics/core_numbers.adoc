@@ -1,0 +1,57 @@
+= Core Numbers
+
+Computes the k-core decomposition of a graph. Each vertex is assigned a core
+number: the largest k such that the vertex belongs to a subgraph where every
+vertex has degree >= k. Higher core numbers indicate denser, more tightly
+connected substructures.
+
+Complexity: O(V + E) +
+*Defined in:* `<boost/graph/core_numbers.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/metrics/core_numbers.cpp[]
+----
+
+Expected output:
+
+....
+Core numbers (k-core decomposition):
+  vertex 0 (a): 3
+  vertex 1 (b): 3
+  vertex 2 (c): 3
+  vertex 3 (d): 3
+  vertex 4 (e): 1
+  vertex 5 (f): 1
+  vertex 6 (g): 1
+....
+
+Vertices a-d form a 4-clique (K4), so each has core number 3 (every vertex
+in the clique has degree 3 within it). Vertices e-f-g form a chain attached
+to the clique, so they have core number 1.
+
+'''
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename Graph, typename CoreMap>
+typename property_traits<CoreMap>::value_type
+core_numbers(Graph& g, CoreMap core_map);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `Graph& g`
+| Must model IncidenceGraph and VertexListGraph.
+
+| OUT
+| `CoreMap core_map`
+| ReadWritePropertyMap. Vertex descriptor -> core number (integer).
+|===

@@ -1,0 +1,68 @@
+= Geodesic Distance
+
+Computes the mean shortest-path distance from a vertex to all other vertices.
+A low mean geodesic indicates a centrally located vertex.
+
+*Defined in:* `<boost/graph/geodesic_distance.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/metrics/geodesic_distance.cpp[]
+----
+
+Expected output:
+
+....
+mean geodesic[0] = 2.66667
+mean geodesic[1] = 2
+mean geodesic[2] = 2
+mean geodesic[3] = 2.66667
+Graph mean geodesic: 2.33333
+....
+
+== Synopsis
+
+[source,cpp]
+----
+// Single vertex mean geodesic (requires pre-computed distance map)
+template <typename Graph, typename DistanceMap, typename Measure>
+typename Measure::result_type
+mean_geodesic(const Graph& g, DistanceMap dist, Measure measure);
+
+// All vertices
+template <typename Graph, typename DistanceMatrixMap,
+          typename GeodesicMap, typename Measure>
+typename Measure::result_type
+all_mean_geodesics(const Graph& g, DistanceMatrixMap dm,
+                   GeodesicMap gm, Measure measure);
+
+// Graph-level small-world measure
+template <typename Graph, typename GeodesicMap>
+double small_world_distance(const Graph& g, GeodesicMap gm);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| Must model VertexListGraph.
+
+| IN
+| `DistanceMap dist` / `DistanceMatrixMap dm`
+| Pre-computed distances (single-vertex or all-pairs).
+
+| IN
+| `Measure measure`
+| Geodesic measure functor.
+
+| OUT
+| `GeodesicMap gm`
+| (all_mean_geodesics) WritablePropertyMap for per-vertex results.
+|===
+
+NOTE: Requires pre-computed distance maps from an all-pairs shortest paths
+algorithm.

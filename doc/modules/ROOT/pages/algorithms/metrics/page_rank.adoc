@@ -1,0 +1,84 @@
+= PageRank
+
+Computes the PageRank of each vertex: a measure of importance based on the
+link structure of a directed graph. A vertex is important if it is pointed to
+by other important vertices.
+
+Complexity: O(V + E) per iteration +
+*Defined in:* `<boost/graph/page_rank.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/metrics/page_rank.cpp[]
+----
+
+Expected output:
+
+....
+vertex 0  rank=1.4436
+vertex 1  rank=0.7600
+vertex 2  rank=1.5301
+vertex 3  rank=0.1500
+....
+
+Vertex 2 has the highest rank because it receives edges from three other
+vertices, including the high-ranked vertex 0.
+
+'''
+
+== Synopsis
+
+[source,cpp]
+----
+// Simplest: default damping=0.85, 20 iterations
+template <typename Graph, typename RankMap>
+void page_rank(const Graph& g, RankMap rank_map);
+
+// With custom termination condition
+template <typename Graph, typename RankMap, typename Done>
+void page_rank(const Graph& g, RankMap rank_map, Done done,
+               typename property_traits<RankMap>::value_type damping = 0.85);
+
+// With custom iteration count and vertex count
+template <typename Graph, typename RankMap, typename Done>
+void page_rank(const Graph& g, RankMap rank_map, Done done,
+               typename property_traits<RankMap>::value_type damping,
+               typename graph_traits<Graph>::vertices_size_type n);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| Must model VertexListGraph and IncidenceGraph (or BidirectionalGraph
+  for better performance).
+
+| OUT
+| `RankMap rank_map`
+| ReadWritePropertyMap. Vertex descriptor -> rank value (typically `double`).
+
+| IN
+| `Done done`
+| Termination functor. Called with `(rank_map, g)` after each iteration.
+  Return `true` to stop. Default: `graph::n_iterations(20)`.
+
+| IN
+| `damping`
+| Probability of following a link (vs random jump). Default: 0.85.
+|===
+
+== Termination
+
+The default termination is `graph::n_iterations(20)`, which runs exactly 20
+iterations. For convergence-based termination, write a custom `Done` functor
+that compares rank values between iterations.
+
+== Dangling vertices
+
+Vertices with no outgoing edges (dangling nodes) cause rank to "leak" out of
+the graph. Use `graph::remove_dangling_links(g)` to remove them before
+running PageRank, or handle them in your model.

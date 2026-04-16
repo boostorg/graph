@@ -1,0 +1,41 @@
+= Neighbor BFS
+
+A BFS variant for directed graphs that explores both out-edges and in-edges
+at each vertex. In a standard BFS on a directed graph, only out-edges are
+followed. Neighbor BFS also follows in-edges, effectively treating the graph
+as undirected during traversal while preserving edge direction information.
+
+Complexity: O(V + E) +
+*Defined in:* `<boost/graph/neighbor_bfs.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/utility/neighbor_bfs.cpp[]
+----
+
+Expected output:
+
+....
+Neighbor BFS from vertex 1: 1 4 0 2 3
+....
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename VertexListGraph, typename P, typename T, typename R>
+void neighbor_breadth_first_search(
+    const VertexListGraph& g,
+    typename graph_traits<VertexListGraph>::vertex_descriptor s,
+    const bgl_named_params<P, T, R>& params);
+----
+
+The graph must model BidirectionalGraph and VertexListGraph.
+
+WARNING: This function only has a named-parameter interface. There is no
+positional overload.
+
+TIP: If you just need undirected traversal on a directed graph, consider using
+`make_reverse_graph` to get a bidirectional view, then run standard BFS.

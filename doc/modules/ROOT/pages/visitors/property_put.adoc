@@ -1,95 +1,55 @@
 = property_put
 
-....
+Assigns a fixed constant value to a property map entry when an event occurs.
+Useful for initialization or for marking specific edges (e.g. back edges).
 
-property_put<PropertyMap, EventTag>
-....
+*Defined in:* `<boost/graph/visitors.hpp>` +
+*Models:* EventVisitor +
+*Typical event:* any
 
-This is an xref:visitors/EventVisitor.adoc[EventVisitor] that can be used to
-write a fixed value to a property map when a vertex or edge is visited
-at some event-point within an algorithm. For example, this visitor can
-be used as an alternative to a loop to initialize a property map, or it
-can be used to mark only back edges with a property.
-
-`property_put` can be used with graph algorithms by wrapping it with
-the algorithm-specific adaptor, such as
-xref:visitors/bfs_visitor.adoc[`bfs_visitor`] and
-xref:visitors/dfs_visitor.adoc[`dfs_visitor`]. Also, this event visitor can
-be combined with other event visitors using `std::pair` to form an
-EventVisitorList.
-
-==== Example
+== Example
 
 [source,cpp]
 ----
-
-  boost::depth_first_search
-    (G, boost::visitor(
-          boost::make_dfs_visitor(
-            boost::put_property(is_back_edge, boost::on_back_edge()))));
+include::example$visitors/property_put.cpp[]
 ----
 
-==== Model of
+Expected output:
 
-xref:visitors/EventVisitor.adoc[EventVisitor]
+....
+0 -> 1
+1 -> 2
+1 -> 3
+2 -> 0  [back edge]
+....
 
-==== Where Defined
+== Synopsis
 
-link:../../../boost/graph/visitors.hpp[`boost/graph/visitors.hpp`]
+[source,cpp]
+----
+template <typename PropertyMap, typename EventTag>
+struct property_put;
 
-==== Template Parameters
+template <typename PropertyMap, typename EventTag>
+property_put<PropertyMap, EventTag>
+put_property(PropertyMap pa,
+             typename property_traits<PropertyMap>::value_type val,
+             EventTag);
+----
 
-[cols=",,",options="header",]
+== Parameters
+
+[cols="1,3",options="header"]
 |===
-|Parameter |Description |Default
-|`PropertyMap` |A
-link:../../property_map/doc/WritablePropertyMap.html[WritablePropertyMap],
-where the `key_type` is the vertex descriptor type or edge
-descriptor of the graph (depending on the kind of event tag). | 
+| Parameter | Description
 
-|`EventTag` |The tag to specify when the `property_put` should be
-applied during the graph algorithm. | 
-|===
+| `PropertyMap`
+| WritablePropertyMap. Key type is vertex or edge descriptor.
 
-=== Associated Types
-
-[cols=",",options="header",]
-|===
-|Type |Description
-|`property_put::event_filter` |This will be the same type as the
-template parameter `EventTag`.
-|===
-
-==== Member Functions
-
-[width="100%",cols="50%,50%",options="header",]
-|===
-|Member |Description
-|` property_put(PropertyMap pa, property_traits::value_type val); `
-|Construct a property put object with the property map `pa` and constant
-value `val`.
-
-|` template <class X, class Graph>` +
-`void operator()(X x, const Graph& g); ` |This puts the value `val` into
-the property map for the vertex or edge `x`. +
+| `EventTag`
+| Any event tag (vertex or edge).
 |===
 
-==== Non-Member Functions
+== Behavior
 
-[width="100%",cols="50%,50%",options="header",]
-|===
-|Function |Description
-|` template <class PropertyMap, class EventTag>` +
-`property_put<PropertyMap, EventTag>` +
-`put_property(PropertyMap pa, typename property_traits::value_type val, EventTag); `
-|A convenient way to create a `property_put`.
-|===
-
-==== See Also
-
-xref:visitors/visitor_concepts.adoc[Visitor concepts]
-
-The following are other event visitors:
-xref:visitors/distance_recorder.adoc[`distance_recorder`],
-xref:visitors/predecessor_recorder.adoc[`predecessor_recorder`], and
-xref:visitors/time_stamper.adoc[`time_stamper`].
+Writes the fixed value to the property map: `put(pa, x, val)`.

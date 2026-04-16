@@ -1,0 +1,55 @@
+= Tiernan All Cycles
+
+Enumerates all elementary cycles in a directed graph. An elementary cycle
+visits each vertex at most once.
+
+Complexity: exponential in the number of cycles +
+*Defined in:* `<boost/graph/tiernan_all_cycles.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/cycle_detection/tiernan_all_cycles.cpp[]
+----
+
+Expected output:
+
+....
+Finding all elementary cycles:
+Cycle: 0 -> 1 -> 2 -> 0
+Cycle: 1 -> 3 -> 1
+....
+
+'''
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename Graph, typename Visitor>
+void tiernan_all_cycles(const Graph& g, Visitor vis,
+                        std::size_t minlen = 2,
+                        std::size_t maxlen = 0);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| Must model VertexListGraph with a vertex_index property.
+
+| IN
+| `Visitor vis`
+| Called with `vis.cycle(path, g)` for each cycle found.
+  `path` is a `const std::vector<vertex_descriptor>&`.
+
+| IN
+| `minlen` / `maxlen`
+| Filter cycles by length. `maxlen = 0` means no upper limit.
+|===
+
+TIP: For simply detecting whether a cycle exists (without enumerating), use
+DFS with a back-edge visitor. That is O(V + E) instead of exponential.

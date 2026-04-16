@@ -4,20 +4,20 @@ This concept defines the interface for the heuristic function of an
 A* search, which is responsible for estimating the remaining cost
 from some vertex to a goal. The user can create a class that matches
 this interface, and then pass objects of the class into
-xref:algorithms/astar_search.adoc[`astar_search()`] to guide the order of
+xref:algorithms/shortest_paths/astar_search.adoc[`astar_search()`] to guide the order of
 vertex examination of the search. The heuristic instance must
 incorporate any necessary information about goal vertices in the graph.
 For further discussion of the use of heuristics in an A* search, see
-the documentation of xref:algorithms/astar_search.adoc[astar_search()].
+the documentation of xref:algorithms/shortest_paths/astar_search.adoc[astar_search()].
 
-==== Refinement of
+== Refinement of
 
 http://www.boost.org/sgi/stl/UnaryFunction.html[Unary Function] (must
 take a single argument -- a graph vertex -- and return a cost value) and
-link:../../utility/CopyConstructible.html[Copy Constructible] (copying a
+Copy Constructible (copying a
 heuristic should be a lightweight operation).
 
-==== Notation
+== Notation
 
 [cols=",",]
 |===
@@ -38,11 +38,11 @@ functions passed to A*.
 |`c` |An object of type `CostType`.
 |===
 
-==== Associated Types
+== Associated Types
 
 none
 
-==== Valid Expressions
+== Valid Expressions
 
 [cols=",,,",options="header",]
 |===
@@ -51,11 +51,11 @@ none
 of every out edge of a vertex being examined.
 |===
 
-==== Models
+== Models
 
 * xref:visitors/astar_heuristic.adoc[`astar_heuristic`]
 
-==== Concept Checking Class
+== Concept Checking Class
 
 [source,cpp]
 ----

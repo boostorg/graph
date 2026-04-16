@@ -1,0 +1,27 @@
+= Cycle Detection
+
+Find or enumerate cycles in a graph.
+
+[cols="1,1,3"]
+|===
+| Algorithm | Complexity | When to use
+
+| xref:algorithms/cycle_detection/hawick_circuits.adoc[Hawick Circuits]
+| O((V + E) * (C + 1))
+| Enumerate all elementary circuits (simple cycles) in a directed graph.
+  C is the number of circuits found.
+
+| xref:algorithms/cycle_detection/tiernan_all_cycles.adoc[Tiernan All Cycles]
+| Exponential
+| Enumerate all elementary cycles. Older algorithm; Hawick is generally
+  preferred.
+
+| xref:algorithms/cycle_detection/howard_cycle_ratio.adoc[Cycle Ratio]
+| Polynomial
+| Find the cycle with the minimum or maximum mean weight (total weight
+  divided by number of edges). Used in performance analysis and scheduling.
+|===
+
+TIP: To simply _detect_ whether a cycle exists (without enumerating all of
+them), use `depth_first_search` with a visitor that checks for back edges.
+This is O(V + E) and much faster than full enumeration.

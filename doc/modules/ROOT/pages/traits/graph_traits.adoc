@@ -1,26 +1,12 @@
-= Graph Traits
+= graph_traits
 
-....
+Extracts associated types (vertex_descriptor, edge_descriptor, iterators, etc.)
+from a graph type. This is the graph equivalent of `std::iterator_traits`.
 
-graph_traits<Graph>
-....
+*Defined in:* `<boost/graph/graph_traits.hpp>`
 
-Just like the
-http://www.boost.org/sgi/stl/iterator_traits.html[iterators] of STL,
-graphs have *associated types*. As stated in the various
-xref:concepts/graph_concepts.adoc[graph concepts], a graph has quite a few
-associated types: `vertex_descriptor`, `edge_descriptor`,
-`out_edge_iterator`, etc.. Any particular graph concepts will
-not require that all of the following associated types be defined. When
-implementing a graph class that fullfils one or more graph concepts, for
-associated types that are not required by the concepts, it is ok to use
-`void` as the type (when using nested typedefs inside the graph class),
-or to leave the typedef out of the `graph_traits` specialization for
-the graph class. Note that because of the use of traits classes rather
-than member types, it is not safe (and often will not work) to define
-subclasses of BGL graph types; those types may be missing important
-traits and properties that were defined externally to the class
-definition.
+WARNING: Do not subclass BGL graph types. Because `graph_traits` is specialized
+externally, a subclass will not inherit the specialization.
 
 [source,cpp]
 ----
@@ -45,11 +31,11 @@ definition.
   };
 ----
 
-==== Where Defined
+== Where Defined
 
-link:../../../boost/graph/graph_traits.hpp[`boost/graph/graph_traits.hpp`]
+`boost/graph/graph_traits.hpp`
 
-==== Template Parameters
+== Template Parameters
 
 [cols=",",options="header",]
 |===
@@ -57,17 +43,17 @@ link:../../../boost/graph/graph_traits.hpp[`boost/graph/graph_traits.hpp`]
 |`Graph` |The graph type whose associated types are being accessed.
 |===
 
-==== Model of
+== Model of
 
-http://www.boost.org/sgi/stl/DefaultConstructible.html[DefaultConstructible]
-and http://www.boost.org/sgi/stl/Assignable.html[Assignable]
+DefaultConstructible
+and Assignable
 
-==== Type Requirements
+== Type Requirements
 
 * `Graph` is a model of one of the xref:concepts/graph_concepts.adoc[graph
 concepts].
 
-=== Members
+== Members
 
 [cols=",",options="header",]
 |===

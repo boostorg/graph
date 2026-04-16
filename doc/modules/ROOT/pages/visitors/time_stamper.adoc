@@ -1,108 +1,56 @@
 = time_stamper
 
-....
+Stamps a monotonically increasing time value when an event occurs. Commonly
+used to record discover and finish times during DFS.
 
-time_stamper<TimeMap, TimeT, EventTag>
-....
+*Defined in:* `<boost/graph/visitors.hpp>` +
+*Models:* EventVisitor +
+*Typical event:* `on_discover_vertex`, `on_finish_vertex`
 
-This is an xref:visitors/EventVisitor.adoc[EventVisitor] that can be used to
-"stamp" a time at some event-point within an algorithm. An example of
-this is recording the discover or finish time of a vertex during a graph
-search.
-
-`time_stamper` can be used with graph algorithms by wrapping it with
-the algorithm specific adaptor, such as
-xref:visitors/bfs_visitor.adoc[`bfs_visitor`] and
-xref:visitors/dfs_visitor.adoc[`dfs_visitor`]. Also, this event visitor can
-be combined with other event visitors using `std::pair` to form an
-EventVisitorList.
-
-==== Example
-
-The following example shows the usage of the `time_stamper`.
+== Example
 
 [source,cpp]
 ----
-
-  std::vector color(num_vertices(G));
-  std::vector dtime(num_vertices(G));
-  std::vector ftime(num_vertices(G));
-
-  int time = 0;
-  boost::breadth_first_search
-    (G, vertex(s, G), make_bfs_visitor(
-     std::make_pair(stamp_times(dtime.begin(), time, on_discover_vertex()),
-                    stamp_times(ftime.begin(), time, on_finish_vertex()))),
-     color.begin());
+include::example$visitors/time_stamper.cpp[]
 ----
 
-==== Model of
+Expected output:
 
-xref:visitors/EventVisitor.adoc[EventVisitor]
+....
+vertex 0  discover=1  finish=8
+vertex 1  discover=2  finish=5
+vertex 2  discover=6  finish=7
+vertex 3  discover=3  finish=4
+....
 
-==== Where Defined
+== Synopsis
 
-link:../../../boost/graph/visitors.hpp[`boost/graph/visitors.hpp`]
+[source,cpp]
+----
+template <typename TimeMap, typename TimeT, typename EventTag>
+struct time_stamper;
 
-==== Template Parameters
+template <typename TimeMap, typename TimeT, typename EventTag>
+time_stamper<TimeMap, TimeT, EventTag>
+stamp_times(TimeMap pa, TimeT& t, EventTag);
+----
 
-[cols=",,",options="header",]
+== Parameters
+
+[cols="1,3",options="header"]
 |===
-|Parameter |Description |Default
-|`TimeMap` |A
-link:../../property_map/doc/WritablePropertyMap.html[WritablePropertyMap]
-where the `key_type` is the vertex descriptor type or edge
-descriptor of the graph (depending on the kind of event tag) and where
-the `TimeT` type is convertible to the `value_type` of the time
-property map. | 
+| Parameter | Description
 
-|`TimeT` |The type for the time counter which should be convertible to
-the `value_type` of the time property map | 
+| `TimeMap`
+| WritablePropertyMap. Key type is the vertex or edge descriptor.
 
-|`EventTag` |The tag to specify when the `time_stamper` should be
-applied during the graph algorithm. | 
-|===
+| `TimeT`
+| The time counter type. Passed by reference; incremented on each event.
 
-=== Associated Types
-
-[cols=",",options="header",]
-|===
-|Type |Description
-|`time_stamper::event_filter` |This will be the same type as the
-template parameter `EventTag`.
-|===
-
-==== Member Functions
-
-[width="100%",cols="50%,50%",options="header",]
-|===
-|Member |Description
-|` time_stamper(TimeMap time_pa, TimeT& t); ` |Construct a time
-stamper object with time property map `time_pa` and time counter
-`t`.
-
-|` template <class X, class Graph>` +
-`void operator()(X x, const Graph& g); ` |This increments the time count
-and "stamps" the time: +
-`put(time_pa, x, ++t);`
+| `EventTag`
+| Any event tag (vertex or edge).
 |===
 
-==== Non-Member Functions
+== Behavior
 
-[width="100%",cols="50%,50%",options="header",]
-|===
-|Function |Description
-|` template <class TimeMap, class TimeT, class Tag>` +
-`time_stamper<TimeMap, TimeT, Tag>` +
-`stamp_times(TimeMap pa, TimeT& t, Tag); ` |A convenient way to
-create a `time_stamper`.
-|===
-
-==== See Also
-
-xref:visitors/visitor_concepts.adoc[Visitor concepts]
-
-The following are other event visitors:
-xref:visitors/distance_recorder.adoc[`distance_recorder`],
-xref:visitors/time_stamper.adoc[`time_stamper`], and
-xref:visitors/property_writer.adoc[`property_writer`].
+Increments the counter and stamps the time: `put(time_map, x, ++t)`.

@@ -1,0 +1,17 @@
+= Topological Sort
+
+Produces a linear ordering of vertices such that for every directed edge
+(u, v), vertex u appears before v. Only possible on directed acyclic graphs
+(DAGs). If the graph has a cycle, `topological_sort` throws `not_a_dag`.
+
+Common uses: build system dependency ordering, task scheduling, course
+prerequisite planning.
+
+[cols="1,3"]
+|===
+| Algorithm | What it does
+
+| xref:algorithms/topological_sort/topological_sort.adoc[topological_sort]
+| DFS-based. O(V + E). Outputs vertices in reverse topological order into
+  an output iterator.
+|===
