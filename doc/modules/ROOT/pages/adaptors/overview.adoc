@@ -1,0 +1,41 @@
+= Graph Adaptors
+
+A graph adaptor wraps an existing graph and presents a different view of it
+without copying. The original graph's data and structure are reused. Adaptors
+are lightweight (typically O(1) to construct) and composable.
+
+[cols="1,3"]
+|===
+| Adaptor | What it does
+
+| xref:adaptors/filtered_graph.adoc[filtered_graph]
+| Hides vertices and/or edges based on predicate functions.
+
+| xref:adaptors/reverse_graph.adoc[reverse_graph]
+| Reverses all edge directions (graph transposition). O(1).
+
+| xref:adaptors/subgraph.adoc[subgraph]
+| Selects a subset of vertices; all edges between them are included
+  automatically. Supports parent/child nesting.
+
+| xref:adaptors/edge_list.adoc[edge_list]
+| Turns raw data (an array of `std::pair`, a CSV file parsed into pairs, etc.)
+  into a graph that algorithms like `bellman_ford_shortest_paths` can consume
+  directly. Useful when you have edge data but do not want to build a full
+  `adjacency_list`.
+
+| xref:adaptors/grid_graph.adoc[grid_graph]
+| N-dimensional rectangular grid with optional wrapping per dimension.
+  Not an adaptor in the strict sense (it generates its own structure), but
+  it follows the same zero-copy philosophy.
+|===
+
+Adaptors model the same graph concepts as their underlying graph. A
+`filtered_graph` over a BidirectionalGraph is itself a BidirectionalGraph.
+A `reverse_graph` over a BidirectionalGraph is a BidirectionalGraph.
+
+Vertex and edge descriptors from an adaptor are typically the same type as
+descriptors from the underlying graph, so they can be used interchangeably.
+The exception is `subgraph`, which uses local descriptors that must be
+converted with `local_to_global()` and `global_to_local()`.
+

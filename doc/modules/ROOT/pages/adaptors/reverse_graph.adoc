@@ -1,432 +1,188 @@
-= Reverse Graph Adaptor
+= Reverse Graph
 
-....
+A view of a graph with all edges reversed (transposed). Construction is O(1).
 
-reverse_graph<BidirectionalGraph, GraphReference>
-....
+*Defined in:* `<boost/graph/reverse_graph.hpp>` +
+*Models:* BidirectionalGraph, VertexListGraph, PropertyGraph (depending on
+underlying graph)
 
-The `reverse_graph` adaptor flips the in-edges and out-edges of a
-xref:concepts/BidirectionalGraph.adoc[BidirectionalGraph], effectively
-transposing the graph. The construction of the `reverse_graph` is
-constant time, providing a highly efficient way to obtain a transposed
-view of a graph.
-
-==== Example
-
-The example from
-link:../example/reverse_graph.cpp[`example/reverse_graph.cpp`].
+== Example
 
 [source,cpp]
 ----
-
-int
-main()
-{
-  typedef boost::adjacency_list<
-    boost::vecS, boost::vecS, boost::bidirectionalS,
-  > Graph;
-
-  Graph G(5);
-  boost::add_edge(0, 2, G);
-  boost::add_edge(1, 1, G);
-  boost::add_edge(1, 3, G);
-  boost::add_edge(1, 4, G);
-  boost::add_edge(2, 1, G);
-  boost::add_edge(2, 3, G);
-  boost::add_edge(2, 4, G);
-  boost::add_edge(3, 1, G);
-  boost::add_edge(3, 4, G);
-  boost::add_edge(4, 0, G);
-  boost::add_edge(4, 1, G);
-
-  std::cout << "original graph:" << std::endl;
-  boost::print_graph(G, boost::get(boost::vertex_index, G));
-
-  std::cout << std::endl << "reversed graph:" << std::endl;
-  boost::print_graph(boost::make_reverse_graph(G),
-                     boost::get(boost::vertex_index, G));
-
-  return 0;
-}
+include::example$adaptors/reverse_graph.cpp[]
 ----
 
-The output is:
+Expected output:
 
 ....
+Original:
+0 --> 1
+1 --> 2
+2 --> 3
+3 --> 0
 
-original graph:
-0 --> 2
-1 --> 1 3 4
-2 --> 1 3 4
-3 --> 1 4
-4 --> 0 1
-
-reversed graph:
-0 --> 4
-1 --> 1 2 3 4
-2 --> 0
-3 --> 1 2
-4 --> 1 2 3
+Reversed:
+0 --> 3
+1 --> 0
+2 --> 1
+3 --> 2
 ....
 
-==== Template Parameters
-
-[cols=",,",options="header",]
-|===
-|Parameter |Description |Default
-|`BidirectionalGraph` |The graph type to be adapted. | 
-
-|`GraphReference` |This type should be `const BidirectionalGraph&` if
-you want to create a const reverse graph, or `BidirectionalGraph&` if
-you want to create a non-const reverse graph.
-|`const BidirectionalGraph&`
-|===
-
-==== Model of
-
-xref:concepts/BidirectionalGraph.adoc[BidirectionalGraph] and optionally
-xref:concepts/VertexListGraph.adoc[VertexListGraph] and
-xref:concepts/PropertyGraph.adoc[PropertyGraph]
-
-==== Where Defined
-
-link:../../../boost/graph/reverse_graph.hpp[`boost/graph/reverse_graph.hpp`]
-
-=== Associated Types
-
-'''''
-
-`graph_traits<reverse_graph>::vertex_descriptor` +
- +
-The type for the vertex descriptors associated with the
-`reverse_graph`.
-
-'''''
-
-`graph_traits<reverse_graph>::edge_descriptor` +
- +
-The type for the edge descriptors associated with the
-`reverse_graph`.
-
-'''''
-
-`graph_traits<reverse_graph>::vertex_iterator` +
- +
-The type for the iterators returned by `vertices()`.
-
-'''''
-
-`graph_traits<reverse_graph>::edge_iterator` +
- +
-The type for the iterators returned by `edges()`.
-
-'''''
-
-`graph_traits<reverse_graph>::out_edge_iterator` +
- +
-The type for the iterators returned by `out_edges()`.
-
-'''''
-
-`graph_traits<reverse_graph>::adjacency_iterator` +
- +
-The type for the iterators returned by `adjacent_vertices()`.
-
-'''''
-
-`graph_traits<reverse_graph>::directed_category` +
- +
-Provides information about whether the graph is directed
-(`directed_tag`) or undirected (`undirected_tag`).
-
-'''''
-
-`graph_traits<reverse_graph>::edge_parallel_category` +
- +
-This describes whether the graph class allows the insertion of parallel
-edges (edges with the same source and target). The two tags are
-`allow_parallel_edge-_tag` and
-`disallow_parallel_edge_tag`. The `setS` and `hash_setS`
-variants disallow parallel edges while the others allow parallel edges.
-
-'''''
-
-`graph_traits<reverse_graph>::vertices_size_type` +
- +
-The type used for dealing with the number of vertices in the graph.
-
-'''''
-
-`graph_traits<reverse_graph>::edges_size_type` +
- +
-The type used for dealing with the number of edges in the graph.
-
-'''''
-
-`graph_traits<reverse_graph>::degree_size_type` +
- +
-The type used for dealing with the number of edges incident to a vertex
-in the graph.
-
-'''''
-
-`property_map<reverse_graph, PropertyTag>::type` +
-and +
-`property_map<reverse_graph, PropertyTag>::const_type` +
- +
-The property map type for vertex or edge properties in the graph. The
-specific property is specified by the `PropertyTag` template argument,
-and must match one of the properties specified in the `VertexProperty`
-or `EdgeProperty` for the graph.
-
-'''''
-
-`property_map<reverse_graph, edge_underlying_t>::type` +
-and +
-`property_map<reverse_graph, edge_underlying_t>::const_type` +
- +
-An edge property type mapping from edge descriptors in the
-`reverse_graph` to edge descriptors in the underlying
-`BidirectionalGraph` object.
-
-'''''
-
-=== Member Functions
-
-'''''
-
-....
-
-reverse_graph(BidirectionalGraph& g)
-....
-
-Constructor. Create a reversed (transposed) view of the graph `g`.
-
-'''''
-
-=== Non-Member Functions
-
-'''''
+== Synopsis
 
 [source,cpp]
 ----
-template <typename BidirectionalGraph>
-reverse_graph<BidirectionalGraph, BidirectionalGraph&>
-make_reverse_graph(BidirectionalGraph& g);
+template <typename BidirectionalGraph,
+          typename GraphRef = const BidirectionalGraph&>
+class reverse_graph;
 
 template <typename BidirectionalGraph>
 reverse_graph<BidirectionalGraph, const BidirectionalGraph&>
-make_reverse_graph(const BidirectionalGraph& g)
+make_reverse_graph(const BidirectionalGraph& g);
+
+template <typename BidirectionalGraph>
+reverse_graph<BidirectionalGraph, BidirectionalGraph&>
+make_reverse_graph(BidirectionalGraph& g);
 ----
 
-Helper function for creating a `reverse_graph`.
+The `reverse_graph` does not copy the original graph. It holds a reference and
+swaps the meaning of `out_edges` and `in_edges`. This makes `source()` and
+`target()` return the opposite of what they return on the original graph.
 
-'''''
+The `GraphRef` parameter controls const-ness: `const BidirectionalGraph&`
+(default) gives a read-only view, `BidirectionalGraph&` gives a mutable view.
+
+== Template Parameters
+
+[cols="1,3,1",options="header"]
+|===
+| Parameter | Description | Default
+
+| `BidirectionalGraph`
+| The underlying graph type. Must model BidirectionalGraph.
+|
+
+| `GraphRef`
+| Reference type to the underlying graph. Use `const BidirectionalGraph&` for a
+  read-only view, `BidirectionalGraph&` for a mutable view.
+| `const BidirectionalGraph&`
+|===
+
+== Non-Member Functions
+
+=== Structure Access
 
 [source,cpp]
 ----
 std::pair<vertex_iterator, vertex_iterator>
-vertices(const reverse_graph& g)
+vertices(const reverse_graph& g);
 ----
 
-Returns an iterator-range providing access to the vertex set of graph
-`g`.
+Same vertices as the underlying graph.
 
-'''''
+'''
 
 [source,cpp]
 ----
-std::pair<out_edge_iterator, out_edge_iterator>
-out_edges(vertex_descriptor v, const reverse_graph& g)
+vertex_descriptor vertex(vertices_size_type n, const reverse_graph& g);
 ----
 
-Returns an iterator-range providing access to the out-edges of vertex
-`v` in graph `g`. These out-edges correspond to the in-edges of the
-adapted graph.
+Returns the nth vertex.
 
-'''''
-
-[source,cpp]
-----
-std::pair<in_edge_iterator, in_edge_iterator>
-in_edges(vertex_descriptor v, const reverse_graph& g)
-----
-
-Returns an iterator-range providing access to the in-edges of vertex
-`v` in graph `g`. These in-edges correspond to the out edges of the
-adapted graph.
-
-'''''
+'''
 
 [source,cpp]
 ----
 std::pair<adjacency_iterator, adjacency_iterator>
-adjacent_vertices(vertex_descriptor v, const reverse_graph& g)
+adjacent_vertices(vertex_descriptor v, const reverse_graph& g);
 ----
 
-Returns an iterator-range providing access to the adjacent vertices of
-vertex `v` in graph `g`.
+Returns the vertices adjacent to `v` through reversed edges.
 
-'''''
+'''
 
 [source,cpp]
 ----
-vertex_descriptor
-source(edge_descriptor e, const reverse_graph& g)
+std::pair<out_edge_iterator, out_edge_iterator>
+out_edges(vertex_descriptor v, const reverse_graph& g);
 ----
 
-Returns the source vertex of edge `e`.
+Returns the in-edges of `v` in the underlying graph (as out-edges of the
+reversed view).
 
-'''''
+'''
 
 [source,cpp]
 ----
-vertex_descriptor
-target(edge_descriptor e, const reverse_graph& g)
+std::pair<in_edge_iterator, in_edge_iterator>
+in_edges(vertex_descriptor v, const reverse_graph& g);
 ----
 
-Returns the target vertex of edge `e`.
+Returns the out-edges of `v` in the underlying graph (as in-edges of the
+reversed view).
 
-'''''
+'''
 
 [source,cpp]
 ----
-degree_size_type
-out_degree(vertex_descriptor u, const reverse_graph& g)
+vertex_descriptor source(edge_descriptor e, const reverse_graph& g);
+vertex_descriptor target(edge_descriptor e, const reverse_graph& g);
 ----
 
-Returns the number of edges leaving vertex `u`.
+Reversed: `source()` returns the target of the underlying edge, and vice versa.
 
-'''''
+'''
 
 [source,cpp]
 ----
-degree_size_type
-in_degree(vertex_descriptor u, const reverse_graph& g)
+degree_size_type out_degree(vertex_descriptor u, const reverse_graph& g);
+degree_size_type in_degree(vertex_descriptor u, const reverse_graph& g);
+vertices_size_type num_vertices(const reverse_graph& g);
+edges_size_type num_edges(const reverse_graph& g);
 ----
 
-Returns the number of edges entering vertex `u`. This operation is only
-available if `bidirectionalS` was specified for the `Directed` template
-parameter.
+Degree and count functions. `out_degree` returns the in-degree of the
+underlying graph, and vice versa.
 
-'''''
+=== Property Map Access
 
-[source,cpp]
-----
-vertices_size_type
-num_vertices(const reverse_graph& g)
-----
-
-Returns the number of vertices in the graph `g`.
-
-'''''
-
-[source,cpp]
-----
-vertex_descriptor
-vertex(vertices_size_type n, const reverse_graph& g)
-----
-
-Returns the nth vertex in the graph's vertex list.
-
-'''''
-
-[source,cpp]
-----
-std::pair<edge_descriptor, bool>
-edge(vertex_descriptor u, vertex_descriptor v,
-     const reverse_graph& g)
-----
-
-Returns the edge connecting vertex `u` to vertex `v` in graph `g`.
-
-'''''
+Property maps from the underlying graph are accessible through the reversed
+view. Additionally, the `edge_underlying_t` property maps reversed edge
+descriptors back to the underlying edge descriptors.
 
 [source,cpp]
 ----
 template <typename PropertyTag>
 property_map<reverse_graph, PropertyTag>::type
-get(PropertyTag, reverse_graph& g)
+get(PropertyTag, reverse_graph& g);
 
 template <typename PropertyTag>
 property_map<reverse_graph, PropertyTag>::const_type
-get(PropertyTag, const reverse_graph& g)
+get(PropertyTag, const reverse_graph& g);
 ----
 
-Returns the property map object for the vertex property specified by
-`PropertyTag`. The `PropertyTag` must match one of the properties
-specified in the graph's `VertexProperty` template argument.
+== Associated Types
 
-'''''
+[cols="1,3",options="header"]
+|===
+| Type | Description
 
-[source,cpp]
-----
-property_map<reverse_graph, edge_underlying_t>::const_type
-get(edge_underlying_t, const reverse_graph& g)
-----
+| `vertex_descriptor`
+| Same as the underlying graph.
 
-Returns a property map object that converts from edge descriptors in the
-`reverse_graph` to edge descriptors in the underlying
-`BidirectionalGraph` object.
+| `edge_descriptor`
+| Same as the underlying graph.
 
-'''''
+| `out_edge_iterator`
+| Corresponds to `in_edge_iterator` of the underlying graph.
 
-[source,cpp]
-----
-template <typename PropertyTag, typename X>
-typename property_traits<property_map<reverse_graph, PropertyTag>::const_type>::value_type
-get(PropertyTag, const reverse_graph& g, X x)
-----
+| `in_edge_iterator`
+| Corresponds to `out_edge_iterator` of the underlying graph.
 
-This returns the property value for `x`, which is either a vertex or
-edge descriptor.
+| `directed_category`
+| From the underlying graph.
 
-'''''
-
-[source,cpp]
-----
-typename graph_traits<BidirectionalGraph>::edge_descriptor
-get(edge_underlying_t, const reverse_graph& g, edge_descriptor e)
-----
-
-This returns the underlying edge descriptor for the edge `e` in the
-`reverse_graph`.
-
-'''''
-
-[source,cpp]
-----
-template <typename PropertyTag, typename X, typename Value>
-void
-put(PropertyTag, const reverse_graph& g, X x, const Value& value)
-----
-
-This sets the property value for `x` to `value`. `x` is either a
-vertex or edge descriptor. `Value` must be convertible to
-`typename property_traits<property_map<reverse_graph, PropertyTag>::type>::value_type`
-
-'''''
-
-[source,cpp]
-----
-template <typename GraphProperties, typename GraphPropertyTag>
-typename property_value<GraphProperties, GraphPropertyTag>::type&
-get_property(reverse_graph& g, GraphPropertyTag)
-----
-
-Return the property specified by `GraphPropertyTag` that is attached to
-the graph object `g`. The `property_value` traits class is defined in
-link:../../../boost/pending/property.hpp[`boost/pending/property.hpp`].
-
-'''''
-
-[source,cpp]
-----
-template <typename GraphProperties, typename GraphPropertyTag>
-const typename property_value<GraphProperties, GraphPropertyTag>::type&
-get_property(const reverse_graph& g, GraphPropertyTag)
-----
-
-Return the property specified by `GraphPropertyTag` that is attached to
-the graph object `g`. The `property_value` traits class is defined in
-link:../../../boost/pending/property.hpp[`boost/pending/property.hpp`].
+| `edge_parallel_category`
+| From the underlying graph.
+|===

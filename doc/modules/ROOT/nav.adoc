@@ -170,11 +170,11 @@
 ** xref:io/graphml.adoc[GraphML]
 ** xref:io/dimacs.adoc[DIMACS]
 * Graph Adaptors
-** xref:adaptors/subgraph.adoc[subgraph]
-** xref:adaptors/edge_list.adoc[Edge List]
-** xref:adaptors/reverse_graph.adoc[Reverse Graph]
+** xref:adaptors/overview.adoc[Overview]
 ** xref:adaptors/filtered_graph.adoc[Filtered Graph]
-** xref:adaptors/stanford_graph.adoc[Stanford GraphBase]
+** xref:adaptors/reverse_graph.adoc[Reverse Graph]
+** xref:adaptors/subgraph.adoc[Subgraph]
+** xref:adaptors/edge_list.adoc[Edge List]
 ** xref:adaptors/grid_graph.adoc[Grid Graph]
 * Traits and Iterators
 ** xref:traits/graph_traits.adoc[Graph Traits]

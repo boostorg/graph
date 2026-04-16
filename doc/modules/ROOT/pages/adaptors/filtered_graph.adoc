@@ -1,522 +1,299 @@
-[#sec:filtered-graph-class]
 = Filtered Graph
 
-....
+A view of a graph that hides vertices and/or edges based on predicate functions.
 
-filtered_graph<Graph, EdgePredicate, VertexPredicate>
-....
+*Defined in:* `<boost/graph/filtered_graph.hpp>` +
+*Models:* same concepts as the underlying graph (VertexListGraph, EdgeListGraph,
+IncidenceGraph, BidirectionalGraph, PropertyGraph, etc.)
 
-The `filtered_graph` class template is an adaptor that creates a
-filtered view of a graph. The predicate function objects determine which
-edges and vertices of the original graph will show up in the filtered
-graph. If the edge predicate returns `true` for an edge then it shows up
-in the filtered graph, and if the predicate returns `false` then the
-edge does not appear in the filtered graph. Likewise for vertices. The
-`filtered_graph` class does not create a copy of the original graph,
-but uses a reference to the original graph. The lifetime of the original
-graph must extend past any use of the filtered graph. The filtered graph
-does not change the structure of the original graph, though vertex and
-edge properties of the original graph can be changed through property
-maps of the filtered graph. Vertex and edge descriptors of the filtered
-graph are the same as, and interchangeable with, the vertex and edge
-descriptors of the original graph.
+WARNING: `num_vertices()` and `num_edges()` return counts from the _underlying_
+graph, not the filtered view. This means
+`std::distance(vertices(fg).first, vertices(fg).second) != num_vertices(fg)`.
+This is by design: computing filtered counts would be O(V) instead of O(1), and
+the vertex/edge indices would no longer fall in the range `[0, num_vertices(g))`
+which many algorithms assume. Some algorithms (e.g. `vf2_sub_graph_iso`) have
+been specifically patched to use `std::distance` instead of `num_vertices`.
 
-The <<num_vertices,`num_vertices`>> and
-<<num_edges,`num_edges`>> functions do not filter before
-returning results, so they return the number of vertices or edges in the
-underlying graph, unfiltered <<2,[2>>].
-
-==== Example
-
-In this example we will filter a graph's edges based on edge weight. We
-will keep all edges with positive edge weight. First, we create a
-predicate function object.
+== Example
 
 [source,cpp]
 ----
-
-template <typename EdgeWeightMap>
-struct positive_edge_weight {
-  positive_edge_weight() { }
-  positive_edge_weight(EdgeWeightMap weight) : m_weight(weight) { }
-  template <typename Edge>
-  bool operator()(const Edge& e) const {
-    return 0 < get(m_weight, e);
-  }
-  EdgeWeightMap m_weight;
-};
+include::example$adaptors/filtered_graph.cpp[]
 ----
 
-Now we create a graph and print out the filtered graph.
-
-[source,cpp]
-----
-
-int main()
-{
-  using namespace boost;
-
-  typedef adjacency_list<vecS, vecS, directedS,
-    no_property, property<edge_weight_t, int> > Graph;
-  typedef property_map<Graph, edge_weight_t>::type EdgeWeightMap;
-
-  enum { A, B, C, D, E, N };
-  const char* name = "ABCDE";
-  Graph g(N);
-  add_edge(A, B, 2, g);
-  add_edge(A, C, 0, g);
-  add_edge(C, D, 1, g);
-  add_edge(C, E, 0, g);
-  add_edge(D, B, 3, g);
-  add_edge(E, C, 0, g);
-
-  positive_edge_weight<EdgeWeightMap> filter(get(edge_weight, g));
-  filtered_graph<Graph, positive_edge_weight<EdgeWeightMap> >
-    fg(g, filter);
-
-  std::cout << "filtered edge set: ";
-  print_edges(fg, name);
-
-  std::cout << "filtered out-edges:" << std::endl;
-  print_graph(fg, name);
-
-  return 0;
-}
-----
-
-The output is:
+Expected output:
 
 ....
-
-filtered edge set: (A,B) (C,D) (D,B)
-filtered out-edges:
-A --> B
-B -->
-C --> D
-D --> B
-E -->
+Original: 4 edges
+  0 -> 1 (weight=5)
+  0 -> 2 (weight=0)
+  1 -> 3 (weight=3)
+  2 -> 3 (weight=0)
+Filtered (weight > 0):
+  0 -> 1 (weight=5)
+  1 -> 3 (weight=3)
 ....
 
-==== Template Parameters
-
-[cols=",,",options="header",]
-|===
-|Parameter |Description |Default
-|`Graph` |The underlying graph type. | 
-
-|`EdgePredicate` |A function object that selects which edges from the
-original graph will appear in the filtered graph. The function object
-must model http://www.boost.org/sgi/stl/Predicate.html[Predicate]. The
-argument type for the function object must be the edge descriptor type
-of the graph. Also, the predicate must be
-http://www.boost.org/sgi/stl/DefaultConstructible.html[Default
-Constructible] <<1,[1>>]. | 
-
-|`VertexPredicate` |A function object that selects which vertices from
-the original graph will appear in the filtered graph. The function
-object must model
-http://www.boost.org/sgi/stl/Predicate.html[Predicate]. The argument
-type for the function object must be the vertex descriptor type of the
-graph. Also, the predicate must be
-http://www.boost.org/sgi/stl/DefaultConstructible.html[Default
-Constructible] <<1,[1>>]. |`keep_all`
-|===
-
-==== Model of
-
-This depends on the underlying graph type. If the underlying `Graph`
-type models xref:concepts/VertexAndEdgeListGraph.adoc[VertexAndEdgeListGraph]
-and xref:concepts/PropertyGraph.adoc[PropertyGraph] then so does the filtered
-graph. If the underlying `Graph` type models fewer or smaller concepts
-than these, then so does the filtered graph.
-
-==== Where Defined
-
-link:../../../boost/graph/filtered_graph.hpp[`boost/graph/filtered_graph.hpp`]
-
-=== Associated Types
-
-'''''
-
-`graph_traits<filtered_graph>::vertex_descriptor` +
- +
-The type for the vertex descriptors associated with the
-`filtered_graph`, which is the same type as the
-`vertex_descriptor` for the original `Graph`.
-
-'''''
-
-`graph_traits<filtered_graph>::edge_descriptor` +
- +
- +
-The type for the edge descriptors associated with the
-`filtered_graph`, which is the same type as the
-`edge_descriptor` for the original `Graph`.
-
-'''''
-
-`graph_traits<filtered_graph>::vertex_iterator` +
- +
- +
-The type for the iterators returned by `vertices()`, which is:
+== Synopsis
 
 [source,cpp]
 ----
-
-filter_iterator<VertexPredicate, graph_traits<Graph>::vertex_iterator>
+template <typename Graph,
+          typename EdgePredicate,
+          typename VertexPredicate = keep_all>
+class filtered_graph;
 ----
 
-The iterator is a model of
-link:../../utility/MultiPassInputIterator.html[MultiPassInputIterator].
-
-'''''
-
-`graph_traits<filtered_graph>::edge_iterator` +
- +
-The type for the iterators returned by `edges()`, which is:
-
-[source,cpp]
-----
-
-filter_iterator<EdgePredicate, graph_traits<Graph>::edge_iterator>
-----
-
-The iterator is a model of
-link:../../utility/MultiPassInputIterator.html[MultiPassInputIterator].
-
-'''''
-
-`graph_traits<filtered_graph>::out_edge_iterator` +
- +
-The type for the iterators returned by `out_edges()`, which is:
-
-[source,cpp]
-----
-
-filter_iterator<EdgePredicate, graph_traits<Graph>::out_edge_iterator>
-----
-
-The iterator is a model of
-link:../../utility/MultiPassInputIterator.html[MultiPassInputIterator].
-
-'''''
-
-`graph_traits<filtered_graph>::adjacency_iterator` +
- +
-The type for the iterators returned by `adjacent_vertices()`. The
-`adjacency_iterator` models the same iterator concept as
-`out_edge_iterator`.
-
-'''''
-
-`graph_traits<filtered_graph>::directed_category` +
- +
- +
-Provides information about whether the graph is directed
-(`directed_tag`) or undirected (`undirected_tag`).
-
-'''''
-
-`graph_traits<filtered_graph>::edge_parallel_category` +
- +
- +
-This describes whether the graph class allows the insertion of parallel
-edges (edges with the same source and target). The two tags are
-`allow_parallel_edge_tag` and
-`disallow_parallel_edge_tag`.
-
-'''''
-
-`graph_traits<filtered_graph>::vertices_size_type` +
- +
-The type used for dealing with the number of vertices in the graph.
-
-'''''
-
-`graph_traits<filtered_graph>::edges_size_type` +
- +
-The type used for dealing with the number of edges in the graph.
-
-'''''
-
-`graph_traits<filtered_graph>::degree_size_type` +
- +
-The type used for dealing with the number of edges incident to a vertex
-in the graph.
-
-'''''
-
-`property_map<filtered_graph, Property>::type` +
-and +
-`property_map<filtered_graph, Property>::const_type` +
- +
-The property map type for vertex or edge properties in the graph. The
-same property maps from the adapted graph are available in the filtered
+The `filtered_graph` does not copy the original graph. It holds a reference to
+it. The lifetime of the original graph must extend past any use of the filtered
 graph.
 
-'''''
+Vertex and edge descriptors of the filtered graph are the same as, and
+interchangeable with, the descriptors of the original graph. Property maps from
+the original graph are available through the filtered graph.
 
-=== Member Functions
+== Template Parameters
 
-'''''
+[cols="1,3,1",options="header"]
+|===
+| Parameter | Description | Default
 
-....
+| `Graph`
+| The underlying graph type.
+|
 
-filtered_graph(Graph& g, EdgePredicate ep, VertexPredicate vp)
-....
+| `EdgePredicate`
+| Function object selecting which edges appear. Must model Predicate (argument
+  type: edge descriptor). Must be Default Constructible.
+|
 
-Create a filtered graph based on the graph _g_ and the edge filter _ep_
-and vertex filter _vp_.
+| `VertexPredicate`
+| Function object selecting which vertices appear. Must model Predicate
+  (argument type: vertex descriptor). Must be Default Constructible.
+| `keep_all`
+|===
 
-'''''
+NOTE: Predicates must be Default Constructible because they are stored by-value
+in filter iterators, and the C++ Standard requires iterators to be Default
+Constructible.
 
-....
+== Member Functions
 
-filtered_graph(Graph& g, EdgePredicate ep)
-....
+=== Constructors
 
-Create a filtered graph based on the graph _g_ and the edge filter _ep_.
-All vertices from the original graph are retained.
+[source,cpp]
+----
+filtered_graph(Graph& g, EdgePredicate ep, VertexPredicate vp);
+----
 
-'''''
+Create a filtered view of `g` with both edge and vertex filters.
 
-filtered_graph(const filtered_graph& x)
+'''
 
-This creates a filtered graph for the same underlying graph as _x_.
-Anotherwords, this is a shallow copy.
+[source,cpp]
+----
+filtered_graph(Graph& g, EdgePredicate ep);
+----
 
-'''''
+Create a filtered view of `g` with an edge filter only. All vertices are
+retained.
 
-....
+== Non-Member Functions
 
-filtered_graph& operator=(const filtered_graph& x)
-....
-
-This creates a filtered graph for the same underlying graph as _x_.
-Anotherwords, this is a shallow copy.
-
-'''''
-
-=== Non-Member Functions
-
-===== Structure Access
-
-'''''
+=== Structure Access
 
 [source,cpp]
 ----
 std::pair<vertex_iterator, vertex_iterator>
-vertices(const filtered_graph& g)
+vertices(const filtered_graph& g);
 ----
 
-Returns an iterator-range providing access to the vertex set of graph
-`g`.
+Returns an iterator-range for the filtered vertex set.
 
-'''''
+'''
 
 [source,cpp]
 ----
 std::pair<edge_iterator, edge_iterator>
-edges(const filtered_graph& g)
+edges(const filtered_graph& g);
 ----
 
-Returns an iterator-range providing access to the edge set of graph
-`g`.
+Returns an iterator-range for the filtered edge set.
 
-'''''
-
-[source,cpp]
-----
-std::pair<adjacency_iterator, adjacency_iterator>
-adjacent_vertices(vertex_descriptor u, const filtered_graph& g)
-----
-
-Returns an iterator-range providing access to the vertices adjacent to
-vertex `u` in graph `g`.
-
-'''''
+'''
 
 [source,cpp]
 ----
 std::pair<out_edge_iterator, out_edge_iterator>
-out_edges(vertex_descriptor u, const filtered_graph& g)
+out_edges(vertex_descriptor u, const filtered_graph& g);
 ----
 
-Returns an iterator-range providing access to the out-edges of vertex
-`u` in graph `g`. If the graph is undirected, this iterator-range
-provides access to all edges incident on vertex `u`. For both directed
-and undirected graphs, for an out-edge `e`, `source(e, g) == u` and
-`target(e, g) == v` where `v` is a vertex adjacent to `u`.
+Returns an iterator-range for the filtered out-edges of vertex `u`.
 
-'''''
+'''
 
 [source,cpp]
 ----
 std::pair<in_edge_iterator, in_edge_iterator>
-in_edges(vertex_descriptor v, const filtered_graph& g)
+in_edges(vertex_descriptor v, const filtered_graph& g);
 ----
 
-Returns an iterator-range providing access to the in-edges of vertex
-`v` in graph `g`. For an in-edge `e`, `target(e, g) == v` and
-`source(e, g) == u` for some vertex `u` that is adjacent to `v`,
-whether the graph is directed or undirected.
+Returns an iterator-range for the filtered in-edges of vertex `v`.
+Requires the underlying graph to model BidirectionalGraph.
 
-'''''
+'''
 
 [source,cpp]
 ----
-vertex_descriptor
-source(edge_descriptor e, const filtered_graph& g)
+std::pair<adjacency_iterator, adjacency_iterator>
+adjacent_vertices(vertex_descriptor u, const filtered_graph& g);
 ----
 
-Returns the source vertex of edge `e`.
+Returns an iterator-range for the vertices adjacent to `u` through filtered
+edges.
 
-'''''
+'''
 
 [source,cpp]
 ----
-vertex_descriptor
-target(edge_descriptor e, const filtered_graph& g)
+vertex_descriptor source(edge_descriptor e, const filtered_graph& g);
+vertex_descriptor target(edge_descriptor e, const filtered_graph& g);
 ----
 
-Returns the target vertex of edge `e`.
+Returns the source/target vertex of edge `e`.
 
-'''''
+'''
 
 [source,cpp]
 ----
-degree_size_type
-out_degree(vertex_descriptor u, const filtered_graph& g)
+degree_size_type out_degree(vertex_descriptor u, const filtered_graph& g);
+degree_size_type in_degree(vertex_descriptor u, const filtered_graph& g);
 ----
 
-Returns the number of edges leaving vertex `u`.
+Returns the filtered out-degree/in-degree of vertex `u`.
 
-'''''
+'''
 
 [source,cpp]
 ----
-degree_size_type
-in_degree(vertex_descriptor u, const filtered_graph& g)
+vertices_size_type num_vertices(const filtered_graph& g);
+edges_size_type num_edges(const filtered_graph& g);
 ----
 
-Returns the number of edges entering vertex `u`.
+Returns the number of vertices/edges in the _underlying_ graph (not the
+filtered count).
 
-'''''
-
-[[num_vertices]]
-[source,cpp]
-----
-vertices_size_type
-num_vertices(const filtered_graph& g)
-----
-
-Returns the number of vertices in the underlying graph <<2,[2]>>.
-
-'''''
-
-[[num_edges]]
-[source,cpp]
-----
-edges_size_type
-num_edges(const filtered_graph& g)
-----
-
-Returns the number of edges in the underlying graph <<2,[2]>>.
-
-'''''
+'''
 
 [source,cpp]
 ----
 std::pair<edge_descriptor, bool>
-edge(vertex_descriptor u, vertex_descriptor v,
-     const filtered_graph& g)
+edge(vertex_descriptor u, vertex_descriptor v, const filtered_graph& g);
 ----
 
-Returns the edge connecting vertex `u` to vertex `v` in graph `g`.
+Returns the edge connecting `u` to `v`, if it exists and passes the filter.
 
-'''''
+'''
 
 [source,cpp]
 ----
-template <typename G, typename EP, typename VP>
 std::pair<out_edge_iterator, out_edge_iterator>
 edge_range(vertex_descriptor u, vertex_descriptor v,
-           const filtered_graph& g)
+           const filtered_graph& g);
 ----
 
-Returns a pair of out-edge iterators that give the range for all the
-parallel edges from `u` to `v`. This function only works when the
-underlying graph supports `edge_range`, which requires that it sorts
-its out edges according to target vertex and allows parallel edges. The
-`adjacency_list` class with `OutEdgeList=multisetS` is an example of
-such a graph.
+Returns all parallel edges from `u` to `v`. Only works when the underlying
+graph sorts out-edges by target (e.g. `adjacency_list` with
+`OutEdgeList=multisetS`).
 
-'''''
-
-===== Property Map Access
-
-'''''
+=== Property Map Access
 
 [source,cpp]
 ----
 template <typename PropertyTag>
 property_map<filtered_graph, PropertyTag>::type
-get(PropertyTag, filtered_graph& g)
+get(PropertyTag, filtered_graph& g);
 
 template <typename PropertyTag>
 property_map<filtered_graph, PropertyTag>::const_type
-get(PropertyTag, const filtered_graph& g)
+get(PropertyTag, const filtered_graph& g);
 ----
 
-Returns the property map object for the vertex property specified by
-`PropertyTag`. The `PropertyTag` must match one of the properties
-specified in the graph's `VertexProperty` template argument.
+Returns the property map for the given tag. The same property maps from the
+underlying graph are accessible through the filtered graph.
 
-'''''
+'''
 
 [source,cpp]
 ----
 template <typename PropertyTag, typename X>
-typename property_traits<property_map<filtered_graph, PropertyTag>::const_type>::value_type
-get(PropertyTag, const filtered_graph& g, X x)
+auto get(PropertyTag, const filtered_graph& g, X x);
 ----
 
-This returns the property value for `x`, where `x` is either a vertex
-or edge descriptor.
+Returns the property value for vertex or edge `x`.
 
-'''''
+'''
 
 [source,cpp]
 ----
 template <typename PropertyTag, typename X, typename Value>
-void
-put(PropertyTag, const filtered_graph& g, X x, const Value& value)
+void put(PropertyTag, const filtered_graph& g, X x, const Value& value);
 ----
 
-This sets the property value for `x` to `value`. `x` is either a
-vertex or edge descriptor. `Value` must be convertible to
-`typename property_traits<property_map<filtered_graph, PropertyTag>::type>::value_type`
+Sets the property value for vertex or edge `x`. This modifies the property in
+the underlying graph.
 
-'''''
+== Associated Types
 
-==== See Also
+[cols="1,3",options="header"]
+|===
+| Type | Description
 
-xref:helpers/property_map.adoc[`property_map`],
-xref:traits/graph_traits.adoc[`graph_traits`]
+| `vertex_descriptor`
+| Same as the underlying graph.
 
-==== Notes
+| `edge_descriptor`
+| Same as the underlying graph.
 
-[[1]][1] The reason for requiring
-http://www.boost.org/sgi/stl/DefaultConstructible.html[Default
-Constructible] in the `EdgePredicate` and `VertexPredicate` types is
-that these predicates are stored by-value (for performance reasons) in
-the filter iterator adaptor, and iterators are required to be Default
-Constructible by the C++ Standard.
+| `vertex_iterator`
+| `filter_iterator<VertexPredicate, graph_traits<Graph>::vertex_iterator>`
 
-[[2]][2] It would be nicer to return the number of vertices (or edges)
-remaining after the filter has been applied, but this has two problems.
-The first is that it would take longer to calculate, and the second is
-that it would interact badly with the underlying vertex/edge index
-mappings. The index mapping would no longer fall in the range
-`[0,num_vertices(g))` (resp. `[0, num_edges(g))`) which is assumed in
-many of the algorithms.
+| `edge_iterator`
+| `filter_iterator<EdgePredicate, graph_traits<Graph>::edge_iterator>`
+
+| `out_edge_iterator`
+| `filter_iterator<EdgePredicate, graph_traits<Graph>::out_edge_iterator>`
+
+| `adjacency_iterator`
+| Models the same iterator concept as `out_edge_iterator`.
+
+| `directed_category`
+| `directed_tag` or `undirected_tag` (from underlying graph).
+
+| `edge_parallel_category`
+| `allow_parallel_edge_tag` or `disallow_parallel_edge_tag` (from underlying graph).
+
+| `vertices_size_type`, `edges_size_type`, `degree_size_type`
+| Size types from the underlying graph.
+|===
+
+== Helper Predicates
+
+The header provides several ready-made predicates:
+
+[cols="1,3"]
+|===
+| Predicate | Description
+
+| `keep_all`
+| Keeps all elements (the default vertex predicate).
+
+| `is_residual_edge<ResCapMap>`
+| Keeps edges with positive residual capacity. Useful for max-flow.
+
+| `is_in_subset<Set>`
+| Keeps vertices that are in the given set.
+
+| `is_not_in_subset<Set>`
+| Keeps vertices that are not in the given set.
+|===
