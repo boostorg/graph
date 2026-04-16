@@ -165,12 +165,10 @@
 *** xref:visitors/tsp_tour_visitor.adoc[TSP Tour Visitor]
 *** xref:visitors/tsp_tour_len_visitor.adoc[TSP Tour Len Visitor]
 * Graph I/O
-** xref:io/read_graphviz.adoc[Read GraphViz]
-** xref:io/write-graphviz.adoc[Write GraphViz]
-** xref:io/read_dimacs.adoc[Read DIMACS]
-** xref:io/write_dimacs.adoc[Write DIMACS]
-** xref:io/read_graphml.adoc[Read GraphML]
-** xref:io/write_graphml.adoc[Write GraphML]
+** xref:io/overview.adoc[Overview]
+** xref:io/graphviz.adoc[GraphViz (DOT)]
+** xref:io/graphml.adoc[GraphML]
+** xref:io/dimacs.adoc[DIMACS]
 * Graph Adaptors
 ** xref:adaptors/subgraph.adoc[subgraph]
 ** xref:adaptors/edge_list.adoc[Edge List]

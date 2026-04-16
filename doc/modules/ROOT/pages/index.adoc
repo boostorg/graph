@@ -40,8 +40,8 @@ existing one at specific event points (vertex discovered, edge relaxed, etc.).
 * C++14 or later
 * Boost headers: BGL is part of the Boost distribution and requires no separate install.
   It is header-only, so no build step is needed. The only exceptions are the
-  xref:io/read_graphviz.adoc[GraphViz input parser] and the
-  xref:io/read_graphml.adoc[GraphML parser].
+  xref:io/graphviz.adoc[GraphViz parser] and the
+  xref:io/graphml.adoc[GraphML parser].
 * Compile with `-O2` or `-O3`. Template-heavy code is significantly slower in debug builds,
   to the point of being misleading about real performance.
 

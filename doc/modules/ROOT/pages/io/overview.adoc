@@ -1,0 +1,73 @@
+= Graph I/O
+
+BGL supports reading and writing graphs in three formats.
+
+[cols="1,2,2,1"]
+|===
+| Format | Best for | Properties | Linking
+
+| GraphViz (DOT)
+| Visualization, general exchange
+| Arbitrary vertex, edge, and graph attributes
+| Requires `libboost_graph`
+
+| GraphML (XML)
+| Interoperability with other graph tools
+| Typed attributes with XML schema
+| Requires `libboost_graph`
+
+| DIMACS
+| Max-flow / min-cut benchmarks
+| Edge capacity only
+| Header-only
+|===
+
+GraphViz and GraphML parsers require linking against `libboost_graph` because
+they contain non-template code: the DOT parser uses a grammar that cannot be
+instantiated in a header, and the GraphML reader depends on an XML parser.
+DIMACS is a trivial line-oriented format and is fully header-only.
+
+WARNING: Property map value types must be default-constructible. Unspecified
+attributes receive default-constructed values during reading.
+
+WARNING: The graph's directionality must match the file. Reading a `digraph`
+(DOT) or directed edges (GraphML) into an undirected graph type throws
+`directed_graph_error`. The reverse throws `undirected_graph_error`.
+
+== dynamic_properties
+
+File formats store attributes by name: a vertex might have a `"name"` string
+and an edge might have a `"weight"` double. BGL property maps are type-safe
+but have no name. `get(vertex_name, g)` is a compile-time tag, not a string.
+
+`dynamic_properties` bridges this gap. It is a runtime registry that binds
+string names (as they appear in the file) to typed BGL property maps. The I/O
+functions use it to know which file attribute maps to which property map, and
+what type to read or write.
+
+[source,cpp]
+----
+dynamic_properties dp;
+
+// Bind the string "name" to the vertex_name property map
+dp.property("name", get(vertex_name, g));
+
+// Bind the string "weight" to the edge_weight property map
+dp.property("weight", get(edge_weight, g));
+----
+
+The same `dynamic_properties` object is then passed to both read and write
+functions. When reading, the parser looks up each attribute name in the
+registry and calls `put()` on the corresponding map. When writing, each
+registered map is queried with `get()` for every vertex or edge.
+
+TIP: By default, `dynamic_properties` throws `property_not_found` if the
+file contains an attribute that was not registered. To silently skip unknown
+attributes, pass `ignore_other_properties` to the constructor:
+
+[source,cpp]
+----
+dynamic_properties dp(ignore_other_properties);
+dp.property("weight", get(edge_weight, g));
+// All other attributes in the file are silently ignored
+----
