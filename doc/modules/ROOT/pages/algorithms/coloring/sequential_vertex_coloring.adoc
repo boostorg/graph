@@ -102,7 +102,7 @@ sequential_vertex_coloring(
 
 == Description
 
-Computes a xref:examples/graph_coloring.adoc[vertex coloring] for the vertices in
+Computes a vertex coloring for the vertices in
 the graph, using a simple algorithm
 [xref:about/bibliography.adoc#coleman83[59]]. Given vertices ordered
 v~1~, v~2~, ... , v~n~, for k = 1, 2, ..., n the algorithm assigns v~k~

@@ -219,12 +219,6 @@
 ** xref:traits/property.adoc[property]
 ** xref:iterators/adjacency_iterator.adoc[Adjacency Iterator]
 ** xref:iterators/inv_adjacency_iterator.adoc[Inverse Adjacency Iterator]
-* Examples
-** xref:examples/modern_examples.adoc[Modern Examples]
-** xref:examples/file_dependency_example.adoc[File Dependency]
-** xref:examples/kevin_bacon.adoc[Six Degrees of Kevin Bacon]
-** xref:examples/graph_coloring.adoc[Graph Coloring]
-** xref:examples/sparse_matrix_ordering.adoc[Sparse Matrix Ordering]
 * xref:auxiliary/exception.adoc[Exceptions]
 * Background
 ** xref:overview/graph_theory_review.adoc[Graph Theory Review]

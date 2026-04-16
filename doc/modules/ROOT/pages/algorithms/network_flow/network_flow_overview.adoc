@@ -58,3 +58,33 @@ source to a sink, or the minimum-cost way to route a given amount of flow.
 TIP: For max flow, start with push-relabel. Use Boykov-Kolmogorov only for
 grid-like graphs (image segmentation). For minimum cut without a fixed
 source/sink, use Stoer-Wagner.
+
+== Setting up a flow network
+
+All max-flow algorithms require internal property tags: `edge_capacity_t`,
+`edge_residual_capacity_t`, and `edge_reverse_t`. For every edge (u,v) you
+must also add a reverse edge (v,u) and link them via the reverse-edge map.
+
+[source,cpp]
+----
+using Traits = adjacency_list_traits<vecS, vecS, directedS>;
+using Graph = adjacency_list<vecS, vecS, directedS,
+    no_property,
+    property<edge_capacity_t, int,
+    property<edge_residual_capacity_t, int,
+    property<edge_reverse_t, Traits::edge_descriptor>>>>;
+
+// Helper to add an edge and its reverse
+void add_flow_edge(Graph& g, int u, int v, int cap) {
+    auto e1 = add_edge(u, v, g).first;
+    auto e2 = add_edge(v, u, g).first;
+    put(edge_capacity, g, e1, cap);
+    put(edge_capacity, g, e2, 0);    // reverse edge has 0 capacity
+    put(edge_reverse, g, e1, e2);
+    put(edge_reverse, g, e2, e1);
+}
+----
+
+WARNING: Boykov-Kolmogorov additionally requires `vertex_color_t`,
+`vertex_distance_t`, and `vertex_predecessor_t` internal properties on
+vertices. Push-Relabel and Edmonds-Karp do not.

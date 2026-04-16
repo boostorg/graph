@@ -273,9 +273,7 @@ explored. Below we list the vertices of the graph ordered by discover
 and finish time, as well as show the parenthesis structure. DFS is used
 as the kernel for several other graph algorithms, including topological
 sort and two of the connected component algorithms. It can also be used
-to detect cycles (see the
-xref:examples/file_dependency_example.adoc#sec:cycles[Cylic Dependencies] section
-of the File Dependency Example).
+to detect cycles (use a DFS visitor that checks for back edges).
 
 [#fig:dfs-example]
 

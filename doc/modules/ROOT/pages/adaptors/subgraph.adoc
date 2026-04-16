@@ -143,9 +143,9 @@ Standard graph functions: `vertices()`, `edges()`, `out_edges()`, `in_edges()`,
 
 === Structure Modification
 
-WARNING: `remove_vertex()` is not implemented. Calling it triggers an assertion
-failure at runtime. If you need to hide vertices, use `filtered_graph` on top
-of the subgraph.
+WARNING: `remove_vertex()` is not implemented (commented out in the source).
+Calling it will not compile. If you need to hide vertices, use `filtered_graph`
+on top of the subgraph.
 
 [source,cpp]
 ----

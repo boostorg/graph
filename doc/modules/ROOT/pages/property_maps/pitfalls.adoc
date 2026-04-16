@@ -141,10 +141,13 @@ add_edge(0, 1, 0, g);
 add_edge(1, 2, 1, g);
 ----
 
-== Wrong index map for listS
+== No vertex_index with listS
 
 With `VertexList = listS`, there is no built-in `vertex_index` property.
-Calling `get(vertex_index, g)` fails to compile.
+This breaks not just `get(vertex_index, g)` but also any algorithm that
+internally creates default property maps (color maps, distance maps, etc.)
+using vertex_index. BFS, DFS, Dijkstra, `copy_graph`, `topological_sort`,
+and most other algorithms are affected.
 
 .Broken
 [source,cpp]
