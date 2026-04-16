@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Maximum Weighted Matching :: Boost.Graph Documentation</title>
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.boost.org">Boost</a>
+      <span class="navbar-item">Boost.Graph Documentation</span>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="graph" data-version="">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../../index.html">Boost.Graph</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../index.html">Introduction</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../graph_classes/primitives.html">Primitives</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Graph Classes</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../graph_classes/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../graph_classes/adjacency_list.html">Adjacency List</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../graph_classes/adjacency_matrix.html">Adjacency Matrix</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../graph_classes/compressed_sparse_row.html">Compressed Sparse Row Graph</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Graph Generators</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../generators/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../generators/random.html">Random Graph Utilities</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../generators/erdos_renyi_generator.html">Erdős-Rényi (Uniform Random)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../generators/rmat_generator.html">Scale-Free (R-MAT)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../generators/plod_generator.html">PLOD (Power Law)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../generators/small_world_generator.html">Small World (Watts-Strogatz)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../generators/mesh_generator.html">Mesh (2D Grid)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../generators/ssca_generator.html">SSCA (Clustered Benchmark)</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Algorithms</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Traversal</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../traversal/traversal_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../traversal/breadth_first_search.html">Breadth First Search</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../traversal/breadth_first_visit.html">Breadth First Visit</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../traversal/depth_first_search.html">Depth First Search</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../traversal/depth_first_visit.html">Depth First Visit</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../traversal/undirected_dfs.html">Undirected DFS</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Shortest Paths</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../shortest_paths/shortest_paths_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../shortest_paths/dijkstra_shortest_paths.html">Dijkstra Shortest Paths</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../shortest_paths/dijkstra_shortest_paths_no_color_map.html">Dijkstra Shortest Paths No Color Map</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../shortest_paths/bellman_ford_shortest.html">Bellman-Ford Shortest Paths</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../shortest_paths/dag_shortest_paths.html">DAG Shortest Paths</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../shortest_paths/johnson_all_pairs_shortest.html">Johnson All Pairs Shortest Paths</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../shortest_paths/floyd_warshall_shortest.html">Floyd-Warshall All Pairs Shortest Paths</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../shortest_paths/r_c_shortest_paths.html">Resource-Constrained Shortest Paths</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../shortest_paths/astar_search.html">A* Search</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Spanning Trees</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../spanning_trees/spanning_trees_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../spanning_trees/kruskal_min_spanning_tree.html">Kruskal Minimum Spanning Tree</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../spanning_trees/prim_minimum_spanning_tree.html">Prim Minimum Spanning Tree</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../spanning_trees/random_spanning_tree.html">Random Spanning Tree</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../spanning_trees/two_graphs_common_spanning_trees.html">Two Graphs Common Spanning Trees</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Connected Components</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../connected_components/connected_components_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../connected_components/connected_components.html">Connected Components</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../connected_components/strong_components.html">Strong Components</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../connected_components/biconnected_components.html">Biconnected Components</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../connected_components/incremental_components.html">Incremental Components</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Network Flow</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="network_flow_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="edmonds_karp_max_flow.html">Edmonds-Karp Max Flow</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="push_relabel_max_flow.html">Push-Relabel Max Flow</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="boykov_kolmogorov_max_flow.html">Boykov-Kolmogorov Max Flow</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="stoer_wagner_min_cut.html">Stoer-Wagner Min Cut</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="cycle_canceling.html">Cycle Canceling</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="successive_shortest_path_nonnegative_weights.html">Successive Shortest Path Nonnegative Weights</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="find_flow_cost.html">Find Flow Cost</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="maximum_matching.html">Edmonds Maximum Cardinality Matching</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="maximum_weighted_matching.html">Maximum Weighted Matching</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Topological Sort</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../topological_sort/topological_sort_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../topological_sort/topological_sort.html">Topological Sort</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Graph Coloring</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../coloring/coloring_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../coloring/sequential_vertex_coloring.html">Sequential Vertex Coloring</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../coloring/edge_coloring.html">Edge Coloring</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../coloring/is_bipartite.html">Is Bipartite</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../coloring/find_odd_cycle.html">Find Odd Cycle</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Connectivity</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../connectivity/connectivity_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../connectivity/edge_connectivity.html">Edge Connectivity</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../connectivity/st_connected.html">ST Connected</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Graph Metrics</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/metrics_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/page_rank.html">PageRank</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/betweenness_centrality.html">Brandes Betweenness Centrality</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/degree_centrality.html">Degree Centrality</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/closeness_centrality.html">Closeness Centrality</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/eccentricity.html">Eccentricity</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/geodesic_distance.html">Geodesic Distance</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/clustering_coefficient.html">Clustering Coefficient</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/core_numbers.html">Core Numbers</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/profile.html">Profile</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/wavefront.html">Wavefront</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/bandwidth.html">Bandwidth</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Graph Isomorphism</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../isomorphism/isomorphism_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../isomorphism/isomorphism.html">Isomorphism</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../isomorphism/vf2_sub_graph_iso.html">VF2 Subgraph Isomorphism</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../isomorphism/mcgregor_common_subgraphs.html">McGregor Common Subgraphs</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Planar Graphs</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../planar/planar_graphs.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../planar/boyer_myrvold.html">Boyer-Myrvold Planarity Test</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../planar/planar_face_traversal.html">Planar Face Traversal</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../planar/planar_canonical_ordering.html">Planar Canonical Ordering</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../planar/straight_line_drawing.html">Chrobak-Payne Straight Line Drawing</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../planar/is_straight_line_drawing.html">Is Straight Line Drawing</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../planar/is_kuratowski_subgraph.html">Is Kuratowski Subgraph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../planar/make_connected.html">Make Connected</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../planar/make_biconnected_planar.html">Make Biconnected Planar</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../planar/make_maximal_planar.html">Make Maximal Planar</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Layout</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../layout/layout_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../layout/topology.html">Topologies</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../layout/random_layout.html">Random Graph Layout</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../layout/circle_layout.html">Circle Layout</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../layout/kamada_kawai_spring_layout.html">Kamada-Kawai Spring Layout</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../layout/fruchterman_reingold.html">Fruchterman-Reingold Force Directed Layout</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../layout/gursoy_atun_layout.html">Gürsoy-Atun Layout</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/layout_tolerance.html">Layout Tolerance</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Sparse Matrix Ordering</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../ordering/ordering_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../ordering/cuthill_mckee_ordering.html">Cuthill-McKee Ordering</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../ordering/king_ordering.html">King Ordering</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../ordering/minimum_degree_ordering.html">Minimum Degree Ordering</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../ordering/sloan_ordering.html">Sloan Ordering</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../ordering/sloan_start_end_vertices.html">Sloan Start End Vertices</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Cycle Detection</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cycle_detection/cycle_detection_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cycle_detection/hawick_circuits.html">Hawick Circuits</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cycle_detection/tiernan_all_cycles.html">Tiernan All Cycles</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cycle_detection/howard_cycle_ratio.html">Cycle Ratio</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Clique Detection</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../clique_detection/clique_detection_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../clique_detection/bron_kerbosch.html">Bron-Kerbosch All Cliques</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Utility</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/utility_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/copy_graph.html">Copy Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/transpose_graph.html">Transpose Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/transitive_closure.html">Transitive Closure</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/transitive_reduction.html">Transitive Reduction</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/smallest_last_ordering.html">Smallest Last Ordering</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/lengauer_tarjan_dominator.html">Lengauer-Tarjan Dominator Tree</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/metric_tsp_approx.html">Metric TSP Approximation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/maximum_adjacency_search.html">Maximum Adjacency Search</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/bc_clustering.html">Betweenness Centrality Clustering</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/disjoint_sets.html">Disjoint Sets</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/incident.html">Incident</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/opposite.html">Opposite</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/neighbor_bfs.html">Neighbor BFS</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/loop_erased_random_walk.html">Loop-Erased Random Walk</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/graph_stats.html">Graph Statistics</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Property Maps</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../property_maps/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../property_maps/bundled.html">Bundled Properties</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../property_maps/external.html">External Properties</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../property_maps/tags.html">Internal Tags (Legacy)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../property_maps/pitfalls.html">Common Mistakes</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Concepts</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../concepts/graph_concepts.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Graph Structure</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/Graph.html">Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/IncidenceGraph.html">Incidence Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/BidirectionalGraph.html">Bidirectional Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/AdjacencyGraph.html">Adjacency Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/VertexListGraph.html">Vertex List Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/EdgeListGraph.html">Edge List Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/VertexAndEdgeListGraph.html">Vertex and Edge List Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/AdjacencyMatrix.html">Adjacency Matrix</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/MutableGraph.html">Mutable Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/VertexMutableGraph.html">Vertex Mutable Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/EdgeMutableGraph.html">Edge Mutable Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/PropertyGraph.html">Property Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/MutablePropertyGraph.html">Mutable Property Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/IteratorConstructibleGraph.html">Iterator Constructible Graph</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Property and Value Types</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/ColorValue.html">Color Value</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/Buffer.html">Buffer</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/BasicMatrix.html">Basic Matrix</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/Monoid.html">Monoid</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/KeyedUpdatableQueue.html">Keyed Updatable Queue</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/UpdatableQueue.html">Updatable Queue</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/PlanarEmbedding.html">Planar Embedding</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/PropertyTag.html">Property Tag</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Visitors</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../visitors/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Pre-built Event Visitors</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/predecessor_recorder.html">Predecessor Recorder</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/distance_recorder.html">Distance Recorder</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/time_stamper.html">Time Stamper</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/property_put.html">Property Put</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/property_writer.html">Property Writer</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/edge_predecessor_recorder.html">Edge Predecessor Recorder</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/null_visitor.html">Null Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/tsp_tour_visitor.html">TSP Tour Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/tsp_tour_len_visitor.html">TSP Tour Len Visitor</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Concepts</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/BFSVisitor.html">BFS Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/DFSVisitor.html">DFS Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/DijkstraVisitor.html">Dijkstra Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/BellmanFordVisitor.html">Bellman-Ford Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/AStarVisitor.html">A* Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/AStarHeuristic.html">A* Heuristic</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/EventVisitor.html">Event Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/PlanarFaceVisitor.html">Planar Face Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/TSPTourVisitor.html">TSP Tour Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/AddEdgeVisitor.html">Add Edge Visitor</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Algorithm adaptors</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/EventVisitorList.html">Event Visitor List</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/bfs_visitor.html">BFS Visitor Adaptor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/dfs_visitor.html">DFS Visitor Adaptor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/dijkstra_visitor.html">Dijkstra Visitor Adaptor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/bellman_visitor.html">Bellman-Ford Visitor Adaptor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/astar_visitor.html">A* Visitor Adaptor</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Graph I/O</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../io/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../io/graphviz.html">GraphViz (DOT)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../io/graphml.html">GraphML</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../io/dimacs.html">DIMACS</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Graph Adaptors</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../adaptors/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../adaptors/filtered_graph.html">Filtered Graph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../adaptors/reverse_graph.html">Reverse Graph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../adaptors/subgraph.html">Subgraph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../adaptors/edge_list.html">Edge List</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../adaptors/grid_graph.html">Grid Graph</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Traits and Iterators</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../traits/graph_traits.html">Graph Traits</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../traits/adjacency_list_traits.html">Adjacency List Traits</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../traits/property_map.html">Property Map</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../traits/property.html">property</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../iterators/adjacency_iterator.html">Adjacency Iterator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../iterators/inv_adjacency_iterator.html">Inverse Adjacency Iterator</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../auxiliary/exception.html">Exceptions</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Background</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../overview/graph_theory_review.html">Graph Theory Review</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../auxiliary/bgl_named_params.html">Named Parameters</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../overview/faq.html">FAQ</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Extending the BGL</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../extending/overview.html">Writing Algorithms for BGL</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../extending/constructing_algorithms.html">Worked Example: Graph Coloring</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../extending/custom_storage.html">Custom Adjacency List Storage</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../extending/leda_conversion.html">Adapting Existing Graph Structures</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">About</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../about/design.html">Design Rationale</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../about/history.html">History</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../about/acknowledgements.html">Acknowledgements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../about/publications.html">Publications</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../about/users.html">BGL Users</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../about/bibliography.html">Bibliography</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Boost.Graph</span>
+    <span class="version"></span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../../index.html">Boost.Graph</a></div>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../index.html">Boost.Graph</a></li>
+    <li>Algorithms</li>
+    <li>Network Flow</li>
+    <li><a href="maximum_weighted_matching.html">Maximum Weighted Matching</a></li>
+  </ul>
+</nav>
+<div class="edit-this-page"><a href="file:///Users/arnaudbecheler/dev/boost/forks/graph/doc/modules/ROOT/pages/algorithms/network_flow/maximum_weighted_matching.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Maximum Weighted Matching</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Finds a matching in an undirected edge-weighted graph that maximizes the sum of matched edge weights.</p>
+</div>
+<div class="paragraph">
+<p>Complexity: <em>O(n<sup>3</sup>)</em> for <code>maximum_weighted_matching</code>; exponential in <em>m</em> for brute force<br>
+<strong>Defined in:</strong> <code>&lt;boost/graph/maximum_weighted_matching.hpp&gt;</code></p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_1_maximum_weighted_matching_default_maps"><a class="anchor" href="#_1_maximum_weighted_matching_default_maps"></a>(1) maximum_weighted_matching (default maps)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename MateMap&gt;
+void maximum_weighted_matching(
+    const Graph&amp; g,
+    MateMap mate);</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 12.5%;">
+<col style="width: 25%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Direction</th>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const Graph&amp; g</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An undirected graph. The graph type must be a model of
+  <a href="../../concepts/VertexAndEdgeListGraph.html" class="xref page">Vertex and Edge List Graph</a> and
+  <a href="../../concepts/IncidenceGraph.html" class="xref page">Incidence Graph</a>.
+  The graph may not contain parallel edges.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MateMap mate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Must be a model of
+  <a href="../../property_map/doc/ReadWritePropertyMap.html">ReadWritePropertyMap</a>,
+  mapping vertices to vertices. For any vertex v in the graph,
+  <code>get(mate, v)</code> will be the vertex that v is matched to, or
+  <code>graph_traits&lt;Graph&gt;::null_vertex()</code> if v is not matched.</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_2_maximum_weighted_matching_with_vertex_index_map"><a class="anchor" href="#_2_maximum_weighted_matching_with_vertex_index_map"></a>(2) maximum_weighted_matching (with vertex index map)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename MateMap,
+          typename VertexIndexMap&gt;
+void maximum_weighted_matching(
+    const Graph&amp; g,
+    MateMap mate,
+    VertexIndexMap vm);</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 12.5%;">
+<col style="width: 25%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Direction</th>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const Graph&amp; g</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An undirected graph. The graph type must be a model of
+  <a href="../../concepts/VertexAndEdgeListGraph.html" class="xref page">Vertex and Edge List Graph</a> and
+  <a href="../../concepts/IncidenceGraph.html" class="xref page">Incidence Graph</a>.
+  The graph may not contain parallel edges.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MateMap mate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Must be a model of
+  <a href="../../property_map/doc/ReadWritePropertyMap.html">ReadWritePropertyMap</a>,
+  mapping vertices to vertices. For any vertex v in the graph,
+  <code>get(mate, v)</code> will be the vertex that v is matched to, or
+  <code>graph_traits&lt;Graph&gt;::null_vertex()</code> if v is not matched.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>VertexIndexMap vm</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Must be a model of
+  <a href="../../property_map/doc/ReadablePropertyMap.html">ReadablePropertyMap</a>,
+  mapping vertices to integer indices in the range <code>[0, num_vertices(g))</code>.</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_3_maximum_weighted_matching_with_vertex_index_map_and_edge_weight_map"><a class="anchor" href="#_3_maximum_weighted_matching_with_vertex_index_map_and_edge_weight_map"></a>(3) maximum_weighted_matching (with vertex index map and edge weight map)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename MateMap,
+          typename VertexIndexMap, typename EdgeWeightMap&gt;
+void maximum_weighted_matching(
+    const Graph&amp; g,
+    MateMap mate,
+    VertexIndexMap vm,
+    EdgeWeightMap weights);</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 12.5%;">
+<col style="width: 25%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Direction</th>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const Graph&amp; g</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An undirected graph. The graph type must be a model of
+  <a href="../../concepts/VertexAndEdgeListGraph.html" class="xref page">Vertex and Edge List Graph</a> and
+  <a href="../../concepts/IncidenceGraph.html" class="xref page">Incidence Graph</a>.
+  The graph may not contain parallel edges.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MateMap mate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Must be a model of
+  <a href="../../property_map/doc/ReadWritePropertyMap.html">ReadWritePropertyMap</a>,
+  mapping vertices to vertices. For any vertex v in the graph,
+  <code>get(mate, v)</code> will be the vertex that v is matched to, or
+  <code>graph_traits&lt;Graph&gt;::null_vertex()</code> if v is not matched.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>VertexIndexMap vm</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Must be a model of
+  <a href="../../property_map/doc/ReadablePropertyMap.html">ReadablePropertyMap</a>,
+  mapping vertices to integer indices in the range <code>[0, num_vertices(g))</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>EdgeWeightMap weights</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Must be a model of
+  <a href="../../property_map/doc/ReadablePropertyMap.html">ReadablePropertyMap</a>,
+  mapping edges to weights. Edge weights must be integers or floating point values.</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_4_brute_force_maximum_weighted_matching_default_maps"><a class="anchor" href="#_4_brute_force_maximum_weighted_matching_default_maps"></a>(4) brute_force_maximum_weighted_matching (default maps)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename MateMap&gt;
+void brute_force_maximum_weighted_matching(
+    const Graph&amp; g,
+    MateMap mate);</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 12.5%;">
+<col style="width: 25%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Direction</th>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const Graph&amp; g</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An undirected graph. The graph type must be a model of
+  <a href="../../concepts/VertexAndEdgeListGraph.html" class="xref page">Vertex and Edge List Graph</a> and
+  <a href="../../concepts/IncidenceGraph.html" class="xref page">Incidence Graph</a>.
+  The graph may not contain parallel edges.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MateMap mate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Must be a model of
+  <a href="../../property_map/doc/ReadWritePropertyMap.html">ReadWritePropertyMap</a>,
+  mapping vertices to vertices. For any vertex v in the graph,
+  <code>get(mate, v)</code> will be the vertex that v is matched to, or
+  <code>graph_traits&lt;Graph&gt;::null_vertex()</code> if v is not matched.</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_5_brute_force_maximum_weighted_matching_with_vertex_index_map"><a class="anchor" href="#_5_brute_force_maximum_weighted_matching_with_vertex_index_map"></a>(5) brute_force_maximum_weighted_matching (with vertex index map)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename MateMap,
+          typename VertexIndexMap&gt;
+void brute_force_maximum_weighted_matching(
+    const Graph&amp; g,
+    MateMap mate,
+    VertexIndexMap vm);</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 12.5%;">
+<col style="width: 25%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Direction</th>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const Graph&amp; g</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An undirected graph. The graph type must be a model of
+  <a href="../../concepts/VertexAndEdgeListGraph.html" class="xref page">Vertex and Edge List Graph</a> and
+  <a href="../../concepts/IncidenceGraph.html" class="xref page">Incidence Graph</a>.
+  The graph may not contain parallel edges.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MateMap mate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Must be a model of
+  <a href="../../property_map/doc/ReadWritePropertyMap.html">ReadWritePropertyMap</a>,
+  mapping vertices to vertices. For any vertex v in the graph,
+  <code>get(mate, v)</code> will be the vertex that v is matched to, or
+  <code>graph_traits&lt;Graph&gt;::null_vertex()</code> if v is not matched.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>VertexIndexMap vm</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Must be a model of
+  <a href="../../property_map/doc/ReadablePropertyMap.html">ReadablePropertyMap</a>,
+  mapping vertices to integer indices in the range <code>[0, num_vertices(g))</code>.</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+<div class="sect1">
+<h2 id="_description"><a class="anchor" href="#_description"></a>Description</h2>
+<div class="sectionbody">
+<div id="sec:weighted_matching" class="paragraph">
+<p>Before you continue, it is recommended to read about
+<a href="maximum_matching.html" class="xref page">maximal cardinality matching</a> first.
+A <em>maximum weighted matching</em> of an edge-weighted graph is a matching
+for which the sum of the weights of the edges is maximum.
+Two different matchings (edges in the matching are colored blue) in the same graph are
+illustrated below.
+The matching on the left is a maximum cardinality matching of size 8 and a maximal
+weighted matching of weight sum 30, meaning that it has maximum size over all matchings in the graph
+and its weight sum can&#8217;t be increased by adding edges.
+The matching on the right is a maximum weighted matching of size 7 and weight sum 38, meaning that it has maximum
+weight sum over all matchings in the graph.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span id="fig:maximal_weighted_matching"><span class="image"><img src="../../_images/figs/maximal-weighted-match.png" alt="figs/maximal-weighted-match"></span></span></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span id="fig:maximum_weighted_matching"><span class="image"><img src="../../_images/figs/maximum-weighted-match.png" alt="figs/maximum-weighted-match"></span></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Both <code>maximum_weighted_matching</code> and
+<code>brute_force_maximum_weighted_matching</code> find a
+maximum weighted matching in any undirected graph. The matching is returned in a
+<code>MateMap</code>, which is a
+<a href="../../property_map/doc/ReadWritePropertyMap.html">ReadWritePropertyMap</a>
+that maps vertices to vertices. In the mapping returned, each vertex is
+either mapped to the vertex it&#8217;s matched to, or to
+<code>graph_traits&lt;Graph&gt;::null_vertex()</code> if it doesn&#8217;t participate in the matching.</p>
+</div>
+<div class="paragraph">
+<p>If the <code>VertexIndexMap</code> is not explicitly specified, it is obtained from the internal vertex property
+of the graph by calling <code>get(vertex_index, g)</code>.
+If the <code>EdgeWeightMap</code> is not explicitly specified, it is obtained from the internal edge property
+of the graph by calling <code>get(edge_weight, g)</code>.</p>
+</div>
+<div class="sect2">
+<h3 id="_algorithm_description"><a class="anchor" href="#_algorithm_description"></a>Algorithm Description</h3>
+<div class="paragraph">
+<p>The maximum weighted matching problem was solved by Edmonds in
+[<a href="../../about/bibliography.html#edmonds65:_max_weighted_match" class="xref page">74</a>].
+Subsequently, Gabow [<a href="../../about/bibliography.html#gabow76" class="xref page">75</a>] and
+Lawler [<a href="../../about/bibliography.html#lawler76:_comb_opt" class="xref page">20</a>] developed methods
+to reduce the run time from <em>O(V<sup>4</sup>)</em> to <em>O(V<sup>3</sup>)</em>.
+The implementation of <code>maximum_weighted_matching</code> follows a description
+of the <em>O(V<sup>3</sup>)</em> algorithm by Galil [<a href="../../about/bibliography.html#galil86" class="xref page">77</a>].</p>
+</div>
+<div class="paragraph">
+<p>Starting from an empty matching, the algorithm repeatedly augments the
+matching until no further improvement is possible.
+Alternating trees and blossoms are used to find an augmenting path, in a way that is similar
+to maximum cardinality matching.
+A linear programming technique is used to ensure that the selected augmenting path has maximum weight.
+This involves assigning dual variables to vertices and blossoms, and computing slack values for edges.</p>
+</div>
+<div class="paragraph">
+<p>The outline of the algorithm is as follows:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic" start="0">
+<li>
+<p>Start with an empty matching and initialize dual variables to half of the maximum edge weight.</p>
+</li>
+<li>
+<p>(Labeling) Root a tree at each non-matched vertex, and proceed to construct alternating trees by labeling, using only edges with zero slack value.
+If an augmenting path is found, go to step 2. If a blossom is formed, go to step 3. Otherwise, go to step 4.</p>
+</li>
+<li>
+<p>(Augmentation) Find the augmenting path, tracing the path through shrunken blossoms. Augment the matching.
+Deconstruct and unlabel the alternating trees traversed by the augmenting path.
+Go to step 1.</p>
+</li>
+<li>
+<p>(Blossoming) Identify the blossoms in the alternating cycle and shrink these into a newly formed blossom.
+Return to step 1.</p>
+</li>
+<li>
+<p>(Updating dual variables) Adjust the dual variables based on the primal-dual method.
+If this enables further growth of the alternating trees, return to step 1.
+Otherwise, halt the algorithm; the matching has maximum weight.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The implementation deviates from the description in
+[<a href="../../about/bibliography.html#galil86" class="xref page">77</a>] on a few points:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>After augmenting the matching,
+[<a href="../../about/bibliography.html#galil86" class="xref page">77</a>] expands all blossoms with
+zero dual. This is correct but potentially unnecessary; some of the
+expanded blossoms will be recreated during the next stage. The
+implementation holds off on the expansion of such blossoms. In any
+scenario where a blossom <em>must</em> be expanded to make progress, label T
+will be assigned to it. At that point, the blossom will be expanded
+through a zero-delta dual step. The additional cost is <em>O(V)</em> per
+expanded blossom, and the total number of blossom expansions is
+<em>O(V<sup>2</sup>)</em>, therefore this does not change the overall time complexity of
+the algorithm.</p>
+</li>
+<li>
+<p>The algorithm records a minimum-slack edge <em>e<sub>k,l</sub></em> for every pair of
+blossoms <em>B<sub>k</sub>, B<sub>l</sub></em>. Storing these edges in a 2-dimensional array
+would increase the space complexity to <em>O(V<sup>2</sup>)</em>; an unfortunate cost
+for large sparse graphs. The implementation of
+<code>maximum_weighted_matching</code> avoids this by maintaining, for each
+blossom <em>B<sub>k</sub></em>, a list <code>B<sub>k</sub>.best_edge_set</code> that contains
+the non-empty elements of <em>e<sub>k,l</sub></em>, plus edges between <em>B<sub>k</sub></em> and <em>B<sub>l</sub></em>
+discovered after shrinking <em>B<sub>k</sub></em>. The combined length of these lists is
+<em>O(E)</em>, since any edge is contained in at most two lists. The algorithm
+only ever examines <em>e<sub>k,l</sub></em> during the process of merging <em>B<sub>k</sub></em> into a
+larger blossom. In that case, it sequentially examines <em>e<sub>k,l</sub></em> for all
+<em>l</em>, taking time <em>O(V)</em>. The implementation handles this by examining
+every element of <code>B<sub>k</sub>.best_edge_set</code>, taking time <em>O(V)</em>
+plus a constant time per newly discovered edge. This does not change the
+overall time complexity of the algorithm.</p>
+</li>
+<li>
+<p>After augmenting, [<a href="../../about/bibliography.html#galil86" class="xref page">77</a>] removes
+all labels and alternating trees. This keeps the algorithm simple, but
+it causes many trees and labels to be rediscovered at the beginning of
+the new stage. To avoid such redundant work,
+<code>maximum_weighted_matching</code> removes labels only from the two
+alternating trees that are touched by the augmenting path. All other
+labels and trees are reused in the next stage. Erasing labels from a
+subset of the graph requires updating the data structures that track
+minimum-slack edges. This involves examining all edges that either touch
+a blossom which loses its label or touch a vertex which depended on a
+lost label. These steps take <em>O(V + E)</em> per stage, adding up to
+<em>O(V<sup>3</sup>)</em> in total. Although this strategy does not improve the
+worst-case time complexity of the algorithm, it achieves a significant
+speedup in benchmarks on random graphs.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If edge weights are integers, the algorithm uses only integer
+computations. This is achieved by internally multiplying edge weights by
+2, which ensures that all dual variables are also integers.</p>
+</div>
+<div class="paragraph">
+<p>A brute-force implementation
+<code>brute_force_maximum_weighted_matching</code> is also
+provided. This algorithm simply searches all possible matchings and
+selects one with the maximum weight sum.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_example"><a class="anchor" href="#_example"></a>Example</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include &lt;boost/graph/adjacency_list.hpp&gt;
+#include &lt;boost/graph/maximum_weighted_matching.hpp&gt;
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+using namespace boost;
+
+using Graph = adjacency_list&lt;vecS, vecS, undirectedS, no_property,
+    property&lt;edge_weight_t, int&gt;&gt;;
+using Vertex = graph_traits&lt;Graph&gt;::vertex_descriptor;
+
+int main() {
+    Graph g(5);
+    add_edge(0, 1, {3}, g);
+    add_edge(1, 2, {1}, g);
+    add_edge(2, 3, {4}, g);
+    add_edge(3, 4, {2}, g);
+    add_edge(0, 4, {5}, g);
+
+    std::vector&lt;Vertex&gt; mate(num_vertices(g));
+    maximum_weighted_matching(g, &amp;mate[0]);
+
+    std::cout &lt;&lt; "Matched edges:\n";
+    int total = 0;
+    for (Vertex v = 0; v &lt; num_vertices(g); ++v) {
+        if (mate[v] != graph_traits&lt;Graph&gt;::null_vertex() &amp;&amp; v &lt; mate[v]) {
+            auto w = get(edge_weight, g, edge(v, mate[v], g).first);
+            std::cout &lt;&lt; "  " &lt;&lt; v &lt;&lt; " -- " &lt;&lt; mate[v] &lt;&lt; " (w=" &lt;&lt; w &lt;&lt; ")\n";
+            total += w;
+        }
+    }
+    std::cout &lt;&lt; "Total weight: " &lt;&lt; total &lt;&lt; "\n";
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>Matched edges:
+  0 -- 4 (w=5)
+  2 -- 3 (w=4)
+Total weight: 9</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_notes"><a class="anchor" href="#_notes"></a>Notes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>All five overloads return <code>void</code>. The result is written into the <code>MateMap</code> output parameter.</p>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

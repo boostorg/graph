@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Boykov-Kolmogorov Maximum Flow :: Boost.Graph Documentation</title>
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.boost.org">Boost</a>
+      <span class="navbar-item">Boost.Graph Documentation</span>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="graph" data-version="">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../../index.html">Boost.Graph</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../index.html">Introduction</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../graph_classes/primitives.html">Primitives</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Graph Classes</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../graph_classes/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../graph_classes/adjacency_list.html">Adjacency List</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../graph_classes/adjacency_matrix.html">Adjacency Matrix</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../graph_classes/compressed_sparse_row.html">Compressed Sparse Row Graph</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Graph Generators</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../generators/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../generators/random.html">Random Graph Utilities</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../generators/erdos_renyi_generator.html">Erdős-Rényi (Uniform Random)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../generators/rmat_generator.html">Scale-Free (R-MAT)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../generators/plod_generator.html">PLOD (Power Law)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../generators/small_world_generator.html">Small World (Watts-Strogatz)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../generators/mesh_generator.html">Mesh (2D Grid)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../generators/ssca_generator.html">SSCA (Clustered Benchmark)</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Algorithms</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Traversal</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../traversal/traversal_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../traversal/breadth_first_search.html">Breadth First Search</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../traversal/breadth_first_visit.html">Breadth First Visit</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../traversal/depth_first_search.html">Depth First Search</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../traversal/depth_first_visit.html">Depth First Visit</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../traversal/undirected_dfs.html">Undirected DFS</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Shortest Paths</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../shortest_paths/shortest_paths_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../shortest_paths/dijkstra_shortest_paths.html">Dijkstra Shortest Paths</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../shortest_paths/dijkstra_shortest_paths_no_color_map.html">Dijkstra Shortest Paths No Color Map</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../shortest_paths/bellman_ford_shortest.html">Bellman-Ford Shortest Paths</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../shortest_paths/dag_shortest_paths.html">DAG Shortest Paths</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../shortest_paths/johnson_all_pairs_shortest.html">Johnson All Pairs Shortest Paths</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../shortest_paths/floyd_warshall_shortest.html">Floyd-Warshall All Pairs Shortest Paths</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../shortest_paths/r_c_shortest_paths.html">Resource-Constrained Shortest Paths</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../shortest_paths/astar_search.html">A* Search</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Spanning Trees</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../spanning_trees/spanning_trees_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../spanning_trees/kruskal_min_spanning_tree.html">Kruskal Minimum Spanning Tree</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../spanning_trees/prim_minimum_spanning_tree.html">Prim Minimum Spanning Tree</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../spanning_trees/random_spanning_tree.html">Random Spanning Tree</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../spanning_trees/two_graphs_common_spanning_trees.html">Two Graphs Common Spanning Trees</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Connected Components</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../connected_components/connected_components_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../connected_components/connected_components.html">Connected Components</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../connected_components/strong_components.html">Strong Components</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../connected_components/biconnected_components.html">Biconnected Components</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../connected_components/incremental_components.html">Incremental Components</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Network Flow</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="network_flow_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="edmonds_karp_max_flow.html">Edmonds-Karp Max Flow</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="push_relabel_max_flow.html">Push-Relabel Max Flow</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="boykov_kolmogorov_max_flow.html">Boykov-Kolmogorov Max Flow</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="stoer_wagner_min_cut.html">Stoer-Wagner Min Cut</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="cycle_canceling.html">Cycle Canceling</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="successive_shortest_path_nonnegative_weights.html">Successive Shortest Path Nonnegative Weights</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="find_flow_cost.html">Find Flow Cost</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="maximum_matching.html">Edmonds Maximum Cardinality Matching</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="maximum_weighted_matching.html">Maximum Weighted Matching</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Topological Sort</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../topological_sort/topological_sort_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../topological_sort/topological_sort.html">Topological Sort</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Graph Coloring</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../coloring/coloring_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../coloring/sequential_vertex_coloring.html">Sequential Vertex Coloring</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../coloring/edge_coloring.html">Edge Coloring</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../coloring/is_bipartite.html">Is Bipartite</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../coloring/find_odd_cycle.html">Find Odd Cycle</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Connectivity</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../connectivity/connectivity_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../connectivity/edge_connectivity.html">Edge Connectivity</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../connectivity/st_connected.html">ST Connected</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Graph Metrics</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/metrics_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/page_rank.html">PageRank</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/betweenness_centrality.html">Brandes Betweenness Centrality</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/degree_centrality.html">Degree Centrality</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/closeness_centrality.html">Closeness Centrality</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/eccentricity.html">Eccentricity</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/geodesic_distance.html">Geodesic Distance</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/clustering_coefficient.html">Clustering Coefficient</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/core_numbers.html">Core Numbers</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/profile.html">Profile</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/wavefront.html">Wavefront</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/bandwidth.html">Bandwidth</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Graph Isomorphism</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../isomorphism/isomorphism_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../isomorphism/isomorphism.html">Isomorphism</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../isomorphism/vf2_sub_graph_iso.html">VF2 Subgraph Isomorphism</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../isomorphism/mcgregor_common_subgraphs.html">McGregor Common Subgraphs</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Planar Graphs</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../planar/planar_graphs.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../planar/boyer_myrvold.html">Boyer-Myrvold Planarity Test</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../planar/planar_face_traversal.html">Planar Face Traversal</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../planar/planar_canonical_ordering.html">Planar Canonical Ordering</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../planar/straight_line_drawing.html">Chrobak-Payne Straight Line Drawing</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../planar/is_straight_line_drawing.html">Is Straight Line Drawing</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../planar/is_kuratowski_subgraph.html">Is Kuratowski Subgraph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../planar/make_connected.html">Make Connected</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../planar/make_biconnected_planar.html">Make Biconnected Planar</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../planar/make_maximal_planar.html">Make Maximal Planar</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Layout</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../layout/layout_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../layout/topology.html">Topologies</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../layout/random_layout.html">Random Graph Layout</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../layout/circle_layout.html">Circle Layout</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../layout/kamada_kawai_spring_layout.html">Kamada-Kawai Spring Layout</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../layout/fruchterman_reingold.html">Fruchterman-Reingold Force Directed Layout</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../layout/gursoy_atun_layout.html">Gürsoy-Atun Layout</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/layout_tolerance.html">Layout Tolerance</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Sparse Matrix Ordering</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../ordering/ordering_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../ordering/cuthill_mckee_ordering.html">Cuthill-McKee Ordering</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../ordering/king_ordering.html">King Ordering</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../ordering/minimum_degree_ordering.html">Minimum Degree Ordering</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../ordering/sloan_ordering.html">Sloan Ordering</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../ordering/sloan_start_end_vertices.html">Sloan Start End Vertices</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Cycle Detection</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cycle_detection/cycle_detection_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cycle_detection/hawick_circuits.html">Hawick Circuits</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cycle_detection/tiernan_all_cycles.html">Tiernan All Cycles</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cycle_detection/howard_cycle_ratio.html">Cycle Ratio</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Clique Detection</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../clique_detection/clique_detection_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../clique_detection/bron_kerbosch.html">Bron-Kerbosch All Cliques</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Utility</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/utility_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/copy_graph.html">Copy Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/transpose_graph.html">Transpose Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/transitive_closure.html">Transitive Closure</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/transitive_reduction.html">Transitive Reduction</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/smallest_last_ordering.html">Smallest Last Ordering</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/lengauer_tarjan_dominator.html">Lengauer-Tarjan Dominator Tree</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/metric_tsp_approx.html">Metric TSP Approximation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/maximum_adjacency_search.html">Maximum Adjacency Search</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/bc_clustering.html">Betweenness Centrality Clustering</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/disjoint_sets.html">Disjoint Sets</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/incident.html">Incident</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/opposite.html">Opposite</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/neighbor_bfs.html">Neighbor BFS</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/loop_erased_random_walk.html">Loop-Erased Random Walk</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/graph_stats.html">Graph Statistics</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Property Maps</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../property_maps/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../property_maps/bundled.html">Bundled Properties</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../property_maps/external.html">External Properties</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../property_maps/tags.html">Internal Tags (Legacy)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../property_maps/pitfalls.html">Common Mistakes</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Concepts</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../concepts/graph_concepts.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Graph Structure</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/Graph.html">Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/IncidenceGraph.html">Incidence Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/BidirectionalGraph.html">Bidirectional Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/AdjacencyGraph.html">Adjacency Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/VertexListGraph.html">Vertex List Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/EdgeListGraph.html">Edge List Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/VertexAndEdgeListGraph.html">Vertex and Edge List Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/AdjacencyMatrix.html">Adjacency Matrix</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/MutableGraph.html">Mutable Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/VertexMutableGraph.html">Vertex Mutable Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/EdgeMutableGraph.html">Edge Mutable Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/PropertyGraph.html">Property Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/MutablePropertyGraph.html">Mutable Property Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/IteratorConstructibleGraph.html">Iterator Constructible Graph</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Property and Value Types</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/ColorValue.html">Color Value</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/Buffer.html">Buffer</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/BasicMatrix.html">Basic Matrix</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/Monoid.html">Monoid</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/KeyedUpdatableQueue.html">Keyed Updatable Queue</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/UpdatableQueue.html">Updatable Queue</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/PlanarEmbedding.html">Planar Embedding</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/PropertyTag.html">Property Tag</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Visitors</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../visitors/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Pre-built Event Visitors</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/predecessor_recorder.html">Predecessor Recorder</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/distance_recorder.html">Distance Recorder</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/time_stamper.html">Time Stamper</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/property_put.html">Property Put</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/property_writer.html">Property Writer</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/edge_predecessor_recorder.html">Edge Predecessor Recorder</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/null_visitor.html">Null Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/tsp_tour_visitor.html">TSP Tour Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/tsp_tour_len_visitor.html">TSP Tour Len Visitor</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Concepts</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/BFSVisitor.html">BFS Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/DFSVisitor.html">DFS Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/DijkstraVisitor.html">Dijkstra Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/BellmanFordVisitor.html">Bellman-Ford Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/AStarVisitor.html">A* Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/AStarHeuristic.html">A* Heuristic</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/EventVisitor.html">Event Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/PlanarFaceVisitor.html">Planar Face Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/TSPTourVisitor.html">TSP Tour Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/AddEdgeVisitor.html">Add Edge Visitor</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Algorithm adaptors</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/EventVisitorList.html">Event Visitor List</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/bfs_visitor.html">BFS Visitor Adaptor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/dfs_visitor.html">DFS Visitor Adaptor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/dijkstra_visitor.html">Dijkstra Visitor Adaptor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/bellman_visitor.html">Bellman-Ford Visitor Adaptor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/astar_visitor.html">A* Visitor Adaptor</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Graph I/O</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../io/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../io/graphviz.html">GraphViz (DOT)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../io/graphml.html">GraphML</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../io/dimacs.html">DIMACS</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Graph Adaptors</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../adaptors/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../adaptors/filtered_graph.html">Filtered Graph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../adaptors/reverse_graph.html">Reverse Graph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../adaptors/subgraph.html">Subgraph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../adaptors/edge_list.html">Edge List</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../adaptors/grid_graph.html">Grid Graph</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Traits and Iterators</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../traits/graph_traits.html">Graph Traits</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../traits/adjacency_list_traits.html">Adjacency List Traits</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../traits/property_map.html">Property Map</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../traits/property.html">property</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../iterators/adjacency_iterator.html">Adjacency Iterator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../iterators/inv_adjacency_iterator.html">Inverse Adjacency Iterator</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../auxiliary/exception.html">Exceptions</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Background</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../overview/graph_theory_review.html">Graph Theory Review</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../auxiliary/bgl_named_params.html">Named Parameters</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../overview/faq.html">FAQ</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Extending the BGL</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../extending/overview.html">Writing Algorithms for BGL</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../extending/constructing_algorithms.html">Worked Example: Graph Coloring</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../extending/custom_storage.html">Custom Adjacency List Storage</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../extending/leda_conversion.html">Adapting Existing Graph Structures</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">About</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../about/design.html">Design Rationale</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../about/history.html">History</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../about/acknowledgements.html">Acknowledgements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../about/publications.html">Publications</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../about/users.html">BGL Users</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../about/bibliography.html">Bibliography</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Boost.Graph</span>
+    <span class="version"></span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../../index.html">Boost.Graph</a></div>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../index.html">Boost.Graph</a></li>
+    <li>Algorithms</li>
+    <li>Network Flow</li>
+    <li><a href="boykov_kolmogorov_max_flow.html">Boykov-Kolmogorov Max Flow</a></li>
+  </ul>
+</nav>
+<div class="edit-this-page"><a href="file:///Users/arnaudbecheler/dev/boost/forks/graph/doc/modules/ROOT/pages/algorithms/network_flow/boykov_kolmogorov_max_flow.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Boykov-Kolmogorov Maximum Flow</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Calculates the maximum flow of a network using the Boykov-Kolmogorov augmenting-path algorithm.</p>
+</div>
+<div class="paragraph">
+<p><strong>Defined in:</strong> <code>&lt;boost/graph/boykov_kolmogorov_max_flow.hpp&gt;</code></p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_1_non_named_parameter_version_all_maps"><a class="anchor" href="#_1_non_named_parameter_version_all_maps"></a>(1) Non-named parameter version (all maps)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;class Graph, class CapacityEdgeMap, class ResidualCapacityEdgeMap,
+          class ReverseEdgeMap, class PredecessorMap, class ColorMap,
+          class DistanceMap, class IndexMap&gt;
+typename property_traits&lt;CapacityEdgeMap&gt;::value_type boykov_kolmogorov_max_flow(
+    Graph&amp; g,
+    CapacityEdgeMap cap,
+    ResidualCapacityEdgeMap res_cap,
+    ReverseEdgeMap rev_map,
+    PredecessorMap pre_map,
+    ColorMap color,
+    DistanceMap dist,
+    IndexMap idx,
+    typename graph_traits&lt;Graph&gt;::vertex_descriptor src,
+    typename graph_traits&lt;Graph&gt;::vertex_descriptor sink);</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 12.5%;">
+<col style="width: 25%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Direction</th>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Graph&amp; g</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A directed graph. The graph&#8217;s type must be a model of
+  <a href="../../concepts/VertexListGraph.html" class="xref page">Vertex List Graph</a>,
+  <a href="../../concepts/EdgeListGraph.html" class="xref page">Edge List Graph</a> and
+  <a href="../../concepts/IncidenceGraph.html" class="xref page">Incidence Graph</a>.
+  For each edge <em>(u,v)</em> in the graph, the reverse edge <em>(v,u)</em> must also be
+  in the graph. Performance of the algorithm will be slightly improved if the
+  graph type also models <a href="../../concepts/AdjacencyMatrix.html" class="xref page">Adjacency Matrix</a>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CapacityEdgeMap cap</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The edge capacity property map. The type must be a model of a constant
+  <a href="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property Map</a>.
+  The key type of the map must be the graph&#8217;s edge descriptor type.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ResidualCapacityEdgeMap res_cap</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The edge residual capacity property map. The type must be a model of a
+  mutable <a href="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property Map</a>.
+  The key type of the map must be the graph&#8217;s edge descriptor type.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ReverseEdgeMap rev_map</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An edge property map that maps every edge <em>(u,v)</em> in the graph to the
+  reverse edge <em>(v,u)</em>. The map must be a model of constant
+  <a href="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property Map</a>.
+  The key type of the map must be the graph&#8217;s edge descriptor type.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UTIL</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PredecessorMap pre_map</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A vertex property map that stores the edge to the vertex&#8217;s predecessor.
+  The map must be a model of mutable
+  <a href="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property Map</a>.
+  The key type of the map must be the graph&#8217;s vertex descriptor type.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OUT/UTIL</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ColorMap color</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A vertex property map that stores a color for each vertex. If the color
+  of a vertex after running the algorithm is black the vertex belongs to the
+  source tree, else it belongs to the sink-tree (used for minimum cuts). The
+  map must be a model of mutable
+  <a href="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property Map</a>.
+  The key type of the map must be the graph&#8217;s vertex descriptor type.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UTIL</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DistanceMap dist</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A vertex property map that stores the distance to the corresponding
+  terminal. It is a utility map for speeding up the algorithm. The map must
+  be a model of mutable
+  <a href="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property Map</a>.
+  The key type of the map must be the graph&#8217;s vertex descriptor type.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IndexMap idx</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maps each vertex of the graph to a unique integer in the range
+  <code>[0, num_vertices(g))</code>. The map must be a model of constant
+  <a href="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property Map</a>.
+  The key type of the map must be the graph&#8217;s vertex descriptor type.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>vertex_descriptor src</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The source vertex for the flow network graph.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>vertex_descriptor sink</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The sink vertex for the flow network graph.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Additional overloaded versions for non-named parameters are provided (without DistanceMap/ColorMap/DistanceMap; for those, <code>iterator_property_map</code> objects with the provided index map are used).</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_2_named_parameter_version"><a class="anchor" href="#_2_named_parameter_version"></a>(2) Named parameter version</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;class Graph, class P, class T, class R&gt;
+typename property_traits&lt;typename property_map&lt;Graph, edge_capacity_t&gt;::const_type&gt;::value_type
+boykov_kolmogorov_max_flow(
+    Graph&amp; g,
+    typename graph_traits&lt;Graph&gt;::vertex_descriptor src,
+    typename graph_traits&lt;Graph&gt;::vertex_descriptor sink,
+    const bgl_named_params&lt;P, T, R&gt;&amp; params = _all defaults_);</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 12.5%;">
+<col style="width: 25%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Direction</th>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Graph&amp; g</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A directed graph. The graph&#8217;s type must be a model of
+  <a href="../../concepts/VertexListGraph.html" class="xref page">Vertex List Graph</a>,
+  <a href="../../concepts/EdgeListGraph.html" class="xref page">Edge List Graph</a> and
+  <a href="../../concepts/IncidenceGraph.html" class="xref page">Incidence Graph</a>.
+  For each edge <em>(u,v)</em> in the graph, the reverse edge <em>(v,u)</em> must also be
+  in the graph. Performance of the algorithm will be slightly improved if the
+  graph type also models <a href="../../concepts/AdjacencyMatrix.html" class="xref page">Adjacency Matrix</a>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>vertex_descriptor src</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The source vertex for the flow network graph.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>vertex_descriptor sink</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The sink vertex for the flow network graph.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>params</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Named parameters passed via <code>bgl_named_params</code>. The following are accepted:</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 12.5%;">
+<col style="width: 25%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Direction</th>
+<th class="tableblock halign-left valign-top">Named Parameter</th>
+<th class="tableblock halign-left valign-top">Description / Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>edge_capacity(EdgeCapacityMap cap)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The edge capacity property map. The type must be a model of a constant
+  <a href="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property Map</a>.
+  The key type of the map must be the graph&#8217;s edge descriptor type.<br>
+  <strong>Default:</strong> <code>get(edge_capacity, g)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>edge_residual_capacity(ResidualCapacityEdgeMap res)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The edge residual capacity property map. The type must be a model of a
+  mutable <a href="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property Map</a>.
+  The key type of the map must be the graph&#8217;s edge descriptor type.<br>
+  <strong>Default:</strong> <code>get(edge_residual_capacity, g)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>edge_reverse(ReverseEdgeMap rev)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An edge property map that maps every edge <em>(u,v)</em> in the graph to the
+  reverse edge <em>(v,u)</em>. The map must be a model of constant
+  <a href="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property Map</a>.
+  The key type of the map must be the graph&#8217;s edge descriptor type.<br>
+  <strong>Default:</strong> <code>get(edge_reverse, g)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UTIL</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>vertex_predecessor(PredecessorMap pre_map)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A vertex property map that stores the edge to the vertex&#8217;s predecessor.
+  The map must be a model of mutable
+  <a href="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property Map</a>.
+  The key type of the map must be the graph&#8217;s vertex descriptor type.<br>
+  <strong>Default:</strong> <code>get(vertex_predecessor, g)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OUT/UTIL</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>vertex_color(ColorMap color)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A vertex property map that stores a color for each vertex. If the color
+  of a vertex after running the algorithm is black the vertex belongs to the
+  source tree, else it belongs to the sink-tree (used for minimum cuts). The
+  map must be a model of mutable
+  <a href="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property Map</a>.
+  The key type of the map must be the graph&#8217;s vertex descriptor type.<br>
+  <strong>Default:</strong> <code>get(vertex_color, g)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UTIL</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>vertex_distance(DistanceMap dist)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A vertex property map that stores the distance to the corresponding
+  terminal. It is a utility map for speeding up the algorithm. The map must
+  be a model of mutable
+  <a href="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property Map</a>.
+  The key type of the map must be the graph&#8217;s vertex descriptor type.<br>
+  <strong>Default:</strong> <code>get(vertex_distance, g)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>vertex_index(VertexIndexMap index_map)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maps each vertex of the graph to a unique integer in the range
+  <code>[0, num_vertices(g))</code>. The map must be a model of constant
+  <a href="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property Map</a>.
+  The key type of the map must be the graph&#8217;s vertex descriptor type.<br>
+  <strong>Default:</strong> <code>get(vertex_index, g)</code></p></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+<div class="sect1">
+<h2 id="_description"><a class="anchor" href="#_description"></a>Description</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>boykov_kolmogorov_max_flow()</code> function calculates the maximum flow of a network.
+See Section <a href="../../overview/graph_theory_review.html#sec:network-flow-algorithms" class="xref page">Network Flow Algorithms</a> for a description of maximum flow.
+The calculated maximum flow will be the return value of the function.
+The function also calculates the flow values <em>f(u,v)</em> for all <em>(u,v)</em> in <em>E</em>, which are returned in the form of the residual capacity <em>r(u,v) = c(u,v) - f(u,v)</em>.</p>
+</div>
+<div class="sect2">
+<h3 id="_requirements"><a class="anchor" href="#_requirements"></a>Requirements</h3>
+<div class="paragraph">
+<p>The directed graph <em>G=(V,E)</em> that represents the network must include a reverse edge for every edge in <em>E</em>.
+That is, the input graph should be <em>G<sub>in</sub> = (V,{E U E<sup>T</sup>})</em>.
+The <code>ReverseEdgeMap</code> argument <code>rev</code> must map each edge in the original graph to its reverse edge, that is <em>(u,v) &#8594; (v,u)</em> for all <em>(u,v)</em> in <em>E</em>.</p>
+</div>
+<div class="paragraph">
+<p>While the push-relabel method states that each edge in <em>E<sup>T</sup></em> has to have capacity of 0, the reverse edges for this algorithm ARE allowed to carry capacities.
+If there are already reverse edges in the input Graph <em>G</em>, those can be used.
+This can halve the amount of edges and will noticeably increase the performance.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_algorithm_description"><a class="anchor" href="#_algorithm_description"></a>Algorithm description</h3>
+<div class="paragraph">
+<p>The Boykov-Kolmogorov max-flow (or often BK max-flow) algorithm is a variety of the augmenting-path algorithm.
+Standard augmenting path algorithms find shortest paths from source to sink vertex and augment them by subtracting the bottleneck capacity found on that path from the residual capacities of each edge and adding it to the total flow.
+Additionally the minimum capacity is added to the residual capacity of the reverse edges.
+If no more paths in the residual-edge tree are found, the algorithm terminates.
+Instead of finding a new shortest path from source to sink in the graph in each iteration, the Boykov-Kolmogorov algorithm keeps the already found paths as follows:</p>
+</div>
+<div class="paragraph">
+<p>The algorithm builds up two search trees, a source-tree and a sink-tree.
+Each vertex has a label (stored in <em>ColorMap</em>) to which tree it belongs and a status-flag if this vertex is active or passive.
+In the beginning of the algorithm only the source and the sink are colored (source==black, sink==white) and have active status.
+All other vertices are colored gray.
+The algorithm consists of three phases:</p>
+</div>
+<div class="paragraph">
+<p><em>grow-phase</em>: In this phase active vertices are allowed to acquire neighbor vertices that are connected through an edge that has a capacity-value greater than zero.
+Acquiring means that those vertices become active and belong now to the search tree of the current active vertex.
+If there are no more valid connections to neighbor vertices, the current vertex becomes passive and the grow phase continues with the next active vertex.
+The grow phase terminates if there are no more active vertices left or a vertex discovers a vertex from the other search tree through an unsaturated edge.
+In this case a path from source to sink is found.</p>
+</div>
+<div class="paragraph">
+<p><em>augment-phase</em>: This phase augments the path that was found in the grow phase.
+First it finds the bottleneck capacity of the found path, and then it updates the residual-capacity of the edges from this path by subtracting the bottleneck capacity from the residual capacity.
+Furthermore the residual capacity of the reverse edges are updated by adding the bottleneck capacity.
+This phase can destroy the built up search trees, as it creates at least one saturated edge.
+That means, that the search trees collapse to forests, because a condition for the search trees is, that each vertex in them has a valid (=non-saturated) connection to a terminal.</p>
+</div>
+<div class="paragraph">
+<p><em>adoption-phase</em>: Here the search trees are reconstructed.
+A simple solution would be to mark all vertices coming after the first orphan in the found path free vertices (gray).
+A more sophisticated solution is to give those orphans new parents: The neighbor vertices are checked if they have a valid connection to the same terminal like this vertex had (a path with unsaturated edges).
+If there is one, this vertex becomes the new parent of the current orphan and this forest is re-included into the search tree.
+If no new valid parent is found, this vertex becomes a free vertex (marked gray), and its children become orphans.
+The adoption phase terminates if there are no more orphans.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../../_images/figs/bk_max_flow.gif" alt="Boykov-Kolmogorov max flow illustration" width="827" height="311">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_details"><a class="anchor" href="#_details"></a>Details</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Marking heuristics: A timestamp is stored for each vertex which shows in which iteration of the algorithm the distance to the corresponding terminal was calculated.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>This distance is used and gets calculated in the adoption-phase. In order to find a valid new parent for an orphan, the possible parent is checked for a connection to the terminal to which tree it belongs. If there is such a connection, the path is tagged with the current time-stamp, and the distance value. If another orphan has to find a parent and it comes across a vertex with a current timestamp, this information is used.</p>
+</li>
+<li>
+<p>The distance is also used in the grow-phase. If a vertex comes across another vertex of the same tree while searching for new vertices, the other&#8217;s distance is compared to its distance. If it is smaller, that other vertex becomes the new parent of the current. This can decrease the length of the search paths, and so amount of adoptions.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Ordering of orphans: As described above, the augment-phase and the adoption phase can create orphans. The orphans the augment-phase generates, are ordered according to their distance to the terminals (smallest first). This combined with the distance/timestamp heuristics results in the possibility for not having to recheck terminal-connections too often. New orphans which are generated in adoption phase are processed before orphans from the main queue for the same reason.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_returns"><a class="anchor" href="#_returns"></a>Returns</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The maximum flow value of the network, of type <code>property_traits&lt;CapacityEdgeMap&gt;::value_type</code>.
+The flow values for individual edges can be recovered from the residual capacity map as <em>f(u,v) = c(u,v) - r(u,v)</em>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_example"><a class="anchor" href="#_example"></a>Example</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include &lt;boost/graph/adjacency_list.hpp&gt;
+#include &lt;boost/graph/boykov_kolmogorov_max_flow.hpp&gt;
+#include &lt;iostream&gt;
+
+using namespace boost;
+using Traits = adjacency_list_traits&lt;vecS, vecS, directedS&gt;;
+using Graph = adjacency_list&lt;vecS, vecS, directedS,
+    property&lt;vertex_color_t, default_color_type,
+    property&lt;vertex_distance_t, long,
+    property&lt;vertex_predecessor_t, Traits::edge_descriptor&gt;&gt;&gt;,
+    property&lt;edge_capacity_t, int,
+    property&lt;edge_residual_capacity_t, int,
+    property&lt;edge_reverse_t, Traits::edge_descriptor&gt;&gt;&gt;&gt;;
+using Edge = graph_traits&lt;Graph&gt;::edge_descriptor;
+
+void add_flow_edge(Graph&amp; g, int u, int v, int cap) {
+    Edge e1 = add_edge(u, v, g).first;
+    Edge e2 = add_edge(v, u, g).first;
+    put(edge_capacity, g, e1, cap);
+    put(edge_capacity, g, e2, 0);
+    put(edge_reverse, g, e1, e2);
+    put(edge_reverse, g, e2, e1);
+}
+
+int main() {
+    Graph g(4);
+    add_flow_edge(g, 0, 1, 3);
+    add_flow_edge(g, 0, 2, 2);
+    add_flow_edge(g, 1, 3, 2);
+    add_flow_edge(g, 2, 3, 3);
+
+    int flow = boykov_kolmogorov_max_flow(g, vertex(0, g), vertex(3, g));
+    std::cout &lt;&lt; "Boykov-Kolmogorov max flow: " &lt;&lt; flow &lt;&lt; "\n";
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Expected output</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">Boykov-Kolmogorov max flow: 4</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_dimacs_example"><a class="anchor" href="#_dimacs_example"></a>DIMACS Example</h3>
+<div class="paragraph">
+<p>This reads an example maximum flow problem (a graph with edge capacities) from a file in the DIMACS format (<a href="../example/max_flow.dat"><code>example/max_flow.dat</code></a>).
+The source for this example can be found in <a href="../example/boykov_kolmogorov-eg.cpp"><code>example/boykov_kolmogorov-eg.cpp</code></a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include &lt;boost/config.hpp&gt;
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;boost/graph/adjacency_list.hpp&gt;
+#include &lt;boost/graph/boykov_kolmogorov_max_flow.hpp&gt;
+#include &lt;boost/graph/read_dimacs.hpp&gt;
+#include &lt;boost/graph/graph_utility.hpp&gt;
+
+int
+main()
+{
+  using namespace boost;
+
+  typedef adjacency_list_traits &lt; vecS, vecS, directedS &gt; Traits;
+  typedef adjacency_list &lt; vecS, vecS, directedS,
+    property &lt; vertex_name_t, std::string,
+    property &lt; vertex_index_t, long,
+    property &lt; vertex_color_t, boost::default_color_type,
+    property &lt; vertex_distance_t, long,
+    property &lt; vertex_predecessor_t, Traits::edge_descriptor &gt; &gt; &gt; &gt; &gt;,
+
+    property &lt; edge_capacity_t, long,
+    property &lt; edge_residual_capacity_t, long,
+    property &lt; edge_reverse_t, Traits::edge_descriptor &gt; &gt; &gt; &gt; Graph;
+
+  Graph g;
+  property_map &lt; Graph, edge_capacity_t &gt;::type
+      capacity = get(edge_capacity, g);
+  property_map &lt; Graph, edge_residual_capacity_t &gt;::type
+      residual_capacity = get(edge_residual_capacity, g);
+  property_map &lt; Graph, edge_reverse_t &gt;::type rev = get(edge_reverse, g);
+  Traits::vertex_descriptor s, t;
+  read_dimacs_max_flow(g, capacity, rev, s, t);
+
+  std::vector&lt;default_color_type&gt; color(num_vertices(g));
+  std::vector&lt;long&gt; distance(num_vertices(g));
+  long flow = boykov_kolmogorov_max_flow(g ,s, t);
+
+  std::cout &lt;&lt; "c  The total flow:" &lt;&lt; std::endl;
+  std::cout &lt;&lt; "s " &lt;&lt; flow &lt;&lt; std::endl &lt;&lt; std::endl;
+
+  std::cout &lt;&lt; "c flow values:" &lt;&lt; std::endl;
+  graph_traits &lt; Graph &gt;::vertex_iterator u_iter, u_end;
+  graph_traits &lt; Graph &gt;::out_edge_iterator ei, e_end;
+  for (boost::tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
+    for (boost::tie(ei, e_end) = out_edges(*u_iter, g); ei != e_end; ++ei)
+      if (capacity[*ei] &gt; 0)
+        std::cout &lt;&lt; "f " &lt;&lt; *u_iter &lt;&lt; " " &lt;&lt; target(*ei, g) &lt;&lt; " "
+          &lt;&lt; (capacity[*ei] - residual_capacity[*ei]) &lt;&lt; std::endl;
+
+  return EXIT_SUCCESS;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The output is:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>c  The total flow:
+s 13
+
+c flow values:
+f 0 6 3
+f 0 1 0
+f 0 2 10
+f 1 5 1
+f 1 0 0
+f 1 3 0
+f 2 4 4
+f 2 3 6
+f 2 0 0
+f 3 7 5
+f 3 2 0
+f 3 1 1
+f 4 5 4
+f 4 6 0
+f 5 4 0
+f 5 7 5
+f 6 7 3
+f 6 4 0
+f 7 6 0
+f 7 5 0</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_notes"><a class="anchor" href="#_notes"></a>Notes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The algorithm is mainly implemented as described by Boykov and Kolmogorov in [<a href="../../about/bibliography.html#boykov-kolmogorov04" class="xref page">69</a>].
+An extended version can be found in the PhD Thesis of Kolmogorov [<a href="../../about/bibliography.html#kolmogorov03" class="xref page">68</a>].
+The following changes are made to improve performance:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Initialization:</strong> the algorithm first augments all paths from source&#8594;sink and all paths from source&#8594;VERTEX&#8594;sink. This improves especially graph-cuts used in image vision where nearly each vertex has a source and sink connect. During this step, all vertices that have an unsaturated connection from source are added to the active vertex list and so the source is not.</p>
+</li>
+<li>
+<p><strong>Active vertices:</strong> Boykov-Kolmogorov uses two lists for active nodes and states that new active vertices are added to the rear of the second. Fetching an active vertex is done from the beginning of the first list. If the first list is empty, it is exchanged by the second. This implementation uses just one list.</p>
+</li>
+<li>
+<p><strong>Grow-phase:</strong> In the grow phase the first vertex in the active-list is taken and all outgoing edges are checked if they are unsaturated. This decreases performance for graphs with high-edge density. This implementation stores the last accessed edge and continues with it, if the first vertex in the active-list is the same one as during the last grow-phase.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

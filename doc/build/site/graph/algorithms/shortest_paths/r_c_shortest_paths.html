@@ -1,0 +1,1859 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Resource-Constrained Shortest Paths :: Boost.Graph Documentation</title>
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.boost.org">Boost</a>
+      <span class="navbar-item">Boost.Graph Documentation</span>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="graph" data-version="">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../../index.html">Boost.Graph</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../index.html">Introduction</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../graph_classes/primitives.html">Primitives</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Graph Classes</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../graph_classes/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../graph_classes/adjacency_list.html">Adjacency List</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../graph_classes/adjacency_matrix.html">Adjacency Matrix</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../graph_classes/compressed_sparse_row.html">Compressed Sparse Row Graph</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Graph Generators</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../generators/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../generators/random.html">Random Graph Utilities</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../generators/erdos_renyi_generator.html">Erdős-Rényi (Uniform Random)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../generators/rmat_generator.html">Scale-Free (R-MAT)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../generators/plod_generator.html">PLOD (Power Law)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../generators/small_world_generator.html">Small World (Watts-Strogatz)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../generators/mesh_generator.html">Mesh (2D Grid)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../generators/ssca_generator.html">SSCA (Clustered Benchmark)</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Algorithms</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Traversal</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../traversal/traversal_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../traversal/breadth_first_search.html">Breadth First Search</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../traversal/breadth_first_visit.html">Breadth First Visit</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../traversal/depth_first_search.html">Depth First Search</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../traversal/depth_first_visit.html">Depth First Visit</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../traversal/undirected_dfs.html">Undirected DFS</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Shortest Paths</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="shortest_paths_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="dijkstra_shortest_paths.html">Dijkstra Shortest Paths</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="dijkstra_shortest_paths_no_color_map.html">Dijkstra Shortest Paths No Color Map</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="bellman_ford_shortest.html">Bellman-Ford Shortest Paths</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="dag_shortest_paths.html">DAG Shortest Paths</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="johnson_all_pairs_shortest.html">Johnson All Pairs Shortest Paths</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="floyd_warshall_shortest.html">Floyd-Warshall All Pairs Shortest Paths</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="r_c_shortest_paths.html">Resource-Constrained Shortest Paths</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="astar_search.html">A* Search</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Spanning Trees</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../spanning_trees/spanning_trees_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../spanning_trees/kruskal_min_spanning_tree.html">Kruskal Minimum Spanning Tree</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../spanning_trees/prim_minimum_spanning_tree.html">Prim Minimum Spanning Tree</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../spanning_trees/random_spanning_tree.html">Random Spanning Tree</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../spanning_trees/two_graphs_common_spanning_trees.html">Two Graphs Common Spanning Trees</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Connected Components</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../connected_components/connected_components_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../connected_components/connected_components.html">Connected Components</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../connected_components/strong_components.html">Strong Components</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../connected_components/biconnected_components.html">Biconnected Components</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../connected_components/incremental_components.html">Incremental Components</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Network Flow</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../network_flow/network_flow_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../network_flow/edmonds_karp_max_flow.html">Edmonds-Karp Max Flow</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../network_flow/push_relabel_max_flow.html">Push-Relabel Max Flow</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../network_flow/boykov_kolmogorov_max_flow.html">Boykov-Kolmogorov Max Flow</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../network_flow/stoer_wagner_min_cut.html">Stoer-Wagner Min Cut</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../network_flow/cycle_canceling.html">Cycle Canceling</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../network_flow/successive_shortest_path_nonnegative_weights.html">Successive Shortest Path Nonnegative Weights</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../network_flow/find_flow_cost.html">Find Flow Cost</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../network_flow/maximum_matching.html">Edmonds Maximum Cardinality Matching</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../network_flow/maximum_weighted_matching.html">Maximum Weighted Matching</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Topological Sort</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../topological_sort/topological_sort_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../topological_sort/topological_sort.html">Topological Sort</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Graph Coloring</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../coloring/coloring_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../coloring/sequential_vertex_coloring.html">Sequential Vertex Coloring</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../coloring/edge_coloring.html">Edge Coloring</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../coloring/is_bipartite.html">Is Bipartite</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../coloring/find_odd_cycle.html">Find Odd Cycle</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Connectivity</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../connectivity/connectivity_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../connectivity/edge_connectivity.html">Edge Connectivity</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../connectivity/st_connected.html">ST Connected</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Graph Metrics</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/metrics_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/page_rank.html">PageRank</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/betweenness_centrality.html">Brandes Betweenness Centrality</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/degree_centrality.html">Degree Centrality</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/closeness_centrality.html">Closeness Centrality</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/eccentricity.html">Eccentricity</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/geodesic_distance.html">Geodesic Distance</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/clustering_coefficient.html">Clustering Coefficient</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/core_numbers.html">Core Numbers</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/profile.html">Profile</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/wavefront.html">Wavefront</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../metrics/bandwidth.html">Bandwidth</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Graph Isomorphism</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../isomorphism/isomorphism_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../isomorphism/isomorphism.html">Isomorphism</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../isomorphism/vf2_sub_graph_iso.html">VF2 Subgraph Isomorphism</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../isomorphism/mcgregor_common_subgraphs.html">McGregor Common Subgraphs</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Planar Graphs</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../planar/planar_graphs.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../planar/boyer_myrvold.html">Boyer-Myrvold Planarity Test</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../planar/planar_face_traversal.html">Planar Face Traversal</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../planar/planar_canonical_ordering.html">Planar Canonical Ordering</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../planar/straight_line_drawing.html">Chrobak-Payne Straight Line Drawing</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../planar/is_straight_line_drawing.html">Is Straight Line Drawing</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../planar/is_kuratowski_subgraph.html">Is Kuratowski Subgraph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../planar/make_connected.html">Make Connected</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../planar/make_biconnected_planar.html">Make Biconnected Planar</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../planar/make_maximal_planar.html">Make Maximal Planar</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Layout</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../layout/layout_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../layout/topology.html">Topologies</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../layout/random_layout.html">Random Graph Layout</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../layout/circle_layout.html">Circle Layout</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../layout/kamada_kawai_spring_layout.html">Kamada-Kawai Spring Layout</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../layout/fruchterman_reingold.html">Fruchterman-Reingold Force Directed Layout</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../layout/gursoy_atun_layout.html">Gürsoy-Atun Layout</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/layout_tolerance.html">Layout Tolerance</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Sparse Matrix Ordering</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../ordering/ordering_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../ordering/cuthill_mckee_ordering.html">Cuthill-McKee Ordering</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../ordering/king_ordering.html">King Ordering</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../ordering/minimum_degree_ordering.html">Minimum Degree Ordering</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../ordering/sloan_ordering.html">Sloan Ordering</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../ordering/sloan_start_end_vertices.html">Sloan Start End Vertices</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Cycle Detection</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cycle_detection/cycle_detection_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cycle_detection/hawick_circuits.html">Hawick Circuits</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cycle_detection/tiernan_all_cycles.html">Tiernan All Cycles</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cycle_detection/howard_cycle_ratio.html">Cycle Ratio</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Clique Detection</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../clique_detection/clique_detection_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../clique_detection/bron_kerbosch.html">Bron-Kerbosch All Cliques</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Utility</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/utility_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/copy_graph.html">Copy Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/transpose_graph.html">Transpose Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/transitive_closure.html">Transitive Closure</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/transitive_reduction.html">Transitive Reduction</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/smallest_last_ordering.html">Smallest Last Ordering</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/lengauer_tarjan_dominator.html">Lengauer-Tarjan Dominator Tree</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/metric_tsp_approx.html">Metric TSP Approximation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/maximum_adjacency_search.html">Maximum Adjacency Search</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/bc_clustering.html">Betweenness Centrality Clustering</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/disjoint_sets.html">Disjoint Sets</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/incident.html">Incident</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/opposite.html">Opposite</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/neighbor_bfs.html">Neighbor BFS</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/loop_erased_random_walk.html">Loop-Erased Random Walk</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../utility/graph_stats.html">Graph Statistics</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Property Maps</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../property_maps/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../property_maps/bundled.html">Bundled Properties</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../property_maps/external.html">External Properties</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../property_maps/tags.html">Internal Tags (Legacy)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../property_maps/pitfalls.html">Common Mistakes</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Concepts</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../concepts/graph_concepts.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Graph Structure</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/Graph.html">Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/IncidenceGraph.html">Incidence Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/BidirectionalGraph.html">Bidirectional Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/AdjacencyGraph.html">Adjacency Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/VertexListGraph.html">Vertex List Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/EdgeListGraph.html">Edge List Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/VertexAndEdgeListGraph.html">Vertex and Edge List Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/AdjacencyMatrix.html">Adjacency Matrix</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/MutableGraph.html">Mutable Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/VertexMutableGraph.html">Vertex Mutable Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/EdgeMutableGraph.html">Edge Mutable Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/PropertyGraph.html">Property Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/MutablePropertyGraph.html">Mutable Property Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../concepts/IteratorConstructibleGraph.html">Iterator Constructible Graph</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Property and Value Types</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/ColorValue.html">Color Value</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/Buffer.html">Buffer</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/BasicMatrix.html">Basic Matrix</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/Monoid.html">Monoid</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/KeyedUpdatableQueue.html">Keyed Updatable Queue</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/UpdatableQueue.html">Updatable Queue</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/PlanarEmbedding.html">Planar Embedding</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../auxiliary/PropertyTag.html">Property Tag</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Visitors</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../visitors/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Pre-built Event Visitors</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/predecessor_recorder.html">Predecessor Recorder</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/distance_recorder.html">Distance Recorder</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/time_stamper.html">Time Stamper</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/property_put.html">Property Put</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/property_writer.html">Property Writer</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/edge_predecessor_recorder.html">Edge Predecessor Recorder</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/null_visitor.html">Null Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/tsp_tour_visitor.html">TSP Tour Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/tsp_tour_len_visitor.html">TSP Tour Len Visitor</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Concepts</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/BFSVisitor.html">BFS Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/DFSVisitor.html">DFS Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/DijkstraVisitor.html">Dijkstra Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/BellmanFordVisitor.html">Bellman-Ford Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/AStarVisitor.html">A* Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/AStarHeuristic.html">A* Heuristic</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/EventVisitor.html">Event Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/PlanarFaceVisitor.html">Planar Face Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/TSPTourVisitor.html">TSP Tour Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/AddEdgeVisitor.html">Add Edge Visitor</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Algorithm adaptors</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/EventVisitorList.html">Event Visitor List</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/bfs_visitor.html">BFS Visitor Adaptor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/dfs_visitor.html">DFS Visitor Adaptor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/dijkstra_visitor.html">Dijkstra Visitor Adaptor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/bellman_visitor.html">Bellman-Ford Visitor Adaptor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../visitors/astar_visitor.html">A* Visitor Adaptor</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Graph I/O</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../io/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../io/graphviz.html">GraphViz (DOT)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../io/graphml.html">GraphML</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../io/dimacs.html">DIMACS</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Graph Adaptors</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../adaptors/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../adaptors/filtered_graph.html">Filtered Graph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../adaptors/reverse_graph.html">Reverse Graph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../adaptors/subgraph.html">Subgraph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../adaptors/edge_list.html">Edge List</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../adaptors/grid_graph.html">Grid Graph</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Traits and Iterators</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../traits/graph_traits.html">Graph Traits</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../traits/adjacency_list_traits.html">Adjacency List Traits</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../traits/property_map.html">Property Map</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../traits/property.html">property</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../iterators/adjacency_iterator.html">Adjacency Iterator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../iterators/inv_adjacency_iterator.html">Inverse Adjacency Iterator</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../auxiliary/exception.html">Exceptions</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Background</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../overview/graph_theory_review.html">Graph Theory Review</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../auxiliary/bgl_named_params.html">Named Parameters</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../overview/faq.html">FAQ</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Extending the BGL</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../extending/overview.html">Writing Algorithms for BGL</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../extending/constructing_algorithms.html">Worked Example: Graph Coloring</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../extending/custom_storage.html">Custom Adjacency List Storage</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../extending/leda_conversion.html">Adapting Existing Graph Structures</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">About</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../about/design.html">Design Rationale</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../about/history.html">History</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../about/acknowledgements.html">Acknowledgements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../about/publications.html">Publications</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../about/users.html">BGL Users</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../about/bibliography.html">Bibliography</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Boost.Graph</span>
+    <span class="version"></span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../../index.html">Boost.Graph</a></div>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../index.html">Boost.Graph</a></li>
+    <li>Algorithms</li>
+    <li>Shortest Paths</li>
+    <li><a href="r_c_shortest_paths.html">Resource-Constrained Shortest Paths</a></li>
+  </ul>
+</nav>
+<div class="edit-this-page"><a href="file:///Users/arnaudbecheler/dev/boost/forks/graph/doc/modules/ROOT/pages/algorithms/shortest_paths/r_c_shortest_paths.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Resource-Constrained Shortest Paths</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Solves the shortest path problem with resource constraints (SPPRC) on a directed graph using a label-setting algorithm based on dynamic programming.</p>
+</div>
+<div class="paragraph">
+<p>Complexity: Problem-dependent; polynomial for non-elementary or acyclic cases, exponential for elementary with negative cycles<br>
+<strong>Defined in:</strong> <code>&lt;boost/graph/r_c_shortest_paths.hpp&gt;</code></p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_1_all_pareto_optimal_solutions_with_allocator_and_visitor"><a class="anchor" href="#_1_all_pareto_optimal_solutions_with_allocator_and_visitor"></a>(1) All Pareto-optimal solutions, with allocator and visitor</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;class Graph,
+          class VertexIndexMap,
+          class EdgeIndexMap,
+          class Resource_Container,
+          class Resource_Extension_Function,
+          class Dominance_Function,
+          class Label_Allocator,
+          class Visitor&gt;
+void r_c_shortest_paths(
+    const Graph&amp; g,
+    const VertexIndexMap&amp; vertex_index_map,
+    const EdgeIndexMap&amp; edge_index_map,
+    typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
+    typename graph_traits&lt;Graph&gt;::vertex_descriptor t,
+    std::vector&lt;std::vector&lt;typename graph_traits&lt;Graph&gt;::edge_descriptor&gt;&gt;&amp; pareto_optimal_solutions,
+    std::vector&lt;Resource_Container&gt;&amp; pareto_optimal_resource_containers,
+    const Resource_Container&amp; rc,
+    const Resource_Extension_Function&amp; ref,
+    const Dominance_Function&amp; dominance,
+    Label_Allocator la,
+    Visitor vis)</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 12.5%;">
+<col style="width: 25%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Direction</th>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const Graph&amp; g</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The graph object on which the algorithm is applied.
+  The type <code>Graph</code> must be directed and must be a model of
+  <a href="../../concepts/IncidenceGraph.html" class="xref page">Incidence Graph</a> and
+  <a href="../../concepts/PropertyGraph.html" class="xref page">PropertyGraph</a>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const VertexIndexMap&amp; vertex_index_map</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A <a href="../../property_map/doc/ReadablePropertyMap.html">ReadablePropertyMap</a>
+  mapping vertex descriptors to integers in [0, <code>num_vertices(g)</code>).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const EdgeIndexMap&amp; edge_index_map</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A <a href="../../property_map/doc/ReadablePropertyMap.html">ReadablePropertyMap</a>
+  mapping edge descriptors to integers in [0, <code>num_edges(g)</code>).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>vertex_descriptor s</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The start vertex of the path.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>vertex_descriptor t</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The end vertex of the path.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::vector&lt;std::vector&lt;edge_descriptor&gt;&gt;&amp; pareto_optimal_solutions</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A container for storing all Pareto-optimal (undominated) <em>s</em>-<em>t</em>-paths.
+  The paths are returned as sequences of edge descriptors in reverse order
+  (from <code>t</code> to <code>s</code>).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::vector&lt;Resource_Container&gt;&amp; pareto_optimal_resource_containers</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A container for storing the Pareto-optimal resource containers
+  corresponding to all Pareto-optimal solutions.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const Resource_Container&amp; rc</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An object specifying the initial resource consumptions at vertex <code>s</code>.
+  The type <code>Resource_Container</code> must be a model of the ResourceContainer concept.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const Resource_Extension_Function&amp; ref</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A function object, function pointer, or function specifying how a label is to
+  be extended along an arc. The type <code>Resource_Extension_Function</code> must be a model
+  of the ResourceExtensionFunction concept.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const Dominance_Function&amp; dominance</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A function object, function pointer, or function specifying a dominance
+  relation between two labels. The type <code>Dominance_Function</code> must be a model of
+  the DominanceFunction concept.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Label_Allocator la</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An object specifying a strategy for the memory management of the labels.
+  It must offer the same interface as
+  <code>std::allocator&lt;r_c_shortest_paths_label&lt;Graph, Resource_Container&gt;&gt;</code>.
+  There is a default type <code>default_r_c_shortest_paths_allocator</code> for this
+  parameter using the STL standard allocator. If one wants to use a specialized
+  allocator, one can specify an arbitrary type as template parameter for
+  the value type to the allocator; it is rebound to the correct type.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Visitor vis</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A visitor object specifying what operations are to be performed at the
+  event points in the algorithm. The type <code>Visitor</code> must be a model of the
+  ResourceConstrainedShortestPathsVisitor concept. There is a default type
+  <code>default_r_c_shortest_paths_visitor</code> for this parameter with empty function
+  bodies.</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_2_one_pareto_optimal_solution_with_allocator_and_visitor"><a class="anchor" href="#_2_one_pareto_optimal_solution_with_allocator_and_visitor"></a>(2) One Pareto-optimal solution, with allocator and visitor</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;class Graph,
+          class VertexIndexMap,
+          class EdgeIndexMap,
+          class Resource_Container,
+          class Resource_Extension_Function,
+          class Dominance_Function,
+          class Label_Allocator,
+          class Visitor&gt;
+void r_c_shortest_paths(
+    const Graph&amp; g,
+    const VertexIndexMap&amp; vertex_index_map,
+    const EdgeIndexMap&amp; edge_index_map,
+    typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
+    typename graph_traits&lt;Graph&gt;::vertex_descriptor t,
+    std::vector&lt;typename graph_traits&lt;Graph&gt;::edge_descriptor&gt;&amp; pareto_optimal_solution,
+    Resource_Container&amp; pareto_optimal_resource_container,
+    const Resource_Container&amp; rc,
+    const Resource_Extension_Function&amp; ref,
+    const Dominance_Function&amp; dominance,
+    Label_Allocator la,
+    Visitor vis)</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 12.5%;">
+<col style="width: 25%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Direction</th>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const Graph&amp; g</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The graph object on which the algorithm is applied.
+  The type <code>Graph</code> must be directed and must be a model of
+  <a href="../../concepts/IncidenceGraph.html" class="xref page">Incidence Graph</a> and
+  <a href="../../concepts/PropertyGraph.html" class="xref page">PropertyGraph</a>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const VertexIndexMap&amp; vertex_index_map</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A <a href="../../property_map/doc/ReadablePropertyMap.html">ReadablePropertyMap</a>
+  mapping vertex descriptors to integers in [0, <code>num_vertices(g)</code>).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const EdgeIndexMap&amp; edge_index_map</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A <a href="../../property_map/doc/ReadablePropertyMap.html">ReadablePropertyMap</a>
+  mapping edge descriptors to integers in [0, <code>num_edges(g)</code>).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>vertex_descriptor s</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The start vertex of the path.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>vertex_descriptor t</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The end vertex of the path.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::vector&lt;edge_descriptor&gt;&amp; pareto_optimal_solution</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A container for storing the first Pareto-optimal (undominated) <em>s</em>-<em>t</em>-path.
+  The path is returned as a sequence of edge descriptors in reverse order
+  (from <code>t</code> to <code>s</code>). This argument is not modified if there are no solutions.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Resource_Container&amp; pareto_optimal_resource_container</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A <code>Resource_Container</code> object for storing the Pareto-optimal resource
+  container corresponding to the first Pareto-optimal path. This argument
+  is not modified if there are no solutions.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const Resource_Container&amp; rc</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An object specifying the initial resource consumptions at vertex <code>s</code>.
+  The type <code>Resource_Container</code> must be a model of the ResourceContainer concept.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const Resource_Extension_Function&amp; ref</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A function object, function pointer, or function specifying how a label is to
+  be extended along an arc. The type <code>Resource_Extension_Function</code> must be a model
+  of the ResourceExtensionFunction concept.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const Dominance_Function&amp; dominance</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A function object, function pointer, or function specifying a dominance
+  relation between two labels. The type <code>Dominance_Function</code> must be a model of
+  the DominanceFunction concept.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Label_Allocator la</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An object specifying a strategy for the memory management of the labels.
+  It must offer the same interface as
+  <code>std::allocator&lt;r_c_shortest_paths_label&lt;Graph, Resource_Container&gt;&gt;</code>.
+  There is a default type <code>default_r_c_shortest_paths_allocator</code> for this
+  parameter using the STL standard allocator.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Visitor vis</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A visitor object specifying what operations are to be performed at the
+  event points in the algorithm. The type <code>Visitor</code> must be a model of the
+  ResourceConstrainedShortestPathsVisitor concept. There is a default type
+  <code>default_r_c_shortest_paths_visitor</code> for this parameter with empty function
+  bodies.</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_3_all_pareto_optimal_solutions_default_allocator_and_visitor"><a class="anchor" href="#_3_all_pareto_optimal_solutions_default_allocator_and_visitor"></a>(3) All Pareto-optimal solutions, default allocator and visitor</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;class Graph,
+          class VertexIndexMap,
+          class EdgeIndexMap,
+          class Resource_Container,
+          class Resource_Extension_Function,
+          class Dominance_Function&gt;
+void r_c_shortest_paths(
+    const Graph&amp; g,
+    const VertexIndexMap&amp; vertex_index_map,
+    const EdgeIndexMap&amp; edge_index_map,
+    typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
+    typename graph_traits&lt;Graph&gt;::vertex_descriptor t,
+    std::vector&lt;std::vector&lt;typename graph_traits&lt;Graph&gt;::edge_descriptor&gt;&gt;&amp; pareto_optimal_solutions,
+    std::vector&lt;Resource_Container&gt;&amp; pareto_optimal_resource_containers,
+    const Resource_Container&amp; rc,
+    const Resource_Extension_Function&amp; ref,
+    const Dominance_Function&amp; dominance)</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 12.5%;">
+<col style="width: 25%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Direction</th>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const Graph&amp; g</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The graph object on which the algorithm is applied.
+  The type <code>Graph</code> must be directed and must be a model of
+  <a href="../../concepts/IncidenceGraph.html" class="xref page">Incidence Graph</a> and
+  <a href="../../concepts/PropertyGraph.html" class="xref page">PropertyGraph</a>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const VertexIndexMap&amp; vertex_index_map</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A <a href="../../property_map/doc/ReadablePropertyMap.html">ReadablePropertyMap</a>
+  mapping vertex descriptors to integers in [0, <code>num_vertices(g)</code>).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const EdgeIndexMap&amp; edge_index_map</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A <a href="../../property_map/doc/ReadablePropertyMap.html">ReadablePropertyMap</a>
+  mapping edge descriptors to integers in [0, <code>num_edges(g)</code>).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>vertex_descriptor s</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The start vertex of the path.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>vertex_descriptor t</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The end vertex of the path.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::vector&lt;std::vector&lt;edge_descriptor&gt;&gt;&amp; pareto_optimal_solutions</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A container for storing all Pareto-optimal (undominated) <em>s</em>-<em>t</em>-paths.
+  The paths are returned as sequences of edge descriptors in reverse order
+  (from <code>t</code> to <code>s</code>).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::vector&lt;Resource_Container&gt;&amp; pareto_optimal_resource_containers</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A container for storing the Pareto-optimal resource containers
+  corresponding to all Pareto-optimal solutions.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const Resource_Container&amp; rc</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An object specifying the initial resource consumptions at vertex <code>s</code>.
+  The type <code>Resource_Container</code> must be a model of the ResourceContainer concept.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const Resource_Extension_Function&amp; ref</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A function object, function pointer, or function specifying how a label is to
+  be extended along an arc. The type <code>Resource_Extension_Function</code> must be a model
+  of the ResourceExtensionFunction concept.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const Dominance_Function&amp; dominance</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A function object, function pointer, or function specifying a dominance
+  relation between two labels. The type <code>Dominance_Function</code> must be a model of
+  the DominanceFunction concept.</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_4_one_pareto_optimal_solution_default_allocator_and_visitor"><a class="anchor" href="#_4_one_pareto_optimal_solution_default_allocator_and_visitor"></a>(4) One Pareto-optimal solution, default allocator and visitor</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;class Graph,
+          class VertexIndexMap,
+          class EdgeIndexMap,
+          class Resource_Container,
+          class Resource_Extension_Function,
+          class Dominance_Function&gt;
+void r_c_shortest_paths(
+    const Graph&amp; g,
+    const VertexIndexMap&amp; vertex_index_map,
+    const EdgeIndexMap&amp; edge_index_map,
+    typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
+    typename graph_traits&lt;Graph&gt;::vertex_descriptor t,
+    std::vector&lt;typename graph_traits&lt;Graph&gt;::edge_descriptor&gt;&amp; pareto_optimal_solution,
+    Resource_Container&amp; pareto_optimal_resource_container,
+    const Resource_Container&amp; rc,
+    const Resource_Extension_Function&amp; ref,
+    const Dominance_Function&amp; dominance)</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 12.5%;">
+<col style="width: 25%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Direction</th>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const Graph&amp; g</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The graph object on which the algorithm is applied.
+  The type <code>Graph</code> must be directed and must be a model of
+  <a href="../../concepts/IncidenceGraph.html" class="xref page">Incidence Graph</a> and
+  <a href="../../concepts/PropertyGraph.html" class="xref page">PropertyGraph</a>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const VertexIndexMap&amp; vertex_index_map</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A <a href="../../property_map/doc/ReadablePropertyMap.html">ReadablePropertyMap</a>
+  mapping vertex descriptors to integers in [0, <code>num_vertices(g)</code>).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const EdgeIndexMap&amp; edge_index_map</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A <a href="../../property_map/doc/ReadablePropertyMap.html">ReadablePropertyMap</a>
+  mapping edge descriptors to integers in [0, <code>num_edges(g)</code>).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>vertex_descriptor s</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The start vertex of the path.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>vertex_descriptor t</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The end vertex of the path.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::vector&lt;edge_descriptor&gt;&amp; pareto_optimal_solution</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A container for storing the first Pareto-optimal (undominated) <em>s</em>-<em>t</em>-path.
+  The path is returned as a sequence of edge descriptors in reverse order
+  (from <code>t</code> to <code>s</code>). This argument is not modified if there are no solutions.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Resource_Container&amp; pareto_optimal_resource_container</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A <code>Resource_Container</code> object for storing the Pareto-optimal resource
+  container corresponding to the first Pareto-optimal path. This argument
+  is not modified if there are no solutions.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const Resource_Container&amp; rc</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An object specifying the initial resource consumptions at vertex <code>s</code>.
+  The type <code>Resource_Container</code> must be a model of the ResourceContainer concept.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const Resource_Extension_Function&amp; ref</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A function object, function pointer, or function specifying how a label is to
+  be extended along an arc. The type <code>Resource_Extension_Function</code> must be a model
+  of the ResourceExtensionFunction concept.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const Dominance_Function&amp; dominance</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A function object, function pointer, or function specifying a dominance
+  relation between two labels. The type <code>Dominance_Function</code> must be a model of
+  the DominanceFunction concept.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect1">
+<h2 id="_description"><a class="anchor" href="#_description"></a>Description</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_introduction_and_problem_description"><a class="anchor" href="#_introduction_and_problem_description"></a>Introduction and Problem Description</h3>
+<div class="paragraph">
+<p>The shortest path problem with resource constraints (SPPRC) seeks a shortest (cheapest, fastest) path in a directed graph with arbitrary arc lengths (travel times, costs) from an origin node to a destination node subject to one or more resource constraints. For example, one might seek a path of minimum length from <em>s</em> to <em>t</em> subject to the constraints that</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>the total travel time must not exceed some upper bound and/or</p>
+</li>
+<li>
+<p>the total amount of some good that has to be picked up at the vertices along the path be less than or equal to some capacity limit and/or</p>
+</li>
+<li>
+<p>if two vertices <em>i</em> and <em>j</em> are visited on a path, then <em>i</em> must be visited before <em>j</em></p>
+</li>
+<li>
+<p>etc.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The problem is NP-hard in the strong sense. If the path need not be elementary, i.e., if it is allowed that vertices are visited more than once, the problem can be solved in pseudopolynomial time. A central aspect is that two (partial) paths in an SPPRC can be incomparable, contrary to the SPP without resource constraints. This makes the SPPRC similar to a multi-criteria decision problem.<br>
+A recent survey on the problem is:<br>
+Irnich, S.; Desaulniers, G. (2005):<br>
+Shortest Path Problems with Resource Constraints<br>
+in:<br>
+Desaulniers, G.; Desrosiers, J.; Solomon, M. (eds.) (2005):<br>
+Column Generation<br>
+Springer, New York, pp. 33-65<br>
+(available online
+<a href="https://www.researchgate.net/publication/227142556_Shortest_Path_Problems_with_Resource_Constraints">here</a>)</p>
+</div>
+<div class="paragraph">
+<p>The present document cannot give a complete introduction to SPPRCs. To get a thorough understanding of the problem, the reader is referred to the above paper. However, to understand the algorithm and its implementation, it is necessary to explain some fundamental ideas and point out the differences to a labelling algorithm for the shortest path problem without resource constraints (SPP).</p>
+</div>
+<div class="paragraph">
+<p>The standard solution technique for SPPRCs is a labelling algorithm based on dynamic programming. This approach uses the concepts of <em>resources</em> and <em>resource extension functions</em>. A resource is an arbitrarily scaled one-dimensional piece of information that can be determined or measured at the vertices of a directed walk in a graph. Examples are cost, time, load, or the information 'Is a vertex <em>i</em> visited on the current path?'. A resource is <em>constrained</em> if there is at least one vertex in the graph where the resource must not take all possible values. The <em>resource window</em> of a resource at a vertex is the set of allowed values for the resource at this vertex.</p>
+</div>
+<div class="paragraph">
+<p>A resource extension function is defined on each arc in a graph for each resource considered. A resource extension function for a resource maps the set of all possible vectors (in a mathematical sense, not to be confused with a <code>std::vector</code>) of resource values at the source of an arc to the set of possible values of the resource at the target of the arc. This means that the value of a resource at a vertex may depend on the values of one or more other resources at the preceding vertex.</p>
+</div>
+<div class="paragraph">
+<p><em>Labels</em> are used to store the information on the resource values for partial paths. A label in an SPPRC labelling algorithm is not a mere triple of resident vertex, current cost and predecessor vertex, as it is the case in labelling algorithms for the SPP. A label for an SPPRC labelling algorithm stores its resident vertex, its predecessor <em>arc</em> over which it has been extended, its predecessor label, and its current vector of resource values. The criterion to be minimized (cost, travel time, travel distance, whatsoever) is also treated as a (possibly unconstrained) resource. It is necessary to store the predecessor arc instead of the predecessor vertex, because, due to the resource constraints, one can not assume that the underlying graph is simple. Labels reside at vertices, and they are propagated via resource extension functions when they are extended along an arc. An <em>extension</em> of a label along an arc (<em>i</em>, <em>j</em>) is <em>feasible</em> if the resulting label <em>l</em> at <em>j</em> is feasible, which is the case if and only if all resource values of <em>l</em> are within their resource windows.</p>
+</div>
+<div class="paragraph">
+<p>To keep the number of labels as small as possible, it is decisive to perform a <em>dominance step</em> for eliminating unnecessary labels. A label <em>l</em><sub>1</sub> <em>dominates</em> a label <em>l</em><sub>2</sub> if both reside at the same vertex and if, for each feasible extension of <em>l</em><sub>2</sub>, there is also a feasible extension of <em>l</em><sub>1</sub> where the value of each cardinally scaled resource is less than or equal to the value of the resource in the extension of <em>l</em><sub>2</sub>, and where the value of each nominally scaled resource is equal to the value of the resource in the extension of <em>l</em><sub>2</sub>. Dominated labels need not be extended. A label which is not dominated by any other label is called undominated or Pareto-optimal. The application of the dominance principle is optional&#8201;&#8212;&#8201;at least from a theoretical perspective.</p>
+</div>
+<div class="paragraph">
+<p>The implementation is a label-setting algorithm. This means that there must be one or more resources whose cumulated consumption(s) after extension is/are always at least as high as before. This is similar to the Dijkstra algorithm for the SPP without resource constraints where the distance measure must be non-negative. It is sufficient if there is one resource with a non-negative resource consumption along all arcs (for example, non-negative arc lengths or non-negative arc traversal times).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_concepts"><a class="anchor" href="#_concepts"></a>Concepts</h3>
+
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="ResourceContainer"><a class="anchor" href="#ResourceContainer"></a>ResourceContainer</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A type modelling the ResourceContainer concept is used to store the current resource consumptions of a label.</p>
+</div>
+<div class="paragraph">
+<p><strong>Refinement of</strong><br>
+<a href="http://www.boost.org/sgi/stl/DefaultConstructible.html">DefaultConstructible</a>,
+<a href="../../utility/CopyConstructible.html">CopyConstructible</a>,
+<a href="http://www.boost.org/sgi/stl/Assignable.html">Assignable</a>,
+<a href="http://www.boost.org/sgi/stl/LessThanComparable.html">LessThanComparable</a>,
+<a href="http://www.boost.org/sgi/stl/EqualityComparable.html">EqualityComparable</a></p>
+</div>
+<div class="paragraph">
+<p><strong>Valid Expressions</strong><br>
+See <a href="#ResourceExtensionFunction">ResourceExtensionFunction</a> concept.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Label"><a class="anchor" href="#Label"></a>Label</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This concept defines the interface for a label in the <code>r_c_shortest_paths</code> functions. It is a design decision not to parameterize the functions on the type of label. The type <code>template&lt;class Graph, class Resource_Container&gt; struct r_c_shortest_paths_label</code> is used to model this concept.</p>
+</div>
+<div class="paragraph">
+<p><strong>Valid Expressions</strong><br>
+If <code>label</code> is an object of type <code>r_c_shortest_paths_label</code>, the following expressions are valid:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Expression</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>label.num</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Returns an unsigned integer value specifying the number of the label. Labels are numbered consecutively in order of their creation.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>label.cumulated_resource_consumption</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Returns the object associated with <code>label</code> modelling the ResourceContainer concept.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>label.p_pred_label</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Returns a <code>const</code> pointer to the predecessor label, i.e., to the label whose extension along <code>label.pred_edge</code> yielded the <code>label</code> object.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>label.pred_edge</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Returns an edge descriptor for the arc along which <code>label.p_pred_label</code> was extended to yield the <code>label</code> object.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>label.resident_vertex</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Returns a vertex descriptor for the vertex at which the <code>label</code> object resides.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>label.b_is_dominated</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Returns a boolean value indicating whether the <code>label</code> object is dominated by some other label residing at the vertex <code>label.resident_vertex</code>. Is useful only after dominance checking has been performed, i.e. only in the visitor functions <code>on_label_dominated</code> and <code>on_label_not_dominated</code> (see <a href="#ResourceConstrainedShortestPathsVisitor">below</a>).</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Invariants</strong><br>
+Every <code>r_c_shortest_paths_label</code> object, except for the first label, has a valid (not null) <code>p_pred_label</code> pointer and a valid <code>pred_edge</code> member. The <code>p_pred_label</code> pointer of the label with <code>num</code> member equal to zero is a null pointer, and the <code>pred_edge</code> member of this label is a default-constructed edge descriptor.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="ResourceExtensionFunction"><a class="anchor" href="#ResourceExtensionFunction"></a>ResourceExtensionFunction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A model of the ResourceExtensionFunction concept is used to specify how a label is to be extended along an arc.</p>
+</div>
+<div class="paragraph">
+<p><strong>Valid Expressions</strong><br>
+If <code>ref</code> models the ResourceExtensionFunction concept, and if the type <code>Resource_Container</code> models the ResourceContainer concept, the following expression is valid:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">bool b = ref( const Graph&amp; g,
+              Resource_Container&amp; new_cont,
+              const Resource_Container&amp; old_cont,
+              graph_traits&lt;Graph&gt;::edge_descriptor ed )</code></pre>
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ref</code> must return <code>true</code> if and only if the extension is feasible, i.e., if <code>new_cont</code> fulfills all resource constraints at the target vertex of <code>ed</code>.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Moreover, a reference to a type modelling the ResourceExtensionFunction concept can be passed as a parameter to <code>r_c_shortest_paths</code>, see above.</p>
+</div>
+<div class="paragraph">
+<p>Hence, a type modelling the ResourceExtensionFunction concept is likely to be a function or a <a href="http://www.boost.org/sgi/stl/functors.html">function object</a>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Invariants</strong><br>
+If <code>ref</code> models the ResourceExtensionFunction concept, and if the type <code>Resource_Container</code> models the ResourceContainer concept, after the call</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">ref( const Graph&amp; g,
+     Resource_Container&amp; new_cont,
+     const Resource_Container&amp; old_cont,
+     graph_traits&lt;Graph&gt;::edge_descriptor )</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>the expression <code>old_cont &lt;= new_cont</code> evaluates to <code>true</code>.<br>
+This is because, as stated above, the implementation is a label-setting algorithm. Therefore, the Less-Than operator for ResourceContainer must compare one or more resource(s) whose resource consumption(s) along any arc is/are non-decreasing in order for the algorithm to work properly.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_dominancefunction"><a class="anchor" href="#_dominancefunction"></a>DominanceFunction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A model of DominanceFunction is used to specify a dominance relation between two labels.</p>
+</div>
+<div class="paragraph">
+<p><strong>Refinement of</strong><br>
+<a href="http://www.boost.org/sgi/stl/BinaryPredicate.html">BinaryPredicate</a></p>
+</div>
+<div class="paragraph">
+<p><strong>Valid Expressions</strong><br>
+If <code>dominance</code> models the DominanceFunction concept, and if the type <code>Resource_Container</code> models the ResourceContainer concept, the following expression is valid:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="literalblock">
+<div class="content">
+<pre>bool b = dominance(const Resource_Container&amp; rc1, const Resource_Container&amp; rc2)</pre>
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dominance</code> must return <code>true</code> if and only if <code>rc1</code> dominates <code>rc2</code>.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Moreover, a reference to a type modelling the DominanceFunction concept can be passed as a parameter to <code>r_c_shortest_paths</code>, see above.</p>
+</div>
+<div class="paragraph">
+<p><strong>Invariants</strong><br>
+A type modelling the DominanceFunction concept must return <code>true</code> if and only if <code>rc1&lt;=rc2</code>. It must <em>not</em> return <code>false</code> if <code>rc1==rc2</code>. Then, it is guaranteed that no two labels with identical resource consumption dominate each other and are both considered as dominated by the <code>r_c_shortest_paths</code> functions.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="ResourceConstrainedShortestPathsVisitor"><a class="anchor" href="#ResourceConstrainedShortestPathsVisitor"></a>ResourceConstrainedShortestPathsVisitor</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This concept defines the visitor interface for <code>r_c_shortest_paths</code>. A user can define a type with this interface and pass an object of this type to <code>r_c_shortest_paths</code> to perform user-defined actions at the event points of the algorithm. Note that the object is passed by value.</p>
+</div>
+<div class="paragraph">
+<p><strong>Refinement of</strong><br>
+<a href="http://www.boost.org/sgi/stl/DefaultConstructible.html">DefaultConstructible</a>,
+<a href="../../utility/CopyConstructible.html">CopyConstructible</a></p>
+</div>
+<div class="paragraph">
+<p><strong>Valid Expressions</strong><br>
+If <code>vis</code> is an object of a type modelling the ResourceConstrainedShortestPathsVisitor concept, and if <code>g</code> is an object of a type <code>Graph</code> modelling the IncidenceGraph and the PropertyGraph concepts, and if it is a directed graph, and if <code>l</code> is an object of a type <code>Label</code> modelling the Label concept, the following expressions are valid:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 100%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>vis.on_enter_loop(const Queue&amp; queue, const Graph&amp; g)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>vis.on_label_popped(const Label&amp; l, const Graph&amp; g)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>vis.on_label_feasible(const Label&amp; l, const Graph&amp; g)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>vis.on_label_not_feasible(const Label&amp; l, const Graph&amp; g)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>vis.on_label_dominated(const Label&amp; l, const Graph&amp; g)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>vis.on_label_not_dominated(const Label&amp; l, const Graph&amp; g)</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Note that <em>on_enter_loop</em> returns a boolean that signals whether the main loop should continue (see the <em>default_r_c_shortest_paths_visitor</em> in the <a href="../../../boost/graph/r_c_shortest_paths.hpp"><code>source code</code></a> for inspiration). See the <a href="#Label">description of the Label concept</a> for the interface of a Label. See the <a href="#FunctionsDescription">algorithm description</a> for information on when these functions are called.</p>
+</div>
+<div class="sect2">
+<h3 id="FunctionsDescription"><a class="anchor" href="#FunctionsDescription"></a>Algorithm Description</h3>
+<div class="paragraph">
+<p>The functions are an implementation of a priority-queue-based label-setting algorithm. At each iteration, the algorithm picks a label <em>l</em> from a priority queue (the set of unprocessed labels) and checks it for dominance against the current set of labels at the vertex <em>i</em> where <em>l</em> resides. If <em>l</em> is dominated by some other label residing at <em>i</em>, <em>l</em> is deleted from the set of labels residing at <em>i</em>. If <em>l</em> is undominated, it is extended along all out-edges of <em>i</em>. Each resulting new label is checked for feasibility, and if it is feasible, it is added to the set of unprocessed labels and to the set of labels residing at the respective successor vertex of <em>i</em>. If a new label is not feasible, it is discarded. The algorithm stops when there are no more unprocessed labels. It then checks whether the destination vertex could be reached (which may not be the case even for a strongly connected graph because of the resource constraints), constructs one or all Pareto-optimal (i.e., undominated) <em>s</em>-<em>t</em>-path(s) and returns. A pseudo-code of the algorithm follows.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">r_c_shortest_paths( g,
+                    vertex_index_map,
+                    edge_index_map,
+                    s,
+                    t,
+                    pareto_optimal_solutions,
+                    pareto_optimal_resource_containers,
+                    rc,
+                    ref,
+                    dominance,
+                    la,
+                    vis )
+{
+  Label first_label, cur_label, new_label
+  Set of Labels unprocessed_labels, labels_cur_vertex
+  initialize first_label with rc
+  INSERT(unprocessed_labels, first_label)
+  while(unprocessed_labels != Ø)
+    cur_label := EXTRACTMIN(unprocessed_labels)                      ◁ vis.on_label_popped(cur_label)
+    if(cur_label is not dominated)
+      vertex i = ResidentVertex(cur_label)
+      perform pairwise dominance check over labels resident at i
+      mark all dominated labels as dominated
+      DELETE all labels which are dominated AND processed
+    if(cur_label is not dominated)                                   ◁ vis.on_label_not_dominated(cur_label)
+      mark cur_label as processed
+      for each arc (i, j) in the forward star of i
+        new_label := ref(cur_label)
+        if(new_label is not feasible)                                ◁ vis.on_label_not_feasible(new_label)
+          DELETE(new_label)
+        else                                                         ◁ vis.on_label_feasible(new_label)
+          INSERT(unprocessed_labels, new_label)
+          INSERT(set of labels resident at j,new_label)
+    else                                                             ◁ vis.on_label_dominated(cur_label)
+      DELETE(cur_label)
+  if(t could be reached from s)
+    for each label resident at t
+      INSERT(pareto_optimal_resource_containers, label.resource_container)
+      recursively construct pareto_optimal_path
+      INSERT(pareto_optimal_solutions, pareto_optimal_path)
+      if(only one Pareto-optimal solution is sought)
+        BREAK
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_preconditions"><a class="anchor" href="#_preconditions"></a>Preconditions</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><code>s</code> and <code>t</code> are valid vertex descriptors for <code>g</code>.</p>
+</li>
+<li>
+<p><code>rc</code> is within the resource windows at <code>s</code>, i.e., it constitutes a feasible <code>Resource_Container</code> object at <code>s</code> (see <a href="#Discussion">discussion</a>).</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_throws"><a class="anchor" href="#_throws"></a>Throws</h3>
+<div class="paragraph">
+<p>The function itself does not throw any exceptions. However, depending on the template parameters, exceptions may be thrown from within the function.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Discussion"><a class="anchor" href="#Discussion"></a>Notes</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_discussion"><a class="anchor" href="#_discussion"></a>Discussion</h3>
+<div class="paragraph">
+<p>The function leaves a lot of work to the user. It is almost like a small framework for SPPRCs. This, however, is a property inherent to the problem. It is entirely up to the user to make sure that he stores the 'right' resources in his resource container object, that the resource extension function extends a label in the desired way, and that the dominance function declares the 'right' labels as dominated and not dominated. In particular, the precondition that the initial ResourceContainer object supplied to the function must be feasible is as important as it is unpleasant. The implementation does not check this and, hence, sacrifices comfort for genericity here. It was a design decision not to make any assumptions with respect to the relationship between the type modelling ResourceContainer and the vertex properties of the graph type.</p>
+</div>
+<div class="paragraph">
+<p>In case the underlying graph does not contain negative cycles (cycles with overall negative resource consumption for the unconstrained resource whose consumption is to be minimized, such as cost or distance), the resulting paths will always be elementary, i.e., without repetitions of vertices. In the presence of negative cycles, the algorithm is finite if there is at least one strictly increasing resource, i.e., one resource with strictly positive resource consumption on all arcs (this is a sufficient condition). Otherwise, one must provide a customized type for the ResourceContainer concept to ensure finiteness. See, for example<br>
+Feillet, D.; Dejax, P.; Gendreau, M.; Gueguen, C. (2004):<br>
+An Exact Algorithm for the Elementary Shortest Path Problem with Resource Constraints: Application to Some Vehicle Routing Problems<br>
+Networks, vol. 44, pp. 216-229.</p>
+</div>
+<div class="paragraph">
+<p>Experience shows that for 'small' resource containers, it may be useful to try a specialized small object allocator, e.g., from the Boost Pool library. For larger resource containers (i.e., for a large number of resources), the default allocator is the right choice.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_allocator_and_visitor_defaults"><a class="anchor" href="#_allocator_and_visitor_defaults"></a>Allocator and Visitor Defaults</h3>
+<div class="paragraph">
+<p>If the third or the fourth overload of the function is used, objects of type <code>default_r_c_shortest_paths_allocator</code> and <code>default_r_c_shortest_paths_visitor</code> are used as the <code>Label_Allocator</code> and <code>Visitor</code> parameters respectively. If the first or the second overload is used, one must specify both a <code>Label_Allocator</code> and a <code>Visitor</code> parameter. If one wants to develop a user-defined type only for <code>Visitor</code>, one can use <code>default_r_c_shortest_paths_allocator</code> as <code>Label_Allocator</code> parameter. If one wants to use only a specialized allocator, one can use <code>default_r_c_shortest_paths_visitor</code> as <code>Visitor</code> parameter.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_utility_function_check_r_c_path"><a class="anchor" href="#_utility_function_check_r_c_path"></a>Utility Function: check_r_c_path</h3>
+<div class="paragraph">
+<p>There is a utility function called <code>check_r_c_path</code> that can be used for debugging purposes, if <code>r_c_shortest_paths</code> returns a path as feasible and Pareto-optimal and the user is of the opinion that the path is either infeasible or not optimal:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;class Graph,
+          class Resource_Container,
+          class Resource_Extension_Function&gt;
+void check_r_c_path(
+    const Graph&amp; g,
+    const std::vector&lt;typename graph_traits&lt;Graph&gt;::edge_descriptor&gt;&amp; ed_vec_path,
+    const Resource_Container&amp; initial_resource_levels,
+    bool b_result_must_be_equal_to_desired_final_resource_levels,
+    const Resource_Container&amp; desired_final_resource_levels,
+    Resource_Container&amp; actual_final_resource_levels,
+    const Resource_Extension_Function&amp; ref,
+    bool&amp; b_is_a_path_at_all,
+    bool&amp; b_feasible,
+    bool&amp; b_correctly_extended,
+    typename graph_traits&lt;Graph&gt;::edge_descriptor&amp; ed_last_extended_arc)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The boolean parameters have the following meaning:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If <code>b_result_must_be_equal_to_desired_final_resource_levels==true</code>, computed accumulated final resource levels must be equal to <code>desired_final_resource_levels</code>.</p>
+</li>
+<li>
+<p>If <code>b_result_must_be_equal_to_desired_final_resource_levels==false</code>, computed accumulated final resource levels must be less than or equal to <code>desired_final_resource_levels</code>.</p>
+</li>
+<li>
+<p><code>b_is_a_path_at_all==true</code> if and only if <code>ed_vec_path</code> specifies a walk in a graph-theoretical sense, i.e., a sequence of arcs where the target of an arc is the source of the next arc, or a reverse walk, where the source of one arc is the target of the next arc. Note that in the world of resource-constrained shortest paths, a path need not be elementary: Repetitions of vertices or arcs are allowed. When the graph does not have any cycles of negative cost (traversal cost, travel time etc.), the paths returned by <code>r_c_shortest_paths</code> will be elementary. Otherwise, one must use appropriate resource containers and resource extension and dominance functions (see the abovementioned references).</p>
+</li>
+<li>
+<p><code>b_feasible==true</code> if and only if <code>b_is_a_path_at_all==true</code> and all resource windows at all vertices along the path are maintained.</p>
+</li>
+<li>
+<p>When <code>b_result_must_be_equal_to_desired_final_resource_levels==true</code> (<code>false</code>), <code>b_correctly_extended==true</code> if and only if <code>b_feasible==true</code> and the computed resource levels at the end of the path are equal to (less than or equal to) the desired final resource levels as specified in <code>desired_final_resource_levels</code>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><code>ed_last_extended_arc</code> stores the edge descriptor of the last extended arc. If <code>ed_vec_path</code> is a path of positive length and <code>b_feasible==false</code>, <code>ed_last_extended_arc</code> is the edge descriptor of the arc at whose target vertex the first violation of a resource window occured.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_example"><a class="anchor" href="#_example"></a>Example</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include &lt;boost/graph/adjacency_list.hpp&gt;
+#include &lt;boost/graph/r_c_shortest_paths.hpp&gt;
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+// r_c_shortest_paths requires an edge_index_map, so we include edge_index_t.
+using namespace boost;
+using Graph = adjacency_list&lt;vecS, vecS, directedS, no_property,
+    property&lt;edge_index_t, int, property&lt;edge_weight_t, int&gt;&gt;&gt;;
+using Edge = graph_traits&lt;Graph&gt;::edge_descriptor;
+
+// Resource container: (cost, time)
+struct Res { int cost; int time; };
+bool operator==(const Res&amp; a, const Res&amp; b) { return a.cost == b.cost &amp;&amp; a.time == b.time; }
+bool operator&lt;(const Res&amp; a, const Res&amp; b) { return a.cost &lt; b.cost; }
+
+struct ResExt {
+    bool operator()(const Graph&amp; g, Res&amp; new_r, const Res&amp; old_r, Edge e) const {
+        new_r.cost = old_r.cost + get(edge_weight, g, e);
+        new_r.time = old_r.time + 1;
+        return new_r.time &lt;= 5; // hop-count constraint
+    }
+};
+
+struct Dom {
+    bool operator()(const Res&amp; r1, const Res&amp; r2) const {
+        return r1.cost &lt;= r2.cost &amp;&amp; r1.time &lt;= r2.time;
+    }
+};
+
+int main() {
+    Graph g(4);
+    int idx = 0;
+    auto ae = [&amp;](int u, int v, int w) {
+        auto e = add_edge(u, v, g).first;
+        put(edge_index, g, e, idx++);
+        put(edge_weight, g, e, w);
+    };
+    ae(0, 1, 2); ae(0, 2, 5); ae(1, 3, 3); ae(2, 3, 2);
+
+    std::vector&lt;Edge&gt; path;
+    Res result{0, 0};
+    r_c_shortest_paths(g, get(vertex_index, g), get(edge_index, g),
+        vertex(0, g), vertex(3, g), path, result,
+        Res{0, 0}, ResExt{}, Dom{});
+
+    std::cout &lt;&lt; "Cost: " &lt;&lt; result.cost &lt;&lt; ", hops: " &lt;&lt; result.time &lt;&lt; "\n";
+    std::cout &lt;&lt; "Path edges: " &lt;&lt; path.size() &lt;&lt; "\n";
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>Cost: 5, hops: 2
+Path edges: 2</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The file <a href="../example/r_c_shortest_paths_example.cpp"><code>example/r_c_shortest_paths_example.cpp</code></a> provides additional examples for how SPPRCs can be solved with the <code>r_c_shortest_paths</code> functions. There is an example for an SPP without resource constraints and an example for a shortest path problem with time windows.<br>
+It is obvious that one would not use the algorithm for SPPs without resource constraints, because there are faster algorithms for this problem, but one would expect a code for the SPP with resource constraints to be able to handle such a case.</p>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

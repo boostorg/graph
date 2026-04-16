@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Named Parameters :: Boost.Graph Documentation</title>
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.boost.org">Boost</a>
+      <span class="navbar-item">Boost.Graph Documentation</span>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="graph" data-version="">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Boost.Graph</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Introduction</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../graph_classes/primitives.html">Primitives</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Graph Classes</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../graph_classes/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../graph_classes/adjacency_list.html">Adjacency List</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../graph_classes/adjacency_matrix.html">Adjacency Matrix</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../graph_classes/compressed_sparse_row.html">Compressed Sparse Row Graph</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Graph Generators</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../generators/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../generators/random.html">Random Graph Utilities</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../generators/erdos_renyi_generator.html">Erdős-Rényi (Uniform Random)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../generators/rmat_generator.html">Scale-Free (R-MAT)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../generators/plod_generator.html">PLOD (Power Law)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../generators/small_world_generator.html">Small World (Watts-Strogatz)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../generators/mesh_generator.html">Mesh (2D Grid)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../generators/ssca_generator.html">SSCA (Clustered Benchmark)</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Algorithms</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Traversal</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/traversal/traversal_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/traversal/breadth_first_search.html">Breadth First Search</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/traversal/breadth_first_visit.html">Breadth First Visit</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/traversal/depth_first_search.html">Depth First Search</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/traversal/depth_first_visit.html">Depth First Visit</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/traversal/undirected_dfs.html">Undirected DFS</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Shortest Paths</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/shortest_paths/shortest_paths_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/shortest_paths/dijkstra_shortest_paths.html">Dijkstra Shortest Paths</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/shortest_paths/dijkstra_shortest_paths_no_color_map.html">Dijkstra Shortest Paths No Color Map</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/shortest_paths/bellman_ford_shortest.html">Bellman-Ford Shortest Paths</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/shortest_paths/dag_shortest_paths.html">DAG Shortest Paths</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/shortest_paths/johnson_all_pairs_shortest.html">Johnson All Pairs Shortest Paths</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/shortest_paths/floyd_warshall_shortest.html">Floyd-Warshall All Pairs Shortest Paths</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/shortest_paths/r_c_shortest_paths.html">Resource-Constrained Shortest Paths</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/shortest_paths/astar_search.html">A* Search</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Spanning Trees</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/spanning_trees/spanning_trees_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/spanning_trees/kruskal_min_spanning_tree.html">Kruskal Minimum Spanning Tree</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/spanning_trees/prim_minimum_spanning_tree.html">Prim Minimum Spanning Tree</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/spanning_trees/random_spanning_tree.html">Random Spanning Tree</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/spanning_trees/two_graphs_common_spanning_trees.html">Two Graphs Common Spanning Trees</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Connected Components</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/connected_components/connected_components_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/connected_components/connected_components.html">Connected Components</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/connected_components/strong_components.html">Strong Components</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/connected_components/biconnected_components.html">Biconnected Components</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/connected_components/incremental_components.html">Incremental Components</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Network Flow</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/network_flow/network_flow_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/network_flow/edmonds_karp_max_flow.html">Edmonds-Karp Max Flow</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/network_flow/push_relabel_max_flow.html">Push-Relabel Max Flow</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/network_flow/boykov_kolmogorov_max_flow.html">Boykov-Kolmogorov Max Flow</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/network_flow/stoer_wagner_min_cut.html">Stoer-Wagner Min Cut</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/network_flow/cycle_canceling.html">Cycle Canceling</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/network_flow/successive_shortest_path_nonnegative_weights.html">Successive Shortest Path Nonnegative Weights</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/network_flow/find_flow_cost.html">Find Flow Cost</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/network_flow/maximum_matching.html">Edmonds Maximum Cardinality Matching</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/network_flow/maximum_weighted_matching.html">Maximum Weighted Matching</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Topological Sort</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/topological_sort/topological_sort_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/topological_sort/topological_sort.html">Topological Sort</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Graph Coloring</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/coloring/coloring_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/coloring/sequential_vertex_coloring.html">Sequential Vertex Coloring</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/coloring/edge_coloring.html">Edge Coloring</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/coloring/is_bipartite.html">Is Bipartite</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/coloring/find_odd_cycle.html">Find Odd Cycle</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Connectivity</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/connectivity/connectivity_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/connectivity/edge_connectivity.html">Edge Connectivity</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/connectivity/st_connected.html">ST Connected</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Graph Metrics</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/metrics/metrics_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/metrics/page_rank.html">PageRank</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/metrics/betweenness_centrality.html">Brandes Betweenness Centrality</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/metrics/degree_centrality.html">Degree Centrality</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/metrics/closeness_centrality.html">Closeness Centrality</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/metrics/eccentricity.html">Eccentricity</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/metrics/geodesic_distance.html">Geodesic Distance</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/metrics/clustering_coefficient.html">Clustering Coefficient</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/metrics/core_numbers.html">Core Numbers</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/metrics/profile.html">Profile</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/metrics/wavefront.html">Wavefront</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/metrics/bandwidth.html">Bandwidth</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Graph Isomorphism</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/isomorphism/isomorphism_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/isomorphism/isomorphism.html">Isomorphism</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/isomorphism/vf2_sub_graph_iso.html">VF2 Subgraph Isomorphism</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/isomorphism/mcgregor_common_subgraphs.html">McGregor Common Subgraphs</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Planar Graphs</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/planar/planar_graphs.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/planar/boyer_myrvold.html">Boyer-Myrvold Planarity Test</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/planar/planar_face_traversal.html">Planar Face Traversal</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/planar/planar_canonical_ordering.html">Planar Canonical Ordering</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/planar/straight_line_drawing.html">Chrobak-Payne Straight Line Drawing</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/planar/is_straight_line_drawing.html">Is Straight Line Drawing</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/planar/is_kuratowski_subgraph.html">Is Kuratowski Subgraph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/planar/make_connected.html">Make Connected</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/planar/make_biconnected_planar.html">Make Biconnected Planar</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/planar/make_maximal_planar.html">Make Maximal Planar</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Layout</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/layout/layout_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/layout/topology.html">Topologies</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/layout/random_layout.html">Random Graph Layout</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/layout/circle_layout.html">Circle Layout</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/layout/kamada_kawai_spring_layout.html">Kamada-Kawai Spring Layout</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/layout/fruchterman_reingold.html">Fruchterman-Reingold Force Directed Layout</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/layout/gursoy_atun_layout.html">Gürsoy-Atun Layout</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="layout_tolerance.html">Layout Tolerance</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Sparse Matrix Ordering</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/ordering/ordering_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/ordering/cuthill_mckee_ordering.html">Cuthill-McKee Ordering</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/ordering/king_ordering.html">King Ordering</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/ordering/minimum_degree_ordering.html">Minimum Degree Ordering</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/ordering/sloan_ordering.html">Sloan Ordering</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/ordering/sloan_start_end_vertices.html">Sloan Start End Vertices</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Cycle Detection</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/cycle_detection/cycle_detection_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/cycle_detection/hawick_circuits.html">Hawick Circuits</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/cycle_detection/tiernan_all_cycles.html">Tiernan All Cycles</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/cycle_detection/howard_cycle_ratio.html">Cycle Ratio</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Clique Detection</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/clique_detection/clique_detection_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/clique_detection/bron_kerbosch.html">Bron-Kerbosch All Cliques</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Utility</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/utility/utility_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/utility/copy_graph.html">Copy Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/utility/transpose_graph.html">Transpose Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/utility/transitive_closure.html">Transitive Closure</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/utility/transitive_reduction.html">Transitive Reduction</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/utility/smallest_last_ordering.html">Smallest Last Ordering</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/utility/lengauer_tarjan_dominator.html">Lengauer-Tarjan Dominator Tree</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/utility/metric_tsp_approx.html">Metric TSP Approximation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/utility/maximum_adjacency_search.html">Maximum Adjacency Search</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/utility/bc_clustering.html">Betweenness Centrality Clustering</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="disjoint_sets.html">Disjoint Sets</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="incident.html">Incident</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="opposite.html">Opposite</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/utility/neighbor_bfs.html">Neighbor BFS</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/utility/loop_erased_random_walk.html">Loop-Erased Random Walk</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../algorithms/utility/graph_stats.html">Graph Statistics</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Property Maps</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../property_maps/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../property_maps/bundled.html">Bundled Properties</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../property_maps/external.html">External Properties</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../property_maps/tags.html">Internal Tags (Legacy)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../property_maps/pitfalls.html">Common Mistakes</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Concepts</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph_concepts.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Graph Structure</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../concepts/Graph.html">Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../concepts/IncidenceGraph.html">Incidence Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../concepts/BidirectionalGraph.html">Bidirectional Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../concepts/AdjacencyGraph.html">Adjacency Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../concepts/VertexListGraph.html">Vertex List Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../concepts/EdgeListGraph.html">Edge List Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../concepts/VertexAndEdgeListGraph.html">Vertex and Edge List Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../concepts/AdjacencyMatrix.html">Adjacency Matrix</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../concepts/MutableGraph.html">Mutable Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../concepts/VertexMutableGraph.html">Vertex Mutable Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../concepts/EdgeMutableGraph.html">Edge Mutable Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../concepts/PropertyGraph.html">Property Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../concepts/MutablePropertyGraph.html">Mutable Property Graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../concepts/IteratorConstructibleGraph.html">Iterator Constructible Graph</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Property and Value Types</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ColorValue.html">Color Value</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="Buffer.html">Buffer</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="BasicMatrix.html">Basic Matrix</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="Monoid.html">Monoid</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="KeyedUpdatableQueue.html">Keyed Updatable Queue</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="UpdatableQueue.html">Updatable Queue</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="PlanarEmbedding.html">Planar Embedding</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="PropertyTag.html">Property Tag</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Visitors</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../visitors/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Pre-built Event Visitors</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../visitors/predecessor_recorder.html">Predecessor Recorder</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../visitors/distance_recorder.html">Distance Recorder</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../visitors/time_stamper.html">Time Stamper</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../visitors/property_put.html">Property Put</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../visitors/property_writer.html">Property Writer</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../visitors/edge_predecessor_recorder.html">Edge Predecessor Recorder</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../visitors/null_visitor.html">Null Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../visitors/tsp_tour_visitor.html">TSP Tour Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../visitors/tsp_tour_len_visitor.html">TSP Tour Len Visitor</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Concepts</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../visitors/BFSVisitor.html">BFS Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../visitors/DFSVisitor.html">DFS Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../visitors/DijkstraVisitor.html">Dijkstra Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../visitors/BellmanFordVisitor.html">Bellman-Ford Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../visitors/AStarVisitor.html">A* Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../visitors/AStarHeuristic.html">A* Heuristic</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../visitors/EventVisitor.html">Event Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../visitors/PlanarFaceVisitor.html">Planar Face Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../visitors/TSPTourVisitor.html">TSP Tour Visitor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../visitors/AddEdgeVisitor.html">Add Edge Visitor</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Algorithm adaptors</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../visitors/EventVisitorList.html">Event Visitor List</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../visitors/bfs_visitor.html">BFS Visitor Adaptor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../visitors/dfs_visitor.html">DFS Visitor Adaptor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../visitors/dijkstra_visitor.html">Dijkstra Visitor Adaptor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../visitors/bellman_visitor.html">Bellman-Ford Visitor Adaptor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../visitors/astar_visitor.html">A* Visitor Adaptor</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Graph I/O</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../io/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../io/graphviz.html">GraphViz (DOT)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../io/graphml.html">GraphML</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../io/dimacs.html">DIMACS</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Graph Adaptors</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../adaptors/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../adaptors/filtered_graph.html">Filtered Graph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../adaptors/reverse_graph.html">Reverse Graph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../adaptors/subgraph.html">Subgraph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../adaptors/edge_list.html">Edge List</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../adaptors/grid_graph.html">Grid Graph</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Traits and Iterators</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../traits/graph_traits.html">Graph Traits</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../traits/adjacency_list_traits.html">Adjacency List Traits</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../traits/property_map.html">Property Map</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../traits/property.html">property</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../iterators/adjacency_iterator.html">Adjacency Iterator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../iterators/inv_adjacency_iterator.html">Inverse Adjacency Iterator</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="exception.html">Exceptions</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Background</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../overview/graph_theory_review.html">Graph Theory Review</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="bgl_named_params.html">Named Parameters</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../overview/faq.html">FAQ</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Extending the BGL</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../extending/overview.html">Writing Algorithms for BGL</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../extending/constructing_algorithms.html">Worked Example: Graph Coloring</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../extending/custom_storage.html">Custom Adjacency List Storage</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../extending/leda_conversion.html">Adapting Existing Graph Structures</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">About</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../about/design.html">Design Rationale</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../about/history.html">History</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../about/acknowledgements.html">Acknowledgements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../about/publications.html">Publications</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../about/users.html">BGL Users</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../about/bibliography.html">Bibliography</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Boost.Graph</span>
+    <span class="version"></span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Boost.Graph</a></div>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Boost.Graph</a></li>
+    <li>Background</li>
+    <li><a href="bgl_named_params.html">Named Parameters</a></li>
+  </ul>
+</nav>
+<div class="edit-this-page"><a href="file:///Users/arnaudbecheler/dev/boost/forks/graph/doc/modules/ROOT/pages/auxiliary/bgl_named_params.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Named Parameters</h1>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Named parameters are a legacy API. New code should use the positional
+overloads documented on each algorithm page.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Many of the Boost.Graph algorithms have a long list of parameters, most
+of which have default values. This causes several problems. First,
+C&#43;&#43; does not provide a mechanism for handling default
+parameters of template functions. However, this can be overcome by
+creating multiply version of an algorithm with different numbers of
+parameters with each version providing defaults for some subset of the
+parameters. This is the approach used in previous versions of
+Boost.Graph. This solution is still unsatisfactory for several reasons:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The defaults for parameters can only been used in a particular order.
+If the ordering of the defaults does not fit the users situation he or
+she has to resort to providing all the parameters.</p>
+</li>
+<li>
+<p>Since the list of parameters is long, it is easy to forget the
+ordering.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>A better solution is provided by <code>bgl_named_params</code>. This class
+allows users to provide parameters is any order, and matches arguments
+to parameters based on parameter names.</p>
+</div>
+<div class="paragraph">
+<p>The following code shows an example of calling
+<code>bellman_ford_shortest_paths</code> using the named parameter
+technique. Each of the arguments is passed to a function whose name
+indicates which parameter the argument is for. Each of the named
+parameters is separated by a <strong>period</strong>, not a comma.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">  bool r = boost::bellman_ford_shortest_paths(g, int(N),
+     boost::weight_map(weight).
+     distance_map(&amp;distance[0]).
+     predecessor_map(&amp;parent[0]));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The order in which the arguments are provided does not matter as long as
+they are matched with the correct parameter function. Here is an call to
+<code>bellman_ford_shortest_paths</code> that is equivalent to the one
+above.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">  bool r = boost::bellman_ford_shortest_paths(g, int(N),
+     boost::predecessor_map(&amp;parent[0]).
+     distance_map(&amp;distance[0]).
+     weight_map(weight));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Typically the user never needs to deal with the
+<code>bgl_named_params</code> class directly, since there are functions
+like <code>boost::weight_map</code> that create an instance of
+<code>bgl_named_params</code>.</p>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>
