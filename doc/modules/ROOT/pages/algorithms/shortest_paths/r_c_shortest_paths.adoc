@@ -419,7 +419,7 @@ The implementation is a label-setting algorithm. This means that there must be o
 === Concepts
 
 [#ResourceContainer]
-==== ResourceContainer
+== ResourceContainer
 
 A type modelling the ResourceContainer concept is used to store the current resource consumptions of a label.
 
@@ -434,7 +434,7 @@ http://www.boost.org/sgi/stl/EqualityComparable.html[EqualityComparable]
 See <<ResourceExtensionFunction,ResourceExtensionFunction>> concept.
 
 [#Label]
-==== Label
+== Label
 
 This concept defines the interface for a label in the `r_c_shortest_paths` functions. It is a design decision not to parameterize the functions on the type of label. The type `template<class Graph, class Resource_Container> struct r_c_shortest_paths_label` is used to model this concept.
 
@@ -468,7 +468,7 @@ If `label` is an object of type `r_c_shortest_paths_label`, the following expres
 Every `r_c_shortest_paths_label` object, except for the first label, has a valid (not null) `p_pred_label` pointer and a valid `pred_edge` member. The `p_pred_label` pointer of the label with `num` member equal to zero is a null pointer, and the `pred_edge` member of this label is a default-constructed edge descriptor.
 
 [#ResourceExtensionFunction]
-==== ResourceExtensionFunction
+== ResourceExtensionFunction
 
 A model of the ResourceExtensionFunction concept is used to specify how a label is to be extended along an arc.
 
@@ -507,7 +507,7 @@ ref( const Graph& g,
 the expression `old_cont \<= new_cont` evaluates to `true`. +
 This is because, as stated above, the implementation is a label-setting algorithm. Therefore, the Less-Than operator for ResourceContainer must compare one or more resource(s) whose resource consumption(s) along any arc is/are non-decreasing in order for the algorithm to work properly.
 
-==== DominanceFunction
+== DominanceFunction
 
 A model of DominanceFunction is used to specify a dominance relation between two labels.
 
@@ -533,7 +533,7 @@ Moreover, a reference to a type modelling the DominanceFunction concept can be p
 A type modelling the DominanceFunction concept must return `true` if and only if `rc1\<=rc2`. It must _not_ return `false` if `rc1==rc2`. Then, it is guaranteed that no two labels with identical resource consumption dominate each other and are both considered as dominated by the `r_c_shortest_paths` functions.
 
 [#ResourceConstrainedShortestPathsVisitor]
-==== ResourceConstrainedShortestPathsVisitor
+== ResourceConstrainedShortestPathsVisitor
 
 This concept defines the visitor interface for `r_c_shortest_paths`. A user can define a type with this interface and pass an object of this type to `r_c_shortest_paths` to perform user-defined actions at the event points of the algorithm. Note that the object is passed by value.
 

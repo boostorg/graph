@@ -212,7 +212,7 @@ Parameters are the same as <<mcgregor_common_subgraphs>>.
 === Utility Functions and Structs
 
 [#make_property_map_equivalent]
-==== make_property_map_equivalent
+== make_property_map_equivalent
 
 [source,cpp]
 ----
@@ -232,7 +232,7 @@ invoked, the `operator()` is effectively:
 `return (get(m_property_map1, vertex1) == get(m_property_map2, vertex2));`
 
 [#always_equivalent]
-==== always_equivalent
+== always_equivalent
 
 [source,cpp]
 ----
@@ -242,7 +242,7 @@ struct always_equivalent;
 A binary function object that returns true for any pair of items.
 
 [#fill_membership_map]
-==== fill_membership_map
+== fill_membership_map
 
 [source,cpp]
 ----
@@ -262,7 +262,7 @@ subgraph). `MembershipMapFirst` must model
 link:../../property_map/doc/WritablePropertyMap.html[Writable Property Map].
 
 [#make_membership_filtered_graph]
-==== make_membership_filtered_graph
+== make_membership_filtered_graph
 
 [source,cpp]
 ----

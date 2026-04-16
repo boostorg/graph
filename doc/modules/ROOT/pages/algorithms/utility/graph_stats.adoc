@@ -63,6 +63,12 @@ std::map<unsigned long, double> weight_degree_dist(Graph& g);
 }}
 ----
 
-The graph must model VertexListGraph and IncidenceGraph.
-`weight_degree_dist` additionally requires an internal `edge_weight_t`
-property.
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `Graph& g`
+| Must model VertexListGraph and IncidenceGraph. `weight_degree_dist`
+  additionally requires an internal `edge_weight_t` property.
+|===

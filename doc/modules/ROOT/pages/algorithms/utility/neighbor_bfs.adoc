@@ -32,7 +32,18 @@ void neighbor_breadth_first_search(
     const bgl_named_params<P, T, R>& params);
 ----
 
-The graph must model BidirectionalGraph and VertexListGraph.
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const VertexListGraph& g`
+| Must model BidirectionalGraph and VertexListGraph.
+
+| IN
+| `vertex_descriptor s`
+| Source vertex for the search.
+|===
 
 WARNING: This function only has a named-parameter interface. There is no
 positional overload.

@@ -5,9 +5,23 @@ Finds a maximum cardinality matching in an undirected graph using Edmonds' algor
 Complexity: _O(mn alpha(m,n))_ +
 *Defined in:* `<boost/graph/max_cardinality_matching.hpp>`
 
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/network_flow/maximum_matching.cpp[]
+----
+
+.Expected output
+----
+Maximum matching (3 edges):
+  0 - 3
+  1 - 2
+----
+
 '''
 
-=== edmonds_maximum_cardinality_matching
+== edmonds_maximum_cardinality_matching
 
 [source,cpp]
 ----
@@ -53,7 +67,7 @@ void edmonds_maximum_cardinality_matching(
 
 '''
 
-=== checked_edmonds_maximum_cardinality_matching
+== checked_edmonds_maximum_cardinality_matching
 
 [source,cpp]
 ----
@@ -99,7 +113,7 @@ bool checked_edmonds_maximum_cardinality_matching(
 
 '''
 
-=== matching (generic)
+== matching (generic)
 
 [source,cpp]
 ----
@@ -169,18 +183,18 @@ If you use `checked_edmonds_maximum_cardinality_matching` or `edmonds_maximum_ca
 
 When quoting time bounds for algorithms, we assume that `VertexIndexMap` is a property map that allows for constant-time mapping between vertices and indices (which is easily achieved if, for instance, the vertices are stored in contiguous memory). We use _n_ and _m_ to represent the size of the vertex and edge sets, respectively, of the input graph.
 
-=== Algorithms for Creating an Initial Matching
+== Algorithms for Creating an Initial Matching
 
 * *`empty_matching`*: Takes time _O(n)_ to initialize the empty matching.
 * *`greedy_matching`*: The matching obtained by iterating through the edges and adding an edge if it doesn't conflict with the edges already in the matching. This matching is maximal, and is therefore guaranteed to contain at least half of the edges that a maximum matching has. Takes time _O(m log n)_.
 * *`extra_greedy_matching`*: Sorts the edges in increasing order of the degree of the vertices contained in each edge, then constructs a greedy matching from those edges. Also a maximal matching, and can sometimes be much closer to the maximum cardinality matching than a simple `greedy_matching`. Takes time _O(m log n)_, but the constants involved make this a slower algorithm than `greedy_matching`.
 
-=== Algorithms for Finding an Augmenting Path
+== Algorithms for Finding an Augmenting Path
 
 * *`edmonds_augmenting_path_finder`*: Finds an augmenting path in time _O(m alpha(m,n))_, where _alpha(m,n)_ is an inverse of the Ackerman function. _alpha(m,n)_ is one of the slowest growing functions that occurs naturally in computer science; essentially, _alpha(m,n)_ <= 4 for any graph that we'd ever hope to run this algorithm on. Since we arrive at a maximum cardinality matching after augmenting _O(n)_ matchings, the entire algorithm takes time _O(mn alpha(m,n))_. Edmonds' original algorithm appeared in [xref:about/bibliography.adoc#edmonds65[64]], but our implementation of Edmonds' algorithm closely follows Tarjan's description of the algorithm from [xref:about/bibliography.adoc#tarjan83:_data_struct_network_algo[27]].
 * *`no_augmenting_path_finder`*: Can be used if no augmentation of the initial matching is desired.
 
-=== Verification Algorithms
+== Verification Algorithms
 
 * *`maximum_cardinality_matching_verifier`*: Returns true if and only if the matching found is a maximum cardinality matching. Takes time _O(m alpha(m,n))_, which is on the order of a single iteration of Edmonds' algorithm.
 * *`no_matching_verifier`*: Always returns true.
@@ -205,7 +219,7 @@ An outline of our verification procedure is: Given a `Graph g` and `MateMap mate
 
 Assuming these steps are implemented correctly, the verifier will never return a false positive, and will only return a false negative if `edmonds_augmenting_path_finder` doesn't compute the `vertex_state` map correctly, in which case the `edmonds_augmenting_path_finder` isn't working correctly.
 
-=== Creating Your Own Matching Algorithms
+== Creating Your Own Matching Algorithms
 
 Creating a matching algorithm is as simple as plugging the algorithms described above into the generic `matching` function.
 
@@ -233,20 +247,6 @@ The resulting algorithm will find an extra greedy matching in time _O(m log n)_ 
 `checked_edmonds_maximum_cardinality_matching` returns `true` if and only if the matching computed is a maximum cardinality matching.
 
 The generic `matching` function returns `true` if and only if the `MatchingVerifier` confirms the matching.
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/network_flow/maximum_matching.cpp[]
-----
-
-.Expected output
-----
-Maximum matching (3 edges):
-  0 - 3
-  1 - 2
-----
 
 == Notes
 
