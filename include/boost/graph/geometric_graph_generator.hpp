@@ -124,8 +124,8 @@ void connect_all_geometric(VertexListGraph& g, const PointContainer& points,
             // Use templated distance function for compatibility with
             // Boost.Geometry.  In the case of boost::simple_point, this uses euclidean
             // (std::hypot)
-            const WeightType weight
-                = distance(points[src_idx], points[dest_idx]);
+            const WeightType weight = static_cast< WeightType >(
+                distance(points[src_idx], points[dest_idx]));
 
             // No need to check 'inserted' - building fresh complete graph
             Edge e = boost::add_edge(*src, *dest, g).first;
@@ -295,8 +295,8 @@ void make_random_euclidean_graph(VertexListGraph& g, std::size_t num_points,
 template < typename PointType, typename VertexListGraph, typename WeightMap,
     typename VertexIndexMap, typename XDistribution, typename YDistribution >
 void make_random_geometric_graph(VertexListGraph& g, std::size_t num_points,
-                                 XDistribution x_dist, YDistribution y_dist, WeightMap weight_map,
-                                 VertexIndexMap vertex_index_map)
+    XDistribution x_dist, YDistribution y_dist, WeightMap weight_map,
+    VertexIndexMap vertex_index_map)
 {
     std::vector< PointType > points;
     points.reserve(num_points);
@@ -322,8 +322,8 @@ void make_random_geometric_graph(VertexListGraph& g, std::size_t num_points,
 template < typename PointType, typename VertexListGraph, typename WeightMap,
     typename VertexIndexMap, typename CoordType = double >
 void make_random_geometric_graph(VertexListGraph& g, std::size_t num_points,
-                                 std::size_t coordinate_max, WeightMap weight_map,
-                                 VertexIndexMap vertex_index_map)
+    std::size_t coordinate_max, WeightMap weight_map,
+    VertexIndexMap vertex_index_map)
 {
     std::vector< PointType > points;
     points.reserve(num_points);
