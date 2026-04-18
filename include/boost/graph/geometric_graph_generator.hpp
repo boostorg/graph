@@ -77,6 +77,9 @@ void connect_all_geometric(VertexListGraph& g, const PointContainer& points,
     WeightMap wmap, VertexIndexMap vmap)
 {
     using boost::geometry::distance; 
+    BOOST_CONCEPT_ASSERT((ReadablePropertyMapConcept< VertexIndexMap,
+        typename graph_traits< VertexListGraph >::vertex_descriptor >));
+    BOOST_CONCEPT_ASSERT((RandomAccessContainerConcept< PointContainer >));
     BOOST_CONCEPT_ASSERT((VertexListGraphConcept< VertexListGraph >));
     BOOST_CONCEPT_ASSERT((MutableGraphConcept< VertexListGraph >));
     BOOST_CONCEPT_ASSERT((WritablePropertyMapConcept< WeightMap,
