@@ -73,7 +73,7 @@ void example_basic_random_graph()
     std::vector< Point > points;
     points.reserve(num_vertices);
     auto back_itr = std::back_inserter(points);
-    boost::generate_random_points(num_vertices, 500, back_itr);
+    boost::generate_random_points< Point >(num_vertices, 500, back_itr);
 
     // Get the edge weight map (matches edges to weight) and vertex index map
     auto weight_map = boost::get(boost::edge_weight, g);
@@ -97,7 +97,7 @@ void example_custom_distribution()
     std::normal_distribution< double > normal_dist(50.0, 10.0);
     std::vector< Point > points;
     points.reserve(num_vertices);
-    boost::generate_random_points(
+    boost::generate_random_points< Point >(
         num_vertices, normal_dist, normal_dist, std::back_inserter(points));
 
     // Create graph
@@ -120,7 +120,7 @@ void example_mst_on_euclidean_graph()
     // Generate and store points
     std::vector< Point > points;
     points.reserve(num_vertices);
-    boost::generate_random_points(
+    boost::generate_random_points < Point >(
         num_vertices, 500, std::back_inserter(points));
 
     // Create complete graph using adjacency_list

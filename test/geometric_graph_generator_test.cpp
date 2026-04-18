@@ -70,7 +70,7 @@ struct RandomGraphFixture
 
     RandomGraphFixture() : g(num_vertices)
     {
-        boost::generate_random_points(
+        boost::generate_random_points< PointDbl >(
             num_vertices, 100, std::back_inserter(points));
         boost::connect_all_geometric(g, points,
             boost::get(boost::edge_weight, g),
@@ -114,7 +114,7 @@ BOOST_AUTO_TEST_CASE(test_uniqueness)
     const std::size_t num_points = 100;
     std::vector< PointDbl > points;
 
-    boost::generate_random_points(
+    boost::generate_random_points< PointDbl >(
         num_points, 10000, std::back_inserter(points));
 
     std::set< std::pair< double, double > > unique_points;
@@ -134,7 +134,7 @@ BOOST_AUTO_TEST_CASE(test_custom_distributions)
     std::uniform_real_distribution< double > x_dist(0.0, 100.0);
     std::uniform_real_distribution< double > y_dist(0.0, 200.0);
 
-    std::size_t generated = boost::generate_random_points(
+    std::size_t generated = boost::generate_random_points< PointDbl >(
         num_points, x_dist, y_dist, std::back_inserter(points));
 
     BOOST_TEST(generated == num_points);
@@ -156,7 +156,8 @@ BOOST_AUTO_TEST_CASE(test_max_attempts)
     std::mt19937 rng(12345);
     std::vector< boost::simple_point< int > > points;
 
-    std::size_t generated = boost::generate_random_points(num_points,
+    std::size_t generated
+        = boost::generate_random_points < boost::simple_point< int > >(num_points,
         narrow_dist, narrow_dist, std::back_inserter(points), rng, 200);
 
     BOOST_TEST(generated < num_points);
@@ -167,7 +168,7 @@ BOOST_AUTO_TEST_CASE(test_empty)
 {
     std::vector< PointDbl > points;
     std::size_t generated
-        = boost::generate_random_points(0, 100, std::back_inserter(points));
+        = boost::generate_random_points< PointDbl >(0, 100, std::back_inserter(points));
 
     BOOST_TEST(generated == 0u);
     BOOST_TEST(points.empty());
@@ -292,7 +293,7 @@ BOOST_AUTO_TEST_CASE(test_float_generation_and_math)
     std::vector< boost::simple_point< float > > points;
     std::uniform_real_distribution< float > dist(0.0f, 100.0f);
 
-    std::size_t generated = boost::generate_random_points(
+    std::size_t generated = boost::generate_random_points< boost::simple_point< float > >(
         num_points, dist, dist, std::back_inserter(points));
 
     BOOST_TEST(generated == num_points);
@@ -365,6 +366,57 @@ BOOST_FIXTURE_TEST_CASE(
             }
         }
     }
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+//=======================================================================
+// Test Suite: make_random_geometric_graph
+//=======================================================================
+
+BOOST_AUTO_TEST_SUITE(make_random_geometric_graph_tests)
+
+BOOST_AUTO_TEST_CASE(test_with_uniform_distribution_simple_point)
+{
+    using Graph = UndirectedMatrixGraph;
+    using Point = boost::simple_point<double>;
+    const std::size_t num_vertices = 15;
+    const std::size_t coordinate_max = 1000;
+    Graph g(num_vertices);
+    boost::make_random_geometric_graph< Point >(
+        g, num_vertices, coordinate_max,
+        boost::get(boost::edge_weight, g),
+        boost::get(boost::vertex_index, g));
+    BOOST_TEST(is_complete_graph(g));
+}
+
+BOOST_AUTO_TEST_CASE(test_with_uniform_distribution_boost_geometry_point)
+{
+    using Graph = UndirectedMatrixGraph;
+    using Point = boost::geometry::model::d2::point_xy<double>;
+    const std::size_t num_vertices = 12;
+    const std::size_t coordinate_max = 500;
+    Graph g(num_vertices);
+    boost::make_random_geometric_graph< Point >(
+        g, num_vertices, coordinate_max,
+        boost::get(boost::edge_weight, g),
+        boost::get(boost::vertex_index, g));
+    BOOST_TEST(is_complete_graph(g));
+}
+
+BOOST_AUTO_TEST_CASE(test_with_custom_distribution_boost_geometry_point)
+{
+    using Graph = UndirectedMatrixGraph;
+    using Point = boost::geometry::model::d2::point_xy<double>;
+    const std::size_t num_vertices = 10;
+    std::uniform_real_distribution<double> x_dist(0.0, 100.0);
+    std::normal_distribution<double> y_dist(50.0, 10.0);
+    Graph g(num_vertices);
+    boost::make_random_geometric_graph< Point >(
+        g, num_vertices, x_dist, y_dist,
+        boost::get(boost::edge_weight, g),
+        boost::get(boost::vertex_index, g));
+    BOOST_TEST(is_complete_graph(g));
 }
 
 BOOST_AUTO_TEST_SUITE_END()
