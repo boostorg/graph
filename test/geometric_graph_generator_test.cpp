@@ -7,15 +7,17 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 
-#define BOOST_TEST_MODULE euclidean_graph_generator_test
+#define BOOST_TEST_MODULE geometric_graph_generator_test
 #include <boost/test/included/unit_test.hpp>
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/adjacency_matrix.hpp>
-#include <boost/graph/euclidean_graph_generator.hpp>
+#include <boost/graph/geometric_graph_generator.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/simple_point.hpp>
+#include <boost/geometry.hpp>
+#include <boost/geometry/geometries/point.hpp>
 #include <boost/property_map/property_map.hpp>
 
 #include <algorithm>
@@ -70,7 +72,7 @@ struct RandomGraphFixture
     {
         boost::generate_random_points(
             num_vertices, 100, std::back_inserter(points));
-        boost::connect_all_euclidean(g, points,
+        boost::connect_all_geometric(g, points,
             boost::get(boost::edge_weight, g),
             boost::get(boost::vertex_index, g));
     }
@@ -91,7 +93,7 @@ struct KnownPointsFixture
     {
         points = { { 0.0, 0.0 }, { 3.0, 0.0 }, { 0.0, 4.0 }, { 3.0, 4.0 },
             { 1.5, 2.0 } };
-        boost::connect_all_euclidean(
+        boost::connect_all_geometric(
             g, points, weight_map, boost::get(boost::vertex_index, g));
     }
 };
@@ -173,8 +175,41 @@ BOOST_AUTO_TEST_CASE(test_empty)
 
 BOOST_AUTO_TEST_SUITE_END()
 
+BOOST_AUTO_TEST_CASE(test_boost_geometry_point_compatibility)
+{
+    using BoostGeomPoint = boost::geometry::model::d2::point_xy<double>;
+    using Graph = boost::adjacency_matrix< boost::undirectedS, boost::no_property, boost::property< boost::edge_weight_t, double > >;
+
+    std::vector<BoostGeomPoint> points = {
+        BoostGeomPoint(0.0, 0.0),
+        BoostGeomPoint(3.0, 0.0),
+        BoostGeomPoint(0.0, 4.0)
+    };
+    Graph g(points.size());
+    auto weight_map = boost::get(boost::edge_weight, g);
+    auto vertex_index_map = boost::get(boost::vertex_index, g);
+
+    boost::connect_all_geometric(g, points, weight_map, vertex_index_map);
+
+    // Check edge weights using Boost.Geometry distance
+    auto e01 = boost::edge(0, 1, g);
+    BOOST_REQUIRE(e01.second);
+    double expected01 = boost::geometry::distance(points[0], points[1]);
+    BOOST_TEST(boost::get(weight_map, e01.first) == expected01, boost::test_tools::tolerance(1e-10));
+
+    auto e02 = boost::edge(0, 2, g);
+    BOOST_REQUIRE(e02.second);
+    double expected02 = boost::geometry::distance(points[0], points[2]);
+    BOOST_TEST(boost::get(weight_map, e02.first) == expected02, boost::test_tools::tolerance(1e-10));
+
+    auto e12 = boost::edge(1, 2, g);
+    BOOST_REQUIRE(e12.second);
+    double expected12 = boost::geometry::distance(points[1], points[2]);
+    BOOST_TEST(boost::get(weight_map, e12.first) == expected12, boost::test_tools::tolerance(1e-10));
+}
+
 //=======================================================================
-// Test Suite: connect_all_euclidean (using fixtures)
+// Test Suite: connect_all_geometric (using fixtures)
 //=======================================================================
 
 BOOST_AUTO_TEST_SUITE(connect_all_euclidean_tests)
@@ -215,7 +250,7 @@ BOOST_AUTO_TEST_CASE(test_single_vertex_matrix)
     UndirectedMatrixGraph g(1);
     std::vector< PointDbl > points = { { 0.0, 0.0 } };
 
-    boost::connect_all_euclidean(g, points, boost::get(boost::edge_weight, g),
+    boost::connect_all_geometric(g, points, boost::get(boost::edge_weight, g),
         boost::get(boost::vertex_index, g));
 
     BOOST_TEST(boost::num_edges(g) == 0u);
@@ -269,7 +304,7 @@ BOOST_AUTO_TEST_CASE(test_float_generation_and_math)
     std::vector< boost::simple_point< float > > known_points
         = { { 0.0f, 0.0f }, { 3.0f, 0.0f }, { 0.0f, 4.0f } };
 
-    boost::connect_all_euclidean(g, known_points,
+    boost::connect_all_geometric(g, known_points,
         boost::get(boost::edge_weight, g), boost::get(boost::vertex_index, g));
 
     auto weight_map = boost::get(boost::edge_weight, g);

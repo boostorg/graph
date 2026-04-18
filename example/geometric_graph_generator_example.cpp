@@ -9,7 +9,7 @@
 
 #include <boost/graph/adjacency_matrix.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/euclidean_graph_generator.hpp>
+#include <boost/graph/geometric_graph_generator.hpp>
 #include <boost/graph/simple_point.hpp>
 #include <boost/graph/kruskal_min_spanning_tree.hpp>
 #include <boost/graph/graphml.hpp>
@@ -81,7 +81,7 @@ void example_basic_random_graph()
 
     // Create complete graph (generate edges) 
     // using the stored points and populate weight map
-    boost::connect_all_euclidean(g, points, weight_map,
+    boost::connect_all_geometric(g, points, weight_map,
         vertex_index_map);
 }
 
@@ -101,7 +101,7 @@ void example_custom_distribution()
         num_vertices, normal_dist, normal_dist, std::back_inserter(points));
 
     // Create graph
-    boost::connect_all_euclidean(g, points, boost::get(boost::edge_weight, g),
+    boost::connect_all_geometric(g, points, boost::get(boost::edge_weight, g),
         boost::get(boost::vertex_index, g));
 }
 
@@ -124,7 +124,7 @@ void example_mst_on_euclidean_graph()
         num_vertices, 500, std::back_inserter(points));
 
     // Create complete graph using adjacency_list
-    boost::connect_all_euclidean(g, points, boost::get(boost::edge_weight, g),
+    boost::connect_all_geometric(g, points, boost::get(boost::edge_weight, g),
         boost::get(boost::vertex_index, g));
 
     // Write full graph with GraphML format

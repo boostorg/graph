@@ -7,8 +7,8 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 
-#ifndef BOOST_GRAPH_EUCLIDEAN_GRAPH_GENERATOR_HPP
-#define BOOST_GRAPH_EUCLIDEAN_GRAPH_GENERATOR_HPP
+#ifndef BOOST_GRAPH_GEOMETRIC_GRAPH_GENERATOR_HPP
+#define BOOST_GRAPH_GEOMETRIC_GRAPH_GENERATOR_HPP
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
@@ -18,6 +18,7 @@
 #include <boost/unordered/unordered_flat_set.hpp>
 #include <boost/concept/assert.hpp>
 #include <boost/graph/graph_concepts.hpp>
+#include <boost/geometry.hpp>
 #include <algorithm>
 #include <cmath>
 #include <iterator>
@@ -29,22 +30,26 @@
 namespace boost
 {
 
-// connect_all_euclidean
+// connect_all_geometric
 //
-// Creates a complete graph with Euclidean distance edge weights.
-// Connects all vertices in the graph with edges weighted by the Euclidean
+// Creates a complete graph with geometric distance edge weights.
+// Connects all vertices in the graph with edges weighted by the
 // distance between their corresponding points in the point container.
-// This is a common preprocessing step for TSP algorithms.
+// This is a common preprocessing step for TSP algorithms.  
+// Relies on on a templated distance function (e.g. boost::geometry::distance)
+// for flexibility and compatibility with various point types, including
+// Boost.Geometry points.
 //
 // Preconditions: g must have num_vertices(g) == points.size() and no edges
-// Postconditions: g will be a complete graph with Euclidean distance weights
+// Postconditions: g will be a complete graph with geometric distance weights
 // Complexity: O(V^2) where V is the number of vertices
 
 template < typename VertexListGraph, typename PointContainer,
     typename WeightMap, typename VertexIndexMap >
-void connect_all_euclidean(VertexListGraph& g, const PointContainer& points,
+void connect_all_geometric(VertexListGraph& g, const PointContainer& points,
     WeightMap wmap, VertexIndexMap vmap)
 {
+    using boost::geometry::distance; 
     BOOST_CONCEPT_ASSERT((VertexListGraphConcept< VertexListGraph >));
     BOOST_CONCEPT_ASSERT((MutableGraphConcept< VertexListGraph >));
     BOOST_CONCEPT_ASSERT((WritablePropertyMapConcept< WeightMap,
@@ -55,9 +60,9 @@ void connect_all_euclidean(VertexListGraph& g, const PointContainer& points,
     // Precondition: Graph should have no edges and size of points should match
     // num_vertices(g)
     BOOST_ASSERT_MSG(boost::num_edges(g) == 0,
-        "connect_all_euclidean requires a graph with no edges)");
+        "connect_all_geometric requires a graph with no edges)");
     BOOST_ASSERT_MSG(boost::num_vertices(g) == points.size(),
-        "connect_all_euclidean requires num_vertices(g) == points.size()");
+        "connect_all_geometric requires num_vertices(g) == points.size()");
 
     using Edge = typename graph_traits< VertexListGraph >::edge_descriptor;
     using VItr = typename graph_traits< VertexListGraph >::vertex_iterator;
@@ -69,9 +74,9 @@ void connect_all_euclidean(VertexListGraph& g, const PointContainer& points,
 
     // Compile-time assertion: Prevent integer weight types
     BOOST_STATIC_ASSERT_MSG(
-        !std::is_integral<WeightType>::value,
-        "connect_all_euclidean requires floating-point weight types (float, double, or long double). "
-        "Integer types cause truncation and produce non-useful incorrect tour lengths. "
+        std::is_floating_point<WeightType>::value,
+        "connect_all_geometric requires floating-point weight types (float, double, or long double). "
+        "Integer types cause truncation and produce non-useful edge lengths. "
         "e.g. Use property<edge_weight_t, double> instead of property<edge_weight_t, int>."
     );
 
@@ -86,18 +91,14 @@ void connect_all_euclidean(VertexListGraph& g, const PointContainer& points,
 
         for (; dest != verts.second; ++dest)
         {
-            const IndexType dest_idx = boost::get(vmap, *dest);  // Cache destination index lookup
+            const IndexType dest_idx
+                = boost::get(vmap, *dest); // Cache destination index lookup
 
-            // Promote to WeightType for calculation precision and to avoid overflow
-            const WeightType dx =
-                static_cast<WeightType>(points[src_idx].x) -
-                static_cast<WeightType>(points[dest_idx].x);
-            const WeightType dy =
-                static_cast<WeightType>(points[src_idx].y) -
-                static_cast<WeightType>(points[dest_idx].y);
-
-            // Use std::hypot for numerically stable Euclidean distance
-            const WeightType weight = static_cast<WeightType>(std::hypot(dx, dy));
+            // Use templated distance function for compatibility with
+            // Boost.Geometry.  In the case of boost::simple_point, this uses euclidean
+            // (std::hypot)
+            const WeightType weight
+                = distance(points[src_idx], points[dest_idx]);
 
             // No need to check 'inserted' - building fresh complete graph
             Edge e = boost::add_edge(*src, *dest, g).first;
@@ -229,7 +230,7 @@ void make_random_euclidean_graph(VertexListGraph& g, std::size_t num_points,
     points.reserve(num_points);
     generate_random_points< decltype(std::back_inserter(points)), CoordType >(
         num_points, coordinate_max, std::back_inserter(points));
-    connect_all_euclidean(g, points, weight_map, vertex_index_map);
+    connect_all_geometric(g, points, weight_map, vertex_index_map);
 }
 
 // make_random_euclidean_graph (parameterized distribution version)
@@ -246,9 +247,73 @@ void make_random_euclidean_graph(VertexListGraph& g, std::size_t num_points,
     points.reserve(num_points);
     generate_random_points(
         num_points, x_dist, y_dist, std::back_inserter(points));
-    connect_all_euclidean(g, points, weight_map, vertex_index_map);
+    connect_all_geometric(g, points, weight_map, vertex_index_map);
+}
+
+
+// make_random_geometric_graph (parameterized distribution version)
+//
+// Creates a complete graph with random points of arbitrary PointType and geometric distance weights.
+// This function allows the user to specify the point type and random distributions for each coordinate.
+//
+// Parameters:
+//   g - Graph to populate (must have num_vertices(g) == num_points)
+//   num_points - Number of vertices/points
+//   x_dist, y_dist - Distributions for x and y coordinates
+//   weight_map - Property map for storing edge weights
+//   vertex_index_map - Property map for vertex indices
+//
+// Postconditions: g is a complete graph with geometric distance weights
+// Complexity: O(V^2) where V is the number of vertices
+template < typename VertexListGraph, typename PointType, typename WeightMap,
+    typename VertexIndexMap, typename XDistribution, typename YDistribution >
+void make_random_geometric_graph(VertexListGraph& g, std::size_t num_points,
+    XDistribution x_dist, YDistribution y_dist, WeightMap weight_map,
+    VertexIndexMap vertex_index_map)
+{
+    std::vector< PointType > points;
+    points.reserve(num_points);
+    std::mt19937 rng(std::random_device {}());
+    for (std::size_t i = 0; i < num_points; ++i)
+    {
+        points.emplace_back(x_dist(rng), y_dist(rng));
+    }
+    connect_all_geometric(g, points, weight_map, vertex_index_map);
+}
+
+
+// make_random_geometric_graph
+//
+// Creates a complete graph with random points of arbitrary PointType and geometric distance weights.
+// This overload uses a uniform real distribution for both coordinates in the range [0, coordinate_max].
+//
+// Parameters:
+//   g - Graph to populate (must have num_vertices(g) == num_points)
+//   num_points - Number of vertices/points
+//   coordinate_max - Maximum coordinate value for random points
+//   weight_map - Property map for storing edge weights
+//   vertex_index_map - Property map for vertex indices
+//
+// Postconditions: g is a complete graph with geometric distance weights
+// Complexity: O(V^2) where V is the number of vertices
+template < typename VertexListGraph, typename PointType, typename WeightMap,
+    typename VertexIndexMap, typename CoordType = double >
+void make_random_geometric_graph(VertexListGraph& g, std::size_t num_points,
+    std::size_t coordinate_max, WeightMap weight_map,
+    VertexIndexMap vertex_index_map)
+{
+    std::vector< PointType > points;
+    points.reserve(num_points);
+    std::mt19937 rng(std::random_device {}());
+    std::uniform_real_distribution< CoordType > dist(
+        static_cast< CoordType >(0), static_cast< CoordType >(coordinate_max));
+    for (std::size_t i = 0; i < num_points; ++i)
+    {
+        points.emplace_back(dist(rng), dist(rng));
+    }
+    connect_all_geometric(g, points, weight_map, vertex_index_map);
 }
 
 } // namespace boost
 
-#endif // BOOST_GRAPH_EUCLIDEAN_GRAPH_GENERATOR_HPP
+#endif // BOOST_GRAPH_GEOMETRIC_GRAPH_GENERATOR_HPP
