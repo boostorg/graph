@@ -24,7 +24,6 @@
 #include <algorithm>
 #include <cmath>
 #include <random>
-#include <set>
 #include <vector>
 
 namespace
