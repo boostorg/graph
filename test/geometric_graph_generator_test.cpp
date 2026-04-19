@@ -117,13 +117,13 @@ BOOST_AUTO_TEST_CASE(test_uniqueness)
     boost::generate_random_points< PointDbl >(
         num_points, 10000, std::back_inserter(points));
 
-    std::set< std::pair< double, double > > unique_points;
+    using Pair = std::pair< double, double >;
+    boost::unordered_flat_set< Pair, boost::hash< Pair > > unique_points;
     for (const auto& p : points)
     {
-        unique_points.insert(std::make_pair(p.x, p.y));
+        auto result = unique_points.emplace(p.x, p.y);
+        BOOST_TEST(result.second); // Assert immediately if duplicate found
     }
-
-    BOOST_TEST(unique_points.size() == num_points);
 }
 
 BOOST_AUTO_TEST_CASE(test_custom_distributions)
