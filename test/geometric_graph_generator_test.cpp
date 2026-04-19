@@ -19,6 +19,7 @@
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometries/point.hpp>
 #include <boost/property_map/property_map.hpp>
+#include <boost/unordered/unordered_flat_set.hpp>
 
 #include <algorithm>
 #include <cmath>
