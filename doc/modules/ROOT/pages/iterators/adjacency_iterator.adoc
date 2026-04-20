@@ -1,103 +1,99 @@
-= Adjacency Iterator Adaptor
+= `adjacency_iterator_generator`
 
-Defined in header
-link:../../../boost/graph/adjacency_iterator.hpp[boost/graph/adjacency_iterator.hpp]
+Synthesizes a vertex-iterator out of an existing *_out-edge_* iterator.
+Reads each out-edge and yields its *_target_* vertex.
 
-The adjacency iterator adaptor transforms an `out_edge_iterator`
-into an adjacency iterator. That is, it takes an iterator that traverses
-over edges, and creates an iterator that traverses over the *_target_*
-vertices of those edges. With this adaptor it is trivial to take a graph
-type that models xref:concepts/IncidenceGraph.adoc[Incidence Graph] and add the
-capabilities required of xref:concepts/AdjacencyGraph.adoc[Adjacency Graph].
+*Defined in:* `<boost/graph/adjacency_iterator.hpp>`
 
-=== Synopsis
+IMPORTANT: You almost certainly do not need this page.
+
+Most BGL users just call `adjacent_vertices(v, g)` on any graph that
+models xref:concepts/AdjacencyGraph.adoc[Adjacency Graph] (which every
+built-in BGL graph class does). This page is for people *_implementing
+a new graph class_* that models xref:concepts/IncidenceGraph.adoc[Incidence
+Graph] and who want the compiler to give them the adjacency iterator for
+free.
+
+== Example
 
 [source,cpp]
 ----
+include::example$iterators/adjacency_iterator.cpp[]
+----
 
+.Expected output
+----
+neighbors of 0: 1 2 3
+generator matches graph_traits: true
+----
+
+The example shows both paths:
+
+. `adjacent_vertices(v, g)` — the everyday way to iterate over neighbors.
+. `adjacency_iterator_generator<…>::type` — the type you would publish as
+  `adjacency_iterator` in your own graph class.
+
+For existing graph types like `adjacency_list`, the generator produces
+the same type that `graph_traits` already exposes; there is no reason
+to instantiate it yourself.
+
+== Synopsis
+
+[source,cpp]
+----
 namespace boost {
-  template <class Graph, class VertexDescriptor, class OutEdgeIter>
-  class adjacency_iterator_generator {
-  public:
-    typedef iterator_adaptor<...> type;
-  };
-}
-----
 
-'''''
-
-==== Example
-
-The following is an example of how to use the
-`adjacency_iterator_generator` class.
-
-[source,cpp]
-----
-
-#include <boost/graph/adjacency_iterator.hpp>
-
-class my_graph {
-  // ...
-  typedef ... out_edge_iterator;
-  typedef ... vertex_descriptor;
-  typedef boost::adjacency_iterator_generator<my_graph, vertex_descriptor, out_edge_iterator>::type adjacency_iterator;
-  // ...
+template <class Graph,
+          class VertexDescriptor = typename graph_traits<Graph>::vertex_descriptor,
+          class OutEdgeIter      = typename graph_traits<Graph>::out_edge_iterator>
+class adjacency_iterator_generator {
+public:
+    typedef /* iterator_adaptor instantiation */ type;
 };
+
+} // namespace boost
 ----
 
-==== Template Parameters
+== Template parameters
 
-[width="100%",cols="50%,50%",options="header",]
+[cols="1,4"]
 |===
-|Parameter |Description
-|`Graph` |The graph type, which must model
-xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+| Parameter | Description
 
-|`VertexDescriptor` |This must be the same type as
-`graph_traits<Graph>::vertex_descriptor`. The reason why
-this is a template parameter is that the primary use of
-`adjacency_iterator_generator` is *_inside_* the definition of
-the graph class, and in that context we can not use `graph_traits`
-on the not yet fully defined graph class. +
-*Default:* `graph_traits<Graph>::vertex_descriptor`
+| `Graph`
+| The graph type. Must model xref:concepts/IncidenceGraph.adoc[Incidence Graph].
 
-|`OutEdgeIter` a|
-This must be the same type as
-`graph_traits<Graph>::out_edge_iterator`. +
-*Default:*
+| `VertexDescriptor`
+| The vertex-descriptor type. Defaults to
+  `graph_traits<Graph>::vertex_descriptor`. The parameter exists because
+  the generator is typically instantiated *_inside_* the graph class's
+  declaration, where `graph_traits<Graph>` cannot yet be resolved.
 
-graph_traits<Graph>::out_edge_iterator
-
+| `OutEdgeIter`
+| The source out-edge iterator type. Defaults to
+  `graph_traits<Graph>::out_edge_iterator`, with the same caveat as above.
 |===
 
-==== Model of
+== Members
 
-The adjacency iterator adaptor (the type
-`adjacency_iterator_generator<...>::type`) is a model of
-link:../../utility/MultiPassInputIterator.html[Multi-Pass Input
-Iterator] .
+`adjacency_iterator_generator<…>::type` satisfies the
+link:../../utility/MultiPassInputIterator.html[Multi-Pass Input Iterator]
+concept. It exposes every operator required of a
+link:../../utility/RandomAccessIterator.html[Random Access Iterator],
+except that `reference` equals `value_type`, so `operator*()` returns
+by value.
 
-==== Members
-
-The adjacency iterator type implements the member functions and
-operators required of the
-http://www.boost.org/sgi/stl/RandomAccessIterator.html[Random Access
-Iterator] concept, except that the `reference` type is the same as the
-`value_type` so `operator*()` returns by-value. In addition it
-has the following constructor:
+Constructor:
 
 [source,cpp]
 ----
-
-adjacency_iterator_generator::type(const OutEdgeIter& it, const Graph* g)
+adjacency_iterator_generator<…>::type(const OutEdgeIter& it, const Graph* g);
 ----
 
-'''''
+== See also
 
-Revised 19 Aug 2001
-
-© Copyright Jeremy Siek 2000. Permission to copy, use, modify, sell and
-distribute this document is granted provided this copyright notice
-appears in all copies. This document is provided "as is" without express
-or implied warranty, and with no claim as to its suitability for any
-purpose.
+* xref:traits/overview.adoc[Traits and Iterators overview]
+* xref:concepts/AdjacencyGraph.adoc[AdjacencyGraph concept] —
+  `adjacent_vertices(v, g)`, what you probably want.
+* xref:iterators/inv_adjacency_iterator.adoc[`inv_adjacency_iterator_generator`] —
+  the bidirectional counterpart.

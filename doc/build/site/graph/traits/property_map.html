@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>property_map :: Boost.Graph Documentation</title>
+    <title>property_map&lt;Graph, PropertyTag&gt; :: Boost.Graph Documentation</title>
     <meta name="generator" content="Antora 3.1.14">
     <link rel="stylesheet" href="../../_/css/site.css">
   </head>
@@ -761,6 +761,9 @@
     <span class="nav-text">Traits and Iterators</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="graph_traits.html">Graph Traits</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -785,8 +788,11 @@
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">Background</span>
+    <span class="nav-text">Background and Reference</span>
 <ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../about/design.html">Design Rationale</a>
+  </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../overview/graph_theory_review.html">Graph Theory Review</a>
   </li>
@@ -794,7 +800,7 @@
     <a class="nav-link" href="../auxiliary/bgl_named_params.html">Named Parameters</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../overview/faq.html">FAQ</a>
+    <a class="nav-link" href="../about/bibliography.html">Bibliography</a>
   </li>
 </ul>
   </li>
@@ -818,11 +824,8 @@
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">About</span>
+    <span class="nav-text">Project</span>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/design.html">Design Rationale</a>
-  </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../about/history.html">History</a>
   </li>
@@ -835,10 +838,10 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../about/users.html">BGL Users</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/bibliography.html">Bibliography</a>
-  </li>
 </ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../overview/faq.html">FAQ</a>
   </li>
 </ul>
   </li>
@@ -877,61 +880,204 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">property_map</h1>
+<h1 class="page"><code>property_map&lt;Graph, PropertyTag&gt;</code></h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Traits class that produces the property map type for a given graph type and
-property tag. The property is specified by the
-<a href="../auxiliary/PropertyTag.html" class="xref page">PropertyTag</a> template parameter. Graph classes
-must specialize this traits class to provide their own implementation
-for property maps.</p>
+<p>Maps a (graph type, property tag) pair to the concrete property-map type
+the graph hands you when you call <code>get(tag, g)</code>. Every BGL graph class
+specializes <code>property_map</code> for the property tags it supports.</p>
+</div>
+<div class="paragraph">
+<p><strong>Defined in:</strong> <code>&lt;boost/graph/properties.hpp&gt;</code></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_when_to_use_it"><a class="anchor" href="#_when_to_use_it"></a>When to use it</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In a function signature. If the graph is passed by mutable reference, you
+want <code>property_map&lt;G, Tag&gt;::type</code>; if it is passed by const reference, you
+want <code>property_map&lt;G, Tag&gt;::const_type</code>. Inside function bodies <code>auto</code> is
+usually fine.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">  template &lt;class Graph, class PropertyTag&gt;
-  struct property_map {
-    typedef ... type;
-    typedef ... const_type;
-  };</code></pre>
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// Mutable graph: ::type works.
+auto w = get(edge_weight, g);                                // g is Graph&amp;
+property_map&lt;Graph, edge_weight_t&gt;::type same = get(edge_weight, g);
+
+// Const graph: must use ::const_type.
+auto w = get(edge_weight, g);                                // g is const Graph&amp;
+property_map&lt;Graph, edge_weight_t&gt;::const_type same = get(edge_weight, g);</code></pre>
+</div>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<code>const_type</code> is not interchangeable with <code>const type</code>. Declare
+the <strong>type</strong> as const if you want; do not declare a <strong>variable</strong> of type
+<code>const property_map&lt;…&gt;::type</code> — that produces a readable-only wrapper
+whose template errors are famously cryptic.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_example"><a class="anchor" href="#_example"></a>Example</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// Demonstrates property_map&lt;Graph, Tag&gt;::type vs ::const_type.
+//
+// Rule of thumb: if your Graph&amp; is const, you get ::const_type; otherwise
+// you get ::type. Deducing it via `auto` (C++14) sidesteps the choice
+// entirely and is what most code should do.
+
+#include &lt;boost/graph/adjacency_list.hpp&gt;
+#include &lt;iostream&gt;
+
+using namespace boost;
+using Graph = adjacency_list&lt;vecS, vecS, directedS,
+    no_property, property&lt;edge_weight_t, int&gt;&gt;;
+
+// Mutable graph: ::type works.
+void print_weights(Graph&amp; g) {
+    using PMap = property_map&lt;Graph, edge_weight_t&gt;::type;
+    PMap w = get(edge_weight, g);
+    for (auto e : make_iterator_range(edges(g))) {
+        std::cout &lt;&lt; "(" &lt;&lt; source(e, g) &lt;&lt; "," &lt;&lt; target(e, g)
+                  &lt;&lt; ") weight=" &lt;&lt; get(w, e) &lt;&lt; '\n';
+    }
+}
+
+// Const graph: ::const_type is required.
+int total_weight(const Graph&amp; g) {
+    using PMap = property_map&lt;Graph, edge_weight_t&gt;::const_type;
+    PMap w = get(edge_weight, g);
+    int total = 0;
+    for (auto e : make_iterator_range(edges(g))) total += get(w, e);
+    return total;
+}
+
+int main() {
+    Graph g(3);
+    add_edge(0, 1, 5, g);
+    add_edge(1, 2, 3, g);
+    add_edge(0, 2, 8, g);
+
+    print_weights(g);
+    std::cout &lt;&lt; "total = " &lt;&lt; total_weight(g) &lt;&lt; '\n';
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Expected output</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">(0,1) weight=5
+(0,2) weight=8
+(1,2) weight=3
+total = 16</code></pre>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_where_defined"><a class="anchor" href="#_where_defined"></a>Where Defined</h2>
+<h2 id="_synopsis"><a class="anchor" href="#_synopsis"></a>Synopsis</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">namespace boost {
+
+template &lt;class Graph, class PropertyTag&gt;
+struct property_map {
+    typedef /* specialized per graph */ type;
+    typedef /* specialized per graph */ const_type;
+};
+
+} // namespace boost</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Nested type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The mutable property-map type returned by <code>get(tag, g)</code> when <code>g</code> is a
+  non-const graph. Models a
+  <a href="../../property_map/doc/ReadWritePropertyMap.html">ReadWritePropertyMap</a>
+  (or LvaluePropertyMap, depending on the graph).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The read-only property-map type returned by <code>get(tag, g)</code> when <code>g</code> is a
+  const graph. Models a
+  <a href="../../property_map/doc/ReadablePropertyMap.html">ReadablePropertyMap</a>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_how_specializations_are_written"><a class="anchor" href="#_how_specializations_are_written"></a>How specializations are written</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><code>boost/graph/properties.hpp</code></p>
+<p>A graph type opts into a property tag by specializing <code>property_map</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">namespace boost {
+template &lt;class Config&gt;
+struct property_map&lt;my_graph&lt;Config&gt;, edge_weight_t&gt; {
+    typedef /* some concrete map */       type;
+    typedef /* some concrete map */ const_type;
+};
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you are adapting an existing graph library so that BGL algorithms can
+use it, this is the extension point.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_associated_types"><a class="anchor" href="#_associated_types"></a>Associated Types</h2>
+<h2 id="_see_also"><a class="anchor" href="#_see_also"></a>See also</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>Map Type</p>
-</div>
-<div class="paragraph">
-<p><code>type</code></p>
-</div>
-<div class="paragraph">
-<p>The (mutable) property map type for mapping vertex or edge desriptors of
-the graph to their associated property values, where the property is
-specified by <code>PropertyTag</code>. This type is a
-property map.</p>
-</div>
-<div class="paragraph">
-<p>Const Map Type</p>
-</div>
-<div class="paragraph">
-<p><code>const_type</code></p>
-</div>
-<div class="paragraph">
-<p>The (non-mutable) property map type for mapping vertex or edge
-desriptors of the graph to their associated property values, where the
-property is specified by <code>PropertyTag</code>. This type is a
-property map.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="overview.html" class="xref page">Traits and Iterators overview</a></p>
+</li>
+<li>
+<p><a href="../property_maps/overview.html" class="xref page">Property Maps</a> — the user-facing guide
+to choosing, constructing, and passing property maps.</p>
+</li>
+<li>
+<p><a href="../property_maps/external.html" class="xref page">External Properties</a> — when you want
+to keep the data outside the graph.</p>
+</li>
+<li>
+<p><a href="property.html" class="xref page"><code>property&lt;Tag, T, Next&gt;</code></a> — the legacy interior
+property declaration.</p>
+</li>
+</ul>
 </div>
 </div>
 </div>

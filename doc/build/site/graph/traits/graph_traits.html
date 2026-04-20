@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>graph_traits :: Boost.Graph Documentation</title>
+    <title>graph_traits&lt;Graph&gt; :: Boost.Graph Documentation</title>
     <meta name="generator" content="Antora 3.1.14">
     <link rel="stylesheet" href="../../_/css/site.css">
   </head>
@@ -760,6 +760,9 @@
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Traits and Iterators</span>
 <ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="overview.html">Overview</a>
+  </li>
   <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="graph_traits.html">Graph Traits</a>
   </li>
@@ -785,8 +788,11 @@
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">Background</span>
+    <span class="nav-text">Background and Reference</span>
 <ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../about/design.html">Design Rationale</a>
+  </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../overview/graph_theory_review.html">Graph Theory Review</a>
   </li>
@@ -794,7 +800,7 @@
     <a class="nav-link" href="../auxiliary/bgl_named_params.html">Named Parameters</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../overview/faq.html">FAQ</a>
+    <a class="nav-link" href="../about/bibliography.html">Bibliography</a>
   </li>
 </ul>
   </li>
@@ -818,11 +824,8 @@
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">About</span>
+    <span class="nav-text">Project</span>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/design.html">Design Rationale</a>
-  </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../about/history.html">History</a>
   </li>
@@ -835,10 +838,10 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../about/users.html">BGL Users</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/bibliography.html">Bibliography</a>
-  </li>
 </ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../overview/faq.html">FAQ</a>
   </li>
 </ul>
   </li>
@@ -877,15 +880,29 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">graph_traits</h1>
+<h1 class="page"><code>graph_traits&lt;Graph&gt;</code></h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Extracts associated types (vertex_descriptor, edge_descriptor, iterators, etc.)
-from a graph type. This is the graph equivalent of <code>std::iterator_traits</code>.</p>
+<p>The graph equivalent of <code>std::iterator_traits</code>. Pulls the associated types
+(descriptors, iterators, categories, sizes) out of a graph type, and
+provides the portable <code>null_vertex()</code> sentinel and directed/undirected
+queries.</p>
 </div>
 <div class="paragraph">
 <p><strong>Defined in:</strong> <code>&lt;boost/graph/graph_traits.hpp&gt;</code></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_when_to_use_it"><a class="anchor" href="#_when_to_use_it"></a>When to use it</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Always reach for <code>graph_traits&lt;Graph&gt;</code> when <code>Graph</code> is a template
+parameter. When <code>Graph</code> is a concrete type you can use the nested typedef
+(<code>Graph::vertex_descriptor</code>) directly, but going through the traits
+indirection keeps your code compatible with third-party graph types that
+specialize <code>graph_traits</code> externally.</p>
 </div>
 <div class="admonitionblock warning">
 <table>
@@ -894,86 +911,148 @@ from a graph type. This is the graph equivalent of <code>std::iterator_traits</c
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-Do not subclass BGL graph types. Because <code>graph_traits</code> is specialized
-externally, a subclass will not inherit the specialization.
+Do not subclass a BGL graph type. <code>graph_traits</code> is specialized
+for specific types; a derived class will not inherit the specialization.
 </td>
 </tr>
 </table>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_example_plain_usage"><a class="anchor" href="#_example_plain_usage"></a>Example — plain usage</h2>
+<div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">  template &lt;typename Graph&gt;
-  struct graph_traits {
-    typedef typename Graph::vertex_descriptor      vertex_descriptor;
-    typedef typename Graph::edge_descriptor        edge_descriptor;
-    typedef typename Graph::adjacency_iterator     adjacency_iterator;
-    typedef typename Graph::out_edge_iterator      out_edge_iterator;
-    typedef typename Graph::in_edge_iterator       in_edge_iterator;
-    typedef typename Graph::vertex_iterator        vertex_iterator;
-    typedef typename Graph::edge_iterator          edge_iterator;
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include &lt;boost/graph/adjacency_list.hpp&gt;
+#include &lt;boost/graph/graph_traits.hpp&gt;
+#include &lt;iostream&gt;
 
-    typedef typename Graph::directed_category      directed_category;
-    typedef typename Graph::edge_parallel_category edge_parallel_category;
-    typedef typename Graph::traversal_category     traversal_category;
+using namespace boost;
+using Graph = adjacency_list&lt;vecS, vecS, directedS&gt;;
+using Traits = graph_traits&lt;Graph&gt;;
 
-    typedef typename Graph::vertices_size_type     vertices_size_type;
-    typedef typename Graph::edges_size_type        edges_size_type;
-    typedef typename Graph::degree_size_type       degree_size_type;
-  };</code></pre>
+int main() {
+    Graph g(3);
+    add_edge(0, 1, g);
+    add_edge(1, 2, g);
+
+    // Descriptors and sizes come out of graph_traits
+    Traits::vertex_descriptor s = vertex(0, g);
+    Traits::vertices_size_type n = num_vertices(g);
+
+    std::cout &lt;&lt; "num_vertices = " &lt;&lt; n &lt;&lt; '\n';
+    std::cout &lt;&lt; "source vertex = " &lt;&lt; s &lt;&lt; '\n';
+    std::cout &lt;&lt; "is_directed   = " &lt;&lt; std::boolalpha &lt;&lt; is_directed(g) &lt;&lt; '\n';
+
+    // The null vertex sentinel — portable across selectors
+    Traits::vertex_descriptor nv = Traits::null_vertex();
+    std::cout &lt;&lt; "null_vertex   = " &lt;&lt; nv &lt;&lt; '\n';
+}</code></pre>
 </div>
 </div>
+<div class="listingblock">
+<div class="title">Expected output</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">num_vertices = 3
+source vertex = 0
+is_directed   = true
+null_vertex   = 18446744073709551615</code></pre>
 </div>
 </div>
-<div class="sect1">
-<h2 id="_where_defined"><a class="anchor" href="#_where_defined"></a>Where Defined</h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p><code>boost/graph/graph_traits.hpp</code></p>
+<p>The <code>null_vertex</code> value above is <code>std::numeric_limits&lt;std::size_t&gt;::max()</code>
+because this graph uses <code>vecS</code> vertex storage. For <code>listS</code> it is a
+null pointer; never compare descriptors to <code>0</code>, <code>-1</code>, or any other
+literal — always use <code>graph_traits&lt;Graph&gt;::null_vertex()</code>.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_template_parameters"><a class="anchor" href="#_template_parameters"></a>Template Parameters</h2>
+<h2 id="_example_generic_template_function"><a class="anchor" href="#_example_generic_template_function"></a>Example — generic template function</h2>
 <div class="sectionbody">
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Graph</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The graph type whose associated types are being accessed.</p></td>
-</tr>
-</tbody>
-</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include &lt;boost/graph/adjacency_list.hpp&gt;
+#include &lt;boost/graph/graph_traits.hpp&gt;
+#include &lt;iostream&gt;
+
+// Generic function: Graph is a template parameter, so every nested type
+// must be disambiguated with `typename graph_traits&lt;Graph&gt;::...`.
+template &lt;typename Graph&gt;
+typename boost::graph_traits&lt;Graph&gt;::degree_size_type
+sum_out_degrees(const Graph&amp; g) {
+    using Traits = boost::graph_traits&lt;Graph&gt;;
+    typename Traits::degree_size_type total = 0;
+    for (auto v : boost::make_iterator_range(vertices(g))) {
+        total += out_degree(v, g);
+    }
+    return total;
+}
+
+int main() {
+    using namespace boost;
+    using Graph = adjacency_list&lt;vecS, vecS, directedS&gt;;
+    Graph g(3);
+    add_edge(0, 1, g);
+    add_edge(1, 2, g);
+    add_edge(0, 2, g);
+
+    std::cout &lt;&lt; "sum of out-degrees = " &lt;&lt; sum_out_degrees(g) &lt;&lt; '\n';
+}</code></pre>
 </div>
 </div>
-<div class="sect1">
-<h2 id="_model_of"><a class="anchor" href="#_model_of"></a>Model of</h2>
-<div class="sectionbody">
+<div class="listingblock">
+<div class="title">Expected output</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">sum of out-degrees = 3</code></pre>
+</div>
+</div>
 <div class="paragraph">
-<p>DefaultConstructible
-and Assignable</p>
+<p>Inside a function template, every nested name through <code>graph_traits</code> must
+be disambiguated with <code>typename</code> because the compiler does not yet know
+that <code>graph_traits&lt;Graph&gt;::degree_size_type</code> names a type.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_type_requirements"><a class="anchor" href="#_type_requirements"></a>Type Requirements</h2>
+<h2 id="_synopsis"><a class="anchor" href="#_synopsis"></a>Synopsis</h2>
 <div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p><code>Graph</code> is a model of one of the <a href="../concepts/graph_concepts.html" class="xref page">graph
-concepts</a>.</p>
-</li>
-</ul>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">namespace boost {
+
+template &lt;typename Graph&gt;
+struct graph_traits {
+    typedef /* from Graph */ vertex_descriptor;
+    typedef /* from Graph */ edge_descriptor;
+
+    typedef /* from Graph */ adjacency_iterator;
+    typedef /* from Graph */ out_edge_iterator;
+    typedef /* from Graph */ in_edge_iterator;
+    typedef /* from Graph */ vertex_iterator;
+    typedef /* from Graph */ edge_iterator;
+
+    typedef /* from Graph */ directed_category;
+    typedef /* from Graph */ edge_parallel_category;
+    typedef /* from Graph */ traversal_category;
+
+    typedef /* from Graph */ vertices_size_type;
+    typedef /* from Graph */ edges_size_type;
+    typedef /* from Graph */ degree_size_type;
+
+    static vertex_descriptor null_vertex();
+};
+
+// Free functions / type traits:
+template &lt;typename Graph&gt; bool is_directed  (const Graph&amp; g);
+template &lt;typename Graph&gt; bool is_undirected(const Graph&amp; g);
+
+template &lt;typename Graph&gt; struct is_directed_graph;    // inherits mpl::bool_
+template &lt;typename Graph&gt; struct is_undirected_graph;  // inherits mpl::bool_
+
+} // namespace boost</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -982,8 +1061,8 @@ concepts</a>.</p>
 <div class="sectionbody">
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
+<col style="width: 20%;">
+<col style="width: 80%;">
 </colgroup>
 <thead>
 <tr>
@@ -993,77 +1072,115 @@ concepts</a>.</p>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">` vertex_descriptor `</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The type for the objects used to identity
-vertices in the graph.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>vertex_descriptor</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Handle type for vertices. Concrete type depends on the graph storage
+  selector (see <a href="overview.html" class="xref page">the overview table</a>).</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">` edge_descriptor `</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The type for the objects used to identity
-edges in the graph.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>edge_descriptor</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Handle type for edges. Contains source/target endpoint information.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">` adjacency_iterator `</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The type for the iterators that traverse
-the vertices adjacent to a vertex.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>adjacency_iterator</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Iterator over vertices adjacent to a given vertex. Dereferences to a
+  <code>vertex_descriptor</code>.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">` out_edge_iterator `</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The type for the iterators that traverse
-through the out-edges of a vertex.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>out_edge_iterator</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Iterator over the out-edges of a vertex. Dereferences to <code>edge_descriptor</code>.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">` in_edge_iterator `</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The type for the iterators that traverse
-through the in-edges of a vertex.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>in_edge_iterator</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Iterator over the in-edges of a vertex (requires
+  <a href="../concepts/BidirectionalGraph.html" class="xref page">Bidirectional Graph</a>).</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">` vertex_iterator `</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The type for the iterators that traverse
-through the complete vertex set of the graph.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>vertex_iterator</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Iterator over the whole vertex set.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">` edge_iterator `</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The type for the iterators that traverse through
-the complete edge set of the graph.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>edge_iterator</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Iterator over the whole edge set.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">` directed_category `</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">This says whether the graph is undirected
-(<code>undirected_tag</code>) or directed (<code>directed_tag</code>).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>directed_category</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>directed_tag</code>, <code>undirected_tag</code>, or <code>bidirectional_tag</code>.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">` edge_parallel_category `</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">This says whether the graph allows
-parallel edges to be inserted (<code>allow_parallel_edge_tag</code>) or
-if it automatically removes parallel edges
-(<code>disallow_parallel_edge_tag</code>).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>edge_parallel_category</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>allow_parallel_edge_tag</code> or <code>disallow_parallel_edge_tag</code>.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">` traversal_category `</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The ways in which the vertices in the graph
-can be traversed. The traversal category tags are:
-<code>incidence_graph_tag, adjacency_graph_tag, bidirectional_graph_tag, vertex_list_graph_tag, edge_list_graph_tag, adjacency_matrix_tag</code>.
-You can also create your own tag which should inherit from one or more
-of the above.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>traversal_category</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tag composed (via inheritance) of
+  <code>incidence_graph_tag</code>, <code>adjacency_graph_tag</code>, <code>bidirectional_graph_tag</code>,
+  <code>vertex_list_graph_tag</code>, <code>edge_list_graph_tag</code>, <code>adjacency_matrix_tag</code>.
+  Controls tag-dispatch inside generic algorithms.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">` vertices_size_type `</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The unsigned integer type used for
-representing the number of vertices in the graph.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>vertices_size_type</code> / <code>edges_size_type</code> / <code>degree_size_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Unsigned integer types for vertex count, edge count, and per-vertex degree.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">` edges_size_type `</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The unsigned integer type used for
-representing the number of edge in the graph.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">` degree_size_type `</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The unsigned integer type used for
-representing the degree of vertices in the graph.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>static vertex_descriptor null_vertex()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Portable sentinel meaning "no vertex". Use it instead of integer literals
+  when clearing predecessor maps or testing for "unset".</p></td>
 </tr>
 </tbody>
 </table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_free_helpers"><a class="anchor" href="#_free_helpers"></a>Free helpers</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 40%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Expression</th>
+<th class="tableblock halign-left valign-top">Returns</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>boost::is_directed(g)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code> if <code>directed_category</code> is <code>directed_tag</code> or <code>bidirectional_tag</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>boost::is_undirected(g)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>!is_directed(g)</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>boost::is_directed_graph&lt;Graph&gt;::value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compile-time version of the above.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>boost::is_undirected_graph&lt;Graph&gt;::value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compile-time negation.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_see_also"><a class="anchor" href="#_see_also"></a>See also</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="overview.html" class="xref page">Traits and Iterators overview</a></p>
+</li>
+<li>
+<p><a href="../concepts/graph_concepts.html" class="xref page">Graph Concepts</a></p>
+</li>
+<li>
+<p><a href="property_map.html" class="xref page"><code>property_map</code></a></p>
+</li>
+</ul>
+</div>
 </div>
 </div>
 </article>

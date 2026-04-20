@@ -761,6 +761,9 @@
     <span class="nav-text">Traits and Iterators</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="traits/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="traits/graph_traits.html">Graph Traits</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -785,8 +788,11 @@
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">Background</span>
+    <span class="nav-text">Background and Reference</span>
 <ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="about/design.html">Design Rationale</a>
+  </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="overview/graph_theory_review.html">Graph Theory Review</a>
   </li>
@@ -794,7 +800,7 @@
     <a class="nav-link" href="auxiliary/bgl_named_params.html">Named Parameters</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="overview/faq.html">FAQ</a>
+    <a class="nav-link" href="about/bibliography.html">Bibliography</a>
   </li>
 </ul>
   </li>
@@ -818,11 +824,8 @@
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">About</span>
+    <span class="nav-text">Project</span>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="about/design.html">Design Rationale</a>
-  </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="about/history.html">History</a>
   </li>
@@ -835,10 +838,10 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="about/users.html">BGL Users</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="about/bibliography.html">Bibliography</a>
-  </li>
 </ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="overview/faq.html">FAQ</a>
   </li>
 </ul>
   </li>
@@ -948,6 +951,15 @@ int main() {
     for (auto v : make_iterator_range(vertices(g)))
         std::cout &lt;&lt; "distance to " &lt;&lt; v &lt;&lt; " = " &lt;&lt; storage_dist[v] &lt;&lt; "\n";
 }</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Expected output</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">distance to 0 = 0
+distance to 1 = 1
+distance to 2 = 3
+distance to 3 = 4</code></pre>
 </div>
 </div>
 </div>

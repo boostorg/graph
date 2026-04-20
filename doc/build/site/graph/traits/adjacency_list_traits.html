@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>adjacency_list_traits :: Boost.Graph Documentation</title>
+    <title>adjacency_list_traits&lt;EdgeList, VertexList, Directed&gt; :: Boost.Graph Documentation</title>
     <meta name="generator" content="Antora 3.1.14">
     <link rel="stylesheet" href="../../_/css/site.css">
   </head>
@@ -761,6 +761,9 @@
     <span class="nav-text">Traits and Iterators</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="graph_traits.html">Graph Traits</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
@@ -785,8 +788,11 @@
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">Background</span>
+    <span class="nav-text">Background and Reference</span>
 <ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../about/design.html">Design Rationale</a>
+  </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../overview/graph_theory_review.html">Graph Theory Review</a>
   </li>
@@ -794,7 +800,7 @@
     <a class="nav-link" href="../auxiliary/bgl_named_params.html">Named Parameters</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../overview/faq.html">FAQ</a>
+    <a class="nav-link" href="../about/bibliography.html">Bibliography</a>
   </li>
 </ul>
   </li>
@@ -818,11 +824,8 @@
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">About</span>
+    <span class="nav-text">Project</span>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/design.html">Design Rationale</a>
-  </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../about/history.html">History</a>
   </li>
@@ -835,10 +838,10 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../about/users.html">BGL Users</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/bibliography.html">Bibliography</a>
-  </li>
 </ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../overview/faq.html">FAQ</a>
   </li>
 </ul>
   </li>
@@ -877,49 +880,155 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">adjacency_list_traits</h1>
+<h1 class="page"><code>adjacency_list_traits&lt;EdgeList, VertexList, Directed&gt;</code></h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This class provides an alternate method for accessing some of the
-associated types of the <code>adjacency_list</code> class. The main reason for
-this class is that sometimes one would like to create graph properties
-whose values are vertex or edge descriptors. If you try to use
-<code>graph_traits</code> for this you will run into a problem with mutually
-recursive types. To get around this problem, the
-<code>adjacency_list_traits</code> class is provided, which gives the user
-access to the vertex and edge descriptor types without requiring the
-user to provide the property types for the graph.</p>
+<p>Pre-declares the descriptor types of an <code>adjacency_list</code> <strong><em>before</em></strong> the
+<code>adjacency_list</code> itself is declared. Exists to break a chicken-and-egg
+compile error users hit exactly once — and then want to know about forever.</p>
+</div>
+<div class="paragraph">
+<p><strong>Defined in:</strong> <code>&lt;boost/graph/adjacency_list.hpp&gt;</code></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_why_this_class_exists"><a class="anchor" href="#_why_this_class_exists"></a>Why this class exists</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Suppose you want an interior edge property whose value is a
+<code>vertex_descriptor</code> — say, storing a <strong><em>predecessor</em></strong> directly on each
+edge instead of maintaining an external predecessor map. The naive spelling</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">  template &lt;class EdgeList, class VertexList, class Directed&gt;
-  struct adjacency_list_traits {
-    typedef ... vertex_descriptor;
-    typedef ... edge_descriptor;
-    typedef ... directed_category;
-    typedef ... edge_parallel_category;
-  };</code></pre>
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// This does NOT compile:
+using Graph = adjacency_list&lt;
+    vecS, vecS, directedS,
+    no_property,
+    property&lt;edge_name_t,
+             graph_traits&lt;Graph&gt;::vertex_descriptor&gt;&gt;;  // Graph not yet defined</code></pre>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_where_defined"><a class="anchor" href="#_where_defined"></a>Where Defined</h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p><code>boost/graph/adjacency_list.hpp</code></p>
+<p>fails because <code>graph_traits&lt;Graph&gt;</code> cannot be instantiated until <code>Graph</code>
+is a complete type, but <code>Graph</code> cannot be completed until its property
+type is known. <code>adjacency_list_traits</code> exposes the descriptor types
+computed purely from the three selectors — no property types required —
+so it is fine to instantiate before the full graph type exists.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_template_parameters"><a class="anchor" href="#_template_parameters"></a>Template Parameters</h2>
+<h2 id="_example"><a class="anchor" href="#_example"></a>Example</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// Demonstrates the "mutually recursive type" problem that
+// adjacency_list_traits solves.
+//
+// We want an interior edge property whose value is a vertex_descriptor
+// (for example, a pointer-to-predecessor stored on each edge). That
+// requires the vertex_descriptor type to be known BEFORE we finish
+// declaring the graph — which is impossible with graph_traits because
+// graph_traits needs the full graph type.
+//
+// adjacency_list_traits&lt;EdgeList, VertexList, Directed&gt; exposes just
+// vertex_descriptor / edge_descriptor without instantiating the full
+// adjacency_list template, breaking the cycle.
+
+#include &lt;boost/graph/adjacency_list.hpp&gt;
+#include &lt;iostream&gt;
+
+using namespace boost;
+
+// Step 1: pre-declare the traits. Same selectors as the final graph.
+using Traits = adjacency_list_traits&lt;vecS, vecS, directedS&gt;;
+
+// Step 2: use Traits::vertex_descriptor as a property value type.
+using Graph = adjacency_list&lt;
+    vecS, vecS, directedS,
+    no_property,
+    property&lt;edge_name_t, Traits::vertex_descriptor&gt;&gt;;
+
+int main() {
+    Graph g(3);
+    auto e01 = add_edge(0, 1, g).first;
+    auto e12 = add_edge(1, 2, g).first;
+
+    // Store the predecessor vertex on each edge.
+    put(edge_name, g, e01, vertex(0, g));
+    put(edge_name, g, e12, vertex(1, g));
+
+    for (auto e : make_iterator_range(edges(g))) {
+        std::cout &lt;&lt; source(e, g) &lt;&lt; " -&gt; " &lt;&lt; target(e, g)
+                  &lt;&lt; "  predecessor=" &lt;&lt; get(edge_name, g, e) &lt;&lt; '\n';
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Expected output</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">0 -&gt; 1  predecessor=0
+1 -&gt; 2  predecessor=1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Observe that <code>Traits</code> and the final <code>Graph</code> use the <strong><em>same</em></strong> three
+selectors (<code>vecS, vecS, directedS</code>). If they diverge, the descriptor
+types also diverge and the program is ill-formed.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+For most use cases, an <strong><em>external</em></strong> predecessor map —
+<code>std::vector&lt;vertex_descriptor&gt;</code> wrapped in <code>iterator_property_map</code> — is
+simpler and every BGL algorithm already accepts one. Reach for
+<code>adjacency_list_traits</code> only when you genuinely need the property to
+travel with the graph (serialization, subgraph adaptors, mixing with
+<a href="../io/graphml.html" class="xref page">GraphML</a> I/O that round-trips interior properties, …).
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_synopsis"><a class="anchor" href="#_synopsis"></a>Synopsis</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">namespace boost {
+
+template &lt;class EdgeList   = vecS,
+          class VertexList = vecS,
+          class Directed   = directedS&gt;
+struct adjacency_list_traits {
+    typedef /* implementation-defined */ vertex_descriptor;
+    typedef /* implementation-defined */ edge_descriptor;
+    typedef /* implementation-defined */ directed_category;
+    typedef /* implementation-defined */ edge_parallel_category;
+};
+
+} // namespace boost</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_template_parameters"><a class="anchor" href="#_template_parameters"></a>Template parameters</h2>
 <div class="sectionbody">
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+<col style="width: 20%;">
 </colgroup>
 <thead>
 <tr>
@@ -931,19 +1040,17 @@ user to provide the property types for the graph.</p>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>EdgeList</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The selector type for the edge container implementation.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Selector for per-vertex edge-list storage (<code>vecS</code>, <code>listS</code>, <code>setS</code>, …).</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>vecS</code></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>VertexList</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The selector type for the vertex container
-implementation.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Selector for the vertex container storage.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>vecS</code></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Directed</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The selector type whether the graph is directed or
-undirected.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>directedS</code>, <code>undirectedS</code>, or <code>bidirectionalS</code>.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>directedS</code></p></td>
 </tr>
 </tbody>
@@ -951,29 +1058,12 @@ undirected.</p></td>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_model_of"><a class="anchor" href="#_model_of"></a>Model of</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>DefaultConstructible
-and Assignable</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_type_requirements"><a class="anchor" href="#_type_requirements"></a>Type Requirements</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Under construction.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
 <h2 id="_members"><a class="anchor" href="#_members"></a>Members</h2>
 <div class="sectionbody">
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
+<col style="width: 20%;">
+<col style="width: 80%;">
 </colgroup>
 <thead>
 <tr>
@@ -983,29 +1073,47 @@ and Assignable</p>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">` vertex_descriptor `</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The type for the objects used to identify
-vertices in the graph.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>vertex_descriptor</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Same concrete type as <code>graph_traits&lt;adjacency_list&lt;EdgeList, VertexList, Directed, …&gt;&gt;::vertex_descriptor</code>, but available without naming the full graph type.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">` edge_descriptor `</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The type for the objects used to identify
-edges in the graph.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>edge_descriptor</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Likewise for edge descriptors.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">` directed_category `</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">This says whether the graph is undirected
-(<code>undirected_tag</code>) or directed (<code>directed_tag</code>).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>directed_category</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>directed_tag</code>, <code>undirected_tag</code>, or <code>bidirectional_tag</code>.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">` edge_parallel_category `</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">This says whether the graph allows
-parallel edges to be inserted (<code>allow_parallel_edge_tag</code>) or
-if it automatically removes parallel edges
-(<code>disallow_parallel_edge_tag</code>).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>edge_parallel_category</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether the chosen <code>EdgeList</code> stores parallel edges (<code>allow_parallel_edge_tag</code>)
+  or collapses them (<code>disallow_parallel_edge_tag</code>).</p></td>
 </tr>
 </tbody>
 </table>
+<div class="paragraph">
+<p>Iterator and size types are <strong>not</strong> exposed here (they depend on the full
+graph type, which has not been declared yet). If you need them, use
+<code>graph_traits&lt;Graph&gt;</code> on the completed graph.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_see_also"><a class="anchor" href="#_see_also"></a>See also</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="overview.html" class="xref page">Traits and Iterators overview</a></p>
+</li>
+<li>
+<p><a href="../graph_classes/adjacency_list.html" class="xref page"><code>adjacency_list</code></a></p>
+</li>
+<li>
+<p><a href="../property_maps/bundled.html" class="xref page">Bundled Properties</a></p>
+</li>
+</ul>
+</div>
 </div>
 </div>
 </article>

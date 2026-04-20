@@ -761,6 +761,9 @@
     <span class="nav-text">Traits and Iterators</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../traits/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../traits/graph_traits.html">Graph Traits</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -785,8 +788,11 @@
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">Background</span>
+    <span class="nav-text">Background and Reference</span>
 <ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../about/design.html">Design Rationale</a>
+  </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../overview/graph_theory_review.html">Graph Theory Review</a>
   </li>
@@ -794,7 +800,7 @@
     <a class="nav-link" href="../auxiliary/bgl_named_params.html">Named Parameters</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../overview/faq.html">FAQ</a>
+    <a class="nav-link" href="../about/bibliography.html">Bibliography</a>
   </li>
 </ul>
   </li>
@@ -818,11 +824,8 @@
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">About</span>
+    <span class="nav-text">Project</span>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/design.html">Design Rationale</a>
-  </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../about/history.html">History</a>
   </li>
@@ -835,10 +838,10 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../about/users.html">BGL Users</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/bibliography.html">Bibliography</a>
-  </li>
 </ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../overview/faq.html">FAQ</a>
   </li>
 </ul>
   </li>
@@ -994,16 +997,27 @@ int main() {
 }</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>Output (values depend on the random seed):</p>
-</div>
-<div class="literalblock">
+<div class="listingblock">
+<div class="title">Expected output</div>
 <div class="content">
-<pre>0 -&gt; 1  weight=1.60864e+09
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">0 -&gt; 1  weight=1.60864e+09
 0 -&gt; 2  weight=3.42113e+09
 1 -&gt; 2  weight=4.08329e+09
-2 -&gt; 0  weight=7.87846e+08</pre>
+2 -&gt; 0  weight=7.87846e+08</code></pre>
 </div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The values shown assume the seeded <code>mt19937(42)</code> generator in the
+example. Different seeds produce different weights.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>

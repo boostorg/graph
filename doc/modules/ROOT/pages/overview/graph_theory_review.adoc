@@ -288,7 +288,7 @@ image:figs/dfs.gif[figs/dfs,width=141,height=204]
 ....
 
 [#sec:minimum-spanning-tree]
-=== #Minimum Spanning Tree Problem#
+=== Minimum Spanning Tree Problem
 
 The _minimum-spanning-tree problem_ is defined as follows: find an
 acyclic subset _T_ of _E_ that connects all of the vertices in the graph
@@ -302,7 +302,7 @@ weight on the edge _(u,v)_
 _T_ is called the _spanning tree_.
 
 [#sec:shortest-paths-algorithms]
-=== #Shortest-Paths Algorithms#
+=== Shortest-Paths Algorithms
 
 One of the classic problems in graph theory is to find the shortest path
 between two vertices in a graph. Formally, a _path_ is a sequence of
@@ -343,7 +343,8 @@ simple path from _r_ to _v_ in _G'_ is a shortest path from _r_ to _v_
 in _G_. The result of a single-source algorithm is a shortest-paths
 tree.
 
-Network Flow Algorithms
+[#sec:network-flow-algorithms]
+=== Network Flow Algorithms
 
 A flow network is a directed graph _G=(V,E)_ with a *_source_* vertex
 _s_ and a *_sink_* vertex _t_. Each edge has a positive real valued
@@ -389,7 +390,7 @@ is based on the notion of a *_preflow_* introduced by
 xref:about/bibliography.adoc#karzanov74:_deter[Karzanov].
 
 [#sec:min-cut-algorithms]
-=== #Minimum Cut Algorithms#
+=== Minimum Cut Algorithms
 
 ==== Undirected Graphs
 

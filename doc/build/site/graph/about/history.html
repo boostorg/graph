@@ -761,6 +761,9 @@
     <span class="nav-text">Traits and Iterators</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../traits/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../traits/graph_traits.html">Graph Traits</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -785,8 +788,11 @@
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">Background</span>
+    <span class="nav-text">Background and Reference</span>
 <ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="design.html">Design Rationale</a>
+  </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../overview/graph_theory_review.html">Graph Theory Review</a>
   </li>
@@ -794,7 +800,7 @@
     <a class="nav-link" href="../auxiliary/bgl_named_params.html">Named Parameters</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../overview/faq.html">FAQ</a>
+    <a class="nav-link" href="bibliography.html">Bibliography</a>
   </li>
 </ul>
   </li>
@@ -818,11 +824,8 @@
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">About</span>
+    <span class="nav-text">Project</span>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="design.html">Design Rationale</a>
-  </li>
   <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="history.html">History</a>
   </li>
@@ -835,10 +838,10 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="users.html">BGL Users</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="bibliography.html">Bibliography</a>
-  </li>
 </ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../overview/faq.html">FAQ</a>
   </li>
 </ul>
   </li>
@@ -866,7 +869,7 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../index.html">Boost.Graph</a></li>
-    <li>About</li>
+    <li>Project</li>
     <li><a href="history.html">History</a></li>
   </ul>
 </nav>
@@ -878,6 +881,8 @@
 </aside>
 <article class="doc">
 <h1 class="page">History</h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
 <p>The Boost Graph Library began its life as the Generic Graph Component
 Library (GGCL), a software project at the
@@ -903,9 +908,10 @@ available graph libraries (LEDA, GTL, Stanford GraphBase) were written
 using the generic programming style of the STL, and hence did not
 fulfill the flexibility and high-performance requirements of the LSC.
 Others were also expressing interest in a generic C++ graph library.
-There had also been earlier work in the area of generic graph algorithms,
-including some codes written by Alexander Stepanov, and Dietmar Kühl&#8217;s
-masters thesis.</p>
+During a meeting with Bjarne Stroustrup we were introduced to several
+people at AT&amp;T who needed such a library. There had also been earlier
+work in the area of generic graph algorithms, including some codes
+written by Alexander Stepanov, and Dietmar Kühl&#8217;s masters thesis.</p>
 </div>
 <div class="paragraph">
 <p>With this in mind, and motivated by homework assignments in his
@@ -931,6 +937,336 @@ the current Boost Graph Library interface.</p>
 <p>On September 4, 2000 GGCL passed the Boost formal review and became the
 Boost Graph Library (BGL). The first release of BGL was September 27,
 2000.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_historical_changelog_through_boost_1_36"><a class="anchor" href="#_historical_changelog_through_boost_1_36"></a>Historical changelog (through Boost 1.36)</h2>
+<div class="sectionbody">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This changelog is frozen at Boost 1.36 (2008). Modern release notes
+live in the Boost release announcements and the git history of
+<a href="https://github.com/boostorg/graph">boostorg/graph</a>. It is retained here as
+a record of the library&#8217;s early evolution.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_version_1_36_0"><a class="anchor" href="#_version_1_36_0"></a>Version 1.36.0</h3>
+<div class="paragraph">
+<p><strong>New algorithms and components</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../algorithms/shortest_paths/r_c_shortest_paths.html" class="xref page"><code>r_c_shortest_paths</code></a>,
+resource-constrained shortest paths, from Michael Drexl.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_version_1_35_0"><a class="anchor" href="#_version_1_35_0"></a>Version 1.35.0</h3>
+<div class="paragraph">
+<p><strong>New algorithms and components</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../algorithms/network_flow/boykov_kolmogorov_max_flow.html" class="xref page"><code>boykov_kolmogorov_max_flow</code></a>
+(formerly <code>kolmogorov_max_flow</code>), from Stephan Diederich as part of the
+2006 Google Summer of Code.</p>
+</li>
+<li>
+<p><code>read_dimacs_max_flow</code> and <code>write_dimacs_max_flow</code> for max-flow problems,
+from Stephan Diederich.</p>
+</li>
+<li>
+<p><a href="../io/graphml.html" class="xref page"><code>read_graphml</code> / <code>write_graphml</code></a> for GraphML
+input/output, from Tiago de Paula Peixoto.</p>
+</li>
+<li>
+<p><a href="../algorithms/cycle_detection/howard_cycle_ratio.html" class="xref page"><code>minimum_cycle_ratio</code>
+and <code>maximum_cycle_ratio</code></a>, from Dmitry Bufistov and Andrey Parfenov.</p>
+</li>
+<li>
+<p><a href="../algorithms/planar/boyer_myrvold.html" class="xref page"><code>boyer_myrvold_planarity_test</code></a>,
+along with a suite of <a href="../algorithms/planar/planar_graphs.html" class="xref page">algorithms
+for planar graphs</a>, from Aaron Windsor.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Enhancements</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../extending/leda_conversion.html" class="xref page">LEDA adaptor</a> improvements, from Jens Müller.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_version_1_34_1"><a class="anchor" href="#_version_1_34_1"></a>Version 1.34.1</h3>
+<div class="paragraph">
+<p><strong>Bug fixes</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../algorithms/shortest_paths/bellman_ford_shortest.html" class="xref page"><code>bellman_ford_shortest_paths</code></a>:
+fixed a bug where certain negative cycles were not correctly detected.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_version_1_34_0"><a class="anchor" href="#_version_1_34_0"></a>Version 1.34.0</h3>
+<div class="paragraph">
+<p><strong>New algorithms and components</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../algorithms/network_flow/maximum_matching.html" class="xref page"><code>edmonds_maximum_cardinality_matching</code></a>,
+from Aaron Windsor.</p>
+</li>
+<li>
+<p><a href="../algorithms/utility/lengauer_tarjan_dominator.html" class="xref page"><code>lengauer_tarjan_dominator_tree</code></a>,
+from JongSoo Park.</p>
+</li>
+<li>
+<p><a href="../graph_classes/compressed_sparse_row.html" class="xref page"><code>compressed_sparse_row_graph</code></a>,
+from Jeremiah Willcock and Douglas Gregor of Indiana University.</p>
+</li>
+<li>
+<p><code>sorted_erdos_renyi_iterator</code>, from Jeremiah Willcock of Indiana University.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Enhancements</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The compiled library for GraphViz reading is now called <code>boost_graph</code>
+rather than <code>bgl-viz</code>.</p>
+</li>
+<li>
+<p><a href="../algorithms/connected_components/biconnected_components.html" class="xref page"><code>biconnected_components</code></a>
+gained a visitor parameter and supports named parameters, from Janusz
+Piwowarski.</p>
+</li>
+<li>
+<p><a href="../graph_classes/adjacency_matrix.html" class="xref page"><code>adjacency_matrix</code></a> now models
+<a href="../concepts/BidirectionalGraph.html" class="xref page">Bidirectional Graph</a>.</p>
+</li>
+<li>
+<p><a href="../graph_classes/adjacency_list.html" class="xref page"><code>adjacency_list</code></a> is now
+Serializable.</p>
+</li>
+<li>
+<p>Added <code>edges_size_type</code> and <code>vertices_size_type</code> to
+<a href="../traits/adjacency_list_traits.html" class="xref page"><code>adjacency_list_traits</code></a>.</p>
+</li>
+<li>
+<p>Added <code>operator&lt;</code> etc. to `adjacency_list&#8217;s edge descriptor.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Bug fixes</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Fixed a bug that caused the relaxed heap to fail on x86 Linux.</p>
+</li>
+<li>
+<p>Bundled properties now work with adjacency list I/O.</p>
+</li>
+<li>
+<p><a href="../algorithms/shortest_paths/floyd_warshall_shortest.html" class="xref page"><code>floyd_warshall_all_pairs_shortest_paths</code></a>
+now properly uses its <code>compare</code>, <code>inf</code>, and <code>zero</code> parameters.</p>
+</li>
+<li>
+<p><a href="../algorithms/shortest_paths/johnson_all_pairs_shortest.html" class="xref page"><code>johnson_all_pairs_shortest_paths</code></a>
+now supports <code>compare</code>, <code>combine</code>, <code>inf</code>, and <code>zero</code>.</p>
+</li>
+<li>
+<p>Fixed a bug in <code>smallest_last_vertex_ordering.hpp</code> that could cause a
+vertex to be moved to the wrong bucket during a bucket-sorter update.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_version_1_33_1"><a class="anchor" href="#_version_1_33_1"></a>Version 1.33.1</h3>
+<div class="paragraph">
+<p><strong>Bug fixes</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../algorithms/layout/fruchterman_reingold.html" class="xref page"><code>fruchterman_reingold_force_directed_layout</code></a>:
+fixed enumeration of grid-force pairs, which caused some odd graph
+formations along grid lines.</p>
+</li>
+<li>
+<p><a href="../algorithms/ordering/king_ordering.html" class="xref page"><code>king_ordering</code></a> and
+<a href="../algorithms/ordering/cuthill_mckee_ordering.html" class="xref page"><code>cuthill_mckee_ordering</code></a>:
+fixed a bug that caused failures with the multi-component version of
+these algorithms.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_version_1_33_0"><a class="anchor" href="#_version_1_33_0"></a>Version 1.33.0</h3>
+<div class="paragraph">
+<p><strong>New algorithms and components</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Experimental Python bindings, from Doug Gregor and Indiana University.</p>
+</li>
+<li>
+<p><a href="../algorithms/shortest_paths/floyd_warshall_shortest.html" class="xref page"><code>floyd_warshall_all_pairs_shortest_paths</code></a>,
+from Lauren Foutz and Scott Hill.</p>
+</li>
+<li>
+<p><a href="../algorithms/shortest_paths/astar_search.html" class="xref page"><code>astar_search</code></a>, from
+Kristopher Beevers and Jufeng Peng.</p>
+</li>
+<li>
+<p><a href="../algorithms/layout/fruchterman_reingold.html" class="xref page"><code>fruchterman_reingold_force_directed_layout</code></a>,
+from Doug Gregor and Indiana University.</p>
+</li>
+<li>
+<p><a href="../algorithms/connected_components/biconnected_components.html" class="xref page"><code>biconnected_components</code>
+and <code>articulation_points</code></a>, from Indiana University.</p>
+</li>
+<li>
+<p><a href="../algorithms/layout/gursoy_atun_layout.html" class="xref page"><code>gursoy_atun_layout</code></a>, from
+Jeremiah Willcock and Doug Gregor of Indiana University.</p>
+</li>
+<li>
+<p><a href="../algorithms/ordering/king_ordering.html" class="xref page"><code>king_ordering</code></a>, from D.
+Kevin McGrath of Indiana University.</p>
+</li>
+<li>
+<p><a href="../generators/erdos_renyi_generator.html" class="xref page"><code>erdos_renyi_iterator</code></a>.</p>
+</li>
+<li>
+<p><a href="../generators/plod_generator.html" class="xref page"><code>plod_iterator</code></a>.</p>
+</li>
+<li>
+<p><a href="../generators/small_world_generator.html" class="xref page"><code>small_world_iterator</code></a>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Enhancements</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../algorithms/shortest_paths/bellman_ford_shortest.html" class="xref page"><code>bellman_ford_shortest_paths</code></a>
+now permits one to specify the starting vertex, so that it will perform
+its own initialization.</p>
+</li>
+<li>
+<p><a href="../algorithms/traversal/undirected_dfs.html" class="xref page"><code>undirected_dfs</code></a> is now
+data-recursive, resulting in improved performance in some cases, from
+Synge Todo.</p>
+</li>
+<li>
+<p><a href="../algorithms/shortest_paths/dijkstra_shortest_paths.html" class="xref page"><code>dijkstra_shortest_paths</code></a>
+now uses a relaxed heap
+[<a href="bibliography.html#driscoll88" class="xref page">61</a>] as its priority queue,
+improving its complexity to <em>O(V log V)</em> and improving real-world
+performance for larger graphs.</p>
+</li>
+<li>
+<p><a href="../io/graphviz.html" class="xref page"><code>read_graphviz</code></a> now has a new, Spirit-based
+parser that works for all graph types and supports arbitrary properties
+on the graph, from Ron Garcia. The old, Bison-based GraphViz reader
+has been deprecated and was later removed.</p>
+</li>
+<li>
+<p><a href="../io/graphviz.html" class="xref page"><code>write_graphviz</code></a> now supports output of dynamic
+properties (as read in through the new <code>read_graphviz</code>).</p>
+</li>
+<li>
+<p><a href="../algorithms/ordering/cuthill_mckee_ordering.html" class="xref page"><code>cuthill_mckee_ordering</code></a>
+has been recast as an invocation of <code>breadth_first_search</code> and now
+supports graphs with multiple components.</p>
+</li>
+<li>
+<p><a href="../adaptors/subgraph.html" class="xref page"><code>subgraph</code></a> now supports
+<a href="../property_maps/bundled.html" class="xref page">bundled properties</a>. <code>get_property</code>
+now refers to the subgraph property, not the root graph&#8217;s property.</p>
+</li>
+<li>
+<p><a href="../adaptors/filtered_graph.html" class="xref page"><code>filtered_graph</code></a> now supports
+<a href="../property_maps/bundled.html" class="xref page">bundled properties</a>.</p>
+</li>
+<li>
+<p><a href="../adaptors/reverse_graph.html" class="xref page"><code>reverse_graph</code></a> now supports
+<a href="../property_maps/bundled.html" class="xref page">bundled properties</a>, <code>set_property</code>,
+and <code>get_property</code>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Bug fixes</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../algorithms/shortest_paths/bellman_ford_shortest.html" class="xref page"><code>bellman_ford_shortest_paths</code></a>
+now deals with unreachable vertices better.</p>
+</li>
+<li>
+<p><a href="../graph_classes/adjacency_list.html" class="xref page"><code>adjacency_list</code></a>: parallel edge
+removal with <code>OutEdgeListS = listS</code> has been fixed. Copying and swapping
+has been fixed.</p>
+</li>
+<li>
+<p><a href="../algorithms/connected_components/incremental_components.html" class="xref page">Incremental
+connected components</a>: fixed a bug in the <code>incremental_components</code>
+routine that may have caused incorrect results.</p>
+</li>
+<li>
+<p>The <code>remove_out_edge_if</code> function for an undirected
+<a href="../graph_classes/adjacency_list.html" class="xref page"><code>adjacency_list</code></a> has been
+rewritten and should no longer dereference singular iterators.</p>
+</li>
+<li>
+<p><code>write_graphviz</code> now accepts a <code>vertex_id</code> parameter that is used to
+name the nodes.</p>
+</li>
+<li>
+<p><code>read_graphviz</code> now accepts empty attribute lists.</p>
+</li>
+<li>
+<p><a href="../algorithms/coloring/sequential_vertex_coloring.html" class="xref page"><code>sequential_vertex_coloring</code></a>
+has been updated, tested, and documented.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
 </div>
 </article>
   </div>

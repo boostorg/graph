@@ -761,6 +761,9 @@
     <span class="nav-text">Traits and Iterators</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../traits/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../traits/graph_traits.html">Graph Traits</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -785,8 +788,11 @@
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">Background</span>
+    <span class="nav-text">Background and Reference</span>
 <ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../about/design.html">Design Rationale</a>
+  </li>
   <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="graph_theory_review.html">Graph Theory Review</a>
   </li>
@@ -794,7 +800,7 @@
     <a class="nav-link" href="../auxiliary/bgl_named_params.html">Named Parameters</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="faq.html">FAQ</a>
+    <a class="nav-link" href="../about/bibliography.html">Bibliography</a>
   </li>
 </ul>
   </li>
@@ -818,11 +824,8 @@
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">About</span>
+    <span class="nav-text">Project</span>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/design.html">Design Rationale</a>
-  </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../about/history.html">History</a>
   </li>
@@ -835,10 +838,10 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../about/users.html">BGL Users</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/bibliography.html">Bibliography</a>
-  </li>
 </ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="faq.html">FAQ</a>
   </li>
 </ul>
   </li>
@@ -866,7 +869,7 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../index.html">Boost.Graph</a></li>
-    <li>Background</li>
+    <li>Background and Reference</li>
     <li><a href="graph_theory_review.html">Graph Theory Review</a></li>
   </ul>
 </nav>
@@ -1201,7 +1204,7 @@ to detect cycles (use a DFS visitor that checks for back edges).</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="sec:minimum-spanning-tree"><a class="anchor" href="#sec:minimum-spanning-tree"></a><mark>Minimum Spanning Tree Problem</mark></h3>
+<h3 id="sec:minimum-spanning-tree"><a class="anchor" href="#sec:minimum-spanning-tree"></a>Minimum Spanning Tree Problem</h3>
 <div class="paragraph">
 <p>The <em>minimum-spanning-tree problem</em> is defined as follows: find an
 acyclic subset <em>T</em> of <em>E</em> that connects all of the vertices in the graph
@@ -1216,7 +1219,7 @@ weight on the edge <em>(u,v)</em></p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="sec:shortest-paths-algorithms"><a class="anchor" href="#sec:shortest-paths-algorithms"></a><mark>Shortest-Paths Algorithms</mark></h3>
+<h3 id="sec:shortest-paths-algorithms"><a class="anchor" href="#sec:shortest-paths-algorithms"></a>Shortest-Paths Algorithms</h3>
 <div class="paragraph">
 <p>One of the classic problems in graph theory is to find the shortest path
 between two vertices in a graph. Formally, a <em>path</em> is a sequence of
@@ -1259,9 +1262,9 @@ simple path from <em>r</em> to <em>v</em> in <em>G'</em> is a shortest path from
 in <em>G</em>. The result of a single-source algorithm is a shortest-paths
 tree.</p>
 </div>
-<div class="paragraph">
-<p>Network Flow Algorithms</p>
 </div>
+<div class="sect2">
+<h3 id="sec:network-flow-algorithms"><a class="anchor" href="#sec:network-flow-algorithms"></a>Network Flow Algorithms</h3>
 <div class="paragraph">
 <p>A flow network is a directed graph <em>G=(V,E)</em> with a <strong><em>source</em></strong> vertex
 <em>s</em> and a <strong><em>sink</em></strong> vertex <em>t</em>. Each edge has a positive real valued
@@ -1316,7 +1319,7 @@ is based on the notion of a <strong><em>preflow</em></strong> introduced by
 </div>
 </div>
 <div class="sect2">
-<h3 id="sec:min-cut-algorithms"><a class="anchor" href="#sec:min-cut-algorithms"></a><mark>Minimum Cut Algorithms</mark></h3>
+<h3 id="sec:min-cut-algorithms"><a class="anchor" href="#sec:min-cut-algorithms"></a>Minimum Cut Algorithms</h3>
 <div class="sect3">
 <h4 id="_undirected_graphs"><a class="anchor" href="#_undirected_graphs"></a>Undirected Graphs</h4>
 <div class="paragraph">

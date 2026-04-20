@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Adjacency Iterator Adaptor :: Boost.Graph Documentation</title>
+    <title>adjacency_iterator_generator :: Boost.Graph Documentation</title>
     <meta name="generator" content="Antora 3.1.14">
     <link rel="stylesheet" href="../../_/css/site.css">
   </head>
@@ -761,6 +761,9 @@
     <span class="nav-text">Traits and Iterators</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../traits/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../traits/graph_traits.html">Graph Traits</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -785,8 +788,11 @@
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">Background</span>
+    <span class="nav-text">Background and Reference</span>
 <ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../about/design.html">Design Rationale</a>
+  </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../overview/graph_theory_review.html">Graph Theory Review</a>
   </li>
@@ -794,7 +800,7 @@
     <a class="nav-link" href="../auxiliary/bgl_named_params.html">Named Parameters</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../overview/faq.html">FAQ</a>
+    <a class="nav-link" href="../about/bibliography.html">Bibliography</a>
   </li>
 </ul>
   </li>
@@ -818,11 +824,8 @@
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">About</span>
+    <span class="nav-text">Project</span>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/design.html">Design Rationale</a>
-  </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../about/history.html">History</a>
   </li>
@@ -835,10 +838,10 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../about/users.html">BGL Users</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../about/bibliography.html">Bibliography</a>
-  </li>
 </ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../overview/faq.html">FAQ</a>
   </li>
 </ul>
   </li>
@@ -877,63 +880,143 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Adjacency Iterator Adaptor</h1>
+<h1 class="page"><code>adjacency_iterator_generator</code></h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Defined in header
-<a href="../../../boost/graph/adjacency_iterator.hpp">boost/graph/adjacency_iterator.hpp</a></p>
+<p>Synthesizes a vertex-iterator out of an existing <strong><em>out-edge</em></strong> iterator.
+Reads each out-edge and yields its <strong><em>target</em></strong> vertex.</p>
 </div>
 <div class="paragraph">
-<p>The adjacency iterator adaptor transforms an <code>out_edge_iterator</code>
-into an adjacency iterator. That is, it takes an iterator that traverses
-over edges, and creates an iterator that traverses over the <strong><em>target</em></strong>
-vertices of those edges. With this adaptor it is trivial to take a graph
-type that models <a href="../concepts/IncidenceGraph.html" class="xref page">Incidence Graph</a> and add the
-capabilities required of <a href="../concepts/AdjacencyGraph.html" class="xref page">Adjacency Graph</a>.</p>
+<p><strong>Defined in:</strong> <code>&lt;boost/graph/adjacency_iterator.hpp&gt;</code></p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+You almost certainly do not need this page.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Most BGL users just call <code>adjacent_vertices(v, g)</code> on any graph that
+models <a href="../concepts/AdjacencyGraph.html" class="xref page">Adjacency Graph</a> (which every
+built-in BGL graph class does). This page is for people <strong><em>implementing
+a new graph class</em></strong> that models <a href="../concepts/IncidenceGraph.html" class="xref page">Incidence
+Graph</a> and who want the compiler to give them the adjacency iterator for
+free.</p>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_synopsis"><a class="anchor" href="#_synopsis"></a>Synopsis</h3>
+<div class="sect1">
+<h2 id="_example"><a class="anchor" href="#_example"></a>Example</h2>
+<div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">namespace boost {
-  template &lt;class Graph, class VertexDescriptor, class OutEdgeIter&gt;
-  class adjacency_iterator_generator {
-  public:
-    typedef iterator_adaptor&lt;...&gt; type;
-  };
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// Most BGL users never construct an adjacency_iterator directly —
+// they call `adjacent_vertices(v, g)`, which returns a pair of them.
+//
+// This example shows the plain-vanilla use via adjacent_vertices, then
+// the `type` exposed by adjacency_iterator_generator for the same graph.
+// You only reach for the generator when implementing a new graph type
+// that models IncidenceGraph but not (yet) AdjacencyGraph.
+
+#include &lt;boost/graph/adjacency_list.hpp&gt;
+#include &lt;boost/graph/adjacency_iterator.hpp&gt;
+#include &lt;iostream&gt;
+#include &lt;type_traits&gt;
+
+using namespace boost;
+using Graph = adjacency_list&lt;vecS, vecS, directedS&gt;;
+
+int main() {
+    Graph g(4);
+    add_edge(0, 1, g);
+    add_edge(0, 2, g);
+    add_edge(0, 3, g);
+
+    // Everyday path: adjacent_vertices returns an (iterator, iterator) pair
+    // whose value_type is vertex_descriptor.
+    std::cout &lt;&lt; "neighbors of 0:";
+    for (auto v : make_iterator_range(adjacent_vertices(0, g))) {
+        std::cout &lt;&lt; ' ' &lt;&lt; v;
+    }
+    std::cout &lt;&lt; '\n';
+
+    // The generator produces a type equivalent to what adjacency_list
+    // already exposes as graph_traits&lt;Graph&gt;::adjacency_iterator.
+    using Generated = adjacency_iterator_generator&lt;
+        Graph,
+        graph_traits&lt;Graph&gt;::vertex_descriptor,
+        graph_traits&lt;Graph&gt;::out_edge_iterator&gt;::type;
+
+    using Existing = graph_traits&lt;Graph&gt;::adjacency_iterator;
+
+    std::cout &lt;&lt; "generator matches graph_traits: "
+              &lt;&lt; std::boolalpha &lt;&lt; std::is_same&lt;Generated, Existing&gt;::value
+              &lt;&lt; '\n';
 }</code></pre>
 </div>
 </div>
-<hr>
-<div class="sect3">
-<h4 id="_example"><a class="anchor" href="#_example"></a>Example</h4>
-<div class="paragraph">
-<p>The following is an example of how to use the
-<code>adjacency_iterator_generator</code> class.</p>
+<div class="listingblock">
+<div class="title">Expected output</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">neighbors of 0: 1 2 3
+generator matches graph_traits: true</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>The example shows both paths:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><code>adjacent_vertices(v, g)</code> — the everyday way to iterate over neighbors.</p>
+</li>
+<li>
+<p><code>adjacency_iterator_generator&lt;…&gt;::type</code> — the type you would publish as
+<code>adjacency_iterator</code> in your own graph class.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>For existing graph types like <code>adjacency_list</code>, the generator produces
+the same type that <code>graph_traits</code> already exposes; there is no reason
+to instantiate it yourself.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_synopsis"><a class="anchor" href="#_synopsis"></a>Synopsis</h2>
+<div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include &lt;boost/graph/adjacency_iterator.hpp&gt;
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">namespace boost {
 
-class my_graph {
-  // ...
-  typedef ... out_edge_iterator;
-  typedef ... vertex_descriptor;
-  typedef boost::adjacency_iterator_generator&lt;my_graph, vertex_descriptor, out_edge_iterator&gt;::type adjacency_iterator;
-  // ...
-};</code></pre>
+template &lt;class Graph,
+          class VertexDescriptor = typename graph_traits&lt;Graph&gt;::vertex_descriptor,
+          class OutEdgeIter      = typename graph_traits&lt;Graph&gt;::out_edge_iterator&gt;
+class adjacency_iterator_generator {
+public:
+    typedef /* iterator_adaptor instantiation */ type;
+};
+
+} // namespace boost</code></pre>
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_template_parameters"><a class="anchor" href="#_template_parameters"></a>Template Parameters</h4>
+</div>
+<div class="sect1">
+<h2 id="_template_parameters"><a class="anchor" href="#_template_parameters"></a>Template parameters</h2>
+<div class="sectionbody">
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
+<col style="width: 20%;">
+<col style="width: 80%;">
 </colgroup>
 <thead>
 <tr>
@@ -944,67 +1027,62 @@ class my_graph {
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Graph</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The graph type, which must model
-<a href="../concepts/IncidenceGraph.html" class="xref page">Incidence Graph</a>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The graph type. Must model <a href="../concepts/IncidenceGraph.html" class="xref page">Incidence Graph</a>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>VertexDescriptor</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">This must be the same type as
-<code>graph_traits&lt;Graph&gt;::vertex_descriptor</code>. The reason why
-this is a template parameter is that the primary use of
-<code>adjacency_iterator_generator</code> is <strong><em>inside</em></strong> the definition of
-the graph class, and in that context we can not use <code>graph_traits</code>
-on the not yet fully defined graph class.<br>
-<strong>Default:</strong> <code>graph_traits&lt;Graph&gt;::vertex_descriptor</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The vertex-descriptor type. Defaults to
+  <code>graph_traits&lt;Graph&gt;::vertex_descriptor</code>. The parameter exists because
+  the generator is typically instantiated <strong><em>inside</em></strong> the graph class&#8217;s
+  declaration, where <code>graph_traits&lt;Graph&gt;</code> cannot yet be resolved.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>OutEdgeIter</code></p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>This must be the same type as
-<code>graph_traits&lt;Graph&gt;::out_edge_iterator</code>.<br>
-<strong>Default:</strong></p>
-</div>
-<div class="paragraph">
-<p>graph_traits&lt;Graph&gt;::out_edge_iterator</p>
-</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The source out-edge iterator type. Defaults to
+  <code>graph_traits&lt;Graph&gt;::out_edge_iterator</code>, with the same caveat as above.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="sect3">
-<h4 id="_model_of"><a class="anchor" href="#_model_of"></a>Model of</h4>
-<div class="paragraph">
-<p>The adjacency iterator adaptor (the type
-<code>adjacency_iterator_generator&lt;&#8230;&#8203;&gt;::type</code>) is a model of
-<a href="../../utility/MultiPassInputIterator.html">Multi-Pass Input
-Iterator</a> .</p>
 </div>
-</div>
-<div class="sect3">
-<h4 id="_members"><a class="anchor" href="#_members"></a>Members</h4>
+<div class="sect1">
+<h2 id="_members"><a class="anchor" href="#_members"></a>Members</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>The adjacency iterator type implements the member functions and
-operators required of the
-<a href="http://www.boost.org/sgi/stl/RandomAccessIterator.html">Random Access
-Iterator</a> concept, except that the <code>reference</code> type is the same as the
-<code>value_type</code> so <code>operator*()</code> returns by-value. In addition it
-has the following constructor:</p>
+<p><code>adjacency_iterator_generator&lt;…&gt;::type</code> satisfies the
+<a href="../../utility/MultiPassInputIterator.html">Multi-Pass Input Iterator</a>
+concept. It exposes every operator required of a
+<a href="../../utility/RandomAccessIterator.html">Random Access Iterator</a>,
+except that <code>reference</code> equals <code>value_type</code>, so <code>operator*()</code> returns
+by value.</p>
+</div>
+<div class="paragraph">
+<p>Constructor:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">adjacency_iterator_generator::type(const OutEdgeIter&amp; it, const Graph* g)</code></pre>
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">adjacency_iterator_generator&lt;…&gt;::type(const OutEdgeIter&amp; it, const Graph* g);</code></pre>
 </div>
 </div>
-<hr>
-<div class="paragraph">
-<p>Revised 19 Aug 2001</p>
 </div>
-<div class="paragraph">
-<p>© Copyright Jeremy Siek 2000. Permission to copy, use, modify, sell and
-distribute this document is granted provided this copyright notice
-appears in all copies. This document is provided "as is" without express
-or implied warranty, and with no claim as to its suitability for any
-purpose.</p>
+</div>
+<div class="sect1">
+<h2 id="_see_also"><a class="anchor" href="#_see_also"></a>See also</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../traits/overview.html" class="xref page">Traits and Iterators overview</a></p>
+</li>
+<li>
+<p><a href="../concepts/AdjacencyGraph.html" class="xref page">AdjacencyGraph concept</a> —
+<code>adjacent_vertices(v, g)</code>, what you probably want.</p>
+</li>
+<li>
+<p><a href="inv_adjacency_iterator.html" class="xref page"><code>inv_adjacency_iterator_generator</code></a> —
+the bidirectional counterpart.</p>
+</li>
+</ul>
 </div>
 </div>
 </div>

@@ -213,6 +213,7 @@
 ** xref:adaptors/edge_list.adoc[Edge List]
 ** xref:adaptors/grid_graph.adoc[Grid Graph]
 * Traits and Iterators
+** xref:traits/overview.adoc[Overview]
 ** xref:traits/graph_traits.adoc[Graph Traits]
 ** xref:traits/adjacency_list_traits.adoc[Adjacency List Traits]
 ** xref:traits/property_map.adoc[Property Map]
@@ -220,19 +221,19 @@
 ** xref:iterators/adjacency_iterator.adoc[Adjacency Iterator]
 ** xref:iterators/inv_adjacency_iterator.adoc[Inverse Adjacency Iterator]
 * xref:auxiliary/exception.adoc[Exceptions]
-* Background
+* Background and Reference
+** xref:about/design.adoc[Design Rationale]
 ** xref:overview/graph_theory_review.adoc[Graph Theory Review]
 ** xref:auxiliary/bgl_named_params.adoc[Named Parameters]
-** xref:overview/faq.adoc[FAQ]
+** xref:about/bibliography.adoc[Bibliography]
 * Extending the BGL
 ** xref:extending/overview.adoc[Writing Algorithms for BGL]
 ** xref:extending/constructing_algorithms.adoc[Worked Example: Graph Coloring]
 ** xref:extending/custom_storage.adoc[Custom Adjacency List Storage]
 ** xref:extending/leda_conversion.adoc[Adapting Existing Graph Structures]
-* About
-** xref:about/design.adoc[Design Rationale]
+* Project
 ** xref:about/history.adoc[History]
 ** xref:about/acknowledgements.adoc[Acknowledgements]
 ** xref:about/publications.adoc[Publications]
 ** xref:about/users.adoc[BGL Users]
-** xref:about/bibliography.adoc[Bibliography]
+* xref:overview/faq.adoc[FAQ]
