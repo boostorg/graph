@@ -886,14 +886,16 @@
 bidirectional BFS that searches simultaneously from s and t.</p>
 </div>
 <div class="paragraph">
-<p>Complexity: O(V + E) worst case, typically much faster<br>
+<p><strong>Complexity:</strong> O(V + E) worst case, typically much faster<br>
 <strong>Defined in:</strong> <code>&lt;boost/graph/st_connected.hpp&gt;</code></p>
 </div>
+<div class="paragraph">
+<p>Both overloads live in namespace <code>boost::graph</code> (not <code>boost</code>).</p>
 </div>
 </div>
-<div class="sect1">
-<h2 id="_synopsis"><a class="anchor" href="#_synopsis"></a>Synopsis</h2>
-<div class="sectionbody">
+</div>
+<div class="sect2">
+<h3 id="_1_with_explicit_color_map"><a class="anchor" href="#_1_with_explicit_color_map"></a>(1) With explicit color map</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename ColorMap&gt;
@@ -920,7 +922,7 @@ bool st_connected(const Graph&amp; g,
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>const Graph&amp; g</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Must model IncidenceGraph.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Must model <a href="../../concepts/IncidenceGraph.html" class="xref page">Incidence Graph</a>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
@@ -936,10 +938,25 @@ bool st_connected(const Graph&amp; g,
 <td class="tableblock halign-left valign-top"><p class="tableblock">UTIL</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>ColorMap color</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">ReadWritePropertyMap for working storage. One entry per vertex, initialized
-  to white.</p></td>
+  to white. The value type must model <a href="../../auxiliary/ColorValue.html" class="xref page">Color Value</a>.</p></td>
 </tr>
 </tbody>
 </table>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_2_with_default_color_map"><a class="anchor" href="#_2_with_default_color_map"></a>(2) With default color map</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph&gt;
+bool st_connected(const Graph&amp; g,
+    typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
+    typename graph_traits&lt;Graph&gt;::vertex_descriptor t);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Equivalent to overload (1) using a default <code>two_bit_color_map</code> of size <code>num_vertices(g)</code> indexed by <code>get(vertex_index, g)</code>.</p>
+</div>
 <div class="paragraph">
 <p>Returns <code>true</code> if there is a path from <code>s</code> to <code>t</code>.</p>
 </div>
@@ -955,7 +972,6 @@ reachability between two specific vertices.
 </td>
 </tr>
 </table>
-</div>
 </div>
 </div>
 <div class="sect1">

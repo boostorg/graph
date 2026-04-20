@@ -886,7 +886,7 @@
 counts outgoing edges; in-degree (prestige) counts incoming edges.</p>
 </div>
 <div class="paragraph">
-<p>Complexity: O(1) per vertex<br>
+<p><strong>Complexity:</strong> O(1) per vertex<br>
 <strong>Defined in:</strong> <code>&lt;boost/graph/degree_centrality.hpp&gt;</code></p>
 </div>
 </div>
@@ -967,21 +967,129 @@ Degree centrality (prestige = in-degree):
 </div>
 </div>
 <hr>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_synopsis"><a class="anchor" href="#_synopsis"></a>Synopsis</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_1_degree_centrality_with_explicit_measure"><a class="anchor" href="#_1_degree_centrality_with_explicit_measure"></a>(1) degree_centrality with explicit measure</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename Vertex, typename Measure&gt;
 typename Measure::degree_type
-degree_centrality(const Graph&amp; g, Vertex v, Measure measure);
+degree_centrality(const Graph&amp; g, Vertex v, Measure measure);</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_2_degree_centrality_default_total_degree"><a class="anchor" href="#_2_degree_centrality_default_total_degree"></a>(2) degree_centrality (default: total degree)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename Vertex&gt;
+typename graph_traits&lt;Graph&gt;::degree_size_type
+degree_centrality(const Graph&amp; g, Vertex v);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Uses <code>measure_degree(g)</code> as the measure (returns <code>degree(v, g)</code> — equivalent to <code>out_degree</code> for undirected graphs).</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_3_influence"><a class="anchor" href="#_3_influence"></a>(3) influence</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename Vertex&gt;
+typename graph_traits&lt;Graph&gt;::degree_size_type
+influence(const Graph&amp; g, Vertex v);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Returns <code>out_degree(v, g)</code>. Convenience wrapper over <code>degree_centrality(g, v, measure_influence(g))</code>.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_4_prestige"><a class="anchor" href="#_4_prestige"></a>(4) prestige</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename Vertex&gt;
+typename graph_traits&lt;Graph&gt;::degree_size_type
+prestige(const Graph&amp; g, Vertex v);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Returns <code>in_degree(v, g)</code>. Requires the graph to model <a href="../../concepts/BidirectionalGraph.html" class="xref page">Bidirectional Graph</a>. Convenience wrapper over <code>degree_centrality(g, v, measure_prestige(g))</code>.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_5_all_degree_centralities_with_explicit_measure"><a class="anchor" href="#_5_all_degree_centralities_with_explicit_measure"></a>(5) all_degree_centralities with explicit measure</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename CentralityMap, typename Measure&gt;
+void all_degree_centralities(const Graph&amp; g, CentralityMap cent, Measure measure);</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_6_all_degree_centralities_default_total_degree"><a class="anchor" href="#_6_all_degree_centralities_default_total_degree"></a>(6) all_degree_centralities (default: total degree)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename CentralityMap&gt;
+void all_degree_centralities(const Graph&amp; g, CentralityMap cent);</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_7_all_influence_values"><a class="anchor" href="#_7_all_influence_values"></a>(7) all_influence_values</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename CentralityMap&gt;
+void all_influence_values(const Graph&amp; g, CentralityMap cent);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Writes <code>out_degree</code> for every vertex into <code>cent</code>.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_8_all_prestige_values"><a class="anchor" href="#_8_all_prestige_values"></a>(8) all_prestige_values</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename CentralityMap&gt;
+void all_prestige_values(const Graph&amp; g, CentralityMap cent);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Writes <code>in_degree</code> for every vertex into <code>cent</code>. Requires <a href="../../concepts/BidirectionalGraph.html" class="xref page">Bidirectional Graph</a>.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_9_measure_helpers"><a class="anchor" href="#_9_measure_helpers"></a>(9) Measure helpers</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph&gt;
+degree_centrality_measure&lt;Graph&gt; measure_degree(const Graph&amp;);
 
-template &lt;typename Graph, typename CentralityMap, typename Measure&gt;
-void all_degree_centralities(const Graph&amp; g, CentralityMap cm, Measure measure);</code></pre>
+template &lt;typename Graph&gt;
+influence_measure&lt;Graph&gt;       measure_influence(const Graph&amp;);
+
+template &lt;typename Graph&gt;
+prestige_measure&lt;Graph&gt;        measure_prestige(const Graph&amp;);</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>Construct the measure functors used by overloads (1) and (5). <code>degree_centrality_measure</code>, <code>influence_measure</code>, <code>prestige_measure</code> are the corresponding struct types.</p>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_parameters"><a class="anchor" href="#_parameters"></a>Parameters</h2>
+<div class="sectionbody">
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 12.5%;">
@@ -999,23 +1107,22 @@ void all_degree_centralities(const Graph&amp; g, CentralityMap cm, Measure measu
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>const Graph&amp; g</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Must model IncidenceGraph. BidirectionalGraph required for prestige.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Must model <a href="../../concepts/IncidenceGraph.html" class="xref page">Incidence Graph</a>. <a href="../../concepts/BidirectionalGraph.html" class="xref page">Bidirectional Graph</a> is additionally required for <code>prestige</code> / <code>all_prestige_values</code> / <code>measure_prestige</code>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Vertex v</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">(single-vertex version) The vertex to compute centrality for.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The vertex to compute centrality for (single-vertex overloads).</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Measure measure</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Use <code>measure_influence(g)</code> for out-degree or <code>measure_prestige(g)</code> for
-  in-degree.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Model of <code>DistanceMeasureConcept</code>; see overload (9) for the built-in choices.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CentralityMap cm</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">(all_degree_centralities) WritablePropertyMap for per-vertex results.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CentralityMap cent</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">WritablePropertyMap from vertex to <code>degree_size_type</code>.</p></td>
 </tr>
 </tbody>
 </table>

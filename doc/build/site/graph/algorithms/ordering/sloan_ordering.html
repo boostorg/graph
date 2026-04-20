@@ -885,7 +885,7 @@
 <p>Reduces the profile and wavefront of an undirected graph by reordering vertex indices.</p>
 </div>
 <div class="paragraph">
-<p>Complexity: <em>O(log(m)|E|)</em> where <em>m = max { degree(v) | v in V }</em><br>
+<p><strong>Complexity:</strong> <em>O(log(m)|E|)</em> where <em>m = max { degree(v) | v in V }</em><br>
 <strong>Defined in:</strong> <code>&lt;boost/graph/sloan_ordering.hpp&gt;</code></p>
 </div>
 <hr>
@@ -1191,7 +1191,7 @@ OutputIterator sloan_ordering(
 <h2 id="_description"><a class="anchor" href="#_description"></a>Description</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The goal of the Sloan ordering algorithm [1, 2] is to reduce the profile and
+<p>The goal of the Sloan ordering algorithm [<a href="../../about/bibliography.html#sloan86" class="xref page">83</a>, <a href="../../about/bibliography.html#sloan89" class="xref page">84</a>] is to reduce the profile and
 the wavefront of a graph by reordering the indices assigned to each vertex.
 The Sloan algorithm needs a start and an end vertex. These vertices can be
 assigned manually. But there is also an algorithm <code>sloan_starting_nodes</code> that
@@ -1300,15 +1300,17 @@ int main() {
 </div>
 </div>
 <div class="sect1">
-<h2 id="_notes"><a class="anchor" href="#_notes"></a>Notes</h2>
+<h2 id="_references"><a class="anchor" href="#_references"></a>References</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>[1] S. W. Sloan, <em>An algorithm for profile and wavefront reduction of sparse
-matrices</em>, Int. j. numer. methods eng., <strong>23</strong>, 239 - 251 (1986)</p>
-</div>
-<div class="paragraph">
-<p>[2] S. W. Sloan, <em>A fortran program for profile and wavefront reduction</em>,
-Int. j. numer. methods eng., <strong>28</strong>, 2651 - 2679 (1989)</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../about/bibliography.html#sloan86" class="xref page">[83]</a> S. W. Sloan, <em>An algorithm for profile and wavefront reduction of sparse matrices</em>, Int. j. numer. methods eng., <strong>23</strong>, 239-251 (1986).</p>
+</li>
+<li>
+<p><a href="../../about/bibliography.html#sloan89" class="xref page">[84]</a> S. W. Sloan, <em>A fortran program for profile and wavefront reduction</em>, Int. j. numer. methods eng., <strong>28</strong>, 2651-2679 (1989).</p>
+</li>
+</ul>
 </div>
 </div>
 </div>

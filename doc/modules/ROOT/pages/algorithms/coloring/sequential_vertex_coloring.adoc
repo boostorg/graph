@@ -3,7 +3,7 @@
 
 Computes a vertex coloring for the vertices in a graph using a greedy algorithm.
 
-Complexity: _O(V(d{plus}k))_ where _d_ is max degree and _k_ is the number of colors +
+*Complexity:* _O(V(d{plus}k))_ where _d_ is max degree and _k_ is the number of colors +
 *Defined in:* `<boost/graph/sequential_vertex_coloring.hpp>`
 
 == Example

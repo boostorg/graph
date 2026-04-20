@@ -3,7 +3,7 @@
 
 Adds edges to a connected planar graph to make it biconnected while preserving planarity.
 
-Complexity: _O(n)_ +
+*Complexity:* _O(n)_ +
 *Defined in:* `<boost/graph/make_biconnected_planar.hpp>`
 
 '''

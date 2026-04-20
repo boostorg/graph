@@ -3,7 +3,7 @@
 
 Creates a straight line drawing of a maximal planar graph on an integer grid.
 
-Complexity: _O(n + m)_ +
+*Complexity:* _O(n + m)_ +
 *Defined in:* `<boost/graph/chrobak_payne_drawing.hpp>`
 
 '''

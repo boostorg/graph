@@ -2,7 +2,7 @@
 
 Places the vertices of a graph at random locations within a given topology.
 
-Complexity: _O(|V|)_ +
+*Complexity:* _O(|V|)_ +
 *Defined in:* `<boost/graph/random_layout.hpp>`
 
 == Example

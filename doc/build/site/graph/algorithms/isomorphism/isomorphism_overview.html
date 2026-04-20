@@ -899,19 +899,22 @@ that preserves edges).</p>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="isomorphism.html" class="xref page">Isomorphism</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">O(V! * V) worst case</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Test if two graphs are isomorphic (same structure, same size).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">_O(</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">V</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">!)_ worst case</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Test if two graphs are isomorphic (same structure, same size). Simple
+  backtracking implementation.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="vf2_sub_graph_iso.html" class="xref page">VF2 Subgraph Isomorphism</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">O(V! * V) worst case</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Test if one graph is isomorphic to a subgraph of another.
-  Finds all matches via a callback.</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>O(V<sup>2</sup>)</em> best / <em>O(V! · V)</em> worst</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Test if one graph is isomorphic to an induced subgraph of another.
+  Also exposes <code>vf2_graph_iso</code> for full-graph isomorphism and
+  <code>vf2_subgraph_mono</code> for non-induced subgraphs. Finds all matches via a
+  callback.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="mcgregor_common_subgraphs.html" class="xref page">McGregor Common Subgraphs</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Exponential</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Find the largest subgraph common to two graphs.</p></td>
 </tr>
 </tbody>
 </table>

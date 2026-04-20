@@ -3,7 +3,7 @@
 
 Visits all vertices in the same connected component as a source vertex using a depth-first pattern.
 
-Complexity: _O(E)_ +
+*Complexity:* _O(E)_ +
 *Defined in:* `<boost/graph/depth_first_search.hpp>`
 
 == Example

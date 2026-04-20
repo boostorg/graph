@@ -7,19 +7,24 @@ Find or enumerate cycles in a graph.
 | Algorithm | Complexity | When to use
 
 | xref:algorithms/cycle_detection/hawick_circuits.adoc[Hawick Circuits]
-| O((V + E) * (C + 1))
-| Enumerate all elementary circuits (simple cycles) in a directed graph.
-  C is the number of circuits found.
+| Exponential (use `max_length` to bound)
+| Enumerate all elementary circuits in a directed multigraph. Handles
+  self-loops and parallel edges. A `hawick_unique_circuits` variant suppresses
+  duplicates induced by parallel edges.
 
 | xref:algorithms/cycle_detection/tiernan_all_cycles.adoc[Tiernan All Cycles]
 | Exponential
-| Enumerate all elementary cycles. Older algorithm; Hawick is generally
-  preferred.
+| Earlier algorithm (1970) for enumerating elementary cycles. Companion
+  helpers `tiernan_girth`, `tiernan_circumference`, and
+  `tiernan_girth_and_circumference` return the shortest / longest /
+  both cycle lengths without enumerating every cycle explicitly.
 
-| xref:algorithms/cycle_detection/howard_cycle_ratio.adoc[Cycle Ratio]
-| Polynomial
-| Find the cycle with the minimum or maximum mean weight (total weight
-  divided by number of edges). Used in performance analysis and scheduling.
+| xref:algorithms/cycle_detection/howard_cycle_ratio.adoc[Cycle Ratio / Cycle Mean]
+| Empirical _O(|E|)_; no tight worst-case bound
+| Find the cycle with the minimum or maximum ratio of two edge weight sums
+  (`maximum_cycle_ratio` / `minimum_cycle_ratio`). The `..._cycle_mean`
+  variants are the common special case where the denominator is the cycle
+  length. Used in performance analysis and scheduling.
 |===
 
 TIP: To simply _detect_ whether a cycle exists (without enumerating all of

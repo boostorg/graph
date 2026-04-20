@@ -33,5 +33,8 @@ Fruchterman-Reingold or Kamada-Kawai. Kamada-Kawai produces better results
 but is slower; Fruchterman-Reingold is faster and handles larger graphs.
 
 All layout algorithms write positions into a property map. The topology
-(rectangle, circle, sphere, etc.) is specified via a topology object from
-`<boost/graph/topology.hpp>`.
+(rectangle, circle, sphere, heart, etc.) is specified via a topology object;
+see xref:algorithms/layout/topology.adoc[Topologies for Graph Drawing] for
+the catalog of built-in types (`square_topology`, `cube_topology`,
+`ball_topology`, `sphere_topology`, `heart_topology`, …) and the concept a
+custom topology must model.

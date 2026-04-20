@@ -3,7 +3,7 @@
 
 Performs a depth-first traversal of the vertices in a directed graph.
 
-Complexity: _O(E + V)_ +
+*Complexity:* _O(E + V)_ +
 *Defined in:* `<boost/graph/depth_first_search.hpp>`
 
 == Example

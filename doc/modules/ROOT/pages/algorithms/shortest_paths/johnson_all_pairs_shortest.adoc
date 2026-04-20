@@ -3,7 +3,7 @@
 
 Finds the shortest distance between every pair of vertices in a graph, suitable for sparse graphs with positive or negative edge weights.
 
-Complexity: _O(V E log V)_ +
+*Complexity:* _O(V E log V)_ +
 *Defined in:* `<boost/graph/johnson_all_pairs_shortest.hpp>`
 
 == Example

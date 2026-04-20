@@ -2,7 +2,7 @@
 
 Calculates the minimum cost maximum flow of a network with nonnegative edge weights using successive shortest path augmentation.
 
-Complexity: _O(U * (|E| + |V| log |V|))_ for integer capacities with max flow _U_ +
+*Complexity:* _O(U * (|E| + |V| log |V|))_ for integer capacities with max flow _U_ +
 *Defined in:* `<boost/graph/successive_shortest_path_nonnegative_weights.hpp>`
 
 '''

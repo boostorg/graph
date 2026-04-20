@@ -3,7 +3,7 @@
 
 Solves the minimum spanning tree problem for an undirected graph with weighted edges using Prim's algorithm.
 
-Complexity: _O(E log V)_ +
+*Complexity:* _O(E log V)_ +
 *Defined in:* `<boost/graph/prim_minimum_spanning_tree.hpp>`
 
 == Example

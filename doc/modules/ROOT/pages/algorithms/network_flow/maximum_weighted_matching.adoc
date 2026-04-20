@@ -3,7 +3,7 @@
 
 Finds a matching in an undirected edge-weighted graph that maximizes the sum of matched edge weights.
 
-Complexity: _O(n^3^)_ for `maximum_weighted_matching`; exponential in _m_ for brute force +
+*Complexity:* _O(n^3^)_ for `maximum_weighted_matching`; exponential in _m_ for brute force +
 *Defined in:* `<boost/graph/maximum_weighted_matching.hpp>`
 
 '''

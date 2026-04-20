@@ -21,7 +21,7 @@ Expected output (with seed 42):
 Path from 0 to 4: 0 1 3 4
 ....
 
-Complexity: depends on graph structure, expected O(V) per walk on many graphs +
+*Complexity:* depends on graph structure, expected O(V) per walk on many graphs +
 *Defined in:* `<boost/graph/loop_erased_random_walk.hpp>`
 
 == Synopsis
@@ -68,3 +68,51 @@ void loop_erased_random_walk(
 
 `loop_erased_random_walk_stuck` if the walk reaches a vertex with no
 out-edges.
+
+'''
+
+=== NextEdge helpers
+
+The header also provides two ready-made `NextEdge` functors that satisfy the callable signature expected by `loop_erased_random_walk`:
+
+[source,cpp]
+----
+template <typename Graph, typename Gen>
+class unweighted_random_out_edge_gen {
+public:
+    explicit unweighted_random_out_edge_gen(Gen& gen);
+
+    typename graph_traits<Graph>::edge_descriptor
+    operator()(typename graph_traits<Graph>::vertex_descriptor src,
+               const Graph& g) const;
+};
+
+template <typename Graph, typename WeightMap, typename Gen>
+class weighted_random_out_edge_gen {
+public:
+    weighted_random_out_edge_gen(const WeightMap& weight, Gen& gen);
+
+    typename graph_traits<Graph>::edge_descriptor
+    operator()(typename graph_traits<Graph>::vertex_descriptor src,
+               const Graph& g) const;
+};
+----
+
+`unweighted_random_out_edge_gen` picks an out-edge uniformly at random via `boost::random_out_edge(g, src, gen)`.
+
+`weighted_random_out_edge_gen` picks an out-edge with probability proportional to its weight via `boost::weighted_random_out_edge(g, src, weight, gen)`.
+
+Both throw `loop_erased_random_walk_stuck` if `out_degree(src, g) == 0`.
+
+'''
+
+=== loop_erased_random_walk_stuck (exception)
+
+[source,cpp]
+----
+struct loop_erased_random_walk_stuck : public std::exception {
+    virtual const char* what() const throw();
+};
+----
+
+Thrown when the walk encounters a vertex with no outgoing edges, which makes the algorithm unable to continue.

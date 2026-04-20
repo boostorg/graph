@@ -492,3 +492,50 @@ Zvi Galil +
 _https://dl.acm.org/doi/pdf/10.1145/6462.6502[Efficient Algorithms for
 Finding Maximum Matching in Graphs]_ +
 ACM Computing Surveys (CSUR), 18(1), 23-38, 1986.
+
+[#cochet-terrasson98]#78#
+
+J. Cochet-Terrasson et al. +
+_Numerical computation of spectral elements in max-plus algebra_, 1998.
+
+[#dasdan99]#79#
+
+A. Dasdan, S. S. Irani, R. K. Gupta. +
+_Efficient Algorithms for Optimum Cycle Mean and Optimum Cost to Time
+Ratio Problems_. +
+Proceedings of the 36th ACM/IEEE Design Automation Conference (DAC '99),
+1999.
+
+[#mehlhorn-uhrig95]#80#
+
+K. Mehlhorn and C. Uhrig. +
+_http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.31.614&rep=rep1&type=pdf[The
+minimum cut algorithm of Stoer and Wagner]_. +
+1995.
+
+[#stoer-wagner97]#81#
+
+M. Stoer and F. Wagner. +
+_http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.114.6687&rep=rep1&type=pdf[A
+simple min-cut algorithm]_. +
+Journal of the ACM 44 (4), 585-591, 1997.
+
+[#zwick08]#82#
+
+U. Zwick. +
+_http://www.cs.tau.ac.il/~zwick/grad-algo-08/gmc.pdf[Global minimum cuts]_. +
+2008.
+
+[#sloan86]#83#
+
+S. W. Sloan. +
+_An algorithm for profile and wavefront reduction of sparse matrices_. +
+International Journal for Numerical Methods in Engineering, 23, 239-251,
+1986.
+
+[#sloan89]#84#
+
+S. W. Sloan. +
+_A fortran program for profile and wavefront reduction_. +
+International Journal for Numerical Methods in Engineering, 28,
+2651-2679, 1989.

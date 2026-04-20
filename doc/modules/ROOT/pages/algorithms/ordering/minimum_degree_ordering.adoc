@@ -3,7 +3,7 @@
 
 A fill-in reduction matrix reordering algorithm for sparse Cholesky factorization.
 
-Complexity: UNDER CONSTRUCTION +
+*Complexity:* UNDER CONSTRUCTION +
 *Defined in:* `<boost/graph/minimum_degree_ordering.hpp>`
 
 '''

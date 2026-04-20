@@ -3,7 +3,7 @@
 
 Traverses vertices of an undirected graph, always visiting next the vertex with the most visited neighbors.
 
-Complexity: _O(E + V)_ +
+*Complexity:* _O(E + V)_ +
 *Defined in:* `<boost/graph/maximum_adjacency_search.hpp>`
 
 '''

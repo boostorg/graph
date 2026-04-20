@@ -2,7 +2,7 @@
 
 Adds edges to a biconnected planar graph to make it maximal planar.
 
-Complexity: _O(n + m)_ +
+*Complexity:* _O(n + m)_ +
 *Defined in:* `<boost/graph/make_maximal_planar.hpp>`
 
 '''

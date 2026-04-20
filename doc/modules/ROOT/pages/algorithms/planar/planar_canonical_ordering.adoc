@@ -3,7 +3,7 @@
 
 Computes a canonical ordering of the vertices of a maximal planar graph.
 
-Complexity: _O(n + m)_ +
+*Complexity:* _O(n + m)_ +
 *Defined in:* `<boost/graph/planar_canonical_ordering.hpp>`
 
 '''

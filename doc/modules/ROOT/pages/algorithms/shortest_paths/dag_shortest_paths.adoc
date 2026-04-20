@@ -3,7 +3,7 @@
 
 Solves the single-source shortest-paths problem on a weighted, directed acyclic graph (DAG), more efficiently than either Dijkstra or Bellman-Ford.
 
-Complexity: _O(V + E)_ +
+*Complexity:* _O(V + E)_ +
 *Defined in:* `<boost/graph/dag_shortest_paths.hpp>`
 
 == Example

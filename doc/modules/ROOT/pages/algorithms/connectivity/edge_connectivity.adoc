@@ -3,7 +3,7 @@
 Computes the minimum number of edges whose removal disconnects the graph.
 Optionally outputs the disconnecting edge set.
 
-Complexity: O(V * max_flow) +
+*Complexity:* O(V * max_flow) +
 *Defined in:* `<boost/graph/edge_connectivity.hpp>`
 
 == Synopsis

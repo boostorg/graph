@@ -3,7 +3,7 @@
 
 Tests whether a graph is planar, optionally computing a planar embedding or isolating a Kuratowski subgraph.
 
-Complexity: _O(n)_ for most cases; _O(n+m)_ when Kuratowski isolation is requested on dense graphs +
+*Complexity:* _O(n)_ for most cases; _O(n+m)_ when Kuratowski isolation is requested on dense graphs +
 *Defined in:* `<boost/graph/boyer_myrvold_planar_test.hpp>`
 
 '''

@@ -3,7 +3,7 @@
 
 Computes the transpose of a directed graph, reversing the direction of every edge.
 
-Complexity: _O(V + E)_ +
+*Complexity:* _O(V + E)_ +
 *Defined in:* `<boost/graph/transpose_graph.hpp>`
 
 == Example

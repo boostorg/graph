@@ -3,7 +3,7 @@
 
 Computes the bandwidth of a graph, which is the maximum distance between two adjacent vertices when vertices are placed at unit intervals on a line.
 
-Complexity: _O(|E|)_ +
+*Complexity:* _O(|E|)_ +
 *Defined in:* `<boost/graph/bandwidth.hpp>`
 
 == Example
@@ -92,7 +92,7 @@ xref:algorithms/ordering/sloan_ordering.adoc[`sloan_ordering`].
 
 Computes the bandwidth of the i-th vertex, which is the maximum distance between that vertex and any of its neighbors.
 
-Complexity: _O(out_degree(i))_ +
+*Complexity:* _O(out_degree(i))_ +
 *Defined in:* `<boost/graph/bandwidth.hpp>`
 
 '''

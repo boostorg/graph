@@ -2,7 +2,7 @@
 
 Finds a maximum cardinality matching in an undirected graph using Edmonds' algorithm.
 
-Complexity: _O(mn alpha(m,n))_ +
+*Complexity:* _O(mn alpha(m,n))_ +
 *Defined in:* `<boost/graph/max_cardinality_matching.hpp>`
 
 == Example

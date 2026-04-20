@@ -4,7 +4,7 @@
 
 Computes the strongly connected components of a directed graph using Tarjan's algorithm based on DFS.
 
-Complexity: _O(V + E)_ +
+*Complexity:* _O(V + E)_ +
 *Defined in:* `<boost/graph/strong_components.hpp>`
 
 == Example

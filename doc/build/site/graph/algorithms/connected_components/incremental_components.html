@@ -885,7 +885,7 @@
 <p>A family of functions and classes for computing connected components of an undirected graph incrementally using disjoint-sets.</p>
 </div>
 <div class="paragraph">
-<p>Complexity: <em>O(V + E * alpha(E, V))</em><br>
+<p><strong>Complexity:</strong> <em>O(V + E * alpha(E, V))</em><br>
 <strong>Defined in:</strong> <code>&lt;boost/graph/incremental_components.hpp&gt;</code></p>
 </div>
 <hr>
@@ -932,6 +932,9 @@ void initialize_incremental_components(
 </div>
 <div class="sect2">
 <h3 id="sec:incremental-components"><a class="anchor" href="#sec:incremental-components"></a>incremental_components</h3>
+<div class="paragraph">
+<p><strong>Complexity:</strong> <em>O(E)</em></p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;class EdgeListGraph,
@@ -971,6 +974,9 @@ void incremental_components(
 </div>
 <div class="sect2">
 <h3 id="sec:same-component"><a class="anchor" href="#sec:same-component"></a>same_component</h3>
+<div class="paragraph">
+<p><strong>Complexity:</strong> <em>O(alpha(E,V))</em></p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;class Vertex,

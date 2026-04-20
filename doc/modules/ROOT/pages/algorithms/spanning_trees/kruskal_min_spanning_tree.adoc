@@ -3,7 +3,7 @@
 
 Find a minimum spanning tree in an undirected graph with weighted edges using Kruskal's algorithm.
 
-Complexity: _O(E log E)_ +
+*Complexity:* _O(E log E)_ +
 *Defined in:* `<boost/graph/kruskal_min_spanning_tree.hpp>`
 
 == Example

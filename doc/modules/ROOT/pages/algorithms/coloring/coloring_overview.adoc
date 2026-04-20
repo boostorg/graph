@@ -9,12 +9,15 @@ number (vertices) or chromatic index (edges).
 | Algorithm | What it does
 
 | xref:algorithms/coloring/sequential_vertex_coloring.adoc[Sequential Vertex Coloring]
-| Greedy O(V + E) vertex coloring. The number of colors depends on the
-  vertex ordering. Combine with `smallest_last_vertex_ordering` for
-  better results.
+| Greedy vertex coloring in _O(V(d+k))_ where _d_ is max degree and _k_ the
+  number of colors used. The color count depends on the vertex ordering;
+  combine with xref:algorithms/utility/smallest_last_ordering.adoc[`smallest_last_vertex_ordering`]
+  for better results.
 
 | xref:algorithms/coloring/edge_coloring.adoc[Edge Coloring]
-| Colors edges so no two edges sharing a vertex have the same color.
+| Colors edges so no two edges sharing a vertex have the same color. Runs in
+  _O(|E| |V|)_ using the Misra-Gries variant of Vizing's theorem; uses at
+  most `max_degree(g) + 1` colors.
 
 | xref:algorithms/coloring/is_bipartite.adoc[Is Bipartite]
 | Tests if a graph can be 2-colored (vertices split into two independent sets).

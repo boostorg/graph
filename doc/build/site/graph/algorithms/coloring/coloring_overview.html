@@ -898,13 +898,24 @@ number (vertices) or chromatic index (edges).</p>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="sequential_vertex_coloring.html" class="xref page">Sequential Vertex Coloring</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Greedy O(V + E) vertex coloring. The number of colors depends on the
-  vertex ordering. Combine with <code>smallest_last_vertex_ordering</code> for
-  better results.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Greedy vertex coloring in <em>O(V(d+k))</em> where <em>d</em> is max degree and <em>k</em> the
+  number of colors used. The color count depends on the vertex ordering;
+  combine with <a href="../utility/smallest_last_ordering.html" class="xref page"><code>smallest_last_vertex_ordering</code></a>
+  for better results.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="edge_coloring.html" class="xref page">Edge Coloring</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Colors edges so no two edges sharing a vertex have the same color.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Colors edges so no two edges sharing a vertex have the same color. Runs in
+  _O(</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">E</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">V</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">)_ using the Misra-Gries variant of Vizing&#8217;s theorem; uses at
+  most <code>max_degree(g) + 1</code> colors.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="is_bipartite.html" class="xref page">Is Bipartite</a></p></td>

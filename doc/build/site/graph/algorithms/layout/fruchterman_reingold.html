@@ -885,7 +885,7 @@
 <p>Force-directed layout for unweighted, undirected graphs using the Fruchterman-Reingold algorithm.</p>
 </div>
 <div class="paragraph">
-<p>Complexity: <em>O(|V|<sup>2</sup> + |E|)</em> per iteration (worst case); <em>O(|V| + |E|)</em> average case for grid variant<br>
+<p><strong>Complexity:</strong> <em>O(|V|<sup>2</sup> + |E|)</em> per iteration (worst case); <em>O(|V| + |E|)</em> average case for grid variant<br>
 <strong>Defined in:</strong> <code>&lt;boost/graph/fruchterman_reingold.hpp&gt;</code></p>
 </div>
 <hr>
@@ -1126,6 +1126,22 @@ void fruchterman_reingold_force_directed_layout(
 </tr>
 </tbody>
 </table>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_3_all_defaults_version"><a class="anchor" href="#_3_all_defaults_version"></a>(3) All-defaults version</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template&lt;typename Topology, typename Graph, typename PositionMap&gt;
+void fruchterman_reingold_force_directed_layout(
+    const Graph&amp; g,
+    PositionMap position,
+    const Topology&amp; topology);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Equivalent to the named parameter version (1) with every named parameter left at its default.</p>
+</div>
 </div>
 <div class="sect1">
 <h2 id="_description"><a class="anchor" href="#_description"></a>Description</h2>

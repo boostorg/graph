@@ -10,9 +10,12 @@ all-connected property.
 
 | xref:algorithms/clique_detection/bron_kerbosch.adoc[Bron-Kerbosch]
 | Enumerates all maximal cliques using backtracking with pivoting.
-  Worst-case O(3^(V/3)), but fast in practice on sparse graphs.
+  Worst-case _O(3^(V/3))_, but fast in practice on sparse graphs. The same
+  header also exposes `bron_kerbosch_clique_number(g)`, which returns only
+  the size of the largest clique.
 |===
 
-TIP: Clique enumeration is exponential. If you only need to know whether the
-graph has a clique of size k, consider using the complement graph and
-checking for an independent set instead.
+NOTE: Clique enumeration is NP-hard in general. Cliques and independent sets
+are dual under graph complementation (a clique in `G` is an independent set
+in the complement), so neither direction is inherently cheaper — both face
+the same worst-case complexity.

@@ -2,7 +2,7 @@
 
 Reduces the bandwidth of a graph by reordering the indices assigned to each vertex using the Cuthill-McKee algorithm.
 
-Complexity: _O(m log(m)|V|)_ where _m = max { degree(v) | v in V }_ +
+*Complexity:* _O(m log(m)|V|)_ where _m = max { degree(v) | v in V }_ +
 *Defined in:* `<boost/graph/cuthill_mckee_ordering.hpp>`
 
 == Example

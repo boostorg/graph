@@ -3,7 +3,7 @@
 
 Adds a minimal set of edges to make an undirected graph connected.
 
-Complexity: _O(n + m)_ +
+*Complexity:* _O(n + m)_ +
 *Defined in:* `<boost/graph/make_connected.hpp>`
 
 '''

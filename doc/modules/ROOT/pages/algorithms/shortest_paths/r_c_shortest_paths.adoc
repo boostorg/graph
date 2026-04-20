@@ -3,7 +3,7 @@
 
 Solves the shortest path problem with resource constraints (SPPRC) on a directed graph using a label-setting algorithm based on dynamic programming.
 
-Complexity: Problem-dependent; polynomial for non-elementary or acyclic cases, exponential for elementary with negative cycles +
+*Complexity:* Problem-dependent; polynomial for non-elementary or acyclic cases, exponential for elementary with negative cycles +
 *Defined in:* `<boost/graph/r_c_shortest_paths.hpp>`
 
 '''

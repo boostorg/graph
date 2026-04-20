@@ -2,7 +2,7 @@
 
 Calculates the cost of a network flow from edge flow values and edge weights.
 
-Complexity: _O(|E|)_ +
+*Complexity:* _O(|E|)_ +
 *Defined in:* `<boost/graph/find_flow_cost.hpp>`
 
 '''

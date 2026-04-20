@@ -7,11 +7,17 @@ Find the lowest-cost path between vertices in a weighted graph.
 | Algorithm | Complexity | When to use
 
 | xref:algorithms/shortest_paths/dijkstra_shortest_paths.adoc[Dijkstra]
-| O((V + E) log V)
+| _O((V + E) log V)_
 | Single-source, non-negative weights. The default choice.
 
+| xref:algorithms/shortest_paths/dijkstra_shortest_paths_no_color_map.adoc[Dijkstra (no color map)]
+| _O((V + E) log V)_
+| Variant of Dijkstra that uses only the distance map to track visited
+  vertices (no separate color map). Trades a simpler interface / smaller
+  memory footprint for a slightly different visitor protocol.
+
 | xref:algorithms/shortest_paths/bellman_ford_shortest.adoc[Bellman-Ford]
-| O(V * E)
+| _O(V · E)_
 | Single-source with negative weights. Detects negative cycles.
 
 | xref:algorithms/shortest_paths/dag_shortest_paths.adoc[DAG Shortest Paths]

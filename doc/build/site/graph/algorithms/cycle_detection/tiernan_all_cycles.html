@@ -886,7 +886,7 @@
 visits each vertex at most once.</p>
 </div>
 <div class="paragraph">
-<p>Complexity: exponential in the number of cycles<br>
+<p><strong>Complexity:</strong> exponential in the number of cycles<br>
 <strong>Defined in:</strong> <code>&lt;boost/graph/tiernan_all_cycles.hpp&gt;</code></p>
 </div>
 </div>
@@ -977,17 +977,14 @@ Cycle: 1 -&gt; 3 -&gt; 1</pre>
 </div>
 </div>
 <hr>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_synopsis"><a class="anchor" href="#_synopsis"></a>Synopsis</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_1_tiernan_all_cycles_explicit_min_and_max"><a class="anchor" href="#_1_tiernan_all_cycles_explicit_min_and_max"></a>(1) tiernan_all_cycles (explicit min and max)</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename Visitor&gt;
 void tiernan_all_cycles(const Graph&amp; g, Visitor vis,
-                        std::size_t minlen = 2,
-                        std::size_t maxlen = 0);</code></pre>
+                        std::size_t minlen,
+                        std::size_t maxlen);</code></pre>
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -1007,7 +1004,7 @@ void tiernan_all_cycles(const Graph&amp; g, Visitor vis,
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>const Graph&amp; g</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Must model VertexListGraph with a vertex_index property.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Must model <a href="../../concepts/VertexListGraph.html" class="xref page">Vertex List Graph</a> with a <code>vertex_index</code> property.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
@@ -1017,11 +1014,82 @@ void tiernan_all_cycles(const Graph&amp; g, Visitor vis,
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>minlen</code> / <code>maxlen</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Filter cycles by length. <code>maxlen = 0</code> means no upper limit.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::size_t minlen</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Minimum cycle length (inclusive). Cycles shorter than this are skipped.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::size_t maxlen</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum cycle length (inclusive).</p></td>
 </tr>
 </tbody>
 </table>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_2_tiernan_all_cycles_explicit_max_default_min"><a class="anchor" href="#_2_tiernan_all_cycles_explicit_max_default_min"></a>(2) tiernan_all_cycles (explicit max, default min)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename Visitor&gt;
+void tiernan_all_cycles(const Graph&amp; g, Visitor vis, std::size_t maxlen);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Same as overload (1) with <code>minlen</code> defaulted to the smallest cycle length admissible for the graph&#8217;s directed category (loops and length-1 cycles excluded as appropriate).</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_3_tiernan_all_cycles_default_min_and_max"><a class="anchor" href="#_3_tiernan_all_cycles_default_min_and_max"></a>(3) tiernan_all_cycles (default min and max)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename Visitor&gt;
+void tiernan_all_cycles(const Graph&amp; g, Visitor vis);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Equivalent to overload (2) with <code>maxlen</code> set to <code>std::numeric_limits&lt;std::size_t&gt;::max()</code> (no upper bound).</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_4_tiernan_girth_and_circumference"><a class="anchor" href="#_4_tiernan_girth_and_circumference"></a>(4) tiernan_girth_and_circumference</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph&gt;
+std::pair&lt;std::size_t, std::size_t&gt;
+tiernan_girth_and_circumference(const Graph&amp; g);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Returns <code>(girth, circumference)</code> — the smallest and largest cycle lengths in the graph. If the graph is acyclic, both values equal <code>std::numeric_limits&lt;std::size_t&gt;::max()</code>.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_5_tiernan_girth"><a class="anchor" href="#_5_tiernan_girth"></a>(5) tiernan_girth</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph&gt;
+std::size_t tiernan_girth(const Graph&amp; g);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Returns the girth (shortest cycle length). Thin wrapper over <code>tiernan_girth_and_circumference</code>.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_6_tiernan_circumference"><a class="anchor" href="#_6_tiernan_circumference"></a>(6) tiernan_circumference</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph&gt;
+std::size_t tiernan_circumference(const Graph&amp; g);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Returns the circumference (longest cycle length). Thin wrapper over <code>tiernan_girth_and_circumference</code>.</p>
+</div>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -1034,6 +1102,7 @@ DFS with a back-edge visitor. That is O(V + E) instead of exponential.
 </td>
 </tr>
 </table>
+</div>
 </div>
 </div>
 </div>

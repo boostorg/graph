@@ -2,7 +2,7 @@
 
 Computes the transitive closure of a directed graph, adding an edge _(u,v)_ whenever there is a path from _u_ to _v_.
 
-Complexity: _O(|V||E|)_ +
+*Complexity:* _O(|V||E|)_ +
 *Defined in:* `<boost/graph/transitive_closure.hpp>`
 
 == Example

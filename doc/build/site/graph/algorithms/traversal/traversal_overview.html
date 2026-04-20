@@ -914,13 +914,22 @@ connected components, and topological sort all build on BFS or DFS internally.</
 </table>
 <div class="paragraph">
 <p>BFS uses a queue (FIFO). DFS uses a stack (LIFO, or recursion). Both have
-O(V + E) time complexity.</p>
+<em>O(V + E)</em> time complexity.</p>
 </div>
 <div class="paragraph">
-<p>The <code>_visit</code> variants (<code>breadth_first_visit</code>, <code>depth_first_visit</code>) skip
-initialization and operate on a subset of vertices. Use them when you have
-already initialized colors or want to search from a specific vertex without
-resetting state.</p>
+<p>The <code>_visit</code> variants skip initialization and operate on a subset of
+vertices — useful when you have already initialized colors or want to search
+from a specific vertex without resetting state:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="breadth_first_visit.html" class="xref page"><code>breadth_first_visit</code></a></p>
+</li>
+<li>
+<p><a href="depth_first_visit.html" class="xref page"><code>depth_first_visit</code></a></p>
+</li>
+</ul>
 </div>
 </article>
   </div>

@@ -2,7 +2,7 @@
 
 Reduces the profile and wavefront of an undirected graph by reordering vertex indices.
 
-Complexity: _O(log(m)|E|)_ where _m = max { degree(v) | v in V }_ +
+*Complexity:* _O(log(m)|E|)_ where _m = max { degree(v) | v in V }_ +
 *Defined in:* `<boost/graph/sloan_ordering.hpp>`
 
 '''
@@ -237,7 +237,7 @@ OutputIterator sloan_ordering(
 
 == Description
 
-The goal of the Sloan ordering algorithm [1, 2] is to reduce the profile and
+The goal of the Sloan ordering algorithm [xref:about/bibliography.adoc#sloan86[83], xref:about/bibliography.adoc#sloan89[84]] is to reduce the profile and
 the wavefront of a graph by reordering the indices assigned to each vertex.
 The Sloan algorithm needs a start and an end vertex. These vertices can be
 assigned manually. But there is also an algorithm `sloan_starting_nodes` that
@@ -303,10 +303,7 @@ include::example$algorithms/ordering/sloan.cpp[]
 Sloan ordering: 5 4 3 2 1 0
 ----
 
-== Notes
+== References
 
-[1] S. W. Sloan, _An algorithm for profile and wavefront reduction of sparse
-matrices_, Int. j. numer. methods eng., *23*, 239 - 251 (1986)
-
-[2] S. W. Sloan, _A fortran program for profile and wavefront reduction_,
-Int. j. numer. methods eng., *28*, 2651 - 2679 (1989)
+* xref:about/bibliography.adoc#sloan86[[83\]] S. W. Sloan, _An algorithm for profile and wavefront reduction of sparse matrices_, Int. j. numer. methods eng., *23*, 239-251 (1986).
+* xref:about/bibliography.adoc#sloan89[[84\]] S. W. Sloan, _A fortran program for profile and wavefront reduction_, Int. j. numer. methods eng., *28*, 2651-2679 (1989).

@@ -3,7 +3,7 @@
 
 Performs a breadth-first traversal of a directed or undirected graph.
 
-Complexity: _O(E + V)_ +
+*Complexity:* _O(E + V)_ +
 *Defined in:* `<boost/graph/breadth_first_search.hpp>`
 
 == Example

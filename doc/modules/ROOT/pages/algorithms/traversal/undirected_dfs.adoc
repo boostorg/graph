@@ -2,7 +2,7 @@
 
 Performs a depth-first traversal of the vertices in an undirected graph.
 
-Complexity: _O(E + V)_ +
+*Complexity:* _O(E + V)_ +
 *Defined in:* `<boost/graph/undirected_dfs.hpp>`
 
 '''

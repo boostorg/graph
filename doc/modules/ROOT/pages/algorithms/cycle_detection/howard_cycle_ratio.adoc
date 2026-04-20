@@ -2,7 +2,7 @@
 
 Calculates the maximum or minimum cycle ratio of a weighted directed multigraph using Howard's iteration policy algorithm.
 
-Complexity: Empirical _O(|E|)_; space _O(7|V|)_ plus graph storage +
+*Complexity:* Empirical _O(|E|)_; space _O(7|V|)_ plus graph storage +
 *Defined in:* `<boost/graph/howard_cycle_ratio.hpp>`
 
 '''
@@ -297,11 +297,11 @@ the corresponding `std::vector` of edge descriptors. The edges in the vector
 stored in the way such that `*pcc[0], *ppc[1], ..., *ppc[n]` is a correct path.
 
 The algorithm is due to Howard's iteration policy algorithm, described in
-link:./cochet-terrasson98numerical.pdf[[1\]].
+xref:about/bibliography.adoc#cochet-terrasson98[[78\]].
 Ali Dasdan, Sandy S. Irani and Rajesh K. Gupta in their paper
-link:./dasdan-dac99.pdf[Efficient Algorithms for Optimum Cycle Mean and
-Optimum Cost to Time Ratio Problems] state that this is the most efficient
-algorithm to the time being (1999).
+_Efficient Algorithms for Optimum Cycle Mean and Optimum Cost to Time
+Ratio Problems_ [xref:about/bibliography.adoc#dasdan99[79]] state that
+this is the most efficient algorithm to the time being (1999).
 
 For convenience, functions `maximum_cycle_mean()` and `minimum_cycle_mean()`
 are also provided. These take an `EdgeIndexMap` instead of the two separate

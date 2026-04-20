@@ -2,7 +2,7 @@
 
 Computes an edge coloring for the edges of an undirected, loop-free graph.
 
-Complexity: _O(|E| |V|)_ +
+*Complexity:* _O(|E| |V|)_ +
 *Defined in:* `<boost/graph/edge_coloring.hpp>`
 
 '''

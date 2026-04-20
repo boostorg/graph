@@ -2,7 +2,7 @@
 
 Graph clustering based on edge betweenness centrality.
 
-Complexity: _O(VE)_ per iteration (unweighted) +
+*Complexity:* _O(VE)_ per iteration (unweighted) +
 *Defined in:* `<boost/graph/bc_clustering.hpp>`
 
 '''

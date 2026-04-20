@@ -3,7 +3,7 @@
 
 Performs a breadth-first traversal without initializing color markers.
 
-Complexity: _O(E)_ +
+*Complexity:* _O(E)_ +
 *Defined in:* `<boost/graph/breadth_first_search.hpp>`
 
 == Example

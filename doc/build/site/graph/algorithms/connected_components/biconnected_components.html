@@ -885,7 +885,7 @@
 <p>Computes the biconnected components and articulation points of an undirected graph.</p>
 </div>
 <div class="paragraph">
-<p>Complexity: <em>O(V + E)</em><br>
+<p><strong>Complexity:</strong> <em>O(V + E)</em><br>
 <strong>Defined in:</strong> <code>&lt;boost/graph/biconnected_components.hpp&gt;</code></p>
 </div>
 <hr>
@@ -930,7 +930,8 @@ biconnected_components(
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>OutputIterator out</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The algorithm writes articulation points via this output iterator and returns the resulting iterator.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The algorithm writes articulation points via this output iterator and returns the resulting iterator.<br>
+<strong>Default:</strong> a dummy iterator that ignores values written to it.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">UTIL/OUT</p></td>
@@ -983,7 +984,8 @@ biconnected_components(
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>OutputIterator out</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The algorithm writes articulation points via this output iterator and returns the resulting iterator.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The algorithm writes articulation points via this output iterator and returns the resulting iterator.<br>
+<strong>Default:</strong> a dummy iterator that ignores values written to it.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1060,12 +1062,14 @@ biconnected_components(
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>ComponentMap comp</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The algorithm computes how many biconnected components are in the graph, and assigning each component an integer label. The algorithm then records which component each edge in the graph belongs to by recording the component number in the component property map. The <code>ComponentMap</code> type must be a model of <a href="../../property_map/doc/WritablePropertyMap.html">Writable Property Map</a>. The value type should be an integer type, preferably the same as the <code>edges_size_type</code> of the graph. The key type must be the graph&#8217;s edge descriptor type.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The algorithm computes how many biconnected components are in the graph, and assigning each component an integer label. The algorithm then records which component each edge in the graph belongs to by recording the component number in the component property map. The <code>ComponentMap</code> type must be a model of <a href="../../property_map/doc/WritablePropertyMap.html">Writable Property Map</a>. The value type should be an integer type, preferably the same as the <code>edges_size_type</code> of the graph. The key type must be the graph&#8217;s edge descriptor type.<br>
+<strong>Default:</strong> <code>dummy_property_map</code>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>OutputIterator out</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The algorithm writes articulation points via this output iterator and returns the resulting iterator.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The algorithm writes articulation points via this output iterator and returns the resulting iterator.<br>
+<strong>Default:</strong> a dummy iterator that ignores values written to it.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1245,7 +1249,8 @@ OutputIterator articulation_points(
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>OutputIterator out</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The algorithm writes articulation points via this output iterator and returns the resulting iterator.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The algorithm writes articulation points via this output iterator and returns the resulting iterator.<br>
+<strong>Default:</strong> a dummy iterator that ignores values written to it.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1284,7 +1289,8 @@ OutputIterator articulation_points(
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>OutputIterator out</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The algorithm writes articulation points via this output iterator and returns the resulting iterator.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The algorithm writes articulation points via this output iterator and returns the resulting iterator.<br>
+<strong>Default:</strong> a dummy iterator that ignores values written to it.</p></td>
 </tr>
 </tbody>
 </table>

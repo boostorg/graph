@@ -2,7 +2,7 @@
 
 Generates a random spanning tree on a directed or undirected graph.
 
-Complexity: Expected _O(tau)_ (unweighted), where _tau_ is the mean hitting time +
+*Complexity:* Expected _O(tau)_ (unweighted), where _tau_ is the mean hitting time +
 *Defined in:* `<boost/graph/random_spanning_tree.hpp>`
 
 '''

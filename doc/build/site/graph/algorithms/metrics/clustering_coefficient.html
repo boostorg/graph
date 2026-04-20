@@ -933,27 +933,80 @@ vertex 3: clustering coeff = 0
 vertex 4: clustering coeff = 0</pre>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_1_clustering_coefficient_default_double_result"><a class="anchor" href="#_1_clustering_coefficient_default_double_result"></a>(1) clustering_coefficient (default double result)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename Vertex&gt;
+double clustering_coefficient(const Graph&amp; g, Vertex v);</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_2_clustering_coefficient_with_explicit_result_type"><a class="anchor" href="#_2_clustering_coefficient_with_explicit_result_type"></a>(2) clustering_coefficient with explicit result type</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename T, typename Graph, typename Vertex&gt;
+T clustering_coefficient(const Graph&amp; g, Vertex v);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For each ordered pair <code>(u, w)</code> of neighbors of <code>v</code>, counts whether edge <code>(u, w)</code> is present. Returns <code>num_triangles_on_vertex(g, v) / num_paths_through_vertex(g, v)</code> (or zero if the denominator is zero).</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_3_all_clustering_coefficients"><a class="anchor" href="#_3_all_clustering_coefficients"></a>(3) all_clustering_coefficients</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename ClusteringMap&gt;
+typename property_traits&lt;ClusteringMap&gt;::value_type
+all_clustering_coefficients(const Graph&amp; g, ClusteringMap cm);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Writes the clustering coefficient of each vertex to <code>cm</code> and returns the mean (sum / <code>num_vertices(g)</code>).</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_4_mean_clustering_coefficient"><a class="anchor" href="#_4_mean_clustering_coefficient"></a>(4) mean_clustering_coefficient</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename ClusteringMap&gt;
+typename property_traits&lt;ClusteringMap&gt;::value_type
+mean_clustering_coefficient(const Graph&amp; g, ClusteringMap cm);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Given an already-populated <code>cm</code>, returns the mean of the values without recomputing them. <code>ClusteringMap</code> is a ReadablePropertyMap in this overload.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_5_helpers_num_paths_through_vertex_num_triangles_on_vertex"><a class="anchor" href="#_5_helpers_num_paths_through_vertex_num_triangles_on_vertex"></a>(5) Helpers: num_paths_through_vertex / num_triangles_on_vertex</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename Vertex&gt;
+typename graph_traits&lt;Graph&gt;::degree_size_type
+num_paths_through_vertex(const Graph&amp; g, Vertex v);
+
+template &lt;typename Graph, typename Vertex&gt;
+typename graph_traits&lt;Graph&gt;::degree_size_type
+num_triangles_on_vertex(const Graph&amp; g, Vertex v);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>num_paths_through_vertex</code> counts ordered pairs of <code>v&#8217;s neighbors (the denominator of the clustering coefficient). `num_triangles_on_vertex</code> counts the actual edges between those neighbors (the numerator).</p>
+</div>
+<hr>
+</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_synopsis"><a class="anchor" href="#_synopsis"></a>Synopsis</h2>
+<h2 id="_parameters"><a class="anchor" href="#_parameters"></a>Parameters</h2>
 <div class="sectionbody">
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// Single vertex
-template &lt;typename Graph&gt;
-double clustering_coefficient(const Graph&amp; g,
-    typename graph_traits&lt;Graph&gt;::vertex_descriptor v);
-
-// All vertices
-template &lt;typename Graph, typename ClusteringMap&gt;
-void all_clustering_coefficients(const Graph&amp; g, ClusteringMap cm);
-
-// Graph-level average
-template &lt;typename Graph, typename ClusteringMap&gt;
-double mean_clustering_coefficient(const Graph&amp; g, ClusteringMap cm);</code></pre>
-</div>
-</div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 12.5%;">
@@ -971,18 +1024,17 @@ double mean_clustering_coefficient(const Graph&amp; g, ClusteringMap cm);</code>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>const Graph&amp; g</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Must model AdjacencyGraph and IncidenceGraph. The single-vertex version also
-  requires AdjacencyMatrix (<code>edge()</code> function).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Must model <a href="../../concepts/AdjacencyGraph.html" class="xref page">Adjacency Graph</a> and <a href="../../concepts/IncidenceGraph.html" class="xref page">Incidence Graph</a>. The single-vertex overloads also require <a href="../../concepts/AdjacencyMatrix.html" class="xref page">Adjacency Matrix</a> (the <code>edge()</code> function).</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>vertex_descriptor v</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">(single-vertex version) The vertex to compute the coefficient for.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Vertex v</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The vertex to compute the coefficient for (single-vertex overloads).</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN/OUT</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>ClusteringMap cm</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">(all_clustering_coefficients) WritablePropertyMap for per-vertex results.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">WritablePropertyMap for overload (3); ReadablePropertyMap for overload (4). Key type is the graph&#8217;s vertex descriptor; value type is the coefficient&#8217;s numeric type.</p></td>
 </tr>
 </tbody>
 </table>

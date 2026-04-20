@@ -888,7 +888,7 @@ followed. Neighbor BFS also follows in-edges, effectively treating the graph
 as undirected during traversal while preserving edge direction information.</p>
 </div>
 <div class="paragraph">
-<p>Complexity: O(V + E)<br>
+<p><strong>Complexity:</strong> O(V + E)<br>
 <strong>Defined in:</strong> <code>&lt;boost/graph/neighbor_bfs.hpp&gt;</code></p>
 </div>
 </div>
@@ -934,11 +934,8 @@ int main() {
 <pre>Neighbor BFS from vertex 1: 1 4 0 2 3</pre>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_synopsis"><a class="anchor" href="#_synopsis"></a>Synopsis</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_1_neighbor_breadth_first_search_named_parameter_version"><a class="anchor" href="#_1_neighbor_breadth_first_search_named_parameter_version"></a>(1) neighbor_breadth_first_search (named parameter version)</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename VertexListGraph, typename P, typename T, typename R&gt;
@@ -947,6 +944,9 @@ void neighbor_breadth_first_search(
     typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
     const bgl_named_params&lt;P, T, R&gt;&amp; params);</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>Initializes the color map to white, then runs the search from <code>s</code>.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -965,27 +965,88 @@ void neighbor_breadth_first_search(
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>const VertexListGraph&amp; g</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Must model BidirectionalGraph and VertexListGraph.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Must model <a href="../../concepts/BidirectionalGraph.html" class="xref page">Bidirectional Graph</a> and <a href="../../concepts/VertexListGraph.html" class="xref page">Vertex List Graph</a>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>vertex_descriptor s</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Source vertex for the search.</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>params</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Accepts <code>color_map(ColorMap)</code>, <code>visitor(NeighborBFSVisitor)</code>, and <code>buffer(Buffer&amp;)</code>. Defaults: a <code>two_bit_color_map</code> indexed by <code>vertex_index</code>, a null neighbor-BFS visitor, and a <code>boost::queue&lt;vertex_descriptor&gt;</code>.</p></td>
+</tr>
 </tbody>
 </table>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-This function only has a named-parameter interface. There is no
-positional overload.
-</td>
-</tr>
-</table>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_2_neighbor_breadth_first_visit_named_parameter_version"><a class="anchor" href="#_2_neighbor_breadth_first_visit_named_parameter_version"></a>(2) neighbor_breadth_first_visit (named parameter version)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename IncidenceGraph, typename P, typename T, typename R&gt;
+void neighbor_breadth_first_visit(
+    IncidenceGraph&amp; g,
+    typename graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor s,
+    const bgl_named_params&lt;P, T, R&gt;&amp; params);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Same as (1) but does <strong>not</strong> initialize the color map — the caller must pre-populate it. Only requires <a href="../../concepts/IncidenceGraph.html" class="xref page">Incidence Graph</a> (plus whatever the visitor events require) because no vertex enumeration is needed.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_3_neighbor_bfs_visitor"><a class="anchor" href="#_3_neighbor_bfs_visitor"></a>(3) neighbor_bfs_visitor</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;class Visitors = null_visitor&gt;
+class neighbor_bfs_visitor;
+
+template &lt;class Visitors&gt;
+neighbor_bfs_visitor&lt;Visitors&gt; make_neighbor_bfs_visitor(Visitors vis);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Visitor adapter that models <code>NeighborBFSVisitorConcept</code>. In addition to the standard BFS event points (<code>discover_vertex</code>, <code>examine_vertex</code>, <code>examine_out_edge</code>, <code>tree_out_edge</code>, etc.) it also dispatches <code>examine_in_edge</code> and <code>tree_in_edge</code> events for the incoming edges of each vertex. Use <code>make_neighbor_bfs_visitor(&#8230;&#8203;)</code> to construct one from a user-supplied visitor (or event-visitor list).</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_visitor_event_points"><a class="anchor" href="#_visitor_event_points"></a>Visitor Event Points</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following members of the visitor (modelling <code>NeighborBFSVisitorConcept</code>) are called during traversal:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>vis.initialize_vertex(v, g)</code> — for every vertex before the search begins (only (1)).</p>
+</li>
+<li>
+<p><code>vis.discover_vertex(v, g)</code> — when a vertex is first encountered.</p>
+</li>
+<li>
+<p><code>vis.examine_vertex(v, g)</code> — when a vertex is pulled from the queue.</p>
+</li>
+<li>
+<p><code>vis.examine_out_edge(e, g)</code> / <code>vis.examine_in_edge(e, g)</code> — on each outgoing / incoming edge of the examined vertex.</p>
+</li>
+<li>
+<p><code>vis.tree_out_edge(e, g)</code> / <code>vis.tree_in_edge(e, g)</code> — on each edge whose target was previously white.</p>
+</li>
+<li>
+<p><code>vis.non_tree_out_edge(e, g)</code> / <code>vis.non_tree_in_edge(e, g)</code> — otherwise.</p>
+</li>
+<li>
+<p><code>vis.gray_target(e, g)</code> / <code>vis.black_target(e, g)</code> — when the target was gray / black.</p>
+</li>
+<li>
+<p><code>vis.finish_vertex(v, g)</code> — after all incident edges of <code>v</code> have been examined.</p>
+</li>
+</ul>
 </div>
 <div class="admonitionblock tip">
 <table>

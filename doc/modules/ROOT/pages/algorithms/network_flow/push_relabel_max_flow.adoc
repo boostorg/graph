@@ -3,7 +3,7 @@
 
 Calculates the maximum flow of a network using the push-relabel algorithm.
 
-Complexity: _O(V^3^)_ +
+*Complexity:* _O(V^3^)_ +
 *Defined in:* `<boost/graph/push_relabel_max_flow.hpp>`
 
 == Example

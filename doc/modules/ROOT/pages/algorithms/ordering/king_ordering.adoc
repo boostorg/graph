@@ -2,7 +2,7 @@
 
 Reduces the bandwidth of a graph by reordering the indices assigned to each vertex using local minimization of i-th bandwidths.
 
-Complexity: _O(m^2^ log(m) |E|)_ where _m = max { degree(v) | v in V }_ +
+*Complexity:* _O(m^2^ log(m) |E|)_ where _m = max { degree(v) | v in V }_ +
 *Defined in:* `<boost/graph/king_ordering.hpp>`
 
 '''

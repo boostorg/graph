@@ -3,7 +3,7 @@
 
 Implements a heuristic search on a weighted, directed or undirected graph for the case where all edge weights are non-negative.
 
-Complexity: _O((E + V) log V)_ +
+*Complexity:* _O((E + V) log V)_ +
 *Defined in:* `<boost/graph/astar_search.hpp>`
 
 == Example

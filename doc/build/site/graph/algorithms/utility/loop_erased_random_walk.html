@@ -948,7 +948,7 @@ int main() {
 </div>
 </div>
 <div class="paragraph">
-<p>Complexity: depends on graph structure, expected O(V) per walk on many graphs<br>
+<p><strong>Complexity:</strong> depends on graph structure, expected O(V) per walk on many graphs<br>
 <strong>Defined in:</strong> <code>&lt;boost/graph/loop_erased_random_walk.hpp&gt;</code></p>
 </div>
 </div>
@@ -1018,6 +1018,59 @@ void loop_erased_random_walk(
 <div class="paragraph">
 <p><code>loop_erased_random_walk_stuck</code> if the walk reaches a vertex with no
 out-edges.</p>
+</div>
+<hr>
+<div class="sect2">
+<h3 id="_nextedge_helpers"><a class="anchor" href="#_nextedge_helpers"></a>NextEdge helpers</h3>
+<div class="paragraph">
+<p>The header also provides two ready-made <code>NextEdge</code> functors that satisfy the callable signature expected by <code>loop_erased_random_walk</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename Gen&gt;
+class unweighted_random_out_edge_gen {
+public:
+    explicit unweighted_random_out_edge_gen(Gen&amp; gen);
+
+    typename graph_traits&lt;Graph&gt;::edge_descriptor
+    operator()(typename graph_traits&lt;Graph&gt;::vertex_descriptor src,
+               const Graph&amp; g) const;
+};
+
+template &lt;typename Graph, typename WeightMap, typename Gen&gt;
+class weighted_random_out_edge_gen {
+public:
+    weighted_random_out_edge_gen(const WeightMap&amp; weight, Gen&amp; gen);
+
+    typename graph_traits&lt;Graph&gt;::edge_descriptor
+    operator()(typename graph_traits&lt;Graph&gt;::vertex_descriptor src,
+               const Graph&amp; g) const;
+};</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>unweighted_random_out_edge_gen</code> picks an out-edge uniformly at random via <code>boost::random_out_edge(g, src, gen)</code>.</p>
+</div>
+<div class="paragraph">
+<p><code>weighted_random_out_edge_gen</code> picks an out-edge with probability proportional to its weight via <code>boost::weighted_random_out_edge(g, src, weight, gen)</code>.</p>
+</div>
+<div class="paragraph">
+<p>Both throw <code>loop_erased_random_walk_stuck</code> if <code>out_degree(src, g) == 0</code>.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_loop_erased_random_walk_stuck_exception"><a class="anchor" href="#_loop_erased_random_walk_stuck_exception"></a>loop_erased_random_walk_stuck (exception)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">struct loop_erased_random_walk_stuck : public std::exception {
+    virtual const char* what() const throw();
+};</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Thrown when the walk encounters a vertex with no outgoing edges, which makes the algorithm unable to continue.</p>
+</div>
 </div>
 </div>
 </div>

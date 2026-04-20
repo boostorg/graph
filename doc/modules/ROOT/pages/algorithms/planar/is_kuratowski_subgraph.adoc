@@ -3,7 +3,7 @@
 
 Verifies that a set of edges forms a Kuratowski subgraph in a graph.
 
-Complexity: _O(n)_ +
+*Complexity:* _O(n)_ +
 *Defined in:* `<boost/graph/is_kuratowski_subgraph.hpp>`
 
 '''

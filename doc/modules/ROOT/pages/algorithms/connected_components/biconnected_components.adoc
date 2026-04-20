@@ -3,7 +3,7 @@
 
 Computes the biconnected components and articulation points of an undirected graph.
 
-Complexity: _O(V + E)_ +
+*Complexity:* _O(V + E)_ +
 *Defined in:* `<boost/graph/biconnected_components.hpp>`
 
 '''
@@ -26,7 +26,8 @@ biconnected_components(
 
 | IN | `const Graph& g` | An undirected graph. The graph type must be a model of xref:concepts/VertexListGraph.adoc[Vertex List Graph] and xref:concepts/IncidenceGraph.adoc[Incidence Graph].
 | OUT | `ComponentMap comp` | The algorithm computes how many biconnected components are in the graph, and assigning each component an integer label. The algorithm then records which component each edge in the graph belongs to by recording the component number in the component property map. The `ComponentMap` type must be a model of link:../../property_map/doc/WritablePropertyMap.html[Writable Property Map]. The value type should be an integer type, preferably the same as the `edges_size_type` of the graph. The key type must be the graph's edge descriptor type.
-| OUT | `OutputIterator out` | The algorithm writes articulation points via this output iterator and returns the resulting iterator.
+| OUT | `OutputIterator out` | The algorithm writes articulation points via this output iterator and returns the resulting iterator. +
+*Default:* a dummy iterator that ignores values written to it.
 | UTIL/OUT | `DiscoverTimeMap discover_time` | The discovery time of each vertex in the depth-first search. The type `DiscoverTimeMap` must be a model of link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]. The value type of the map must be an integer type. The vertex descriptor type of the graph needs to be usable as the key type of the map.
 | UTIL/OUT | `LowPointMap lowpt` | The low point of each vertex in the depth-first search, which is the smallest vertex reachable from a given vertex with at most one back edge. The type `LowPointMap` must be a model of link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]. The value type of the map must be an integer type. The vertex descriptor type of the graph needs to be usable as the key type of the map.
 |===
@@ -49,7 +50,8 @@ biconnected_components(
 
 | IN | `const Graph& g` | An undirected graph. The graph type must be a model of xref:concepts/VertexListGraph.adoc[Vertex List Graph] and xref:concepts/IncidenceGraph.adoc[Incidence Graph].
 | OUT | `ComponentMap comp` | The algorithm computes how many biconnected components are in the graph, and assigning each component an integer label. The algorithm then records which component each edge in the graph belongs to by recording the component number in the component property map. The `ComponentMap` type must be a model of link:../../property_map/doc/WritablePropertyMap.html[Writable Property Map]. The value type should be an integer type, preferably the same as the `edges_size_type` of the graph. The key type must be the graph's edge descriptor type.
-| OUT | `OutputIterator out` | The algorithm writes articulation points via this output iterator and returns the resulting iterator.
+| OUT | `OutputIterator out` | The algorithm writes articulation points via this output iterator and returns the resulting iterator. +
+*Default:* a dummy iterator that ignores values written to it.
 |===
 
 '''
@@ -90,8 +92,10 @@ biconnected_components(
 | Direction | Parameter | Description
 
 | IN | `const Graph& g` | An undirected graph. The graph type must be a model of xref:concepts/VertexListGraph.adoc[Vertex List Graph] and xref:concepts/IncidenceGraph.adoc[Incidence Graph].
-| OUT | `ComponentMap comp` | The algorithm computes how many biconnected components are in the graph, and assigning each component an integer label. The algorithm then records which component each edge in the graph belongs to by recording the component number in the component property map. The `ComponentMap` type must be a model of link:../../property_map/doc/WritablePropertyMap.html[Writable Property Map]. The value type should be an integer type, preferably the same as the `edges_size_type` of the graph. The key type must be the graph's edge descriptor type.
-| OUT | `OutputIterator out` | The algorithm writes articulation points via this output iterator and returns the resulting iterator.
+| OUT | `ComponentMap comp` | The algorithm computes how many biconnected components are in the graph, and assigning each component an integer label. The algorithm then records which component each edge in the graph belongs to by recording the component number in the component property map. The `ComponentMap` type must be a model of link:../../property_map/doc/WritablePropertyMap.html[Writable Property Map]. The value type should be an integer type, preferably the same as the `edges_size_type` of the graph. The key type must be the graph's edge descriptor type. +
+*Default:* `dummy_property_map`.
+| OUT | `OutputIterator out` | The algorithm writes articulation points via this output iterator and returns the resulting iterator. +
+*Default:* a dummy iterator that ignores values written to it.
 |===
 
 Named Parameters::
@@ -170,7 +174,8 @@ OutputIterator articulation_points(
 | Direction | Parameter | Description
 
 | IN | `const Graph& g` | An undirected graph. The graph type must be a model of xref:concepts/VertexListGraph.adoc[Vertex List Graph] and xref:concepts/IncidenceGraph.adoc[Incidence Graph].
-| OUT | `OutputIterator out` | The algorithm writes articulation points via this output iterator and returns the resulting iterator.
+| OUT | `OutputIterator out` | The algorithm writes articulation points via this output iterator and returns the resulting iterator. +
+*Default:* a dummy iterator that ignores values written to it.
 |===
 
 '''
@@ -191,7 +196,8 @@ OutputIterator articulation_points(
 | Direction | Parameter | Description
 
 | IN | `const Graph& g` | An undirected graph. The graph type must be a model of xref:concepts/VertexListGraph.adoc[Vertex List Graph] and xref:concepts/IncidenceGraph.adoc[Incidence Graph].
-| OUT | `OutputIterator out` | The algorithm writes articulation points via this output iterator and returns the resulting iterator.
+| OUT | `OutputIterator out` | The algorithm writes articulation points via this output iterator and returns the resulting iterator. +
+*Default:* a dummy iterator that ignores values written to it.
 |===
 
 Named Parameters::

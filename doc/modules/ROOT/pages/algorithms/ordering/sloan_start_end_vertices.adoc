@@ -2,7 +2,7 @@
 
 Finds good start and end vertices for the Sloan profile and wavefront reduction ordering algorithm.
 
-Complexity: Depends on graph structure (multiple internal BFS traversals) +
+*Complexity:* Depends on graph structure (multiple internal BFS traversals) +
 *Defined in:* `<boost/graph/sloan_ordering.hpp>`
 
 '''
@@ -48,7 +48,7 @@ sloan_start_end_vertices(
 
 == Description
 
-The goal of the `sloan_start_end_vertices` algorithm [1, 2] is to find good
+The goal of the `sloan_start_end_vertices` algorithm [xref:about/bibliography.adoc#sloan86[83], xref:about/bibliography.adoc#sloan89[84]] is to find good
 start- and end-vertices for the profile and wavefront reduction algorithm
 xref:algorithms/ordering/sloan_ordering.adoc[`sloan_ordering`]. The algorithm is similar
 to `pseudo_peripheral_pair` and also based on
@@ -75,10 +75,7 @@ End vertex:   3
 
 See also link:../example/sloan_ordering.cpp[`example/sloan_ordering.cpp`].
 
-== Notes
+== References
 
-[1] S. W. Sloan, _An algorithm for profile and wavefront reduction of sparse
-matrices_, Int. j. numer. methods eng., *23*, 239-251 (1986)
-
-[2] S. W. Sloan, _A fortran program for profile and wavefront reduction_,
-Int. j. numer. methods eng., *28*, 2651-2679 (1989)
+* xref:about/bibliography.adoc#sloan86[[83\]] S. W. Sloan, _An algorithm for profile and wavefront reduction of sparse matrices_, Int. j. numer. methods eng., *23*, 239-251 (1986).
+* xref:about/bibliography.adoc#sloan89[[84\]] S. W. Sloan, _A fortran program for profile and wavefront reduction_, Int. j. numer. methods eng., *28*, 2651-2679 (1989).

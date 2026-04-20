@@ -2,7 +2,7 @@
 
 Calculates the minimum cost flow of a network with given flow by iteratively canceling negative-cost cycles in the residual graph.
 
-Complexity: _O(C * |V| * |E|)_ for integer capacities/weights, where _C_ is the initial flow cost +
+*Complexity:* _O(C * |V| * |E|)_ for integer capacities/weights, where _C_ is the initial flow cost +
 *Defined in:* `<boost/graph/cycle_canceling.hpp>`
 
 '''

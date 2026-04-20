@@ -3,7 +3,7 @@
 
 Builds the dominator tree for a directed graph using the Lengauer-Tarjan algorithm.
 
-Complexity: _O((V+E)log(V+E))_ +
+*Complexity:* _O((V+E)log(V+E))_ +
 *Defined in:* `<boost/graph/dominator_tree.hpp>`
 
 '''

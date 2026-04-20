@@ -25,7 +25,7 @@ Avg wavefront: 2.2
 
 Calculates the wavefront of the _i-th_ vertex.
 
-Complexity: _O(|V| * max_out_degree)_ +
+*Complexity:* _O(|V| * max_out_degree)_ +
 *Defined in:* `<boost/graph/wavefront.hpp>`
 
 '''
@@ -111,7 +111,7 @@ The wavefront of the _i-th_ vertex as a `vertices_size_type` value.
 
 Calculates the maximum wavefront of a graph.
 
-Complexity: _O(|V|^2^ * max_out_degree)_ +
+*Complexity:* _O(|V|^2^ * max_out_degree)_ +
 *Defined in:* `<boost/graph/wavefront.hpp>`
 
 '''
@@ -186,7 +186,7 @@ The maximum wavefront of the graph as a `vertices_size_type` value.
 
 Calculates the average wavefront of a graph (sum of all wavefronts divided by the number of vertices).
 
-Complexity: _O(|V|^2^ * max_out_degree)_ +
+*Complexity:* _O(|V|^2^ * max_out_degree)_ +
 *Defined in:* `<boost/graph/wavefront.hpp>`
 
 '''
@@ -259,7 +259,7 @@ The average wavefront as a `double` value.
 
 Calculates the root mean square of all wavefronts.
 
-Complexity: _O(|V|^2^ * max_out_degree)_ +
+*Complexity:* _O(|V|^2^ * max_out_degree)_ +
 *Defined in:* `<boost/graph/wavefront.hpp>`
 
 '''

@@ -3,7 +3,7 @@
 
 Traverses all faces of a planar graph defined by a planar embedding, invoking visitor event points along the way.
 
-Complexity: _O(n + m)_ +
+*Complexity:* _O(n + m)_ +
 *Defined in:* `<boost/graph/planar_face_traversal.hpp>`
 
 '''

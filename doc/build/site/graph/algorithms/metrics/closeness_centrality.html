@@ -887,7 +887,7 @@ of the sum of shortest distances from that vertex to every other vertex. A
 high closeness means the vertex can reach all others quickly.</p>
 </div>
 <div class="paragraph">
-<p>Complexity: O(V * (V + E) log V) (Dijkstra per vertex)<br>
+<p><strong>Complexity:</strong> O(V * (V + E) log V) (Dijkstra per vertex)<br>
 <strong>Defined in:</strong> <code>&lt;boost/graph/closeness_centrality.hpp&gt;</code></p>
 </div>
 </div>
@@ -974,25 +974,134 @@ int main() {
 </div>
 </div>
 <hr>
+<div class="sect2">
+<h3 id="_1_closeness_centrality_with_explicit_combinator"><a class="anchor" href="#_1_closeness_centrality_with_explicit_combinator"></a>(1) closeness_centrality with explicit combinator</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename DistanceMap,
+          typename Measure, typename Combinator&gt;
+typename Measure::result_type
+closeness_centrality(const Graph&amp; g, DistanceMap dist,
+                     Measure measure, Combinator combine);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Combines distances via <code>combine</code> (e.g. <code>std::plus</code>) before applying the measure.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_2_closeness_centrality_with_measure"><a class="anchor" href="#_2_closeness_centrality_with_measure"></a>(2) closeness_centrality with measure</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename DistanceMap, typename Measure&gt;
+typename Measure::result_type
+closeness_centrality(const Graph&amp; g, DistanceMap dist, Measure measure);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Equivalent to (1) with <code>combine = std::plus&lt;distance_type&gt;()</code>.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_3_closeness_centrality_with_default_measure_double"><a class="anchor" href="#_3_closeness_centrality_with_default_measure_double"></a>(3) closeness_centrality with default measure (double)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename DistanceMap&gt;
+double closeness_centrality(const Graph&amp; g, DistanceMap dist);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Uses <code>measure_closeness(g, dist)</code> as the measure (reciprocal of sum of distances).</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_4_closeness_centrality_with_explicit_result_type"><a class="anchor" href="#_4_closeness_centrality_with_explicit_result_type"></a>(4) closeness_centrality with explicit result type</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename T, typename Graph, typename DistanceMap&gt;
+T closeness_centrality(const Graph&amp; g, DistanceMap dist);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Same as (3) but the result type is parametrized as <code>T</code>.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_5_all_closeness_centralities_with_measure"><a class="anchor" href="#_5_all_closeness_centralities_with_measure"></a>(5) all_closeness_centralities with measure</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename DistanceMatrixMap,
+          typename CentralityMap, typename Measure&gt;
+void all_closeness_centralities(const Graph&amp; g, DistanceMatrixMap dist,
+                                CentralityMap cent, Measure measure);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For each vertex, runs overload (2) against its row of <code>dist</code> and writes the result into <code>cent</code>.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_6_all_closeness_centralities_with_default_measure"><a class="anchor" href="#_6_all_closeness_centralities_with_default_measure"></a>(6) all_closeness_centralities with default measure</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename DistanceMatrixMap,
+          typename CentralityMap&gt;
+void all_closeness_centralities(const Graph&amp; g, DistanceMatrixMap dist,
+                                CentralityMap cent);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Equivalent to (5) with <code>measure_closeness&lt;Result&gt;(g, DistanceMap())</code> where <code>Result</code> is the value type of <code>CentralityMap</code>.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_7_helper_measure_closeness"><a class="anchor" href="#_7_helper_measure_closeness"></a>(7) Helper: measure_closeness</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename DistanceMap&gt;
+closeness_measure&lt;/*...*/, double, reciprocal&lt;double&gt;&gt;
+measure_closeness(const Graph&amp;, DistanceMap);
+
+template &lt;typename T, typename Graph, typename DistanceMap&gt;
+closeness_measure&lt;/*...*/, T, reciprocal&lt;T&gt;&gt;
+measure_closeness(const Graph&amp;, DistanceMap);
+
+template &lt;typename T, typename Graph, typename DistanceMap, typename Reciprocal&gt;
+closeness_measure&lt;/*...*/, T, Reciprocal&gt;
+measure_closeness(const Graph&amp;, DistanceMap);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Constructs the default <code>closeness_measure</code> functor. Three overloads let you choose the result type (<code>double</code> or <code>T</code>) and the reciprocal functor.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_8_closeness_measure_struct"><a class="anchor" href="#_8_closeness_measure_struct"></a>(8) closeness_measure (struct)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename DistanceType, typename ResultType,
+          typename Reciprocal = detail::reciprocal&lt;ResultType&gt;&gt;
+struct closeness_measure
+    : public geodesic_measure&lt;Graph, DistanceType, ResultType&gt;;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The default closeness functor: given a summed distance <code>d</code>, returns <code>0</code> if <code>d</code> is the infinite distance marker, otherwise <code>Reciprocal()(d)</code>.</p>
+</div>
+<hr>
+</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_synopsis"><a class="anchor" href="#_synopsis"></a>Synopsis</h2>
+<h2 id="_parameters"><a class="anchor" href="#_parameters"></a>Parameters</h2>
 <div class="sectionbody">
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// Single vertex (requires pre-computed distance map)
-template &lt;typename Graph, typename DistanceMap, typename Measure&gt;
-typename Measure::result_type
-closeness_centrality(const Graph&amp; g, DistanceMap dist, Measure measure);
-
-// All vertices
-template &lt;typename Graph, typename DistanceMatrixMap,
-          typename CentralityMap, typename Measure&gt;
-void all_closeness_centralities(const Graph&amp; g, DistanceMatrixMap dm,
-                                CentralityMap cm, Measure measure);</code></pre>
-</div>
-</div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 12.5%;">
@@ -1010,23 +1119,32 @@ void all_closeness_centralities(const Graph&amp; g, DistanceMatrixMap dm,
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>const Graph&amp; g</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Must model VertexListGraph.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Must model <a href="../../concepts/VertexListGraph.html" class="xref page">Vertex List Graph</a> for overloads that iterate vertices; the 2/3/4-arg overloads only require <a href="../../concepts/Graph.html" class="xref page">Graph</a>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>DistanceMap dist</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Pre-computed distances from the vertex to all others. Run Dijkstra or BFS
-  first.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ReadablePropertyMap from vertex descriptor to distance. Must be populated by a shortest-paths algorithm (e.g. Dijkstra or BFS) before calling.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DistanceMatrixMap dist</code> (all_*)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ReadablePropertyMap from vertex to another property map (the row for that vertex).</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Measure measure</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Closeness measure functor. Default: reciprocal of sum of distances.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A <code>DistanceMeasureConcept</code> functor mapping summed distance to result. Default constructed via <code>measure_closeness</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Combinator combine</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Binary operation used to reduce distances to a single scalar. Default in (2) is <code>std::plus&lt;distance_type&gt;</code>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CentralityMap cm</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">(all_closeness_centralities only) WritablePropertyMap for per-vertex results.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CentralityMap cent</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(all_* only) WritablePropertyMap receiving the per-vertex closeness.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1037,8 +1155,7 @@ void all_closeness_centralities(const Graph&amp; g, DistanceMatrixMap dm,
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-<code>closeness_centrality</code> takes a pre-computed distance map, not the graph
-alone. Run a shortest-paths algorithm first to fill the distance map.
+The single-vertex overloads take a pre-computed distance map, not the graph alone. Run a shortest-paths algorithm first to fill the distance map.
 </td>
 </tr>
 </table>

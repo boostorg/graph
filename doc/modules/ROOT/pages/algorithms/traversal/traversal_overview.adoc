@@ -21,9 +21,11 @@ connected components, and topological sort all build on BFS or DFS internally.
 |===
 
 BFS uses a queue (FIFO). DFS uses a stack (LIFO, or recursion). Both have
-O(V + E) time complexity.
+_O(V + E)_ time complexity.
 
-The `_visit` variants (`breadth_first_visit`, `depth_first_visit`) skip
-initialization and operate on a subset of vertices. Use them when you have
-already initialized colors or want to search from a specific vertex without
-resetting state.
+The `_visit` variants skip initialization and operate on a subset of
+vertices — useful when you have already initialized colors or want to search
+from a specific vertex without resetting state:
+
+* xref:algorithms/traversal/breadth_first_visit.adoc[`breadth_first_visit`]
+* xref:algorithms/traversal/depth_first_visit.adoc[`depth_first_visit`]

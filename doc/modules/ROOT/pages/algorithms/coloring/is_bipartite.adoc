@@ -2,7 +2,7 @@
 
 Tests whether an undirected graph is bipartite using a DFS-based coloring approach.
 
-Complexity: _O(V + E)_ +
+*Complexity:* _O(V + E)_ +
 *Defined in:* `<boost/graph/bipartite.hpp>`
 
 == Example

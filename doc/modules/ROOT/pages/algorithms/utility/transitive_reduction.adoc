@@ -4,7 +4,7 @@ Computes the minimal equivalent graph: removes all edges that can be inferred
 from other paths. If there is an edge u->v and also a longer path u->...->v,
 the direct edge is redundant and is removed.
 
-Complexity: O(V * (V + E)) +
+*Complexity:* O(V * (V + E)) +
 *Defined in:* `<boost/graph/transitive_reduction.hpp>`
 
 == Synopsis

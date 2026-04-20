@@ -3,7 +3,7 @@
 
 Copies all vertices and edges from one graph into another, along with their properties.
 
-Complexity: _O(V + E)_ +
+*Complexity:* _O(V + E)_ +
 *Defined in:* `<boost/graph/copy.hpp>`
 
 WARNING: `copy_graph` internally requires a `vertex_index` property map.

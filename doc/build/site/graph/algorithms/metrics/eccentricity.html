@@ -945,33 +945,100 @@ eccentricity[2] = 3
 eccentricity[3] = 4</pre>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_synopsis"><a class="anchor" href="#_synopsis"></a>Synopsis</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_1_eccentricity_with_explicit_combinator"><a class="anchor" href="#_1_eccentricity_with_explicit_combinator"></a>(1) eccentricity with explicit combinator</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// Single vertex eccentricity (requires pre-computed distance map)
-template &lt;typename Graph, typename DistanceMap&gt;
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename DistanceMap, typename Combinator&gt;
 typename property_traits&lt;DistanceMap&gt;::value_type
-eccentricity(const Graph&amp; g, DistanceMap dist);
-
-// All eccentricities
-template &lt;typename Graph, typename DistanceMatrix, typename EccentricityMap&gt;
-void all_eccentricities(const Graph&amp; g, const DistanceMatrix&amp; dm,
-                        EccentricityMap ecc);
-
-// Radius and diameter
-template &lt;typename Graph, typename EccentricityMap&gt;
+eccentricity(const Graph&amp; g, DistanceMap dist, Combinator combine);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The combinator reduces the distances into a single value (by default <code>max</code>).</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_2_eccentricity"><a class="anchor" href="#_2_eccentricity"></a>(2) eccentricity</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename DistanceMap&gt;
+typename property_traits&lt;DistanceMap&gt;::value_type
+eccentricity(const Graph&amp; g, DistanceMap dist);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Equivalent to (1) with a default combinator that returns the maximum finite distance.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_3_all_eccentricities"><a class="anchor" href="#_3_all_eccentricities"></a>(3) all_eccentricities</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename DistanceMatrix, typename EccentricityMap&gt;
+std::pair&lt;
+    typename property_traits&lt;EccentricityMap&gt;::value_type,
+    typename property_traits&lt;EccentricityMap&gt;::value_type&gt;
+all_eccentricities(const Graph&amp; g, const DistanceMatrix&amp; dist,
+                   EccentricityMap ecc);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Writes the eccentricity of every vertex into <code>ecc</code>. Returns the pair <code>(radius, diameter)</code> (the minimum and maximum eccentricities) computed along the way.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_4_radius_and_diameter"><a class="anchor" href="#_4_radius_and_diameter"></a>(4) radius_and_diameter</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename EccentricityMap&gt;
+std::pair&lt;
+    typename property_traits&lt;EccentricityMap&gt;::value_type,
+    typename property_traits&lt;EccentricityMap&gt;::value_type&gt;
+radius_and_diameter(const Graph&amp; g, EccentricityMap ecc);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Given an already-populated <code>ecc</code>, returns <code>(radius, diameter)</code> without recomputing the eccentricities. <code>EccentricityMap</code> is ReadablePropertyMap in this overload.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_5_radius"><a class="anchor" href="#_5_radius"></a>(5) radius</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename EccentricityMap&gt;
 typename property_traits&lt;EccentricityMap&gt;::value_type
-radius(const Graph&amp; g, EccentricityMap ecc);
-
-template &lt;typename Graph, typename EccentricityMap&gt;
+radius(const Graph&amp; g, EccentricityMap ecc);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Returns only the radius (<code>.first</code> of <code>radius_and_diameter</code>).</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_6_diameter"><a class="anchor" href="#_6_diameter"></a>(6) diameter</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename EccentricityMap&gt;
 typename property_traits&lt;EccentricityMap&gt;::value_type
 diameter(const Graph&amp; g, EccentricityMap ecc);</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>Returns only the diameter (<code>.second</code> of <code>radius_and_diameter</code>).</p>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_parameters"><a class="anchor" href="#_parameters"></a>Parameters</h2>
+<div class="sectionbody">
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 12.5%;">
@@ -989,22 +1056,27 @@ diameter(const Graph&amp; g, EccentricityMap ecc);</code></pre>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>const Graph&amp; g</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Must model VertexListGraph.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Must model <a href="../../concepts/VertexListGraph.html" class="xref page">Vertex List Graph</a>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>DistanceMap dist</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">(single-vertex) Pre-computed distances from this vertex to all others.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(single-vertex) ReadablePropertyMap from vertex to distance, pre-populated by a shortest-paths run.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DistanceMatrix dm</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">(all_eccentricities) Pre-computed all-pairs distance matrix.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DistanceMatrix dist</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(all_eccentricities) ReadablePropertyMap from vertex to another property map (that vertex&#8217;s row of the distance matrix).</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Combinator combine</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Binary functor reducing distances to a scalar (default: <code>max</code>).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OUT / IN</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>EccentricityMap ecc</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">WritablePropertyMap for per-vertex eccentricity values.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">WritablePropertyMap for overload (3); ReadablePropertyMap for overloads (4)/(5)/(6). Vertex-to-eccentricity mapping.</p></td>
 </tr>
 </tbody>
 </table>

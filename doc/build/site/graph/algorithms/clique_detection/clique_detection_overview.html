@@ -899,20 +899,23 @@ all-connected property.</p>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="bron_kerbosch.html" class="xref page">Bron-Kerbosch</a></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Enumerates all maximal cliques using backtracking with pivoting.
-  Worst-case O(3^(V/3)), but fast in practice on sparse graphs.</p></td>
+  Worst-case <em>O(3^(V/3))</em>, but fast in practice on sparse graphs. The same
+  header also exposes <code>bron_kerbosch_clique_number(g)</code>, which returns only
+  the size of the largest clique.</p></td>
 </tr>
 </tbody>
 </table>
-<div class="admonitionblock tip">
+<div class="admonitionblock note">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Clique enumeration is exponential. If you only need to know whether the
-graph has a clique of size k, consider using the complement graph and
-checking for an independent set instead.
+Clique enumeration is NP-hard in general. Cliques and independent sets
+are dual under graph complementation (a clique in <code>G</code> is an independent set
+in the complement), so neither direction is inherently cheaper — both face
+the same worst-case complexity.
 </td>
 </tr>
 </table>

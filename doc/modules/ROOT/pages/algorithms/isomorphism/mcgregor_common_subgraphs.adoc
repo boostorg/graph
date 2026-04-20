@@ -2,7 +2,7 @@
 
 Finds all common subgraphs between two graphs using McGregor's backtracking algorithm.
 
-Complexity: _O(V1 * V2)_ +
+*Complexity:* _O(V1 * V2)_ +
 *Defined in:* `<boost/graph/mcgregor_common_subgraphs.hpp>`
 
 '''

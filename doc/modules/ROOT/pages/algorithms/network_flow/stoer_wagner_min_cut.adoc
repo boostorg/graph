@@ -3,7 +3,7 @@
 
 Determines a min-cut and the min-cut weight of a connected, undirected graph.
 
-Complexity: _O_(_V_ * _E_ + _V_^2^ log _V_) +
+*Complexity:* _O_(_V_ * _E_ + _V_^2^ log _V_) +
 *Defined in:* `<boost/graph/stoer_wagner_min_cut.hpp>`
 
 == Example
@@ -149,4 +149,10 @@ The weight of the min-cut.
 == Example
 
 The file link:../example/stoer_wagner.cpp[`examples/stoer_wagner.cpp`] contains an example of calculating a min-cut of a weighted, undirected graph and its min-cut weight.
+
+== References
+
+* xref:about/bibliography.adoc#mehlhorn-uhrig95[[80\]] Mehlhorn, Kurt and Christian Uhrig (1995). _The minimum cut algorithm of Stoer and Wagner_.
+* xref:about/bibliography.adoc#stoer-wagner97[[81\]] Stoer, Mechthild and Frank Wagner (1997). _A simple min-cut algorithm_. Journal of the ACM 44 (4), 585-591.
+* xref:about/bibliography.adoc#zwick08[[82\]] Zwick, Uri (2008). _Global minimum cuts_.
 

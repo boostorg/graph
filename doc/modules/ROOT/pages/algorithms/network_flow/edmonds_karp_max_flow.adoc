@@ -3,7 +3,7 @@
 
 Calculates the maximum flow of a network using the Edmonds-Karp variant of the Ford-Fulkerson algorithm.
 
-Complexity: _O(V E^2^)_, or _O(V E U)_ for integer capacities bounded by _U_ +
+*Complexity:* _O(V E^2^)_, or _O(V E U)_ for integer capacities bounded by _U_ +
 *Defined in:* `<boost/graph/edmonds_karp_max_flow.hpp>`
 
 == Example

@@ -945,30 +945,152 @@ mean geodesic[3] = 2.66667
 Graph mean geodesic: 2.33333</pre>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_1_mean_geodesic_with_explicit_measure_and_combinator"><a class="anchor" href="#_1_mean_geodesic_with_explicit_measure_and_combinator"></a>(1) mean_geodesic with explicit measure and combinator</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename DistanceMap,
+          typename Measure, typename Combinator&gt;
+typename Measure::result_type
+mean_geodesic(const Graph&amp; g, DistanceMap dist,
+              Measure measure, Combinator combine);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Reduces <code>dist</code> via <code>combine</code> (default behavior in (2) uses <code>std::plus</code>) and applies <code>measure</code>.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_2_mean_geodesic_with_measure"><a class="anchor" href="#_2_mean_geodesic_with_measure"></a>(2) mean_geodesic with measure</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename DistanceMap, typename Measure&gt;
+typename Measure::result_type
+mean_geodesic(const Graph&amp; g, DistanceMap dist, Measure measure);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Equivalent to (1) with <code>combine = std::plus&lt;distance_type&gt;()</code>.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_3_mean_geodesic_default_double_result"><a class="anchor" href="#_3_mean_geodesic_default_double_result"></a>(3) mean_geodesic (default double result)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename DistanceMap&gt;
+double mean_geodesic(const Graph&amp; g, DistanceMap dist);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Uses <code>measure_mean_geodesic(g, dist)</code> as the measure — (sum of distances) / (num_vertices(g) - 1).</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_4_mean_geodesic_with_explicit_result_type"><a class="anchor" href="#_4_mean_geodesic_with_explicit_result_type"></a>(4) mean_geodesic with explicit result type</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename T, typename Graph, typename DistanceMap&gt;
+T mean_geodesic(const Graph&amp; g, DistanceMap dist);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Same as (3) but the result type is parametrized as <code>T</code>.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_5_all_mean_geodesics_with_measure"><a class="anchor" href="#_5_all_mean_geodesics_with_measure"></a>(5) all_mean_geodesics with measure</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename DistanceMatrixMap,
+          typename GeodesicMap, typename Measure&gt;
+typename property_traits&lt;GeodesicMap&gt;::value_type
+all_mean_geodesics(const Graph&amp; g, DistanceMatrixMap dist,
+                   GeodesicMap geo, Measure measure);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Writes the mean geodesic for every vertex into <code>geo</code> and returns the average of those values (the graph&#8217;s mean geodesic).</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_6_all_mean_geodesics_default_measure"><a class="anchor" href="#_6_all_mean_geodesics_default_measure"></a>(6) all_mean_geodesics (default measure)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename DistanceMatrixMap,
+          typename GeodesicMap&gt;
+typename property_traits&lt;GeodesicMap&gt;::value_type
+all_mean_geodesics(const Graph&amp; g, DistanceMatrixMap dist,
+                   GeodesicMap geo);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Equivalent to (5) with <code>measure_mean_geodesic&lt;Result&gt;(g, DistanceMap())</code> where <code>Result</code> is the value type of <code>GeodesicMap</code>.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_7_small_world_distance_with_measure"><a class="anchor" href="#_7_small_world_distance_with_measure"></a>(7) small_world_distance with measure</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename GeodesicMap, typename Measure&gt;
+typename Measure::result_type
+small_world_distance(const Graph&amp; g, GeodesicMap geo, Measure measure);</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_8_small_world_distance_default_measure"><a class="anchor" href="#_8_small_world_distance_default_measure"></a>(8) small_world_distance (default measure)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename GeodesicMap&gt;
+typename property_traits&lt;GeodesicMap&gt;::value_type
+small_world_distance(const Graph&amp; g, GeodesicMap geo);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Sums the per-vertex mean geodesics in <code>geo</code> and applies <code>measure_graph_mean_geodesic(g, geo)</code> (sum divided by <code>num_vertices(g)</code>).</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_9_measure_helpers_and_structs"><a class="anchor" href="#_9_measure_helpers_and_structs"></a>(9) Measure helpers and structs</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename DistanceType, typename ResultType,
+          typename Divides = std::divides&lt;ResultType&gt;&gt;
+struct mean_geodesic_measure
+    : public geodesic_measure&lt;Graph, DistanceType, ResultType&gt;;
+
+template &lt;typename Graph, typename DistanceType&gt;
+struct mean_graph_distance_measure
+    : public geodesic_measure&lt;Graph, DistanceType, DistanceType&gt;;
+
+template &lt;typename Graph, typename DistanceMap&gt;
+mean_geodesic_measure&lt;/*...*/, double&gt; measure_mean_geodesic(const Graph&amp;, DistanceMap);
+
+template &lt;typename T, typename Graph, typename DistanceMap&gt;
+mean_geodesic_measure&lt;/*...*/, T&gt;      measure_mean_geodesic(const Graph&amp;, DistanceMap);
+
+template &lt;typename Graph, typename DistanceMap&gt;
+mean_graph_distance_measure&lt;/*...*/&gt;   measure_graph_mean_geodesic(const Graph&amp;, DistanceMap);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Functors and factory helpers. <code>mean_geodesic_measure</code> returns <code>d / (num_vertices(g) - 1)</code>; <code>mean_graph_distance_measure</code> returns <code>d / num_vertices(g)</code>. Both map the infinite-distance marker to an infinite result.</p>
+</div>
+<hr>
+</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_synopsis"><a class="anchor" href="#_synopsis"></a>Synopsis</h2>
+<h2 id="_parameters"><a class="anchor" href="#_parameters"></a>Parameters</h2>
 <div class="sectionbody">
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// Single vertex mean geodesic (requires pre-computed distance map)
-template &lt;typename Graph, typename DistanceMap, typename Measure&gt;
-typename Measure::result_type
-mean_geodesic(const Graph&amp; g, DistanceMap dist, Measure measure);
-
-// All vertices
-template &lt;typename Graph, typename DistanceMatrixMap,
-          typename GeodesicMap, typename Measure&gt;
-typename Measure::result_type
-all_mean_geodesics(const Graph&amp; g, DistanceMatrixMap dm,
-                   GeodesicMap gm, Measure measure);
-
-// Graph-level small-world measure
-template &lt;typename Graph, typename GeodesicMap&gt;
-double small_world_distance(const Graph&amp; g, GeodesicMap gm);</code></pre>
-</div>
-</div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 12.5%;">
@@ -986,22 +1108,32 @@ double small_world_distance(const Graph&amp; g, GeodesicMap gm);</code></pre>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>const Graph&amp; g</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Must model VertexListGraph.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Must model <a href="../../concepts/VertexListGraph.html" class="xref page">Vertex List Graph</a> for overloads iterating vertices; the 2/3/4-arg <code>mean_geodesic</code> overloads only require <a href="../../concepts/Graph.html" class="xref page">Graph</a>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DistanceMap dist</code> / <code>DistanceMatrixMap dm</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Pre-computed distances (single-vertex or all-pairs).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DistanceMap dist</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ReadablePropertyMap from vertex to distance. Populate via a shortest-paths algorithm before calling.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DistanceMatrixMap dist</code> (all_*)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ReadablePropertyMap from vertex to its distance map row.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Measure measure</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Geodesic measure functor.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Model of <code>DistanceMeasureConcept</code> (see overload (9) for the built-in choices).</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GeodesicMap gm</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">(all_mean_geodesics) WritablePropertyMap for per-vertex results.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Combinator combine</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Binary reduction over distances. Default: <code>std::plus&lt;distance_type&gt;</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OUT / IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GeodesicMap geo</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">WritablePropertyMap for overload (5)/(6); ReadablePropertyMap for overload (7)/(8).</p></td>
 </tr>
 </tbody>
 </table>
@@ -1012,8 +1144,7 @@ double small_world_distance(const Graph&amp; g, GeodesicMap gm);</code></pre>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Requires pre-computed distance maps from an all-pairs shortest paths
-algorithm.
+Requires pre-computed distance maps from an all-pairs shortest paths algorithm.
 </td>
 </tr>
 </table>

@@ -3,7 +3,7 @@
 Enumerates all maximal cliques in an undirected graph using the Bron-Kerbosch
 backtracking algorithm with pivoting.
 
-Complexity: O(3^(V/3)) worst case +
+*Complexity:* O(3^(V/3)) worst case +
 *Defined in:* `<boost/graph/bron_kerbosch_all_cliques.hpp>`
 
 == Example
@@ -23,13 +23,16 @@ Clique: {1, 2, 3}
 
 '''
 
-== Synopsis
+=== (1) bron_kerbosch_all_cliques
 
 [source,cpp]
 ----
 template <typename Graph, typename Visitor>
 void bron_kerbosch_all_cliques(const Graph& g, Visitor vis,
-                               std::size_t min = 2);
+                               std::size_t min);
+
+template <typename Graph, typename Visitor>
+void bron_kerbosch_all_cliques(const Graph& g, Visitor vis);
 ----
 
 [cols="1,2,5"]
@@ -38,7 +41,9 @@ void bron_kerbosch_all_cliques(const Graph& g, Visitor vis,
 
 | IN
 | `const Graph& g`
-| Must model AdjacencyMatrix and VertexListGraph. Undirected.
+| Must model xref:concepts/IncidenceGraph.adoc[Incidence Graph],
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph], and
+  xref:concepts/AdjacencyMatrix.adoc[Adjacency Matrix]. Undirected.
 
 | IN
 | `Visitor vis`
@@ -46,8 +51,30 @@ void bron_kerbosch_all_cliques(const Graph& g, Visitor vis,
   `clique` is a `std::deque<vertex_descriptor>`.
 
 | IN
-| `min`
-| Minimum clique size to report. Default: 2.
+| `std::size_t min`
+| Minimum clique size to report. +
+  *Default:* `2` (singleton cliques are suppressed).
+|===
+
+'''
+
+=== (2) bron_kerbosch_clique_number
+
+[source,cpp]
+----
+template <typename Graph>
+std::size_t bron_kerbosch_clique_number(const Graph& g);
+----
+
+Returns the size of the largest clique in the graph (the clique number). Internally calls `bron_kerbosch_all_cliques` with a `find_max_clique` visitor.
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| Must satisfy the same concepts as overload (1).
 |===
 
 NOTE: The graph must model AdjacencyMatrix (the `edge()` function must be

@@ -3,7 +3,7 @@
 
 Determines whether an isomorphism exists between two graphs.
 
-Complexity: _O(++|++V++|++!)_ +
+*Complexity:* _O(++|++V++|++!)_ +
 *Defined in:* `<boost/graph/isomorphism.hpp>`
 
 == Example

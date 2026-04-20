@@ -3,7 +3,7 @@
 
 Finds the shortest distance between every pair of vertices in a graph using the Floyd-Warshall algorithm.
 
-Complexity: _O(V^3^)_ +
+*Complexity:* _O(V^3^)_ +
 *Defined in:* `<boost/graph/floyd_warshall_shortest.hpp>`
 
 == Example

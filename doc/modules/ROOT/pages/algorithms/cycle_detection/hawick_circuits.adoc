@@ -2,7 +2,7 @@
 
 Enumerates all elementary circuits in a directed multigraph, including self-loops and circuits caused by parallel edges.
 
-Complexity: Exponential in the worst case; use `max_length` to limit search depth +
+*Complexity:* Exponential in the worst case; use `max_length` to limit search depth +
 *Defined in:* `<boost/graph/hawick_circuits.hpp>`
 
 '''

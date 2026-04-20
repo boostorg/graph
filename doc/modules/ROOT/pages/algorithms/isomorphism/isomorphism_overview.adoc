@@ -8,13 +8,16 @@ that preserves edges).
 | Algorithm | Complexity | When to use
 
 | xref:algorithms/isomorphism/isomorphism.adoc[Isomorphism]
-| O(V! * V) worst case
-| Test if two graphs are isomorphic (same structure, same size).
+| _O(|V|!)_ worst case
+| Test if two graphs are isomorphic (same structure, same size). Simple
+  backtracking implementation.
 
 | xref:algorithms/isomorphism/vf2_sub_graph_iso.adoc[VF2 Subgraph Isomorphism]
-| O(V! * V) worst case
-| Test if one graph is isomorphic to a subgraph of another.
-  Finds all matches via a callback.
+| _O(V^2^)_ best / _O(V! · V)_ worst
+| Test if one graph is isomorphic to an induced subgraph of another.
+  Also exposes `vf2_graph_iso` for full-graph isomorphism and
+  `vf2_subgraph_mono` for non-induced subgraphs. Finds all matches via a
+  callback.
 
 | xref:algorithms/isomorphism/mcgregor_common_subgraphs.adoc[McGregor Common Subgraphs]
 | Exponential

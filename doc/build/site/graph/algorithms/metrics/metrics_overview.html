@@ -909,24 +909,25 @@ individual vertices and edges within it.</p>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="betweenness_centrality.html" class="xref page">Betweenness Centrality</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">O(V * E)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>O(VE)</em> unweighted; <em>O(VE + V(V+E) log V)</em> weighted</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">How often a vertex lies on shortest paths between other vertices.
   High betweenness = bridge or bottleneck.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Closeness Centrality</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">O(V * (V + E))</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Inverse of the average distance to all other vertices.
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="closeness_centrality.html" class="xref page">Closeness Centrality</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>O(V)</em> per vertex given a pre-computed distance map</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reciprocal of the sum of shortest distances to all other vertices.
   High closeness = can reach everyone quickly.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Degree Centrality</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">O(1) per vertex</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Number of connections. Simple but effective for many networks.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="degree_centrality.html" class="xref page">Degree Centrality</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>O(1)</em> per vertex</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Number of connections (in, out, or total). Simple but effective for many
+  networks.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">PageRank</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">O(V + E) per iteration</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="page_rank.html" class="xref page">PageRank</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>O(V + E)</em> per iteration</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Importance based on incoming links (recursive: a link from an
   important page counts more). Used by web search engines.</p></td>
 </tr>
@@ -950,22 +951,22 @@ individual vertices and edges within it.</p>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Eccentricity</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="eccentricity.html" class="xref page">Eccentricity</a></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Maximum distance from a vertex to any other. The minimum eccentricity
   across all vertices is the graph&#8217;s <em>radius</em>; the maximum is the <em>diameter</em>.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Geodesic Distance</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="geodesic_distance.html" class="xref page">Geodesic Distance</a></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Mean shortest-path distance from a vertex. Low mean = centrally located.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Clustering Coefficient</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Fraction of a vertex&#8217;s neighbors that are also neighbors of each other.
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="clustering_coefficient.html" class="xref page">Clustering Coefficient</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fraction of a vertex&#8217;s neighbor pairs that are also connected to each other.
   High clustering = tight-knit local community.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="profile.html" class="xref page">Profile</a> / <a href="wavefront.html" class="xref page">Wavefront</a> / <a href="bandwidth.html" class="xref page">Bandwidth</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Sparse matrix metrics used to evaluate vertex orderings for numerical solvers.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sparse-matrix metrics used to evaluate vertex orderings for numerical solvers.</p></td>
 </tr>
 </tbody>
 </table>
@@ -987,13 +988,31 @@ individual vertices and edges within it.</p>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Core Numbers</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">k-core decomposition: assigns each vertex the largest k such that it
-  belongs to a subgraph where every vertex has degree &gt;= k. Useful for
-  identifying dense substructures.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="core_numbers.html" class="xref page">Core Numbers</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">k-core decomposition: assigns each vertex the largest <em>k</em> such that it
+  belongs to a subgraph where every vertex has degree <em>&gt;= k</em>. Useful for
+  identifying dense substructures. A weighted variant is available.</p></td>
 </tr>
 </tbody>
 </table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Most distance-based metrics (<code>eccentricity</code>, <code>geodesic_distance</code>,
+<code>closeness_centrality</code>) consume a pre-computed distance map and therefore
+don&#8217;t fit a single complexity figure — the cost is dominated by the
+shortest-paths run (<a href="../shortest_paths/dijkstra_shortest_paths.html" class="xref page">Dijkstra</a>
+per vertex, <a href="../shortest_paths/floyd_warshall_shortest.html" class="xref page">Floyd-Warshall</a>,
+or <a href="../shortest_paths/johnson_all_pairs_shortest.html" class="xref page">Johnson</a>) that
+you run first.
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 </article>

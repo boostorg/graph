@@ -898,12 +898,19 @@
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="dijkstra_shortest_paths.html" class="xref page">Dijkstra</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">O((V + E) log V)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>O((V + E) log V)</em></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Single-source, non-negative weights. The default choice.</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="dijkstra_shortest_paths_no_color_map.html" class="xref page">Dijkstra (no color map)</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>O((V + E) log V)</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Variant of Dijkstra that uses only the distance map to track visited
+  vertices (no separate color map). Trades a simpler interface / smaller
+  memory footprint for a slightly different visitor protocol.</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="bellman_ford_shortest.html" class="xref page">Bellman-Ford</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">O(V * E)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>O(V · E)</em></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Single-source with negative weights. Detects negative cycles.</p></td>
 </tr>
 <tr>

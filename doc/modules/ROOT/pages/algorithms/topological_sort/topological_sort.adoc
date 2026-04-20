@@ -3,7 +3,7 @@
 
 Creates a linear ordering of the vertices such that if edge _(u,v)_ appears in the graph, then _v_ comes before _u_ in the ordering.
 
-Complexity: _O(V {plus} E)_ +
+*Complexity:* _O(V {plus} E)_ +
 *Defined in:* `<boost/graph/topological_sort.hpp>`
 
 == Example

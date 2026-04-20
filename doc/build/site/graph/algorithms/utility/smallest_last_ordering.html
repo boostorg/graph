@@ -887,7 +887,7 @@ degree. This ordering is a good heuristic for graph coloring: using it with
 <code>sequential_vertex_coloring</code> often produces near-optimal results.</p>
 </div>
 <div class="paragraph">
-<p>Complexity: O(V + E)<br>
+<p><strong>Complexity:</strong> O(V + E)<br>
 <strong>Defined in:</strong> <code>&lt;boost/graph/smallest_last_ordering.hpp&gt;</code></p>
 </div>
 </div>
@@ -935,11 +935,8 @@ int main() {
   position 4: vertex 4</pre>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_synopsis"><a class="anchor" href="#_synopsis"></a>Synopsis</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_1_with_full_work_map_set"><a class="anchor" href="#_1_with_full_work_map_set"></a>(1) With full work-map set</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename VertexListGraph, typename Order,
@@ -949,6 +946,60 @@ void smallest_last_vertex_ordering(const VertexListGraph&amp; g,
                                    Marker marker);</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>Allocates a <code>bucket_sorter</code> keyed on <code>degree</code> and delegates to overload (2).</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_2_with_explicit_bucket_sorter"><a class="anchor" href="#_2_with_explicit_bucket_sorter"></a>(2) With explicit bucket sorter</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename VertexListGraph, typename Order,
+          typename Degree, typename Marker, typename BucketSorter&gt;
+void smallest_last_vertex_ordering(const VertexListGraph&amp; g,
+                                   Order order, Degree degree,
+                                   Marker marker,
+                                   BucketSorter&amp; degree_buckets);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Useful if you want to reuse a pre-allocated <code>bucket_sorter</code> across multiple runs.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_3_with_only_the_ordering_map"><a class="anchor" href="#_3_with_only_the_ordering_map"></a>(3) With only the ordering map</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename VertexListGraph, typename Order&gt;
+void smallest_last_vertex_ordering(const VertexListGraph&amp; g, Order order);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Equivalent to (1) with internally allocated degree and marker property maps built over <code>vertex_index</code>.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_4_returning_a_vector"><a class="anchor" href="#_4_returning_a_vector"></a>(4) Returning a vector</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename VertexListGraph&gt;
+std::vector&lt;typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor&gt;
+smallest_last_vertex_ordering(const VertexListGraph&amp; g);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Convenience form: returns a <code>std::vector&lt;vertex_descriptor&gt;</code> of length <code>num_vertices(g)</code> holding the ordering.</p>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_parameters"><a class="anchor" href="#_parameters"></a>Parameters</h2>
+<div class="sectionbody">
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 12.5%;">
@@ -966,22 +1017,27 @@ void smallest_last_vertex_ordering(const VertexListGraph&amp; g,
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>const VertexListGraph&amp; g</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Must model VertexListGraph and IncidenceGraph.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Must model <a href="../../concepts/VertexListGraph.html" class="xref page">Vertex List Graph</a> and <a href="../../concepts/IncidenceGraph.html" class="xref page">Incidence Graph</a> with an internal <code>vertex_index</code> property.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Order order</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">WritablePropertyMap. Vertex descriptor &#8594; integer position in ordering.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">WritablePropertyMap from position (integer) to vertex descriptor — <code>put(order, i, v)</code> places vertex <code>v</code> at position <code>i</code> of the ordering.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">UTIL</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Degree degree</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">ReadWritePropertyMap for tracking current vertex degrees.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ReadWritePropertyMap from vertex to current (remaining) degree.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">UTIL</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Marker marker</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">ReadWritePropertyMap for marking removed vertices.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ReadWritePropertyMap from vertex to marker value; used to track removed vertices.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UTIL</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BucketSorter&amp; degree_buckets</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A <code>bucket_sorter</code> indexed by current degree. Reused across calls if desired.</p></td>
 </tr>
 </tbody>
 </table>

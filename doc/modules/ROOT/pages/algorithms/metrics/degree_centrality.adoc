@@ -3,7 +3,7 @@
 Measures vertex importance by the number of connections. Out-degree (influence)
 counts outgoing edges; in-degree (prestige) counts incoming edges.
 
-Complexity: O(1) per vertex +
+*Complexity:* O(1) per vertex +
 *Defined in:* `<boost/graph/degree_centrality.hpp>`
 
 == Example
@@ -33,17 +33,119 @@ Degree centrality (prestige = in-degree):
 
 '''
 
-== Synopsis
+=== (1) degree_centrality with explicit measure
 
 [source,cpp]
 ----
 template <typename Graph, typename Vertex, typename Measure>
 typename Measure::degree_type
 degree_centrality(const Graph& g, Vertex v, Measure measure);
-
-template <typename Graph, typename CentralityMap, typename Measure>
-void all_degree_centralities(const Graph& g, CentralityMap cm, Measure measure);
 ----
+
+'''
+
+=== (2) degree_centrality (default: total degree)
+
+[source,cpp]
+----
+template <typename Graph, typename Vertex>
+typename graph_traits<Graph>::degree_size_type
+degree_centrality(const Graph& g, Vertex v);
+----
+
+Uses `measure_degree(g)` as the measure (returns `degree(v, g)` — equivalent to `out_degree` for undirected graphs).
+
+'''
+
+=== (3) influence
+
+[source,cpp]
+----
+template <typename Graph, typename Vertex>
+typename graph_traits<Graph>::degree_size_type
+influence(const Graph& g, Vertex v);
+----
+
+Returns `out_degree(v, g)`. Convenience wrapper over `degree_centrality(g, v, measure_influence(g))`.
+
+'''
+
+=== (4) prestige
+
+[source,cpp]
+----
+template <typename Graph, typename Vertex>
+typename graph_traits<Graph>::degree_size_type
+prestige(const Graph& g, Vertex v);
+----
+
+Returns `in_degree(v, g)`. Requires the graph to model xref:concepts/BidirectionalGraph.adoc[Bidirectional Graph]. Convenience wrapper over `degree_centrality(g, v, measure_prestige(g))`.
+
+'''
+
+=== (5) all_degree_centralities with explicit measure
+
+[source,cpp]
+----
+template <typename Graph, typename CentralityMap, typename Measure>
+void all_degree_centralities(const Graph& g, CentralityMap cent, Measure measure);
+----
+
+'''
+
+=== (6) all_degree_centralities (default: total degree)
+
+[source,cpp]
+----
+template <typename Graph, typename CentralityMap>
+void all_degree_centralities(const Graph& g, CentralityMap cent);
+----
+
+'''
+
+=== (7) all_influence_values
+
+[source,cpp]
+----
+template <typename Graph, typename CentralityMap>
+void all_influence_values(const Graph& g, CentralityMap cent);
+----
+
+Writes `out_degree` for every vertex into `cent`.
+
+'''
+
+=== (8) all_prestige_values
+
+[source,cpp]
+----
+template <typename Graph, typename CentralityMap>
+void all_prestige_values(const Graph& g, CentralityMap cent);
+----
+
+Writes `in_degree` for every vertex into `cent`. Requires xref:concepts/BidirectionalGraph.adoc[Bidirectional Graph].
+
+'''
+
+=== (9) Measure helpers
+
+[source,cpp]
+----
+template <typename Graph>
+degree_centrality_measure<Graph> measure_degree(const Graph&);
+
+template <typename Graph>
+influence_measure<Graph>       measure_influence(const Graph&);
+
+template <typename Graph>
+prestige_measure<Graph>        measure_prestige(const Graph&);
+----
+
+Construct the measure functors used by overloads (1) and (5). `degree_centrality_measure`, `influence_measure`, `prestige_measure` are the corresponding struct types.
+
+'''
+
+== Parameters
 
 [cols="1,2,5"]
 |===
@@ -51,18 +153,17 @@ void all_degree_centralities(const Graph& g, CentralityMap cm, Measure measure);
 
 | IN
 | `const Graph& g`
-| Must model IncidenceGraph. BidirectionalGraph required for prestige.
+| Must model xref:concepts/IncidenceGraph.adoc[Incidence Graph]. xref:concepts/BidirectionalGraph.adoc[Bidirectional Graph] is additionally required for `prestige` / `all_prestige_values` / `measure_prestige`.
 
 | IN
 | `Vertex v`
-| (single-vertex version) The vertex to compute centrality for.
+| The vertex to compute centrality for (single-vertex overloads).
 
 | IN
 | `Measure measure`
-| Use `measure_influence(g)` for out-degree or `measure_prestige(g)` for
-  in-degree.
+| Model of `DistanceMeasureConcept`; see overload (9) for the built-in choices.
 
 | OUT
-| `CentralityMap cm`
-| (all_degree_centralities) WritablePropertyMap for per-vertex results.
+| `CentralityMap cent`
+| WritablePropertyMap from vertex to `degree_size_type`.
 |===

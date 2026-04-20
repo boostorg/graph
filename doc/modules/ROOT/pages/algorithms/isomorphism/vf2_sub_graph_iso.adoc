@@ -2,7 +2,7 @@
 
 Finds all graph-subgraph isomorphism mappings between two graphs using the VF2 algorithm.
 
-Complexity: _O(V^2^)_ best case, _O(V! * V)_ worst case. Space: _O(V)_ +
+*Complexity:* _O(V^2^)_ best case, _O(V! * V)_ worst case. Space: _O(V)_ +
 *Defined in:* `<boost/graph/vf2_sub_graph_iso.hpp>`. All functions are defined in the `boost` namespace.
 
 '''

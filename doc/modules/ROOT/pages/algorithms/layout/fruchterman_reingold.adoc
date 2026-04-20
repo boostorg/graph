@@ -2,7 +2,7 @@
 
 Force-directed layout for unweighted, undirected graphs using the Fruchterman-Reingold algorithm.
 
-Complexity: _O(|V|^2^ + |E|)_ per iteration (worst case); _O(|V| + |E|)_ average case for grid variant +
+*Complexity:* _O(|V|^2^ + |E|)_ per iteration (worst case); _O(|V| + |E|)_ average case for grid variant +
 *Defined in:* `<boost/graph/fruchterman_reingold.hpp>`
 
 '''
@@ -193,6 +193,21 @@ void fruchterman_reingold_force_directed_layout(
 | The displacement map used to compute vertex movement in each step.
 
 |===
+
+'''
+
+=== (3) All-defaults version
+
+[source,cpp]
+----
+template<typename Topology, typename Graph, typename PositionMap>
+void fruchterman_reingold_force_directed_layout(
+    const Graph& g,
+    PositionMap position,
+    const Topology& topology);
+----
+
+Equivalent to the named parameter version (1) with every named parameter left at its default.
 
 == Description
 

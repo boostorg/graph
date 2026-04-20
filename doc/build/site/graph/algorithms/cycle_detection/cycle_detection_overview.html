@@ -898,21 +898,23 @@
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="hawick_circuits.html" class="xref page">Hawick Circuits</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">OV + E) * (C + 1</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Enumerate all elementary circuits (simple cycles) in a directed graph.
-  C is the number of circuits found.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Exponential (use <code>max_length</code> to bound)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enumerate all elementary circuits in a directed multigraph. Handles
+  self-loops and parallel edges. A <code>hawick_unique_circuits</code> variant suppresses
+  duplicates induced by parallel edges.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="tiernan_all_cycles.html" class="xref page">Tiernan All Cycles</a></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Exponential</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Enumerate all elementary cycles. Older algorithm; Hawick is generally
-  preferred.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Earlier algorithm (1970) for enumerating elementary cycles. Companion
+  helpers <code>tiernan_girth</code>, <code>tiernan_circumference</code>, and
+  <code>tiernan_girth_and_circumference</code> return the shortest / longest /
+  both cycle lengths without enumerating every cycle explicitly.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="howard_cycle_ratio.html" class="xref page">Cycle Ratio</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Polynomial</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Find the cycle with the minimum or maximum mean weight (total weight
-  divided by number of edges). Used in performance analysis and scheduling.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="howard_cycle_ratio.html" class="xref page">Cycle Ratio / Cycle Mean</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Empirical _O(</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">E</p></td>
 </tr>
 </tbody>
 </table>

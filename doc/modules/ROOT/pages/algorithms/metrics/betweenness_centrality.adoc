@@ -2,7 +2,7 @@
 
 Computes the betweenness centrality of each vertex or each edge in the graph.
 
-Complexity: _O(VE)_ for unweighted graphs; _O(VE {plus} V(V{plus}E) log V)_ for weighted graphs. Space: _O(VE)_ +
+*Complexity:* _O(VE)_ for unweighted graphs; _O(VE {plus} V(V{plus}E) log V)_ for weighted graphs. Space: _O(VE)_ +
 *Defined in:* `<boost/graph/betweenness_centrality.hpp>`
 
 == Example

@@ -888,7 +888,7 @@ vertex has degree &gt;= k. Higher core numbers indicate denser, more tightly
 connected substructures.</p>
 </div>
 <div class="paragraph">
-<p>Complexity: O(V + E)<br>
+<p><strong>Complexity:</strong> O(V + E)<br>
 <strong>Defined in:</strong> <code>&lt;boost/graph/core_numbers.hpp&gt;</code></p>
 </div>
 </div>
@@ -974,18 +974,93 @@ in the clique has degree 3 within it). Vertices e-f-g form a chain attached
 to the clique, so they have core number 1.</p>
 </div>
 <hr>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_synopsis"><a class="anchor" href="#_synopsis"></a>Synopsis</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_1_core_numbers_unweighted_default_visitor"><a class="anchor" href="#_1_core_numbers_unweighted_default_visitor"></a>(1) core_numbers (unweighted, default visitor)</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename CoreMap&gt;
 typename property_traits&lt;CoreMap&gt;::value_type
-core_numbers(Graph&amp; g, CoreMap core_map);</code></pre>
+core_numbers(Graph&amp; g, CoreMap c);</code></pre>
 </div>
 </div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_2_core_numbers_unweighted_custom_visitor"><a class="anchor" href="#_2_core_numbers_unweighted_custom_visitor"></a>(2) core_numbers (unweighted, custom visitor)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename CoreMap, typename CoreNumVisitor&gt;
+typename property_traits&lt;CoreMap&gt;::value_type
+core_numbers(Graph&amp; g, CoreMap c, CoreNumVisitor vis);</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_3_core_numbers_weighted"><a class="anchor" href="#_3_core_numbers_weighted"></a>(3) core_numbers (weighted)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename CoreMap, typename EdgeWeightMap,
+          typename VertexIndexMap, typename CoreNumVisitor&gt;
+typename property_traits&lt;CoreMap&gt;::value_type
+core_numbers(Graph&amp; g, CoreMap c,
+             EdgeWeightMap wm, VertexIndexMap vim, CoreNumVisitor vis);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When edge weights are provided, the core number of a vertex is based on the weighted degree (sum of incident edge weights) rather than the unweighted degree.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_4_weighted_core_numbers_default_visitor"><a class="anchor" href="#_4_weighted_core_numbers_default_visitor"></a>(4) weighted_core_numbers (default visitor)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename CoreMap&gt;
+typename property_traits&lt;CoreMap&gt;::value_type
+weighted_core_numbers(Graph&amp; g, CoreMap c);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Convenience wrapper over (3) that uses <code>get(edge_weight, g)</code> as the weight map, <code>get(vertex_index, g)</code> as the index map, and a <code>null_visitor</code>.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_5_weighted_core_numbers_custom_visitor"><a class="anchor" href="#_5_weighted_core_numbers_custom_visitor"></a>(5) weighted_core_numbers (custom visitor)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename Graph, typename CoreMap, typename CoreNumVisitor&gt;
+typename property_traits&lt;CoreMap&gt;::value_type
+weighted_core_numbers(Graph&amp; g, CoreMap c, CoreNumVisitor vis);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Same as (4) with an explicit visitor.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_6_core_numbers_visitor"><a class="anchor" href="#_6_core_numbers_visitor"></a>(6) core_numbers_visitor</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;class Visitors = null_visitor&gt;
+class core_numbers_visitor : public bfs_visitor&lt;Visitors&gt;;
+
+template &lt;class Visitors&gt;
+core_numbers_visitor&lt;Visitors&gt; make_core_numbers_visitor(Visitors vis);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The visitor type used internally. Model of <code>CoreNumbersVisitorConcept</code>. Derives from <code>bfs_visitor</code>, adding the <code>examine_vertex(v, g)</code> event each time a vertex is removed during k-core stripping. Use <code>make_core_numbers_visitor(&#8230;&#8203;)</code> to construct one from an adapted visitor.</p>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_parameters"><a class="anchor" href="#_parameters"></a>Parameters</h2>
+<div class="sectionbody">
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 12.5%;">
@@ -1003,15 +1078,33 @@ core_numbers(Graph&amp; g, CoreMap core_map);</code></pre>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Graph&amp; g</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Must model IncidenceGraph and VertexListGraph.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Must model <a href="../../concepts/IncidenceGraph.html" class="xref page">Incidence Graph</a> and <a href="../../concepts/VertexListGraph.html" class="xref page">Vertex List Graph</a>. For the weighted overloads, must also model <a href="../../concepts/EdgeListGraph.html" class="xref page">Edge List Graph</a>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CoreMap core_map</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">ReadWritePropertyMap. Vertex descriptor &#8594; core number (integer).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CoreMap c</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ReadWritePropertyMap. Vertex descriptor &#8594; core number.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>EdgeWeightMap wm</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(weighted) ReadablePropertyMap from edge descriptor to weight.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>VertexIndexMap vim</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(weighted) ReadablePropertyMap from vertex to integer in <code>[0, num_vertices(g))</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CoreNumVisitor vis</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Model of <code>CoreNumbersVisitorConcept</code>. Typically constructed via <code>make_core_numbers_visitor</code>.</p></td>
 </tr>
 </tbody>
 </table>
+<div class="paragraph">
+<p>The function returns the largest core number assigned.</p>
+</div>
 </div>
 </div>
 </article>
