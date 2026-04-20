@@ -13,12 +13,10 @@ backtracking algorithm with pivoting.
 include::example$algorithms/clique_detection/bron_kerbosch.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-Finding all maximal cliques:
-Clique: {0, 1, 2}
-Clique: {1, 2, 3}
+include::example$algorithms/clique_detection/bron_kerbosch.txt[]
 ....
 
 '''

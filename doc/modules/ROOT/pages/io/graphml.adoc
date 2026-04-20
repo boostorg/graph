@@ -22,7 +22,7 @@ dynamic_properties dp(ignore_other_properties);
 include::example$io/graphml.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
 === GraphML output ===
@@ -58,8 +58,6 @@ Expected output:
   Lyon
   Marseille
 ....
-
-'''
 
 == read_graphml
 
@@ -149,8 +147,6 @@ void write_graphml(std::ostream& out, const Graph& g,
 | `VertexIndexMap vertex_index`
 | Only needed if the graph has no built-in `vertex_index` property.
 |===
-
-'''
 
 == Throws
 

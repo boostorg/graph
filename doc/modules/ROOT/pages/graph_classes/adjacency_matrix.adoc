@@ -59,14 +59,10 @@ checked in the matrix row.
 include::example$graph_classes/adjacency_matrix_usage.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-Paris -> Lyon: 460 km
-Paris -> Lyon (460 km)
-Paris -> Marseille (775 km)
-Lyon -> Marseille (310 km)
-Marseille -> Nice (200 km)
+include::example$graph_classes/adjacency_matrix_usage.txt[]
 ....
 
 == Template Parameters

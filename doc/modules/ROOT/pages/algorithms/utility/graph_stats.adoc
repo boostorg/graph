@@ -11,14 +11,10 @@ Utility functions for computing basic structural statistics of a graph.
 include::example$algorithms/utility/graph_stats.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-Duplicate edges: 1
-Degree distribution:
-  degree 0: 2 vertices
-  degree 1: 1 vertices
-  degree 3: 1 vertices
+include::example$algorithms/utility/graph_stats.txt[]
 ....
 
 == Functions

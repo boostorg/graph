@@ -1,0 +1,2 @@
+Minimum cycle ratio: 2
+Cycle length: 3 edges

@@ -1,0 +1,2 @@
+Edges before: 3
+Edges after make_biconnected_planar: 5

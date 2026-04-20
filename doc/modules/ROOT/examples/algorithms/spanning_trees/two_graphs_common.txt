@@ -1,0 +1,5 @@
+Common spanning trees:
+  Tree 1: edges 0 1
+  Tree 2: edges 0 2
+  Tree 3: edges 1 2
+Total: 3

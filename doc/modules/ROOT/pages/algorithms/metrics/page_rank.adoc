@@ -14,13 +14,10 @@ by other important vertices.
 include::example$algorithms/metrics/page_rank.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-vertex 0  rank=1.4436
-vertex 1  rank=0.7600
-vertex 2  rank=1.5301
-vertex 3  rank=0.1500
+include::example$algorithms/metrics/page_rank.txt[]
 ....
 
 Vertex 2 has the highest rank because it receives edges from three other
@@ -110,8 +107,6 @@ struct n_iterations {
 ----
 
 The built-in termination functor used by overload (4): returns `true` after `n` calls. Use `n_iterations(k)` to run exactly `k` iterations.
-
-'''
 
 == Parameters
 

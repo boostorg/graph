@@ -35,11 +35,11 @@ so it is fine to instantiate before the full graph type exists.
 include::example$traits/adjacency_list_traits.cpp[]
 ----
 
-.Expected output
-----
-0 -> 1  predecessor=0
-1 -> 2  predecessor=1
-----
+*Expected output:*
+
+....
+include::example$traits/adjacency_list_traits.txt[]
+....
 
 Observe that `Traits` and the final `Graph` use the *_same_* three
 selectors (`vecS, vecS, directedS`). If they diverge, the descriptor

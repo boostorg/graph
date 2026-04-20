@@ -5,6 +5,19 @@ Finds all common subgraphs between two graphs using McGregor's backtracking algo
 *Complexity:* _O(V1 * V2)_ +
 *Defined in:* `<boost/graph/mcgregor_common_subgraphs.hpp>`
 
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/isomorphism/mcgregor.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/isomorphism/mcgregor.txt[]
+....
+
 '''
 
 [#mcgregor_common_subgraphs]
@@ -279,8 +292,6 @@ represented here as a vertex membership map (vertex -> bool where a value of
 `true` means that the vertex is present in the subgraph). All edges between the
 included vertices are preserved. See the <<example>> section for details.
 
-'''
-
 == Description
 
 This algorithm finds all common subgraphs between `graph1` and `graph2` and
@@ -347,18 +358,7 @@ Returning `false` from the callback will abort the search immediately.
 Otherwise, the entire search space will be explored <<1,[1]>>.
 
 [#example]
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/isomorphism/mcgregor.cpp[]
-----
-
-Expected output:
-
-....
-Largest common subgraph size: 3
-....
+== Writing a callback
 
 Before calling any of the `mcgregor_common_subgraphs` algorithms, you must
 create a function object to act as a callback:

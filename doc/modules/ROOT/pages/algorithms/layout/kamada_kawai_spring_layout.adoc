@@ -11,8 +11,11 @@ Kamada-Kawai spring layout for connected, undirected graphs.
 include::example$algorithms/layout/kamada_kawai.cpp[]
 ----
 
-NOTE: Vertex positions depend on the initial layout and convergence. Output
-may vary between runs.
+*Expected output:*
+
+....
+include::example$algorithms/layout/kamada_kawai.txt[]
+....
 
 '''
 

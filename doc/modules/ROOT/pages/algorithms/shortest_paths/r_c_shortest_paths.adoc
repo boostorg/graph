@@ -6,6 +6,19 @@ Solves the shortest path problem with resource constraints (SPPRC) on a directed
 *Complexity:* Problem-dependent; polynomial for non-elementary or acyclic cases, exponential for elementary with negative cycles +
 *Defined in:* `<boost/graph/r_c_shortest_paths.hpp>`
 
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/shortest_paths/r_c_shortest.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/shortest_paths/r_c_shortest.txt[]
+....
+
 '''
 
 === (1) All Pareto-optimal solutions, with allocator and visitor
@@ -613,7 +626,7 @@ r_c_shortest_paths( g,
 * `s` and `t` are valid vertex descriptors for `g`.
 * `rc` is within the resource windows at `s`, i.e., it constitutes a feasible `Resource_Container` object at `s` (see <<Discussion,discussion>>).
 
-=== Throws
+== Throws
 
 The function itself does not throw any exceptions. However, depending on the template parameters, exceptions may be thrown from within the function.
 
@@ -667,20 +680,6 @@ The boolean parameters have the following meaning:
 * When `b_result_must_be_equal_to_desired_final_resource_levels==true` (`false`), `b_correctly_extended==true` if and only if `b_feasible==true` and the computed resource levels at the end of the path are equal to (less than or equal to) the desired final resource levels as specified in `desired_final_resource_levels`.
 
 `ed_last_extended_arc` stores the edge descriptor of the last extended arc. If `ed_vec_path` is a path of positive length and `b_feasible==false`, `ed_last_extended_arc` is the edge descriptor of the arc at whose target vertex the first violation of a resource window occured.
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/shortest_paths/r_c_shortest.cpp[]
-----
-
-Expected output:
-
-....
-Cost: 5, hops: 2
-Path edges: 2
-....
 
 The file link:../example/r_c_shortest_paths_example.cpp[`example/r_c_shortest_paths_example.cpp`] provides additional examples for how SPPRCs can be solved with the `r_c_shortest_paths` functions. There is an example for an SPP without resource constraints and an example for a shortest path problem with time windows. +
 It is obvious that one would not use the algorithm for SPPs without resource constraints, because there are faster algorithms for this problem, but one would expect a code for the SPP with resource constraints to be able to handle such a case.

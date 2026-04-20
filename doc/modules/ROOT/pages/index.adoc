@@ -15,13 +15,11 @@ A C++ library of graph algorithms and data structures, generic enough to work on
 include::example$algorithms/shortest_paths/dijkstra_bundled.cpp[]
 ----
 
-.Expected output
-----
-distance to 0 = 0
-distance to 1 = 1
-distance to 2 = 3
-distance to 3 = 4
-----
+*Expected output:*
+
+....
+include::example$algorithms/shortest_paths/dijkstra_bundled.txt[]
+....
 
 == Get started
 

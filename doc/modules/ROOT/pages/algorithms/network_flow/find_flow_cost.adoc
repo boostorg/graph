@@ -5,6 +5,19 @@ Calculates the cost of a network flow from edge flow values and edge weights.
 *Complexity:* _O(|E|)_ +
 *Defined in:* `<boost/graph/find_flow_cost.hpp>`
 
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/network_flow/find_flow_cost.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/network_flow/find_flow_cost.txt[]
+....
+
 '''
 
 === (1) Non-named parameter version
@@ -116,8 +129,6 @@ find_flow_cost(
 
 |===
 
-'''
-
 == Description
 
 The `find_flow_cost()` function calculates the minimum cost maximum flow value
@@ -135,17 +146,4 @@ or xref:algorithms/network_flow/cycle_canceling.adoc[`cycle_canceling()`].
 
 The cost of the network flow, whose type is
 `typename property_traits<typename property_map<Graph, edge_capacity_t>::type>::value_type`.
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/network_flow/find_flow_cost.cpp[]
-----
-
-Expected output:
-
-....
-Flow cost: 10
-....
 

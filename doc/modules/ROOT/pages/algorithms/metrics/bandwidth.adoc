@@ -13,10 +13,10 @@ Computes the bandwidth of a graph, which is the maximum distance between two adj
 include::example$algorithms/metrics/bandwidth.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-Bandwidth: 4
+include::example$algorithms/metrics/bandwidth.txt[]
 ....
 
 '''

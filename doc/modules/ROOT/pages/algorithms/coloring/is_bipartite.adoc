@@ -12,11 +12,10 @@ Tests whether an undirected graph is bipartite using a DFS-based coloring approa
 include::example$algorithms/coloring/is_bipartite.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-4-cycle is bipartite: yes
-Triangle is bipartite: no
+include::example$algorithms/coloring/is_bipartite.txt[]
 ....
 
 '''
@@ -119,8 +118,6 @@ bool is_bipartite(
   xref:concepts/IncidenceGraph.adoc[Incidence Graph].
 
 |===
-
-'''
 
 == Description
 

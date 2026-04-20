@@ -5,6 +5,19 @@ Performs a depth-first traversal of the vertices in an undirected graph.
 *Complexity:* _O(E + V)_ +
 *Defined in:* `<boost/graph/undirected_dfs.hpp>`
 
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/traversal/undirected_dfs.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/traversal/undirected_dfs.txt[]
+....
+
 '''
 
 === (1) Non-named parameter version
@@ -164,8 +177,6 @@ void undirected_dfs(Graph& G,
   does not have an internal `vertex_index` property.
 |===
 
-'''
-
 == Description
 
 The `undirected_dfs()` function performs a depth-first traversal of
@@ -309,26 +320,6 @@ finish vertex u
   its out edges have been added to the search tree and all of the adjacent
   vertices have been discovered (but before their out-edges have been
   examined).
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/traversal/undirected_dfs.cpp[]
-----
-
-Expected output:
-
-....
-discover 0
-discover 1
-discover 3
-finish   3
-finish   1
-discover 2
-finish   2
-finish   0
-....
 
 == Notes
 

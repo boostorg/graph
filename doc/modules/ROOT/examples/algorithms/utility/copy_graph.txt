@@ -1,0 +1,2 @@
+Original: 4 vertices, 3 edges
+Copy:     4 vertices, 3 edges

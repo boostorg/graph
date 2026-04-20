@@ -13,15 +13,10 @@ Computes a vertex coloring for the vertices in a graph using a greedy algorithm.
 include::example$algorithms/coloring/vertex_coloring.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-Colors used: 3
-  Vertex 0 -> color 0
-  Vertex 1 -> color 1
-  Vertex 2 -> color 2
-  Vertex 3 -> color 0
-  Vertex 4 -> color 1
+include::example$algorithms/coloring/vertex_coloring.txt[]
 ....
 
 '''
@@ -97,8 +92,6 @@ sequential_vertex_coloring(
   graph's `vertices_size_type`.
 
 |===
-
-'''
 
 == Description
 

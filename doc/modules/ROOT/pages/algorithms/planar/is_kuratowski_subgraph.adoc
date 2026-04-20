@@ -6,9 +6,7 @@ Verifies that a set of edges forms a Kuratowski subgraph in a graph.
 *Complexity:* _O(n)_ +
 *Defined in:* `<boost/graph/is_kuratowski_subgraph.hpp>`
 
-'''
-
-=== Synopsis
+== Synopsis
 
 [source,cpp]
 ----
@@ -41,8 +39,6 @@ bool is_kuratowski_subgraph(
   `[0, num_vertices(g))`. +
   *Default*: `get(vertex_index, g)`
 |===
-
-'''
 
 == Description
 

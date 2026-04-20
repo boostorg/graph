@@ -13,10 +13,10 @@ Performs a breadth-first traversal without initializing color markers.
 include::example$algorithms/traversal/bfs_visit.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-BFS visit order: 0 1 2 3 4
+include::example$algorithms/traversal/bfs_visit.txt[]
 ....
 
 '''
@@ -110,8 +110,6 @@ void breadth_first_visit(IncidenceGraph& G,
   must be a model of xref:auxiliary/Buffer.adoc[Buffer]. +
   *Default:* `boost::queue`
 |===
-
-'''
 
 == Description
 

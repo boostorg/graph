@@ -41,20 +41,10 @@ xref:overview/graph_theory_review.adoc#sec:adjacency-list-representation[Graph T
 include::example$graph_classes/adjacency_list_usage.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-3 vertices, 3 edges:
-  Paris -> Lyon (460 km)
-  Paris -> Marseille (775 km)
-  Lyon -> Marseille (310 km)
-
-After remove_edge(paris, marseille):
-  Paris -> Lyon (460 km)
-  Lyon -> Marseille (310 km)
-
-After remove_edge(iterator):
-  Paris -> Lyon (460 km)
+include::example$graph_classes/adjacency_list_usage.txt[]
 ....
 
 == Template Parameters

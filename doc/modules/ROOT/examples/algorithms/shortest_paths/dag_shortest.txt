@@ -1,0 +1,5 @@
+distance to 0 = 0
+distance to 1 = 2
+distance to 2 = 6
+distance to 3 = 7
+distance to 4 = 10

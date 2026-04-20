@@ -8,8 +8,7 @@ struct Road { int weight; };
 int main() {
     using namespace boost;
     using Graph = adjacency_list<vecS, vecS, undirectedS, no_property, Road>;
-    using Edge = graph_traits<Graph>::edge_descriptor;
-    using Vertex = graph_traits<Graph>::vertex_descriptor;
+    using Edge  = graph_traits<Graph>::edge_descriptor;
 
     Graph g(5);
     add_edge(0, 1, Road{2}, g);
@@ -20,17 +19,12 @@ int main() {
     add_edge(2, 4, Road{4}, g);
     add_edge(3, 4, Road{6}, g);
 
-    // Call the detail implementation directly to pass a bundled weight map
-    auto n = num_vertices(g);
-    std::vector<std::size_t> rank_vec(n);
-    std::vector<Vertex> parent_vec(n);
-    auto index = get(vertex_index, g);
-    auto rank_map = make_iterator_property_map(rank_vec.begin(), index);
-    auto parent_map = make_iterator_property_map(parent_vec.begin(), index);
-
+    // Named-parameter overload: needed because the weight lives in a bundled
+    // property (not the interior `edge_weight_t` tag that the 2-arg positional
+    // overload would pick up).
     std::vector<Edge> mst;
-    detail::kruskal_mst_impl(g, std::back_inserter(mst),
-        rank_map, parent_map, get(&Road::weight, g));
+    kruskal_minimum_spanning_tree(g, std::back_inserter(mst),
+        weight_map(get(&Road::weight, g)));
 
     int total = 0;
     std::cout << "MST edges:\n";

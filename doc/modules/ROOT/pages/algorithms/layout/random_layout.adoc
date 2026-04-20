@@ -12,7 +12,11 @@ Places the vertices of a graph at random locations within a given topology.
 include::example$algorithms/layout/random_layout.cpp[]
 ----
 
-NOTE: Since positions are randomly generated, the exact coordinates will vary by run.
+*Expected output:*
+
+....
+include::example$algorithms/layout/random_layout.txt[]
+....
 
 '''
 

@@ -14,15 +14,10 @@ high closeness means the vertex can reach all others quickly.
 include::example$algorithms/metrics/closeness_centrality.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-Closeness centrality (1 / sum of shortest distances):
-  vertex 0: 0.0909
-  vertex 1: 0.1000
-  vertex 2: 0.1111
-  vertex 3: 0.0833
-  vertex 4: 0.1000
+include::example$algorithms/metrics/closeness_centrality.txt[]
 ....
 
 '''
@@ -139,8 +134,6 @@ struct closeness_measure
 ----
 
 The default closeness functor: given a summed distance `d`, returns `0` if `d` is the infinite distance marker, otherwise `Reciprocal()(d)`.
-
-'''
 
 == Parameters
 

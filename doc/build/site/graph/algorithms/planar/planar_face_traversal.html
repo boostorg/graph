@@ -1061,8 +1061,10 @@ These calls may be interleaved, all vertex visits may precede all edge visits, o
 #include &lt;vector&gt;
 
 using namespace boost;
-using Graph = adjacency_list&lt;vecS, vecS, undirectedS,
-    property&lt;vertex_index_t, int&gt;, property&lt;edge_index_t, int&gt;&gt;;
+
+struct Edge { int idx; };
+
+using Graph = adjacency_list&lt;vecS, vecS, undirectedS, no_property, Edge&gt;;
 
 struct face_counter : public planar_face_traversal_visitor {
     int count = 0;
@@ -1075,9 +1077,8 @@ int main() {
     add_edge(2, 3, g); add_edge(3, 0, g);
     add_edge(0, 2, g);
 
-    int idx = 0;
-    for (auto e : make_iterator_range(edges(g)))
-        put(edge_index, g, e, idx++);
+    int i = 0;
+    for (auto e : make_iterator_range(edges(g))) { g[e].idx = i++; }
 
     using embedding_t = std::vector&lt;std::vector&lt;graph_traits&lt;Graph&gt;::edge_descriptor&gt;&gt;;
     embedding_t embedding(num_vertices(g));
@@ -1085,13 +1086,13 @@ int main() {
         boyer_myrvold_params::embedding = &amp;embedding[0]);
 
     face_counter visitor;
-    planar_face_traversal(g, &amp;embedding[0], visitor);
+    planar_face_traversal(g, &amp;embedding[0], visitor, get(&amp;Edge::idx, g));
     std::cout &lt;&lt; "Number of faces: " &lt;&lt; visitor.count &lt;&lt; "\n";
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Expected output:</p>
+<p><strong>Expected output:</strong></p>
 </div>
 <div class="literalblock">
 <div class="content">

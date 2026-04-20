@@ -13,10 +13,10 @@ Calculates the maximum flow of a network using the push-relabel algorithm.
 include::example$algorithms/network_flow/push_relabel.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-Push-relabel max flow: 19
+include::example$algorithms/network_flow/push_relabel.txt[]
 ....
 
 '''
@@ -156,8 +156,6 @@ typename property_traits<CapacityEdgeMap>::value_type push_relabel_max_flow(
   `VertexList=listS` does not have an internal `vertex_index` property.
 
 |===
-
-'''
 
 == Description
 

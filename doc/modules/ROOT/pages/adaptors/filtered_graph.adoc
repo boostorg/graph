@@ -21,17 +21,10 @@ been specifically patched to use `std::distance` instead of `num_vertices`.
 include::example$adaptors/filtered_graph.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-Original: 4 edges
-  0 -> 1 (weight=5)
-  0 -> 2 (weight=0)
-  1 -> 3 (weight=3)
-  2 -> 3 (weight=0)
-Filtered (weight > 0):
-  0 -> 1 (weight=5)
-  1 -> 3 (weight=3)
+include::example$adaptors/filtered_graph.txt[]
 ....
 
 == Synopsis

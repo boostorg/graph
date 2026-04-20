@@ -13,24 +13,23 @@ Computes the transpose of a directed graph, reversing the direction of every edg
 include::example$algorithms/utility/transpose_graph.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-Original edges: 0->1 1->2 2->0
-Transposed edges: 1->0 2->1 0->2
+include::example$algorithms/utility/transpose_graph.txt[]
 ....
 
 '''
 
-=== Synopsis
+=== (1) Named parameter version
 
 [source,cpp]
 ----
-template <class VertexListGraph,
-          class MutableGraph>
+template <class VertexListGraph, class MutableGraph,
+          class P, class T, class R>
 void transpose_graph(
     const VertexListGraph& G, MutableGraph& G_T,
-    const bgl_named_params<P, T, R>& params = all defaults)
+    const bgl_named_params<P, T, R>& params);
 ----
 
 [cols="1,2,5"]
@@ -72,6 +71,24 @@ void transpose_graph(
 |===
 
 '''
+
+=== (2) Positional version
+
+[source,cpp]
+----
+template <class VertexListGraph, class MutableGraph>
+void transpose_graph(const VertexListGraph& G, MutableGraph& G_T);
+----
+
+Equivalent to (1) with every named parameter left at its default. Uses the default vertex/edge copiers (via `vertex_all` / `edge_all` property tags) and `get(vertex_index, G)`.
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `const VertexListGraph& G` | Same as (1).
+| OUT | `MutableGraph& G_T` | Same as (1).
+|===
 
 == Description
 

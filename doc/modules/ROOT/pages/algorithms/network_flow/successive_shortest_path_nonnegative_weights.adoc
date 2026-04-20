@@ -5,6 +5,19 @@ Calculates the minimum cost maximum flow of a network with nonnegative edge weig
 *Complexity:* _O(U * (|E| + |V| log |V|))_ for integer capacities with max flow _U_ +
 *Defined in:* `<boost/graph/successive_shortest_path_nonnegative_weights.hpp>`
 
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/network_flow/successive_shortest_path.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/network_flow/successive_shortest_path.txt[]
+....
+
 '''
 
 === (1) Non-named parameter version
@@ -243,8 +256,6 @@ void successive_shortest_path_nonnegative_weights(
 
 |===
 
-'''
-
 == Description
 
 The `successive_shortest_path_nonnegative_weights()` function calculates
@@ -273,19 +284,6 @@ shortest path (in terms of weight) in the residual graph.
 
 In order to find the cost of the result flow use:
 xref:algorithms/network_flow/find_flow_cost.adoc[`find_flow_cost()`].
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/network_flow/successive_shortest_path.cpp[]
-----
-
-Expected output:
-
-....
-Min cost: 10
-....
 
 See also link:../example/successive_shortest_path_nonnegative_weights_example.cpp[`example/successive_shortest_path_nonnegative_weights_example.cpp`]
 for an additional example of using this algorithm.

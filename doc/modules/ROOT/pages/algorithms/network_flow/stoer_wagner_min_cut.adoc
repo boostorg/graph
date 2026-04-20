@@ -13,15 +13,15 @@ Determines a min-cut and the min-cut weight of a connected, undirected graph.
 include::example$algorithms/network_flow/stoer_wagner.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-Stoer-Wagner min cut: 5
+include::example$algorithms/network_flow/stoer_wagner.txt[]
 ....
 
 '''
 
-=== Synopsis
+=== (1) Named parameter version
 
 .A min-cut of a weighted graph having min-cut weight 4
 image::stoer_wagner_imgs/stoer_wagner-example-min-cut.gif[A min-cut of a weighted graph having min-cut weight 4,width=376]
@@ -130,6 +130,39 @@ weight_type stoer_wagner_min_cut(
 |===
 
 '''
+
+=== (2) Positional version (explicit index map)
+
+[source,cpp]
+----
+template <class UndirectedGraph, class WeightMap, class ParityMap,
+          class VertexAssignmentMap, class KeyedUpdatablePriorityQueue,
+          class IndexMap>
+typename property_traits<WeightMap>::value_type
+stoer_wagner_min_cut(
+    const UndirectedGraph& g, WeightMap weights,
+    ParityMap parities, VertexAssignmentMap assignments,
+    KeyedUpdatablePriorityQueue& pq, IndexMap index_map);
+----
+
+Explicit positional form with every working map supplied by the caller. Prefer overload (1) unless you have a reason to pre-allocate the work maps and priority queue.
+
+'''
+
+=== (3) Positional version (default index map)
+
+[source,cpp]
+----
+template <class UndirectedGraph, class WeightMap, class ParityMap,
+          class VertexAssignmentMap, class KeyedUpdatablePriorityQueue>
+typename property_traits<WeightMap>::value_type
+stoer_wagner_min_cut(
+    const UndirectedGraph& g, WeightMap weights,
+    ParityMap parities, VertexAssignmentMap assignments,
+    KeyedUpdatablePriorityQueue& pq);
+----
+
+Lives in namespace `boost::graph`. Same as (2) with `index_map = get(vertex_index, g)`; requires the graph to have an interior `vertex_index_t` property.
 
 == Description
 

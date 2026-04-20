@@ -6,6 +6,19 @@ A traveling salesperson heuristic for generating a tour of vertices for a fully 
 *Complexity:* _O(E log V)_ +
 *Defined in:* `<boost/graph/metric_tsp_approx.hpp>`
 
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/utility/metric_tsp_approx.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/utility/metric_tsp_approx.txt[]
+....
+
 '''
 
 === (1) metric_tsp_approx_from_vertex (full)
@@ -332,8 +345,6 @@ void metric_tsp_approx_from_vertex(
 
 |===
 
-'''
-
 == Description
 
 This is a traveling salesperson heuristic for generating a tour of vertices for a fully connected undirected graph with weighted edges that obey the triangle inequality. The current implementation is based off of the algorithm presented in _Introduction to Algorithms_ on page 1029. This implementation generates solutions that are twice as long as the optimal tour in the worst case. The pseudo-code is listed below.
@@ -350,19 +361,6 @@ TSP-APPROX(G, w)
 ----
 
 The overloads that do not accept a `start` vertex use `*vertices(g).first` as the default starting vertex. The overloads that do not accept a `WeightMap` use `get(edge_weight, g)` as the default. The overloads that do not accept a `VertexIndexMap` use `get(vertex_index, g)` as the default -- if you use this default, make sure your graph has an internal `vertex_index` property (for example, `adjacency_list` with `VertexList=listS` does not have an internal `vertex_index` property).
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/utility/metric_tsp_approx.cpp[]
-----
-
-Expected output:
-
-....
-TSP tour: 0 1 2 3 0
-....
 
 == Notes
 

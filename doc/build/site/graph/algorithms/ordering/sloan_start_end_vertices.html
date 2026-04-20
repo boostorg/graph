@@ -971,15 +971,16 @@ RLS-width.</p>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include &lt;boost/graph/adjacency_list.hpp&gt;
 #include &lt;boost/graph/sloan_ordering.hpp&gt;
-#include &lt;boost/graph/properties.hpp&gt;
 #include &lt;iostream&gt;
 
-// sloan_start_end_vertices requires property tags for color and degree.
 using namespace boost;
-using Graph = adjacency_list&lt;vecS, vecS, undirectedS,
-    property&lt;vertex_color_t, default_color_type,
-    property&lt;vertex_degree_t, int,
-    property&lt;vertex_priority_t, double&gt;&gt;&gt;&gt;;
+
+struct VertexData {
+    default_color_type color;
+    int degree;
+};
+
+using Graph = adjacency_list&lt;vecS, vecS, undirectedS, VertexData&gt;;
 using Vertex = graph_traits&lt;Graph&gt;::vertex_descriptor;
 
 int main() {
@@ -988,14 +989,15 @@ int main() {
     add_edge(2, 3, g); add_edge(3, 4, g);
     add_edge(4, 5, g); add_edge(0, 5, g);
 
-    // The degree map must be initialized with actual vertex degrees.
-    auto deg = get(vertex_degree, g);
+    // sloan_start_end_vertices reads the degree field, so populate it first.
+    auto deg = get(&amp;VertexData::degree, g);
     for (auto v : make_iterator_range(vertices(g))) {
         put(deg, v, static_cast&lt;int&gt;(out_degree(v, g)));
     }
 
     Vertex s = *vertices(g).first;
-    Vertex e = sloan_start_end_vertices(g, s, get(vertex_color, g), deg);
+    Vertex e = sloan_start_end_vertices(g, s,
+        get(&amp;VertexData::color, g), deg);
 
     std::cout &lt;&lt; "Start vertex: " &lt;&lt; s &lt;&lt; "\n";
     std::cout &lt;&lt; "End vertex:   " &lt;&lt; e &lt;&lt; "\n";
@@ -1003,7 +1005,7 @@ int main() {
 </div>
 </div>
 <div class="paragraph">
-<p>Expected output:</p>
+<p><strong>Expected output:</strong></p>
 </div>
 <div class="literalblock">
 <div class="content">

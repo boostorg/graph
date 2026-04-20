@@ -7,6 +7,19 @@ the direct edge is redundant and is removed.
 *Complexity:* O(V * (V + E)) +
 *Defined in:* `<boost/graph/transitive_reduction.hpp>`
 
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/utility/transitive_reduction.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/utility/transitive_reduction.txt[]
+....
+
 == Synopsis
 
 [source,cpp]
@@ -41,16 +54,3 @@ void transitive_reduction(const Graph& g, GraphTR& tr,
 
 WARNING: The input graph must be a DAG. Behavior is undefined on graphs with
 cycles.
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/utility/transitive_reduction.cpp[]
-----
-
-.Expected output
-----
-Before (5 edges): 0->1 0->2 0->3 1->2 2->3
-After  (3 edges): 0->1 1->2 2->3
-----

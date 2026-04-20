@@ -1,0 +1,2 @@
+Edges before: 5
+Edges after make_maximal_planar: 6

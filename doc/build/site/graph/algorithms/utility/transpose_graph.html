@@ -926,7 +926,7 @@ int main() {
 </div>
 </div>
 <div class="paragraph">
-<p>Expected output:</p>
+<p><strong>Expected output:</strong></p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -936,14 +936,14 @@ Transposed edges: 1-&gt;0 2-&gt;1 0-&gt;2</pre>
 </div>
 <hr>
 <div class="sect2">
-<h3 id="_synopsis"><a class="anchor" href="#_synopsis"></a>Synopsis</h3>
+<h3 id="_1_named_parameter_version"><a class="anchor" href="#_1_named_parameter_version"></a>(1) Named parameter version</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;class VertexListGraph,
-          class MutableGraph&gt;
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;class VertexListGraph, class MutableGraph,
+          class P, class T, class R&gt;
 void transpose_graph(
     const VertexListGraph&amp; G, MutableGraph&amp; G_T,
-    const bgl_named_params&lt;P, T, R&gt;&amp; params = all defaults)</code></pre>
+    const bgl_named_params&lt;P, T, R&gt;&amp; params);</code></pre>
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -1016,6 +1016,45 @@ void transpose_graph(
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>orig_to_copy(Orig2CopyMap c)</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">This maps vertices in the original graph to vertices in the copy.<br>
   <strong>Default:</strong> an <a href="https://www.boost.org/libs/property_map/doc/iterator_property_map.html">iterator_property_map</a> created from a <code>std::vector</code> of the output graph&#8217;s vertex descriptor type of size <code>num_vertices(g)</code> and using the <code>i_map</code> for the index map.</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_2_positional_version"><a class="anchor" href="#_2_positional_version"></a>(2) Positional version</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;class VertexListGraph, class MutableGraph&gt;
+void transpose_graph(const VertexListGraph&amp; G, MutableGraph&amp; G_T);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Equivalent to (1) with every named parameter left at its default. Uses the default vertex/edge copiers (via <code>vertex_all</code> / <code>edge_all</code> property tags) and <code>get(vertex_index, G)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 12.5%;">
+<col style="width: 25%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Direction</th>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const VertexListGraph&amp; G</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Same as (1).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MutableGraph&amp; G_T</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Same as (1).</p></td>
 </tr>
 </tbody>
 </table>

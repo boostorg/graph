@@ -49,14 +49,8 @@ direction, violating the degree guarantee of the model.
 include::example$generators/small_world.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-6 vertices, 6 edges
-  0 -- 1
-  1 -- 3
-  2 -- 3
-  3 -- 4
-  4 -- 5
-  5 -- 0
+include::example$generators/small_world.txt[]
 ....

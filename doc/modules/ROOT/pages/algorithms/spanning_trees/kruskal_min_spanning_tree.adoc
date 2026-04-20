@@ -13,15 +13,10 @@ Find a minimum spanning tree in an undirected graph with weighted edges using Kr
 include::example$algorithms/spanning_trees/kruskal.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-MST edges:
-  0 -- 3 (weight 1)
-  0 -- 1 (weight 2)
-  1 -- 2 (weight 3)
-  2 -- 4 (weight 4)
-Total weight: 10
+include::example$algorithms/spanning_trees/kruskal.txt[]
 ....
 
 '''
@@ -67,6 +62,28 @@ Note: if you use this default, make sure your graph has an internal `vertex_inde
 |===
 
 '''
+
+=== (2) Positional version
+
+[source,cpp]
+----
+template <class Graph, class OutputIterator>
+OutputIterator
+kruskal_minimum_spanning_tree(
+    const Graph& g, OutputIterator spanning_tree_edges);
+----
+
+Equivalent to (1) with every named parameter left at its default. Internally calls `get(edge_weight, g)` and `get(vertex_index, g)`, so the graph must have both interior properties (this is automatic for `adjacency_list` with `vecS` vertex storage, but you must declare `vertex_index_t` when using `listS` / `setS`).
+
+If you need to supply a weight map or a custom disjoint-sets backing, use overload (1).
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `const Graph& g` | Same concept requirements as (1).
+| IN | `OutputIterator spanning_tree_edges` | Same as (1).
+|===
 
 == Description
 

@@ -21,10 +21,11 @@ compiler to give them the reverse adjacency iterator for free.
 include::example$iterators/inv_adjacency_iterator.cpp[]
 ----
 
-.Expected output
-----
-predecessors of 0: 1 2 3
-----
+*Expected output:*
+
+....
+include::example$iterators/inv_adjacency_iterator.txt[]
+....
 
 For any existing BGL graph class you never need to instantiate the
 generator — the class already exposes

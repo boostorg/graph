@@ -6,6 +6,19 @@ Computes the biconnected components and articulation points of an undirected gra
 *Complexity:* _O(V + E)_ +
 *Defined in:* `<boost/graph/biconnected_components.hpp>`
 
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/connected_components/biconnected.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/connected_components/biconnected.txt[]
+....
+
 '''
 
 === biconnected_components (1)
@@ -218,8 +231,6 @@ Named Parameters::
 *Default:* `dfs_visitor<null_visitor>`
 |===
 
-'''
-
 == Description
 
 A connected graph is _biconnected_ if the removal of any single vertex (and all edges incident on that vertex) can not disconnect the graph. More generally, the biconnected components of a graph are the maximal subsets of vertices such that the removal of a vertex from a particular component will not disconnect the component. Unlike connected components, vertices may belong to multiple biconnected components: those vertices that belong to more than one biconnected component are called _articulation points_ or, equivalently, _cut vertices_. Articulation points are vertices whose removal would increase the number of connected components in the graph. Thus, a graph without articulation points is biconnected. The following figure illustrates the articulation points and biconnected components of a small graph:
@@ -237,24 +248,6 @@ Depending on the overload:
 * `biconnected_components` overloads returning `std::pair<std::size_t, OutputIterator>` return the number of biconnected components and the output iterator past the last articulation point written.
 * `biconnected_components` overloads returning `std::size_t` return the number of biconnected components.
 * `articulation_points` overloads return the `OutputIterator` past the last articulation point written.
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/connected_components/biconnected.cpp[]
-----
-
-.Expected output
-----
-Biconnected components: 2
-  0-1 component 1
-  1-2 component 1
-  2-0 component 1
-  2-3 component 0
-  3-4 component 0
-  4-2 component 0
-----
 
 == Notes
 

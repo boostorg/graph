@@ -1163,24 +1163,30 @@ algorithm doesn&#8217;t have to know it.</p>
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include &lt;boost/graph/adjacency_list.hpp&gt;
 #include &lt;boost/graph/cycle_canceling.hpp&gt;
 #include &lt;boost/graph/edmonds_karp_max_flow.hpp&gt;
+#include &lt;boost/graph/find_flow_cost.hpp&gt;
 #include &lt;iostream&gt;
+#include &lt;vector&gt;
 
 using namespace boost;
 
 using Traits = adjacency_list_traits&lt;vecS, vecS, directedS&gt;;
-using Graph = adjacency_list&lt;vecS, vecS, directedS, no_property,
-    property&lt;edge_capacity_t, int,
-    property&lt;edge_residual_capacity_t, int,
-    property&lt;edge_weight_t, int,
-    property&lt;edge_reverse_t, Traits::edge_descriptor&gt;&gt;&gt;&gt;&gt;;
-using Edge = Traits::edge_descriptor;
+struct Edge {
+    int capacity;
+    int residual_capacity;
+    int weight;
+    Traits::edge_descriptor reverse;
+};
+
+using Graph = adjacency_list&lt;vecS, vecS, directedS, no_property, Edge&gt;;
+using Descriptor = graph_traits&lt;Graph&gt;::edge_descriptor;
+using Vertex = graph_traits&lt;Graph&gt;::vertex_descriptor;
 
 void add_edge_pair(Graph&amp; g, int u, int v, int cap, int cost) {
-    Edge e = add_edge(u, v, g).first;
-    Edge r = add_edge(v, u, g).first;
-    put(edge_capacity, g, e, cap);  put(edge_capacity, g, r, 0);
-    put(edge_weight, g, e, cost);   put(edge_weight, g, r, -cost);
-    put(edge_reverse, g, e, r);     put(edge_reverse, g, r, e);
+    Descriptor e = add_edge(u, v, g).first;
+    Descriptor r = add_edge(v, u, g).first;
+    g[e].capacity = cap;  g[r].capacity = 0;
+    g[e].weight = cost;   g[r].weight = -cost;
+    g[e].reverse = r;     g[r].reverse = e;
 }
 
 int main() {
@@ -1190,15 +1196,31 @@ int main() {
     add_edge_pair(g, 1, 3, 2, 2);
     add_edge_pair(g, 2, 3, 3, 1);
 
-    edmonds_karp_max_flow(g, 0, 3);
-    cycle_canceling(g);
-    int cost = find_flow_cost(g);
+    auto cap = get(&amp;Edge::capacity, g);
+    auto res = get(&amp;Edge::residual_capacity, g);
+    auto rev = get(&amp;Edge::reverse, g);
+    auto wgt = get(&amp;Edge::weight, g);
+
+    std::vector&lt;default_color_type&gt; color(num_vertices(g));
+    std::vector&lt;Descriptor&gt; pred(num_vertices(g));
+    std::vector&lt;int&gt; dist(num_vertices(g));
+    auto idx = get(vertex_index, g);
+
+    edmonds_karp_max_flow(g, Vertex(0), Vertex(3), cap, res, rev,
+        make_iterator_property_map(color.begin(), idx),
+        make_iterator_property_map(pred.begin(), idx));
+
+    cycle_canceling(g, wgt, rev, res,
+        make_iterator_property_map(pred.begin(), idx),
+        make_iterator_property_map(dist.begin(), idx));
+
+    int cost = find_flow_cost(g, cap, res, wgt);
     std::cout &lt;&lt; "Min cost: " &lt;&lt; cost &lt;&lt; "\n";
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Expected output:</p>
+<p><strong>Expected output:</strong></p>
 </div>
 <div class="literalblock">
 <div class="content">

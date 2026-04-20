@@ -6,9 +6,20 @@ Computes a canonical ordering of the vertices of a maximal planar graph.
 *Complexity:* _O(n + m)_ +
 *Defined in:* `<boost/graph/planar_canonical_ordering.hpp>`
 
-'''
+== Example
 
-=== Synopsis
+[source,cpp]
+----
+include::example$algorithms/planar/canonical_ordering.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/planar/canonical_ordering.txt[]
+....
+
+== Synopsis
 
 [source,cpp]
 ----
@@ -48,8 +59,6 @@ void planar_canonical_ordering(
   *Default*: `get(vertex_index, g)`
 |===
 
-'''
-
 == Description
 
 A _planar canonical ordering_ is an ordering _v~1~, v~2~, ..., v~n~_ of the vertices of a xref:algorithms/planar/make_maximal_planar.adoc[maximal] xref:algorithms/planar/planar_graphs.adoc[planar] graph having the property that, for each _k_, _3 \<= k < n_, the graph induced by _v~1~, v~2~, ..., v~k~_:
@@ -67,19 +76,6 @@ A planar canonical ordering exists for every maximal planar graph with at least 
 
 The planar canonical ordering is used as an input in some planar graph drawing algorithms, particularly those that create a straight line embedding.
 de Fraysseix, Pach, and Pollack [xref:about/bibliography.adoc#defraysseixpachpollack90[72]] first proved the existence of such an ordering and showed how to compute one in time _O(n)_ on a maximal planar graph with _n_ vertices.
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/planar/canonical_ordering.cpp[]
-----
-
-Expected output:
-
-....
-Planar canonical ordering: 0 1 2
-....
 
 See also link:../example/canonical_ordering.cpp[`example/canonical_ordering.cpp`].
 

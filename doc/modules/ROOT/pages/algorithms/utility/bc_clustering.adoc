@@ -5,6 +5,19 @@ Graph clustering based on edge betweenness centrality.
 *Complexity:* _O(VE)_ per iteration (unweighted) +
 *Defined in:* `<boost/graph/bc_clustering.hpp>`
 
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/utility/bc_clustering.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/utility/bc_clustering.txt[]
+....
+
 '''
 
 === (1) Full version
@@ -126,8 +139,6 @@ void betweenness_centrality_clustering(
 The edge centrality map defaults to a `dummy_property_map`, which requires no work to compute and returns no answer.
 The vertex index defaults to `get(vertex_index, g)`.
 
-'''
-
 == Description
 
 This algorithm implements graph clustering based on edge betweenness centrality.
@@ -137,23 +148,4 @@ xref:algorithms/metrics/betweenness_centrality.adoc[brandes_betweenness_centrali
 and removes the edge with the maximum betweenness centrality. The `done`
 function object determines when the algorithm terminates (the edge found
 when the algorithm terminates will not be removed).
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/utility/bc_clustering.cpp[]
-----
-
-Expected output:
-
-....
-Clusters: 6
-  vertex 0 -> cluster 0
-  vertex 1 -> cluster 1
-  vertex 2 -> cluster 2
-  vertex 3 -> cluster 3
-  vertex 4 -> cluster 4
-  vertex 5 -> cluster 5
-....
 

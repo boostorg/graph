@@ -1,0 +1,1 @@
+sum of out-degrees = 3

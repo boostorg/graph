@@ -1,0 +1,11 @@
+3 vertices, 3 edges:
+  Paris -> Lyon (460 km)
+  Paris -> Marseille (775 km)
+  Lyon -> Marseille (310 km)
+
+After remove_edge(paris, marseille):
+  Paris -> Lyon (460 km)
+  Lyon -> Marseille (310 km)
+
+After remove_edge(iterator):
+  Paris -> Lyon (460 km)

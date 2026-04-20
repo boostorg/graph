@@ -924,7 +924,7 @@ int main() {
 </div>
 </div>
 <div class="paragraph">
-<p>Expected output:</p>
+<p><strong>Expected output:</strong></p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -1020,18 +1020,116 @@ strong_components(
 </tr>
 </tbody>
 </table>
-<div class="admonitionblock note">
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_2_positional_version"><a class="anchor" href="#_2_positional_version"></a>(2) Positional version</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;class Graph, class ComponentMap&gt;
+typename property_traits&lt;ComponentMap&gt;::value_type
+strong_components(const Graph&amp; g, ComponentMap comp);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Equivalent to (1) with every named parameter left at its default. Uses <code>get(vertex_index, g)</code> for the index map and internally allocated maps for the root / discover-time / color work arrays.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 12.5%;">
+<col style="width: 25%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Direction</th>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const Graph&amp; g</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Same concept requirements as (1).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ComponentMap comp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Same as (1).</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_3_kosaraju_strong_components"><a class="anchor" href="#_3_kosaraju_strong_components"></a>(3) <code>kosaraju_strong_components</code></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;class Graph, class DFSVisitor, class ComponentsMap,
+          class DiscoverTime, class FinishTime, class ColorMap&gt;
+typename property_traits&lt;ComponentsMap&gt;::value_type
+kosaraju_strong_components(
+    Graph&amp; G, ComponentsMap c,
+    FinishTime finish_time, ColorMap color);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Alternate implementation using Kosaraju&#8217;s two-DFS-forest algorithm (CLR / Aho-Hopcroft-Ullman). Slower than Tarjan&#8217;s by a constant factor, uses more memory, and requires the graph to model <a href="../../concepts/MutableGraph.html" class="xref page">Mutable Graph</a>.</p>
+</div>
+<div class="admonitionblock warning">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-note" title="Note"></i>
+<i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-There is not a non-named parameter version of this function.
+The template has six parameters but the function signature only
+uses four — <code>DFSVisitor</code> and <code>DiscoverTime</code> are declared yet neither
+deducible from the function arguments nor referenced in the body. Calling
+this function therefore requires explicit template argument specification,
+and there are no uses of <code>kosaraju_strong_components</code> anywhere in the
+Boost tree itself. Prefer overloads (1) or (2) above.
 </td>
 </tr>
 </table>
 </div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 12.5%;">
+<col style="width: 25%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Direction</th>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN/OUT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Graph&amp; G</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A directed graph modelling <a href="../../concepts/MutableGraph.html" class="xref page">Mutable Graph</a>. The algorithm temporarily transposes the graph internally.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ComponentsMap c</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Per-vertex component index. Same requirements as <code>ComponentMap</code> in (1).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UTIL</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>FinishTime finish_time</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Read/Write property map. Stores DFS finish timestamps used to order the second pass.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UTIL</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ColorMap color</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Read/Write property map with <code>default_color_type</code> values. Used by both DFS passes.</p></td>
+</tr>
+</tbody>
+</table>
 <hr>
 </div>
 </div>

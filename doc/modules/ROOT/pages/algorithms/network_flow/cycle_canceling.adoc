@@ -5,6 +5,19 @@ Calculates the minimum cost flow of a network with given flow by iteratively can
 *Complexity:* _O(C * |V| * |E|)_ for integer capacities/weights, where _C_ is the initial flow cost +
 *Defined in:* `<boost/graph/cycle_canceling.hpp>`
 
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/network_flow/cycle_canceling.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/network_flow/cycle_canceling.txt[]
+....
+
 '''
 
 === (1) Non-named parameter version
@@ -171,8 +184,6 @@ void cycle_canceling(
 
 |===
 
-'''
-
 == Description
 
 The `cycle_canceling()` function calculates the minimum cost flow of a network
@@ -211,17 +222,4 @@ algorithm doesn't have to know it.
 
 In order to find the cost of the result flow use:
 xref:algorithms/network_flow/find_flow_cost.adoc[`find_flow_cost()`].
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/network_flow/cycle_canceling.cpp[]
-----
-
-Expected output:
-
-....
-Min cost: 10
-....
 

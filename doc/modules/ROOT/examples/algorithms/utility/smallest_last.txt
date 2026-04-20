@@ -1,0 +1,6 @@
+Smallest-last ordering:
+  position 0: vertex 0
+  position 1: vertex 1
+  position 2: vertex 2
+  position 3: vertex 3
+  position 4: vertex 4

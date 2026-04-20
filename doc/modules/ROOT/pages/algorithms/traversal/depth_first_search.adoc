@@ -13,17 +13,10 @@ Performs a depth-first traversal of the vertices in a directed graph.
 include::example$algorithms/traversal/dfs.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-discover 0
-discover 1
-discover 3
-finish   3
-finish   1
-discover 2
-finish   2
-finish   0
+include::example$algorithms/traversal/dfs.txt[]
 ....
 
 '''
@@ -150,8 +143,6 @@ void depth_first_search(Graph& G,
   `vertex_index` property. For example, `adjacency_list` with `VertexList=listS`
   does not have an internal `vertex_index` property.
 |===
-
-'''
 
 == Description
 

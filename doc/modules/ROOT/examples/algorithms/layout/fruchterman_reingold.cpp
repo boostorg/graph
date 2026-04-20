@@ -5,9 +5,8 @@
 #include <vector>
 
 using namespace boost;
+using Graph = adjacency_list<vecS, vecS, undirectedS>;
 using Point = rectangle_topology<>::point_type;
-using Graph = adjacency_list<vecS, vecS, undirectedS, property<vertex_index_t, int>>;
-using Vertex = graph_traits<Graph>::vertex_descriptor;
 
 int main() {
     Graph g(5);

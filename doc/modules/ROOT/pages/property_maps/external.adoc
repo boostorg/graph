@@ -45,13 +45,10 @@ An undersized vector causes undefined behavior with no compile-time warning.
 include::example$property_maps/external_vector.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-d[0] = 0
-d[1] = 1
-d[2] = 3
-d[3] = 6
+include::example$property_maps/external_vector.txt[]
 ....
 
 == Raw arrays
@@ -65,13 +62,10 @@ needed.
 include::example$property_maps/external_array.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-d[0] = 0
-d[1] = 1
-d[2] = 3
-d[3] = 6
+include::example$property_maps/external_array.txt[]
 ....
 
 == Edge-based external properties
@@ -85,14 +79,10 @@ index map.
 include::example$property_maps/external_edge.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-0 -> 1  capacity=10  flow=8
-0 -> 2  capacity=20  flow=12
-1 -> 2  capacity=30  flow=25
-1 -> 3  capacity=40  flow=32
-2 -> 3  capacity=50  flow=45
+include::example$property_maps/external_edge.txt[]
 ....
 
 == std::map for non-integer keys
@@ -114,12 +104,9 @@ call `my_map[v]` and `my_map[v] = val` respectively.
 include::example$property_maps/external_assoc.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-depth = 0
-depth = 1
-depth = 1
-depth = 2
+include::example$property_maps/external_assoc.txt[]
 ....
 

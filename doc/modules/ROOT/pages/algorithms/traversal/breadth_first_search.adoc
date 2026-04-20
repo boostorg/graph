@@ -13,10 +13,10 @@ Performs a breadth-first traversal of a directed or undirected graph.
 include::example$algorithms/traversal/bfs.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-BFS discovery order: 0 1 2 3 4
+include::example$algorithms/traversal/bfs.txt[]
 ....
 
 '''
@@ -137,8 +137,6 @@ void breadth_first_search(Graph& G,
   The `value_type` of the buffer must be the `vertex_descriptor` type for the graph. +
   *Default:* `boost::queue`
 |===
-
-'''
 
 == Description
 

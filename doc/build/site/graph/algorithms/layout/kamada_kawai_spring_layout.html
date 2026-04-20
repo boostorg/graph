@@ -905,17 +905,18 @@
 #include &lt;vector&gt;
 #include &lt;iomanip&gt;
 
+struct Spring { double length; };
+
 int main() {
     using namespace boost;
-    using Graph = adjacency_list&lt;vecS, vecS, undirectedS,
-        no_property, property&lt;edge_weight_t, double&gt;&gt;;
+    using Graph = adjacency_list&lt;vecS, vecS, undirectedS, no_property, Spring&gt;;
 
     Graph g(5);
-    add_edge(0, 1, 1.0, g);
-    add_edge(1, 2, 1.0, g);
-    add_edge(2, 3, 1.0, g);
-    add_edge(3, 4, 1.0, g);
-    add_edge(4, 0, 1.0, g);
+    add_edge(0, 1, Spring{1.0}, g);
+    add_edge(1, 2, Spring{1.0}, g);
+    add_edge(2, 3, Spring{1.0}, g);
+    add_edge(3, 4, Spring{1.0}, g);
+    add_edge(4, 0, Spring{1.0}, g);
 
     using Topo = rectangle_topology&lt;&gt;;
     Topo topo(0.0, 0.0, 100.0, 100.0);
@@ -926,7 +927,8 @@ int main() {
 
     circle_graph_layout(g, pos_map, 25.0);
 
-    bool ok = kamada_kawai_spring_layout(g, pos_map, get(edge_weight, g),
+    // Bundled spring-length via member pointer — no edge_weight_t tag needed.
+    bool ok = kamada_kawai_spring_layout(g, pos_map, get(&amp;Spring::length, g),
         topo, side_length(50.0), layout_tolerance&lt;double&gt;(0.1));
 
     std::cout &lt;&lt; std::fixed &lt;&lt; std::setprecision(1);
@@ -938,18 +940,18 @@ int main() {
 }</code></pre>
 </div>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Vertex positions depend on the initial layout and convergence. Output
-may vary between runs.
-</td>
-</tr>
-</table>
+<div class="paragraph">
+<p><strong>Expected output:</strong></p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>converged: yes
+vertex 0: (21.7, -0.0)
+vertex 1: (7.7, 23.8)
+vertex 2: (-20.2, 14.7)
+vertex 3: (-20.2, -14.7)
+vertex 4: (5.8, -22.0)</pre>
+</div>
 </div>
 <hr>
 <div class="sect2">

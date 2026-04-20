@@ -6,6 +6,19 @@ Builds the dominator tree for a directed graph using the Lengauer-Tarjan algorit
 *Complexity:* _O((V+E)log(V+E))_ +
 *Defined in:* `<boost/graph/dominator_tree.hpp>`
 
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/utility/lengauer_tarjan.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/utility/lengauer_tarjan.txt[]
+....
+
 '''
 
 === (1) Simple version
@@ -180,8 +193,6 @@ void lengauer_tarjan_dominator_tree_without_dfs(
 
 |===
 
-'''
-
 == Description
 
 This algorithm [xref:about/bibliography.adoc#lengauer-tarjan79[65],xref:about/bibliography.adoc#muchnick97[66],xref:about/bibliography.adoc#appel98[67]]
@@ -223,24 +234,6 @@ an intermediate step, finding the semidominator which is relatively easier
 to evaluate than the immediate dominator, and the second one is path
 compression. For the detail of the algorithm, see
 [xref:about/bibliography.adoc#lengauer-tarjan79[65]].
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/utility/lengauer_tarjan.cpp[]
-----
-
-.Expected output
-----
-Immediate dominators (entry = 0):
-  idom(0) = none (entry)
-  idom(1) = 0
-  idom(2) = 0
-  idom(3) = 0
-  idom(4) = 3
-  idom(5) = 4
-----
 
 == Notes
 

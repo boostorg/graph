@@ -56,13 +56,10 @@ only). Choose the right constructor variant carefully.
 include::example$graph_classes/csr_usage.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-Paris -> Lyon (460 km)
-Paris -> Marseille (775 km)
-Lyon -> Marseille (310 km)
-Marseille -> Nice (200 km)
+include::example$graph_classes/csr_usage.txt[]
 ....
 
 == Template Parameters
@@ -365,8 +362,6 @@ const EdgeProperty& operator[](edge_descriptor e) const;
 
 Retrieves the property value associated with edge `e`. Only valid when
 `EdgeProperty` is a class type other than `no_property`.
-
-'''
 
 == Non-Member Functions
 
@@ -677,8 +672,6 @@ _(directed only)_
 Adds edges from `[first, last)` with edge properties from `ep_iter`.
 `BidirectionalIterator` and `EPIter` must both model BidirectionalIterator.
 Edges *must* be sorted in increasing order by source vertex index.
-
-'''
 
 == Associated Types
 

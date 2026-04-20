@@ -1,0 +1,6 @@
+Number of strongly connected components: 3
+  Vertex 0 -> component 2
+  Vertex 1 -> component 2
+  Vertex 2 -> component 2
+  Vertex 3 -> component 1
+  Vertex 4 -> component 0

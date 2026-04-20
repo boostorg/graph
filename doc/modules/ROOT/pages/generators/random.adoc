@@ -12,14 +12,10 @@ randomize properties.
 include::example$generators/random_utilities.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-5 vertices, 8 edges
-random vertex: 1
-random edge: 0 -> 2
-random out-edge of 0: 0 -> 2
-weighted random out-edge of 0: 0 -> 2
+include::example$generators/random_utilities.txt[]
 ....
 
 == generate_random_graph
@@ -45,8 +41,6 @@ template <typename MutableGraph, typename RandNumGen, typename VertexOutputItera
 void generate_random_graph(MutableGraph& g, vertices_size_type V, vertices_size_type E, RandNumGen& gen, VertexOutputIterator vertex_out, EdgeOutputIterator edge_out, bool self_edges = false);
 ----
 
-'''
-
 == random_vertex
 
 [source,cpp]
@@ -59,8 +53,6 @@ Returns a uniformly random vertex from `g`.
 
 *Precondition:* `num_vertices(g) > 0` +
 *Complexity:* _O(num_vertices(g))_
-
-'''
 
 == random_edge
 
@@ -75,8 +67,6 @@ Returns a uniformly random edge from `g`.
 *Precondition:* `num_edges(g) > 0` +
 *Complexity:* _O(num_edges(g))_
 
-'''
-
 == random_out_edge
 
 [source,cpp]
@@ -90,8 +80,6 @@ Returns a uniformly random out-edge of vertex `src`.
 *Precondition:* `out_degree(src, g) > 0` +
 *Complexity:* _O(out_degree(src, g))_
 
-'''
-
 == weighted_random_out_edge
 
 [source,cpp]
@@ -104,8 +92,6 @@ Returns a random out-edge of vertex `src`, where each edge is selected with prob
 
 *Precondition:* `out_degree(src, g) > 0` and total weight > 0 +
 *Complexity:* _O(out_degree(src, g))_
-
-'''
 
 == randomize_property
 

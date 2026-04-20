@@ -6,9 +6,20 @@ Adds a minimal set of edges to make an undirected graph connected.
 *Complexity:* _O(n + m)_ +
 *Defined in:* `<boost/graph/make_connected.hpp>`
 
-'''
+== Example
 
-=== Synopsis
+[source,cpp]
+----
+include::example$algorithms/planar/make_connected.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/planar/make_connected.txt[]
+....
+
+== Synopsis
 
 [source,cpp]
 ----
@@ -44,8 +55,6 @@ void make_connected(
   dispatch its calls to `add_edge`.
 |===
 
-'''
-
 == Description
 
 An undirected graph _G_ is connected if, for every pair of vertices _u,v_ in _G_, there is a path from _u_ to _v_.
@@ -66,18 +75,4 @@ void visit_vertex_pair(Vertex u, Vertex v, Graph& g);
 
 This event point can also be used as a hook to update the underlying edge index map automatically as edges are added.
 See the documentation for the xref:visitors/AddEdgeVisitor.adoc[AddEdgeVisitor] concept for more information.
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/planar/make_connected.cpp[]
-----
-
-Expected output:
-
-....
-Edges before: 3
-Edges after:  5
-....
 

@@ -14,15 +14,10 @@ Computes the strongly connected components of a directed graph using Tarjan's al
 include::example$algorithms/connected_components/strong.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-Number of strongly connected components: 3
-  Vertex 0 -> component 2
-  Vertex 1 -> component 2
-  Vertex 2 -> component 2
-  Vertex 3 -> component 1
-  Vertex 4 -> component 0
+include::example$algorithms/connected_components/strong.txt[]
 ....
 
 '''
@@ -63,9 +58,59 @@ Named Parameters::
 *Default:* `get(vertex_index, g)`. Note: if you use this default, make sure your graph has an internal `vertex_index` property. For example, `adjacency_list` with `VertexList=listS` does not have an internal `vertex_index` property.
 |===
 
-NOTE: There is not a non-named parameter version of this function.
+'''
+
+=== (2) Positional version
+
+[source,cpp]
+----
+template <class Graph, class ComponentMap>
+typename property_traits<ComponentMap>::value_type
+strong_components(const Graph& g, ComponentMap comp);
+----
+
+Equivalent to (1) with every named parameter left at its default. Uses `get(vertex_index, g)` for the index map and internally allocated maps for the root / discover-time / color work arrays.
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `const Graph& g` | Same concept requirements as (1).
+| OUT | `ComponentMap comp` | Same as (1).
+|===
 
 '''
+
+=== (3) `kosaraju_strong_components`
+
+[source,cpp]
+----
+template <class Graph, class DFSVisitor, class ComponentsMap,
+          class DiscoverTime, class FinishTime, class ColorMap>
+typename property_traits<ComponentsMap>::value_type
+kosaraju_strong_components(
+    Graph& G, ComponentsMap c,
+    FinishTime finish_time, ColorMap color);
+----
+
+Alternate implementation using Kosaraju's two-DFS-forest algorithm (CLR / Aho-Hopcroft-Ullman). Slower than Tarjan's by a constant factor, uses more memory, and requires the graph to model xref:concepts/MutableGraph.adoc[Mutable Graph].
+
+WARNING: The template has six parameters but the function signature only
+uses four — `DFSVisitor` and `DiscoverTime` are declared yet neither
+deducible from the function arguments nor referenced in the body. Calling
+this function therefore requires explicit template argument specification,
+and there are no uses of `kosaraju_strong_components` anywhere in the
+Boost tree itself. Prefer overloads (1) or (2) above.
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN/OUT | `Graph& G` | A directed graph modelling xref:concepts/MutableGraph.adoc[Mutable Graph]. The algorithm temporarily transposes the graph internally.
+| OUT | `ComponentsMap c` | Per-vertex component index. Same requirements as `ComponentMap` in (1).
+| UTIL | `FinishTime finish_time` | Read/Write property map. Stores DFS finish timestamps used to order the second pass.
+| UTIL | `ColorMap color` | Read/Write property map with `default_color_type` values. Used by both DFS passes.
+|===
 
 == Description
 

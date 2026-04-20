@@ -6,6 +6,19 @@ Tests whether a graph is planar, optionally computing a planar embedding or isol
 *Complexity:* _O(n)_ for most cases; _O(n+m)_ when Kuratowski isolation is requested on dense graphs +
 *Defined in:* `<boost/graph/boyer_myrvold_planar_test.hpp>`
 
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/planar/boyer_myrvold.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/planar/boyer_myrvold.txt[]
+....
+
 '''
 
 === (1) Simple planarity test
@@ -80,8 +93,6 @@ bool boyer_myrvold_planarity_test(
 These named parameters all belong to the namespace `boyer_myrvold_params`.
 The algorithm is optimized at compile time based on which parameters are present.
 
-'''
-
 == Description
 
 The function `boyer_myrvold_planarity_test` implements the planarity testing/embedding algorithm of Boyer and Myrvold [xref:about/bibliography.adoc#boyermyrvold04[70]].
@@ -108,19 +119,6 @@ This set of edges can be passed to the function xref:algorithms/planar/is_kurato
 == Returns
 
 `true` if the input graph is planar, `false` otherwise.
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/planar/boyer_myrvold.cpp[]
-----
-
-.Expected output
-----
-K4 is planar: true
-K5 is planar: false
-----
 
 == Notes
 

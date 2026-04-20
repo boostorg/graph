@@ -13,14 +13,10 @@ eccentricity) and diameter (maximum eccentricity).
 include::example$algorithms/metrics/eccentricity.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-Radius: 3, Diameter: 4
-eccentricity[0] = 4
-eccentricity[1] = 3
-eccentricity[2] = 3
-eccentricity[3] = 4
+include::example$algorithms/metrics/eccentricity.txt[]
 ....
 
 === (1) eccentricity with explicit combinator
@@ -103,8 +99,6 @@ diameter(const Graph& g, EccentricityMap ecc);
 ----
 
 Returns only the diameter (`.second` of `radius_and_diameter`).
-
-'''
 
 == Parameters
 

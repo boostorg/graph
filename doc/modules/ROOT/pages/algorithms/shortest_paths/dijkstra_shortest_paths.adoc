@@ -6,6 +6,19 @@ Solves the single-source shortest-paths problem on a weighted, directed or undir
 *Complexity:* _O(V log V + E)_ +
 *Defined in:* `<boost/graph/dijkstra_shortest_paths.hpp>`
 
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/shortest_paths/dijkstra_bundled.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/shortest_paths/dijkstra_bundled.txt[]
+....
+
 '''
 
 === (1) Non-named parameter version
@@ -266,8 +279,6 @@ void dijkstra_shortest_paths(
 
 |===
 
-'''
-
 == Description
 
 This algorithm [xref:about/bibliography.adoc#dijkstra59[10],xref:about/bibliography.adoc#clr90[8]]
@@ -413,22 +424,6 @@ finish vertex u
   relaxed (see above).
 * *`vis.finish_vertex(u, g)`* is invoked on a vertex after all of
   its out edges have been examined.
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/shortest_paths/dijkstra_bundled.cpp[]
-----
-
-Expected output:
-
-....
-distance to 0 = 0
-distance to 1 = 1
-distance to 2 = 3
-distance to 3 = 4
-....
 
 == Notes
 

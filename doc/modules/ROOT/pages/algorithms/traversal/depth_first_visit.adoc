@@ -13,10 +13,10 @@ Visits all vertices in the same connected component as a source vertex using a d
 include::example$algorithms/traversal/dfs_visit.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-DFS visit order: 0 1 3 2 4
+include::example$algorithms/traversal/dfs_visit.txt[]
 ....
 
 '''
@@ -104,8 +104,6 @@ void depth_first_visit(IncidenceGraph& g,
   immediately after the `discover_vertex` visitor event. If `true` is returned,
   the out edges of the vertex are not examined, as if they don't exist.
 |===
-
-'''
 
 == Description
 

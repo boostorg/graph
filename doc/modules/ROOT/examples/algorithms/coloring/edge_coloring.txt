@@ -1,0 +1,6 @@
+Edge coloring uses 4 colors:
+  0-1 : color 2
+  0-2 : color 3
+  0-3 : color 0
+  1-2 : color 0
+  2-3 : color 1

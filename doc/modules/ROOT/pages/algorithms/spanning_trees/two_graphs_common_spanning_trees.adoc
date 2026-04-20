@@ -5,6 +5,19 @@ Finds all common spanning trees of two undirected graphs using the MRT algorithm
 
 *Defined in:* `<boost/graph/two_graphs_common_spanning_trees.hpp>`
 
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/spanning_trees/two_graphs_common.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/spanning_trees/two_graphs_common.txt[]
+....
+
 '''
 
 === (1) Ordered Edges List
@@ -107,8 +120,6 @@ void two_graphs_common_spanning_trees(
 
 |===
 
-'''
-
 == Description
 
 The *MRT* algorithm, based on an academic article of *Minty*, *Read* and *Tarjan*, is an efficient algorithm for the common spanning tree problem.
@@ -120,23 +131,6 @@ Imagine we have two graphs that are represented as lists of edges. A common span
 Note that the set of common spanning trees of the two graphs is a subset of the set of spanning trees of the first graph, as well as those of the second graph.
 
 The proposed algorithm receives several arguments and works with callbacks. Overload (1) accepts explicit edge orderings for the two graphs, while overload (2) uses the default edge iteration order.
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/spanning_trees/two_graphs_common.cpp[]
-----
-
-Expected output:
-
-....
-Common spanning trees:
-  Tree 1: edges 0 1
-  Tree 2: edges 0 2
-  Tree 3: edges 1 2
-Total: 3
-....
 
 The file link:../example/two_graphs_common_spanning_trees.cpp[`examples/two_graphs_common_spanning_trees.cpp`] contains an additional example of finding common spanning trees of two undirected graphs.
 

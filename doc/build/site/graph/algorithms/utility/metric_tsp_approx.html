@@ -1374,10 +1374,10 @@ void metric_tsp_approx_from_vertex(
 #include &lt;iostream&gt;
 #include &lt;vector&gt;
 
-using namespace boost;
+struct Edge { double weight; };
 
-using Graph = adjacency_list&lt;vecS, vecS, undirectedS, no_property,
-    property&lt;edge_weight_t, double&gt;&gt;;
+using namespace boost;
+using Graph = adjacency_list&lt;vecS, vecS, undirectedS, no_property, Edge&gt;;
 using Vertex = graph_traits&lt;Graph&gt;::vertex_descriptor;
 
 int main() {
@@ -1386,10 +1386,12 @@ int main() {
     double w[][4] = {{0,10,15,20},{10,0,35,25},{15,35,0,30},{20,25,30,0}};
     for (int i = 0; i &lt; N; ++i)
         for (int j = i + 1; j &lt; N; ++j)
-            add_edge(i, j, {w[i][j]}, g);
+            add_edge(i, j, Edge{w[i][j]}, g);
 
+    // Bundled weight via member pointer — the 3-arg overload of
+    // metric_tsp_approx_tour takes an explicit WeightMap.
     std::vector&lt;Vertex&gt; tour;
-    metric_tsp_approx_tour(g, std::back_inserter(tour));
+    metric_tsp_approx_tour(g, get(&amp;Edge::weight, g), std::back_inserter(tour));
 
     std::cout &lt;&lt; "TSP tour:";
     for (auto v : tour) { std::cout &lt;&lt; " " &lt;&lt; v; }
@@ -1398,7 +1400,7 @@ int main() {
 </div>
 </div>
 <div class="paragraph">
-<p>Expected output:</p>
+<p><strong>Expected output:</strong></p>
 </div>
 <div class="literalblock">
 <div class="content">

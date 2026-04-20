@@ -12,14 +12,10 @@ A low mean geodesic indicates a centrally located vertex.
 include::example$algorithms/metrics/geodesic_distance.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-mean geodesic[0] = 2.66667
-mean geodesic[1] = 2
-mean geodesic[2] = 2
-mean geodesic[3] = 2.66667
-Graph mean geodesic: 2.33333
+include::example$algorithms/metrics/geodesic_distance.txt[]
 ....
 
 === (1) mean_geodesic with explicit measure and combinator
@@ -152,8 +148,6 @@ mean_graph_distance_measure</*...*/>   measure_graph_mean_geodesic(const Graph&,
 ----
 
 Functors and factory helpers. `mean_geodesic_measure` returns `d / (num_vertices(g) - 1)`; `mean_graph_distance_measure` returns `d / num_vertices(g)`. Both map the infinite-distance marker to an infinite result.
-
-'''
 
 == Parameters
 

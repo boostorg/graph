@@ -5,6 +5,19 @@ Calculates the maximum or minimum cycle ratio of a weighted directed multigraph 
 *Complexity:* Empirical _O(|E|)_; space _O(7|V|)_ plus graph storage +
 *Defined in:* `<boost/graph/howard_cycle_ratio.hpp>`
 
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/cycle_detection/howard_cycle_ratio.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/cycle_detection/howard_cycle_ratio.txt[]
+....
+
 '''
 
 === (1) `maximum_cycle_ratio` (default FloatTraits)
@@ -274,8 +287,6 @@ typename FloatTraits::float_type minimum_cycle_mean(
 
 Same parameters as (5), plus the `FloatTraits` template parameter described in (2).
 
-'''
-
 == Description
 
 The `maximum_cycle_ratio()` function calculates the maximum cycle ratio of a
@@ -313,20 +324,6 @@ The calculated maximum (or minimum) cycle ratio. Returns
 `-FloatTraits::infinity()` (for `maximum_cycle_ratio`) or
 `FloatTraits::infinity()` (for `minimum_cycle_ratio`) if the graph has no
 cycles.
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/cycle_detection/howard_cycle_ratio.cpp[]
-----
-
-Expected output:
-
-....
-Minimum cycle ratio: 2
-Cycle length: 3 edges
-....
 
 The program in link:../example/cycle_ratio_example.cpp[`libs/graph/example/cycle_ratio_example.cpp`]
 generates a random graph and computes its maximum cycle ratio.

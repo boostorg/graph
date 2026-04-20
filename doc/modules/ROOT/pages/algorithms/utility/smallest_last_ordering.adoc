@@ -14,15 +14,10 @@ degree. This ordering is a good heuristic for graph coloring: using it with
 include::example$algorithms/utility/smallest_last.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-Smallest-last ordering:
-  position 0: vertex 0
-  position 1: vertex 1
-  position 2: vertex 2
-  position 3: vertex 3
-  position 4: vertex 4
+include::example$algorithms/utility/smallest_last.txt[]
 ....
 
 === (1) With full work-map set
@@ -78,8 +73,6 @@ smallest_last_vertex_ordering(const VertexListGraph& g);
 ----
 
 Convenience form: returns a `std::vector<vertex_descriptor>` of length `num_vertices(g)` holding the ordering.
-
-'''
 
 == Parameters
 

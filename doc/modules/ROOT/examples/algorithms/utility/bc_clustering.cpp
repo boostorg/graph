@@ -6,18 +6,23 @@
 
 using namespace boost;
 
-using Graph = adjacency_list<vecS, vecS, undirectedS,
-    no_property, property<edge_index_t, int>>;
+// Bundled edge scratch field holds the centrality value that the algorithm
+// writes on each iteration. Passing it explicitly removes the need for the
+// `edge_index_t` / iterator_property_map round-trip.
+struct Edge { double centrality; };
+
+using Graph = adjacency_list<vecS, vecS, undirectedS, no_property, Edge>;
 
 int main() {
     Graph g(6);
-    int idx = 0;
-    auto ae = [&](int u, int v) { add_edge(u, v, {idx++}, g); };
-    ae(0,1); ae(1,2); ae(0,2);   // cluster A
-    ae(3,4); ae(4,5); ae(3,5);   // cluster B
-    ae(2,3);                      // bridge
+    add_edge(0, 1, g); add_edge(1, 2, g); add_edge(0, 2, g);  // cluster A
+    add_edge(3, 4, g); add_edge(4, 5, g); add_edge(3, 5, g);  // cluster B
+    add_edge(2, 3, g);                                         // bridge
 
-    betweenness_centrality_clustering(g, bc_clustering_threshold<double>(1.0, g, false));
+    // 3-arg overload takes an explicit EdgeCentralityMap.
+    betweenness_centrality_clustering(g,
+        bc_clustering_threshold<double>(1.0, g, false),
+        get(&Edge::centrality, g));
 
     std::vector<int> comp(num_vertices(g));
     int nc = connected_components(g, &comp[0]);

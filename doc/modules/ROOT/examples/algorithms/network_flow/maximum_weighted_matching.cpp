@@ -5,6 +5,9 @@
 
 using namespace boost;
 
+// This algorithm hard-codes its weight source to the interior `edge_weight_t`
+// tag (see boost/graph/maximum_weighted_matching.hpp). Bundled properties are
+// not supported here; the tag-based form below is required.
 using Graph = adjacency_list<vecS, vecS, undirectedS, no_property,
     property<edge_weight_t, int>>;
 using Vertex = graph_traits<Graph>::vertex_descriptor;

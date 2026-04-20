@@ -5,6 +5,19 @@ Finds all graph-subgraph isomorphism mappings between two graphs using the VF2 a
 *Complexity:* _O(V^2^)_ best case, _O(V! * V)_ worst case. Space: _O(V)_ +
 *Defined in:* `<boost/graph/vf2_sub_graph_iso.hpp>`. All functions are defined in the `boost` namespace.
 
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/isomorphism/vf2_subgraph.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/isomorphism/vf2_subgraph.txt[]
+....
+
 '''
 
 === (1) `vf2_subgraph_iso` -- All defaults
@@ -336,8 +349,6 @@ inline bool verify_vf2_subgraph_iso(const Graph1& graph1,
 
 This function can be used to verify a (sub)graph isomorphism mapping _f_. The parameters are analogous to function `vf2_subgraph_iso` (`vf2_graph_iso`).
 
-'''
-
 == Description
 
 An isomorphism between two graphs _G~1~=(V~1~, E~1~)_ and _G~2~=(V~2~, E~2~)_ is a bijective mapping _M_ of the vertices of one graph to vertices of the other graph that preserves the edge structure of the graphs. _M_ is said to be a graph-subgraph isomorphism if and only if _M_ is an isomorphism between _G~1~_ and a subgraph of _G~2~_. An induced subgraph of a graph _G = (V, E)_ is a normal subgraph _G' = (V', E')_ with the extra condition that all edges of _G_ which have both endpoints in _V'_ are in _E'_.
@@ -349,18 +360,6 @@ The current implementation is based on the _VF2_ algorithm, introduced by Cordel
 == Returns
 
 All three functions (`vf2_subgraph_iso`, `vf2_graph_iso`, `vf2_subgraph_mono`) return `true` if at least one mapping was found and `false` otherwise.
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/isomorphism/vf2_subgraph.cpp[]
-----
-
-.Expected output
-----
-Subgraph isomorphism found: true
-----
 
 === Example 1
 

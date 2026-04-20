@@ -993,31 +993,27 @@ de Fraysseix, Pach, and Pollack [<a href="../../about/bibliography.html#defrayss
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include &lt;boost/graph/adjacency_list.hpp&gt;
 #include &lt;boost/graph/boyer_myrvold_planar_test.hpp&gt;
-#include &lt;boost/graph/make_biconnected_planar.hpp&gt;
-#include &lt;boost/graph/make_maximal_planar.hpp&gt;
 #include &lt;boost/graph/planar_canonical_ordering.hpp&gt;
-#include &lt;boost/graph/properties.hpp&gt;
 #include &lt;iostream&gt;
 #include &lt;vector&gt;
 
 using namespace boost;
-using Graph = adjacency_list&lt;vecS, vecS, undirectedS,
-    property&lt;vertex_index_t, int&gt;, property&lt;edge_index_t, int&gt;&gt;;
-using Vertex = graph_traits&lt;Graph&gt;::vertex_descriptor;
-using Edge = graph_traits&lt;Graph&gt;::edge_descriptor;
 
-void reindex(Graph&amp; g) {
-    int i = 0;
-    for (auto e : make_iterator_range(edges(g))) { put(edge_index, g, e, i++); }
-}
+struct Edge { int idx; };
+
+using Graph = adjacency_list&lt;vecS, vecS, undirectedS, no_property, Edge&gt;;
+using Vertex = graph_traits&lt;Graph&gt;::vertex_descriptor;
+using Descriptor = graph_traits&lt;Graph&gt;::edge_descriptor;
 
 int main() {
     // Start with a triangle (already maximal planar for 3 vertices)
     Graph g(3);
     add_edge(0, 1, g); add_edge(1, 2, g); add_edge(0, 2, g);
-    reindex(g);
 
-    std::vector&lt;std::vector&lt;Edge&gt;&gt; storage(num_vertices(g));
+    int i = 0;
+    for (auto e : make_iterator_range(edges(g))) { g[e].idx = i++; }
+
+    std::vector&lt;std::vector&lt;Descriptor&gt;&gt; storage(num_vertices(g));
     auto embedding = make_iterator_property_map(storage.begin(), get(vertex_index, g));
     boyer_myrvold_planarity_test(boyer_myrvold_params::graph = g,
         boyer_myrvold_params::embedding = embedding);
@@ -1033,7 +1029,7 @@ int main() {
 </div>
 </div>
 <div class="paragraph">
-<p>Expected output:</p>
+<p><strong>Expected output:</strong></p>
 </div>
 <div class="literalblock">
 <div class="content">

@@ -1,0 +1,5 @@
+mean geodesic[0] = 2.66667
+mean geodesic[1] = 2
+mean geodesic[2] = 2
+mean geodesic[3] = 2.66667
+Graph mean geodesic: 2.33333

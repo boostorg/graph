@@ -1,0 +1,8 @@
+find(0) = 1
+find(1) = 1
+find(2) = 1
+find(3) = 4
+find(4) = 4
+find(5) = 5
+0 and 2 same set? 1
+0 and 5 same set? 0

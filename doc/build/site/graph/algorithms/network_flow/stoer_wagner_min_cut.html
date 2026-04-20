@@ -925,7 +925,7 @@ int main() {
 </div>
 </div>
 <div class="paragraph">
-<p>Expected output:</p>
+<p><strong>Expected output:</strong></p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -934,7 +934,7 @@ int main() {
 </div>
 <hr>
 <div class="sect2">
-<h3 id="_synopsis"><a class="anchor" href="#_synopsis"></a>Synopsis</h3>
+<h3 id="_1_named_parameter_version"><a class="anchor" href="#_1_named_parameter_version"></a>(1) Named parameter version</h3>
 <div class="imageblock">
 <div class="content">
 <img src="../../_images/stoer_wagner_imgs/stoer_wagner-example-min-cut.gif" alt="A min-cut of a weighted graph having min-cut weight 4" width="376">
@@ -1071,6 +1071,43 @@ weight_type stoer_wagner_min_cut(
 </tr>
 </tbody>
 </table>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_2_positional_version_explicit_index_map"><a class="anchor" href="#_2_positional_version_explicit_index_map"></a>(2) Positional version (explicit index map)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;class UndirectedGraph, class WeightMap, class ParityMap,
+          class VertexAssignmentMap, class KeyedUpdatablePriorityQueue,
+          class IndexMap&gt;
+typename property_traits&lt;WeightMap&gt;::value_type
+stoer_wagner_min_cut(
+    const UndirectedGraph&amp; g, WeightMap weights,
+    ParityMap parities, VertexAssignmentMap assignments,
+    KeyedUpdatablePriorityQueue&amp; pq, IndexMap index_map);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Explicit positional form with every working map supplied by the caller. Prefer overload (1) unless you have a reason to pre-allocate the work maps and priority queue.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_3_positional_version_default_index_map"><a class="anchor" href="#_3_positional_version_default_index_map"></a>(3) Positional version (default index map)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;class UndirectedGraph, class WeightMap, class ParityMap,
+          class VertexAssignmentMap, class KeyedUpdatablePriorityQueue&gt;
+typename property_traits&lt;WeightMap&gt;::value_type
+stoer_wagner_min_cut(
+    const UndirectedGraph&amp; g, WeightMap weights,
+    ParityMap parities, VertexAssignmentMap assignments,
+    KeyedUpdatablePriorityQueue&amp; pq);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Lives in namespace <code>boost::graph</code>. Same as (2) with <code>index_map = get(vertex_index, g)</code>; requires the graph to have an interior <code>vertex_index_t</code> property.</p>
+</div>
 <hr>
 </div>
 </div>

@@ -905,22 +905,21 @@
 using namespace boost;
 
 using Traits = adjacency_list_traits&lt;vecS, vecS, directedS&gt;;
-using Graph = adjacency_list&lt;vecS, vecS, directedS,
-    property&lt;vertex_index_t, std::size_t&gt;,
-    property&lt;edge_capacity_t, int,
-    property&lt;edge_residual_capacity_t, int,
-    property&lt;edge_reverse_t, Traits::edge_descriptor&gt;&gt;&gt;&gt;;
-using Edge = Traits::edge_descriptor;
+struct Edge {
+    int capacity;
+    int residual_capacity;
+    Traits::edge_descriptor reverse;
+};
+
+using Graph = adjacency_list&lt;vecS, vecS, directedS, no_property, Edge&gt;;
+using Descriptor = graph_traits&lt;Graph&gt;::edge_descriptor;
+using Vertex = graph_traits&lt;Graph&gt;::vertex_descriptor;
 
 void add_flow_edge(Graph&amp; g, int from, int to, int cap) {
-    auto cap_map = get(edge_capacity, g);
-    auto rev_map = get(edge_reverse, g);
-    Edge e = add_edge(from, to, g).first;
-    Edge r = add_edge(to, from, g).first;
-    cap_map[e] = cap;
-    cap_map[r] = 0;
-    rev_map[e] = r;
-    rev_map[r] = e;
+    Descriptor e = add_edge(from, to, g).first;
+    Descriptor r = add_edge(to, from, g).first;
+    g[e].capacity = cap; g[e].reverse = r;
+    g[r].capacity = 0;   g[r].reverse = e;
 }
 
 int main() {
@@ -931,13 +930,17 @@ int main() {
     add_flow_edge(g, 2, 3, 15);
     add_flow_edge(g, 1, 2, 4);
 
-    int flow = push_relabel_max_flow(g, 0, 3);
+    int flow = push_relabel_max_flow(g, Vertex(0), Vertex(3),
+        get(&amp;Edge::capacity, g),
+        get(&amp;Edge::residual_capacity, g),
+        get(&amp;Edge::reverse, g),
+        get(vertex_index, g));
     std::cout &lt;&lt; "Push-relabel max flow: " &lt;&lt; flow &lt;&lt; "\n";
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Expected output:</p>
+<p><strong>Expected output:</strong></p>
 </div>
 <div class="literalblock">
 <div class="content">

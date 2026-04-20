@@ -62,11 +62,11 @@ struct property : public NextProperty {
 include::example$traits/property_nested.cpp[]
 ----
 
-.Expected output
-----
-a->b weight=5
-b->c weight=3
-----
+*Expected output:*
+
+....
+include::example$traits/property_nested.txt[]
+....
 
 The outermost `property<>` is consumed first by `add_edge`. If you are
 chaining more than two properties, the syntax (and the compile errors)

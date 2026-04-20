@@ -1,0 +1,5 @@
+Duplicate edges: 1
+Degree distribution:
+  degree 0: 2 vertices
+  degree 1: 1 vertices
+  degree 3: 1 vertices

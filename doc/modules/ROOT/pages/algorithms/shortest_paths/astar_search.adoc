@@ -13,13 +13,10 @@ Implements a heuristic search on a weighted, directed or undirected graph for th
 include::example$algorithms/shortest_paths/astar.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-distance to 0 = 0
-distance to 1 = 2
-distance to 2 = 5
-distance to 3 = 6
+include::example$algorithms/shortest_paths/astar.txt[]
 ....
 
 '''
@@ -431,8 +428,6 @@ void astar_search_no_init_tree(
 ----
 
 Same named parameters as (5). Combines the no-init and tree behaviors.
-
-'''
 
 == Description
 

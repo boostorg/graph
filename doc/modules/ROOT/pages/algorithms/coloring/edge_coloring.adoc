@@ -5,6 +5,19 @@ Computes an edge coloring for the edges of an undirected, loop-free graph.
 *Complexity:* _O(|E| |V|)_ +
 *Defined in:* `<boost/graph/edge_coloring.hpp>`
 
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/coloring/edge_coloring.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/coloring/edge_coloring.txt[]
+....
+
 '''
 
 === (1) Edge coloring
@@ -39,8 +52,6 @@ edge_coloring(
 
 |===
 
-'''
-
 == Description
 
 Computes an edge coloring for the vertices in the graph, using an algorithm
@@ -51,21 +62,4 @@ assigns colors c~1~, c~2~, ..., c~n~ in a way that no vertex connects with
 == Returns
 
 The number of colors used, of type `property_traits<ColorMap>::value_type`.
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/coloring/edge_coloring.cpp[]
-----
-
-.Expected output
-----
-Edge coloring uses 4 colors:
-  0-1 : color 2
-  0-2 : color 3
-  1-2 : color 0
-  1-3 : color 1
-  2-3 : color 2
-----
 

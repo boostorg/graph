@@ -6,6 +6,19 @@ Optionally outputs the disconnecting edge set.
 *Complexity:* O(V * max_flow) +
 *Defined in:* `<boost/graph/edge_connectivity.hpp>`
 
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/connectivity/edge_connectivity.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/connectivity/edge_connectivity.txt[]
+....
+
 == Synopsis
 
 [source,cpp]
@@ -33,16 +46,3 @@ Returns the edge connectivity (minimum cut size).
 
 NOTE: This function internally uses max-flow. It constructs a temporary copy
 of the graph for flow computation.
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/connectivity/edge_connectivity.cpp[]
-----
-
-.Expected output
-----
-Edge connectivity: 2
-Min cut edges: 2
-----

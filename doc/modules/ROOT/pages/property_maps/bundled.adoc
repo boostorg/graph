@@ -75,15 +75,10 @@ dijkstra_shortest_paths(g, source,
 include::example$property_maps/bundled.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-Source city: Paris
-Shortest distances from Paris:
-  Paris: 0 km
-  Lyon: 460 km
-  Marseille: 770 km
-  Nice: 970 km
+include::example$property_maps/bundled.txt[]
 ....
 
 == Graph-level bundles

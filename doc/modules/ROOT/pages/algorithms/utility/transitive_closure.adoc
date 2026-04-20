@@ -12,16 +12,10 @@ Computes the transitive closure of a directed graph, adding an edge _(u,v)_ when
 include::example$algorithms/utility/transitive_closure.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-Transitive closure edges:
-  0 -> 1
-  0 -> 2
-  0 -> 3
-  1 -> 2
-  1 -> 3
-  2 -> 3
+include::example$algorithms/utility/transitive_closure.txt[]
 ....
 
 '''
@@ -132,8 +126,6 @@ void transitive_closure(
   `VertexList=listS` does not have an internal `vertex_index` property.
 
 |===
-
-'''
 
 == Description
 

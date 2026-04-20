@@ -1,0 +1,4 @@
+num_vertices = 3
+source vertex = 0
+is_directed   = true
+null_vertex   = 18446744073709551615

@@ -25,13 +25,11 @@ for specific types; a derived class will not inherit the specialization.
 include::example$traits/graph_traits_basic.cpp[]
 ----
 
-.Expected output
-----
-num_vertices = 3
-source vertex = 0
-is_directed   = true
-null_vertex   = 18446744073709551615
-----
+*Expected output:*
+
+....
+include::example$traits/graph_traits_basic.txt[]
+....
 
 The `null_vertex` value above is `std::numeric_limits<std::size_t>::max()`
 because this graph uses `vecS` vertex storage. For `listS` it is a
@@ -45,10 +43,11 @@ literal — always use `graph_traits<Graph>::null_vertex()`.
 include::example$traits/graph_traits_generic.cpp[]
 ----
 
-.Expected output
-----
-sum of out-degrees = 3
-----
+*Expected output:*
+
+....
+include::example$traits/graph_traits_generic.txt[]
+....
 
 Inside a function template, every nested name through `graph_traits` must
 be disambiguated with `typename` because the compiler does not yet know

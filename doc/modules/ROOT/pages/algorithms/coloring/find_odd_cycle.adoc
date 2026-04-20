@@ -5,6 +5,19 @@ Tests a graph for bipartiteness and, if not bipartite, finds an odd-length cycle
 *Complexity:* _O(V + E)_ +
 *Defined in:* `<boost/graph/bipartite.hpp>`
 
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/coloring/find_odd_cycle.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/coloring/find_odd_cycle.txt[]
+....
+
 '''
 
 === (1) With partition map and index map
@@ -174,16 +187,4 @@ exists. The final final iterator is returned by the function.
 The function returns an `OutputIterator` pointing past the last vertex
 written. If the graph is bipartite (i.e. no odd-length cycle exists),
 nothing is written, and the returned iterator equals the input `result`.
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/coloring/find_odd_cycle.cpp[]
-----
-
-.Expected output
-----
-Odd cycle found: 2 1 0
-----
 

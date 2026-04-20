@@ -1,0 +1,4 @@
+(0,1) weight=5
+(0,2) weight=8
+(1,2) weight=3
+total = 16

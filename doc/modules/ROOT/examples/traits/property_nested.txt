@@ -1,0 +1,2 @@
+a->b weight=5
+b->c weight=3

@@ -992,21 +992,22 @@ void visit_vertex_pair(Vertex u, Vertex v, Graph&amp; g);</code></pre>
 #include &lt;boost/graph/boyer_myrvold_planar_test.hpp&gt;
 #include &lt;boost/graph/make_biconnected_planar.hpp&gt;
 #include &lt;boost/graph/make_maximal_planar.hpp&gt;
-#include &lt;boost/graph/properties.hpp&gt;
 #include &lt;iostream&gt;
 #include &lt;vector&gt;
 
 using namespace boost;
-using Graph = adjacency_list&lt;vecS, vecS, undirectedS,
-    property&lt;vertex_index_t, int&gt;, property&lt;edge_index_t, int&gt;&gt;;
-using Edge = graph_traits&lt;Graph&gt;::edge_descriptor;
+
+struct Edge { int idx; };
+
+using Graph = adjacency_list&lt;vecS, vecS, undirectedS, no_property, Edge&gt;;
+using Descriptor = graph_traits&lt;Graph&gt;::edge_descriptor;
 
 void reindex(Graph&amp; g) {
     int i = 0;
-    for (auto e : make_iterator_range(edges(g))) { put(edge_index, g, e, i++); }
+    for (auto e : make_iterator_range(edges(g))) { g[e].idx = i++; }
 }
 
-void reembed(Graph&amp; g, std::vector&lt;std::vector&lt;Edge&gt;&gt;&amp; s) {
+void reembed(Graph&amp; g, std::vector&lt;std::vector&lt;Descriptor&gt;&gt;&amp; s) {
     s.assign(num_vertices(g), {});
     auto emb = make_iterator_property_map(s.begin(), get(vertex_index, g));
     boyer_myrvold_planarity_test(boyer_myrvold_params::graph = g,
@@ -1017,21 +1018,21 @@ int main() {
     Graph g(4);
     add_edge(0, 1, g); add_edge(1, 2, g); add_edge(2, 3, g);
 
-    std::vector&lt;std::vector&lt;Edge&gt;&gt; st(num_vertices(g));
+    std::vector&lt;std::vector&lt;Descriptor&gt;&gt; st(num_vertices(g));
     reindex(g); reembed(g, st);
     auto emb = make_iterator_property_map(st.begin(), get(vertex_index, g));
-    make_biconnected_planar(g, emb, get(edge_index, g));
+    make_biconnected_planar(g, emb, get(&amp;Edge::idx, g));
 
     reindex(g); reembed(g, st);
     emb = make_iterator_property_map(st.begin(), get(vertex_index, g));
     std::cout &lt;&lt; "Edges before: " &lt;&lt; num_edges(g) &lt;&lt; "\n";
-    make_maximal_planar(g, emb);
+    make_maximal_planar(g, emb, get(vertex_index, g), get(&amp;Edge::idx, g));
     std::cout &lt;&lt; "Edges after make_maximal_planar: " &lt;&lt; num_edges(g) &lt;&lt; "\n";
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Expected output:</p>
+<p><strong>Expected output:</strong></p>
 </div>
 <div class="literalblock">
 <div class="content">

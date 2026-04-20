@@ -1,0 +1,5 @@
+vertex 0  distance=0
+vertex 1  distance=1
+vertex 2  distance=1
+vertex 3  distance=2
+vertex 4  distance=3

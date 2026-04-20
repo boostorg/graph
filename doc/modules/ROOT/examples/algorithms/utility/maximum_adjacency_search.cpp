@@ -3,26 +3,23 @@
 #include <iostream>
 #include <vector>
 
+struct Edge { int weight; };
+
 int main() {
     using namespace boost;
-    // MAS requires edge_weight_t internal property
-    using Graph = adjacency_list<vecS, vecS, undirectedS,
-        no_property, property<edge_weight_t, int>>;
+    using Graph = adjacency_list<vecS, vecS, undirectedS, no_property, Edge>;
 
     Graph g(5);
-    add_edge(0, 1, 2, g);
-    add_edge(0, 4, 3, g);
-    add_edge(1, 2, 3, g);
-    add_edge(1, 4, 2, g);
-    add_edge(2, 3, 4, g);
-    add_edge(3, 4, 1, g);
+    add_edge(0, 1, Edge{2}, g);
+    add_edge(0, 4, Edge{3}, g);
+    add_edge(1, 2, Edge{3}, g);
+    add_edge(1, 4, Edge{2}, g);
+    add_edge(2, 3, Edge{4}, g);
+    add_edge(3, 4, Edge{1}, g);
 
-    std::vector<int> weights(num_vertices(g));
-    auto weight_map = make_iterator_property_map(
-        weights.begin(), get(vertex_index, g));
-
+    // Bundled weight via member pointer — passed through the named parameter.
     maximum_adjacency_search(g,
-        boost::weight_map(get(edge_weight, g)));
+        boost::weight_map(get(&Edge::weight, g)));
 
     std::cout << "Maximum adjacency search completed\n";
     std::cout << "Last vertex visited has highest connectivity\n";

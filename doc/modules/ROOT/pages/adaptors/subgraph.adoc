@@ -17,16 +17,10 @@ class.
 include::example$adaptors/subgraph.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-Root: 5 vertices, 6 edges
-Subgraph: 3 vertices, 3 edges
-
-Subgraph edges (local descriptors):
-  1 -> 2
-  1 -> 3
-  2 -> 3
+include::example$adaptors/subgraph.txt[]
 ....
 
 == Synopsis

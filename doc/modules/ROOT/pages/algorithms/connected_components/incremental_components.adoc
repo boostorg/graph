@@ -6,6 +6,19 @@ A family of functions and classes for computing connected components of an undir
 *Complexity:* _O(V + E * alpha(E, V))_ +
 *Defined in:* `<boost/graph/incremental_components.hpp>`
 
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/connected_components/incremental.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/connected_components/incremental.txt[]
+....
+
 '''
 
 [#sec:initialize-incremental-components]
@@ -102,8 +115,6 @@ The `component_index` class provides an STL container-like view for the componen
 | `std::pair<component_iterator, component_iterator> operator[](size_type index) const` | Returns a pair of iterators for the component at `index` where `index` is in [0, `size()`).
 |===
 
-'''
-
 == Description
 
 This section describes a family of functions and classes that work together to calculate the connected components of an undirected graph. The algorithm used here is based on the disjoint-sets (fast union-find) data structure [xref:about/bibliography.adoc#clr90[8],xref:about/bibliography.adoc#tarjan83:_data_struct_network_algo[27]] which is a good method to use for situations where the graph is growing (edges are being added) and the connected components information needs to be updated repeatedly. This method does not cover the situation where edges are both added and removed from the graph, hence it is called *_incremental_* xref:about/bibliography.adoc#eppstein97:dynamic_graph[[42]] (and not fully dynamic). The disjoint-sets class is described in Section xref:auxiliary/disjoint_sets.adoc[Disjoint Sets].
@@ -120,19 +131,4 @@ The following five operations are the primary functions that you will use to cal
 `incremental_components` calculates the connected components of the graph, embedding the results in the disjoint-sets data structure.
 
 `same_component` determines whether `u` and `v` are in the same component.
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/connected_components/incremental.cpp[]
-----
-
-.Expected output
-----
-Incremental connected components:
-  After adding 0-1: 4 components
-  After adding 2-3: 3 components
-  After adding 1-2: 2 components
-----
 

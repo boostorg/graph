@@ -6,9 +6,7 @@ Verifies that no two edges in a straight line drawing intersect.
 *Complexity:* _O(n log n)_ +
 *Defined in:* `<boost/graph/is_straight_line_drawing.hpp>`
 
-'''
-
-=== Synopsis
+== Synopsis
 
 [source,cpp]
 ----
@@ -42,8 +40,6 @@ bool is_straight_line_drawing(
   `[0, num_vertices(g))`. +
   *Default*: `get(vertex_index, g)`
 |===
-
-'''
 
 == Description
 

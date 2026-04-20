@@ -1,0 +1,5 @@
+12 vertices, 40 edges
+
+From (0,0):
+  previous in dim 0 (wraps) = (3,0)
+  previous in dim 1 (stops) = (0,0)

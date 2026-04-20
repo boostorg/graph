@@ -6,17 +6,18 @@
 #include <vector>
 #include <iomanip>
 
+struct Spring { double length; };
+
 int main() {
     using namespace boost;
-    using Graph = adjacency_list<vecS, vecS, undirectedS,
-        no_property, property<edge_weight_t, double>>;
+    using Graph = adjacency_list<vecS, vecS, undirectedS, no_property, Spring>;
 
     Graph g(5);
-    add_edge(0, 1, 1.0, g);
-    add_edge(1, 2, 1.0, g);
-    add_edge(2, 3, 1.0, g);
-    add_edge(3, 4, 1.0, g);
-    add_edge(4, 0, 1.0, g);
+    add_edge(0, 1, Spring{1.0}, g);
+    add_edge(1, 2, Spring{1.0}, g);
+    add_edge(2, 3, Spring{1.0}, g);
+    add_edge(3, 4, Spring{1.0}, g);
+    add_edge(4, 0, Spring{1.0}, g);
 
     using Topo = rectangle_topology<>;
     Topo topo(0.0, 0.0, 100.0, 100.0);
@@ -27,7 +28,8 @@ int main() {
 
     circle_graph_layout(g, pos_map, 25.0);
 
-    bool ok = kamada_kawai_spring_layout(g, pos_map, get(edge_weight, g),
+    // Bundled spring-length via member pointer — no edge_weight_t tag needed.
+    bool ok = kamada_kawai_spring_layout(g, pos_map, get(&Spring::length, g),
         topo, side_length(50.0), layout_tolerance<double>(0.1));
 
     std::cout << std::fixed << std::setprecision(1);

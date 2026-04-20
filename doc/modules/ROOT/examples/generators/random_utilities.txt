@@ -1,0 +1,5 @@
+5 vertices, 8 edges
+random vertex: 1
+random edge: 0 -> 2
+random out-edge of 0: 0 -> 2
+weighted random out-edge of 0: 0 -> 2

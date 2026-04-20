@@ -13,12 +13,10 @@ Finds the shortest distance between every pair of vertices in a graph using the 
 include::example$algorithms/shortest_paths/floyd_warshall.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-0 2 5
-2147483647 0 3
-2147483647 2147483647 0
+include::example$algorithms/shortest_paths/floyd_warshall.txt[]
 ....
 
 '''
@@ -339,8 +337,6 @@ bool floyd_warshall_all_pairs_shortest_paths(
   *Default:* `0`
 
 |===
-
-'''
 
 == Description
 

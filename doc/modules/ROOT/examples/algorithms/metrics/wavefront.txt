@@ -1,0 +1,2 @@
+Max wavefront: 3
+Avg wavefront: 2.2

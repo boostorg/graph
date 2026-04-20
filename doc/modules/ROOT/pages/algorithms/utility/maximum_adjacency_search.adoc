@@ -6,6 +6,19 @@ Traverses vertices of an undirected graph, always visiting next the vertex with 
 *Complexity:* _O(E + V)_ +
 *Defined in:* `<boost/graph/maximum_adjacency_search.hpp>`
 
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/utility/maximum_adjacency_search.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/utility/maximum_adjacency_search.txt[]
+....
+
 '''
 
 === (1) Non-named parameter version
@@ -163,8 +176,6 @@ void maximum_adjacency_search(
 
 |===
 
-'''
-
 == Description
 
 The `maximum_adjacency_search()` function performs a traversal of the
@@ -228,11 +239,11 @@ finish vertex u
 ----
 |===
 
-=== Returns
+== Returns
 
 `void`
 
-=== Throws
+== Throws
 
 `bad_graph`:: If `num_vertices(g)` is less than 2.
 `std::invalid_argument`:: If a max-priority queue is given as an argument and it is not empty.
@@ -248,19 +259,6 @@ finish vertex u
 * *`vis.finish_vertex(u, g)`* is invoked on a vertex after all of its
   out edges have been examined and the reach counts of the unvisited
   targets have been updated.
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/utility/maximum_adjacency_search.cpp[]
-----
-
-.Expected output
-----
-Maximum adjacency search completed
-Last vertex visited has highest connectivity
-----
 
 == Notes
 

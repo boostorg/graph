@@ -11,11 +11,10 @@ Functions for computing the wavefront and related metrics of a graph.
 include::example$algorithms/metrics/wavefront.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-Max wavefront: 3
-Avg wavefront: 2.2
+include::example$algorithms/metrics/wavefront.txt[]
 ....
 
 '''''

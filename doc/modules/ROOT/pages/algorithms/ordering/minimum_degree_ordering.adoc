@@ -6,6 +6,19 @@ A fill-in reduction matrix reordering algorithm for sparse Cholesky factorizatio
 *Complexity:* UNDER CONSTRUCTION +
 *Defined in:* `<boost/graph/minimum_degree_ordering.hpp>`
 
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/ordering/minimum_degree.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/ordering/minimum_degree.txt[]
+....
+
 '''
 
 === (1) Non-named parameter version
@@ -83,8 +96,6 @@ void minimum_degree_ordering(
 
 |===
 
-'''
-
 == Description
 
 The minimum degree ordering
@@ -132,19 +143,6 @@ The following equations are always held.
 for (size_type i = 0; i != inverse_perm.size(); ++i)
   perm[inverse_perm[i]] == i;
 ----
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/ordering/minimum_degree.cpp[]
-----
-
-Expected output:
-
-....
-Minimum degree ordering: 2 5 1 4 3 0
-....
 
 == Notes
 

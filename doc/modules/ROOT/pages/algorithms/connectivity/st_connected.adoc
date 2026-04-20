@@ -8,6 +8,19 @@ bidirectional BFS that searches simultaneously from s and t.
 
 Both overloads live in namespace `boost::graph` (not `boost`).
 
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/connectivity/st_connected.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/connectivity/st_connected.txt[]
+....
+
 === (1) With explicit color map
 
 [source,cpp]
@@ -59,16 +72,3 @@ Returns `true` if there is a path from `s` to `t`.
 
 TIP: This is faster than running a full BFS when you only need to check
 reachability between two specific vertices.
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/connectivity/st_connected.cpp[]
-----
-
-.Expected output
-----
-0 connected to 2: true
-0 connected to 3: false
-----

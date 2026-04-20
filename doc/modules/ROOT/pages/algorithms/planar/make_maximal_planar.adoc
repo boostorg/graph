@@ -5,6 +5,19 @@ Adds edges to a biconnected planar graph to make it maximal planar.
 *Complexity:* _O(n + m)_ +
 *Defined in:* `<boost/graph/make_maximal_planar.hpp>`
 
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/planar/make_maximal.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/planar/make_maximal.txt[]
+....
+
 '''
 
 === Non-named parameter version
@@ -73,20 +86,6 @@ void visit_vertex_pair(Vertex u, Vertex v, Graph& g);
 ----
 
 This event point can also be used as a hook to update the underlying edge index map automatically as edges are added. See the documentation for the xref:visitors/AddEdgeVisitor.adoc[AddEdgeVisitor] concept for more information.
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/planar/make_maximal.cpp[]
-----
-
-Expected output:
-
-....
-Edges before: 5
-Edges after make_maximal_planar: 6
-....
 
 See also link:../example/make_maximal_planar.cpp[examples/make_maximal_planar.cpp].
 

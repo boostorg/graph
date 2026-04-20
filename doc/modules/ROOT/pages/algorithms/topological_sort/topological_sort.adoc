@@ -13,15 +13,15 @@ Creates a linear ordering of the vertices such that if edge _(u,v)_ appears in t
 include::example$algorithms/topological_sort/topological_sort.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-Topological order: D E C A B
+include::example$algorithms/topological_sort/topological_sort.txt[]
 ....
 
 '''
 
-=== Synopsis
+=== (1) Named parameter version
 
 [source,cpp]
 ----
@@ -76,6 +76,24 @@ void topological_sort(
 |===
 
 '''
+
+=== (2) Positional version
+
+[source,cpp]
+----
+template <typename VertexListGraph, typename OutputIterator>
+void topological_sort(VertexListGraph& g, OutputIterator result);
+----
+
+Equivalent to (1) with every named parameter left at its default. Uses `get(vertex_index, g)` for the index map and an internally allocated `default_color_type` color map; requires the graph to have an interior `vertex_index_t` property.
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `VertexListGraph& g` | Same requirements as (1). Must be a DAG.
+| OUT | `OutputIterator result` | Same as (1). Output is in reverse topological order.
+|===
 
 == Description
 

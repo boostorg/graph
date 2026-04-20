@@ -21,11 +21,11 @@ free.
 include::example$iterators/adjacency_iterator.cpp[]
 ----
 
-.Expected output
-----
-neighbors of 0: 1 2 3
-generator matches graph_traits: true
-----
+*Expected output:*
+
+....
+include::example$iterators/adjacency_iterator.txt[]
+....
 
 The example shows both paths:
 

@@ -5,6 +5,19 @@ Calculates the maximum flow of a network using the Boykov-Kolmogorov augmenting-
 
 *Defined in:* `<boost/graph/boykov_kolmogorov_max_flow.hpp>`
 
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/network_flow/boykov_kolmogorov.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/network_flow/boykov_kolmogorov.txt[]
+....
+
 '''
 
 === (1) Non-named parameter version (all maps)
@@ -208,8 +221,6 @@ boykov_kolmogorov_max_flow(
 
 |===
 
-'''
-
 == Description
 
 The `boykov_kolmogorov_max_flow()` function calculates the maximum flow of a network.
@@ -273,18 +284,6 @@ image::figs/bk_max_flow.gif[Boykov-Kolmogorov max flow illustration,width=827,he
 
 The maximum flow value of the network, of type `property_traits<CapacityEdgeMap>::value_type`.
 The flow values for individual edges can be recovered from the residual capacity map as _f(u,v) = c(u,v) - r(u,v)_.
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/network_flow/boykov_kolmogorov.cpp[]
-----
-
-.Expected output
-----
-Boykov-Kolmogorov max flow: 4
-----
 
 === DIMACS Example
 

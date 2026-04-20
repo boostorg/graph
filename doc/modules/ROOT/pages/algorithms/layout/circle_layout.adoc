@@ -11,14 +11,10 @@ Lays out the graph with the vertices at the points of a regular n-polygon.
 include::example$algorithms/layout/circle_layout.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-vertex 0: (50, 0)
-vertex 1: (15.4508, 47.5528)
-vertex 2: (-40.4508, 29.3893)
-vertex 3: (-40.4508, -29.3893)
-vertex 4: (15.4508, -47.5528)
+include::example$algorithms/layout/circle_layout.txt[]
 ....
 
 '''

@@ -9,12 +9,11 @@ interact with graphs, regardless of the underlying data structure.
 include::example$primitives/primitives_traversal.cpp[]
 ----
 
-.Expected output
-----
-0 -> 1
-1 -> 2
-2 -> 3
-----
+*Expected output:*
+
+....
+include::example$primitives/primitives_traversal.txt[]
+....
 
 == Traversal
 
@@ -69,10 +68,11 @@ NOTE: All pairs can be used with `make_iterator_range` for range-based for loops
 include::example$primitives/primitives_edge_access.cpp[]
 ----
 
-.Expected output
-----
-0 -> 1
-----
+*Expected output:*
+
+....
+include::example$primitives/primitives_edge_access.txt[]
+....
 
 == Counts
 
@@ -141,10 +141,11 @@ xref:graph_classes/overview.adoc[Graph Data Structures] for details.
 include::example$primitives/primitives_mutation.cpp[]
 ----
 
-.Expected output
-----
-vertices: 2
-----
+*Expected output:*
+
+....
+include::example$primitives/primitives_mutation.txt[]
+....
 
 == Property access
 
@@ -173,10 +174,11 @@ vertices: 2
 include::example$primitives/primitives_properties.cpp[]
 ----
 
-.Expected output
-----
-460
-----
+*Expected output:*
+
+....
+include::example$primitives/primitives_properties.txt[]
+....
 
 == Types
 

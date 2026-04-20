@@ -1,0 +1,10 @@
+9 vertices, 24 edges
+(0,0) degree=2
+(1,0) degree=3
+(2,0) degree=2
+(0,1) degree=3
+(1,1) degree=4
+(2,1) degree=3
+(0,2) degree=2
+(1,2) degree=3
+(2,2) degree=2

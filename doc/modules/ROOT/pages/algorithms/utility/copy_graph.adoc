@@ -17,23 +17,23 @@ own vertex index.
 include::example$algorithms/utility/copy_graph.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-Original: 4 vertices, 3 edges
-Copy:     4 vertices, 3 edges
+include::example$algorithms/utility/copy_graph.txt[]
 ....
 
 '''
 
-=== Synopsis
+=== (1) Named parameter version
 
 [source,cpp]
 ----
-template <class VertexListGraph, class MutableGraph>
+template <class VertexListGraph, class MutableGraph,
+          class P, class T, class R>
 void copy_graph(
     const VertexListGraph& G, MutableGraph& G_copy,
-    const bgl_named_params<P, T, R>& params = all defaults)
+    const bgl_named_params<P, T, R>& params);
 ----
 
 [cols="1,2,5"]
@@ -75,6 +75,24 @@ void copy_graph(
 |===
 
 '''
+
+=== (2) Positional version
+
+[source,cpp]
+----
+template <class VertexListGraph, class MutableGraph>
+void copy_graph(const VertexListGraph& G, MutableGraph& G_copy);
+----
+
+Equivalent to (1) with every named parameter left at its default. Uses the default vertex/edge copiers (via `vertex_all` / `edge_all` property tags) and `get(vertex_index, G)`.
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `const VertexListGraph& G` | Same as (1).
+| OUT | `MutableGraph& G_copy` | Same as (1).
+|===
 
 == Description
 

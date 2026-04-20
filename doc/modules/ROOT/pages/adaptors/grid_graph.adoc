@@ -23,19 +23,10 @@ image::figs/grid_graph_unwrapped.png[3x3 unwrapped grid]
 include::example$adaptors/grid_graph_unwrapped.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-9 vertices, 24 edges
-(0,0) degree=2
-(1,0) degree=3
-(2,0) degree=2
-(0,1) degree=3
-(1,1) degree=4
-(2,1) degree=3
-(0,2) degree=2
-(1,2) degree=3
-(2,2) degree=2
+include::example$adaptors/grid_graph_unwrapped.txt[]
 ....
 
 == Torus (all dimensions wrap)
@@ -50,19 +41,10 @@ image::figs/grid_graph_wrapped.png[3x3 wrapped grid (torus)]
 include::example$adaptors/grid_graph_torus.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-9 vertices, 36 edges
-(0,0) degree=4
-(1,0) degree=4
-(2,0) degree=4
-(0,1) degree=4
-(1,1) degree=4
-(2,1) degree=4
-(0,2) degree=4
-(1,2) degree=4
-(2,2) degree=4
+include::example$adaptors/grid_graph_torus.txt[]
 ....
 
 == Cylinder (mixed wrapping)
@@ -75,14 +57,10 @@ Here dimension 0 wraps (cylinder) but dimension 1 does not.
 include::example$adaptors/grid_graph_cylinder.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-12 vertices, 40 edges
-
-From (0,0):
-  previous in dim 0 (wraps) = (3,0)
-  previous in dim 1 (stops) = (0,0)
+include::example$adaptors/grid_graph_cylinder.txt[]
 ....
 
 == Higher dimensions
@@ -95,15 +73,11 @@ works the same way.
 include::example$adaptors/grid_graph_3d.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-27 vertices, 108 edges
-corner (0,0,0) degree=3
-center (1,1,1) degree=6
+include::example$adaptors/grid_graph_3d.txt[]
 ....
-
-'''
 
 == Synopsis
 

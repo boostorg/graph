@@ -1397,45 +1397,45 @@ OutputIterator articulation_points(
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include &lt;boost/graph/adjacency_list.hpp&gt;
 #include &lt;boost/graph/biconnected_components.hpp&gt;
-#include &lt;boost/property_map/property_map.hpp&gt;
 #include &lt;iostream&gt;
-#include &lt;vector&gt;
+
+struct Edge { int comp; };
 
 int main() {
     using namespace boost;
-    using Graph = adjacency_list&lt;vecS, vecS, undirectedS,
-        no_property, property&lt;edge_index_t, int&gt;&gt;;
+    using Graph = adjacency_list&lt;vecS, vecS, undirectedS, no_property, Edge&gt;;
 
     Graph g(5);
-    add_edge(0, 1, 0, g);
-    add_edge(1, 2, 1, g);
-    add_edge(2, 0, 2, g);  // triangle
-    add_edge(2, 3, 3, g);
-    add_edge(3, 4, 4, g);
-    add_edge(4, 2, 5, g);  // second triangle
+    add_edge(0, 1, g);
+    add_edge(1, 2, g);
+    add_edge(2, 0, g);  // triangle
+    add_edge(2, 3, g);
+    add_edge(3, 4, g);
+    add_edge(4, 2, g);  // second triangle
 
-    std::vector&lt;std::size_t&gt; comp(num_edges(g));
-    auto comp_map = make_iterator_property_map(comp.begin(), get(edge_index, g));
-    auto num = biconnected_components(g, comp_map);
+    // Bundled component index written via member-pointer property map.
+    auto num = biconnected_components(g, get(&amp;Edge::comp, g));
 
     std::cout &lt;&lt; "Biconnected components: " &lt;&lt; num &lt;&lt; "\n";
     for (auto ei = edges(g).first; ei != edges(g).second; ++ei) {
         std::cout &lt;&lt; "  " &lt;&lt; source(*ei, g) &lt;&lt; "-" &lt;&lt; target(*ei, g)
-                  &lt;&lt; " component " &lt;&lt; get(comp_map, *ei) &lt;&lt; "\n";
+                  &lt;&lt; " component " &lt;&lt; g[*ei].comp &lt;&lt; "\n";
     }
 }</code></pre>
 </div>
 </div>
-<div class="listingblock">
-<div class="title">Expected output</div>
+<div class="paragraph">
+<p><strong>Expected output:</strong></p>
+</div>
+<div class="literalblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">Biconnected components: 2
+<pre>Biconnected components: 2
   0-1 component 1
   1-2 component 1
   2-0 component 1
   2-3 component 0
   3-4 component 0
-  4-2 component 0</code></pre>
+  4-2 component 0</pre>
 </div>
 </div>
 </div>

@@ -1,0 +1,6 @@
+vertex 0  predecessor=0
+vertex 1  predecessor=0
+vertex 2  predecessor=0
+vertex 3  predecessor=1
+vertex 4  predecessor=2
+vertex 5  predecessor=3

@@ -13,7 +13,7 @@ Determines whether an isomorphism exists between two graphs.
 include::example$algorithms/isomorphism/isomorphism.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
 Graphs are isomorphic
@@ -186,8 +186,6 @@ bool isomorphism(
   `VertexList=listS` does not have an internal `vertex_index` property.
 
 |===
-
-'''
 
 == Description
 

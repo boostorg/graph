@@ -1,0 +1,3 @@
+Finding all maximal cliques:
+Clique: {0, 1, 2}
+Clique: {1, 2, 3}

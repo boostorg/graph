@@ -6,6 +6,19 @@ Finds a matching in an undirected edge-weighted graph that maximizes the sum of 
 *Complexity:* _O(n^3^)_ for `maximum_weighted_matching`; exponential in _m_ for brute force +
 *Defined in:* `<boost/graph/maximum_weighted_matching.hpp>`
 
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/network_flow/maximum_weighted_matching.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/network_flow/maximum_weighted_matching.txt[]
+....
+
 '''
 
 === (1) maximum_weighted_matching (default maps)
@@ -202,8 +215,6 @@ void brute_force_maximum_weighted_matching(
 
 |===
 
-'''
-
 == Description
 
 [#sec:weighted_matching]
@@ -324,22 +335,6 @@ A brute-force implementation
 `brute_force_maximum_weighted_matching` is also
 provided. This algorithm simply searches all possible matchings and
 selects one with the maximum weight sum.
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/network_flow/maximum_weighted_matching.cpp[]
-----
-
-Expected output:
-
-....
-Matched edges:
-  0 -- 4 (w=5)
-  2 -- 3 (w=4)
-Total weight: 9
-....
 
 == Notes
 

@@ -13,15 +13,10 @@ Records the predecessor (parent) vertex for each vertex in a property map.
 include::example$visitors/predecessor_recorder.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-vertex 0  predecessor=0
-vertex 1  predecessor=0
-vertex 2  predecessor=0
-vertex 3  predecessor=1
-vertex 4  predecessor=2
-vertex 5  predecessor=3
+include::example$visitors/predecessor_recorder.txt[]
 ....
 
 TIP: Initialize the source vertex's predecessor to itself before running the

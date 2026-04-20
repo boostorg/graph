@@ -6,9 +6,20 @@ Adds edges to a connected planar graph to make it biconnected while preserving p
 *Complexity:* _O(n)_ +
 *Defined in:* `<boost/graph/make_biconnected_planar.hpp>`
 
-'''
+== Example
 
-=== Synopsis
+[source,cpp]
+----
+include::example$algorithms/planar/make_biconnected.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/planar/make_biconnected.txt[]
+....
+
+== Synopsis
 
 [source,cpp]
 ----
@@ -49,8 +60,6 @@ void make_biconnected_planar(
   dispatch its calls to `add_edge`.
 |===
 
-'''
-
 == Description
 
 A graph _G_ is biconnected if, for every pair of vertices _u,v_ in _G_, there is a cycle containing both _u_ and _v_.
@@ -69,20 +78,6 @@ void visit_vertex_pair(Vertex u, Vertex v, Graph& g);
 
 This event point can also be used as a hook to update the underlying edge index map automatically as edges are added.
 See the documentation for the xref:visitors/AddEdgeVisitor.adoc[AddEdgeVisitor] concept for more information.
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/planar/make_biconnected.cpp[]
-----
-
-Expected output:
-
-....
-Edges before: 3
-Edges after make_biconnected_planar: 5
-....
 
 See also link:../example/make_biconnected_planar.cpp[`example/make_biconnected_planar.cpp`].
 

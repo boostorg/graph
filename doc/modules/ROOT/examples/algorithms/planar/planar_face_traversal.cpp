@@ -5,8 +5,10 @@
 #include <vector>
 
 using namespace boost;
-using Graph = adjacency_list<vecS, vecS, undirectedS,
-    property<vertex_index_t, int>, property<edge_index_t, int>>;
+
+struct Edge { int idx; };
+
+using Graph = adjacency_list<vecS, vecS, undirectedS, no_property, Edge>;
 
 struct face_counter : public planar_face_traversal_visitor {
     int count = 0;
@@ -19,9 +21,8 @@ int main() {
     add_edge(2, 3, g); add_edge(3, 0, g);
     add_edge(0, 2, g);
 
-    int idx = 0;
-    for (auto e : make_iterator_range(edges(g)))
-        put(edge_index, g, e, idx++);
+    int i = 0;
+    for (auto e : make_iterator_range(edges(g))) { g[e].idx = i++; }
 
     using embedding_t = std::vector<std::vector<graph_traits<Graph>::edge_descriptor>>;
     embedding_t embedding(num_vertices(g));
@@ -29,6 +30,6 @@ int main() {
         boyer_myrvold_params::embedding = &embedding[0]);
 
     face_counter visitor;
-    planar_face_traversal(g, &embedding[0], visitor);
+    planar_face_traversal(g, &embedding[0], visitor, get(&Edge::idx, g));
     std::cout << "Number of faces: " << visitor.count << "\n";
 }

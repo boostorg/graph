@@ -5,6 +5,19 @@ Enumerates all elementary circuits in a directed multigraph, including self-loop
 *Complexity:* Exponential in the worst case; use `max_length` to limit search depth +
 *Defined in:* `<boost/graph/hawick_circuits.hpp>`
 
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/cycle_detection/hawick_circuits.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/cycle_detection/hawick_circuits.txt[]
+....
+
 '''
 
 === (1) hawick_circuits
@@ -99,27 +112,11 @@ void hawick_unique_circuits(
 
 |===
 
-'''
-
 == Description
 
 Enumerate all the elementary circuits (of length &le; `max_length`, if nonzero) in a directed multigraph. Specifically, self-loops and redundant circuits caused by parallel edges are enumerated too. `hawick_unique_circuits` may be used if redundant circuits caused by parallel edges are not desired.
 
 The algorithm is described in detail in https://www.researchgate.net/publication/221440635_Enumerating_Circuits_and_Loops_in_Graphs_with_Self-Arcs_and_Multiple-Arcs[Enumerating Circuits and Loops in Graphs with Self-Arcs and Multiple-Arcs].
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/cycle_detection/hawick_circuits.cpp[]
-----
-
-.Expected output
-----
-Circuits:
-0 1 2
-0 1 2 3
-----
 
 == Notes
 

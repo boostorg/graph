@@ -985,42 +985,45 @@ See the documentation for the <a href="../../visitors/AddEdgeVisitor.html" class
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include &lt;boost/graph/adjacency_list.hpp&gt;
 #include &lt;boost/graph/boyer_myrvold_planar_test.hpp&gt;
 #include &lt;boost/graph/make_biconnected_planar.hpp&gt;
-#include &lt;boost/graph/properties.hpp&gt;
 #include &lt;iostream&gt;
 #include &lt;vector&gt;
 
 using namespace boost;
-using Graph = adjacency_list&lt;vecS, vecS, undirectedS,
-    property&lt;vertex_index_t, int&gt;, property&lt;edge_index_t, int&gt;&gt;;
-using Edge = graph_traits&lt;Graph&gt;::edge_descriptor;
+
+// Bundled edge field holds the contiguous index that planar algorithms need.
+struct Edge { int idx; };
+
+using Graph = adjacency_list&lt;vecS, vecS, undirectedS, no_property, Edge&gt;;
+using Descriptor = graph_traits&lt;Graph&gt;::edge_descriptor;
+
+void reindex(Graph&amp; g) {
+    int i = 0;
+    for (auto e : make_iterator_range(edges(g))) { g[e].idx = i++; }
+}
 
 int main() {
     // A path graph: 0-1-2-3 (planar but not biconnected)
     Graph g(4);
     add_edge(0, 1, g); add_edge(1, 2, g); add_edge(2, 3, g);
 
-    // Assign edge indices
-    int idx = 0;
-    for (auto e : make_iterator_range(edges(g))) { put(edge_index, g, e, idx++); }
+    reindex(g);
 
     // Compute planar embedding
-    using EmbStorage = std::vector&lt;std::vector&lt;Edge&gt;&gt;;
+    using EmbStorage = std::vector&lt;std::vector&lt;Descriptor&gt;&gt;;
     EmbStorage storage(num_vertices(g));
     auto embedding = make_iterator_property_map(storage.begin(), get(vertex_index, g));
     boyer_myrvold_planarity_test(boyer_myrvold_params::graph = g,
         boyer_myrvold_params::embedding = embedding);
 
     std::cout &lt;&lt; "Edges before: " &lt;&lt; num_edges(g) &lt;&lt; "\n";
-    // Re-index edges before calling make_biconnected_planar
-    idx = 0;
-    for (auto e : make_iterator_range(edges(g))) { put(edge_index, g, e, idx++); }
-    make_biconnected_planar(g, embedding, get(edge_index, g));
+    reindex(g);
+    make_biconnected_planar(g, embedding, get(&amp;Edge::idx, g));
     std::cout &lt;&lt; "Edges after make_biconnected_planar: " &lt;&lt; num_edges(g) &lt;&lt; "\n";
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Expected output:</p>
+<p><strong>Expected output:</strong></p>
 </div>
 <div class="literalblock">
 <div class="content">

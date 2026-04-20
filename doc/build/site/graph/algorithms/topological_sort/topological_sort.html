@@ -927,7 +927,7 @@ int main() {
 </div>
 </div>
 <div class="paragraph">
-<p>Expected output:</p>
+<p><strong>Expected output:</strong></p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -936,7 +936,7 @@ int main() {
 </div>
 <hr>
 <div class="sect2">
-<h3 id="_synopsis"><a class="anchor" href="#_synopsis"></a>Synopsis</h3>
+<h3 id="_1_named_parameter_version"><a class="anchor" href="#_1_named_parameter_version"></a>(1) Named parameter version</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename VertexListGraph, typename OutputIterator,
@@ -1005,6 +1005,45 @@ void topological_sort(
   Note: if you use this default, make sure your graph has an internal
   <code>vertex_index</code> property. For example, <code>adjacency_list</code> with
   <code>VertexList=listS</code> does not have an internal <code>vertex_index</code> property.</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_2_positional_version"><a class="anchor" href="#_2_positional_version"></a>(2) Positional version</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;typename VertexListGraph, typename OutputIterator&gt;
+void topological_sort(VertexListGraph&amp; g, OutputIterator result);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Equivalent to (1) with every named parameter left at its default. Uses <code>get(vertex_index, g)</code> for the index map and an internally allocated <code>default_color_type</code> color map; requires the graph to have an interior <code>vertex_index_t</code> property.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 12.5%;">
+<col style="width: 25%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Direction</th>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>VertexListGraph&amp; g</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Same requirements as (1). Must be a DAG.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OutputIterator result</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Same as (1). Output is in reverse topological order.</p></td>
 </tr>
 </tbody>
 </table>

@@ -255,15 +255,8 @@ All property map types in one file:
 include::example$property_maps/property_maps.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-460 km
-42
-200
-capital
-3.14
-2
-285.831 miles
-1
+include::example$property_maps/property_maps.txt[]
 ....

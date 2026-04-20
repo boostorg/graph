@@ -13,13 +13,10 @@ Converts a list of event visitors into an AStarVisitor for use with
 include::example$visitors/astar_visitor.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-vertex 0  dist=0  pred=0
-vertex 1  dist=1  pred=0
-vertex 2  dist=3  pred=1
-vertex 3  dist=4  pred=2
+include::example$visitors/astar_visitor.txt[]
 ....
 
 == Synopsis

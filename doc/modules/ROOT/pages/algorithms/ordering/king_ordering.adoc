@@ -5,6 +5,19 @@ Reduces the bandwidth of a graph by reordering the indices assigned to each vert
 *Complexity:* _O(m^2^ log(m) |E|)_ where _m = max { degree(v) | v in V }_ +
 *Defined in:* `<boost/graph/king_ordering.hpp>`
 
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/ordering/king.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/ordering/king.txt[]
+....
+
 '''
 
 === (1) Single starting vertex
@@ -210,19 +223,6 @@ for (size_type i = 0; i != inv_perm.size(); ++i)
 == Returns
 
 `OutputIterator` -- the iterator past the end of the output sequence of reordered vertices.
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/ordering/king.cpp[]
-----
-
-Expected output:
-
-....
-King ordering: 1 2 4 5 3 0
-....
 
 == Notes
 

@@ -49,12 +49,10 @@ of `Graph`.
 include::example$generators/plod.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-8 vertices, 2 edges
-  0 -> 0
-  2 -> 3
+include::example$generators/plod.txt[]
 ....
 
 == Variants

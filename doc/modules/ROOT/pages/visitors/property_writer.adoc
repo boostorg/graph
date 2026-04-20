@@ -14,10 +14,10 @@ event occurs. Useful for debugging or logging during graph traversal.
 include::example$visitors/property_writer.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-BFS discovery order: 0 1 2 3 4
+include::example$visitors/property_writer.txt[]
 ....
 
 == Synopsis

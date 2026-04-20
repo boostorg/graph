@@ -15,17 +15,10 @@ connected substructures.
 include::example$algorithms/metrics/core_numbers.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-Core numbers (k-core decomposition):
-  vertex 0 (a): 3
-  vertex 1 (b): 3
-  vertex 2 (c): 3
-  vertex 3 (d): 3
-  vertex 4 (e): 1
-  vertex 5 (f): 1
-  vertex 6 (g): 1
+include::example$algorithms/metrics/core_numbers.txt[]
 ....
 
 Vertices a-d form a 4-clique (K4), so each has core number 3 (every vertex
@@ -109,8 +102,6 @@ core_numbers_visitor<Visitors> make_core_numbers_visitor(Visitors vis);
 ----
 
 The visitor type used internally. Model of `CoreNumbersVisitorConcept`. Derives from `bfs_visitor`, adding the `examine_vertex(v, g)` event each time a vertex is removed during k-core stripping. Use `make_core_numbers_visitor(...)` to construct one from an adapted visitor.
-
-'''
 
 == Parameters
 

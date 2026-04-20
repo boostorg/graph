@@ -5,6 +5,19 @@ Reduces the profile and wavefront of an undirected graph by reordering vertex in
 *Complexity:* _O(log(m)|E|)_ where _m = max { degree(v) | v in V }_ +
 *Defined in:* `<boost/graph/sloan_ordering.hpp>`
 
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/ordering/sloan.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/ordering/sloan.txt[]
+....
+
 '''
 
 === (1) With start/end vertices and weights
@@ -233,8 +246,6 @@ OutputIterator sloan_ordering(
 
 |===
 
-'''
-
 == Description
 
 The goal of the Sloan ordering algorithm [xref:about/bibliography.adoc#sloan86[83], xref:about/bibliography.adoc#sloan89[84]] is to reduce the profile and
@@ -290,18 +301,6 @@ the direct ordering with the Sloan algorithm.
 == Returns
 
 An `OutputIterator` pointing past the end of the permutation output.
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/ordering/sloan.cpp[]
-----
-
-.Expected output
-----
-Sloan ordering: 5 4 3 2 1 0
-----
 
 == References
 

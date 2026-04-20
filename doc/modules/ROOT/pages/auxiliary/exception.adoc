@@ -11,10 +11,10 @@ BGL algorithms throw these exceptions when preconditions are not met.
 include::example$auxiliary/exception.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-Exception: The graph must be a DAG.
+include::example$auxiliary/exception.txt[]
 ....
 
 == Exception classes

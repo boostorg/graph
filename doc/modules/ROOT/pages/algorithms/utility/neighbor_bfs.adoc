@@ -15,10 +15,10 @@ as undirected during traversal while preserving edge direction information.
 include::example$algorithms/utility/neighbor_bfs.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-Neighbor BFS from vertex 1: 1 4 0 2 3
+include::example$algorithms/utility/neighbor_bfs.txt[]
 ....
 
 === (1) neighbor_breadth_first_search (named parameter version)

@@ -13,10 +13,10 @@ Calculates the maximum flow of a network using the Edmonds-Karp variant of the F
 include::example$algorithms/network_flow/edmonds_karp.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-Edmonds-Karp max flow: 19
+include::example$algorithms/network_flow/edmonds_karp.txt[]
 ....
 
 '''
@@ -200,8 +200,6 @@ edmonds_karp_max_flow(
   `VertexList=listS` does not have an internal `vertex_index` property.
 
 |===
-
-'''
 
 == Description
 

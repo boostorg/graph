@@ -1,0 +1,4 @@
+vertex 0  rank=1.4436
+vertex 1  rank=0.7600
+vertex 2  rank=1.5301
+vertex 3  rank=0.1500

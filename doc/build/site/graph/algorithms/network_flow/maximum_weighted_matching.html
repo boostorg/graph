@@ -1327,6 +1327,9 @@ selects one with the maximum weight sum.</p>
 
 using namespace boost;
 
+// This algorithm hard-codes its weight source to the interior `edge_weight_t`
+// tag (see boost/graph/maximum_weighted_matching.hpp). Bundled properties are
+// not supported here; the tag-based form below is required.
 using Graph = adjacency_list&lt;vecS, vecS, undirectedS, no_property,
     property&lt;edge_weight_t, int&gt;&gt;;
 using Vertex = graph_traits&lt;Graph&gt;::vertex_descriptor;
@@ -1356,7 +1359,7 @@ int main() {
 </div>
 </div>
 <div class="paragraph">
-<p>Expected output:</p>
+<p><strong>Expected output:</strong></p>
 </div>
 <div class="literalblock">
 <div class="content">

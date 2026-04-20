@@ -6,9 +6,7 @@ Creates a straight line drawing of a maximal planar graph on an integer grid.
 *Complexity:* _O(n + m)_ +
 *Defined in:* `<boost/graph/chrobak_payne_drawing.hpp>`
 
-'''
-
-=== Synopsis
+== Synopsis
 
 [source,cpp]
 ----
@@ -57,8 +55,6 @@ void chrobak_payne_straight_line_drawing(
   `[0, num_vertices(g))`. +
   *Default*: `get(vertex_index, g)`
 |===
-
-'''
 
 == Description
 

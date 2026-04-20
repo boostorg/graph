@@ -13,14 +13,10 @@ Solves the single-source shortest-paths problem on a weighted, directed acyclic 
 include::example$algorithms/shortest_paths/dag_shortest.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-distance to 0 = 0
-distance to 1 = 2
-distance to 2 = 6
-distance to 3 = 7
-distance to 4 = 10
+include::example$algorithms/shortest_paths/dag_shortest.txt[]
 ....
 
 '''
@@ -250,8 +246,6 @@ void dag_shortest_paths(
   *Default:* `dijkstra_visitor<null_visitor>`
 
 |===
-
-'''
 
 == Description
 

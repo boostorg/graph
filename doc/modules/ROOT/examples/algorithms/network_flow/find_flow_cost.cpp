@@ -2,23 +2,28 @@
 #include <boost/graph/edmonds_karp_max_flow.hpp>
 #include <boost/graph/find_flow_cost.hpp>
 #include <iostream>
+#include <vector>
 
 using namespace boost;
 
 using Traits = adjacency_list_traits<vecS, vecS, directedS>;
-using Graph = adjacency_list<vecS, vecS, directedS, no_property,
-    property<edge_capacity_t, int,
-    property<edge_residual_capacity_t, int,
-    property<edge_weight_t, int,
-    property<edge_reverse_t, Traits::edge_descriptor>>>>>;
-using Edge = Traits::edge_descriptor;
+struct Edge {
+    int capacity;
+    int residual_capacity;
+    int weight;
+    Traits::edge_descriptor reverse;
+};
+
+using Graph = adjacency_list<vecS, vecS, directedS, no_property, Edge>;
+using Descriptor = graph_traits<Graph>::edge_descriptor;
+using Vertex = graph_traits<Graph>::vertex_descriptor;
 
 void add_edge_pair(Graph& g, int u, int v, int cap, int cost) {
-    Edge e = add_edge(u, v, g).first;
-    Edge r = add_edge(v, u, g).first;
-    put(edge_capacity, g, e, cap);  put(edge_capacity, g, r, 0);
-    put(edge_weight, g, e, cost);   put(edge_weight, g, r, -cost);
-    put(edge_reverse, g, e, r);     put(edge_reverse, g, r, e);
+    Descriptor e = add_edge(u, v, g).first;
+    Descriptor r = add_edge(v, u, g).first;
+    g[e].capacity = cap;  g[r].capacity = 0;
+    g[e].weight = cost;   g[r].weight = -cost;
+    g[e].reverse = r;     g[r].reverse = e;
 }
 
 int main() {
@@ -28,7 +33,20 @@ int main() {
     add_edge_pair(g, 1, 3, 2, 2);
     add_edge_pair(g, 2, 3, 3, 1);
 
-    edmonds_karp_max_flow(g, 0, 3);
-    int cost = find_flow_cost(g);
+    auto cap = get(&Edge::capacity, g);
+    auto res = get(&Edge::residual_capacity, g);
+    auto wgt = get(&Edge::weight, g);
+    auto rev = get(&Edge::reverse, g);
+    auto idx = get(vertex_index, g);
+
+    std::vector<default_color_type> color(num_vertices(g));
+    std::vector<Descriptor> pred(num_vertices(g));
+
+    edmonds_karp_max_flow(g, Vertex(0), Vertex(3), cap, res, rev,
+        make_iterator_property_map(color.begin(), idx),
+        make_iterator_property_map(pred.begin(), idx));
+
+    // 4-arg positional form of find_flow_cost.
+    int cost = find_flow_cost(g, cap, res, wgt);
     std::cout << "Flow cost: " << cost << "\n";
 }

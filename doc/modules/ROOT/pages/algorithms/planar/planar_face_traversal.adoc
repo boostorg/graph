@@ -6,9 +6,20 @@ Traverses all faces of a planar graph defined by a planar embedding, invoking vi
 *Complexity:* _O(n + m)_ +
 *Defined in:* `<boost/graph/planar_face_traversal.hpp>`
 
-'''
+== Example
 
-=== Synopsis
+[source,cpp]
+----
+include::example$algorithms/planar/planar_face_traversal.cpp[]
+----
+
+*Expected output:*
+
+....
+include::example$algorithms/planar/planar_face_traversal.txt[]
+....
+
+== Synopsis
 
 [source,cpp]
 ----
@@ -44,8 +55,6 @@ void planar_face_traversal(
   `[0, num_edges(g))`. +
   *Default*: `get(edge_index, g)`
 |===
-
-'''
 
 == Description
 
@@ -110,17 +119,4 @@ Although `next_vertex` is guaranteed to be called in sequence for each vertex as
 These calls may be interleaved, all vertex visits may precede all edge visits, or vice-versa.
 
 `planar_face_traversal` iterates over a copy of the edges of the input graph, so it is safe to add edges to the graph during visitor event points.
-
-== Example
-
-[source,cpp]
-----
-include::example$algorithms/planar/planar_face_traversal.cpp[]
-----
-
-Expected output:
-
-....
-Number of faces: 3
-....
 

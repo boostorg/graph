@@ -1787,11 +1787,13 @@ void check_r_c_path(
 #include &lt;iostream&gt;
 #include &lt;vector&gt;
 
-// r_c_shortest_paths requires an edge_index_map, so we include edge_index_t.
 using namespace boost;
-using Graph = adjacency_list&lt;vecS, vecS, directedS, no_property,
-    property&lt;edge_index_t, int, property&lt;edge_weight_t, int&gt;&gt;&gt;;
-using Edge = graph_traits&lt;Graph&gt;::edge_descriptor;
+
+// Bundled edge fields replace `property&lt;edge_index_t, int, property&lt;edge_weight_t, int&gt;&gt;`.
+struct Edge { int idx; int weight; };
+
+using Graph = adjacency_list&lt;vecS, vecS, directedS, no_property, Edge&gt;;
+using Descriptor = graph_traits&lt;Graph&gt;::edge_descriptor;
 
 // Resource container: (cost, time)
 struct Res { int cost; int time; };
@@ -1799,8 +1801,8 @@ bool operator==(const Res&amp; a, const Res&amp; b) { return a.cost == b.cost &a
 bool operator&lt;(const Res&amp; a, const Res&amp; b) { return a.cost &lt; b.cost; }
 
 struct ResExt {
-    bool operator()(const Graph&amp; g, Res&amp; new_r, const Res&amp; old_r, Edge e) const {
-        new_r.cost = old_r.cost + get(edge_weight, g, e);
+    bool operator()(const Graph&amp; g, Res&amp; new_r, const Res&amp; old_r, Descriptor e) const {
+        new_r.cost = old_r.cost + g[e].weight;
         new_r.time = old_r.time + 1;
         return new_r.time &lt;= 5; // hop-count constraint
     }
@@ -1814,17 +1816,17 @@ struct Dom {
 
 int main() {
     Graph g(4);
-    int idx = 0;
+    int i = 0;
     auto ae = [&amp;](int u, int v, int w) {
         auto e = add_edge(u, v, g).first;
-        put(edge_index, g, e, idx++);
-        put(edge_weight, g, e, w);
+        g[e].idx = i++;
+        g[e].weight = w;
     };
     ae(0, 1, 2); ae(0, 2, 5); ae(1, 3, 3); ae(2, 3, 2);
 
-    std::vector&lt;Edge&gt; path;
+    std::vector&lt;Descriptor&gt; path;
     Res result{0, 0};
-    r_c_shortest_paths(g, get(vertex_index, g), get(edge_index, g),
+    r_c_shortest_paths(g, get(vertex_index, g), get(&amp;Edge::idx, g),
         vertex(0, g), vertex(3, g), path, result,
         Res{0, 0}, ResExt{}, Dom{});
 
@@ -1834,7 +1836,7 @@ int main() {
 </div>
 </div>
 <div class="paragraph">
-<p>Expected output:</p>
+<p><strong>Expected output:</strong></p>
 </div>
 <div class="literalblock">
 <div class="content">

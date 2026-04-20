@@ -1,0 +1,7 @@
+Clusters: 6
+  vertex 0 -> cluster 0
+  vertex 1 -> cluster 1
+  vertex 2 -> cluster 2
+  vertex 3 -> cluster 3
+  vertex 4 -> cluster 4
+  vertex 5 -> cluster 5

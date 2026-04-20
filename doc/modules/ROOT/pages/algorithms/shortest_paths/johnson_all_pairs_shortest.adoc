@@ -13,12 +13,10 @@ Finds the shortest distance between every pair of vertices in a graph, suitable 
 include::example$algorithms/shortest_paths/johnson.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-0 2 5
-2147483647 0 3
-2147483647 2147483647 0
+include::example$algorithms/shortest_paths/johnson.txt[]
 ....
 
 '''
@@ -288,8 +286,6 @@ bool johnson_all_pairs_shortest_paths(
   `num_vertices(g)` and using the `i_map` for the index map.
 
 |===
-
-'''
 
 == Description
 

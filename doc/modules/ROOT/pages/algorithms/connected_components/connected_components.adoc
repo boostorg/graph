@@ -13,17 +13,10 @@ Computes the connected components of an undirected graph using a DFS-based appro
 include::example$algorithms/connected_components/connected.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-Number of components: 3
-  Vertex 0 -> component 0
-  Vertex 1 -> component 0
-  Vertex 2 -> component 0
-  Vertex 3 -> component 1
-  Vertex 4 -> component 1
-  Vertex 5 -> component 2
-  Vertex 6 -> component 2
+include::example$algorithms/connected_components/connected.txt[]
 ....
 
 '''
@@ -60,9 +53,27 @@ Named Parameters::
 *Default:* `get(vertex_index, g)`. Note: if you use this default, make sure your graph has an internal `vertex_index` property. For example, `adjacency_list` with `VertexList=listS` does not have an internal `vertex_index` property.
 |===
 
-NOTE: There is not a non-named parameter version of this function.
-
 '''
+
+=== (2) Positional version
+
+[source,cpp]
+----
+template <class VertexListGraph, class ComponentMap>
+typename property_traits<ComponentMap>::value_type
+connected_components(
+    const VertexListGraph& g, ComponentMap c);
+----
+
+Equivalent to (1) with every named parameter left at its default. Uses `get(vertex_index, g)` for the index map and an internally allocated `default_color_type` color map.
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `const Graph& g` | An undirected graph. Same concept requirements as (1).
+| OUT | `ComponentMap c` | Same as (1).
+|===
 
 == Description
 

@@ -13,14 +13,10 @@ Records the hop distance of each vertex from the source during a graph search.
 include::example$visitors/distance_recorder.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-vertex 0  distance=0
-vertex 1  distance=1
-vertex 2  distance=1
-vertex 3  distance=2
-vertex 4  distance=3
+include::example$visitors/distance_recorder.txt[]
 ....
 
 == Synopsis

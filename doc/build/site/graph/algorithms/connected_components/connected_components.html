@@ -925,7 +925,7 @@ int main() {
 </div>
 </div>
 <div class="paragraph">
-<p>Expected output:</p>
+<p><strong>Expected output:</strong></p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -1011,18 +1011,47 @@ connected_components(
 </tr>
 </tbody>
 </table>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-There is not a non-named parameter version of this function.
-</td>
-</tr>
-</table>
+<hr>
 </div>
+<div class="sect2">
+<h3 id="_2_positional_version"><a class="anchor" href="#_2_positional_version"></a>(2) Positional version</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template &lt;class VertexListGraph, class ComponentMap&gt;
+typename property_traits&lt;ComponentMap&gt;::value_type
+connected_components(
+    const VertexListGraph&amp; g, ComponentMap c);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Equivalent to (1) with every named parameter left at its default. Uses <code>get(vertex_index, g)</code> for the index map and an internally allocated <code>default_color_type</code> color map.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 12.5%;">
+<col style="width: 25%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Direction</th>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const Graph&amp; g</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An undirected graph. Same concept requirements as (1).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OUT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ComponentMap c</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Same as (1).</p></td>
+</tr>
+</tbody>
+</table>
 <hr>
 </div>
 </div>

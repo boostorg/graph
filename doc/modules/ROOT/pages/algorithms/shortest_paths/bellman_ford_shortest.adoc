@@ -13,13 +13,10 @@ Solves the single-source shortest-paths problem for a graph with both positive a
 include::example$algorithms/shortest_paths/bellman_ford.cpp[]
 ----
 
-Expected output:
+*Expected output:*
 
 ....
-distance to 0 = 0
-distance to 1 = 1
-distance to 2 = -1
-distance to 3 = 2
+include::example$algorithms/shortest_paths/bellman_ford.txt[]
 ....
 
 '''
@@ -188,8 +185,6 @@ bool bellman_ford_shortest_paths(
   `D=typename property_traits<DistanceMap>::value_type`
 
 |===
-
-'''
 
 == Description
 
