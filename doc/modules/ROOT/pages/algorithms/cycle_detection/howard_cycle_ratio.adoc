@@ -14,9 +14,10 @@ include::example$algorithms/cycle_detection/howard_cycle_ratio.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/cycle_detection/howard_cycle_ratio.txt[]
-....
+----
 
 '''
 

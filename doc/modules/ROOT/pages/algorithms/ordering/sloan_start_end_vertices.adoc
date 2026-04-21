@@ -14,9 +14,10 @@ include::example$algorithms/ordering/sloan_start_end.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/ordering/sloan_start_end.txt[]
-....
+----
 
 '''
 

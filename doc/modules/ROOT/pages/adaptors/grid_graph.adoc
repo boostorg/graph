@@ -25,9 +25,10 @@ include::example$adaptors/grid_graph_unwrapped.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$adaptors/grid_graph_unwrapped.txt[]
-....
+----
 
 == Torus (all dimensions wrap)
 
@@ -43,9 +44,10 @@ include::example$adaptors/grid_graph_torus.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$adaptors/grid_graph_torus.txt[]
-....
+----
 
 == Cylinder (mixed wrapping)
 
@@ -59,9 +61,10 @@ include::example$adaptors/grid_graph_cylinder.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$adaptors/grid_graph_cylinder.txt[]
-....
+----
 
 == Higher dimensions
 
@@ -75,9 +78,10 @@ include::example$adaptors/grid_graph_3d.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$adaptors/grid_graph_3d.txt[]
-....
+----
 
 == Synopsis
 

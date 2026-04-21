@@ -16,9 +16,10 @@ include::example$algorithms/utility/transitive_reduction.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/utility/transitive_reduction.txt[]
-....
+----
 
 == Synopsis
 

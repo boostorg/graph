@@ -14,9 +14,10 @@ include::example$algorithms/coloring/edge_coloring.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/coloring/edge_coloring.txt[]
-....
+----
 
 '''
 

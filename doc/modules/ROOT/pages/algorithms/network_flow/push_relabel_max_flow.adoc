@@ -15,9 +15,10 @@ include::example$algorithms/network_flow/push_relabel.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/network_flow/push_relabel.txt[]
-....
+----
 
 '''
 

@@ -10,9 +10,10 @@ include::example$algorithms/shortest_paths/dijkstra_no_color.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/shortest_paths/dijkstra_no_color.txt[]
-....
+----
 
 '''
 

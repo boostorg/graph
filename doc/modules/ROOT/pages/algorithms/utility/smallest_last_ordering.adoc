@@ -16,9 +16,10 @@ include::example$algorithms/utility/smallest_last.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/utility/smallest_last.txt[]
-....
+----
 
 === (1) With full work-map set
 

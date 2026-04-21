@@ -47,9 +47,10 @@ include::example$property_maps/external_vector.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$property_maps/external_vector.txt[]
-....
+----
 
 == Raw arrays
 
@@ -64,9 +65,10 @@ include::example$property_maps/external_array.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$property_maps/external_array.txt[]
-....
+----
 
 == Edge-based external properties
 
@@ -81,9 +83,10 @@ include::example$property_maps/external_edge.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$property_maps/external_edge.txt[]
-....
+----
 
 == std::map for non-integer keys
 
@@ -106,7 +109,8 @@ include::example$property_maps/external_assoc.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$property_maps/external_assoc.txt[]
-....
+----
 

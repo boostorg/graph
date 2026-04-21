@@ -14,9 +14,10 @@ include::example$algorithms/network_flow/cycle_canceling.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/network_flow/cycle_canceling.txt[]
-....
+----
 
 '''
 

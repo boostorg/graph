@@ -51,9 +51,10 @@ include::example$generators/rmat.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$generators/rmat.txt[]
-....
+----
 
 == Variants
 
@@ -88,9 +89,10 @@ include::example$generators/sorted_rmat.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$generators/sorted_rmat.txt[]
-....
+----
 
 === `unique_rmat_iterator`
 
@@ -114,9 +116,10 @@ include::example$generators/unique_rmat.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$generators/unique_rmat.txt[]
-....
+----
 
 Additional parameters:
 
@@ -160,6 +163,7 @@ include::example$generators/sorted_unique_rmat.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$generators/sorted_unique_rmat.txt[]
-....
+----

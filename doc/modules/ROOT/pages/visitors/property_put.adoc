@@ -16,9 +16,10 @@ include::example$visitors/property_put.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$visitors/property_put.txt[]
-....
+----
 
 == Synopsis
 

@@ -15,9 +15,10 @@ include::example$algorithms/utility/transpose_graph.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/utility/transpose_graph.txt[]
-....
+----
 
 '''
 

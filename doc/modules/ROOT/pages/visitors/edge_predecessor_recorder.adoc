@@ -17,9 +17,10 @@ include::example$visitors/edge_predecessor_recorder.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$visitors/edge_predecessor_recorder.txt[]
-....
+----
 
 == Synopsis
 

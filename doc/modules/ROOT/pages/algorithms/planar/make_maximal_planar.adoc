@@ -14,9 +14,10 @@ include::example$algorithms/planar/make_maximal.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/planar/make_maximal.txt[]
-....
+----
 
 '''
 

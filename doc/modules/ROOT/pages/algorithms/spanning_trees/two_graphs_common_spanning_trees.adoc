@@ -14,9 +14,10 @@ include::example$algorithms/spanning_trees/two_graphs_common.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/spanning_trees/two_graphs_common.txt[]
-....
+----
 
 '''
 

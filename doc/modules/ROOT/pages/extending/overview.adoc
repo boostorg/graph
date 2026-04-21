@@ -102,9 +102,10 @@ include::example$property_maps/custom_property_map.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$property_maps/custom_property_map.txt[]
-....
+----
 
 The key insight: the `IDMap` converts opaque descriptors to integer offsets,
 and the iterator provides contiguous storage at those offsets. The three

@@ -15,9 +15,10 @@ include::example$algorithms/spanning_trees/prim.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/spanning_trees/prim.txt[]
-....
+----
 
 '''
 

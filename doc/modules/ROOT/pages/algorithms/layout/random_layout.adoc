@@ -14,9 +14,10 @@ include::example$algorithms/layout/random_layout.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/layout/random_layout.txt[]
-....
+----
 
 '''
 

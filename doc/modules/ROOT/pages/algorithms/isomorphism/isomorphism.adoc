@@ -15,9 +15,10 @@ include::example$algorithms/isomorphism/isomorphism.cpp[]
 
 *Expected output:*
 
-....
-Graphs are isomorphic
-....
+[,text]
+----
+include::example$algorithms/isomorphism/isomorphism.txt[]
+----
 
 '''
 

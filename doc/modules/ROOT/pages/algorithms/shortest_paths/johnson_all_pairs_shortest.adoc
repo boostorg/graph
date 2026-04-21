@@ -15,9 +15,10 @@ include::example$algorithms/shortest_paths/johnson.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/shortest_paths/johnson.txt[]
-....
+----
 
 '''
 

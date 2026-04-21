@@ -15,9 +15,10 @@ include::example$algorithms/cycle_detection/tiernan_all_cycles.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/cycle_detection/tiernan_all_cycles.txt[]
-....
+----
 
 '''
 

@@ -15,9 +15,10 @@ include::example$algorithms/planar/canonical_ordering.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/planar/canonical_ordering.txt[]
-....
+----
 
 == Synopsis
 

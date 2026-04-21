@@ -16,9 +16,10 @@ include::example$algorithms/connected_components/strong.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/connected_components/strong.txt[]
-....
+----
 
 '''
 

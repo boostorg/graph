@@ -15,9 +15,10 @@ include::example$algorithms/topological_sort/topological_sort.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/topological_sort/topological_sort.txt[]
-....
+----
 
 '''
 

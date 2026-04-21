@@ -15,9 +15,10 @@ include::example$algorithms/traversal/dfs_visit.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/traversal/dfs_visit.txt[]
-....
+----
 
 '''
 

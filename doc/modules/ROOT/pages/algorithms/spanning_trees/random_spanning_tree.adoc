@@ -14,9 +14,10 @@ include::example$algorithms/spanning_trees/random_spanning_tree.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/spanning_trees/random_spanning_tree.txt[]
-....
+----
 
 '''
 

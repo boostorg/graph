@@ -17,9 +17,10 @@ include::example$algorithms/metrics/core_numbers.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/metrics/core_numbers.txt[]
-....
+----
 
 Vertices a-d form a 4-clique (K4), so each has core number 3 (every vertex
 in the clique has degree 3 within it). Vertices e-f-g form a chain attached

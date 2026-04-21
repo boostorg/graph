@@ -15,9 +15,10 @@ include::example$algorithms/metrics/bandwidth.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/metrics/bandwidth.txt[]
-....
+----
 
 '''
 

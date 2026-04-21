@@ -17,9 +17,10 @@ include::example$algorithms/utility/loop_erased_random_walk.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/utility/loop_erased_random_walk.txt[]
-....
+----
 
 *Complexity:* depends on graph structure, expected O(V) per walk on many graphs +
 *Defined in:* `<boost/graph/loop_erased_random_walk.hpp>`

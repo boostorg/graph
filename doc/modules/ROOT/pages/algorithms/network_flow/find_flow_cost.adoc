@@ -14,9 +14,10 @@ include::example$algorithms/network_flow/find_flow_cost.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/network_flow/find_flow_cost.txt[]
-....
+----
 
 '''
 

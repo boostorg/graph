@@ -51,9 +51,10 @@ include::example$generators/erdos_renyi.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$generators/erdos_renyi.txt[]
-....
+----
 
 == Variants
 
@@ -92,6 +93,7 @@ include::example$generators/sorted_erdos_renyi.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$generators/sorted_erdos_renyi.txt[]
-....
+----

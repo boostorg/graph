@@ -51,9 +51,10 @@ include::example$generators/plod.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$generators/plod.txt[]
-....
+----
 
 == Variants
 

@@ -37,9 +37,10 @@ include::example$traits/adjacency_list_traits.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$traits/adjacency_list_traits.txt[]
-....
+----
 
 Observe that `Traits` and the final `Graph` use the *_same_* three
 selectors (`vecS, vecS, directedS`). If they diverge, the descriptor

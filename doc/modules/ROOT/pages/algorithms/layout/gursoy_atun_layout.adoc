@@ -13,9 +13,10 @@ include::example$algorithms/layout/gursoy_atun.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/layout/gursoy_atun.txt[]
-....
+----
 
 '''
 

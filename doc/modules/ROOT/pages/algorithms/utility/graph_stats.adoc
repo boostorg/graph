@@ -13,9 +13,10 @@ include::example$algorithms/utility/graph_stats.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/utility/graph_stats.txt[]
-....
+----
 
 == Functions
 

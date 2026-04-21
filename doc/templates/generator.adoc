@@ -45,9 +45,10 @@ include::example$generators/generator_name.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$generators/generator_name.txt[]
-....
+----
 
 == Synopsis
 

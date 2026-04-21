@@ -13,9 +13,10 @@ include::example$algorithms/layout/kamada_kawai.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/layout/kamada_kawai.txt[]
-....
+----
 
 '''
 

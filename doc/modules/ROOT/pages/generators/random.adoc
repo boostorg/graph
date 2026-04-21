@@ -14,9 +14,10 @@ include::example$generators/random_utilities.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$generators/random_utilities.txt[]
-....
+----
 
 == generate_random_graph
 

@@ -15,9 +15,10 @@ include::example$adaptors/reverse_graph.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$adaptors/reverse_graph.txt[]
-....
+----
 
 == Synopsis
 

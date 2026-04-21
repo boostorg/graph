@@ -69,9 +69,10 @@ b2. `BOOST_LIB` is only needed for the three link-required examples
   before signatures.
 - **Bold metadata.** `*Complexity:*`, `*Defined in:*`,
   `*Expected output:*` are bold.
-- **Output blocks** use AsciiDoc literal `....`, not source `----`,
-  and pull from the `.txt` sidecar via `include::example$…[]` so the
-  documentation can never drift from the code.
+- **Output blocks** use `[,text]\n----` (same listing-block wrapper as
+  the code above) and pull from the `.txt` sidecar via
+  `include::example$…[]`, so the documentation can never drift from the
+  code and the two blocks align vertically on the page.
 - **Heading levels:** `==` for top-level sections; `===` only for
   numbered overloads or grouped variants. The `'''` thematic break
   appears only before a `===`, never before a `==`.

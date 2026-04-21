@@ -16,9 +16,10 @@ include::example$visitors/property_writer.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$visitors/property_writer.txt[]
-....
+----
 
 == Synopsis
 

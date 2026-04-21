@@ -22,9 +22,10 @@ include::example$io/dimacs.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$io/dimacs.txt[]
-....
+----
 
 == read_dimacs_max_flow
 

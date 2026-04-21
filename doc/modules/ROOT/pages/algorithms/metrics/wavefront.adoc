@@ -13,9 +13,10 @@ include::example$algorithms/metrics/wavefront.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/metrics/wavefront.txt[]
-....
+----
 
 '''''
 

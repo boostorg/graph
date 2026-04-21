@@ -14,9 +14,10 @@ include::example$algorithms/network_flow/maximum_matching.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/network_flow/maximum_matching.txt[]
-....
+----
 
 == edmonds_maximum_cardinality_matching
 

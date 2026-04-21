@@ -15,9 +15,10 @@ include::example$algorithms/connected_components/incremental.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/connected_components/incremental.txt[]
-....
+----
 
 '''
 

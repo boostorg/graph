@@ -19,9 +19,10 @@ include::example$algorithms/utility/copy_graph.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/utility/copy_graph.txt[]
-....
+----
 
 '''
 

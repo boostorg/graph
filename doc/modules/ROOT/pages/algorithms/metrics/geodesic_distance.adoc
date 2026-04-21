@@ -14,9 +14,10 @@ include::example$algorithms/metrics/geodesic_distance.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/metrics/geodesic_distance.txt[]
-....
+----
 
 === (1) mean_geodesic with explicit measure and combinator
 

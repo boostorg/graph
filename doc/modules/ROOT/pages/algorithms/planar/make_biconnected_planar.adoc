@@ -15,9 +15,10 @@ include::example$algorithms/planar/make_biconnected.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/planar/make_biconnected.txt[]
-....
+----
 
 == Synopsis
 

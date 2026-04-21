@@ -15,9 +15,10 @@ include::example$algorithms/planar/make_connected.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/planar/make_connected.txt[]
-....
+----
 
 == Synopsis
 

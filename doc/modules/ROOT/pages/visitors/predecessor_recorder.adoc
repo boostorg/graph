@@ -15,9 +15,10 @@ include::example$visitors/predecessor_recorder.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$visitors/predecessor_recorder.txt[]
-....
+----
 
 TIP: Initialize the source vertex's predecessor to itself before running the
 algorithm. This marks the root of the search tree as the only vertex that is

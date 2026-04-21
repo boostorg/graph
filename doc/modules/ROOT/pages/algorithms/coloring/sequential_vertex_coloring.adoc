@@ -15,9 +15,10 @@ include::example$algorithms/coloring/vertex_coloring.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/coloring/vertex_coloring.txt[]
-....
+----
 
 '''
 

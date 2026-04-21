@@ -15,9 +15,10 @@ include::example$algorithms/shortest_paths/astar.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/shortest_paths/astar.txt[]
-....
+----
 
 '''
 

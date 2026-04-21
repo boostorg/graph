@@ -77,9 +77,10 @@ include::example$property_maps/bundled.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$property_maps/bundled.txt[]
-....
+----
 
 == Graph-level bundles
 

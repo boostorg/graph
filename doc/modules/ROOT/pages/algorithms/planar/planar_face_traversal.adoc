@@ -15,9 +15,10 @@ include::example$algorithms/planar/planar_face_traversal.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/planar/planar_face_traversal.txt[]
-....
+----
 
 == Synopsis
 

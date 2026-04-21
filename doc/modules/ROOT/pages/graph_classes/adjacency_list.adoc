@@ -43,9 +43,10 @@ include::example$graph_classes/adjacency_list_usage.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$graph_classes/adjacency_list_usage.txt[]
-....
+----
 
 == Template Parameters
 

@@ -13,9 +13,10 @@ include::example$auxiliary/exception.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$auxiliary/exception.txt[]
-....
+----
 
 == Exception classes
 

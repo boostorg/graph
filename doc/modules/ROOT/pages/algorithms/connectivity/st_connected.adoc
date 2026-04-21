@@ -17,9 +17,10 @@ include::example$algorithms/connectivity/st_connected.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/connectivity/st_connected.txt[]
-....
+----
 
 === (1) With explicit color map
 

@@ -257,6 +257,7 @@ include::example$property_maps/property_maps.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$property_maps/property_maps.txt[]
-....
+----

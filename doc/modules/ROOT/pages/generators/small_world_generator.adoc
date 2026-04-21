@@ -51,6 +51,7 @@ include::example$generators/small_world.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$generators/small_world.txt[]
-....
+----

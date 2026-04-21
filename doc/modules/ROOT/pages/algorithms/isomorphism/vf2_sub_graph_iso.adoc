@@ -14,9 +14,10 @@ include::example$algorithms/isomorphism/vf2_subgraph.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/isomorphism/vf2_subgraph.txt[]
-....
+----
 
 '''
 

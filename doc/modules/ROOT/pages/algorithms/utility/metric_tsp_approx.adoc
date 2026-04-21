@@ -15,9 +15,10 @@ include::example$algorithms/utility/metric_tsp_approx.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/utility/metric_tsp_approx.txt[]
-....
+----
 
 '''
 

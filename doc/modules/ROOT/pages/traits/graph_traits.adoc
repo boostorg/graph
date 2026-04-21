@@ -27,9 +27,10 @@ include::example$traits/graph_traits_basic.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$traits/graph_traits_basic.txt[]
-....
+----
 
 The `null_vertex` value above is `std::numeric_limits<std::size_t>::max()`
 because this graph uses `vecS` vertex storage. For `listS` it is a
@@ -45,9 +46,10 @@ include::example$traits/graph_traits_generic.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$traits/graph_traits_generic.txt[]
-....
+----
 
 Inside a function template, every nested name through `graph_traits` must
 be disambiguated with `typename` because the compiler does not yet know

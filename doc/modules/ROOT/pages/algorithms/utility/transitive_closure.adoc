@@ -14,9 +14,10 @@ include::example$algorithms/utility/transitive_closure.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/utility/transitive_closure.txt[]
-....
+----
 
 '''
 

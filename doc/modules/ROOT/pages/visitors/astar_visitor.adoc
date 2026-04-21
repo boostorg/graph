@@ -15,9 +15,10 @@ include::example$visitors/astar_visitor.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$visitors/astar_visitor.txt[]
-....
+----
 
 == Synopsis
 

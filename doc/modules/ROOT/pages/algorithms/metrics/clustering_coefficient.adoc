@@ -15,9 +15,10 @@ include::example$algorithms/metrics/clustering_coefficient.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/metrics/clustering_coefficient.txt[]
-....
+----
 
 === (1) clustering_coefficient (default double result)
 

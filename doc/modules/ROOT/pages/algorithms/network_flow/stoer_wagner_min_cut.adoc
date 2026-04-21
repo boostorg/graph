@@ -15,9 +15,10 @@ include::example$algorithms/network_flow/stoer_wagner.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/network_flow/stoer_wagner.txt[]
-....
+----
 
 '''
 

@@ -45,6 +45,7 @@ include::example$generators/mesh.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$generators/mesh.txt[]
-....
+----

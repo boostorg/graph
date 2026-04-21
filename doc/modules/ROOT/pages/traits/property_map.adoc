@@ -38,9 +38,10 @@ include::example$traits/property_map.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$traits/property_map.txt[]
-....
+----
 
 == Synopsis
 

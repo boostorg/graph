@@ -14,9 +14,10 @@ include::example$algorithms/coloring/is_bipartite.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/coloring/is_bipartite.txt[]
-....
+----
 
 '''
 

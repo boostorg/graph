@@ -14,9 +14,10 @@ include::example$algorithms/network_flow/boykov_kolmogorov.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/network_flow/boykov_kolmogorov.txt[]
-....
+----
 
 '''
 

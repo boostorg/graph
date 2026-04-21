@@ -49,6 +49,7 @@ include::example$generators/ssca.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$generators/ssca.txt[]
-....
+----

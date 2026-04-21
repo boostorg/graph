@@ -15,9 +15,10 @@ include::example$algorithms/connected_components/biconnected.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/connected_components/biconnected.txt[]
-....
+----
 
 '''
 

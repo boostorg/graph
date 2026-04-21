@@ -16,9 +16,10 @@ include::example$algorithms/metrics/page_rank.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/metrics/page_rank.txt[]
-....
+----
 
 Vertex 2 has the highest rank because it receives edges from three other
 vertices, including the high-ranked vertex 0.

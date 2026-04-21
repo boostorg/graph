@@ -56,9 +56,10 @@ include::example$algorithms/<category>/<name>.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/<category>/<name>.txt[]
-....
+----
 
 '''
 

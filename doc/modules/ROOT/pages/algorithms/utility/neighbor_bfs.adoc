@@ -17,9 +17,10 @@ include::example$algorithms/utility/neighbor_bfs.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/utility/neighbor_bfs.txt[]
-....
+----
 
 === (1) neighbor_breadth_first_search (named parameter version)
 

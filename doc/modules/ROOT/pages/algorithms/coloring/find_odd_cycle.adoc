@@ -14,9 +14,10 @@ include::example$algorithms/coloring/find_odd_cycle.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/coloring/find_odd_cycle.txt[]
-....
+----
 
 '''
 

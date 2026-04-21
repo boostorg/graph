@@ -16,9 +16,10 @@ include::example$algorithms/metrics/closeness_centrality.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/metrics/closeness_centrality.txt[]
-....
+----
 
 '''
 

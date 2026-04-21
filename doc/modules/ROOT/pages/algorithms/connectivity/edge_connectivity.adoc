@@ -15,9 +15,10 @@ include::example$algorithms/connectivity/edge_connectivity.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/connectivity/edge_connectivity.txt[]
-....
+----
 
 == Synopsis
 

@@ -15,9 +15,10 @@ include::example$algorithms/planar/boyer_myrvold.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/planar/boyer_myrvold.txt[]
-....
+----
 
 '''
 

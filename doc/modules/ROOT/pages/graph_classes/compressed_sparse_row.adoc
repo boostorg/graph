@@ -58,9 +58,10 @@ include::example$graph_classes/csr_usage.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$graph_classes/csr_usage.txt[]
-....
+----
 
 == Template Parameters
 

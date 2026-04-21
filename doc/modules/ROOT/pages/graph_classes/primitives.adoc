@@ -11,9 +11,10 @@ include::example$primitives/primitives_traversal.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$primitives/primitives_traversal.txt[]
-....
+----
 
 == Traversal
 
@@ -70,9 +71,10 @@ include::example$primitives/primitives_edge_access.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$primitives/primitives_edge_access.txt[]
-....
+----
 
 == Counts
 
@@ -143,9 +145,10 @@ include::example$primitives/primitives_mutation.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$primitives/primitives_mutation.txt[]
-....
+----
 
 == Property access
 
@@ -176,9 +179,10 @@ include::example$primitives/primitives_properties.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$primitives/primitives_properties.txt[]
-....
+----
 
 == Types
 

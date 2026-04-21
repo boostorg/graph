@@ -16,9 +16,10 @@ include::example$auxiliary/disjoint_sets.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$auxiliary/disjoint_sets.txt[]
-....
+----
 
 == Template Parameters
 

@@ -15,9 +15,10 @@ include::example$algorithms/ordering/minimum_degree.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/ordering/minimum_degree.txt[]
-....
+----
 
 '''
 

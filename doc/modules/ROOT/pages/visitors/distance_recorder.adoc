@@ -15,9 +15,10 @@ include::example$visitors/distance_recorder.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$visitors/distance_recorder.txt[]
-....
+----
 
 == Synopsis
 

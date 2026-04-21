@@ -13,9 +13,10 @@ include::example$algorithms/layout/circle_layout.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/layout/circle_layout.txt[]
-....
+----
 
 '''
 

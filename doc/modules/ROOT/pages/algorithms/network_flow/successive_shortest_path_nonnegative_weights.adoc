@@ -14,9 +14,10 @@ include::example$algorithms/network_flow/successive_shortest_path.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/network_flow/successive_shortest_path.txt[]
-....
+----
 
 '''
 

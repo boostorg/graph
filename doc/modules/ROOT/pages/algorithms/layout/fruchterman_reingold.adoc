@@ -14,9 +14,10 @@ include::example$algorithms/layout/fruchterman_reingold.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/layout/fruchterman_reingold.txt[]
-....
+----
 
 '''
 

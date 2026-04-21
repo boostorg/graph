@@ -14,9 +14,10 @@ include::example$algorithms/traversal/undirected_dfs.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/traversal/undirected_dfs.txt[]
-....
+----
 
 '''
 

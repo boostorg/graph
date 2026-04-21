@@ -15,9 +15,10 @@ include::example$algorithms/metrics/eccentricity.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/metrics/eccentricity.txt[]
-....
+----
 
 === (1) eccentricity with explicit combinator
 

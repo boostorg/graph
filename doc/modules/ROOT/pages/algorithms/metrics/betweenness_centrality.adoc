@@ -14,9 +14,10 @@ include::example$algorithms/metrics/betweenness.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/metrics/betweenness.txt[]
-....
+----
 
 '''
 

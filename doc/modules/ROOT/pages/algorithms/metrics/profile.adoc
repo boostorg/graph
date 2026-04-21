@@ -14,9 +14,10 @@ include::example$algorithms/metrics/profile.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/metrics/profile.txt[]
-....
+----
 
 '''
 

@@ -15,9 +15,10 @@ include::example$algorithms/utility/maximum_adjacency_search.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/utility/maximum_adjacency_search.txt[]
-....
+----
 
 '''
 

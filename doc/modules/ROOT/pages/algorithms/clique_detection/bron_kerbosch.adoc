@@ -15,9 +15,10 @@ include::example$algorithms/clique_detection/bron_kerbosch.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$algorithms/clique_detection/bron_kerbosch.txt[]
-....
+----
 
 '''
 

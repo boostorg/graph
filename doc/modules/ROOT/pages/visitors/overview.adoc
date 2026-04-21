@@ -23,9 +23,10 @@ include::example$visitors/visitor_intro.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$visitors/visitor_intro.txt[]
-....
+----
 
 The key pattern:
 
@@ -49,9 +50,10 @@ include::example$visitors/custom_visitor.cpp[]
 
 *Expected output:*
 
-....
+[,text]
+----
 include::example$visitors/custom_visitor.txt[]
-....
+----
 
 The base classes are:
 
