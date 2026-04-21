@@ -10,6 +10,10 @@ A C++ library of graph algorithms and data structures, generic enough to work on
 
 == Example
 
+++++
+<p style="padding-left: 2em;"><a href="https://godbolt.org/z/9Esszr9Ga">Try it on Compiler Explorer</a></p>
+++++
+
 [source,cpp]
 ----
 include::example$algorithms/shortest_paths/dijkstra_bundled.cpp[]
