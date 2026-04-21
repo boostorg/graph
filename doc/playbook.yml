@@ -7,7 +7,7 @@ site:
 
 content:
   sources:
-    - url: .
+    - url: ..
       start_path: doc
       branches: HEAD
 

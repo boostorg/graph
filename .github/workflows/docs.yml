@@ -55,7 +55,8 @@ jobs:
         run: rsync -a ../boost-root/libs/graph/doc/modules/ROOT/examples/ doc/modules/ROOT/examples/
 
       - name: Build the site
-        run: npx antora --fetch doc/playbook.yml
+        working-directory: doc
+        run: npx antora --fetch playbook.yml
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
