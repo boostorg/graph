@@ -97,8 +97,7 @@ include::example$graph_classes/adjacency_matrix_usage.txt[]
 
 [source,cpp]
 ----
-adjacency_matrix(vertices_size_type n,
-                 const GraphProperty& p = GraphProperty())
+adjacency_matrix(vertices_size_type n, const GraphProperty& p = GraphProperty())
 ----
 
 Creates a graph object with `n` vertices and zero edges. +
@@ -125,7 +124,8 @@ element type is an integer in `[0, n)`. +
 [source,cpp]
 ----
 template <typename EdgeIterator, typename EdgePropertyIterator>
-adjacency_matrix(EdgeIterator first, EdgeIterator last,
+adjacency_matrix(EdgeIterator first, 
+                 EdgeIterator last,
                  EdgePropertyIterator ep_iter,
                  vertices_size_type n,
                  const GraphProperty& p = GraphProperty())
@@ -300,8 +300,7 @@ Returns the nth vertex in the graph's vertex list.
 [source,cpp]
 ----
 std::pair<edge_descriptor, bool>
-edge(vertex_descriptor u, vertex_descriptor v,
-     const adjacency_matrix& g)
+edge(vertex_descriptor u, vertex_descriptor v, const adjacency_matrix& g)
 ----
 
 Returns the edge connecting vertex `u` to vertex `v` in graph `g`. The `bool`
@@ -313,8 +312,7 @@ is `true` if the edge exists. +
 [source,cpp]
 ----
 std::pair<edge_descriptor, bool>
-add_edge(vertex_descriptor u, vertex_descriptor v,
-         adjacency_matrix& g)
+add_edge(vertex_descriptor u, vertex_descriptor v, adjacency_matrix& g)
 ----
 
 Adds edge `(u,v)` to the graph and returns the edge descriptor for the new
@@ -327,7 +325,8 @@ edge. If the edge already exists, no duplicate is added and the `bool` flag is
 [source,cpp]
 ----
 std::pair<edge_descriptor, bool>
-add_edge(vertex_descriptor u, vertex_descriptor v,
+add_edge(vertex_descriptor u, 
+         vertex_descriptor v,
          const EdgeProperty& p,
          adjacency_matrix& g)
 ----
@@ -339,8 +338,7 @@ value. See the previous `add_edge()` for duplicate-edge behavior.
 
 [source,cpp]
 ----
-void remove_edge(vertex_descriptor u, vertex_descriptor v,
-                 adjacency_matrix& g)
+void remove_edge(vertex_descriptor u, vertex_descriptor v, adjacency_matrix& g)
 ----
 
 Removes the edge `(u,v)` from the graph. +

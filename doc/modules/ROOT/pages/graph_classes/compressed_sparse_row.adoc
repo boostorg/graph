@@ -122,7 +122,8 @@ Constructs a graph with no vertices or edges.
 template <typename InputIterator>
 compressed_sparse_row_graph(
     edges_are_unsorted_t,
-    InputIterator edge_begin, InputIterator edge_end,
+    InputIterator edge_begin, 
+    InputIterator edge_end,
     vertices_size_type numverts,
     const GraphProperty& prop = GraphProperty());
 ----
@@ -142,7 +143,8 @@ The value `prop` initializes the graph property.
 template <typename InputIterator, typename EdgePropertyIterator>
 compressed_sparse_row_graph(
     edges_are_unsorted_t,
-    InputIterator edge_begin, InputIterator edge_end,
+    InputIterator edge_begin, 
+    InputIterator edge_end,
     EdgePropertyIterator ep_iter,
     vertices_size_type numverts,
     const GraphProperty& prop = GraphProperty());
@@ -230,7 +232,8 @@ sort order.
 template <typename InputIterator, typename EdgePropertyIterator>
 compressed_sparse_row_graph(
     edges_are_sorted_t,
-    InputIterator edge_begin, InputIterator edge_end,
+    InputIterator edge_begin, 
+    InputIterator edge_end,
     EdgePropertyIterator ep_iter,
     vertices_size_type numverts,
     edges_size_type numedges = 0,
@@ -288,14 +291,13 @@ unspecified values.
 [source,cpp]
 ----
 template <typename Graph, typename VertexIndexMap>
-compressed_sparse_row_graph(
-    const Graph& g, const VertexIndexMap& vi,
-    vertices_size_type numverts,
-    edges_size_type numedges);
+compressed_sparse_row_graph( const Graph& g, 
+                             const VertexIndexMap& vi,
+                             vertices_size_type numverts,
+                             edges_size_type numedges);
 
 template <typename Graph, typename VertexIndexMap>
-compressed_sparse_row_graph(
-    const Graph& g, const VertexIndexMap& vi);
+compressed_sparse_row_graph(const Graph& g, const VertexIndexMap& vi);
 
 template <typename Graph>
 explicit compressed_sparse_row_graph(const Graph& g);
@@ -313,8 +315,10 @@ respectively.
 [source,cpp]
 ----
 template <typename Graph, typename VertexIndexMap>
-void assign(const Graph& g, const VertexIndexMap& vi,
-            vertices_size_type numverts, edges_size_type numedges);
+void assign(const Graph& g, 
+            const VertexIndexMap& vi,
+            vertices_size_type numverts, 
+            edges_size_type numedges);
 
 template <typename Graph, typename VertexIndexMap>
 void assign(const Graph& g, const VertexIndexMap& vi);
@@ -368,9 +372,8 @@ Retrieves the property value associated with edge `e`. Only valid when
 
 [source,cpp]
 ----
-vertex_descriptor vertex(
-    vertices_size_type i,
-    const compressed_sparse_row_graph&);
+vertex_descriptor 
+vertex(vertices_size_type i, const compressed_sparse_row_graph&);
 ----
 
 Returns the _i_-th vertex in the graph. Constant time.
@@ -379,8 +382,8 @@ Returns the _i_-th vertex in the graph. Constant time.
 
 [source,cpp]
 ----
-std::pair<vertex_iterator, vertex_iterator>
-    vertices(const compressed_sparse_row_graph&);
+std::pair<vertex_iterator, vertex_iterator> 
+vertices(const compressed_sparse_row_graph&);
 ----
 
 Returns an iterator range over all vertices.
@@ -389,8 +392,8 @@ Returns an iterator range over all vertices.
 
 [source,cpp]
 ----
-vertices_size_type num_vertices(
-    const compressed_sparse_row_graph&);
+vertices_size_type 
+num_vertices(const compressed_sparse_row_graph&);
 ----
 
 Returns the number of vertices.
@@ -402,8 +405,7 @@ Returns the number of vertices.
 [source,cpp]
 ----
 std::pair<edge_descriptor, bool>
-    edge(vertex_descriptor u, vertex_descriptor v,
-         const compressed_sparse_row_graph&);
+edge(vertex_descriptor u, vertex_descriptor v, const compressed_sparse_row_graph&);
 ----
 
 If an edge _(u, v)_ exists, returns its descriptor and `true`; otherwise
@@ -415,9 +417,8 @@ matches. Linear in `out_degree(u)`.
 
 [source,cpp]
 ----
-edge_descriptor edge_from_index(
-    edges_size_type i,
-    const compressed_sparse_row_graph&);
+edge_descriptor 
+edge_from_index(edges_size_type i, const compressed_sparse_row_graph&);
 ----
 
 Returns the _i_-th edge in the graph. Logarithmic in the number of
@@ -428,7 +429,7 @@ vertices.
 [source,cpp]
 ----
 std::pair<edge_iterator, edge_iterator>
-    edges(const compressed_sparse_row_graph&);
+edges(const compressed_sparse_row_graph&);
 ----
 
 Returns an iterator range over all edges.
@@ -437,8 +438,8 @@ Returns an iterator range over all edges.
 
 [source,cpp]
 ----
-edges_size_type num_edges(
-    const compressed_sparse_row_graph&);
+edges_size_type 
+num_edges(const compressed_sparse_row_graph&);
 ----
 
 Returns the number of edges.
@@ -447,9 +448,7 @@ Returns the number of edges.
 
 [source,cpp]
 ----
-vertex_descriptor source(
-    edge_descriptor e,
-    const compressed_sparse_row_graph&);
+vertex_descriptor source(edge_descriptor e, const compressed_sparse_row_graph&);
 ----
 
 Returns the source vertex of edge `e`.
@@ -458,9 +457,7 @@ Returns the source vertex of edge `e`.
 
 [source,cpp]
 ----
-vertex_descriptor target(
-    edge_descriptor e,
-    const compressed_sparse_row_graph&);
+vertex_descriptor target(edge_descriptor e, const compressed_sparse_row_graph&);
 ----
 
 Returns the target vertex of edge `e`.
@@ -470,8 +467,7 @@ Returns the target vertex of edge `e`.
 [source,cpp]
 ----
 std::pair<out_edge_iterator, out_edge_iterator>
-    out_edges(vertex_descriptor v,
-              const compressed_sparse_row_graph&);
+out_edges(vertex_descriptor v, const compressed_sparse_row_graph&);
 ----
 
 Returns an iterator range over all outgoing edges of vertex `v`.
@@ -480,9 +476,8 @@ Returns an iterator range over all outgoing edges of vertex `v`.
 
 [source,cpp]
 ----
-degree_size_type out_degree(
-    vertex_descriptor v,
-    const compressed_sparse_row_graph&);
+degree_size_type 
+out_degree(vertex_descriptor v, const compressed_sparse_row_graph&);
 ----
 
 Returns the number of outgoing edges from vertex `v`.
@@ -492,8 +487,7 @@ Returns the number of outgoing edges from vertex `v`.
 [source,cpp]
 ----
 std::pair<in_edge_iterator, in_edge_iterator>
-    in_edges(vertex_descriptor v,
-             const compressed_sparse_row_graph&);
+in_edges(vertex_descriptor v, const compressed_sparse_row_graph&);
 ----
 
 _(bidirectional only)_
@@ -503,9 +497,8 @@ Returns an iterator range over all incoming edges of vertex `v`.
 
 [source,cpp]
 ----
-degree_size_type in_degree(
-    vertex_descriptor v,
-    const compressed_sparse_row_graph&);
+degree_size_type 
+in_degree(vertex_descriptor v, const compressed_sparse_row_graph&);
 ----
 
 _(bidirectional only)_
@@ -516,8 +509,7 @@ Returns the number of incoming edges to vertex `v`.
 [source,cpp]
 ----
 std::pair<adjacency_iterator, adjacency_iterator>
-    adjacent_vertices(vertex_descriptor v,
-                      const compressed_sparse_row_graph&);
+adjacent_vertices(vertex_descriptor v, const compressed_sparse_row_graph&);
 ----
 
 Returns an iterator range over the vertices adjacent to `v`.
@@ -530,11 +522,11 @@ Returns an iterator range over the vertices adjacent to `v`.
 ----
 template <typename PropertyTag>
 property_map<compressed_sparse_row_graph, PropertyTag>::type
-    get(PropertyTag, compressed_sparse_row_graph& g);
+get(PropertyTag, compressed_sparse_row_graph& g);
 
 template <typename PropertyTag>
 property_map<compressed_sparse_row_graph, PropertyTag>::const_type
-    get(PropertyTag, const compressed_sparse_row_graph& g);
+get(PropertyTag, const compressed_sparse_row_graph& g);
 ----
 
 Returns the property map object for the vertex or edge property specified
@@ -546,10 +538,8 @@ or `EdgeProperty`.
 [source,cpp]
 ----
 template <typename PropertyTag, typename X>
-typename property_traits<
-    property_map<compressed_sparse_row_graph,
-                 PropertyTag>::const_type>::value_type
-    get(PropertyTag, const compressed_sparse_row_graph& g, X x);
+typename property_traits<property_map<compressed_sparse_row_graph, PropertyTag>::const_type>::value_type
+get(PropertyTag, const compressed_sparse_row_graph& g, X x);
 ----
 
 Returns the property value for `x`, where `x` is a vertex or edge
@@ -573,16 +563,12 @@ be convertible to the property map's value type.
 [source,cpp]
 ----
 template <typename GraphPropertyTag>
-typename graph_property<compressed_sparse_row_graph,
-                        GraphPropertyTag>::type&
-    get_property(compressed_sparse_row_graph& g,
-                 GraphPropertyTag);
+typename graph_property<compressed_sparse_row_graph, GraphPropertyTag>::type&
+get_property(compressed_sparse_row_graph& g, GraphPropertyTag);
 
 template <typename GraphPropertyTag>
-typename graph_property<compressed_sparse_row_graph,
-                        GraphPropertyTag>::type const&
-    get_property(const compressed_sparse_row_graph& g,
-                 GraphPropertyTag);
+typename graph_property<compressed_sparse_row_graph, GraphPropertyTag>::type const&
+get_property(const compressed_sparse_row_graph& g, GraphPropertyTag);
 ----
 
 Returns the graph-level property specified by `GraphPropertyTag`.
@@ -592,11 +578,9 @@ Returns the graph-level property specified by `GraphPropertyTag`.
 [source,cpp]
 ----
 template <typename GraphPropertyTag>
-void set_property(
-    const compressed_sparse_row_graph& g,
-    GraphPropertyTag,
-    const typename graph_property<compressed_sparse_row_graph,
-                                  GraphPropertyTag>::type& value);
+void set_property( const compressed_sparse_row_graph& g,
+                   GraphPropertyTag,
+                   const typename graph_property<compressed_sparse_row_graph, GraphPropertyTag>::type& value);
 ----
 
 Sets the graph-level property specified by `GraphPropertyTag`.
@@ -608,9 +592,7 @@ Sets the graph-level property specified by `GraphPropertyTag`.
 [source,cpp]
 ----
 template <typename InputIterator>
-void add_edges(
-    InputIterator first, InputIterator last,
-    compressed_sparse_row_graph& g);
+void add_edges(InputIterator first, InputIterator last, compressed_sparse_row_graph& g);
 ----
 
 _(directed only)_
@@ -624,10 +606,11 @@ sorted.
 [source,cpp]
 ----
 template <typename InputIterator, typename EPIter>
-void add_edges(
-    InputIterator first, InputIterator last,
-    EPIter ep_first, EPIter ep_last,
-    compressed_sparse_row_graph& g);
+void add_edges( InputIterator first,
+                InputIterator last,
+                EPIter ep_first, 
+                EPIter ep_last,
+                compressed_sparse_row_graph& g);
 ----
 
 _(directed only)_
@@ -642,10 +625,9 @@ type. Edges do not need to be sorted.
 [source,cpp]
 ----
 template <typename BidirectionalIterator>
-void add_edges_sorted(
-    BidirectionalIterator first,
-    BidirectionalIterator last,
-    compressed_sparse_row_graph& g);
+void add_edges_sorted( BidirectionalIterator first,
+                       BidirectionalIterator last,
+                       compressed_sparse_row_graph& g);
 ----
 
 _(directed only)_
@@ -659,11 +641,10 @@ increasing order by source vertex index.
 [source,cpp]
 ----
 template <typename BidirectionalIterator, typename EPIter>
-void add_edges_sorted(
-    BidirectionalIterator first,
-    BidirectionalIterator last,
-    EPIter ep_iter,
-    compressed_sparse_row_graph& g);
+void add_edges_sorted( BidirectionalIterator first,
+                       BidirectionalIterator last,
+                       EPIter ep_iter,
+                       compressed_sparse_row_graph& g);
 ----
 
 _(directed only)_

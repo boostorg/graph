@@ -121,8 +121,7 @@ Assignment operator. Makes this graph a copy of graph
 
 [source,cpp]
 ----
-adjacency_list(vertices_size_type n,
-               const GraphProperty& p = GraphProperty())
+adjacency_list(vertices_size_type n, const GraphProperty& p = GraphProperty())
 ----
 
 Creates a graph object with `n` vertices and zero edges.
@@ -133,7 +132,8 @@ Creates a graph object with `n` vertices and zero edges.
 [source,cpp]
 ----
 template <class EdgeIterator>
-adjacency_list(EdgeIterator first, EdgeIterator last,
+adjacency_list(EdgeIterator first, 
+               EdgeIterator last,
                vertices_size_type n,
                edges_size_type m = 0,
                const GraphProperty& p = GraphProperty())
@@ -153,7 +153,8 @@ range of `[0, n)`.
 [source,cpp]
 ----
 template <class EdgeIterator, class EdgePropertyIterator>
-adjacency_list(EdgeIterator first, EdgeIterator last,
+adjacency_list(EdgeIterator first, 
+               EdgeIterator last,
                EdgePropertyIterator ep_iter,
                vertices_size_type n,
                edges_size_type m = 0,
@@ -370,8 +371,7 @@ Returns the nth vertex in the graph's vertex list.
 [source,cpp]
 ----
 std::pair<edge_descriptor, bool>
-edge(vertex_descriptor u, vertex_descriptor v,
-     const adjacency_list& g)
+edge(vertex_descriptor u, vertex_descriptor v, const adjacency_list& g)
 ----
 
 If an edge from vertex `u` to vertex `v` exists, return a pair
@@ -384,8 +384,7 @@ containing one such edge and `true`.  If there are no edges between
 [source,cpp]
 ----
 std::pair<out_edge_iterator, out_edge_iterator>
-edge_range(vertex_descriptor u, vertex_descriptor v,
-           const adjacency_list& g)
+edge_range(vertex_descriptor u, vertex_descriptor v, const adjacency_list& g)
 ----
 
 Returns a pair of out-edge iterators that give the range for
@@ -401,8 +400,7 @@ such a container.
 [source,cpp]
 ----
 std::pair<edge_descriptor, bool>
-add_edge(vertex_descriptor u, vertex_descriptor v,
-         adjacency_list& g)
+add_edge(vertex_descriptor u, vertex_descriptor v, adjacency_list& g)
 ----
 
 Adds edge _(u,v)_ to the graph and returns the edge descriptor
@@ -439,7 +437,8 @@ then `add_edge()` also invalidates any `edge_iterator`.
 [source,cpp]
 ----
 std::pair<edge_descriptor, bool>
-add_edge(vertex_descriptor u, vertex_descriptor v,
+add_edge(vertex_descriptor u, 
+         vertex_descriptor v,
          const EdgeProperties& p,
          adjacency_list& g)
 ----
@@ -452,8 +451,7 @@ value of the edge's internal property storage.  Also see the previous
 
 [source,cpp]
 ----
-void remove_edge(vertex_descriptor u, vertex_descriptor v,
-                 adjacency_list& g)
+void remove_edge(vertex_descriptor u, vertex_descriptor v, adjacency_list& g)
 ----
 
 Removes the edge _(u,v)_ from the graph.
@@ -502,8 +500,7 @@ has time complexity _O(E/V)_.
 [source,cpp]
 ----
 template <class Predicate>
-void remove_out_edge_if(vertex_descriptor u, Predicate predicate,
-                        adjacency_list& g)
+void remove_out_edge_if(vertex_descriptor u, Predicate predicate, adjacency_list& g)
 ----
 
 Removes all out-edges of vertex _u_ from the graph that satisfy
@@ -518,8 +515,7 @@ invoking `remove_edge()` on each of the removed edges.
 [source,cpp]
 ----
 template <class Predicate>
-void remove_in_edge_if(vertex_descriptor v, Predicate predicate,
-                       adjacency_list& g)
+void remove_in_edge_if(vertex_descriptor v, Predicate predicate, adjacency_list& g)
 ----
 
 Removes all in-edges of vertex _v_ from the graph that satisfy
@@ -565,8 +561,7 @@ new vertex.
 [source,cpp]
 ----
 vertex_descriptor
-add_vertex(const VertexProperties& p,
-           adjacency_list& g)
+add_vertex(const VertexProperties& p, adjacency_list& g)
 ----
 
 Adds a vertex to the graph with the specified properties. Returns the
