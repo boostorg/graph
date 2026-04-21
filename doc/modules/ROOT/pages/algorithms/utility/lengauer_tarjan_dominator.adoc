@@ -13,8 +13,6 @@ Builds the dominator tree for a directed graph using the Lengauer-Tarjan algorit
 include::example$algorithms/utility/lengauer_tarjan.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/utility/lengauer_tarjan.txt[]

@@ -13,8 +13,6 @@ eccentricity) and diameter (maximum eccentricity).
 include::example$algorithms/metrics/eccentricity.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/metrics/eccentricity.txt[]

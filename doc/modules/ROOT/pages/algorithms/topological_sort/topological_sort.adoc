@@ -13,8 +13,6 @@ Creates a linear ordering of the vertices such that if edge _(u,v)_ appears in t
 include::example$algorithms/topological_sort/topological_sort.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/topological_sort/topological_sort.txt[]
@@ -42,7 +40,7 @@ void topological_sort(
   xref:concepts/VertexListGraph.adoc[Vertex List Graph] and
   xref:concepts/IncidenceGraph.adoc[Incidence Graph].
   If the graph is not a DAG then a
-  xref:auxiliary/exception.adoc#not_a_dag[`not_a_dag`] exception will be
+  xref:exception.adoc#not_a_dag[`not_a_dag`] exception will be
   thrown and the user should discard the contents of `result` range.
 
 | OUT | `OutputIterator result`
@@ -56,7 +54,7 @@ void topological_sort(
   link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]
   and its key type must be the graph's vertex descriptor type and the value
   type of the color map must model
-  xref:auxiliary/ColorValue.adoc[ColorValue]. +
+  xref:concepts/property_types/ColorValue.adoc[ColorValue]. +
   *Default:* an
   link:../../property_map/doc/iterator_property_map.html[`iterator_property_map`]
   created from a `std::vector` of `default_color_type` of size

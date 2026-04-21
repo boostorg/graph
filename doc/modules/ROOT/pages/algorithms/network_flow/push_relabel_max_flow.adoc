@@ -13,8 +13,6 @@ Calculates the maximum flow of a network using the push-relabel algorithm.
 include::example$algorithms/network_flow/push_relabel.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/network_flow/push_relabel.txt[]
@@ -22,7 +20,7 @@ include::example$algorithms/network_flow/push_relabel.txt[]
 
 '''
 
-=== (1) Non-named parameter version
+=== (1) Positional version
 
 [source,cpp]
 ----
@@ -162,7 +160,7 @@ typename property_traits<CapacityEdgeMap>::value_type push_relabel_max_flow(
 
 The `push_relabel_max_flow()` function calculates the maximum flow of a
 network. See Section
-xref:overview/graph_theory_review.adoc#sec:network-flow-algorithms[Network Flow
+xref:about/graph_theory_review.adoc#sec:network-flow-algorithms[Network Flow
 Algorithms] for a description of maximum flow. The calculated maximum
 flow will be the return value of the function. The function also
 calculates the flow values _f(u,v)_ for all _(u,v)_ in _E_, which are

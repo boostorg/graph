@@ -34,7 +34,7 @@ void chrobak_payne_straight_line_drawing(
 | IN
 | `PlanarEmbedding perm`
 | A Readable Property Map that models the
-  xref:auxiliary/PlanarEmbedding.adoc[PlanarEmbedding] concept.
+  xref:concepts/property_types/PlanarEmbedding.adoc[PlanarEmbedding] concept.
 
 | IN
 | `ForwardIterator ordering_begin, ordering_end`

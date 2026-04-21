@@ -11,8 +11,6 @@ Performs layout of directed graphs by distributing vertices uniformly within a t
 include::example$algorithms/layout/gursoy_atun.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/layout/gursoy_atun.txt[]
@@ -20,7 +18,7 @@ include::example$algorithms/layout/gursoy_atun.txt[]
 
 '''
 
-=== (1) Non-named parameter version
+=== (1) Positional version
 
 [source,cpp]
 ----

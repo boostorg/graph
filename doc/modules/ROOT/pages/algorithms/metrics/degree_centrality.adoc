@@ -13,8 +13,6 @@ counts outgoing edges; in-degree (prestige) counts incoming edges.
 include::example$algorithms/metrics/degree_centrality.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/metrics/degree_centrality.txt[]

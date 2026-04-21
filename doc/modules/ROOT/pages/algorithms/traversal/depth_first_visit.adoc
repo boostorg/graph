@@ -13,8 +13,6 @@ Visits all vertices in the same connected component as a source vertex using a d
 include::example$algorithms/traversal/dfs_visit.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/traversal/dfs_visit.txt[]
@@ -56,7 +54,7 @@ void depth_first_visit(IncidenceGraph& g,
   graph. The type `ColorMap` must be a model of
   link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]
   and its key type must be the graph's vertex descriptor type and the value type
-  of the color map must model xref:auxiliary/ColorValue.adoc[ColorValue].
+  of the color map must model xref:concepts/property_types/ColorValue.adoc[ColorValue].
 |===
 
 '''
@@ -97,7 +95,7 @@ void depth_first_visit(IncidenceGraph& g,
   graph. The type `ColorMap` must be a model of
   link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]
   and its key type must be the graph's vertex descriptor type and the value type
-  of the color map must model xref:auxiliary/ColorValue.adoc[ColorValue].
+  of the color map must model xref:concepts/property_types/ColorValue.adoc[ColorValue].
 
 | IN | `TerminatorFunc func`
 | A function object callable with two parameters -- the descriptor of a
@@ -110,7 +108,7 @@ void depth_first_visit(IncidenceGraph& g,
 
 This function visits all of the vertices in the same connected component
 as the source vertex `s`, using the
-xref:overview/graph_theory_review.adoc#sec:dfs-algorithm[depth-first pattern].
+xref:about/graph_theory_review.adoc#sec:dfs-algorithm[depth-first pattern].
 The main purpose of the function is for the implementation of
 `depth_first_search()` though sometimes it is useful on its own.
 

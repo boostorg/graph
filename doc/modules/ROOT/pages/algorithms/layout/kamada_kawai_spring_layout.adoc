@@ -11,8 +11,6 @@ Kamada-Kawai spring layout for connected, undirected graphs.
 include::example$algorithms/layout/kamada_kawai.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/layout/kamada_kawai.txt[]
@@ -67,7 +65,7 @@ bool kamada_kawai_spring_layout(
 | `WeightMap weight`
 | The weight or "length" of each edge in the graph. The weights must all be
   non-negative, and the algorithm will throw a
-  xref:auxiliary/exception.adoc#negative_edge[`negative_edge`] exception if one
+  xref:exception.adoc#negative_edge[`negative_edge`] exception if one
   of the edges is negative. The type `WeightMap` must be a model of
   link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
   The edge descriptor type of the graph needs to be usable as the key type
@@ -96,7 +94,7 @@ bool kamada_kawai_spring_layout(
   boolean flag indicating whether `delta_p` is the maximum energy in the
   system (when `true`) or the energy of the vertex being moved. +
   *Default:*
-  xref:auxiliary/layout_tolerance.adoc[`layout_tolerance`] instantiated over
+  xref:algorithms/layout/layout_tolerance.adoc[`layout_tolerance`] instantiated over
   the value type of the weight map.
 
 | IN
@@ -121,7 +119,7 @@ bool kamada_kawai_spring_layout(
 | This parameter will be used to store the distance from every vertex to
   every other vertex, which is computed in the first stages of the
   algorithm. This value's type must be a model of
-  xref:auxiliary/BasicMatrix.adoc[`BasicMatrix`] with value type equal to the
+  xref:concepts/property_types/BasicMatrix.adoc[`BasicMatrix`] with value type equal to the
   value type of the weight map. +
   *Default:* A vector of vectors.
 
@@ -129,7 +127,7 @@ bool kamada_kawai_spring_layout(
 | `SpringStrengthMatrix spring_strength`
 | This matrix will be used to store the strength of the spring between
   every pair of vertices. This value's type must be a model of
-  xref:auxiliary/BasicMatrix.adoc[BasicMatrix] with value type equal to the
+  xref:concepts/property_types/BasicMatrix.adoc[BasicMatrix] with value type equal to the
   value type of the weight map. +
   *Default:* A vector of vectors of the value type of the weight map.
 

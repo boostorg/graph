@@ -12,8 +12,6 @@ Finds all common subgraphs between two graphs using McGregor's backtracking algo
 include::example$algorithms/isomorphism/mcgregor.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/isomorphism/mcgregor.txt[]

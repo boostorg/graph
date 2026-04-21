@@ -21,8 +21,6 @@ them to the algorithm.
 include::example$visitors/visitor_intro.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$visitors/visitor_intro.txt[]
@@ -47,8 +45,6 @@ override only the ones you care about.
 ----
 include::example$visitors/custom_visitor.cpp[]
 ----
-
-*Expected output:*
 
 [,text]
 ----

@@ -48,8 +48,6 @@ One-line summary.
 include::example$graph_classes/class_name.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$graph_classes/class_name.txt[]

@@ -13,8 +13,6 @@ Tests whether a graph is planar, optionally computing a planar embedding or isol
 include::example$algorithms/planar/boyer_myrvold.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/planar/boyer_myrvold.txt[]
@@ -67,7 +65,7 @@ bool boyer_myrvold_planarity_test(
 
 | OUT
 | `PlanarEmbedding embedding`
-| Must model the xref:auxiliary/PlanarEmbedding.adoc[PlanarEmbedding] concept.
+| Must model the xref:concepts/property_types/PlanarEmbedding.adoc[PlanarEmbedding] concept.
   If the graph is planar, this will be populated with a mapping from vertices to the
   clockwise order of neighbors in the planar embedding.
 

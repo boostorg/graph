@@ -29,7 +29,7 @@ xref:concepts/Graph.adoc[Graph]
 `boost::property_traits<Map>::value_type`.
 
 |`PropertyTag` |A type that models the
-xref:auxiliary/PropertyTag.adoc[PropertyTag] concept.
+xref:concepts/property_types/PropertyTag.adoc[PropertyTag] concept.
 
 |`p` |An object of type `PropertyTag`.
 

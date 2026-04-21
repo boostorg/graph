@@ -13,8 +13,6 @@ Finds a matching in an undirected edge-weighted graph that maximizes the sum of 
 include::example$algorithms/network_flow/maximum_weighted_matching.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/network_flow/maximum_weighted_matching.txt[]

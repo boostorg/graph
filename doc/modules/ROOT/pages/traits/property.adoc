@@ -62,8 +62,6 @@ struct property : public NextProperty {
 include::example$traits/property_nested.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$traits/property_nested.txt[]

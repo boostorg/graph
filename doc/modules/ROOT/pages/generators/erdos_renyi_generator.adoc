@@ -49,8 +49,6 @@ Always cast explicitly when using the edge count constructor:
 include::example$generators/erdos_renyi.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$generators/erdos_renyi.txt[]
@@ -90,8 +88,6 @@ Parameter differences from `erdos_renyi_iterator`:
 ----
 include::example$generators/sorted_erdos_renyi.cpp[]
 ----
-
-*Expected output:*
 
 [,text]
 ----

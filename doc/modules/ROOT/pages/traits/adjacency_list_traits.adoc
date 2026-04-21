@@ -35,8 +35,6 @@ so it is fine to instantiate before the full graph type exists.
 include::example$traits/adjacency_list_traits.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$traits/adjacency_list_traits.txt[]

@@ -13,8 +13,6 @@ A fill-in reduction matrix reordering algorithm for sparse Cholesky factorizatio
 include::example$algorithms/ordering/minimum_degree.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/ordering/minimum_degree.txt[]
@@ -22,7 +20,7 @@ include::example$algorithms/ordering/minimum_degree.txt[]
 
 '''
 
-=== (1) Non-named parameter version
+=== (1) Positional version
 
 [source,cpp]
 ----

@@ -13,8 +13,6 @@ A family of functions and classes for computing connected components of an undir
 include::example$algorithms/connected_components/incremental.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/connected_components/incremental.txt[]
@@ -118,7 +116,7 @@ The `component_index` class provides an STL container-like view for the componen
 
 == Description
 
-This section describes a family of functions and classes that work together to calculate the connected components of an undirected graph. The algorithm used here is based on the disjoint-sets (fast union-find) data structure [xref:about/bibliography.adoc#clr90[8],xref:about/bibliography.adoc#tarjan83:_data_struct_network_algo[27]] which is a good method to use for situations where the graph is growing (edges are being added) and the connected components information needs to be updated repeatedly. This method does not cover the situation where edges are both added and removed from the graph, hence it is called *_incremental_* xref:about/bibliography.adoc#eppstein97:dynamic_graph[[42]] (and not fully dynamic). The disjoint-sets class is described in Section xref:auxiliary/disjoint_sets.adoc[Disjoint Sets].
+This section describes a family of functions and classes that work together to calculate the connected components of an undirected graph. The algorithm used here is based on the disjoint-sets (fast union-find) data structure [xref:about/bibliography.adoc#clr90[8],xref:about/bibliography.adoc#tarjan83:_data_struct_network_algo[27]] which is a good method to use for situations where the graph is growing (edges are being added) and the connected components information needs to be updated repeatedly. This method does not cover the situation where edges are both added and removed from the graph, hence it is called *_incremental_* xref:about/bibliography.adoc#eppstein97:dynamic_graph[[42]] (and not fully dynamic). The disjoint-sets class is described in Section xref:algorithms/utility/disjoint_sets.adoc[Disjoint Sets].
 
 The following five operations are the primary functions that you will use to calculate and maintain the connected components. The objects used here are a graph `g`, a disjoint-sets structure `ds`, and vertices `u` and `v`.
 

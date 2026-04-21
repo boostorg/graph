@@ -13,8 +13,6 @@ Solves the single-source shortest-paths problem for a graph with both positive a
 include::example$algorithms/shortest_paths/bellman_ford.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/shortest_paths/bellman_ford.txt[]
@@ -22,7 +20,7 @@ include::example$algorithms/shortest_paths/bellman_ford.txt[]
 
 '''
 
-=== (1) Non-named parameter version
+=== (1) Positional version
 
 [source,cpp]
 ----
@@ -193,7 +191,7 @@ The Bellman-Ford algorithm [xref:about/bibliography.adoc#bellman58[4],xref:about
 solves the single-source shortest paths problem for a graph with both
 positive and negative edge weights. For the definition of the shortest
 paths problem see Section
-xref:overview/graph_theory_review.adoc#sec:shortest-paths-algorithms[Shortest-Paths
+xref:about/graph_theory_review.adoc#sec:shortest-paths-algorithms[Shortest-Paths
 Algorithms]. If you only need to solve the shortest paths problem for
 positive edge weights, Dijkstra's algorithm provides a more efficient
 alternative. If all the edge weights are all equal to one then

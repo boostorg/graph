@@ -21,8 +21,6 @@ free.
 include::example$iterators/adjacency_iterator.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$iterators/adjacency_iterator.txt[]
@@ -96,5 +94,5 @@ adjacency_iterator_generator<…>::type(const OutEdgeIter& it, const Graph* g);
 * xref:traits/overview.adoc[Traits and Iterators overview]
 * xref:concepts/AdjacencyGraph.adoc[AdjacencyGraph concept] —
   `adjacent_vertices(v, g)`, what you probably want.
-* xref:iterators/inv_adjacency_iterator.adoc[`inv_adjacency_iterator_generator`] —
+* xref:traits/iterators/inv_adjacency_iterator.adoc[`inv_adjacency_iterator_generator`] —
   the bidirectional counterpart.

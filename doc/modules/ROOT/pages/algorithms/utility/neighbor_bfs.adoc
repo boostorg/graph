@@ -15,8 +15,6 @@ as undirected during traversal while preserving edge direction information.
 include::example$algorithms/utility/neighbor_bfs.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/utility/neighbor_bfs.txt[]

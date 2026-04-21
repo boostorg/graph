@@ -13,8 +13,6 @@ Computes a vertex coloring for the vertices in a graph using a greedy algorithm.
 include::example$algorithms/coloring/vertex_coloring.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/coloring/vertex_coloring.txt[]

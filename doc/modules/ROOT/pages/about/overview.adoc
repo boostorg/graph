@@ -1,0 +1,28 @@
+= Background and Reference
+
+This section collects the long-form material behind Boost.Graph:
+design rationale, mathematical background, the named-parameter
+protocol used by the older algorithms, and a full bibliography of the
+papers cited throughout the docs.
+
+[cols="1,3"]
+|===
+| Page | What it covers
+
+| xref:about/design.adoc[Design Rationale]
+| Why the library looks the way it does: generic programming, separation
+  of graph structure from algorithm, property maps, visitors.
+
+| xref:about/graph_theory_review.adoc[Graph Theory Review]
+| A short refresher on vertices, edges, paths, cycles, trees,
+  connectivity, planarity, and the algorithm families that operate on
+  them. Read this first if graph theory is new to you.
+
+| xref:about/bgl_named_params.adoc[Named Parameters]
+| How the `bgl_named_params<...>` mechanism works. Relevant to any
+  algorithm whose modern overloads accept a `params` block
+  (`weight_map(...)`, `predecessor_map(...)`, ...).
+
+| xref:about/bibliography.adoc[Bibliography]
+| Every academic reference cited from an algorithm page resolves here.
+|===

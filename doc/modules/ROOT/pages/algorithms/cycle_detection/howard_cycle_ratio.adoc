@@ -12,8 +12,6 @@ Calculates the maximum or minimum cycle ratio of a weighted directed multigraph 
 include::example$algorithms/cycle_detection/howard_cycle_ratio.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/cycle_detection/howard_cycle_ratio.txt[]

@@ -12,8 +12,6 @@ Finds a maximum cardinality matching in an undirected graph using Edmonds' algor
 include::example$algorithms/network_flow/maximum_matching.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/network_flow/maximum_matching.txt[]

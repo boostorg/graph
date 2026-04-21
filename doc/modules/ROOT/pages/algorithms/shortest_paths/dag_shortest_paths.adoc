@@ -13,8 +13,6 @@ Solves the single-source shortest-paths problem on a weighted, directed acyclic 
 include::example$algorithms/shortest_paths/dag_shortest.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/shortest_paths/dag_shortest.txt[]
@@ -22,7 +20,7 @@ include::example$algorithms/shortest_paths/dag_shortest.txt[]
 
 '''
 
-=== (1) Non-named parameter version
+=== (1) Positional version
 
 [source,cpp]
 ----
@@ -63,7 +61,7 @@ void dag_shortest_paths(
   link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map].
   The vertex descriptor type of the graph needs to be usable as the key type
   of the distance map. The value type of the distance map is the element type
-  of a xref:auxiliary/Monoid.adoc[Monoid] formed with the `combine` function
+  of a xref:concepts/property_types/Monoid.adoc[Monoid] formed with the `combine` function
   object and the `zero` object for the identity element. Also the distance
   value type must have a
   http://www.boost.org/sgi/stl/StrictWeakOrdering.html[StrictWeakOrdering]
@@ -89,7 +87,7 @@ void dag_shortest_paths(
   link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map].
   A vertex descriptor must be usable as the key type of the map, and the
   value type of the map must be a model of
-  xref:auxiliary/ColorValue.adoc[Color Value].
+  xref:concepts/property_types/ColorValue.adoc[Color Value].
 
 | OUT
 | `PredecessorMap pred`
@@ -136,7 +134,7 @@ void dag_shortest_paths(
 | IN
 | `DistZero zero`
 | The `zero` value must be the identity element for the
-  xref:auxiliary/Monoid.adoc[Monoid] formed by the distance values and the
+  xref:concepts/property_types/Monoid.adoc[Monoid] formed by the distance values and the
   `combine` function object. The type `D` is the value type of the
   `DistanceMap`.
 
@@ -256,7 +254,7 @@ graph (DAG). This algorithm is more efficient for DAG's than either the
 Dijkstra or Bellman-Ford algorithm. Use breadth-first search instead of
 this algorithm when all edge weights are equal to one. For the
 definition of the shortest-path problem see Section
-xref:overview/graph_theory_review.adoc#sec:shortest-paths-algorithms[Shortest-Paths
+xref:about/graph_theory_review.adoc#sec:shortest-paths-algorithms[Shortest-Paths
 Algorithms] for some background to the shortest-path problem.
 
 There are two main options for obtaining output from the

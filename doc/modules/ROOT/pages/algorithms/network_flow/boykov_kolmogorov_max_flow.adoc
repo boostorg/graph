@@ -12,8 +12,6 @@ Calculates the maximum flow of a network using the Boykov-Kolmogorov augmenting-
 include::example$algorithms/network_flow/boykov_kolmogorov.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/network_flow/boykov_kolmogorov.txt[]
@@ -21,7 +19,7 @@ include::example$algorithms/network_flow/boykov_kolmogorov.txt[]
 
 '''
 
-=== (1) Non-named parameter version (all maps)
+=== (1) Positional version (all maps)
 
 [source,cpp]
 ----
@@ -225,7 +223,7 @@ boykov_kolmogorov_max_flow(
 == Description
 
 The `boykov_kolmogorov_max_flow()` function calculates the maximum flow of a network.
-See Section xref:overview/graph_theory_review.adoc#sec:network-flow-algorithms[Network Flow Algorithms] for a description of maximum flow.
+See Section xref:about/graph_theory_review.adoc#sec:network-flow-algorithms[Network Flow Algorithms] for a description of maximum flow.
 The calculated maximum flow will be the return value of the function.
 The function also calculates the flow values _f(u,v)_ for all _(u,v)_ in _E_, which are returned in the form of the residual capacity _r(u,v) = c(u,v) - f(u,v)_.
 

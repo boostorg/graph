@@ -12,8 +12,6 @@ Finds all graph-subgraph isomorphism mappings between two graphs using the VF2 a
 include::example$algorithms/isomorphism/vf2_subgraph.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/isomorphism/vf2_subgraph.txt[]
@@ -55,7 +53,7 @@ bool vf2_subgraph_iso(const GraphSmall& graph_small,
 
 '''
 
-=== (3) `vf2_subgraph_iso` -- Non-named parameter version
+=== (3) `vf2_subgraph_iso` -- Positional version
 
 [source,cpp]
 ----

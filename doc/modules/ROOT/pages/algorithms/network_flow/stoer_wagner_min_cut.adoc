@@ -13,8 +13,6 @@ Determines a min-cut and the min-cut weight of a connected, undirected graph.
 include::example$algorithms/network_flow/stoer_wagner.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/network_flow/stoer_wagner.txt[]
@@ -97,8 +95,8 @@ weight_type stoer_wagner_min_cut(
 | UTIL
 | `max_priority_queue(MaxPriorityQueue& pq)`
 | `MaxPriorityQueue` must be a model of
-  xref:auxiliary/KeyedUpdatableQueue.adoc[Keyed Updatable Queue] and a
-  max-xref:auxiliary/UpdatableQueue.adoc[Updatable Priority Queue].
+  xref:concepts/property_types/KeyedUpdatableQueue.adoc[Keyed Updatable Queue] and a
+  max-xref:concepts/property_types/UpdatableQueue.adoc[Updatable Priority Queue].
   The value type must be the graph's vertex descriptor and the key type
   must be the weight type. +
   *Default:* A `boost::d_ary_heap_indirect` using a default index-in-heap

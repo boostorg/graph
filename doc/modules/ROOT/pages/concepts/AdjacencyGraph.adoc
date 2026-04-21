@@ -94,7 +94,7 @@ there are situations when `adjacent_vertices()` is more convenient
 to use than `out_edges()`. If you are constructing a graph class and
 do not want to put in the extra work of creating an adjacency iterator,
 have no fear. There is an adaptor class named
-xref:iterators/adjacency_iterator.adoc[`adjacency_iterator`] that you can
+xref:traits/iterators/adjacency_iterator.adoc[`adjacency_iterator`] that you can
 use to create an adjacency iterator out of an out-edge iterator.
 
 == Notes

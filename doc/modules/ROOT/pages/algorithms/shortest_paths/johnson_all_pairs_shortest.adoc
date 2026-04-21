@@ -13,8 +13,6 @@ Finds the shortest distance between every pair of vertices in a graph, suitable 
 include::example$algorithms/shortest_paths/johnson.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/shortest_paths/johnson.txt[]
@@ -22,7 +20,7 @@ include::example$algorithms/shortest_paths/johnson.txt[]
 
 '''
 
-=== (1) Non-named parameter version
+=== (1) Positional version
 
 [source,cpp]
 ----
@@ -50,7 +48,7 @@ bool johnson_all_pairs_shortest_paths(
 | The length of the shortest path between each pair of vertices _u,v_ in the
   graph is stored in `D[u][v]`. The tuple of types
   (`DistanceMatrix, vertices_size_type, D`) must be a model of
-  xref:auxiliary/BasicMatrix.adoc[BasicMatrix] where `D` is the value type of the
+  xref:concepts/property_types/BasicMatrix.adoc[BasicMatrix] where `D` is the value type of the
   `DistanceMap`. There must be implicit conversions between the value type of the
   distance matrix and the value type of the weight map.
 
@@ -112,7 +110,7 @@ bool johnson_all_pairs_shortest_paths(
 | The length of the shortest path between each pair of vertices _u,v_ in the
   graph is stored in `D[u][v]`. The tuple of types
   (`DistanceMatrix, vertices_size_type, D`) must be a model of
-  xref:auxiliary/BasicMatrix.adoc[BasicMatrix] where `D` is the value type of the
+  xref:concepts/property_types/BasicMatrix.adoc[BasicMatrix] where `D` is the value type of the
   `DistanceMap`. There must be implicit conversions between the value type of the
   distance matrix and the value type of the weight map.
 
@@ -193,7 +191,7 @@ bool johnson_all_pairs_shortest_paths(
 | The length of the shortest path between each pair of vertices _u,v_ in the
   graph is stored in `D[u][v]`. The tuple of types
   (`DistanceMatrix, vertices_size_type, D`) must be a model of
-  xref:auxiliary/BasicMatrix.adoc[BasicMatrix] where `D` is the value type of the
+  xref:concepts/property_types/BasicMatrix.adoc[BasicMatrix] where `D` is the value type of the
   `DistanceMap`. There must be implicit conversions between the value type of the
   distance matrix and the value type of the weight map.
 
@@ -280,7 +278,7 @@ bool johnson_all_pairs_shortest_paths(
   model of link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write
   Property Map]. A vertex descriptor must be usable as the key type of the map,
   and the value type of the map must be a model of
-  xref:auxiliary/ColorValue.adoc[Color Value]. +
+  xref:concepts/property_types/ColorValue.adoc[Color Value]. +
   *Default:* an
   link:../../property_map/doc/iterator_property_map.html[`iterator_property_map`]
   created from a `std::vector` of `default_color_type` of size

@@ -14,8 +14,6 @@ by other important vertices.
 include::example$algorithms/metrics/page_rank.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/metrics/page_rank.txt[]

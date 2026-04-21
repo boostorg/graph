@@ -23,8 +23,6 @@ image::figs/grid_graph_unwrapped.png[3x3 unwrapped grid]
 include::example$adaptors/grid_graph_unwrapped.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$adaptors/grid_graph_unwrapped.txt[]
@@ -42,8 +40,6 @@ image::figs/grid_graph_wrapped.png[3x3 wrapped grid (torus)]
 include::example$adaptors/grid_graph_torus.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$adaptors/grid_graph_torus.txt[]
@@ -59,8 +55,6 @@ Here dimension 0 wraps (cylinder) but dimension 1 does not.
 include::example$adaptors/grid_graph_cylinder.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$adaptors/grid_graph_cylinder.txt[]
@@ -75,8 +69,6 @@ works the same way.
 ----
 include::example$adaptors/grid_graph_3d.cpp[]
 ----
-
-*Expected output:*
 
 [,text]
 ----

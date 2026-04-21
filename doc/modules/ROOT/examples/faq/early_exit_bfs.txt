@@ -1,0 +1,5 @@
+visit 0
+visit 1
+visit 2
+visit 3
+stopped at target

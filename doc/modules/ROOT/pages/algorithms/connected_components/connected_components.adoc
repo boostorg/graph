@@ -13,8 +13,6 @@ Computes the connected components of an undirected graph using a DFS-based appro
 include::example$algorithms/connected_components/connected.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/connected_components/connected.txt[]
@@ -48,7 +46,7 @@ Named Parameters::
 |===
 | Direction | Parameter | Description
 
-| UTIL | `color_map(ColorMap color)` | This is used by the algorithm to keep track of its progress through the graph. The type `ColorMap` must be a model of link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map] and its key type must be the graph's vertex descriptor type and the value type of the color map must model xref:auxiliary/ColorValue.adoc[ColorValue]. +
+| UTIL | `color_map(ColorMap color)` | This is used by the algorithm to keep track of its progress through the graph. The type `ColorMap` must be a model of link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map] and its key type must be the graph's vertex descriptor type and the value type of the color map must model xref:concepts/property_types/ColorValue.adoc[ColorValue]. +
 *Default:* an link:../../property_map/doc/iterator_property_map.html[iterator_property_map] created from a `std::vector` of `default_color_type` of size `num_vertices(g)` and using the `i_map` for the index map.
 | IN | `vertex_index_map(VertexIndexMap i_map)` | This maps each vertex to an integer in the range `[0, num_vertices(g))`. This parameter is only necessary when the default color property map is used. The type `VertexIndexMap` must be a model of link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map]. The value type of the map must be an integer type. The vertex descriptor type of the graph needs to be usable as the key type of the map. +
 *Default:* `get(vertex_index, g)`. Note: if you use this default, make sure your graph has an internal `vertex_index` property. For example, `adjacency_list` with `VertexList=listS` does not have an internal `vertex_index` property.

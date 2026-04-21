@@ -13,8 +13,6 @@ Computes the biconnected components and articulation points of an undirected gra
 include::example$algorithms/connected_components/biconnected.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/connected_components/biconnected.txt[]

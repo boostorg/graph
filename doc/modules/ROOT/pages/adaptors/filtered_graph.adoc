@@ -21,8 +21,6 @@ been specifically patched to use `std::distance` instead of `num_vertices`.
 include::example$adaptors/filtered_graph.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$adaptors/filtered_graph.txt[]

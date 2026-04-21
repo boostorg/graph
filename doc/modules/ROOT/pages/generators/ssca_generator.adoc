@@ -47,8 +47,6 @@ inter-clique edges are added with geometrically decreasing probability.
 include::example$generators/ssca.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$generators/ssca.txt[]

@@ -13,8 +13,6 @@ Traverses all faces of a planar graph defined by a planar embedding, invoking vi
 include::example$algorithms/planar/planar_face_traversal.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/planar/planar_face_traversal.txt[]
@@ -44,7 +42,7 @@ void planar_face_traversal(
 
 | IN
 | `PlanarEmbedding embedding`
-| A model of xref:auxiliary/PlanarEmbedding.adoc[PlanarEmbedding].
+| A model of xref:concepts/property_types/PlanarEmbedding.adoc[PlanarEmbedding].
 
 | IN
 | `PlanarFaceVisitor& visitor`

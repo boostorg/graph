@@ -12,8 +12,6 @@ Graph clustering based on edge betweenness centrality.
 include::example$algorithms/utility/bc_clustering.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/utility/bc_clustering.txt[]

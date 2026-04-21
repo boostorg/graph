@@ -13,8 +13,6 @@ Traverses vertices of an undirected graph, always visiting next the vertex with 
 include::example$algorithms/utility/maximum_adjacency_search.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/utility/maximum_adjacency_search.txt[]
@@ -22,7 +20,7 @@ include::example$algorithms/utility/maximum_adjacency_search.txt[]
 
 '''
 
-=== (1) Non-named parameter version
+=== (1) Positional version
 
 [source,cpp]
 ----
@@ -144,7 +142,7 @@ void maximum_adjacency_search(
 | UTIL
 | `max_priority_queue(MaxPriorityQueue& pq)`
 | `MaxPriorityQueue` must be a model of
-  xref:auxiliary/KeyedUpdatableQueue.adoc[Keyed Updatable Queue] and a
+  xref:concepts/property_types/KeyedUpdatableQueue.adoc[Keyed Updatable Queue] and a
   max-link:./UpdatableQueue.html#concept%3AUpdatablePriorityQueue[Updatable
   Priority Queue]. The value type must be the graph's vertex descriptor and
   the key type must be the weight type. +

@@ -13,8 +13,6 @@ Finds the shortest distance between every pair of vertices in a graph using the 
 include::example$algorithms/shortest_paths/floyd_warshall.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/shortest_paths/floyd_warshall.txt[]
@@ -52,7 +50,7 @@ bool floyd_warshall_initialized_all_pairs_shortest_paths(
   The DistanceMatrix must be of type `{M, I, V}` where `I` is of type
   `vertex_descriptor` and `V` is the type of the `weight_map`.
   The set of types must be a model of
-  xref:auxiliary/BasicMatrix.adoc[BasicMatrix], with the exceptions that
+  xref:concepts/property_types/BasicMatrix.adoc[BasicMatrix], with the exceptions that
   it is not required to run in constant time, and it must be mutable.
   The matrix must be properly initialized when it is passed to this function.
 
@@ -116,7 +114,7 @@ bool floyd_warshall_all_pairs_shortest_paths(
   The DistanceMatrix must be of type `{M, I, V}` where `I` is of type
   `vertex_descriptor` and `V` is the type of the `weight_map`.
   The set of types must be a model of
-  xref:auxiliary/BasicMatrix.adoc[BasicMatrix], with the exceptions that
+  xref:concepts/property_types/BasicMatrix.adoc[BasicMatrix], with the exceptions that
   it is not required to run in constant time, and it must be mutable.
   The matrix will be initialized by this function.
 
@@ -187,7 +185,7 @@ bool floyd_warshall_initialized_all_pairs_shortest_paths(
   The DistanceMatrix must be of type `{M, I, V}` where `I` is of type
   `vertex_descriptor` and `V` is the type of the `weight_map`.
   The set of types must be a model of
-  xref:auxiliary/BasicMatrix.adoc[BasicMatrix], with the exceptions that
+  xref:concepts/property_types/BasicMatrix.adoc[BasicMatrix], with the exceptions that
   it is not required to run in constant time, and it must be mutable.
   The matrix must be properly initialized when it is passed to this function.
 
@@ -278,7 +276,7 @@ bool floyd_warshall_all_pairs_shortest_paths(
   The DistanceMatrix must be of type `{M, I, V}` where `I` is of type
   `vertex_descriptor` and `V` is the type of the `weight_map`.
   The set of types must be a model of
-  xref:auxiliary/BasicMatrix.adoc[BasicMatrix], with the exceptions that
+  xref:concepts/property_types/BasicMatrix.adoc[BasicMatrix], with the exceptions that
   it is not required to run in constant time, and it must be mutable.
   The matrix will be initialized by this function.
 

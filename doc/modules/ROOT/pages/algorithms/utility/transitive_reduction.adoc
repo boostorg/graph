@@ -14,8 +14,6 @@ the direct edge is redundant and is removed.
 include::example$algorithms/utility/transitive_reduction.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/utility/transitive_reduction.txt[]

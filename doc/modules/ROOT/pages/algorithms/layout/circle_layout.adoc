@@ -11,8 +11,6 @@ Lays out the graph with the vertices at the points of a regular n-polygon.
 include::example$algorithms/layout/circle_layout.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/layout/circle_layout.txt[]
@@ -20,7 +18,7 @@ include::example$algorithms/layout/circle_layout.txt[]
 
 '''
 
-=== Non-named parameter version
+=== Positional version
 
 [source,cpp]
 ----

@@ -14,8 +14,6 @@ event occurs. Useful for debugging or logging during graph traversal.
 include::example$visitors/property_writer.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$visitors/property_writer.txt[]

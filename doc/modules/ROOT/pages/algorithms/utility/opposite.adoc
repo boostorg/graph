@@ -24,8 +24,6 @@ the source.
 include::example$auxiliary/incident_opposite.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$auxiliary/incident_opposite.txt[]

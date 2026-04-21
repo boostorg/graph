@@ -12,8 +12,6 @@ Calculates the cost of a network flow from edge flow values and edge weights.
 include::example$algorithms/network_flow/find_flow_cost.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/network_flow/find_flow_cost.txt[]
@@ -21,7 +19,7 @@ include::example$algorithms/network_flow/find_flow_cost.txt[]
 
 '''
 
-=== (1) Non-named parameter version
+=== (1) Positional version
 
 [source,cpp]
 ----
@@ -134,7 +132,7 @@ find_flow_cost(
 
 The `find_flow_cost()` function calculates the minimum cost maximum flow value
 of a network and given flow. See Section
-xref:overview/graph_theory_review.adoc#sec:network-flow-algorithms[Network Flow
+xref:about/graph_theory_review.adoc#sec:network-flow-algorithms[Network Flow
 Algorithms] for a description of maximum flow. The function calculates the cost
 from the flow values _f(u,v)_ for _(u,v)_ in _E_, which are passed in the form
 of the residual capacity _r(u,v) = c(u,v) - f(u,v)_.

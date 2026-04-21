@@ -12,8 +12,6 @@ Computes the betweenness centrality of each vertex or each edge in the graph.
 include::example$algorithms/metrics/betweenness.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/metrics/betweenness.txt[]
@@ -131,7 +129,7 @@ void brandes_betweenness_centrality(
 
 '''
 
-=== (4) Non-named parameter version (unweighted)
+=== (4) Positional version (unweighted)
 
 [source,cpp]
 ----
@@ -199,7 +197,7 @@ void brandes_betweenness_centrality(
   link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map].
   The vertex descriptor type of the graph needs to be usable as the key type
   of the distance map. The value type of the distance map is the element type
-  of a xref:auxiliary/Monoid.adoc[Monoid].
+  of a xref:concepts/property_types/Monoid.adoc[Monoid].
 
 | UTIL
 | `DependencyMap dependency`
@@ -232,7 +230,7 @@ void brandes_betweenness_centrality(
 
 '''
 
-=== (5) Non-named parameter version (weighted)
+=== (5) Positional version (weighted)
 
 [source,cpp]
 ----
@@ -297,7 +295,7 @@ void brandes_betweenness_centrality(
 | `WeightMap weight_map`
 | The weight or "length" of each edge in the graph. The weights must all be
   non-negative, and the algorithm will throw a
-  xref:auxiliary/exception.adoc#negative_edge[`negative_edge`] exception if
+  xref:exception.adoc#negative_edge[`negative_edge`] exception if
   one of the edges is negative. The type `WeightMap` must be a model of
   link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
   The edge descriptor type of the graph needs to be usable as the key type
@@ -354,7 +352,7 @@ void brandes_betweenness_centrality(
 | `weight_map(WeightMap w_map)`
 | The weight or "length" of each edge in the graph. The weights must all be
   non-negative, and the algorithm will throw a
-  xref:auxiliary/exception.adoc#negative_edge[`negative_edge`] exception if
+  xref:exception.adoc#negative_edge[`negative_edge`] exception if
   one of the edges is negative. The type `WeightMap` must be a model of
   link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
   The edge descriptor type of the graph needs to be usable as the key type

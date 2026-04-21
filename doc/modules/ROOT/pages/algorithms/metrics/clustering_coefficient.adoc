@@ -13,8 +13,6 @@ A high value means v's neighborhood is tightly knit.
 include::example$algorithms/metrics/clustering_coefficient.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/metrics/clustering_coefficient.txt[]

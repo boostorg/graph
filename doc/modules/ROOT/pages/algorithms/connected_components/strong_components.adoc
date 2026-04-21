@@ -14,8 +14,6 @@ Computes the strongly connected components of a directed graph using Tarjan's al
 include::example$algorithms/connected_components/strong.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/connected_components/strong.txt[]
@@ -53,7 +51,7 @@ Named Parameters::
 *Default:* an link:../../property_map/doc/iterator_property_map.html[`iterator_property_map`] created from a `std::vector` of vertex descriptors of size `num_vertices(g)` and using the `i_map` for the index map.
 | UTIL | `discover_time_map(TimeMap t_map)` | This is used by the algorithm to keep track of the DFS ordering of the vertices. The `TimeMap` must be a model of link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map] and its value type must be an integer type. The key type must be the vertex descriptor type of the graph. +
 *Default:* an link:../../property_map/doc/iterator_property_map.html[`iterator_property_map`] created from a `std::vector` of integers with size `num_vertices(g)` and using the `i_map` for the index map.
-| UTIL | `color_map(ColorMap c_map)` | This is used by the algorithm to keep track of its progress through the graph. The type `ColorMap` must be a model of link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map] and its key type must be the graph's vertex descriptor type and the value type of the color map must model xref:auxiliary/ColorValue.adoc[ColorValue]. +
+| UTIL | `color_map(ColorMap c_map)` | This is used by the algorithm to keep track of its progress through the graph. The type `ColorMap` must be a model of link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map] and its key type must be the graph's vertex descriptor type and the value type of the color map must model xref:concepts/property_types/ColorValue.adoc[ColorValue]. +
 *Default:* an link:../../property_map/doc/iterator_property_map.html[`iterator_property_map`] created from a `std::vector` of `default_color_type` of size `num_vertices(g)` and using the `i_map` for the index map.
 | IN | `vertex_index_map(VertexIndexMap i_map)` | This maps each vertex to an integer in the range `[0, num_vertices(g))`. This parameter is only necessary when a default is used for one of the other named parameters. The type `VertexIndexMap` must be a model of link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map]. The value type of the map must be an integer type. The vertex descriptor type of the graph needs to be usable as the key type of the map. +
 *Default:* `get(vertex_index, g)`. Note: if you use this default, make sure your graph has an internal `vertex_index` property. For example, `adjacency_list` with `VertexList=listS` does not have an internal `vertex_index` property.

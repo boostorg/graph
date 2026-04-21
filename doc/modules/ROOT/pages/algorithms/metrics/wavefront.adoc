@@ -11,8 +11,6 @@ Functions for computing the wavefront and related metrics of a graph.
 include::example$algorithms/metrics/wavefront.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/metrics/wavefront.txt[]

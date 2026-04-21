@@ -1,0 +1,2 @@
+before remove: 0 1 2 
+after  remove: 0 1 

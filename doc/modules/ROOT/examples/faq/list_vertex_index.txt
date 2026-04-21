@@ -1,0 +1,1 @@
+bfs ok; vertex_index assigned to 4 vertices

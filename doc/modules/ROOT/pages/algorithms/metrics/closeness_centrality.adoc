@@ -14,8 +14,6 @@ high closeness means the vertex can reach all others quickly.
 include::example$algorithms/metrics/closeness_centrality.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/metrics/closeness_centrality.txt[]

@@ -15,8 +15,6 @@ random spanning trees. It is used internally by `random_spanning_tree`.
 include::example$algorithms/utility/loop_erased_random_walk.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/utility/loop_erased_random_walk.txt[]

@@ -13,8 +13,6 @@ Converts a list of event visitors into a DijkstraVisitor for use with
 include::example$visitors/dijkstra_visitor.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$visitors/dijkstra_visitor.txt[]

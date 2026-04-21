@@ -1,0 +1,23 @@
+= Project
+
+The non-technical side of Boost.Graph: where the library came from,
+who built it, where it's been used, and the academic papers that cite
+it.
+
+[cols="1,3"]
+|===
+| Page | What it covers
+
+| xref:about/history.adoc[History]
+| How the library evolved from its pre-1.0 roots at Indiana University
+  through Boost releases.
+
+| xref:about/acknowledgements.adoc[Acknowledgements]
+| Credits for the core authors, contributors, and funders.
+
+| xref:about/publications.adoc[Publications]
+| Academic papers about BGL itself and its design.
+
+| xref:about/users.adoc[BGL Users]
+| Real-world projects and research groups that use Boost.Graph.
+|===

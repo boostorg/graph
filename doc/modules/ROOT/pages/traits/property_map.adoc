@@ -36,8 +36,6 @@ whose template errors are famously cryptic.
 include::example$traits/property_map.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$traits/property_map.txt[]

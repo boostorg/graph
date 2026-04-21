@@ -12,8 +12,6 @@ Computes the transitive closure of a directed graph, adding an edge _(u,v)_ when
 include::example$algorithms/utility/transitive_closure.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/utility/transitive_closure.txt[]
@@ -21,7 +19,7 @@ include::example$algorithms/utility/transitive_closure.txt[]
 
 '''
 
-=== (1) Non-named parameter version
+=== (1) Positional version
 
 [source,cpp]
 ----
@@ -132,7 +130,7 @@ void transitive_closure(
 
 The transitive closure of a graph _G = (V,E)_ is a graph _G* = (V,E*)_
 such that _E*_ contains an edge _(u,v)_ if and only if _G_ contains a
-xref:overview/graph_theory_review.adoc#def:path[path] (of at least one edge)
+xref:about/graph_theory_review.adoc#def:path[path] (of at least one edge)
 from _u_ to _v_. The `transitive_closure()` function transforms the input
 graph `g` into the transitive closure graph `tc`.
 
@@ -160,7 +158,7 @@ describes the algorithm (and some relevant background theory).
 
 A [#def:successor-set]#*_successor set_*# of a vertex _v_, denoted by
 _Succ(v)_, is the set of vertices that are
-xref:overview/graph_theory_review.adoc#def:reachable[reachable] from vertex _v_.
+xref:about/graph_theory_review.adoc#def:reachable[reachable] from vertex _v_.
 The set of vertices adjacent to _v_ in the transitive closure _G*_
 is the same as the successor set of _v_ in the original graph _G_.
 Computing the transitive closure is equivalent to computing the

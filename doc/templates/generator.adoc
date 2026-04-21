@@ -43,8 +43,6 @@ One-line summary of what kind of graph this generates.
 include::example$generators/generator_name.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$generators/generator_name.txt[]

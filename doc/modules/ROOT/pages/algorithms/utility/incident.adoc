@@ -24,8 +24,6 @@ Equivalent to `std::make_pair(source(e, g), target(e, g))`.
 include::example$auxiliary/incident_opposite.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$auxiliary/incident_opposite.txt[]

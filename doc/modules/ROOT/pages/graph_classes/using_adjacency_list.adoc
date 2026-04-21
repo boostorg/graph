@@ -291,7 +291,7 @@ template <class PropertyTag, class T, class NextProperty = no_property>
 struct property;
 ----
 
-The xref:auxiliary/PropertyTag.adoc[`PropertyTag`] template parameter is a tag
+The xref:concepts/property_types/PropertyTag.adoc[`PropertyTag`] template parameter is a tag
 class that simply identifies or gives a unique name to the property.
 There are several predefined tags, and it is easy to add more.
 

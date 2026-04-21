@@ -15,8 +15,6 @@ connected substructures.
 include::example$algorithms/metrics/core_numbers.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/metrics/core_numbers.txt[]

@@ -45,8 +45,6 @@ An undersized vector causes undefined behavior with no compile-time warning.
 include::example$property_maps/external_vector.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$property_maps/external_vector.txt[]
@@ -63,8 +61,6 @@ needed.
 include::example$property_maps/external_array.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$property_maps/external_array.txt[]
@@ -80,8 +76,6 @@ index map.
 ----
 include::example$property_maps/external_edge.cpp[]
 ----
-
-*Expected output:*
 
 [,text]
 ----
@@ -106,8 +100,6 @@ call `my_map[v]` and `my_map[v] = val` respectively.
 ----
 include::example$property_maps/external_assoc.cpp[]
 ----
-
-*Expected output:*
 
 [,text]
 ----

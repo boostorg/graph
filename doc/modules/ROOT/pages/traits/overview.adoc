@@ -34,12 +34,12 @@ descriptor type up front.
   properties (see xref:property_maps/bundled.adoc[Bundled Properties]);
   the two can coexist.
 
-| xref:iterators/adjacency_iterator.adoc[`adjacency_iterator_generator`]
+| xref:traits/iterators/adjacency_iterator.adoc[`adjacency_iterator_generator`]
 | Graph-implementer tool. Synthesizes an `adjacency_iterator` from an
   existing `out_edge_iterator`. Skip unless you are writing a new graph
   class.
 
-| xref:iterators/inv_adjacency_iterator.adoc[`inv_adjacency_iterator_generator`]
+| xref:traits/iterators/inv_adjacency_iterator.adoc[`inv_adjacency_iterator_generator`]
 | Same thing for `in_edge_iterator` → reverse-adjacency traversal on
   bidirectional graphs. Also graph-implementer only.
 |===

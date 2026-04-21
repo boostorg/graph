@@ -21,8 +21,6 @@ compiler to give them the reverse adjacency iterator for free.
 include::example$iterators/inv_adjacency_iterator.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$iterators/inv_adjacency_iterator.txt[]
@@ -90,5 +88,5 @@ inv_adjacency_iterator_generator<…>::type(const InEdgeIter& it, const Graph* g
 * xref:traits/overview.adoc[Traits and Iterators overview]
 * xref:concepts/BidirectionalGraph.adoc[BidirectionalGraph concept] —
   `inv_adjacent_vertices(v, g)`, what you probably want.
-* xref:iterators/adjacency_iterator.adoc[`adjacency_iterator_generator`] —
+* xref:traits/iterators/adjacency_iterator.adoc[`adjacency_iterator_generator`] —
   the forward counterpart.

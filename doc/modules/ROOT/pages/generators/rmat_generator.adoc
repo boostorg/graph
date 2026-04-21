@@ -49,8 +49,6 @@ May produce parallel edges and self-loops.
 include::example$generators/rmat.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$generators/rmat.txt[]
@@ -87,8 +85,6 @@ Additional parameters:
 include::example$generators/sorted_rmat.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$generators/sorted_rmat.txt[]
@@ -113,8 +109,6 @@ Requesting _m_ close to _n^2_ may cause very slow generation or an infinite loop
 ----
 include::example$generators/unique_rmat.cpp[]
 ----
-
-*Expected output:*
 
 [,text]
 ----
@@ -160,8 +154,6 @@ Additional parameters:
 ----
 include::example$generators/sorted_unique_rmat.cpp[]
 ----
-
-*Expected output:*
 
 [,text]
 ----

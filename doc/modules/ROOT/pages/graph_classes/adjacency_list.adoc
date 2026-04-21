@@ -32,7 +32,7 @@ important trade-offs:
 See <<_operation_complexity>> for how these choices affect performance, and
 <<_stability_and_invalidation>> for which operations invalidate iterators.
 For the formal data structure definition, see
-xref:overview/graph_theory_review.adoc#sec:adjacency-list-representation[Graph Theory Review].
+xref:about/graph_theory_review.adoc#sec:adjacency-list-representation[Graph Theory Review].
 
 == Quick Usage
 
@@ -40,8 +40,6 @@ xref:overview/graph_theory_review.adoc#sec:adjacency-list-representation[Graph T
 ----
 include::example$graph_classes/adjacency_list_usage.cpp[]
 ----
-
-*Expected output:*
 
 [,text]
 ----

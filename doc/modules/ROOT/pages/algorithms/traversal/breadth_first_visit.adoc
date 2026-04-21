@@ -13,8 +13,6 @@ Performs a breadth-first traversal without initializing color markers.
 include::example$algorithms/traversal/bfs_visit.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/traversal/bfs_visit.txt[]
@@ -22,7 +20,7 @@ include::example$algorithms/traversal/bfs_visit.txt[]
 
 '''
 
-=== (1) Non-named parameter version
+=== (1) Positional version
 
 [source,cpp]
 ----
@@ -50,7 +48,7 @@ void breadth_first_visit(const IncidenceGraph& g,
   according to the usual BFS ordering. Other types of queues can be used,
   but the traversal order will be different. For example Dijkstra's
   algorithm can be implemented using a priority queue. The type `Buffer`
-  must be a model of xref:auxiliary/Buffer.adoc[Buffer].
+  must be a model of xref:concepts/property_types/Buffer.adoc[Buffer].
 
 | IN | `BFSVisitor vis`
 | A visitor object that is invoked inside the algorithm at the
@@ -62,7 +60,7 @@ void breadth_first_visit(const IncidenceGraph& g,
   graph. The type `ColorMap` must be a model of
   link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]
   and its key type must be the graph's vertex descriptor type and the value type
-  of the color map must model xref:auxiliary/ColorValue.adoc[ColorValue].
+  of the color map must model xref:concepts/property_types/ColorValue.adoc[ColorValue].
 |===
 
 '''
@@ -99,7 +97,7 @@ void breadth_first_visit(IncidenceGraph& G,
   graph. The type `ColorMap` must be a model of
   link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]
   and its key type must be the graph's vertex descriptor type and the value type
-  of the color map must model xref:auxiliary/ColorValue.adoc[ColorValue]. +
+  of the color map must model xref:concepts/property_types/ColorValue.adoc[ColorValue]. +
   *Default:* `get(vertex_color, g)`
 
 | UTIL | `buffer(Buffer& Q)`
@@ -108,7 +106,7 @@ void breadth_first_visit(IncidenceGraph& G,
   according to the usual BFS ordering. Other types of queues can be used,
   but the traversal order will be different. For example Dijkstra's
   algorithm can be implemented using a priority queue. The type `Buffer`
-  must be a model of xref:auxiliary/Buffer.adoc[Buffer]. +
+  must be a model of xref:concepts/property_types/Buffer.adoc[Buffer]. +
   *Default:* `boost::queue`
 |===
 

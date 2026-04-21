@@ -59,12 +59,12 @@ family.
 | xref:algorithms/utility/loop_erased_random_walk.adoc[Loop-Erased Random Walk]
 | Building block for Wilson's random spanning tree algorithm.
 
-| xref:auxiliary/disjoint_sets.adoc[Disjoint Sets]
+| xref:algorithms/utility/disjoint_sets.adoc[Disjoint Sets]
 | Union-find data structure used by Kruskal and incremental components.
 
-| xref:auxiliary/incident.adoc[Incident]
+| xref:algorithms/utility/incident.adoc[Incident]
 | Returns both endpoints of an edge as a pair.
 
-| xref:auxiliary/opposite.adoc[Opposite]
+| xref:algorithms/utility/opposite.adoc[Opposite]
 | Given an edge and one endpoint, returns the other.
 |===

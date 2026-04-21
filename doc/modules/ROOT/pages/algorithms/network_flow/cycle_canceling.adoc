@@ -12,8 +12,6 @@ Calculates the minimum cost flow of a network with given flow by iteratively can
 include::example$algorithms/network_flow/cycle_canceling.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/network_flow/cycle_canceling.txt[]
@@ -21,7 +19,7 @@ include::example$algorithms/network_flow/cycle_canceling.txt[]
 
 '''
 
-=== (1) Non-named parameter version
+=== (1) Positional version
 
 [source,cpp]
 ----
@@ -189,7 +187,7 @@ void cycle_canceling(
 
 The `cycle_canceling()` function calculates the minimum cost flow of a network
 with given flow. See Section
-xref:overview/graph_theory_review.adoc#sec:network-flow-algorithms[Network Flow
+xref:about/graph_theory_review.adoc#sec:network-flow-algorithms[Network Flow
 Algorithms] for a description of maximum flow. For given flow values _f(u,v)_,
 the function minimizes flow cost in such a way that for each _v in V_ the
 _sum~u in V~ f(v,u)_ is preserved. Particularly if the input flow was the

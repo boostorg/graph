@@ -13,12 +13,7 @@
 
 {{#if (eq (or level 0) 0)}}
 <style>
-  /* Expand the branch that contains the current page, and the current
-     page's own subtree (if it has children). */
-  .nav-item.is-current-page > .nav-list,
-  .nav-item:has(> .nav-list .is-current-page) > .nav-list { display: block; }
-
-  /* Chevron + link on one flex row — guarantees vertical centring
+  /* Chevron + link on one flex row. Guarantees vertical centring
      regardless of font metrics or line-height. */
   .nav-item-head {
     display: flex;

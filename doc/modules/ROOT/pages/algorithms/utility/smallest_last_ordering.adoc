@@ -14,8 +14,6 @@ degree. This ordering is a good heuristic for graph coloring: using it with
 include::example$algorithms/utility/smallest_last.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/utility/smallest_last.txt[]

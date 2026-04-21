@@ -1,6 +1,6 @@
 = UpdatableQueue
 
-An _UpdatableQueue_ is a refinement of the xref:auxiliary/Buffer.adoc[Buffer]
+An _UpdatableQueue_ is a refinement of the xref:concepts/property_types/Buffer.adoc[Buffer]
 concept that additionally requires that the Buffer be updatable.
 
 Implicit in the definition is an ordering of values. Though access to
@@ -31,7 +31,7 @@ inserted or last updated.
 
 For a type to model the UpdatableQueue concept it must have the
 following members in addition to the members that are required of types
-that model xref:auxiliary/Buffer.adoc[Buffer]:
+that model xref:concepts/property_types/Buffer.adoc[Buffer]:
 
 [cols=",",]
 |===
@@ -73,7 +73,7 @@ whether the queue contains `t`
 == Further Refinements
 
 * UpdatablePriorityQueue
-* xref:auxiliary/KeyedUpdatableQueue.adoc[KeyedUpdatableQueue]
+* xref:concepts/property_types/KeyedUpdatableQueue.adoc[KeyedUpdatableQueue]
 
 [#concept:UpdatablePriorityQueue]
 == UpdatablePriorityQueue

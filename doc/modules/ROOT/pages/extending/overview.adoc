@@ -100,8 +100,6 @@ Implementing your own property map requires overloading `get()` and `put()`
 include::example$property_maps/custom_property_map.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$property_maps/custom_property_map.txt[]

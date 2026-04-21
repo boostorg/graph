@@ -12,8 +12,6 @@ Tests whether an undirected graph is bipartite using a DFS-based coloring approa
 include::example$algorithms/coloring/is_bipartite.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/coloring/is_bipartite.txt[]
@@ -60,7 +58,7 @@ bool is_bipartite(
   link:../../property_map/doc/ReadablePropertyMap.html[Readable Property
   Map] and link:../../property_map/doc/WritablePropertyMap.html[Writable
   Property Map]. The value type must model
-  xref:auxiliary/ColorValue.adoc[ColorValue].
+  xref:concepts/property_types/ColorValue.adoc[ColorValue].
 
 |===
 

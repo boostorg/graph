@@ -22,8 +22,6 @@ dynamic_properties dp(ignore_other_properties);
 include::example$io/graphml.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$io/graphml.txt[]

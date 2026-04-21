@@ -12,8 +12,6 @@ Tests a graph for bipartiteness and, if not bipartite, finds an odd-length cycle
 include::example$algorithms/coloring/find_odd_cycle.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/coloring/find_odd_cycle.txt[]
@@ -61,7 +59,7 @@ OutputIterator find_odd_cycle(
   link:../../property_map/doc/ReadablePropertyMap.html[Readable Property
   Map] and link:../../property_map/doc/WritablePropertyMap.html[Writable
   Property Map]. The value type must model
-  xref:auxiliary/ColorValue.adoc[ColorValue].
+  xref:concepts/property_types/ColorValue.adoc[ColorValue].
 
 | OUT
 | `OutputIterator result`

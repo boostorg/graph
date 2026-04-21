@@ -14,6 +14,8 @@ content:
 asciidoc:
   attributes:
     source-highlighter: highlight.js
+    # Enable the cppalliance theme's right-rail floating TOC on every page.
+    page-toc: ''
 
 ui:
   bundle:

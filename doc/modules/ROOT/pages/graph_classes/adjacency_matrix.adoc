@@ -59,8 +59,6 @@ checked in the matrix row.
 include::example$graph_classes/adjacency_matrix_usage.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$graph_classes/adjacency_matrix_usage.txt[]

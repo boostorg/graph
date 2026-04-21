@@ -13,8 +13,6 @@ Converts a list of event visitors into a DFSVisitor for use with
 include::example$visitors/dfs_visitor.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$visitors/dfs_visitor.txt[]

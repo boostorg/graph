@@ -53,8 +53,6 @@ using Graph = adjacency_list<vecS, vecS, directedS,
 include::example$property_maps/tags.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$property_maps/tags.txt[]

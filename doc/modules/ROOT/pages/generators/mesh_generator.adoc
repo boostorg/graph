@@ -43,8 +43,6 @@ for undirected graphs each adjacency produces one edge.
 include::example$generators/mesh.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$generators/mesh.txt[]

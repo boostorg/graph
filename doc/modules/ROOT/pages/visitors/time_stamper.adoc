@@ -14,8 +14,6 @@ used to record discover and finish times during DFS.
 include::example$visitors/time_stamper.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$visitors/time_stamper.txt[]

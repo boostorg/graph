@@ -54,8 +54,6 @@ One-line summary of what the algorithm does.
 include::example$algorithms/<category>/<name>.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/<category>/<name>.txt[]
@@ -63,7 +61,7 @@ include::example$algorithms/<category>/<name>.txt[]
 
 '''
 
-=== (1) Non-named parameter version
+=== (1) Positional version
 
 [source,cpp]
 ----

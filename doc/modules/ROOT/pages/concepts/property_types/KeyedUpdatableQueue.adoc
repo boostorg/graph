@@ -1,7 +1,7 @@
 = KeyedUpdatableQueue
 
 A _KeyedUpdatableQueue_ is a refinement of the
-xref:auxiliary/UpdatableQueue.adoc[UpdatableQueue] concept. It requires that
+xref:concepts/property_types/UpdatableQueue.adoc[UpdatableQueue] concept. It requires that
 models order the contained values by their _keys_, to which values are
 mapped via a read/write key map.
 
@@ -17,7 +17,7 @@ mapped via a read/write key map.
 
 For a type to model the KeyedUpdatableQueue concept it must have the
 following members in addition to the members that are required of types
-that model xref:auxiliary/UpdatableQueue.adoc[UpdatableQueue]:
+that model xref:concepts/property_types/UpdatableQueue.adoc[UpdatableQueue]:
 
 [cols=",",]
 |===

@@ -12,8 +12,6 @@ Reduces the bandwidth of a graph by reordering the indices assigned to each vert
 include::example$algorithms/ordering/king.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/ordering/king.txt[]

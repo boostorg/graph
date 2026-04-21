@@ -22,8 +22,6 @@ dynamic_properties dp(ignore_other_properties);
 include::example$io/graphviz.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$io/graphviz.txt[]

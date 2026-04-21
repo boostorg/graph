@@ -8,8 +8,6 @@
 include::example$algorithms/shortest_paths/dijkstra_no_color.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/shortest_paths/dijkstra_no_color.txt[]
@@ -64,7 +62,7 @@ Use the Bellman-Ford algorithm for the case when some edge weights are
 negative. Use breadth-first search instead of Dijkstra's algorithm when
 all edge weights are equal to one. For the definition of the
 shortest-path problem see Section
-xref:overview/graph_theory_review.adoc#sec:shortest-paths-algorithms[Shortest-Paths
+xref:about/graph_theory_review.adoc#sec:shortest-paths-algorithms[Shortest-Paths
 Algorithms] for some background to the shortest-path problem.
 
 `dijkstra_shortest_paths_no_color_map` differs from
@@ -167,7 +165,7 @@ finish vertex u
 
 | IN
 | `weight_map(WeightMap weight_map)`
-| The weight or "length" of each edge in the graph. The weights must all be non-negative and non-infinite. The algorithm will throw a xref:auxiliary/exception.adoc#negative_edge[`negative_edge`] exception is one of the edges is negative. The type `WeightMap` must be a model of link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map]. The edge descriptor type of the graph needs to be usable as the key type for the weight map. The value type for this map must be the same as the value type of the distance map. Default: `get(edge_weight, graph)`
+| The weight or "length" of each edge in the graph. The weights must all be non-negative and non-infinite. The algorithm will throw a xref:exception.adoc#negative_edge[`negative_edge`] exception is one of the edges is negative. The type `WeightMap` must be a model of link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map]. The edge descriptor type of the graph needs to be usable as the key type for the weight map. The value type for this map must be the same as the value type of the distance map. Default: `get(edge_weight, graph)`
 
 | IN
 | `index_map(VertexIndexMap index_map)`
@@ -179,7 +177,7 @@ finish vertex u
 
 | UTIL/OUT
 | `distance_map(DistanceMap distance_map)`
-| The shortest path weight from the source vertex `start_vertex` to each vertex in the graph `graph` is recorded in this property map. The shortest path weight is the sum of the edge weights along the shortest path. The type `DistanceMap` must be a model of link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]. The vertex descriptor type of the graph needs to be usable as the key type of the distance map. The value type of the distance map is the element type of a xref:auxiliary/Monoid.adoc[Monoid] formed with the `distance_weight_combine` function object and the `distance_zero` object for the identity element. Also the distance value type must have a http://www.boost.org/sgi/stl/StrictWeakOrdering.html[StrictWeakOrdering] provided by the `distance_compare` function object. Default: link:../../property_map/doc/iterator_property_map.html[`iterator_property_map`] created from a `std::vector` of the `WeightMap`'s value type of size `num_vertices(graph)` and using the `index_map` for the index map.
+| The shortest path weight from the source vertex `start_vertex` to each vertex in the graph `graph` is recorded in this property map. The shortest path weight is the sum of the edge weights along the shortest path. The type `DistanceMap` must be a model of link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]. The vertex descriptor type of the graph needs to be usable as the key type of the distance map. The value type of the distance map is the element type of a xref:concepts/property_types/Monoid.adoc[Monoid] formed with the `distance_weight_combine` function object and the `distance_zero` object for the identity element. Also the distance value type must have a http://www.boost.org/sgi/stl/StrictWeakOrdering.html[StrictWeakOrdering] provided by the `distance_compare` function object. Default: link:../../property_map/doc/iterator_property_map.html[`iterator_property_map`] created from a `std::vector` of the `WeightMap`'s value type of size `num_vertices(graph)` and using the `index_map` for the index map.
 
 | IN
 | `distance_compare(CompareFunction distance_compare)`
@@ -195,7 +193,7 @@ finish vertex u
 
 | IN
 | `distance_zero(D distance_zero)`
-| The `distance_zero` value must be the identity element for the xref:auxiliary/Monoid.adoc[Monoid] formed by the distance values and the `distance_weight_combine` function object. The type `D` is the value type of the `DistanceMap`. Default: `D()` with `D=typename property_traits<DistanceMap>::value_type`
+| The `distance_zero` value must be the identity element for the xref:concepts/property_types/Monoid.adoc[Monoid] formed by the distance values and the `distance_weight_combine` function object. The type `D` is the value type of the `DistanceMap`. Default: `D()` with `D=typename property_traits<DistanceMap>::value_type`
 
 | OUT
 | `visitor(DijkstraVisitor v)`

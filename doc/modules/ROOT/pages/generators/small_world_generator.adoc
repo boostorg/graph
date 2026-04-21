@@ -49,8 +49,6 @@ direction, violating the degree guarantee of the model.
 include::example$generators/small_world.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$generators/small_world.txt[]

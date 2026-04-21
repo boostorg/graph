@@ -12,8 +12,6 @@ Adds edges to a biconnected planar graph to make it maximal planar.
 include::example$algorithms/planar/make_maximal.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/planar/make_maximal.txt[]
@@ -21,7 +19,7 @@ include::example$algorithms/planar/make_maximal.txt[]
 
 '''
 
-=== Non-named parameter version
+=== Positional version
 
 [source,cpp]
 ----
@@ -50,7 +48,7 @@ void make_maximal_planar(
 | IN
 | `PlanarEmbedding embedding`
 | A link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map]
-  that models the xref:auxiliary/PlanarEmbedding.adoc[PlanarEmbedding] concept.
+  that models the xref:concepts/property_types/PlanarEmbedding.adoc[PlanarEmbedding] concept.
 
 | IN
 | `VertexIndexMap vm`

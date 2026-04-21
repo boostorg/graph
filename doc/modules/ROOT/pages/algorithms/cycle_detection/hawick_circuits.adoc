@@ -12,8 +12,6 @@ Enumerates all elementary circuits in a directed multigraph, including self-loop
 include::example$algorithms/cycle_detection/hawick_circuits.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/cycle_detection/hawick_circuits.txt[]

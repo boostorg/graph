@@ -11,8 +11,6 @@ BGL algorithms throw these exceptions when preconditions are not met.
 include::example$auxiliary/exception.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$auxiliary/exception.txt[]

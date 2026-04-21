@@ -13,8 +13,6 @@ Implements a heuristic search on a weighted, directed or undirected graph for th
 include::example$algorithms/shortest_paths/astar.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/shortest_paths/astar.txt[]
@@ -22,7 +20,7 @@ include::example$algorithms/shortest_paths/astar.txt[]
 
 '''
 
-=== (1) Non-named parameter version
+=== (1) Positional version
 
 [source,cpp]
 ----
@@ -103,7 +101,7 @@ inline void astar_search(
   link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map].
   The vertex descriptor type of the graph needs to be usable as the key
   type of the distance map. The value type of the distance map is the
-  element type of a xref:auxiliary/Monoid.adoc[Monoid] formed with the `combine`
+  element type of a xref:concepts/property_types/Monoid.adoc[Monoid] formed with the `combine`
   function object and the `zero` object for the identity element. Also the
   distance value type must have a
   http://www.boost.org/sgi/stl/StrictWeakOrdering.html[StrictWeakOrdering]
@@ -113,7 +111,7 @@ inline void astar_search(
 | `WeightMap weight`
 | The weight or "length" of each edge in the graph. The weights must all
   be non-negative; the algorithm will throw a
-  xref:auxiliary/exception.adoc#negative_edge[`negative_edge`] exception if
+  xref:exception.adoc#negative_edge[`negative_edge`] exception if
   one of the edges is negative. The type `WeightMap` must be a model of
   link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
   The edge descriptor type of the graph needs to be usable as the key type
@@ -141,7 +139,7 @@ inline void astar_search(
   link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map].
   A vertex descriptor must be usable as the key type of the map, and the
   value type of the map must be a model of
-  xref:auxiliary/ColorValue.adoc[Color Value].
+  xref:concepts/property_types/ColorValue.adoc[Color Value].
 
 | IN
 | `CompareFunction compare`
@@ -173,7 +171,7 @@ inline void astar_search(
 | IN
 | `CostZero zero`
 | The `zero` value must be the identity element for the
-  xref:auxiliary/Monoid.adoc[Monoid] formed by the distance values and the
+  xref:concepts/property_types/Monoid.adoc[Monoid] formed by the distance values and the
   `combine` function object. The type `D` is the value type of the
   `DistanceMap`.
 

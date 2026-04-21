@@ -12,8 +12,6 @@ Performs a depth-first traversal of the vertices in an undirected graph.
 include::example$algorithms/traversal/undirected_dfs.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/traversal/undirected_dfs.txt[]
@@ -21,7 +19,7 @@ include::example$algorithms/traversal/undirected_dfs.txt[]
 
 '''
 
-=== (1) Non-named parameter version
+=== (1) Positional version
 
 [source,cpp]
 ----
@@ -53,14 +51,14 @@ void undirected_dfs(const Graph& g, DFSVisitor vis,
   graph. The type `VertexColorMap` must be a model of
   link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]
   and its key type must be the graph's vertex descriptor type and the value type
-  of the color map must model xref:auxiliary/ColorValue.adoc[ColorValue].
+  of the color map must model xref:concepts/property_types/ColorValue.adoc[ColorValue].
 
 | UTIL | `EdgeColorMap edge_color`
 | This is used by the algorithm to keep track of which edges have been
   visited. The type `EdgeColorMap` must be a model of
   link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]
   and its key type must be the graph's edge descriptor type and the value type
-  of the color map must model xref:auxiliary/ColorValue.adoc[ColorValue].
+  of the color map must model xref:concepts/property_types/ColorValue.adoc[ColorValue].
 |===
 
 '''
@@ -98,14 +96,14 @@ void undirected_dfs(const Graph& g, DFSVisitor vis,
   graph. The type `VertexColorMap` must be a model of
   link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]
   and its key type must be the graph's vertex descriptor type and the value type
-  of the color map must model xref:auxiliary/ColorValue.adoc[ColorValue].
+  of the color map must model xref:concepts/property_types/ColorValue.adoc[ColorValue].
 
 | UTIL | `EdgeColorMap edge_color`
 | This is used by the algorithm to keep track of which edges have been
   visited. The type `EdgeColorMap` must be a model of
   link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]
   and its key type must be the graph's edge descriptor type and the value type
-  of the color map must model xref:auxiliary/ColorValue.adoc[ColorValue].
+  of the color map must model xref:concepts/property_types/ColorValue.adoc[ColorValue].
 
 | IN | `vertex_descriptor start`
 | The vertex that the depth-first search should originate from.
@@ -146,7 +144,7 @@ void undirected_dfs(Graph& G,
   graph. The type `VertexColorMap` must be a model of
   link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]
   and its key type must be the graph's vertex descriptor type and the value type
-  of the color map must model xref:auxiliary/ColorValue.adoc[ColorValue]. +
+  of the color map must model xref:concepts/property_types/ColorValue.adoc[ColorValue]. +
   *Default:* an
   link:../../property_map/doc/iterator_property_map.html[iterator_property_map]
   created from a `std::vector` of `default_color_type` of size
@@ -157,7 +155,7 @@ void undirected_dfs(Graph& G,
   visited. The type `EdgeColorMap` must be a model of
   link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]
   and its key type must be the graph's edge descriptor type and the value type
-  of the color map must model xref:auxiliary/ColorValue.adoc[ColorValue]. +
+  of the color map must model xref:concepts/property_types/ColorValue.adoc[ColorValue]. +
   *Default:* none.
 
 | IN | `root_vertex(typename graph_traits<VertexListGraph>::vertex_descriptor start)`
@@ -190,7 +188,7 @@ visited, the algorithm selects from any remaining undiscovered vertices
 and continues the traversal. The algorithm finishes when all vertices
 have been visited. Depth-first search is useful for categorizing edges
 in a graph, and for imposing an ordering on the vertices. Section
-xref:overview/graph_theory_review.adoc#sec:dfs-algorithm[Depth-First Search]
+xref:about/graph_theory_review.adoc#sec:dfs-algorithm[Depth-First Search]
 describes the various properties of DFS and walks through an example.
 
 Similar to BFS, color markers are used to keep track of which vertices

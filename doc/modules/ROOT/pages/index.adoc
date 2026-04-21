@@ -15,8 +15,6 @@ A C++ library of graph algorithms and data structures, generic enough to work on
 include::example$algorithms/shortest_paths/dijkstra_bundled.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/shortest_paths/dijkstra_bundled.txt[]

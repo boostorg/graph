@@ -13,8 +13,6 @@ Adds edges to a connected planar graph to make it biconnected while preserving p
 include::example$algorithms/planar/make_biconnected.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/planar/make_biconnected.txt[]
@@ -46,7 +44,7 @@ void make_biconnected_planar(
 
 | IN
 | `PlanarEmbedding embedding`
-| A model of xref:auxiliary/PlanarEmbedding.adoc[PlanarEmbedding].
+| A model of xref:concepts/property_types/PlanarEmbedding.adoc[PlanarEmbedding].
 
 | IN
 | `EdgeIndexMap em`

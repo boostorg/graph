@@ -13,8 +13,6 @@ Computes a canonical ordering of the vertices of a maximal planar graph.
 include::example$algorithms/planar/canonical_ordering.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/planar/canonical_ordering.txt[]
@@ -45,7 +43,7 @@ void planar_canonical_ordering(
 
 | IN
 | `PlanarEmbedding embedding`
-| A model of xref:auxiliary/PlanarEmbedding.adoc[PlanarEmbedding].
+| A model of xref:concepts/property_types/PlanarEmbedding.adoc[PlanarEmbedding].
 
 | OUT
 | `OutputIterator ordering`

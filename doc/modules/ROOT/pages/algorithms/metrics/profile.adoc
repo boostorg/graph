@@ -12,8 +12,6 @@ Computes the profile of a graph, which is the sum of all vertex bandwidths plus 
 include::example$algorithms/metrics/profile.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/metrics/profile.txt[]

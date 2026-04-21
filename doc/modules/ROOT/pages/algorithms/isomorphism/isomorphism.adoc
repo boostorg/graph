@@ -13,8 +13,6 @@ Determines whether an isomorphism exists between two graphs.
 include::example$algorithms/isomorphism/isomorphism.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/isomorphism/isomorphism.txt[]
@@ -22,7 +20,7 @@ include::example$algorithms/isomorphism/isomorphism.txt[]
 
 '''
 
-=== (1) Non-named parameter version
+=== (1) Positional version
 
 [source,cpp]
 ----

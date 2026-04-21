@@ -15,8 +15,6 @@ Both overloads live in namespace `boost::graph` (not `boost`).
 include::example$algorithms/connectivity/st_connected.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/connectivity/st_connected.txt[]
@@ -52,7 +50,7 @@ bool st_connected(const Graph& g,
 | UTIL
 | `ColorMap color`
 | ReadWritePropertyMap for working storage. One entry per vertex, initialized
-  to white. The value type must model xref:auxiliary/ColorValue.adoc[Color Value].
+  to white. The value type must model xref:concepts/property_types/ColorValue.adoc[Color Value].
 |===
 
 '''

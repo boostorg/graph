@@ -12,8 +12,6 @@ Force-directed layout for unweighted, undirected graphs using the Fruchterman-Re
 include::example$algorithms/layout/fruchterman_reingold.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/layout/fruchterman_reingold.txt[]
@@ -148,7 +146,7 @@ void fruchterman_reingold_force_directed_layout(
 
 '''
 
-=== (2) Non-named parameter version
+=== (2) Positional version
 
 [source,cpp]
 ----

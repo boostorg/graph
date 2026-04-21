@@ -13,8 +13,6 @@ Adds a minimal set of edges to make an undirected graph connected.
 include::example$algorithms/planar/make_connected.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/planar/make_connected.txt[]

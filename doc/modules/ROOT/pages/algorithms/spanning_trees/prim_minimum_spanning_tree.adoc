@@ -13,8 +13,6 @@ Solves the minimum spanning tree problem for an undirected graph with weighted e
 include::example$algorithms/spanning_trees/prim.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/spanning_trees/prim.txt[]
@@ -22,7 +20,7 @@ include::example$algorithms/spanning_trees/prim.txt[]
 
 '''
 
-=== (1) Non-named parameter version
+=== (1) Positional version
 
 [source,cpp]
 ----
@@ -198,7 +196,7 @@ void prim_minimum_spanning_tree(
   link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map].
   A vertex descriptor must be usable as the key type of the map, and the
   value type of the map must be a model of
-  xref:auxiliary/ColorValue.adoc[Color Value]. +
+  xref:concepts/property_types/ColorValue.adoc[Color Value]. +
   *Default:* an
   link:../../property_map/doc/iterator_property_map.html[`iterator_property_map`]
   created from a `std::vector` of `default_color_type` of size
@@ -221,7 +219,7 @@ for solving the minimum spanning tree problem for an undirected graph
 with weighted edges. A MST is a set of edges that connects all the
 vertices in the graph where the total weight of the edges in the tree is
 minimized. See Section
-xref:overview/graph_theory_review.adoc#sec:minimum-spanning-tree[Minimum Spanning
+xref:about/graph_theory_review.adoc#sec:minimum-spanning-tree[Minimum Spanning
 Tree Problem] for more details. The implementation is simply a call to
 xref:algorithms/shortest_paths/dijkstra_shortest_paths.adoc[`dijkstra_shortest_paths()`]
 with the appropriate choice of comparison and combine functors. The

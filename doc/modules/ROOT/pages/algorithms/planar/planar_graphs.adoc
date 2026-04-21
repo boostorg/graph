@@ -53,7 +53,7 @@ A planar embedding specifies, for each vertex, the clockwise (or
 counter-clockwise) order of incident edges. It is the central data structure
 connecting the planarity test to all downstream algorithms. In BGL it is a
 property map from vertices to sequences of edge descriptors. See
-xref:auxiliary/PlanarEmbedding.adoc[PlanarEmbedding concept].
+xref:concepts/property_types/PlanarEmbedding.adoc[PlanarEmbedding concept].
 
 == All algorithms
 

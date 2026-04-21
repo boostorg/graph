@@ -13,8 +13,6 @@ Converts a list of event visitors into a BellmanFordVisitor for use with
 include::example$visitors/bellman_visitor.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$visitors/bellman_visitor.txt[]

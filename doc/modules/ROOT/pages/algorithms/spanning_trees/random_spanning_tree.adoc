@@ -12,8 +12,6 @@ Generates a random spanning tree on a directed or undirected graph.
 include::example$algorithms/spanning_trees/random_spanning_tree.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/spanning_trees/random_spanning_tree.txt[]
@@ -21,7 +19,7 @@ include::example$algorithms/spanning_trees/random_spanning_tree.txt[]
 
 '''
 
-=== (1) Non-named parameter version
+=== (1) Positional version
 
 [source,cpp]
 ----
@@ -72,7 +70,7 @@ void random_spanning_tree(const Graph& g, Gen& gen,
   graph. The type `ColorMap` must be a model of
   link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]
   and its key type must be the graph's vertex descriptor type and the value
-  type of the color map must model xref:auxiliary/ColorValue.adoc[ColorValue].
+  type of the color map must model xref:concepts/property_types/ColorValue.adoc[ColorValue].
 |===
 
 '''
@@ -111,7 +109,7 @@ void random_spanning_tree(Graph& G, Gen& gen,
   graph. The type `ColorMap` must be a model of
   link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]
   and its key type must be the graph's vertex descriptor type and the value
-  type of the color map must model xref:auxiliary/ColorValue.adoc[ColorValue]. +
+  type of the color map must model xref:concepts/property_types/ColorValue.adoc[ColorValue]. +
   *Default:* a `two_bit_color_map` of size `num_vertices(g)` and using the
   `i_map` for the index map.
 

@@ -13,8 +13,6 @@ A traveling salesperson heuristic for generating a tour of vertices for a fully 
 include::example$algorithms/utility/metric_tsp_approx.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/utility/metric_tsp_approx.txt[]

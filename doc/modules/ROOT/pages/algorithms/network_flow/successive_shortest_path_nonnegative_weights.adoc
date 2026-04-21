@@ -12,8 +12,6 @@ Calculates the minimum cost maximum flow of a network with nonnegative edge weig
 include::example$algorithms/network_flow/successive_shortest_path.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/network_flow/successive_shortest_path.txt[]
@@ -21,7 +19,7 @@ include::example$algorithms/network_flow/successive_shortest_path.txt[]
 
 '''
 
-=== (1) Non-named parameter version
+=== (1) Positional version
 
 [source,cpp]
 ----
@@ -79,7 +77,7 @@ void successive_shortest_path_nonnegative_weights(
 | `Weight weight`
 | The weight or "cost" of each edge in the graph. The weights must all be
   non-negative, and the algorithm will throw a
-  xref:auxiliary/exception.adoc#negative_edge[`negative_edge`] exception if
+  xref:exception.adoc#negative_edge[`negative_edge`] exception if
   one of the edges is negative. The type `Weight` must be a model of
   link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
   The edge descriptor type of the graph needs to be usable as the key type
@@ -197,7 +195,7 @@ void successive_shortest_path_nonnegative_weights(
 | `weight_map(WeightMap w_map)`
 | The weight or "cost" of each edge in the graph. The weights must all be
   non-negative, and the algorithm will throw a
-  xref:auxiliary/exception.adoc#negative_edge[`negative_edge`] exception if
+  xref:exception.adoc#negative_edge[`negative_edge`] exception if
   one of the edges is negative. The type `WeightMap` must be a model of
   link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
   The edge descriptor type of the graph needs to be usable as the key type
@@ -261,7 +259,7 @@ void successive_shortest_path_nonnegative_weights(
 
 The `successive_shortest_path_nonnegative_weights()` function calculates
 the minimum cost maximum flow of a network. See Section
-xref:overview/graph_theory_review.adoc#sec:network-flow-algorithms[Network Flow
+xref:about/graph_theory_review.adoc#sec:network-flow-algorithms[Network Flow
 Algorithms] for a description of maximum flow. The function calculates
 the flow values _f(u,v)_ for all _(u,v)_ in _E_, which are returned in
 the form of the residual capacity _r(u,v) = c(u,v) - f(u,v)_.

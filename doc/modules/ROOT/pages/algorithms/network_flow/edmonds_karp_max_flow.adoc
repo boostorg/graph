@@ -13,8 +13,6 @@ Calculates the maximum flow of a network using the Edmonds-Karp variant of the F
 include::example$algorithms/network_flow/edmonds_karp.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/network_flow/edmonds_karp.txt[]
@@ -22,7 +20,7 @@ include::example$algorithms/network_flow/edmonds_karp.txt[]
 
 '''
 
-=== (1) Non-named parameter version
+=== (1) Positional version
 
 [source,cpp]
 ----
@@ -85,7 +83,7 @@ edmonds_karp_max_flow(
   link:../../property_map/doc/LvaluePropertyMap.html[Lvalue Property Map].
   The key type of the map should be the graph's vertex descriptor type,
   and the value type must be a model of
-  xref:auxiliary/ColorValue.adoc[Color Value].
+  xref:concepts/property_types/ColorValue.adoc[Color Value].
 
 | UTIL
 | `PredEdgeMap pred`
@@ -169,7 +167,7 @@ edmonds_karp_max_flow(
   link:../../property_map/doc/LvaluePropertyMap.html[Lvalue Property Map].
   The key type of the map should be the graph's vertex descriptor type,
   and the value type must be a model of
-  xref:auxiliary/ColorValue.adoc[Color Value]. +
+  xref:concepts/property_types/ColorValue.adoc[Color Value]. +
   *Default:* an
   link:../../property_map/doc/iterator_property_map.html[`iterator_property_map`]
   created from a `std::vector` of `default_color_type` of size
@@ -206,7 +204,7 @@ edmonds_karp_max_flow(
 
 The `edmonds_karp_max_flow()` function calculates the maximum flow
 of a network. See Section
-xref:overview/graph_theory_review.adoc#sec:network-flow-algorithms[Network Flow
+xref:about/graph_theory_review.adoc#sec:network-flow-algorithms[Network Flow
 Algorithms] for a description of maximum flow. The calculated maximum
 flow will be the return value of the function. The function also
 calculates the flow values _f(u,v)_ for all _(u,v)_ in _E_, which are

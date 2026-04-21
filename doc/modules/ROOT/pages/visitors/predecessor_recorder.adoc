@@ -13,8 +13,6 @@ Records the predecessor (parent) vertex for each vertex in a property map.
 include::example$visitors/predecessor_recorder.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$visitors/predecessor_recorder.txt[]

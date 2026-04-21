@@ -9,8 +9,6 @@ interact with graphs, regardless of the underlying data structure.
 include::example$primitives/primitives_traversal.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$primitives/primitives_traversal.txt[]
@@ -68,8 +66,6 @@ NOTE: All pairs can be used with `make_iterator_range` for range-based for loops
 ----
 include::example$primitives/primitives_edge_access.cpp[]
 ----
-
-*Expected output:*
 
 [,text]
 ----
@@ -143,8 +139,6 @@ xref:graph_classes/overview.adoc[Graph Data Structures] for details.
 include::example$primitives/primitives_mutation.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$primitives/primitives_mutation.txt[]
@@ -176,8 +170,6 @@ include::example$primitives/primitives_mutation.txt[]
 ----
 include::example$primitives/primitives_properties.cpp[]
 ----
-
-*Expected output:*
 
 [,text]
 ----

@@ -12,8 +12,6 @@ Reduces the profile and wavefront of an undirected graph by reordering vertex in
 include::example$algorithms/ordering/sloan.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$algorithms/ordering/sloan.txt[]

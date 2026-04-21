@@ -14,8 +14,6 @@ Useful for initialization or for marking specific edges (e.g. back edges).
 include::example$visitors/property_put.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$visitors/property_put.txt[]

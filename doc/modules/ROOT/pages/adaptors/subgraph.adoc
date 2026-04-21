@@ -17,8 +17,6 @@ class.
 include::example$adaptors/subgraph.cpp[]
 ----
 
-*Expected output:*
-
 [,text]
 ----
 include::example$adaptors/subgraph.txt[]
