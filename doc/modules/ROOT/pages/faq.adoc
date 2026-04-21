@@ -65,12 +65,9 @@ error: no match for
 ----
 
 The algorithm expected a named property (weight, color, vertex_index,
-...) on the graph and did not find it. Two fixes, pick one:
-
-* Add the property as an **interior** property in the graph template
-  parameters, or
-* Pass the property map **explicitly** using the named-parameter API
-  (`weight_map(...)`, `color_map(...)`, ...).
+...) on the graph and did not find it. Add the property as a field on
+your bundle and pass it explicitly via the named-parameter API
+(`weight_map(...)`, `color_map(...)`, `vertex_index_map(...)`, ...).
 
 [source,cpp]
 ----
@@ -162,10 +159,10 @@ library's roadmap but not yet implemented.
 
 === Why does algorithm X work with `vecS` but not `listS`?
 
-The algorithm expects a `vertex_index` property. With
-`VertexList = vecS` `adjacency_list` synthesizes one; with `listS` it
-does not, so you must declare it in the property chain and fill it
-yourself before calling the algorithm.
+The algorithm needs a vertex index. With `VertexList = vecS`
+`adjacency_list` synthesizes one; with `listS` it does not, so you
+must supply your own. Add an index field to the bundle and pass it
+through the `vertex_index_map` named parameter.
 
 [source,cpp]
 ----
