@@ -1,8 +1,10 @@
-name: Deploy static content to Pages
+name: Build and deploy Antora docs
 
 on:
   push:
     branches: ["documentation"]
+  pull_request:
+    branches: ["develop"]
   workflow_dispatch:
 
 permissions:
@@ -15,20 +17,61 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Upload artifact
+
+      - name: Install Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Antora
+        run: npm i -g @antora/cli@3 @antora/site-generator-default@3
+
+      # Set up boost-root so b2 can build the example .cpp files (needs
+      # the full Boost build tree, not just the headers we ship in this
+      # repo).
+      - name: Set up boost-root
+        run: |
+          git clone -b develop --depth 1 https://github.com/boostorg/boost.git ../boost-root
+          cd ../boost-root
+          git submodule update --init tools/boostdep
+          rm -rf libs/graph
+          cp -r "$GITHUB_WORKSPACE" libs/graph
+          python tools/boostdep/depinst/depinst.py --git_args "--jobs 3" graph
+          ./bootstrap.sh
+          ./b2 headers
+
+      - name: Snapshot example outputs (b2)
+        working-directory: ../boost-root
+        run: ./b2 -j$(nproc) libs/graph/doc/modules/ROOT/examples
+
+      # Mirror the regenerated .txt sidecars back into the workspace
+      # so Antora sees them when it picks up sources from $GITHUB_WORKSPACE.
+      - name: Mirror generated .txt back to workspace
+        run: rsync -a ../boost-root/libs/graph/doc/modules/ROOT/examples/ doc/modules/ROOT/examples/
+
+      - name: Build the site
+        run: npx antora --fetch doc/playbook.yml
+
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'doc/build/site'
+          path: doc/build/site
+
+  deploy:
+    needs: build
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5

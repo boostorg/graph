@@ -1,0 +1,58 @@
+# Builds every example .cpp under this directory and snapshots its stdout
+# into a sibling .txt file that the Antora pages include via
+# `include::example$<path>.txt[]`. The .txt is regenerated only when the
+# source (or its dependencies) change.
+#
+# Invoke from boost-root:
+#     b2 libs/graph/doc/modules/ROOT/examples
+# or directly with -d+2 to see what's being run.
+
+import path ;
+import regex ;
+
+require-b2 5.0.1 ;
+
+path-constant HERE : . ;
+
+project doc-examples
+    : requirements
+        <cxxstd>14
+        <warnings>off
+    ;
+
+# A handful of examples need the prebuilt boost_graph library
+# (graphviz / graphml readers and the isomorphism example pull in
+# non-header-only code). Everything else compiles header-only.
+local needs-graph-lib =
+    io/graphml.cpp
+    io/graphviz.cpp
+    algorithms/isomorphism/isomorphism.cpp
+    ;
+
+# Capture stdout of the input executable into the output file.
+actions snapshot
+{
+    "$(>)" > "$(<)"
+}
+
+# Discover every example, define an `exe` for it, and a `make` that
+# runs the binary and writes the .txt next to the source.
+local examples = [ path.glob-tree $(HERE) : *.cpp ] ;
+for local cpp in $(examples)
+{
+    local rel  = [ path.relative $(cpp) $(HERE) ] ;   # algorithms/foo/bar.cpp
+    local stem = $(rel:S=) ;                          # algorithms/foo/bar
+    local dir  = $(stem:D) ;                          # algorithms/foo
+    local name = $(stem:B) ;                          # bar
+    local libs = ;
+    if $(rel) in $(needs-graph-lib)
+    {
+        libs = <library>/boost/graph//boost_graph ;
+    }
+
+    exe $(name) : $(cpp) : $(libs) ;
+    make $(name).txt
+        : $(name)
+        : @snapshot
+        : <location>$(HERE)/$(dir) ;
+}
