@@ -1,12 +1,10 @@
 * xref:index.adoc[Introduction]
 * xref:graph_classes/primitives.adoc[Primitives]
-* Graph Classes
-** xref:graph_classes/overview.adoc[Overview]
+* xref:graph_classes/overview.adoc[Graph Classes]
 ** xref:graph_classes/adjacency_list.adoc[Adjacency List]
 ** xref:graph_classes/adjacency_matrix.adoc[Adjacency Matrix]
 ** xref:graph_classes/compressed_sparse_row.adoc[Compressed Sparse Row Graph]
-* Graph Generators
-** xref:generators/overview.adoc[Overview]
+* xref:generators/overview.adoc[Graph Generators]
 ** xref:generators/random.adoc[Random Graph Utilities]
 ** xref:generators/erdos_renyi_generator.adoc[Erdős-Rényi (Uniform Random)]
 ** xref:generators/rmat_generator.adoc[Scale-Free (R-MAT)]
@@ -15,15 +13,13 @@
 ** xref:generators/mesh_generator.adoc[Mesh (2D Grid)]
 ** xref:generators/ssca_generator.adoc[SSCA (Clustered Benchmark)]
 * Algorithms
-** Traversal
-*** xref:algorithms/traversal/traversal_overview.adoc[Overview]
+** xref:algorithms/traversal/traversal_overview.adoc[Traversal]
 *** xref:algorithms/traversal/breadth_first_search.adoc[Breadth First Search]
 *** xref:algorithms/traversal/breadth_first_visit.adoc[Breadth First Visit]
 *** xref:algorithms/traversal/depth_first_search.adoc[Depth First Search]
 *** xref:algorithms/traversal/depth_first_visit.adoc[Depth First Visit]
 *** xref:algorithms/traversal/undirected_dfs.adoc[Undirected DFS]
-** Shortest Paths
-*** xref:algorithms/shortest_paths/shortest_paths_overview.adoc[Overview]
+** xref:algorithms/shortest_paths/shortest_paths_overview.adoc[Shortest Paths]
 *** xref:algorithms/shortest_paths/dijkstra_shortest_paths.adoc[Dijkstra Shortest Paths]
 *** xref:algorithms/shortest_paths/dijkstra_shortest_paths_no_color_map.adoc[Dijkstra Shortest Paths No Color Map]
 *** xref:algorithms/shortest_paths/bellman_ford_shortest.adoc[Bellman-Ford Shortest Paths]
@@ -32,20 +28,17 @@
 *** xref:algorithms/shortest_paths/floyd_warshall_shortest.adoc[Floyd-Warshall All Pairs Shortest Paths]
 *** xref:algorithms/shortest_paths/r_c_shortest_paths.adoc[Resource-Constrained Shortest Paths]
 *** xref:algorithms/shortest_paths/astar_search.adoc[A* Search]
-** Spanning Trees
-*** xref:algorithms/spanning_trees/spanning_trees_overview.adoc[Overview]
+** xref:algorithms/spanning_trees/spanning_trees_overview.adoc[Spanning Trees]
 *** xref:algorithms/spanning_trees/kruskal_min_spanning_tree.adoc[Kruskal Minimum Spanning Tree]
 *** xref:algorithms/spanning_trees/prim_minimum_spanning_tree.adoc[Prim Minimum Spanning Tree]
 *** xref:algorithms/spanning_trees/random_spanning_tree.adoc[Random Spanning Tree]
 *** xref:algorithms/spanning_trees/two_graphs_common_spanning_trees.adoc[Two Graphs Common Spanning Trees]
-** Connected Components
-*** xref:algorithms/connected_components/connected_components_overview.adoc[Overview]
+** xref:algorithms/connected_components/connected_components_overview.adoc[Connected Components]
 *** xref:algorithms/connected_components/connected_components.adoc[Connected Components]
 *** xref:algorithms/connected_components/strong_components.adoc[Strong Components]
 *** xref:algorithms/connected_components/biconnected_components.adoc[Biconnected Components]
 *** xref:algorithms/connected_components/incremental_components.adoc[Incremental Components]
-** Network Flow
-*** xref:algorithms/network_flow/network_flow_overview.adoc[Overview]
+** xref:algorithms/network_flow/network_flow_overview.adoc[Network Flow]
 *** xref:algorithms/network_flow/edmonds_karp_max_flow.adoc[Edmonds-Karp Max Flow]
 *** xref:algorithms/network_flow/push_relabel_max_flow.adoc[Push-Relabel Max Flow]
 *** xref:algorithms/network_flow/boykov_kolmogorov_max_flow.adoc[Boykov-Kolmogorov Max Flow]
@@ -55,21 +48,17 @@
 *** xref:algorithms/network_flow/find_flow_cost.adoc[Find Flow Cost]
 *** xref:algorithms/network_flow/maximum_matching.adoc[Edmonds Maximum Cardinality Matching]
 *** xref:algorithms/network_flow/maximum_weighted_matching.adoc[Maximum Weighted Matching]
-** Topological Sort
-*** xref:algorithms/topological_sort/topological_sort_overview.adoc[Overview]
+** xref:algorithms/topological_sort/topological_sort_overview.adoc[Topological Sort]
 *** xref:algorithms/topological_sort/topological_sort.adoc[Topological Sort]
-** Graph Coloring
-*** xref:algorithms/coloring/coloring_overview.adoc[Overview]
+** xref:algorithms/coloring/coloring_overview.adoc[Graph Coloring]
 *** xref:algorithms/coloring/sequential_vertex_coloring.adoc[Sequential Vertex Coloring]
 *** xref:algorithms/coloring/edge_coloring.adoc[Edge Coloring]
 *** xref:algorithms/coloring/is_bipartite.adoc[Is Bipartite]
 *** xref:algorithms/coloring/find_odd_cycle.adoc[Find Odd Cycle]
-** Connectivity
-*** xref:algorithms/connectivity/connectivity_overview.adoc[Overview]
+** xref:algorithms/connectivity/connectivity_overview.adoc[Connectivity]
 *** xref:algorithms/connectivity/edge_connectivity.adoc[Edge Connectivity]
 *** xref:algorithms/connectivity/st_connected.adoc[ST Connected]
-** Graph Metrics
-*** xref:algorithms/metrics/metrics_overview.adoc[Overview]
+** xref:algorithms/metrics/metrics_overview.adoc[Graph Metrics]
 *** xref:algorithms/metrics/page_rank.adoc[PageRank]
 *** xref:algorithms/metrics/betweenness_centrality.adoc[Brandes Betweenness Centrality]
 *** xref:algorithms/metrics/degree_centrality.adoc[Degree Centrality]
@@ -81,13 +70,11 @@
 *** xref:algorithms/metrics/profile.adoc[Profile]
 *** xref:algorithms/metrics/wavefront.adoc[Wavefront]
 *** xref:algorithms/metrics/bandwidth.adoc[Bandwidth]
-** Graph Isomorphism
-*** xref:algorithms/isomorphism/isomorphism_overview.adoc[Overview]
+** xref:algorithms/isomorphism/isomorphism_overview.adoc[Graph Isomorphism]
 *** xref:algorithms/isomorphism/isomorphism.adoc[Isomorphism]
 *** xref:algorithms/isomorphism/vf2_sub_graph_iso.adoc[VF2 Subgraph Isomorphism]
 *** xref:algorithms/isomorphism/mcgregor_common_subgraphs.adoc[McGregor Common Subgraphs]
-** Planar Graphs
-*** xref:algorithms/planar/planar_graphs.adoc[Overview]
+** xref:algorithms/planar/planar_graphs.adoc[Planar Graphs]
 *** xref:algorithms/planar/boyer_myrvold.adoc[Boyer-Myrvold Planarity Test]
 *** xref:algorithms/planar/planar_face_traversal.adoc[Planar Face Traversal]
 *** xref:algorithms/planar/planar_canonical_ordering.adoc[Planar Canonical Ordering]
@@ -97,8 +84,7 @@
 *** xref:algorithms/planar/make_connected.adoc[Make Connected]
 *** xref:algorithms/planar/make_biconnected_planar.adoc[Make Biconnected Planar]
 *** xref:algorithms/planar/make_maximal_planar.adoc[Make Maximal Planar]
-** Layout
-*** xref:algorithms/layout/layout_overview.adoc[Overview]
+** xref:algorithms/layout/layout_overview.adoc[Layout]
 *** xref:algorithms/layout/topology.adoc[Topologies]
 *** xref:algorithms/layout/random_layout.adoc[Random Graph Layout]
 *** xref:algorithms/layout/circle_layout.adoc[Circle Layout]
@@ -106,23 +92,19 @@
 *** xref:algorithms/layout/fruchterman_reingold.adoc[Fruchterman-Reingold Force Directed Layout]
 *** xref:algorithms/layout/gursoy_atun_layout.adoc[Gürsoy-Atun Layout]
 *** xref:auxiliary/layout_tolerance.adoc[Layout Tolerance]
-** Sparse Matrix Ordering
-*** xref:algorithms/ordering/ordering_overview.adoc[Overview]
+** xref:algorithms/ordering/ordering_overview.adoc[Sparse Matrix Ordering]
 *** xref:algorithms/ordering/cuthill_mckee_ordering.adoc[Cuthill-McKee Ordering]
 *** xref:algorithms/ordering/king_ordering.adoc[King Ordering]
 *** xref:algorithms/ordering/minimum_degree_ordering.adoc[Minimum Degree Ordering]
 *** xref:algorithms/ordering/sloan_ordering.adoc[Sloan Ordering]
 *** xref:algorithms/ordering/sloan_start_end_vertices.adoc[Sloan Start End Vertices]
-** Cycle Detection
-*** xref:algorithms/cycle_detection/cycle_detection_overview.adoc[Overview]
+** xref:algorithms/cycle_detection/cycle_detection_overview.adoc[Cycle Detection]
 *** xref:algorithms/cycle_detection/hawick_circuits.adoc[Hawick Circuits]
 *** xref:algorithms/cycle_detection/tiernan_all_cycles.adoc[Tiernan All Cycles]
 *** xref:algorithms/cycle_detection/howard_cycle_ratio.adoc[Cycle Ratio]
-** Clique Detection
-*** xref:algorithms/clique_detection/clique_detection_overview.adoc[Overview]
+** xref:algorithms/clique_detection/clique_detection_overview.adoc[Clique Detection]
 *** xref:algorithms/clique_detection/bron_kerbosch.adoc[Bron-Kerbosch All Cliques]
-** Utility
-*** xref:algorithms/utility/utility_overview.adoc[Overview]
+** xref:algorithms/utility/utility_overview.adoc[Utility]
 *** xref:algorithms/utility/copy_graph.adoc[Copy Graph]
 *** xref:algorithms/utility/transpose_graph.adoc[Transpose Graph]
 *** xref:algorithms/utility/transitive_closure.adoc[Transitive Closure]
@@ -138,14 +120,12 @@
 *** xref:algorithms/utility/neighbor_bfs.adoc[Neighbor BFS]
 *** xref:algorithms/utility/loop_erased_random_walk.adoc[Loop-Erased Random Walk]
 *** xref:algorithms/utility/graph_stats.adoc[Graph Statistics]
-* Property Maps
-** xref:property_maps/overview.adoc[Overview]
+* xref:property_maps/overview.adoc[Property Maps]
 ** xref:property_maps/bundled.adoc[Bundled Properties]
 ** xref:property_maps/external.adoc[External Properties]
 ** xref:property_maps/tags.adoc[Internal Tags (Legacy)]
 ** xref:property_maps/pitfalls.adoc[Common Mistakes]
-* Concepts
-** xref:concepts/graph_concepts.adoc[Overview]
+* xref:concepts/graph_concepts.adoc[Concepts]
 ** Graph Structure
 *** xref:concepts/Graph.adoc[Graph]
 *** xref:concepts/IncidenceGraph.adoc[Incidence Graph]
@@ -170,8 +150,7 @@
 *** xref:auxiliary/UpdatableQueue.adoc[Updatable Queue]
 *** xref:auxiliary/PlanarEmbedding.adoc[Planar Embedding]
 *** xref:auxiliary/PropertyTag.adoc[Property Tag]
-* Visitors
-** xref:visitors/overview.adoc[Overview]
+* xref:visitors/overview.adoc[Visitors]
 ** Pre-built Event Visitors
 *** xref:visitors/predecessor_recorder.adoc[Predecessor Recorder]
 *** xref:visitors/distance_recorder.adoc[Distance Recorder]
@@ -200,20 +179,17 @@
 *** xref:visitors/dijkstra_visitor.adoc[Dijkstra Visitor Adaptor]
 *** xref:visitors/bellman_visitor.adoc[Bellman-Ford Visitor Adaptor]
 *** xref:visitors/astar_visitor.adoc[A* Visitor Adaptor]
-* Graph I/O
-** xref:io/overview.adoc[Overview]
+* xref:io/overview.adoc[Graph I/O]
 ** xref:io/graphviz.adoc[GraphViz (DOT)]
 ** xref:io/graphml.adoc[GraphML]
 ** xref:io/dimacs.adoc[DIMACS]
-* Graph Adaptors
-** xref:adaptors/overview.adoc[Overview]
+* xref:adaptors/overview.adoc[Graph Adaptors]
 ** xref:adaptors/filtered_graph.adoc[Filtered Graph]
 ** xref:adaptors/reverse_graph.adoc[Reverse Graph]
 ** xref:adaptors/subgraph.adoc[Subgraph]
 ** xref:adaptors/edge_list.adoc[Edge List]
 ** xref:adaptors/grid_graph.adoc[Grid Graph]
-* Traits and Iterators
-** xref:traits/overview.adoc[Overview]
+* xref:traits/overview.adoc[Traits and Iterators]
 ** xref:traits/graph_traits.adoc[Graph Traits]
 ** xref:traits/adjacency_list_traits.adoc[Adjacency List Traits]
 ** xref:traits/property_map.adoc[Property Map]
@@ -226,8 +202,7 @@
 ** xref:overview/graph_theory_review.adoc[Graph Theory Review]
 ** xref:auxiliary/bgl_named_params.adoc[Named Parameters]
 ** xref:about/bibliography.adoc[Bibliography]
-* Extending the BGL
-** xref:extending/overview.adoc[Writing Algorithms for BGL]
+* xref:extending/overview.adoc[Extending the BGL]
 ** xref:extending/constructing_algorithms.adoc[Worked Example: Graph Coloring]
 ** xref:extending/custom_storage.adoc[Custom Adjacency List Storage]
 ** xref:extending/leda_conversion.adoc[Adapting Existing Graph Structures]
