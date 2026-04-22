@@ -20,7 +20,7 @@ Find or enumerate cycles in a graph.
   both cycle lengths without enumerating every cycle explicitly.
 
 | xref:algorithms/cycle_detection/howard_cycle_ratio.adoc[Cycle Ratio / Cycle Mean]
-| Empirical _O(|E|)_; no tight worst-case bound
+| Empirical _O(\|E\|)_; no tight worst-case bound
 | Find the cycle with the minimum or maximum ratio of two edge weight sums
   (`maximum_cycle_ratio` / `minimum_cycle_ratio`). The `..._cycle_mean`
   variants are the common special case where the denominator is the cycle

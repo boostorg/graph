@@ -40,9 +40,9 @@ follows:
 
 [width="100%",cols="100%",]
 |===
-|` V = {v, b, x, z, a, y }` +
-`E = { (b,y), (b,y), (y,v), (z,a), (x,x), (b,x), (x,v), (a,z) }` +
-`G = (V, E) `
+|`V = {v, b, x, z, a, y}` +
+`E = {(b,y), (b,y), (y,v), (z,a), (x,x), (b,x), (x,v), (a,z)}` +
+`G = (V, E)`
 |===
 
  
@@ -70,9 +70,9 @@ replacing each edge by two edges, one pointing in each direction.#
 
 [width="100%",cols="100%",]
 |===
-|` V = {v, b, x, z, a, y }` +
-`E = { (b,y), (y,v), (z,a), (b,x), (x,v) }` +
-`G = (V, E) `
+|`V = {v, b, x, z, a, y}` +
+`E = {(b,y), (y,v), (z,a), (b,x), (x,v)}` +
+`G = (V, E)`
 |===
 
  

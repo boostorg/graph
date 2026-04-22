@@ -8,7 +8,7 @@ that preserves edges).
 | Algorithm | Complexity | When to use
 
 | xref:algorithms/isomorphism/isomorphism.adoc[Isomorphism]
-| _O(|V|!)_ worst case
+| _O(\|V\|!)_ worst case
 | Test if two graphs are isomorphic (same structure, same size). Simple
   backtracking implementation.
 

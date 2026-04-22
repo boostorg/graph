@@ -244,9 +244,7 @@ if they were and returning `false` otherwise.
 
 === Pseudo-Code
 
-[cols="1a,1a"]
-|===
-|
+[source,text]
 ----
 BELLMAN-FORD(G)
   // Optional initialization
@@ -255,40 +253,18 @@ BELLMAN-FORD(G)
     p[u] := u
   end for
   for i := 1 to |V|-1
-    for each edge (u,v) in E
-      RELAX(u, v, w, d, p)
+    for each edge (u,v) in E             // examine_edge
+      RELAX(u, v, w, d, p)               // edge_relaxed / edge_not_relaxed
     end for
   end for
   for each edge (u,v) in E
-    if (w(u,v) + d[u] < d[v])
+    if (w(u,v) + d[u] < d[v])            // edge_not_minimized
       return (false, , )
     else
-      ...
+      ...                                // edge_minimized
   end for
   return (true, p, d)
 ----
-|
-----
-.
-.
-.
-.
-.
-.
-.
-examine edge (u,v)
-.
-.
-.
-.
-.
-edge (u,v) was not minimized
-.
-edge (u,v) was minimized
-.
-.
-----
-|===
 
 There are two main options for obtaining output from the
 `bellman_ford_shortest_paths()` function. If the user provides a distance

@@ -1,0 +1,11 @@
+=== DOT output ===
+digraph G {
+A;
+B;
+C;
+A->B  [weight=1.5];
+A->C  [weight=4];
+B->C  [weight=2.5];
+}
+=== Read back ===
+3 vertices, 3 edges

@@ -42,7 +42,6 @@ void initialize_incremental_components(
 
 '''
 
-[#sec:incremental-components]
 === incremental_components
 
 *Complexity:* _O(E)_
