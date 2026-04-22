@@ -4,21 +4,22 @@
 
 === Which container selectors (`vecS`, `listS`, `setS`) should I pick?
 
+[cols="1,1,1,3"]
 |===
-| Selector | Storage | Descriptors stable under remove? | Lookup / duplicates
+| Selector | Storage | Stable? | Notes
 
 | `vecS`
-| contiguous vector
-| No (indices shift)
+| vector
+| No
 | Fast iteration; parallel edges allowed
 
 | `listS`
-| linked list
+| list
 | Yes
 | `O(E)` lookup; parallel edges allowed
 
 | `setS`
-| balanced tree
+| tree
 | Yes (edges)
 | `O(log E)` lookup; no parallel edges
 |===
