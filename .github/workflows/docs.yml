@@ -29,7 +29,7 @@ jobs:
           node-version: '20'
 
       - name: Install Antora
-        run: npm i -g @antora/cli @antora/site-generator
+        run: npm i -g @antora/cli @antora/site-generator @antora/lunr-extension@1.0.0-alpha.13
 
       # Set up boost-root so b2 can build the example .cpp files (needs
       # the full Boost build tree, not just the headers we ship in this
