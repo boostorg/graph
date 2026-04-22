@@ -1,0 +1,8 @@
+{
+  "name": "boost-graph-docs",
+  "private": true,
+  "description": "Build dependencies for the Boost.Graph Antora documentation site.",
+  "devDependencies": {
+    "@antora/lunr-extension": "^1.0.0-alpha.13"
+  }
+}

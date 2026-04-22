@@ -5,6 +5,11 @@ site:
   title: Boost.Graph Documentation
   start_page: graph::index.adoc
 
+antora:
+  extensions:
+    - require: '@antora/lunr-extension'
+      index_latest_only: true
+
 content:
   sources:
     - url: ..

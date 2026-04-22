@@ -197,7 +197,7 @@ image:figs/edge_list.gif[figs/edge_list,width=322,height=22]
 _Tree edges_ are edges in the search tree (or forest) constructed
 (implicitly or explicitly) by running a graph search algorithm over a
 graph. An edge _(u,v)_ is a tree edge if _v_ was first discovered while
-exploring (corresponding to the xref:visitors/visitor_concepts.adoc[visitor]
+exploring (corresponding to the xref:visitors/overview.adoc[visitor]
 `explore()` method) edge _(u,v)_. _Back edges_ connect vertices to their
 ancestors in a search tree. So for edge _(u,v)_ the vertex _v_ must be
 the ancestor of vertex _u_. Self loops are considered to be back edges.
