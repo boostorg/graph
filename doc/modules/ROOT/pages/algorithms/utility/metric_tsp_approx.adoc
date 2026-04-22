@@ -1,7 +1,7 @@
 [#sec:metric_tsp_approx]
 = Metric Traveling Salesperson Approximation
 
-A traveling salesperson heuristic for generating a tour of vertices for a fully connected undirected graph with weighted edges that obey the triangle inequality.
+A https://en.wikipedia.org/wiki/Travelling_salesman_problem[traveling salesperson] heuristic for generating a tour of vertices for a fully connected undirected graph with weighted edges that obey the triangle inequality.
 
 *Complexity:* _O(E log V)_ +
 *Defined in:* `<boost/graph/metric_tsp_approx.hpp>`

@@ -339,8 +339,9 @@ bool floyd_warshall_all_pairs_shortest_paths(
 
 == Description
 
-These algorithms find the shortest distance between every pair of
-vertices in the graph. The shortest distance between each pair of
+These algorithms implement the
+https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm[Floyd-Warshall algorithm]
+to find the shortest distance between every pair of vertices in the graph. The shortest distance between each pair of
 vertices is stored in the distance matrix `d`. The difference between the
 two algorithms is in whether the distance matrix is assumed to be
 initialized or not: `floyd_warshall_initialized_all_pairs_shortest_paths`

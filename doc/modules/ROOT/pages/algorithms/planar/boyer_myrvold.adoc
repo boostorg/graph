@@ -94,7 +94,8 @@ The algorithm is optimized at compile time based on which parameters are present
 
 == Description
 
-The function `boyer_myrvold_planarity_test` implements the planarity testing/embedding algorithm of Boyer and Myrvold [xref:about/bibliography.adoc#boyermyrvold04[70]].
+The function `boyer_myrvold_planarity_test` implements the
+https://en.wikipedia.org/wiki/Planarity_testing[planarity testing]/embedding algorithm of Boyer and Myrvold [xref:about/bibliography.adoc#boyermyrvold04[64]].
 It returns `true` if the input graph is planar and `false` otherwise.
 As a side-effect of this test, a planar embedding can be constructed if the graph is planar or a minimal set of edges that form a xref:algorithms/planar/planar_graphs.adoc#kuratowskisubgraphs[Kuratowski subgraph] can be found if the graph is not planar.
 

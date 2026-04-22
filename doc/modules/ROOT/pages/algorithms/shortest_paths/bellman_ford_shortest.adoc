@@ -187,7 +187,8 @@ bool bellman_ford_shortest_paths(
 
 == Description
 
-The Bellman-Ford algorithm [xref:about/bibliography.adoc#bellman58[4],xref:about/bibliography.adoc#ford62:_flows[11],xref:about/bibliography.adoc#lawler76:_comb_opt[20],xref:about/bibliography.adoc#clr90[8]]
+The https://en.wikipedia.org/wiki/Bellman%E2%80%93Ford_algorithm[Bellman-Ford algorithm]
+[xref:about/bibliography.adoc#bellman58[2],xref:about/bibliography.adoc#ford62:_flows[8],xref:about/bibliography.adoc#lawler76:_comb_opt[16],xref:about/bibliography.adoc#clr90[5]]
 solves the single-source shortest paths problem for a graph with both
 positive and negative edge weights. For the definition of the shortest
 paths problem see Section

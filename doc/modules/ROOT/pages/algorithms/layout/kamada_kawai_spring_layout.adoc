@@ -207,7 +207,8 @@ Same parameters as (3), but uses a default `done` function of `layout_tolerance`
 
 == Description
 
-This algorithm [xref:about/bibliography.adoc#kamada89[57]] performs graph layout (in two dimensions) for connected, undirected graphs. It operates by relating the layout of graphs to a dynamic spring system and minimizing the energy within that system. The strength of a spring between two vertices is inversely proportional to the square of the shortest distance (in graph terms) between those two vertices. Essentially, vertices that are closer in the graph-theoretic sense (i.e., by following edges) will have stronger springs and will therefore be placed closer together.
+This https://en.wikipedia.org/wiki/Force-directed_graph_drawing[algorithm]
+[xref:about/bibliography.adoc#kamada89[52]] performs graph layout (in two dimensions) for connected, undirected graphs. It operates by relating the layout of graphs to a dynamic spring system and minimizing the energy within that system. The strength of a spring between two vertices is inversely proportional to the square of the shortest distance (in graph terms) between those two vertices. Essentially, vertices that are closer in the graph-theoretic sense (i.e., by following edges) will have stronger springs and will therefore be placed closer together.
 
 Prior to invoking this algorithm, it is recommended that the vertices be placed along the vertices of a regular n-sided polygon via xref:algorithms/layout/circle_layout.adoc[`circle_graph_layout`].
 

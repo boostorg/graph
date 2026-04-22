@@ -1,6 +1,7 @@
 = Transitive Closure
 
-Computes the transitive closure of a directed graph, adding an edge _(u,v)_ whenever there is a path from _u_ to _v_.
+Computes the https://en.wikipedia.org/wiki/Transitive_closure[transitive closure]
+of a directed graph, adding an edge _(u,v)_ whenever there is a path from _u_ to _v_.
 
 *Complexity:* _O(|V||E|)_ +
 *Defined in:* `<boost/graph/transitive_closure.hpp>`
@@ -152,8 +153,8 @@ and the transitive closure computed by the algorithm.
 
 The algorithm used to implement the `transitive_closure()` function
 is based on the detection of strong
-components[xref:about/bibliography.adoc#nuutila95[50],
-xref:about/bibliography.adoc#purdom70[53]]. The following discussion
+components[xref:about/bibliography.adoc#nuutila95[45],
+xref:about/bibliography.adoc#purdom70[48]]. The following discussion
 describes the algorithm (and some relevant background theory).
 
 A [#def:successor-set]#*_successor set_*# of a vertex _v_, denoted by
@@ -199,7 +200,7 @@ for each vertex in _Adj[u]_ has already been computed.
 An optimized implementation of the set union operation improves the
 performance of the algorithm. Therefore this implementation uses
 [#def:chain-decomposition]#*_chain decomposition_*#
-[xref:about/bibliography.adoc#goral79[51],xref:about/bibliography.adoc#simon86[52]].
+[xref:about/bibliography.adoc#goral79[46],xref:about/bibliography.adoc#simon86[47]].
 The vertices of _G_ are partitioned into chains _Z~1~, ..., Z~k~_, where
 each chain _Z~i~_ is a path in _G_ and the vertices in a chain have
 increasing topological number. A successor set _S_ is then represented

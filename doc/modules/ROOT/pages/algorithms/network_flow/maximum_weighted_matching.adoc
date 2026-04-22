@@ -219,7 +219,8 @@ void brute_force_maximum_weighted_matching(
 [#sec:weighted_matching]
 Before you continue, it is recommended to read about
 xref:algorithms/network_flow/maximum_matching.adoc[maximal cardinality matching] first.
-A _maximum weighted matching_ of an edge-weighted graph is a matching
+A https://en.wikipedia.org/wiki/Maximum_weight_matching[_maximum weighted matching_]
+of an edge-weighted graph is a matching
 for which the sum of the weights of the edges is maximum.
 Two different matchings (edges in the matching are colored blue) in the same graph are
 illustrated below.
@@ -253,12 +254,17 @@ of the graph by calling `get(edge_weight, g)`.
 === Algorithm Description
 
 The maximum weighted matching problem was solved by Edmonds in
-[xref:about/bibliography.adoc#edmonds65:_max_weighted_match[74]].
-Subsequently, Gabow [xref:about/bibliography.adoc#gabow76[75]] and
-Lawler [xref:about/bibliography.adoc#lawler76:_comb_opt[20]] developed methods
+[xref:about/bibliography.adoc#edmonds65:_max_weighted_match[68]].
+Subsequently, Gabow [xref:about/bibliography.adoc#gabow76[69]] and
+Lawler [xref:about/bibliography.adoc#lawler76:_comb_opt[16]] developed methods
 to reduce the run time from _O(V^4^)_ to _O(V^3^)_.
 The implementation of `maximum_weighted_matching` follows a description
-of the _O(V^3^)_ algorithm by Galil [xref:about/bibliography.adoc#galil86[77]].
+of the _O(V^3^)_ algorithm by Galil [xref:about/bibliography.adoc#galil86[71]].
+The best known time complexity for maximum weighted matching in general
+graphs is _O(VE + V^2^ log V)_ by Gabow
+[xref:about/bibliography.adoc#gabow90[70]], but it relies on an efficient
+algorithm for the nearest common ancestor problem on trees, which Boost
+does not currently provide.
 
 Starting from an empty matching, the algorithm repeatedly augments the
 matching until no further improvement is possible.
@@ -283,10 +289,10 @@ If this enables further growth of the alternating trees, return to step 1.
 Otherwise, halt the algorithm; the matching has maximum weight.
 
 The implementation deviates from the description in
-[xref:about/bibliography.adoc#galil86[77]] on a few points:
+[xref:about/bibliography.adoc#galil86[71]] on a few points:
 
 * After augmenting the matching,
-[xref:about/bibliography.adoc#galil86[77]] expands all blossoms with
+[xref:about/bibliography.adoc#galil86[71]] expands all blossoms with
 zero dual. This is correct but potentially unnecessary; some of the
 expanded blossoms will be recreated during the next stage. The
 implementation holds off on the expansion of such blossoms. In any
@@ -311,7 +317,7 @@ _l_, taking time _O(V)_. The implementation handles this by examining
 every element of `B~k~.best_edge_set`, taking time _O(V)_
 plus a constant time per newly discovered edge. This does not change the
 overall time complexity of the algorithm.
-* After augmenting, [xref:about/bibliography.adoc#galil86[77]] removes
+* After augmenting, [xref:about/bibliography.adoc#galil86[71]] removes
 all labels and alternating trees. This keeps the algorithm simple, but
 it causes many trees and labels to be rediscovered at the beginning of
 the new stage. To avoid such redundant work,

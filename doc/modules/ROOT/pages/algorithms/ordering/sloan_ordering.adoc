@@ -247,7 +247,7 @@ OutputIterator sloan_ordering(
 
 == Description
 
-The goal of the Sloan ordering algorithm [xref:about/bibliography.adoc#sloan86[83], xref:about/bibliography.adoc#sloan89[84]] is to reduce the profile and
+The goal of the Sloan ordering algorithm [xref:about/bibliography.adoc#sloan86[77], xref:about/bibliography.adoc#sloan89[78]] is to reduce the profile and
 the wavefront of a graph by reordering the indices assigned to each vertex.
 The Sloan algorithm needs a start and an end vertex. These vertices can be
 assigned manually. But there is also an algorithm `sloan_starting_nodes` that
@@ -303,5 +303,5 @@ An `OutputIterator` pointing past the end of the permutation output.
 
 == References
 
-* xref:about/bibliography.adoc#sloan86[[83\]] S. W. Sloan, _An algorithm for profile and wavefront reduction of sparse matrices_, Int. j. numer. methods eng., *23*, 239-251 (1986).
-* xref:about/bibliography.adoc#sloan89[[84\]] S. W. Sloan, _A fortran program for profile and wavefront reduction_, Int. j. numer. methods eng., *28*, 2651-2679 (1989).
+* xref:about/bibliography.adoc#sloan86[[77\]] S. W. Sloan, _An algorithm for profile and wavefront reduction of sparse matrices_, Int. j. numer. methods eng., *23*, 239-251 (1986).
+* xref:about/bibliography.adoc#sloan89[[78\]] S. W. Sloan, _A fortran program for profile and wavefront reduction_, Int. j. numer. methods eng., *28*, 2651-2679 (1989).

@@ -145,8 +145,8 @@ void random_spanning_tree(Graph& G, Gen& gen,
 
 The `random_spanning_tree()` function generates a random spanning tree on a
 directed or undirected graph. The algorithm used is Wilson's algorithm
-(xref:about/bibliography.adoc#wilson96generating[73]), based on loop-erased
-random walks. There must be a path from every non-root vertex of the graph to
+(xref:about/bibliography.adoc#wilson96generating[67]), based on
+https://en.wikipedia.org/wiki/Loop-erased_random_walk[loop-erased random walks]. There must be a path from every non-root vertex of the graph to
 the root; the algorithm typically enters an infinite loop when given a graph
 that does not satisfy this property, but may also throw the exception
 `loop_erased_random_walk_stuck` if the search reaches a vertex with no

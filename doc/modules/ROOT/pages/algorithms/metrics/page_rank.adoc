@@ -1,6 +1,7 @@
 = PageRank
 
-Computes the PageRank of each vertex: a measure of importance based on the
+Computes the https://en.wikipedia.org/wiki/PageRank[PageRank]
+of each vertex: a measure of importance based on the
 link structure of a directed graph. A vertex is important if it is pointed to
 by other important vertices.
 

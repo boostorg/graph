@@ -194,8 +194,9 @@ void lengauer_tarjan_dominator_tree_without_dfs(
 
 == Description
 
-This algorithm [xref:about/bibliography.adoc#lengauer-tarjan79[65],xref:about/bibliography.adoc#muchnick97[66],xref:about/bibliography.adoc#appel98[67]]
-builds the dominator tree for a directed graph. There are three options
+This algorithm [xref:about/bibliography.adoc#lengauer-tarjan79[59],xref:about/bibliography.adoc#muchnick97[60],xref:about/bibliography.adoc#appel98[61]]
+builds the https://en.wikipedia.org/wiki/Dominator_(graph_theory)[dominator tree]
+for a directed graph. There are three options
 for dealing with the depth first search related values. The simplest version
 creates data structures and runs depth first search internally. However,
 chances are that a user wants to reuse the depth first search data, so
@@ -232,7 +233,7 @@ Lengauer-Tarjan algorithm utilizes two techniques. The first one is, as
 an intermediate step, finding the semidominator which is relatively easier
 to evaluate than the immediate dominator, and the second one is path
 compression. For the detail of the algorithm, see
-[xref:about/bibliography.adoc#lengauer-tarjan79[65]].
+[xref:about/bibliography.adoc#lengauer-tarjan79[59]].
 
 == Notes
 

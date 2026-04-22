@@ -1,6 +1,7 @@
 = Clustering Coefficient
 
-Measures the density of triangles around a vertex. For vertex v, it is the
+Measures the https://en.wikipedia.org/wiki/Clustering_coefficient[density of triangles]
+around a vertex. For vertex v, it is the
 fraction of pairs of v's neighbors that are also connected to each other.
 A high value means v's neighborhood is tightly knit.
 

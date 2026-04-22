@@ -179,7 +179,7 @@ inline void astar_search(
 
 '''
 
-=== (2) Non-named parameter tree version
+=== (2) Positional tree version
 
 [source,cpp]
 ----
@@ -203,7 +203,7 @@ Same parameters as (1), but without `VertexIndexMap` and `ColorMap`. For the tre
 
 '''
 
-=== (3) Non-named parameter no-init version
+=== (3) Positional no-init version
 
 [source,cpp]
 ----
@@ -231,7 +231,7 @@ NOTE: The `index_map` and `color` parameters are swapped in `astar_search_no_ini
 
 '''
 
-=== (4) Non-named parameter no-init tree version
+=== (4) Positional no-init tree version
 
 [source,cpp]
 ----
@@ -430,7 +430,9 @@ Same named parameters as (5). Combines the no-init and tree behaviors.
 
 == Description
 
-The A* algorithm is a _heuristic graph search algorithm_: an A* search is "guided" by a _heuristic function_. A heuristic function _h(v)_ is one which estimates the cost from a non-goal state (_v_) in the graph to some goal state, _g_. Intuitively, A* follows paths (through the graph) to the goal that are estimated by the heuristic function to be the best paths. Unlike best-first search, A* takes into account the known cost from the start of the search to _v_; the paths A* takes are guided by a function _f(v) = g(v) + h(v)_, where _h(v)_ is the heuristic function, and _g(v)_ (sometimes denoted _c(s, v)_) is the known cost from the start to _v_. Clearly, the efficiency of A* is highly dependent on the heuristic function with which it is used.
+The https://en.wikipedia.org/wiki/A%2A_search_algorithm[A* algorithm]
+[xref:about/bibliography.adoc#hart68[13]]
+is a _heuristic graph search algorithm_: an A* search is "guided" by a _heuristic function_. A heuristic function _h(v)_ is one which estimates the cost from a non-goal state (_v_) in the graph to some goal state, _g_. Intuitively, A* follows paths (through the graph) to the goal that are estimated by the heuristic function to be the best paths. Unlike best-first search, A* takes into account the known cost from the start of the search to _v_; the paths A* takes are guided by a function _f(v) = g(v) + h(v)_, where _h(v)_ is the heuristic function, and _g(v)_ (sometimes denoted _c(s, v)_) is the known cost from the start to _v_. Clearly, the efficiency of A* is highly dependent on the heuristic function with which it is used.
 
 The A* algorithm is very similar to Dijkstra's Shortest Paths algorithm. This implementation finds all the shortest paths from the start vertex to every other vertex by creating a search tree, examining vertices according to their remaining cost to some goal, as estimated by a heuristic function. Most commonly, A* is used to find some specific goal vertex or vertices in a graph, after which the search is terminated.
 

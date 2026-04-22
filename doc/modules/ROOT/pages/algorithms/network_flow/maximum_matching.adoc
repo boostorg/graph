@@ -148,7 +148,8 @@ bool matching(
 
 == Description
 
-A _matching_ is a subset of the edges of a graph such that no two edges share a common vertex. Two different matchings in the same graph are illustrated below (edges in the matching are colored blue). The matching on the left is a _maximal matching_, meaning that its size can't be increased by adding edges. The matching on the right is a _maximum cardinality matching_, meaning that it has maximum size over all matchings in the graph.
+A https://en.wikipedia.org/wiki/Matching_(graph_theory)[_matching_]
+is a subset of the edges of a graph such that no two edges share a common vertex. Two different matchings in the same graph are illustrated below (edges in the matching are colored blue). The matching on the left is a _maximal matching_, meaning that its size can't be increased by adding edges. The matching on the right is a _maximum cardinality matching_, meaning that it has maximum size over all matchings in the graph.
 
 [cols=",,"]
 |===
@@ -183,7 +184,7 @@ When quoting time bounds for algorithms, we assume that `VertexIndexMap` is a pr
 
 == Algorithms for Finding an Augmenting Path
 
-* *`edmonds_augmenting_path_finder`*: Finds an augmenting path in time _O(m alpha(m,n))_, where _alpha(m,n)_ is an inverse of the Ackerman function. _alpha(m,n)_ is one of the slowest growing functions that occurs naturally in computer science; essentially, _alpha(m,n)_ <= 4 for any graph that we'd ever hope to run this algorithm on. Since we arrive at a maximum cardinality matching after augmenting _O(n)_ matchings, the entire algorithm takes time _O(mn alpha(m,n))_. Edmonds' original algorithm appeared in [xref:about/bibliography.adoc#edmonds65[64]], but our implementation of Edmonds' algorithm closely follows Tarjan's description of the algorithm from [xref:about/bibliography.adoc#tarjan83:_data_struct_network_algo[27]].
+* *`edmonds_augmenting_path_finder`*: Finds an augmenting path in time _O(m alpha(m,n))_, where _alpha(m,n)_ is an inverse of the Ackerman function. _alpha(m,n)_ is one of the slowest growing functions that occurs naturally in computer science; essentially, _alpha(m,n)_ <= 4 for any graph that we'd ever hope to run this algorithm on. Since we arrive at a maximum cardinality matching after augmenting _O(n)_ matchings, the entire algorithm takes time _O(mn alpha(m,n))_. Edmonds' original algorithm appeared in [xref:about/bibliography.adoc#edmonds65[58]], but our implementation of Edmonds' algorithm closely follows Tarjan's description of the algorithm from [xref:about/bibliography.adoc#tarjan83:_data_struct_network_algo[22]].
 * *`no_augmenting_path_finder`*: Can be used if no augmentation of the initial matching is desired.
 
 == Verification Algorithms
@@ -242,5 +243,5 @@ The generic `matching` function returns `true` if and only if the `MatchingVerif
 
 == Notes
 
-* Edmonds' original algorithm appeared in [xref:about/bibliography.adoc#edmonds65[64]]. Our implementation closely follows Tarjan's description from [xref:about/bibliography.adoc#tarjan83:_data_struct_network_algo[27]].
+* Edmonds' original algorithm appeared in [xref:about/bibliography.adoc#edmonds65[58]]. Our implementation closely follows Tarjan's description from [xref:about/bibliography.adoc#tarjan83:_data_struct_network_algo[22]].
 * The verification algorithm is based on the Tutte-Berge Formula and the Edmonds-Gallai decomposition, which are computed as a side effect of the Edmonds Blossom-Shrinking algorithm.

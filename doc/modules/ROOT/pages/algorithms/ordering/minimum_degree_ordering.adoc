@@ -97,9 +97,9 @@ void minimum_degree_ordering(
 
 == Description
 
-The minimum degree ordering
-algorithm [xref:about/bibliography.adoc#LIU:MMD[21],
-xref:about/bibliography.adoc#George:evolution[35]] is a fill-in reduction
+The https://en.wikipedia.org/wiki/Minimum_degree_algorithm[minimum degree ordering]
+algorithm [xref:about/bibliography.adoc#LIU:MMD[17],
+xref:about/bibliography.adoc#George:evolution[30]] is a fill-in reduction
 matrix reordering algorithm. When solving a system of equations such as
 _A x = b_ using a sparse version of Cholesky factorization (which is a
 variant of Gaussian elimination for symmetric matrices), often times
@@ -151,7 +151,7 @@ simulating Gaussian elimination process.
 This implementation provided a number of enhancements including mass
 elimination, incomplete degree update, multiple elimination, and
 external degree.
-See xref:about/bibliography.adoc#George:evolution[[35\]] for a
+See xref:about/bibliography.adoc#George:evolution[[30\]] for a
 historical survey of the minimum degree algorithm.
 
 An *elimination graph* _G~v~_ is obtained from the graph _G_ by removing

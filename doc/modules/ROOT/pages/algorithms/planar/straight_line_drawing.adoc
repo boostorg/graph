@@ -60,7 +60,7 @@ void chrobak_payne_straight_line_drawing(
 
 A _straight line drawing_ of a xref:algorithms/planar/planar_graphs.adoc#planar[planar graph] is a xref:algorithms/planar/planar_graphs.adoc#plane_drawing[plane drawing] where each edge is drawn using a straight line segment.
 Since all edges are line segments, the drawing is completely determined by the placement of vertices in the plane.
-`chrobak_payne_straight_line_drawing` uses an algorithm of Chrobak and Payne [xref:about/bibliography.adoc#chrobakpayne95[71]] to form a straight line drawing of a planar graph by mapping all _n_ vertices in a planar graph to integer coordinates in a _(2n - 4) x (n - 2)_ grid.
+`chrobak_payne_straight_line_drawing` uses an algorithm of Chrobak and Payne [xref:about/bibliography.adoc#chrobakpayne95[65]] to form a straight line drawing of a planar graph by mapping all _n_ vertices in a planar graph to integer coordinates in a _(2n - 4) x (n - 2)_ grid.
 
 image::figs/straight_line_drawing.png[Straight line drawing example]
 

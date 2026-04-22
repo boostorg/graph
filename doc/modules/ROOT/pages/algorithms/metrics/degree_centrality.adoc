@@ -1,6 +1,6 @@
 = Degree Centrality
 
-Measures vertex importance by the number of connections. Out-degree (influence)
+Measures vertex https://en.wikipedia.org/wiki/Centrality#Degree_centrality[importance by the number of connections]. Out-degree (influence)
 counts outgoing edges; in-degree (prestige) counts incoming edges.
 
 *Complexity:* O(1) per vertex +

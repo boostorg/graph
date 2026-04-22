@@ -26,6 +26,7 @@ number (vertices) or chromatic index (edges).
 | If the graph is not bipartite, returns an odd-length cycle as proof.
 |===
 
-TIP: Vertex coloring is NP-hard in general. `sequential_vertex_coloring` is a
-fast heuristic that does not guarantee the minimum number of colors. For exact
-2-colorability, use `is_bipartite`.
+TIP: Vertex coloring is NP-hard in general
+[xref:about/bibliography.adoc#garey79:computers-and-intractability[25]].
+`sequential_vertex_coloring` is a fast heuristic that does not guarantee the
+minimum number of colors. For exact 2-colorability, use `is_bipartite`.

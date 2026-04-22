@@ -96,7 +96,8 @@ Equivalent to (1) with every named parameter left at its default. Uses `get(vert
 
 == Description
 
-The topological sort algorithm creates a linear ordering of the vertices such that if edge _(u,v)_ appears in the graph, then _v_ comes before _u_ in the ordering. The graph must be a directed acyclic graph (DAG). The implementation consists mainly of a call to xref:algorithms/traversal/depth_first_search.adoc[`depth_first_search()`].
+The https://en.wikipedia.org/wiki/Topological_sorting[topological sort]
+algorithm creates a linear ordering of the vertices such that if edge _(u,v)_ appears in the graph, then _v_ comes before _u_ in the ordering. The graph must be a directed acyclic graph (DAG). The implementation consists mainly of a call to xref:algorithms/traversal/depth_first_search.adoc[`depth_first_search()`].
 
 == Example
 

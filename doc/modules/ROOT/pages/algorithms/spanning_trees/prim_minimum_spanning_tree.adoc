@@ -214,7 +214,8 @@ void prim_minimum_spanning_tree(
 
 == Description
 
-This is Prim's algorithm [xref:about/bibliography.adoc#prim57:_short[25],xref:about/bibliography.adoc#clr90[8],xref:about/bibliography.adoc#tarjan83:_data_struct_network_algo[27],xref:about/bibliography.adoc#graham85[15]]
+This is https://en.wikipedia.org/wiki/Prim%27s_algorithm[Prim's algorithm]
+[xref:about/bibliography.adoc#prim57:_short[20],xref:about/bibliography.adoc#clr90[5],xref:about/bibliography.adoc#tarjan83:_data_struct_network_algo[22],xref:about/bibliography.adoc#graham85[12]]
 for solving the minimum spanning tree problem for an undirected graph
 with weighted edges. A MST is a set of edges that connects all the
 vertices in the graph where the total weight of the edges in the tree is

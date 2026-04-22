@@ -167,7 +167,8 @@ Lives in namespace `boost::graph`. Same as (2) with `index_map = get(vertex_inde
 
 A _cut_ of a graph _G_ is a partition of the vertices into two, non-empty sets. The _weight_ of such a partition is the number of edges between the two sets if _G_ is unweighted, or the sum of the weights of all edges between the two sets if _G_ is weighted. A _min-cut_ is a cut having the least weight.
 
-Sometimes a graph has multiple min-cuts, but all have the same weight. The `stoer_wagner_min_cut` function determines exactly one of the min-cuts as well as its weight.
+Sometimes a graph has multiple min-cuts, but all have the same weight. The `stoer_wagner_min_cut` function implements the
+https://en.wikipedia.org/wiki/Stoer%E2%80%93Wagner_algorithm[Stoer-Wagner algorithm] and determines exactly one of the min-cuts as well as its weight.
 
 == Returns
 
@@ -184,7 +185,7 @@ The file link:../example/stoer_wagner.cpp[`examples/stoer_wagner.cpp`] contains 
 
 == References
 
-* xref:about/bibliography.adoc#mehlhorn-uhrig95[[80\]] Mehlhorn, Kurt and Christian Uhrig (1995). _The minimum cut algorithm of Stoer and Wagner_.
-* xref:about/bibliography.adoc#stoer-wagner97[[81\]] Stoer, Mechthild and Frank Wagner (1997). _A simple min-cut algorithm_. Journal of the ACM 44 (4), 585-591.
-* xref:about/bibliography.adoc#zwick08[[82\]] Zwick, Uri (2008). _Global minimum cuts_.
+* xref:about/bibliography.adoc#mehlhorn-uhrig95[[74\]] Mehlhorn, Kurt and Christian Uhrig (1995). _The minimum cut algorithm of Stoer and Wagner_.
+* xref:about/bibliography.adoc#stoer-wagner97[[75\]] Stoer, Mechthild and Frank Wagner (1997). _A simple min-cut algorithm_. Journal of the ACM 44 (4), 585-591.
+* xref:about/bibliography.adoc#zwick08[[76\]] Zwick, Uri (2008). _Global minimum cuts_.
 

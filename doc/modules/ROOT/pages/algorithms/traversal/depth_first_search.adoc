@@ -145,8 +145,9 @@ void depth_first_search(Graph& G,
 
 == Description
 
-The `depth_first_search()` function performs a depth-first
-traversal of the vertices in a directed graph. When possible, a
+The `depth_first_search()` function performs a
+https://en.wikipedia.org/wiki/Depth-first_search[depth-first traversal]
+of the vertices in a directed graph. When possible, a
 depth-first traversal chooses a vertex adjacent to the current vertex to
 visit next. If all adjacent vertices have already been discovered, or
 there are no adjacent vertices, then the algorithm backtracks to the

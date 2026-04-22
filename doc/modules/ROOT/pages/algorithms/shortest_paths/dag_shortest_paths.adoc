@@ -248,7 +248,7 @@ void dag_shortest_paths(
 
 == Description
 
-This algorithm [xref:about/bibliography.adoc#clr90[8]] solves the
+This algorithm [xref:about/bibliography.adoc#clr90[5]] solves the
 single-source shortest-paths problem on a weighted, directed acyclic
 graph (DAG). This algorithm is more efficient for DAG's than either the
 Dijkstra or Bellman-Ford algorithm. Use breadth-first search instead of

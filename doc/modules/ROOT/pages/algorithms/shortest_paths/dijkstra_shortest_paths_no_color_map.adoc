@@ -55,7 +55,7 @@ void dijkstra_shortest_paths_no_color_map_no_init
 == Description
 
 This
-algorithm [xref:about/bibliography.adoc#dijkstra59[10],xref:about/bibliography.adoc#clr90[8]]
+algorithm [xref:about/bibliography.adoc#dijkstra59[7],xref:about/bibliography.adoc#clr90[5]]
 solves the single-source shortest-paths problem on a weighted, directed
 or undirected graph for the case where all edge weights are nonnegative.
 Use the Bellman-Ford algorithm for the case when some edge weights are
@@ -169,7 +169,7 @@ finish vertex u
 
 | IN
 | `index_map(VertexIndexMap index_map)`
-| This maps each vertex to an integer in the range `[0, num_vertices(graph))`. This is necessary for efficient updates of the heap data structure [xref:about/bibliography.adoc#driscoll88[61]] when an edge is relaxed. The type `VertexIndexMap` must be a model of link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map]. The value type of the map must be an integer type. The vertex descriptor type of the graph needs to be usable as the key type of the map. Default: `get(vertex_index, graph)`. Note: if you use this default, make sure your graph has an internal `vertex_index` property. For example, `adjacency_list` with `VertexList=listS` does not have an internal `vertex_index` property.
+| This maps each vertex to an integer in the range `[0, num_vertices(graph))`. This is necessary for efficient updates of the heap data structure [xref:about/bibliography.adoc#driscoll88[55]] when an edge is relaxed. The type `VertexIndexMap` must be a model of link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map]. The value type of the map must be an integer type. The vertex descriptor type of the graph needs to be usable as the key type of the map. Default: `get(vertex_index, graph)`. Note: if you use this default, make sure your graph has an internal `vertex_index` property. For example, `adjacency_list` with `VertexList=listS` does not have an internal `vertex_index` property.
 
 | OUT
 | `predecessor_map(PredecessorMap predecessor_map)`

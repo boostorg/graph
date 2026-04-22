@@ -1,6 +1,7 @@
 = Closeness Centrality
 
-Measures how close a vertex is to all other vertices. Computed as the inverse
+Measures how https://en.wikipedia.org/wiki/Closeness_centrality[close]
+a vertex is to all other vertices. Computed as the inverse
 of the sum of shortest distances from that vertex to every other vertex. A
 high closeness means the vertex can reach all others quickly.
 

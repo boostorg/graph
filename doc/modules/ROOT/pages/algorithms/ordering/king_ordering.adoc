@@ -185,7 +185,7 @@ OutputIterator king_ordering(
 == Description
 
 The goal of the King ordering algorithm
-[xref:about/bibliography.adoc#king70[62]] is to reduce the
+[xref:about/bibliography.adoc#king70[56]] is to reduce the
 xref:algorithms/metrics/bandwidth.adoc[bandwidth] of a graph by reordering the indices
 assigned to each vertex. The King ordering algorithm works by a local
 minimization of the i-th bandwidths. The vertices are basically assigned

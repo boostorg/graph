@@ -53,8 +53,8 @@ edge_coloring(
 
 == Description
 
-Computes an edge coloring for the vertices in the graph, using an algorithm
-proposed by Misra et al. []. Given edges ordered e~1~, e~2~, ..., e~n~ it
+Computes an https://en.wikipedia.org/wiki/Edge_coloring[edge coloring]
+for the vertices in the graph, using an algorithm proposed by Misra et al. Given edges ordered e~1~, e~2~, ..., e~n~ it
 assigns colors c~1~, c~2~, ..., c~n~ in a way that no vertex connects with
 2 edges of the same color. Furthermore at most m + 1 colors are used.
 

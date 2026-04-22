@@ -307,10 +307,10 @@ the corresponding `std::vector` of edge descriptors. The edges in the vector
 stored in the way such that `*pcc[0], *ppc[1], ..., *ppc[n]` is a correct path.
 
 The algorithm is due to Howard's iteration policy algorithm, described in
-xref:about/bibliography.adoc#cochet-terrasson98[[78\]].
+xref:about/bibliography.adoc#cochet-terrasson98[[72\]].
 Ali Dasdan, Sandy S. Irani and Rajesh K. Gupta in their paper
 _Efficient Algorithms for Optimum Cycle Mean and Optimum Cost to Time
-Ratio Problems_ [xref:about/bibliography.adoc#dasdan99[79]] state that
+Ratio Problems_ [xref:about/bibliography.adoc#dasdan99[73]] state that
 this is the most efficient algorithm to the time being (1999).
 
 For convenience, functions `maximum_cycle_mean()` and `minimum_cycle_mean()`

@@ -208,7 +208,7 @@ Named parameters for version (2) are:
 
 === (4) `vf2_graph_iso`
 
-Non-named parameter, named-parameter and all default parameter versions are provided, taking the same parameters as the corresponding `vf2_subgraph_iso` overloads.
+Positional, named-parameter and all default parameter versions are provided, taking the same parameters as the corresponding `vf2_subgraph_iso` overloads.
 
 [source,cpp]
 ----
@@ -256,7 +256,7 @@ The algorithm finds all isomorphism mappings between graphs `graph_small` and `g
 
 === (5) `vf2_subgraph_mono`
 
-Non-named parameter, named-parameter and all default parameter versions are provided, taking the same parameters as the corresponding `vf2_subgraph_iso` overloads.
+Positional, named-parameter and all default parameter versions are provided, taking the same parameters as the corresponding `vf2_subgraph_iso` overloads.
 
 [source,cpp]
 ----

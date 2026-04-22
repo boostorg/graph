@@ -76,7 +76,8 @@ Equivalent to (1) with every named parameter left at its default. Uses `get(vert
 
 == Description
 
-The `connected_components()` function computes the connected components of an undirected graph using a DFS-based approach. A *_connected component_* of an undirected graph is a set of vertices that are all reachable from each other. If the connected components need to be maintained while a graph is growing the disjoint-set based approach of function xref:algorithms/connected_components/incremental_components.adoc[`incremental_components()`] is faster. For ``static'' graphs this DFS-based approach is faster [xref:about/bibliography.adoc#clr90[8]].
+The `connected_components()` function computes the
+https://en.wikipedia.org/wiki/Component_(graph_theory)[connected components] of an undirected graph using a DFS-based approach. A *_connected component_* of an undirected graph is a set of vertices that are all reachable from each other. If the connected components need to be maintained while a graph is growing the disjoint-set based approach of function xref:algorithms/connected_components/incremental_components.adoc[`incremental_components()`] is faster. For ``static'' graphs this DFS-based approach is faster [xref:about/bibliography.adoc#clr90[5]].
 
 The output of the algorithm is recorded in the component property map `comp`, which will contain numbers giving the component number assigned to each vertex. The total number of components is the return value of the function.
 

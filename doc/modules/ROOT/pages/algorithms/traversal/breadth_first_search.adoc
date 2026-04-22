@@ -139,8 +139,9 @@ void breadth_first_search(Graph& G,
 
 == Description
 
-The `breadth_first_search()` function performs a breadth-first
-traversal [xref:about/bibliography.adoc#moore59[49]] of a directed
+The `breadth_first_search()` function performs a
+https://en.wikipedia.org/wiki/Breadth-first_search[breadth-first traversal]
+[xref:about/bibliography.adoc#moore59[44]] of a directed
 or undirected graph. A breadth-first traversal visits vertices that are
 closer to the source before visiting vertices that are further away. In
 this context "distance" is defined as the number of edges in the

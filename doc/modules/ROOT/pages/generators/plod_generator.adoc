@@ -16,9 +16,10 @@ plod_iterator();
 plod_iterator(RandomGenerator& gen, std::size_t n, double alpha, double beta, bool allow_self_loops = false);
 ----
 
-The PLOD algorithm generates a scale-free graph from three parameters,
-_n_, _alpha_, and _beta_, by allocating degree "credits" to each vertex
-drawn from a power-law distribution. It then creates edges between
+The PLOD algorithm [xref:about/bibliography.adoc#palmer2000[57]]
+generates a scale-free graph from three parameters, _n_, _alpha_, and
+_beta_, by allocating degree "credits" to each vertex drawn from a
+power-law distribution. It then creates edges between
 vertices, deducting a credit from each involved vertex (undirected case)
 or the source vertex (directed case). The number of credits assigned to a
 vertex is _beta * x^-alpha^_, where _x_ is a random value between 0 and

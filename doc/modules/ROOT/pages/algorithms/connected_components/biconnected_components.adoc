@@ -232,13 +232,15 @@ Named Parameters::
 
 == Description
 
-A connected graph is _biconnected_ if the removal of any single vertex (and all edges incident on that vertex) can not disconnect the graph. More generally, the biconnected components of a graph are the maximal subsets of vertices such that the removal of a vertex from a particular component will not disconnect the component. Unlike connected components, vertices may belong to multiple biconnected components: those vertices that belong to more than one biconnected component are called _articulation points_ or, equivalently, _cut vertices_. Articulation points are vertices whose removal would increase the number of connected components in the graph. Thus, a graph without articulation points is biconnected. The following figure illustrates the articulation points and biconnected components of a small graph:
+A connected graph is
+https://en.wikipedia.org/wiki/Biconnected_component[_biconnected_]
+if the removal of any single vertex (and all edges incident on that vertex) can not disconnect the graph. More generally, the biconnected components of a graph are the maximal subsets of vertices such that the removal of a vertex from a particular component will not disconnect the component. Unlike connected components, vertices may belong to multiple biconnected components: those vertices that belong to more than one biconnected component are called _articulation points_ or, equivalently, _cut vertices_. Articulation points are vertices whose removal would increase the number of connected components in the graph. Thus, a graph without articulation points is biconnected. The following figure illustrates the articulation points and biconnected components of a small graph:
 
 image::figs/biconnected.png[]
 
 Vertices can be present in multiple biconnected components, but each edge can only be contained in a single biconnected component. The output of the `biconnected_components` algorithm records the biconnected component number of each edge in the property map `comp`. Articulation points will be emitted to the (optional) output iterator argument to `biconnected_components`, or can be computed without the use of a biconnected component number map via `articulation_points`. These functions return the number of biconnected components, the articulation point output iterator, or a pair of these quantities, depending on what information was recorded.
 
-The algorithm implemented is due to Tarjan [xref:about/bibliography.adoc#tarjan72:dfs_and_linear_algo[41]].
+The algorithm implemented is due to Tarjan [xref:about/bibliography.adoc#tarjan72:dfs_and_linear_algo[36]].
 
 == Returns
 

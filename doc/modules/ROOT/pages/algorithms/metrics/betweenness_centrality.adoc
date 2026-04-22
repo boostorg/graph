@@ -424,8 +424,9 @@ central_point_dominance(
 
 == Description
 
-This algorithm [xref:about/bibliography.adoc#brandes01[54]] computes the
-_betweenness centrality_ [xref:about/bibliography.adoc#freeman77[55],xref:about/bibliography.adoc#anthonisse71[56]]
+This algorithm [xref:about/bibliography.adoc#brandes01[49]] computes the
+https://en.wikipedia.org/wiki/Betweenness_centrality[_betweenness centrality_]
+[xref:about/bibliography.adoc#freeman77[50],xref:about/bibliography.adoc#anthonisse71[51]]
 of each vertex or each edge in the graph. The betweenness centrality of a
 vertex _v_ is defined by
 
@@ -449,7 +450,7 @@ betweenness centrality, which scales each absolute centrality by
 image:figs/rel_betweenness_centrality.gif[] (where _n_ is the number of
 vertices in the graph), use `relative_betweenness_centrality`. Given the
 relative betweenness centrality, one can compute the _central point
-dominance_ [xref:about/bibliography.adoc#freeman77[55]], which is a measure of
+dominance_ [xref:about/bibliography.adoc#freeman77[50]], which is a measure of
 the maximum "betweenness" of any point in the graph: it will be 0 for complete
 graphs and 1 for "wheel" graphs (in which there is a central vertex that all
 paths include; see <<Fig1,Fig. 1>>). Let image:figs/v_star.gif[] be the vertex

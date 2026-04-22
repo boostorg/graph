@@ -158,8 +158,9 @@ typename property_traits<CapacityEdgeMap>::value_type push_relabel_max_flow(
 
 == Description
 
-The `push_relabel_max_flow()` function calculates the maximum flow of a
-network. See Section
+The `push_relabel_max_flow()` function implements the
+https://en.wikipedia.org/wiki/Push%E2%80%93relabel_maximum_flow_algorithm[push-relabel algorithm]
+to calculate the maximum flow of a network. See Section
 xref:about/graph_theory_review.adoc#sec:network-flow-algorithms[Network Flow
 Algorithms] for a description of maximum flow. The calculated maximum
 flow will be the return value of the function. The function also

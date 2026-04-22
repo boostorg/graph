@@ -288,7 +288,8 @@ bool johnson_all_pairs_shortest_paths(
 
 == Description
 
-This algorithm finds the shortest distance between every pair of vertices in the
+This https://en.wikipedia.org/wiki/Johnson%27s_algorithm[algorithm]
+finds the shortest distance between every pair of vertices in the
 graph. The distance between each pair of vertices is stored in the distance
 matrix `D`. The algorithm returns `false` if there is a negative weight cycle in
 the graph and `true` otherwise.
@@ -307,5 +308,5 @@ the graph.
 
 See link:../example/johnson-eg.cpp[`example/johnson-eg.cpp`] for an example that
 applies Johnson's algorithm for all-pairs shortest paths to the example graph
-from page 568 of the CLR [xref:about/bibliography.adoc#clr90[8]].
+from page 568 of the CLR [xref:about/bibliography.adoc#clr90[5]].
 

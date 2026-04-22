@@ -171,7 +171,7 @@ a record of the library's early evolution.
   Synge Todo.
 * xref:algorithms/shortest_paths/dijkstra_shortest_paths.adoc[`dijkstra_shortest_paths`]
   now uses a relaxed heap
-  [xref:about/bibliography.adoc#driscoll88[61]] as its priority queue,
+  [xref:about/bibliography.adoc#driscoll88[55]] as its priority queue,
   improving its complexity to _O(V log V)_ and improving real-world
   performance for larger graphs.
 * xref:io/graphviz.adoc[`read_graphviz`] now has a new, Spirit-based

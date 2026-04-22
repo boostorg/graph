@@ -376,8 +376,8 @@ f 7 5 0
 
 == Notes
 
-The algorithm is mainly implemented as described by Boykov and Kolmogorov in [xref:about/bibliography.adoc#boykov-kolmogorov04[69]].
-An extended version can be found in the PhD Thesis of Kolmogorov [xref:about/bibliography.adoc#kolmogorov03[68]].
+The algorithm is mainly implemented as described by Boykov and Kolmogorov in [xref:about/bibliography.adoc#boykov-kolmogorov04[63]]; for background see https://en.wikipedia.org/wiki/Graph_cut_optimization[graph cut optimization].
+An extended version can be found in the PhD Thesis of Kolmogorov [xref:about/bibliography.adoc#kolmogorov03[62]].
 The following changes are made to improve performance:
 
 * *Initialization:* the algorithm first augments all paths from source->sink and all paths from source->VERTEX->sink. This improves especially graph-cuts used in image vision where nearly each vertex has a source and sink connect. During this step, all vertices that have an unsaturated connection from source are added to the active vertex list and so the source is not.

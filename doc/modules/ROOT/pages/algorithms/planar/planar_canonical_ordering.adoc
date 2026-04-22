@@ -74,7 +74,7 @@ A planar canonical ordering exists for every maximal planar graph with at least 
 `planar_canonical_ordering` expects the input graph to have at least 2 vertices.
 
 The planar canonical ordering is used as an input in some planar graph drawing algorithms, particularly those that create a straight line embedding.
-de Fraysseix, Pach, and Pollack [xref:about/bibliography.adoc#defraysseixpachpollack90[72]] first proved the existence of such an ordering and showed how to compute one in time _O(n)_ on a maximal planar graph with _n_ vertices.
+de Fraysseix, Pach, and Pollack [xref:about/bibliography.adoc#defraysseixpachpollack90[66]] first proved the existence of such an ordering and showed how to compute one in time _O(n)_ on a maximal planar graph with _n_ vertices.
 
 See also link:../example/canonical_ordering.cpp[`example/canonical_ordering.cpp`].
 

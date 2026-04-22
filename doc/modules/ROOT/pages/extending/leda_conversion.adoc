@@ -12,7 +12,7 @@ to make this copy. Another approach is to wrap the existing graph data
 structure with a BGL interface.
 
 The Adaptor
-pattern [xref:about/bibliography.adoc#gamma95:_design_patterns[12]]
+pattern [xref:about/bibliography.adoc#gamma95:_design_patterns[9]]
 typically requires that the adaptee object be contained inside a new
 class that provides the desired interface. This containment is not
 required when wrapping a graph for BGL because the BGL graph interface
@@ -23,7 +23,7 @@ adaptation_.
 
 One of the more commonly used graph classes is the LEDA parameterized
 https://algorithmic-solutions.info/leda_guide/graphs/param_graph.html[`GRAPH`]
-class [xref:about/bibliography.adoc#mehlhorn99:_leda[22]]. In this
+class [xref:about/bibliography.adoc#mehlhorn99:_leda[18]]. In this
 section we will show how to create a BGL interface for this class. The
 first question is which BGL interfaces (or concepts) we should
 implement. The following concepts are straightforward and easy to

@@ -1,6 +1,7 @@
 = Core Numbers
 
-Computes the k-core decomposition of a graph. Each vertex is assigned a core
+Computes the https://en.wikipedia.org/wiki/Degeneracy_(graph_theory)[k-core decomposition]
+of a graph. Each vertex is assigned a core
 number: the largest k such that the vertex belongs to a subgraph where every
 vertex has degree >= k. Higher core numbers indicate denser, more tightly
 connected substructures.

@@ -178,11 +178,11 @@ OutputIterator cuthill_mckee_ordering(const IncidenceGraph& g,
 
 == Description
 
-The goal of the Cuthill-McKee (and reverse Cuthill-McKee) ordering
-algorithm [xref:about/bibliography.adoc#george81:__sparse_pos_def[14],
-xref:about/bibliography.adoc#cuthill69:reducing_bandwith[43],
-xref:about/bibliography.adoc#liu75:anal_cm_rcm[44],
-xref:about/bibliography.adoc#george71:fem[45]] is to reduce the
+The goal of the https://en.wikipedia.org/wiki/Cuthill%E2%80%93McKee_algorithm[Cuthill-McKee] (and reverse Cuthill-McKee) ordering
+algorithm [xref:about/bibliography.adoc#george81:__sparse_pos_def[11],
+xref:about/bibliography.adoc#cuthill69:reducing_bandwith[38],
+xref:about/bibliography.adoc#liu75:anal_cm_rcm[39],
+xref:about/bibliography.adoc#george71:fem[40]] is to reduce the
 xref:algorithms/metrics/bandwidth.adoc[bandwidth] of a graph by reordering the indices
 assigned to each vertex. The Cuthill-McKee ordering algorithm works by a
 local minimization of the i-th bandwidths. The vertices are basically

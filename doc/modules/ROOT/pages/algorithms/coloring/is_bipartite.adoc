@@ -120,7 +120,9 @@ bool is_bipartite(
 
 == Description
 
-The `is_bipartite()` function tests a given graph for bipartiteness using a DFS-based coloring approach.
+The `is_bipartite()` function tests a given graph for
+https://en.wikipedia.org/wiki/Bipartite_graph[bipartiteness]
+using a DFS-based coloring approach.
 
 An undirected graph is bipartite if one can partition its set of vertices into two sets "left" and "right", such that each edge goes from either side to the other. Obviously, a two-coloring of the graph is exactly the same as a two-partition. `is_bipartite()` tests whether such a two-coloring is possible and can return it in a given property map.
 

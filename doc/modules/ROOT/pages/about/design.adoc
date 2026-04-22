@@ -18,7 +18,7 @@ this interface.
 
 The BGL graph interface and graph components are _generic_, in the same
 sense as the Standard Template Library
-(STL) [xref:about/bibliography.adoc#austern99:_gener_progr_stl[2]].
+(STL) [xref:about/bibliography.adoc#austern99:_gener_progr_stl[1]].
 
 == Genericity in STL
 
@@ -98,8 +98,9 @@ algorithms.
 === Extension through Visitors
 
 Second, the graph algorithms of the BGL are extensible. The BGL
-introduces the notion of a _visitor_, which is just a function object
-with multiple methods. In graph algorithms, there are often several key
+introduces the notion of a _visitor_
+[xref:about/bibliography.adoc#kuehl96:_design_patterns_for_graph_algo[15]],
+which is just a function object with multiple methods. In graph algorithms, there are often several key
 "event points" at which it is useful to insert user-defined operations.
 The visitor object has a different method that is invoked at each event
 point. The particular event points and corresponding visitor methods
@@ -119,8 +120,10 @@ multi-parameterization. The STL `std::list<T>` class has a
 parameter `T` for its element type. Similarly, BGL graph classes have
 template parameters for vertex and edge "properties". A property
 specifies the parameterized type of the property and also assigns an
-identifying tag to the property. This tag is used to distinguish between
-the multiple properties which an edge or vertex may have. A property
+identifying tag to the property, following the C++ traits technique
+[xref:about/bibliography.adoc#myers95:_trait[19]]. This tag is used to
+distinguish between the multiple properties which an edge or vertex may
+have. A property
 value that is attached to a particular vertex or edge can be obtained
 via a _property map_. There is a separate property map for each
 property.

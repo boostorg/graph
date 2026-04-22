@@ -21,7 +21,7 @@ heuristics to find colorings that are close to the minimum.
 The particular algorithm we present here is based on the linear time
 `SEQ` subroutine that is used in the estimation of sparse Jacobian and
 Hessian
-matrices [xref:about/bibliography.adoc#curtis74:_jacob[9],xref:about/bibliography.adoc#coleman84:_estim_jacob[7],xref:about/bibliography.adoc#coleman85:_algor[6]].
+matrices [xref:about/bibliography.adoc#curtis74:_jacob[6],xref:about/bibliography.adoc#coleman84:_estim_jacob[4],xref:about/bibliography.adoc#coleman85:_algor[3]].
 This algorithm visits all of the vertices in the graph according to the
 order defined by the input order. At each vertex the algorithm marks the
 colors of the adjacent vertices, and then chooses the smallest unmarked
@@ -31,10 +31,10 @@ its mark number is equal to the current vertex number. This saves the
 trouble of having to reset the marks for each vertex. The effectiveness
 of this algorithm is highly dependent on the input vertex order. There
 are several ordering algorithms, including the
-_largest-first_ [xref:about/bibliography.adoc#welsch67[31]],
-_smallest-last_ [xref:about/bibliography.adoc#matula72:_graph_theory_computing[29]],
+_largest-first_ [xref:about/bibliography.adoc#welsch67[26]],
+_smallest-last_ [xref:about/bibliography.adoc#matula72:_graph_theory_computing[24]],
 and _incidence
-degree_ [xref:about/bibliography.adoc#brelaz79:_new[32]] algorithms,
+degree_ [xref:about/bibliography.adoc#brelaz79:_new[27]] algorithms,
 which improve the effectiveness of this coloring algorithm.
 
 The first decision to make when constructing a generic graph algorithm

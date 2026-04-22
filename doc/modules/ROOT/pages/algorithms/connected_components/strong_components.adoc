@@ -113,7 +113,8 @@ Boost tree itself. Prefer overloads (1) or (2) above.
 
 == Description
 
-The `strong_components()` function computes the strongly connected components of a directed graph using Tarjan's algorithm based on DFS [xref:about/bibliography.adoc#tarjan72:dfs_and_linear_algo[41]].
+The `strong_components()` function computes the strongly connected components of a directed graph using
+https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm[Tarjan's algorithm] based on DFS [xref:about/bibliography.adoc#tarjan72:dfs_and_linear_algo[36]].
 
 A [#def:strongly-connected-component]#*_strongly connected component_*# of a directed graph _G=(V,E)_ is a maximal set of vertices _U_ which is in _V_ such that for every pair of vertices _u_ and _v_ in _U_, we have both a path from _u_ to _v_ and path from _v_ to _u_. That is to say that _u_ and _v_ are reachable from each other.
 
