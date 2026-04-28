@@ -33,14 +33,13 @@ int main(int, char*[])
 {
     using namespace boost;
     using namespace std;
-    typedef adjacency_list< vecS, vecS, undirectedS,
+    using Graph = adjacency_list< vecS, vecS, undirectedS,
         property< vertex_color_t, default_color_type,
-            property< vertex_degree_t, int > > >
-        Graph;
-    typedef graph_traits< Graph >::vertex_descriptor Vertex;
-    typedef graph_traits< Graph >::vertices_size_type size_type;
+            property< vertex_degree_t, int > > >;
+    using Vertex = graph_traits< Graph >::vertex_descriptor;
+    using size_type = graph_traits< Graph >::vertices_size_type;
 
-    typedef std::pair< std::size_t, std::size_t > Pair;
+    using Pair = std::pair< std::size_t, std::size_t >;
     Pair edges[14] = { Pair(0, 3), // a-d
         Pair(0, 5), // a-f
         Pair(1, 2), // b-c
@@ -57,8 +56,8 @@ int main(int, char*[])
         Pair(6, 7) }; // g-h
 
     Graph G(10);
-    for (int i = 0; i < 14; ++i)
-        add_edge(edges[i].first, edges[i].second, G);
+    for (auto const& edge : edges)
+        add_edge(edge.first, edge.second, G);
 
     graph_traits< Graph >::vertex_iterator ui, ui_end;
 
@@ -79,8 +78,8 @@ int main(int, char*[])
             get(vertex_degree, G));
         cout << "Reverse Cuthill-McKee ordering starting at: " << s << endl;
         cout << "  ";
-        for (auto i = inv_perm.begin(); i != inv_perm.end(); ++i)
-            cout << index_map[*i] << " ";
+        for (auto const& vertex : inv_perm)
+            cout << index_map[vertex] << " ";
         cout << endl;
 
         for (size_type c = 0; c != inv_perm.size(); ++c)
@@ -98,8 +97,8 @@ int main(int, char*[])
             get(vertex_degree, G));
         cout << "Reverse Cuthill-McKee ordering starting at: " << s << endl;
         cout << "  ";
-        for (auto i = inv_perm.begin(); i != inv_perm.end(); ++i)
-            cout << index_map[*i] << " ";
+        for (auto const& vertex : inv_perm)
+            cout << index_map[vertex] << " ";
         cout << endl;
 
         for (size_type c = 0; c != inv_perm.size(); ++c)
@@ -118,8 +117,8 @@ int main(int, char*[])
 
         cout << "Reverse Cuthill-McKee ordering:" << endl;
         cout << "  ";
-        for (auto i = inv_perm.begin(); i != inv_perm.end(); ++i)
-            cout << index_map[*i] << " ";
+        for (auto const& vertex : inv_perm)
+            cout << index_map[vertex] << " ";
         cout << endl;
 
         for (size_type c = 0; c != inv_perm.size(); ++c)

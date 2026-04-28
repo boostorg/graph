@@ -52,17 +52,16 @@ int main(int argc, const char** argv)
         return EXIT_FAILURE;
     }
 
-    typedef adjacency_list< vecS, vecS, undirectedS,
+    using Graph = adjacency_list< vecS, vecS, undirectedS,
         property< vertex_name_t, std::string >,
-        property< edge_name_t, std::string > >
-        Graph;
+        property< edge_name_t, std::string > >;
     Graph g;
 
     auto actor_name = get(vertex_name, g);
     auto connecting_movie = get(edge_name, g);
 
-    typedef graph_traits< Graph >::vertex_descriptor Vertex;
-    typedef std::map< std::string, Vertex > NameVertexMap;
+    using Vertex = graph_traits< Graph >::vertex_descriptor;
+    using NameVertexMap = std::map< std::string, Vertex >;
     NameVertexMap actors;
 
     for (std::string line; std::getline(datafile, line);)

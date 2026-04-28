@@ -29,7 +29,7 @@ std::pair< typename graph_traits< Graph >::vertex_descriptor,
 min_degree_vertex(Graph& g)
 {
     typename graph_traits< Graph >::vertex_descriptor p;
-    typedef typename graph_traits< Graph >::degree_size_type size_type;
+    using size_type = typename graph_traits< Graph >::degree_size_type;
     auto delta = (std::numeric_limits< size_type >::max)();
     typename graph_traits< Graph >::vertex_iterator i, iend;
     for (boost::tie(i, iend) = vertices(g); i != iend; ++i)
@@ -61,19 +61,17 @@ template < typename VertexListGraph, typename OutputIterator >
 typename graph_traits< VertexListGraph >::degree_size_type edge_connectivity(
     VertexListGraph& g, OutputIterator disconnecting_set)
 {
-    typedef typename graph_traits< VertexListGraph >::vertex_descriptor
-        vertex_descriptor;
-    typedef typename graph_traits< VertexListGraph >::degree_size_type
-        degree_size_type;
-    typedef color_traits< default_color_type > Color;
-    typedef
-        typename adjacency_list_traits< vecS, vecS, directedS >::edge_descriptor
-            edge_descriptor;
-    typedef adjacency_list< vecS, vecS, directedS, no_property,
+    using vertex_descriptor =
+        typename graph_traits< VertexListGraph >::vertex_descriptor;
+    using degree_size_type =
+        typename graph_traits< VertexListGraph >::degree_size_type;
+    using Color = color_traits< default_color_type >;
+    using edge_descriptor = typename adjacency_list_traits< vecS, vecS,
+        directedS >::edge_descriptor;
+    using FlowGraph = adjacency_list< vecS, vecS, directedS, no_property,
         property< edge_capacity_t, degree_size_type,
             property< edge_residual_capacity_t, degree_size_type,
-                property< edge_reverse_t, edge_descriptor > > > >
-        FlowGraph;
+                property< edge_reverse_t, edge_descriptor > > > >;
 
     vertex_descriptor u, v, p, k;
     edge_descriptor e1, e2;
@@ -136,13 +134,13 @@ typename graph_traits< VertexListGraph >::degree_size_type edge_connectivity(
     }
 
     std::vector< bool > in_S_star(num_vertices(g), false);
-    for (auto si = S_star.begin(); si != S_star.end(); ++si)
-        in_S_star[*si] = true;
+    for (auto const& vertex : S_star.begin())
+        in_S_star[vertex] = true;
     degree_size_type c = 0;
-    for (auto si = S_star.begin(); si != S_star.end(); ++si)
+    for (auto const& vertex : S_star.begin())
     {
         typename graph_traits< VertexListGraph >::out_edge_iterator ei, ei_end;
-        for (boost::tie(ei, ei_end) = out_edges(*si, g); ei != ei_end; ++ei)
+        for (boost::tie(ei, ei_end) = out_edges(vertex, g); ei != ei_end; ++ei)
             if (!in_S_star[target(*ei, g)])
             {
                 *disconnecting_set++ = *ei;
@@ -161,7 +159,7 @@ int main()
     GraphvizGraph g;
     read_graphviz("figs/edge-connectivity.dot", g);
 
-    typedef graph_traits< GraphvizGraph >::edge_descriptor edge_descriptor;
+    using edge_descriptor = graph_traits< GraphvizGraph >::edge_descriptor;
     std::vector< edge_descriptor > disconnecting_set;
     auto c = edge_connectivity(g, std::back_inserter(disconnecting_set));
 
@@ -170,9 +168,9 @@ int main()
     auto attr_map = get(vertex_attribute, g);
 
     std::cout << "The disconnecting set is {";
-    for (auto i = disconnecting_set.begin(); i != disconnecting_set.end(); ++i)
-        std::cout << "(" << attr_map[source(*i, g)]["label"] << ","
-                  << attr_map[target(*i, g)]["label"] << ") ";
+    for (auto const& edge : disconnecting_set)
+        std::cout << "(" << attr_map[source(edge, g)]["label"] << ","
+                  << attr_map[target(edge, g)]["label"] << ") ";
     std::cout << "}." << std::endl;
     return EXIT_SUCCESS;
 }

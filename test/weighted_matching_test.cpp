@@ -136,9 +136,12 @@ Graph make_graph(typename graph_traits< Graph >::vertices_size_type num_v,
     return g;
 }
 
-int main(int, char*[])
+int main(int argc, char* argv[])
 {
-    std::ifstream in_file("weighted_matching.dat");
+    const char* filename = "weighted_matching.dat";
+    if (argc > 1)
+        filename = argv[1];
+    std::ifstream in_file(filename);
     BOOST_TEST(in_file.good());
     std::string line;
     while (std::getline(in_file, line))

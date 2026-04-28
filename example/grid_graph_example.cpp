@@ -14,8 +14,8 @@
 #define DIMENSIONS 3
 using namespace boost;
 
-typedef grid_graph< DIMENSIONS > Graph;
-typedef graph_traits< Graph > Traits;
+using Graph = grid_graph< DIMENSIONS >;
+using Traits = graph_traits< Graph >;
 
 // Define a simple function to print vertices
 void print_vertex(Traits::vertex_descriptor vertex_to_print)

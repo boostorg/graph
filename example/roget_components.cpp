@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
 {
     using namespace boost;
     Graph* g;
-    typedef graph_traits< Graph* >::vertex_descriptor vertex_t;
+    using vertex_t = graph_traits< Graph* >::vertex_descriptor;
     unsigned long n = 0;
     unsigned long d = 0;
     unsigned long p = 0;

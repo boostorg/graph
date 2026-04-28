@@ -2,7 +2,7 @@
 # Distributed under the Boost Software License, Version 1.0.
 # https://www.boost.org/LICENSE_1_0.txt
 
-cmake_minimum_required(VERSION 3.5...3.16)
+cmake_minimum_required(VERSION 3.8...3.16)
 
 project(boost_graph VERSION "${BOOST_SUPERPROJECT_VERSION}" LANGUAGES CXX)
 
@@ -22,7 +22,6 @@ target_link_libraries(boost_graph
     Boost::array
     Boost::assert
     Boost::bimap
-    Boost::bind
     Boost::concept_check
     Boost::config
     Boost::container_hash
@@ -38,6 +37,7 @@ target_link_libraries(boost_graph
     Boost::move
     Boost::mpl
     Boost::multi_index
+    Boost::multiprecision
     Boost::optional
     Boost::parameter
     Boost::preprocessor
@@ -48,7 +48,6 @@ target_link_libraries(boost_graph
     Boost::serialization
     Boost::smart_ptr
     Boost::spirit
-    Boost::static_assert
     Boost::throw_exception
     Boost::tti
     Boost::tuple

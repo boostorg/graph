@@ -12,9 +12,8 @@
 int main()
 {
     using namespace boost;
-    typedef adjacency_list< listS, listS, directedS,
-        property< vertex_name_t, std::string > >
-        graph_t;
+    using graph_t = adjacency_list< listS, listS, directedS,
+        property< vertex_name_t, std::string > >;
     graph_t g;
     graph_traits< graph_t >::vertex_descriptor u = add_vertex(g);
     auto name_map = get(vertex_name, g);

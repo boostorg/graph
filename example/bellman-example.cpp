@@ -56,14 +56,14 @@ int main()
         N
     };
     char name[] = { 'u', 'v', 'x', 'y', 'z' };
-    typedef std::pair< int, int > E;
+    using E = std::pair< int, int >;
     const int n_edges = 10;
     E edge_array[] = { E(u, y), E(u, x), E(u, v), E(v, u), E(x, y), E(x, v),
         E(y, v), E(y, z), E(z, u), E(z, x) };
     int weight[n_edges] = { -4, 8, 5, -2, 9, -3, 7, 2, 6, 7 };
 
-    typedef adjacency_list< vecS, vecS, directedS, no_property, EdgeProperties >
-        Graph;
+    using Graph
+        = adjacency_list< vecS, vecS, directedS, no_property, EdgeProperties >;
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
     // VC++ can't handle the iterator constructor
     Graph g(N);

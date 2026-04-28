@@ -778,13 +778,13 @@ int writeHB_mat_double(const char* filename, int M, int N,
 
     if ( Ptrfmt == NULL ) Ptrfmt = "(8I10)";
     ParseIfmt(Ptrfmt,&Ptrperline,&Ptrwidth);
-    sprintf(pformat,"%%%dd",Ptrwidth);
+    snprintf(pformat, sizeof(pformat), "%%%dd", Ptrwidth);
     ptrcrd = (N+1)/Ptrperline;
     if ( (N+1)%Ptrperline != 0) ptrcrd++;
 
     if ( Indfmt == NULL ) Indfmt =  Ptrfmt;
     ParseIfmt(Indfmt,&Indperline,&Indwidth);
-    sprintf(iformat,"%%%dd",Indwidth);
+    snprintf(iformat, sizeof(iformat), "%%%dd", Indwidth);
     indcrd = nz/Indperline;
     if ( nz%Indperline != 0) indcrd++;
 
@@ -793,9 +793,9 @@ int writeHB_mat_double(const char* filename, int M, int N,
       ParseRfmt(Valfmt,&Valperline,&Valwidth,&Valprec,&Valflag);
       if (Valflag == 'D') *strchr(Valfmt,'D') = 'E';
       if (Valflag == 'F')
-         sprintf(vformat,"%% %d.%df",Valwidth,Valprec);
+          snprintf(vformat, sizeof(vformat), "%% %d.%df", Valwidth, Valprec);
       else
-         sprintf(vformat,"%% %d.%dE",Valwidth,Valprec);
+         snprintf(vformat, sizeof(vformat), "%% %d.%dE", Valwidth, Valprec);
       valcrd = nvalentries/Valperline;
       if ( nvalentries%Valperline != 0) valcrd++;
     } else valcrd = 0;
@@ -804,9 +804,9 @@ int writeHB_mat_double(const char* filename, int M, int N,
        if ( Rhsfmt == NULL ) Rhsfmt = Valfmt;
        ParseRfmt(Rhsfmt,&Rhsperline,&Rhswidth,&Rhsprec, &Rhsflag);
        if (Rhsflag == 'F')
-          sprintf(rformat,"%% %d.%df",Rhswidth,Rhsprec);
+          snprintf(rformat, sizeof(rformat), "%% %d.%df", Rhswidth, Rhsprec);
        else
-          sprintf(rformat,"%% %d.%dE",Rhswidth,Rhsprec);
+          snprintf(rformat, sizeof(rformat), "%% %d.%dE", Rhswidth, Rhsprec);
        if (Rhsflag == 'D') *strchr(Rhsfmt,'D') = 'E';
        rhscrd = nrhsentries/Rhsperline;
        if ( nrhsentries%Rhsperline != 0) rhscrd++;
@@ -1361,16 +1361,16 @@ int writeHB_mat_char(const char* filename, int M, int N,
 
     if ( Ptrfmt == NULL ) Ptrfmt = "(8I10)";
     ParseIfmt(Ptrfmt,&Ptrperline,&Ptrwidth);
-    sprintf(pformat,"%%%dd",Ptrwidth);
+    snprintf(pformat, sizeof(pformat), "%%%dd", Ptrwidth);
 
     if ( Indfmt == NULL ) Indfmt =  Ptrfmt;
     ParseIfmt(Indfmt,&Indperline,&Indwidth);
-    sprintf(iformat,"%%%dd",Indwidth);
+    snprintf(iformat, sizeof(iformat), "%%%dd", Indwidth);
 
     if ( Type[0] != 'P' ) {          /* Skip if pattern only  */
       if ( Valfmt == NULL ) Valfmt = "(4E20.13)";
       ParseRfmt(Valfmt,&Valperline,&Valwidth,&Valprec,&Valflag);
-      sprintf(vformat,"%%%ds",Valwidth);
+      snprintf(vformat, sizeof(vformat), "%%%ds", Valwidth);
     }
 
     ptrcrd = (N+1)/Ptrperline;
@@ -1385,7 +1385,7 @@ int writeHB_mat_char(const char* filename, int M, int N,
     if ( Nrhs > 0 ) {
        if ( Rhsfmt == NULL ) Rhsfmt = Valfmt;
        ParseRfmt(Rhsfmt,&Rhsperline,&Rhswidth,&Rhsprec, &Rhsflag);
-       sprintf(rformat,"%%%ds",Rhswidth);
+       snprintf(rformat, sizeof(rformat), "%%%ds", Rhswidth);
        rhscrd = nrhsentries/Rhsperline;
        if ( nrhsentries%Rhsperline != 0) rhscrd++;
        if ( Rhstype[1] == 'G' ) rhscrd+=rhscrd;

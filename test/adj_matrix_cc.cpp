@@ -21,6 +21,7 @@ int main(int, char*[])
         BOOST_CONCEPT_ASSERT((EdgeListGraphConcept< Graph >));
         BOOST_CONCEPT_ASSERT((IncidenceGraphConcept< Graph >));
         BOOST_CONCEPT_ASSERT((AdjacencyGraphConcept< Graph >));
+        BOOST_CONCEPT_ASSERT((BidirectionalGraphConcept< Graph >));
         BOOST_CONCEPT_ASSERT((MutableGraphConcept< Graph >));
         BOOST_CONCEPT_ASSERT((AdjacencyMatrixConcept< Graph >));
     }
@@ -30,6 +31,7 @@ int main(int, char*[])
         BOOST_CONCEPT_ASSERT((EdgeListGraphConcept< Graph >));
         BOOST_CONCEPT_ASSERT((IncidenceGraphConcept< Graph >));
         BOOST_CONCEPT_ASSERT((AdjacencyGraphConcept< Graph >));
+        BOOST_CONCEPT_ASSERT((BidirectionalGraphConcept< Graph >));
         BOOST_CONCEPT_ASSERT((MutableGraphConcept< Graph >));
         BOOST_CONCEPT_ASSERT((AdjacencyMatrixConcept< Graph >));
     }
@@ -44,6 +46,7 @@ int main(int, char*[])
         BOOST_CONCEPT_ASSERT((EdgeListGraphConcept< Graph >));
         BOOST_CONCEPT_ASSERT((IncidenceGraphConcept< Graph >));
         BOOST_CONCEPT_ASSERT((AdjacencyGraphConcept< Graph >));
+        BOOST_CONCEPT_ASSERT((BidirectionalGraphConcept< Graph >));
         BOOST_CONCEPT_ASSERT((AdjacencyMatrixConcept< Graph >));
         BOOST_CONCEPT_ASSERT((VertexMutablePropertyGraphConcept< Graph >));
         BOOST_CONCEPT_ASSERT((EdgeMutablePropertyGraphConcept< Graph >));
@@ -64,6 +67,7 @@ int main(int, char*[])
         BOOST_CONCEPT_ASSERT((EdgeListGraphConcept< Graph >));
         BOOST_CONCEPT_ASSERT((IncidenceGraphConcept< Graph >));
         BOOST_CONCEPT_ASSERT((AdjacencyGraphConcept< Graph >));
+        BOOST_CONCEPT_ASSERT((BidirectionalGraphConcept< Graph >));
         BOOST_CONCEPT_ASSERT((AdjacencyMatrixConcept< Graph >));
         BOOST_CONCEPT_ASSERT((VertexMutablePropertyGraphConcept< Graph >));
         BOOST_CONCEPT_ASSERT((EdgeMutablePropertyGraphConcept< Graph >));
