@@ -1,0 +1,9 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Design discussion or open-ended question
+    url: https://github.com/boostorg/graph/discussions
+    about: |
+      For "should we...?" questions, design exploration, or anything not
+      yet a concrete proposal, please start a GitHub Discussion. Issues
+      are reserved for bugs, feature requests with a concrete proposal,
+      and documentation problems.
