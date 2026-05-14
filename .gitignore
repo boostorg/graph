@@ -10,3 +10,7 @@ test/*.dot
 example/routing-table.dat
 example/figs/ospf-sptree.dot
 CMakeFiles/
+
+# Antora docs build artifacts
+doc/build/
+doc/node_modules/

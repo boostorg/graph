@@ -396,15 +396,15 @@ xref:about/bibliography.adoc#karzanov74:_deter[Karzanov].
 
 Given an undirected graph _G_ = (_V_, _E_), a _cut_ of _G_ is a
 partition of the vertices into two, non-empty sets _X_ and
-image:stoer_wagner_imgs/6e4.gif[++\++overline{X} = V - X]. The
+image:stoer_wagner_imgs/6e4.gif[++\++overline\{X} = V - X]. The
 _weight_ of a cut is defined as the number of edges between sets _X_ and
-image:stoer_wagner_imgs/f79.gif[++\++overline{X}] if _G_ is
+image:stoer_wagner_imgs/f79.gif[++\++overline\{X}] if _G_ is
 unweighted, or the sum of the weights of all edges between sets _X_ and
-image:stoer_wagner_imgs/f79.gif[++\++overline{X}] if _G_ is weighted
+image:stoer_wagner_imgs/f79.gif[++\++overline\{X}] if _G_ is weighted
 (each edge has an associated, non-negative weight).
 
 When the weight of a cut image:stoer_wagner_imgs/8b7.gif[C = ++\{++X,
-++\++overline{X}++\++}] is minimal for a graph _G_ (that is, no
+++\++overline\{X}++\++}] is minimal for a graph _G_ (that is, no
 other cut of _G_ has a lesser weight), then the cut is known as a
 _minimum cut_ or a _min-cut_. For example, given this weighted graph:
 
@@ -444,5 +444,5 @@ A min-cut is:
 
 link:stoer_wagner_imgs/digraph1-min-cut.dot[image:stoer_wagner_imgs/digraph1-min-cut.gif[stoer_wagner_imgs/digraph1-min-cut]]
 
-where _S_ = {0}, _T_ = {1, 2, 3}, and the min-cut capacity is
+where _S_ = \{0}, _T_ = \{1, 2, 3}, and the min-cut capacity is
 1.

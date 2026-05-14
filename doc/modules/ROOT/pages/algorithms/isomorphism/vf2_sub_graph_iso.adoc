@@ -465,12 +465,12 @@ If the `EdgeList` allows for parallel edges, e.g. `vecS`, the algorithm does som
 == Bibliography
 
 [#cordella2001]#1#::
-  L. P. Cordella, P. Foggia, C. Sansone, and M. Vento. +
+  \L. P. Cordella, P. Foggia, C. Sansone, and M. Vento. +
   _An improved algorithm for matching large graphs_. +
   In: 3rd IAPR-TC15 Workshop on Graph-based Representations in Pattern
   Recognition, pp. 149-159, Cuen, 2001.
 [#cordella2004]#2#::
-  L. P. Cordella, P. Foggia, C. Sansone, and M. Vento. +
+  \L. P. Cordella, P. Foggia, C. Sansone, and M. Vento. +
   _A (Sub)Graph Isomorphism Algorithm for Matching Large Graphs_. +
   IEEE Trans. Pattern Anal. Mach. Intell., vol. 26, no. 10, pp.
   1367-1372, 2004.
