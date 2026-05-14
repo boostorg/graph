@@ -5,6 +5,16 @@ Finds all common subgraphs between two graphs using McGregor's backtracking algo
 *Complexity:* _O(V1 * V2)_ +
 *Defined in:* `<boost/graph/mcgregor_common_subgraphs.hpp>`
 
+[WARNING]
+.Algorithmic semantics
+====
+These functions compute the induced common subgraph variant: for every pair of mapped vertices, an edge must be present in both graphs, or absent in both. Non-edges are part of the structural match, not just edges.
+
+This is stricter than the non-induced (partial) common subgraph problem usually associated with McGregor's 1982 paper, where only present edges need to agree and additional edges in either graph are ignored. BGL does not currently provide the non-induced variant.
+
+The historical name is preserved because the underlying backtracking technique is McGregor's, even though the problem solved here is the induced variant that became standard in later literature.
+====
+
 == Example
 
 [source,cpp]
