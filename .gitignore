@@ -14,3 +14,7 @@ CMakeFiles/
 # Antora docs build artifacts
 doc/build/
 doc/node_modules/
+
+# macOS
+.DS_Store
+**/.DS_Store

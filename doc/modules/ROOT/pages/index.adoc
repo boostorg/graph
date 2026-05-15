@@ -13,7 +13,7 @@ A C++ library of graph algorithms and data structures, generic enough to work on
 ++++
 <video autoplay loop muted playsinline
        style="display: block; width: 100%; max-width: 800px; margin: 1.5em auto; border-radius: 6px;">
-  <source src="{imagesdir}/animations/BGLWavefrontScene.mp4" type="video/mp4">
+  <source src="{imagesdir}/animations/bfs_shortest_path.mp4" type="video/mp4">
 </video>
 ++++
 
