@@ -8,20 +8,29 @@ A C++ library of graph algorithms and data structures, generic enough to work on
 * Generic algorithms that work across any graph representation, with fine control on allocations
 * Extensible algorithms: inject your own logic at key points during traversal using visitor hooks
 
+
+[subs=attributes+]
+++++
+<video autoplay loop muted playsinline
+       style="display: block; width: 100%; max-width: 800px; margin: 1.5em auto; border-radius: 6px;">
+  <source src="{imagesdir}/animations/BGLWavefrontScene.mp4" type="video/mp4">
+</video>
+++++
+
 == Example
 
 ++++
-<p style="padding-left: 2em;"><a href="https://godbolt.org/z/9Esszr9Ga">Try it on Compiler Explorer</a></p>
+<p style="padding-left: 2em;"><a href="https://godbolt.org/z/TnnMzW7da">Try it on Compiler Explorer</a></p>
 ++++
 
 [source,cpp]
 ----
-include::example$algorithms/shortest_paths/dijkstra_bundled.cpp[]
+include::example$algorithms/traversal/bfs_shortest_path.cpp[]
 ----
 
 [,text]
 ----
-include::example$algorithms/shortest_paths/dijkstra_bundled.txt[]
+include::example$algorithms/traversal/bfs_shortest_path.txt[]
 ----
 
 == Get started
