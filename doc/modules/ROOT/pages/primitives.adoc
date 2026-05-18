@@ -16,6 +16,15 @@ include::example$primitives/primitives_traversal.txt[]
 
 == Traversal
 
+[subs=attributes+]
+++++
+<div class="videoblock" style="margin-left: 2rem; align-items: flex-start;">
+<div class="content">
+<video src="{imagesdir}/animations/primitives_traversal.mp4" width="60%" autoplay loop muted playsinline></video>
+</div>
+</div>
+++++
+
 [cols="2,3,2"]
 |===
 | Function | Returns | Concept
@@ -44,6 +53,15 @@ include::example$primitives/primitives_traversal.txt[]
 NOTE: All pairs can be used with `make_iterator_range` for range-based for loops (see example above).
 
 == Edge access
+
+[subs=attributes+]
+++++
+<div class="videoblock" style="margin-left: 2rem; align-items: flex-start;">
+<div class="content">
+<video src="{imagesdir}/animations/primitives_edge_access.mp4" width="60%" autoplay loop muted playsinline></video>
+</div>
+</div>
+++++
 
 [cols="2,3,2"]
 |===
@@ -74,6 +92,15 @@ include::example$primitives/primitives_edge_access.txt[]
 
 == Counts
 
+[subs=attributes+]
+++++
+<div class="videoblock" style="margin-left: 2rem; align-items: flex-start;">
+<div class="content">
+<video src="{imagesdir}/animations/primitives_counts.mp4" width="60%" autoplay loop muted playsinline></video>
+</div>
+</div>
+++++
+
 [cols="2,3,2"]
 |===
 | Function | Returns | Concept
@@ -99,7 +126,26 @@ include::example$primitives/primitives_edge_access.txt[]
 | xref:concepts/BidirectionalGraph.adoc[BidirectionalGraph]
 |===
 
+[source,cpp]
+----
+include::example$primitives/primitives_counts.cpp[]
+----
+
+[,text]
+----
+include::example$primitives/primitives_counts.txt[]
+----
+
 == Mutation
+
+[subs=attributes+]
+++++
+<div class="videoblock" style="margin-left: 2rem; align-items: flex-start;">
+<div class="content">
+<video src="{imagesdir}/animations/primitives_mutation.mp4" width="60%" autoplay loop muted playsinline></video>
+</div>
+</div>
+++++
 
 [cols="2,3,2"]
 |===
