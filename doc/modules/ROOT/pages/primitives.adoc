@@ -1,5 +1,22 @@
 = Graph Interface Primitives
 
+[NOTE]
+.What is a graph?
+====
+Formally, a graph is a pair _G = (V, E)_ where _V_ is a set of _vertices_
+and _E_ is a set of _edges_. Each edge is a pair _(u, v)_ with _u, v_ in _V_.
+
+- In a *directed graph*, edges are ordered pairs: the edge _(u, v)_ goes from
+its _source_ vertex _u_ to its _target_ vertex _v_. 
+- In an *undirected graph*, edges are unordered pairs and connect both vertices in either direction.
+
+The terms _vertex_, _edge_, _source_, _target_, and the directed vs.
+undirected distinction map directly onto the operations listed below.
+
+For a fuller introduction (degrees, paths, cycles, planarity), see
+xref:about/graph_theory_review.adoc[Graph Theory Review].
+====
+
 All BGL graph types share a common set of free functions for accessing
 and modifying the graph structure. These functions are how algorithms
 interact with graphs, regardless of the underlying data structure.
