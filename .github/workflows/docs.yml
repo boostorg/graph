@@ -1,23 +1,25 @@
-name: Build and deploy Antora docs
+name: docs-check
+
+# PR-time sanity check for the Antora documentation:
+#   - b2 builds every example .cpp and regenerates its .txt sidecar
+#     (catches broken examples; failures here fail the job)
+#   - Antora renders the full site (catches broken .adoc, missing
+#     includes, broken xrefs)
+#
+# No deployment. The real publishing path is boostorg/release-tools,
+# which auto-detects doc/build_antora.sh and ships to
+# www.boost.org/doc/libs/<version>/libs/graph/.
 
 on:
-  push:
-    branches: ["documentation"]
   pull_request:
-    branches: ["develop"]
+    branches: ["develop", "documentation"]
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
 
 jobs:
-  build:
+  docs-check:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -27,9 +29,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-
-      - name: Install Antora
-        run: npm i -g @antora/cli @antora/site-generator @antora/lunr-extension@1.0.0-alpha.13
 
       # Set up boost-root so b2 can build the example .cpp files (needs
       # the full Boost build tree, not just the headers we ship in this
@@ -50,30 +49,14 @@ jobs:
         working-directory: ../boost-root
         run: ./b2 -j$(nproc) libs/graph/doc/modules/ROOT/examples
 
-      # Mirror the regenerated .txt sidecars back into the workspace
-      # so Antora sees them when it picks up sources from $GITHUB_WORKSPACE.
+      # Mirror the regenerated .txt sidecars back into the workspace so
+      # the Antora build below renders pages against fresh outputs.
       - name: Mirror generated .txt back to workspace
         run: rsync -a ../boost-root/libs/graph/doc/modules/ROOT/examples/ doc/modules/ROOT/examples/
 
-      - name: Build the site
+      # Build the site exactly as boostorg/release-tools will at release
+      # time: invoke doc/build_antora.sh, which runs npm ci + npx antora
+      # against the committed package-lock.json.
+      - name: Build the site (release-tools entry point)
         working-directory: doc
-        run: npx antora --fetch playbook.yml
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: doc/build/site
-
-  deploy:
-    needs: build
-    if: github.event_name != 'pull_request'
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v5
+        run: ./build_antora.sh playbook.yml
