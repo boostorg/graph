@@ -15,8 +15,7 @@ content:
     - url: ..
       start_path: doc
       branches: HEAD
-      # FIXME: swap to https://github.com/boostorg/graph/edit/develop/{path} before merging upstream.
-      edit_url: 'https://github.com/Becheler/graph/edit/documentation/{path}'
+      edit_url: 'https://github.com/boostorg/graph/edit/develop/{path}'
 
 asciidoc:
   attributes:
