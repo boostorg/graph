@@ -203,9 +203,7 @@ named parameter is provided then an isomorphism is recorded in the map.
 The current implementation is based on descriptions of a backtracking
 algorithm in
 [xref:about/bibliography.adoc#fortin96:_graph_iso_prob[41],xref:about/bibliography.adoc#reingold77:_combin_algo[43]].
-The file link:./isomorphism-impl.pdf[isomorphism-impl.pdf] contains a
-(somewhat out-of-date) "literate" description of the implementation. The
-algorithm used is simple but slow. A more efficient (and much more
+The algorithm used is simple but slow. A more efficient (and much more
 complex) algorithm is described in
 [xref:about/bibliography.adoc#mckay81:_pract_graph_iso[42]]. When (and
 if) a version of this algorithm is ported to the BGL interface it should
