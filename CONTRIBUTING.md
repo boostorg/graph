@@ -53,21 +53,97 @@ BGL follows the standard Boost / STL conventions:
 | Kind | Style | Example |
 |---|---|---|
 | Functions, types, variables, files | `snake_case` | `dijkstra_visitor`, `add_edge`, `adjacency_list.hpp` |
+| Member functions / methods | `snake_case` (same as free functions) | `get_edge`, `out_edges` |
+| Private member variables | `m_` prefix + `snake_case` | `m_matrix`, `m_num_edges`, `m_property` |
 | Concept names | `PascalCase` | `IncidenceGraph`, `VertexListGraph` |
 | Template parameters | `PascalCase` | `template <class Graph, class WeightMap>` |
 | Tag-dispatch types | `snake_case` + `S` suffix | `vecS`, `directedS` |
 | Macros | `BOOST_GRAPH_` prefix, `SCREAMING_SNAKE_CASE` | `BOOST_GRAPH_DECLARE_EDGE_PROPERTY` |
 
+### Formatting
+
+Low-level formatting (braces, column width, spaces in angle brackets, etc.) is captured by the [`.clang-format`](.clang-format) file at the repo root (WebKit preset with BGL-specific overrides: Allman braces, 80-column limit, `Cpp03`). It is **not** enforced by CI, but contributors are encouraged to run `clang-format -i` on files they touch before opening a PR.
+
 ## Using other Boost libraries
 
 When writing new code:
 
-- **Prefer `std::`** when the supported C++ standard has an equivalent. Use `std::function`, `std::shared_ptr`, `std::tuple` over their Boost counterparts.
+- **Prefer `std::`** when the supported C++ standard has an equivalent. Use `std::function`, `std::shared_ptr`, `std::tuple` over their Boost counterparts. Exceptions are welcome with justification in the PR description, in particular Boost containers with no std equivalent in our standard window (e.g. `boost::unordered_flat_map`, `boost::bimap`, `boost::multi_index_container`).
 - **Avoid pulling in new heavy dependencies** (Spirit, property_tree, xpressive, etc.) without justification: BGL is gradually migrating away from heavy Boost dependencies. Open a discussion before adding one.
 - **Concept checks** (`boost::concept`) are encouraged for any new public template. New public APIs should respect the existing concept hierarchy. 
 - Track BGL's position in the Boost dependency DAG via [boostdep](https://github.com/boostorg/boostdep)'s hosted reports. The long-term goal is to reduce BGL's level over time:
     - **[Module levels](https://pdimov.github.io/boostdep-report/master/module-levels.html#graph)** shows BGL's depth in the global DAG. A rising level means new transitive Boost dependencies have been pulled in.
     - **[Per-library page](https://pdimov.github.io/boostdep-report/develop/graph.html)** shows BGL's direct deps and per-dep `#include` counts.
+
+## Boost macro usage
+
+BGL has accumulated a wide vocabulary of `BOOST_*` macros from its pre-C++14 days. The table below captures the current guidance for each one used in the codebase: **Keep** as-is, **Replace** with a language or std equivalent, or **Remove** along with the dead `#if defined(...)` branch the macro guards. When in doubt, follow the recommendation here or ask before introducing new uses.
+
+| Macro | Recommendation |
+|---|---|
+| `BOOST_ASSERT` | Keep, more useful and configurable than `assert` |
+| `BOOST_BORLANDC` | Remove |
+| `BOOST_CONCEPT_ASSERT` | Keep (pre C++20) |
+| `BOOST_CONCEPT_REQUIRES` | Keep (pre C++20) |
+| `BOOST_CONCEPT_USAGE` | Keep (pre C++20) |
+| `BOOST_DEDUCED_TYPENAME` | Remove |
+| `BOOST_FOREACH` | Replace with an appropriate algorithm or range-based `for` loop |
+| `BOOST_FWD_REF` | Replace with `T&&` |
+| `BOOST_JOIN` | Keep |
+| `BOOST_MPL_HAS_XXX_TRAIT_DEF` | Consider writing the same utility without dependency on MPL |
+| `BOOST_MSVC` | Keep |
+| `BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP` | Remove |
+| `BOOST_NO_AUTO_PTR` | Remove and assume `auto_ptr` is not available |
+| `BOOST_NO_CXX11_ALLOCATOR` | Remove |
+| `BOOST_NO_CXX11_RVALUE_REFERENCES` | Remove |
+| `BOOST_NO_CXX11_SMART_PTR` | Remove |
+| `BOOST_NO_CXX17_STRUCTURED_BINDINGS` | Keep |
+| `BOOST_NO_MEMBER_TEMPLATE_FRIENDS` | Remove |
+| `BOOST_NO_SFINAE` | Remove |
+| `BOOST_NO_STDC_NAMESPACE` | Possibly keep |
+| `BOOST_NO_STD_ALLOCATOR` | Remove |
+| `BOOST_NO_STD_ITERATOR_TRAITS` | Remove |
+| `BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS` | Remove |
+| `BOOST_OVERRIDE` | Possibly remove |
+| `BOOST_PARAMETER_KEYWORD` | Keep |
+| `BOOST_PARAMETER_NAME` | Keep |
+| `BOOST_PP_CAT` | Use if Boost.PP can't be replaced with variadics |
+| `BOOST_PP_COMMA_IF` | Use if Boost.PP can't be replaced with variadics |
+| `BOOST_PP_DEC` | Use if Boost.PP can't be replaced with variadics |
+| `BOOST_PP_ENUM_BINARY_PARAMS` | Use if Boost.PP can't be replaced with variadics |
+| `BOOST_PP_ENUM_BINARY_PARAMS_Z` | Use if Boost.PP can't be replaced with variadics |
+| `BOOST_PP_ENUM_PARAMS` | Use if Boost.PP can't be replaced with variadics |
+| `BOOST_PP_ENUM_PARAMS_Z` | Use if Boost.PP can't be replaced with variadics |
+| `BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z` | Use if Boost.PP can't be replaced with variadics |
+| `BOOST_PP_ENUM_TRAILING_PARAMS_Z` | Use if Boost.PP can't be replaced with variadics |
+| `BOOST_PP_EXPR_IF` | Use if Boost.PP can't be replaced with variadics |
+| `BOOST_PP_INC` | Use if Boost.PP can't be replaced with variadics |
+| `BOOST_PP_LPAREN_IF` | Use if Boost.PP can't be replaced with variadics |
+| `BOOST_PP_REPEAT` | Use if Boost.PP can't be replaced with variadics |
+| `BOOST_PP_REPEAT_FROM_TO` | Use if Boost.PP can't be replaced with variadics |
+| `BOOST_PP_RPAREN_IF` | Use if Boost.PP can't be replaced with variadics |
+| `BOOST_PP_SEQ_ELEM` | Use if Boost.PP can't be replaced with variadics |
+| `BOOST_PP_SUB` | Use if Boost.PP can't be replaced with variadics |
+| `BOOST_PP_TUPLE_EAT` | Use if Boost.PP can't be replaced with variadics |
+| `BOOST_PREVENT_MACRO_SUBSTITUTION` | Keep |
+| `BOOST_SERIALIZATION_NVP` | Consider removing if you can eliminate the dependency on Boost.Serialization via `<boost/core/serialization.hpp>` |
+| `BOOST_SPIRIT_CLOSURE_LIMIT` | Keep |
+| `BOOST_SPIRIT_DEBUG` | Keep |
+| `BOOST_SPIRIT_DEBUG_RULE` | Keep |
+| `BOOST_STATIC_ASSERT` | Replace with `static_assert(..., msg)` |
+| `BOOST_STATIC_ASSERT_MSG` | Replace with `static_assert(..., msg)` |
+| `BOOST_STATIC_CONSTANT` | Remove in favour of in-class `static constexpr` initialization |
+| `BOOST_SYMBOL_EXPORT` | Keep |
+| `BOOST_SYMBOL_IMPORT` | Keep |
+| `BOOST_SYMBOL_VISIBLE` | Keep |
+| `BOOST_TESTED_AT` | Keep |
+| `BOOST_THROW_EXCEPTION` | Keep |
+| `BOOST_TTI_HAS_MEMBER_FUNCTION` | Consider writing the same utility without dependency on TTI |
+| `BOOST_USING_STD_MAX` | Replace with `(std::max)(...)` |
+| `BOOST_USING_STD_MIN` | Replace with `(std::min)(...)` |
+| `BOOST_WORKAROUND` | Keep |
+
+When you mark a `BOOST_NO_*` flag as **Remove**, also delete the `#if defined(...)` block it gates — the alternate branch is always taken on the supported toolchains.
 
 ## Pull request process
 
