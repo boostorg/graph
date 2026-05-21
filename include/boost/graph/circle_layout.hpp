@@ -40,10 +40,11 @@ void circle_graph_layout(
     using std::cos;
     using std::sin;
 #endif // BOOST_NO_STDC_NAMESPACE
+    using vertices_size_type = typename graph_traits< VertexListGraph >::vertices_size_type;
+    
+    const vertices_size_type n = num_vertices(g);
+    vertices_size_type i = 0;
 
-    const auto n = num_vertices(g);
-
-    auto i = 0;
     const auto two_pi_over_n = 2. * pi / n;
     BGL_FORALL_VERTICES_T(v, g, VertexListGraph)
     {
