@@ -3,6 +3,7 @@ name: Documentation issue
 about: Report missing, incorrect, or unclear documentation
 title: ''
 labels: docs
+type: Task
 assignees: ''
 ---
 

@@ -2,7 +2,8 @@
 name: Feature request
 about: Suggest a new algorithm, API addition, or enhancement
 title: ''
-labels: enhancement
+labels: ''
+type: Feature
 assignees: ''
 ---
 

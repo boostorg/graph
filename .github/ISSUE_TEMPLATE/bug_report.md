@@ -2,7 +2,7 @@
 name: Bug report
 about: Report a defect or unexpected behavior in Boost.Graph
 title: ''
-labels: bug
+type: Bug
 assignees: ''
 ---
 
