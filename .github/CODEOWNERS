@@ -1,0 +1,19 @@
+# Code owners for Boost.Graph
+#
+# When a PR is opened, GitHub automatically requests review from the matching
+# owners listed below. The order of rules matters: later, more specific rules
+# override earlier, more general ones.
+#
+# Authoritative maintainer list: meta/libraries.json
+# Contact details: CONTRIBUTING.md#maintainers
+
+# Default reviewers for everything
+*                       @jeremy-murphy @becheler
+
+# Documentation, contributor-facing files, and CI configuration
+/doc/                   @becheler
+/README.md              @becheler
+/CONTRIBUTING.md        @becheler
+/SECURITY.md            @becheler
+/CODE_OF_CONDUCT.md     @becheler
+/.github/               @becheler

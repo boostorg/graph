@@ -11,7 +11,8 @@
         "Iterators"
     ],
     "maintainers": [
-        "Jeremy W. Murphy <jeremy.william.murphy -at- gmail.com>"
+        "Jeremy W. Murphy <jeremy.william.murphy -at- gmail.com>",
+        "Arnaud Becheler <arnaud.becheler -at- gmail.com>"
     ],
     "cxxstd": "14"
 }
