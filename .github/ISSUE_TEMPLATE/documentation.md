@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 <!--
-Documentation problems are real bugs. Thanks for taking the time to
+Documentation problems are real issues. Thanks for taking the time to
 report one.
 -->
 
