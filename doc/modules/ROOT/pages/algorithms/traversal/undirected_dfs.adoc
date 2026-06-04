@@ -119,7 +119,7 @@ template <typename Graph,
           typename P,
           typename T,
           typename R>
-void undirected_dfs(Graph& G,
+void undirected_dfs(const Graph& g,
     const bgl_named_params<P, T, R>& params);
 ----
 
@@ -127,7 +127,7 @@ void undirected_dfs(Graph& G,
 |===
 | Direction | Parameter | Description
 
-| IN | `Graph& g`
+| IN | `const Graph& g`
 | An undirected graph. The graph type must be a model of
   xref:concepts/IncidenceGraph.adoc[Incidence Graph],
   xref:concepts/VertexListGraph.adoc[Vertex List Graph], and

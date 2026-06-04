@@ -95,7 +95,7 @@ void depth_first_search(const Graph& g, DFSVisitor vis,
 [source,cpp]
 ----
 template <class Graph, class P, class T, class R>
-void depth_first_search(Graph& G,
+void depth_first_search(const Graph& g,
     const bgl_named_params<P, T, R>& params);
 ----
 
@@ -103,7 +103,7 @@ void depth_first_search(Graph& G,
 |===
 | Direction | Parameter | Description
 
-| IN | `Graph& g`
+| IN | `const Graph& g`
 | A directed graph. The graph type must be a model of
   xref:concepts/IncidenceGraph.adoc[Incidence Graph] and
   xref:concepts/VertexListGraph.adoc[Vertex List Graph].

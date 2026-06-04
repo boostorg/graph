@@ -72,7 +72,7 @@ void breadth_first_search(const Graph& g,
 [source,cpp]
 ----
 template <class Graph, class P, class T, class R>
-void breadth_first_search(Graph& G,
+void breadth_first_search(const Graph& g,
     typename graph_traits<Graph>::vertex_descriptor s,
     const bgl_named_params<P, T, R>& params);
 ----
@@ -81,7 +81,7 @@ void breadth_first_search(Graph& G,
 |===
 | Direction | Parameter | Description
 
-| IN | `Graph& g`
+| IN | `const Graph& g`
 | A directed or undirected graph. The graph type must be a model of
   xref:concepts/VertexListGraph.adoc[Vertex List Graph] and
   xref:concepts/IncidenceGraph.adoc[Incidence Graph].
