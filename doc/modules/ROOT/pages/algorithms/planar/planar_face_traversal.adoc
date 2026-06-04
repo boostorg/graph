@@ -6,6 +6,17 @@ Traverses all faces of a planar graph defined by a planar embedding, invoking vi
 *Complexity:* _O(n + m)_ +
 *Defined in:* `<boost/graph/planar_face_traversal.hpp>`
 
+[WARNING]
+====
+With multiple connected components, each component reports its own outer face
+instead of one shared outer face, so the count is `C - 1` higher than Euler's
+`F = E - V + C + 1`. Two disjoint triangles, for instance, report four faces
+where the correct count is three. To recover it, subtract `C - 1`, where `C`
+counts only components with at least one edge (isolated vertices add no faces,
+yet xref:algorithms/connected_components/connected_components.adoc[connected_components]
+includes them).
+====
+
 == Example
 
 [source,cpp]
