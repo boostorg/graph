@@ -446,7 +446,7 @@ namespace detail
         {
             std::list< Splabel > dsplabels = get(vec_vertex_labels, vertex);
             if(!b_all_pareto_optimal_solutions
-               && b_all_pareto_optimal_solutions_on_all_vertices)
+               && !b_all_pareto_optimal_solutions_on_all_vertices)
             {
                 dsplabels.sort();
             }
