@@ -15,6 +15,7 @@
 #include <boost/graph/king_ordering.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/bandwidth.hpp>
+#include <boost/core/lightweight_test.hpp>
 
 /*
   Sample Output
@@ -69,7 +70,27 @@ int main(int, char*[])
     property_map< Graph, vertex_index_t >::type index_map
         = get(vertex_index, G);
 
-    std::cout << "original bandwidth: " << bandwidth(G) << std::endl;
+    const size_type n = num_vertices(G);
+    auto assert_valid_permutation
+        = [&index_map, n](const std::vector< Vertex >& order) {
+              BOOST_TEST(order.size() == n);
+              std::vector< bool > seen(n, false);
+              for (std::size_t k = 0; k < order.size(); ++k)
+              {
+                  size_type idx = index_map[order[k]];
+                  BOOST_TEST(idx < n);
+                  if (idx < n)
+                  {
+                      BOOST_TEST(!seen[idx]);
+                      seen[idx] = true;
+                  }
+              }
+              for (size_type k = 0; k < n; ++k)
+                  BOOST_TEST(seen[k]);
+          };
+
+    const size_type original_bw = bandwidth(G);
+    std::cout << "original bandwidth: " << original_bw << std::endl;
 
     std::vector< Vertex > inv_perm(num_vertices(G));
     std::vector< size_type > perm(num_vertices(G));
@@ -87,11 +108,11 @@ int main(int, char*[])
 
         for (size_type c = 0; c != inv_perm.size(); ++c)
             perm[index_map[inv_perm[c]]] = c;
-        std::cout << "  bandwidth: "
-                  << bandwidth(G,
-                         make_iterator_property_map(
-                             &perm[0], index_map, perm[0]))
-                  << std::endl;
+        size_type bw = bandwidth(
+            G, make_iterator_property_map(&perm[0], index_map, perm[0]));
+        std::cout << "  bandwidth: " << bw << std::endl;
+        assert_valid_permutation(inv_perm);
+        BOOST_TEST(bw <= original_bw);
     }
     {
         Vertex s = vertex(0, G);
@@ -107,11 +128,11 @@ int main(int, char*[])
 
         for (size_type c = 0; c != inv_perm.size(); ++c)
             perm[index_map[inv_perm[c]]] = c;
-        std::cout << "  bandwidth: "
-                  << bandwidth(G,
-                         make_iterator_property_map(
-                             &perm[0], index_map, perm[0]))
-                  << std::endl;
+        size_type bw = bandwidth(
+            G, make_iterator_property_map(&perm[0], index_map, perm[0]));
+        std::cout << "  bandwidth: " << bw << std::endl;
+        assert_valid_permutation(inv_perm);
+        BOOST_TEST(bw <= original_bw);
     }
 
     {
@@ -127,11 +148,11 @@ int main(int, char*[])
 
         for (size_type c = 0; c != inv_perm.size(); ++c)
             perm[index_map[inv_perm[c]]] = c;
-        std::cout << "  bandwidth: "
-                  << bandwidth(G,
-                         make_iterator_property_map(
-                             &perm[0], index_map, perm[0]))
-                  << std::endl;
+        size_type bw = bandwidth(
+            G, make_iterator_property_map(&perm[0], index_map, perm[0]));
+        std::cout << "  bandwidth: " << bw << std::endl;
+        assert_valid_permutation(inv_perm);
+        BOOST_TEST(bw <= original_bw);
     }
-    return 0;
+    return boost::report_errors();
 }
