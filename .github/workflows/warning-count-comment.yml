@@ -1,0 +1,54 @@
+name: warning-count-comment
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+
+permissions:
+  actions: read
+  pull-requests: write
+  contents: read
+
+jobs:
+  comment:
+    if: github.event.workflow_run.event == 'pull_request'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      REPO: ${{ github.repository }}
+      PR_RUN: ${{ github.event.workflow_run.id }}
+      HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download this PR run's log archive
+        run: gh api "repos/$REPO/actions/runs/$PR_RUN/logs" > pr-logs.zip
+
+      - name: Download latest successful develop run's log archive
+        run: |
+          DEV=$(gh run list --workflow CI --branch develop --status success \
+                  --limit 1 --json databaseId --jq '.[0].databaseId')
+          if [ -z "$DEV" ]; then echo "no develop baseline run found" >&2; exit 1; fi
+          echo "DEV_RUN=$DEV" >> "$GITHUB_ENV"
+          gh api "repos/$REPO/actions/runs/$DEV/logs" > base-logs.zip
+
+      - name: Generate table
+        run: |
+          {
+            echo "Compiler-warning counts vs \`develop\` (auto-generated)."
+            echo "PR run \`$PR_RUN\` vs develop run \`$DEV_RUN\` (\`${HEAD_SHA:0:10}\`)."
+            echo
+            python3 .github/scripts/warn_table.py base-logs.zip pr-logs.zip
+          } > table.md
+
+      - name: Resolve PR number
+        id: pr
+        run: echo "num=$(gh api "repos/$REPO/commits/$HEAD_SHA/pulls" --jq '.[0].number')" >> "$GITHUB_OUTPUT"
+
+      - name: Post or update sticky comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: warning-counts
+          number: ${{ steps.pr.outputs.num }}
+          path: table.md
