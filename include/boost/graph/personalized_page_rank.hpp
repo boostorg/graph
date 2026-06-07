@@ -20,333 +20,338 @@
 
 namespace boost
 {
-    namespace graph
+namespace graph
+{
+    namespace personalized_page_rank_detail
     {
-        namespace detail {
-            template < typename Graph>
-            std::size_t proxy_in_degree(
-                typename boost::graph_traits<Graph>::vertex_descriptor v,
-                const Graph& g
-                BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph, vertex_list_graph_tag))
-            {
-                return out_degree(v, g);
-            }
-            template < typename Graph>
-            std::size_t proxy_in_degree(
-                typename boost::graph_traits<Graph>::vertex_descriptor v,
-                const Graph& g
-                BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph, bidirectional_graph_tag))
-            {
-                return in_degree(v, g);
-            }
+        template < typename Graph>
+        std::size_t in_or_out_degree(
+            typename boost::graph_traits<Graph>::vertex_descriptor v,
+            const Graph& g,
+            bidirectional_graph_tag)
+        {
+            return in_degree(v, g);
         }
+        template < typename Graph>
+        std::size_t in_or_out_degree(
+            typename boost::graph_traits<Graph>::vertex_descriptor v,
+            const Graph& g,
+            incidence_graph_tag)
+        {
+            return out_degree(v, g);
+        }
+    }
 
-        template <typename Graph>
-        boost::function_property_map<
+    template <typename Graph>
+    boost::function_property_map<
         std::function<double(typename boost::graph_traits<Graph>::edge_descriptor)>,
         typename boost::graph_traits<Graph>::edge_descriptor>
-        markovian_weights(const Graph& g)
+    markovian_weights(const Graph& g)
+    {
+        using Edge = typename boost::graph_traits<Graph>::edge_descriptor;
+        using Func = std::function<double(Edge)>;
+        Func f = [&g](Edge e)
         {
-            using Edge = typename boost::graph_traits<Graph>::edge_descriptor;
-            using Func = std::function<double(Edge)>;
-            Func f = [&g](Edge e)
-            {
-                auto u = source(e, g);
-                std::size_t denom;
-                denom = out_degree(u, g) ;
-                return 1.0 / std::sqrt(denom);
-            };
-            return make_function_property_map<Edge, double>(f);
-        }
-
-        template <typename Graph>
-        boost::function_property_map<
-        std::function<double(typename boost::graph_traits<Graph>::edge_descriptor)>,
-        typename boost::graph_traits<Graph>::edge_descriptor>
-        spectral_weights(const Graph& g)
-        {
-            using Edge = typename boost::graph_traits<Graph>::edge_descriptor;
-            using Func = std::function<double(Edge)>;
-            Func f = [&g](Edge e)
-            {
-                auto u = source(e, g);
-                auto v = target(e, g);
-                std::size_t denom;
-                denom = out_degree(u, g) * detail::proxy_in_degree(v, g);
-                return 1.0 / std::sqrt(denom);
-            };
-            return make_function_property_map<Edge, double>(f);
-        }
-
-        template <typename Graph>
-        boost::function_property_map<
-        std::function<double(typename boost::graph_traits<Graph>::edge_descriptor)>,
-        typename boost::graph_traits<Graph>::edge_descriptor>
-        renormalized_weights(const Graph& g)
-        {
-            using Edge = typename boost::graph_traits<Graph>::edge_descriptor;
-            using Func = std::function<double(Edge)>;
-            Func f = [&g](Edge e)
-            {
-                auto u = source(e, g);
-                auto v = target(e, g);
-                std::size_t denom;
-                denom = (1+out_degree(u, g)) * (1+detail::proxy_in_degree(v, g));
-                return 1.0 / std::sqrt(denom);
-            };
-            return make_function_property_map<Edge, double>(f);
-        }
-
-        struct vertex_map_convergence
-        {
-            explicit vertex_map_convergence(std::size_t n, double tol=0) : n(n), tol(tol) {} // allowing tolerance for early stopping
-
-            template < typename RankMap, typename RankMap2, typename Graph >
-            bool operator()(
-                const RankMap& rank_map,
-                const RankMap2& rank_map2,
-                const Graph& g)
-            {
-                if ( n-- == 0 )
-                {
-                    return true;
-                }
-                if (!tol)
-                    return false;
-
-                typedef typename property_traits< RankMap >::value_type rank_type;
-                rank_type sum_abs(0);
-                BGL_FORALL_VERTICES_T(v, g, Graph)
-                {
-                    rank_type difference = get(rank_map, v)-get(rank_map2, v);
-                    if(difference<0)
-                        difference = -difference;
-                    sum_abs += difference;
-                }
-                return sum_abs*num_vertices(g)<tol;
-            }
-
-            std::size_t get_remaining_iters() const
-            {
-                return n;
-            }
-
-            bool has_converged() const
-            {
-                return n || !tol;
-            }
-
-        private:
-            std::size_t n;
-            double tol;
+            auto u = source(e, g);
+            std::size_t denom;
+            denom = out_degree(u, g) ;
+            return 1.0 / denom;
         };
+        return make_function_property_map<Edge, double>(f);
+    }
 
-        namespace detail
+    template <typename Graph>
+    boost::function_property_map<
+        std::function<double(typename boost::graph_traits<Graph>::edge_descriptor)>,
+        typename boost::graph_traits<Graph>::edge_descriptor>
+    spectral_weights(const Graph& g)
+    {
+        using Edge = typename boost::graph_traits<Graph>::edge_descriptor;
+        using Func = std::function<double(Edge)>;
+        Func f = [&g](Edge e)
         {
-            template <
+            typedef typename boost::graph_traits<Graph>::traversal_category category;
+            auto u = source(e, g);
+            auto v = target(e, g);
+            std::size_t denom;
+            denom = out_degree(u, g) * personalized_page_rank_detail::in_or_out_degree(v, g, category());
+            return 1.0 / std::sqrt(denom);
+        };
+        return make_function_property_map<Edge, double>(f);
+    }
+
+    template <typename Graph>
+    boost::function_property_map<
+        std::function<double(typename boost::graph_traits<Graph>::edge_descriptor)>,
+        typename boost::graph_traits<Graph>::edge_descriptor>
+    renormalized_weights(const Graph& g)
+    {
+        using Edge = typename boost::graph_traits<Graph>::edge_descriptor;
+        using Func = std::function<double(Edge)>;
+        Func f = [&g](Edge e)
+        {
+            typedef typename boost::graph_traits<Graph>::traversal_category category;
+            auto u = source(e, g);
+            auto v = target(e, g);
+            std::size_t denom;
+            denom = (1+out_degree(u, g)) * (1+personalized_page_rank_detail::in_or_out_degree(v, g, category()));
+            return 1.0 / std::sqrt(denom);
+        };
+        return make_function_property_map<Edge, double>(f);
+    }
+
+    struct vertex_map_convergence
+    {
+        explicit vertex_map_convergence(std::size_t n, double tol=0) : n(n), tol(tol) {} // allowing tolerance for early stopping
+
+        template < typename RankMap, typename RankMap2, typename Graph >
+        bool operator()(
+            const RankMap& current,
+            const RankMap2& previous,
+            const Graph& g)
+        {
+            if ( n-- == 0 )
+            {
+                return true;
+            }
+            if (!tol)
+            {
+                return false;
+            }
+
+            typedef typename property_traits< RankMap >::value_type rank_type;
+            rank_type sum_abs(0);
+            for (auto v : boost::make_iterator_range(vertices(g)))
+            {
+                rank_type difference = get(current, v)-get(previous, v);
+                sum_abs += std::abs(difference);
+            }
+            return sum_abs*num_vertices(g)<tol;
+        }
+
+        std::size_t get_remaining_iters() const
+        {
+            return n;
+        }
+
+        bool has_converged() const 
+        {
+            return n || !tol;
+        }
+
+    private:
+        std::size_t n;
+        double tol;
+    };
+
+    namespace personalized_page_rank_detail
+    {
+        template <
             typename Graph,
             typename WeightMap,
             typename PersonalizationMap,
             typename RankMap,
             typename RankMap2 >
-            void personalized_page_rank_step(
-                const Graph& g,
-                WeightMap weight_map,
-                PersonalizationMap personalization_map,
-                RankMap from_rank,
-                RankMap2 to_rank,
-                typename property_traits< RankMap >::value_type damping,
-                incidence_graph_tag)
+        void personalized_page_rank_step(
+            const Graph& g,
+            WeightMap weight_map,
+            PersonalizationMap personalization_map,
+            RankMap from_rank,
+            RankMap2 to_rank,
+            typename property_traits< RankMap >::value_type damping,
+            incidence_graph_tag)
+        {
+            typedef typename property_traits< RankMap >::value_type rank_type;
+            rank_type l1_norm(0); // Computing the norm simultaneously avoids an extra summing iteration.
+
+            // Initialize the constant part of maps
+            for (auto v : boost::make_iterator_range(vertices(g))) 
             {
-                typedef typename property_traits< RankMap >::value_type rank_type;
-                rank_type l1_norm(0); // Computing the norm simultaneously avoids an extra summing iteration.
-
-                // Initialize the constant part of maps
-                BGL_FORALL_VERTICES_T(v, g, Graph) {
-                    auto v_constant = rank_type(1 - damping) * get(personalization_map, v);
-                    put(to_rank, v, v_constant);
-                    l1_norm += v_constant;
-                }
-
-                BGL_FORALL_VERTICES_T(u, g, Graph)
-                {
-                    rank_type u_rank_factor = damping * get(from_rank, u);
-                    rank_type l1_accumulated_norm(0); // TBD: Consider making l1_norm volatile to reduce accumulation errors.
-                    BGL_FORALL_OUTEDGES_T(u, e, g, Graph)
-                    {
-                        auto v = target(e, g);
-                        rank_type u_rank_out = get(weight_map, e)*u_rank_factor;
-                        put(to_rank, v, get(to_rank, v) + u_rank_out);
-                        l1_accumulated_norm += u_rank_out;
-                    }
-                    l1_norm += l1_accumulated_norm;
-                }
-                BGL_FORALL_VERTICES_T(v, g, Graph) put(to_rank, v, get(to_rank, v)/l1_norm);
+                auto v_constant = rank_type(1 - damping) * get(personalization_map, v);
+                put(to_rank, v, v_constant);
+                l1_norm += v_constant;
             }
 
-            template <
-            typename Graph,
-            typename WeightMap,
-            typename PersonalizationMap,
-            typename RankMap,
-            typename RankMap2 >
-            void page_rank_step(
-                const Graph& g,
-                WeightMap weight_map,
-                PersonalizationMap personalization_map,
-                RankMap from_rank,
-                RankMap2 to_rank,
-                typename property_traits< RankMap >::value_type damping,
-                bidirectional_graph_tag)
+            for (auto u : boost::make_iterator_range(vertices(g)))
             {
-                typedef typename property_traits< RankMap >::value_type damping_type;
-                damping_type l1_norm(0); // Computing the norm simultaneously avoids an extra summing iteration.
-                BGL_FORALL_VERTICES_T(v, g, Graph)
+                rank_type u_rank_factor = damping * get(from_rank, u);
+                rank_type l1_accumulated_norm(0); // TBD: Consider making l1_norm volatile to reduce accumulation errors.
+                for (auto e : boost::make_iterator_range(out_edges(u, g))) 
                 {
-                    typename property_traits< RankMap >::value_type rank(0);
-                    BGL_FORALL_INEDGES_T(v, e, g, Graph) rank += get(from_rank, source(e, g))*get(weight_map, e);//get(from_rank, source(e, g)) / out_degree(source(e, g), g);
-                    auto v_score = (damping_type(1) - damping) * get(personalization_map, v) + damping * rank;
-                    put(to_rank, v, v_score);
-                    l1_norm += v_score;
+                    auto v = target(e, g);
+                    rank_type u_rank_out = get(weight_map, e)*u_rank_factor;
+                    put(to_rank, v, get(to_rank, v) + u_rank_out);
+                    l1_accumulated_norm += u_rank_out;
                 }
-                BGL_FORALL_VERTICES_T(v, g, Graph) put(to_rank, v, get(to_rank, v)/l1_norm);
+                l1_norm += l1_accumulated_norm;
             }
-        } // end namespace detail
+            BGL_FORALL_VERTICES_T(v, g, Graph) put(to_rank, v, get(to_rank, v)/l1_norm);
+        }
 
         template <
+            typename Graph,
+            typename WeightMap,
+            typename PersonalizationMap,
+            typename RankMap,
+            typename RankMap2 >
+        void page_rank_step(
+            const Graph& g,
+            WeightMap weight_map,
+            PersonalizationMap personalization_map,
+            RankMap from_rank,
+            RankMap2 to_rank,
+            typename property_traits< RankMap >::value_type damping,
+            bidirectional_graph_tag)
+        {
+            typedef typename property_traits< RankMap >::value_type damping_type;
+            damping_type l1_norm(0); // Computing the norm simultaneously avoids an extra summing iteration.
+            BGL_FORALL_VERTICES_T(v, g, Graph)
+            {
+                typename property_traits< RankMap >::value_type rank(0);
+                BGL_FORALL_INEDGES_T(v, e, g, Graph) rank += get(from_rank, source(e, g))*get(weight_map, e);//get(from_rank, source(e, g)) / out_degree(source(e, g), g);
+                auto v_score = (damping_type(1) - damping) * get(personalization_map, v) + damping * rank;
+                put(to_rank, v, v_score);
+                l1_norm += v_score;
+            }
+            BGL_FORALL_VERTICES_T(v, g, Graph) put(to_rank, v, get(to_rank, v)/l1_norm);
+        }
+    } // end namespace detail
+
+    template <
         typename Graph,
         typename WeightMap,
         typename PersonalizationMap,
         typename RankMap,
         typename Done,
         typename RankMap2 >
-        void personalized_page_rank(
-            const Graph& g,
-            WeightMap weight_map,
-            PersonalizationMap personalization_map,
-            RankMap rank_map,
-            Done& done,
-            typename property_traits< RankMap >::value_type damping,
-            typename graph_traits< Graph >::vertices_size_type n,
-            RankMap2 rank_map2
-            BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph, vertex_list_graph_tag))
+    Done personalized_page_rank(
+        const Graph& g,
+        WeightMap weight_map,
+        PersonalizationMap personalization_map,
+        RankMap rank_map,
+        Done done,
+        typename property_traits< RankMap >::value_type damping,
+        typename graph_traits< Graph >::vertices_size_type n,
+        RankMap2 rank_map2
+        BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph, vertex_list_graph_tag))
+    {
+        typedef typename property_traits< PersonalizationMap >::value_type rank_type;
+
+        rank_type personalization_norm(0);
+        BGL_FORALL_VERTICES_T(v, g, Graph) personalization_norm += get(personalization_map, v);
+
+        // TBD: This implementation couples iterators when possible under reduced L1 cache invalidation assumptions,
+        // but this is not necessarily the case because we may be grabbing 2x memory lanes each time to write there.
+        // Should investigate which pattern is faster.
+        BGL_FORALL_VERTICES_T(v, g, Graph)
         {
-            typedef typename property_traits< PersonalizationMap >::value_type rank_type;
+            rank_type value = get(personalization_map, v)/personalization_norm;
+            put(personalization_map, v, value);
+            put(rank_map, v, value);
+        }
 
-            rank_type personalization_norm(0);
-            BGL_FORALL_VERTICES_T(v, g, Graph) personalization_norm += get(personalization_map, v);
-
-            // TBD: This implementation couples iterators when possible under reduced L1 cache invalidation assumptions,
-            // but this is not necessarily the case because we may be grabbing 2x memory lanes each time to write there.
-            // Should investigate which pattern is faster.
-            BGL_FORALL_VERTICES_T(v, g, Graph)
-            {
-                rank_type value = get(personalization_map, v)/personalization_norm;
-                put(personalization_map, v, value);
-                put(rank_map, v, value);
-            }
-
-            bool to_map_2 = true;
-            do
-            {
-                typedef typename graph_traits< Graph >::traversal_category category;
-                if (to_map_2)
-                    detail::personalized_page_rank_step(g, weight_map, personalization_map, rank_map, rank_map2, damping, category());
-                else
-                    detail::personalized_page_rank_step(g, weight_map, personalization_map, rank_map2, rank_map, damping, category());
-                to_map_2 = !to_map_2;
-            } while (!done(rank_map, rank_map2, g)); // Symmetric call signature that should be unaffected by mode.
-
-            // Now multiply the result with personalization_norm to restore the order of magnitude and store it in rank_map.
-            // Also restore the original personalization_map's magnitude for reuse (this is only a tiny bit lossy).'
-            if (!to_map_2)
-            {
-                BGL_FORALL_VERTICES_T(v, g, Graph)
-                {
-                    put(rank_map, v, get(rank_map2, v)*personalization_norm);
-                    put(personalization_map, v, get(personalization_map, v)*personalization_norm);
-                }
-            }
+        bool to_map_2 = true;
+        do
+        {
+            typedef typename graph_traits< Graph >::traversal_category category;
+            if (to_map_2)
+                personalized_page_rank_detail::personalized_page_rank_step(g, weight_map, personalization_map, rank_map, rank_map2, damping, category());
             else
+                personalized_page_rank_detail::personalized_page_rank_step(g, weight_map, personalization_map, rank_map2, rank_map, damping, category());
+            to_map_2 = !to_map_2;
+        } while ((to_map_2  && !done(rank_map,  rank_map2, g)) || (!to_map_2 && !done(rank_map2, rank_map,  g)));
+        
+        // Now multiply the result with personalization_norm to restore the order of magnitude and store it in rank_map.
+        // Also restore the original personalization_map's magnitude for reuse (this is lossy up to numerical tolerance but leaner).'
+        if (!to_map_2)
+        {
+            for (auto v : boost::make_iterator_range(vertices(g)))
             {
-                BGL_FORALL_VERTICES_T(v, g, Graph)
-                {
-                    put(rank_map, v, get(rank_map, v)*personalization_norm);
-                    put(personalization_map, v, get(personalization_map, v)*personalization_norm);
-                }
+                put(rank_map, v, get(rank_map2, v)*personalization_norm);
+                put(personalization_map, v, get(personalization_map, v)*personalization_norm);
             }
         }
-
-        template <
-        typename Graph,
-        typename WeightMap,
-        typename PersonalizationMap,
-        typename RankMap,
-        typename Done >
-        void personalized_page_rank(
-            const Graph& g,
-            WeightMap weight_map,
-            PersonalizationMap personalization_map,
-            RankMap rank_map,
-            Done& done,
-            typename property_traits< RankMap >::value_type damping,
-            typename graph_traits< Graph >::vertices_size_type n)
+        else
         {
-            typedef typename property_traits< RankMap >::value_type rank_type;
-
-            std::vector< rank_type > ranks2(num_vertices(g));
-            personalized_page_rank(g, weight_map, personalization_map, rank_map, done, damping, n,
-                                   make_iterator_property_map(ranks2.begin(), get(vertex_index, g)));
+            for (auto v : boost::make_iterator_range(vertices(g)))
+            {
+                put(rank_map, v, get(rank_map, v)*personalization_norm);
+                put(personalization_map, v, get(personalization_map, v)*personalization_norm);
+            }
         }
-
-        template <
-        typename Graph,
-        typename WeightMap,
-        typename PersonalizationMap,
-        typename RankMap,
-        typename Done >
-        inline void personalized_page_rank(
-            const Graph& g,
-            WeightMap weight_map,
-            PersonalizationMap personalization_map,
-            RankMap rank_map,
-            Done& done,
-            typename property_traits< RankMap >::value_type damping = 0.85)
-        {
-            personalized_page_rank(g, weight_map, personalization_map, rank_map, done, damping, num_vertices(g));
-        }
-
-        template <
-        typename Graph,
-        typename WeightMap,
-        typename PersonalizationMap,
-        typename RankMap >
-        inline void personalized_page_rank(
-            const Graph& g,
-            WeightMap weight_map,
-            PersonalizationMap personalization_map,
-            RankMap rank_map,
-            typename property_traits< RankMap >::value_type damping = 0.85)
-        {
-            std::size_t n_iters(1.0/(1-damping)+0.5); // accounts for "most" random walks
-            auto convergence = vertex_map_convergence(n_iters);
-            personalized_page_rank(g, weight_map, personalization_map, rank_map, convergence, damping, num_vertices(g));
-        }
-
-        template <
-        typename Graph,
-        typename PersonalizationMap,
-        typename RankMap >
-        inline void personalized_page_rank(
-            const Graph& g,
-            PersonalizationMap personalization_map,
-            RankMap rank_map,
-            typename property_traits< RankMap >::value_type damping = 0.85)
-        {
-            personalized_page_rank(g, asymmetric_normalization(g), personalization_map, rank_map);
-        }
-
+        return done;
     }
+
+    template <
+        typename Graph,
+        typename WeightMap,
+        typename PersonalizationMap,
+        typename RankMap,
+        typename Done >
+    Done personalized_page_rank(
+        const Graph& g,
+        WeightMap weight_map,
+        PersonalizationMap personalization_map,
+        RankMap rank_map,
+        Done done,
+        typename property_traits< RankMap >::value_type damping,
+        typename graph_traits< Graph >::vertices_size_type n)
+    {
+        typedef typename property_traits< RankMap >::value_type rank_type;
+
+        std::vector< rank_type > ranks2(num_vertices(g));
+        return personalized_page_rank(g, weight_map, personalization_map, rank_map, done, damping, n,
+            make_iterator_property_map(ranks2.begin(), get(vertex_index, g)));
+    }
+
+    template <
+        typename Graph,
+        typename WeightMap,
+        typename PersonalizationMap,
+        typename RankMap,
+        typename Done >
+    inline Done personalized_page_rank(
+        const Graph& g,
+        WeightMap weight_map,
+        PersonalizationMap personalization_map,
+        RankMap rank_map,
+        Done done,
+        typename property_traits< RankMap >::value_type damping = 0.85)
+    {
+        return personalized_page_rank(g, weight_map, personalization_map, rank_map, done, damping, num_vertices(g));
+    }
+
+    template <
+        typename Graph,
+        typename WeightMap,
+        typename PersonalizationMap,
+        typename RankMap >
+    inline vertex_map_convergence personalized_page_rank(
+        const Graph& g,
+        WeightMap weight_map,
+        PersonalizationMap personalization_map,
+        RankMap rank_map,
+        typename property_traits< RankMap >::value_type damping = 0.85)
+    {
+        std::size_t n_iters(1.0/(1-damping)+0.5); // accounts for "most" random walks
+        auto convergence = vertex_map_convergence(n_iters);
+        return personalized_page_rank(g, weight_map, personalization_map, rank_map, convergence, damping, num_vertices(g));
+    }
+
+    template <
+        typename Graph,
+        typename PersonalizationMap,
+        typename RankMap >
+    inline vertex_map_convergence personalized_page_rank(
+        const Graph& g,
+        PersonalizationMap personalization_map,
+        RankMap rank_map,
+        typename property_traits< RankMap >::value_type damping = 0.85)
+    {
+        return personalized_page_rank(g, asymmetric_normalization(g), personalization_map, rank_map);
+    }
+
+}
 } // end namespace boost::graph
 
 #endif // BOOST_GRAPH_PERSONALIZED_PAGE_RANK_HPP
