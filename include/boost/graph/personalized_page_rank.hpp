@@ -185,7 +185,7 @@ namespace graph
                 }
                 l1_norm += l1_accumulated_norm;
             }
-            BGL_FORALL_VERTICES_T(v, g, Graph) put(to_rank, v, get(to_rank, v)/l1_norm);
+            for (auto v : boost::make_iterator_range(vertices(g))) put(to_rank, v, get(to_rank, v)/l1_norm);
         }
 
         template <
@@ -194,7 +194,7 @@ namespace graph
             typename PersonalizationMap,
             typename RankMap,
             typename RankMap2 >
-        void page_rank_step(
+        void personalized_page_rank_step(
             const Graph& g,
             WeightMap weight_map,
             PersonalizationMap personalization_map,
@@ -205,15 +205,16 @@ namespace graph
         {
             typedef typename property_traits< RankMap >::value_type damping_type;
             damping_type l1_norm(0); // Computing the norm simultaneously avoids an extra summing iteration.
-            BGL_FORALL_VERTICES_T(v, g, Graph)
+            for (auto v : boost::make_iterator_range(vertices(g)))
             {
                 typename property_traits< RankMap >::value_type rank(0);
-                BGL_FORALL_INEDGES_T(v, e, g, Graph) rank += get(from_rank, source(e, g))*get(weight_map, e);//get(from_rank, source(e, g)) / out_degree(source(e, g), g);
+                for (auto e : boost::make_iterator_range(in_edges(v, g))) 
+                    rank += get(from_rank, source(e, g))*get(weight_map, e);
                 auto v_score = (damping_type(1) - damping) * get(personalization_map, v) + damping * rank;
                 put(to_rank, v, v_score);
                 l1_norm += v_score;
             }
-            BGL_FORALL_VERTICES_T(v, g, Graph) put(to_rank, v, get(to_rank, v)/l1_norm);
+            for (auto v : boost::make_iterator_range(vertices(g))) put(to_rank, v, get(to_rank, v)/l1_norm);
         }
     } // end namespace detail
 
@@ -238,12 +239,12 @@ namespace graph
         typedef typename property_traits< PersonalizationMap >::value_type rank_type;
 
         rank_type personalization_norm(0);
-        BGL_FORALL_VERTICES_T(v, g, Graph) personalization_norm += get(personalization_map, v);
+        for (auto v : boost::make_iterator_range(vertices(g))) personalization_norm += get(personalization_map, v);
 
         // TBD: This implementation couples iterators when possible under reduced L1 cache invalidation assumptions,
         // but this is not necessarily the case because we may be grabbing 2x memory lanes each time to write there.
         // Should investigate which pattern is faster.
-        BGL_FORALL_VERTICES_T(v, g, Graph)
+        for (auto v : boost::make_iterator_range(vertices(g)))
         {
             rank_type value = get(personalization_map, v)/personalization_norm;
             put(personalization_map, v, value);
