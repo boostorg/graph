@@ -98,7 +98,7 @@ namespace sparse
 
         inline size_type size() const { return base::size(); }
 
-        inline size_type eccentricity() const { return eccen; }
+        inline int eccentricity() const { return eccen; }
         inline value_type spouse() const { return w; }
 
     protected:
