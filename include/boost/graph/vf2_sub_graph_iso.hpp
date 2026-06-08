@@ -73,6 +73,11 @@ private:
     const Graph2& graph2_;
 };
 
+static bool vf2_trivial_step_callback()
+{
+    return true;
+}
+
 namespace detail
 {
 
@@ -748,8 +753,8 @@ namespace detail
     // and tested for feasibility to extend the mapping. If a complete
     // mapping is found, the mapping is output to user_callback in the form
     // of a correspondence map (graph1 to graph2). Returning false from the
-    // user_callback will terminate the search. Function match will return
-    // true if the entire search space was explored.
+    // user_callback or user_step_callback will terminate the search. Function
+    // match will return true if a match was found.
     template < typename Graph1, typename Graph2, typename IndexMap1,
         typename IndexMap2, typename VertexOrder1,
         typename EdgeEquivalencePredicate, typename VertexEquivalencePredicate,
@@ -758,7 +763,8 @@ namespace detail
         SubGraphIsoMapCallback user_callback, const VertexOrder1& vertex_order1,
         state< Graph1, Graph2, IndexMap1, IndexMap2, EdgeEquivalencePredicate,
             VertexEquivalencePredicate, SubGraphIsoMapCallback,
-            problem_selection >& s)
+            problem_selection >& s,
+            bool(*user_step_callback)() = &vf2_trivial_step_callback)
     {
 
         typename VertexOrder1::const_iterator graph1_verts_iter;
@@ -773,6 +779,10 @@ namespace detail
         bool found_match = false;
 
     recur:
+        if (!user_step_callback()) {
+            return found_match;
+        }
+
         if (s.success())
         {
             if (!s.call_back(user_callback))
@@ -913,8 +923,9 @@ namespace detail
     }
 
     // Enumerates all graph sub-graph mono-/iso-morphism mappings between graphs
-    // graph_small and graph_large. Continues until user_callback returns true
-    // or the search space has been fully explored.
+    // graph_small and graph_large. Continues until user_callback or
+    // user_step_callback returns false or the search space has been fully
+    // explored.
     template < problem_selector problem_selection, typename GraphSmall,
         typename GraphLarge, typename IndexMapSmall, typename IndexMapLarge,
         typename VertexOrderSmall, typename EdgeEquivalencePredicate,
@@ -924,7 +935,8 @@ namespace detail
         IndexMapSmall index_map_small, IndexMapLarge index_map_large,
         const VertexOrderSmall& vertex_order_small,
         EdgeEquivalencePredicate edge_comp,
-        VertexEquivalencePredicate vertex_comp)
+        VertexEquivalencePredicate vertex_comp,
+        bool(*user_step_callback)() = &vf2_trivial_step_callback)
     {
 
         // Graph requirements
@@ -1007,7 +1019,8 @@ namespace detail
                 edge_comp, vertex_comp);
 
         return detail::match(
-            graph_small, graph_large, user_callback, vertex_order_small, s);
+            graph_small, graph_large, user_callback, vertex_order_small, s,
+            user_step_callback);
     }
 
 } // namespace detail
@@ -1028,8 +1041,8 @@ vertex_order_by_mult(const Graph& graph)
 }
 
 // Enumerates all graph sub-graph monomorphism mappings between graphs
-// graph_small and graph_large. Continues until user_callback returns true or
-// the search space has been fully explored.
+// graph_small and graph_large. Continues until user_callback or
+// user_step_callback returns false or the search space has been fully explored.
 template < typename GraphSmall, typename GraphLarge, typename IndexMapSmall,
     typename IndexMapLarge, typename VertexOrderSmall,
     typename EdgeEquivalencePredicate, typename VertexEquivalencePredicate,
@@ -1038,23 +1051,25 @@ bool vf2_subgraph_mono(const GraphSmall& graph_small,
     const GraphLarge& graph_large, SubGraphIsoMapCallback user_callback,
     IndexMapSmall index_map_small, IndexMapLarge index_map_large,
     const VertexOrderSmall& vertex_order_small,
-    EdgeEquivalencePredicate edge_comp, VertexEquivalencePredicate vertex_comp)
+    EdgeEquivalencePredicate edge_comp, VertexEquivalencePredicate vertex_comp,
+    bool(*user_step_callback)() = &vf2_trivial_step_callback)
 {
     return detail::vf2_subgraph_morphism< detail::subgraph_mono >(graph_small,
         graph_large, user_callback, index_map_small, index_map_large,
-        vertex_order_small, edge_comp, vertex_comp);
+        vertex_order_small, edge_comp, vertex_comp, user_step_callback);
 }
 
 // All default interface for vf2_subgraph_iso
 template < typename GraphSmall, typename GraphLarge,
     typename SubGraphIsoMapCallback >
 bool vf2_subgraph_mono(const GraphSmall& graph_small,
-    const GraphLarge& graph_large, SubGraphIsoMapCallback user_callback)
+    const GraphLarge& graph_large, SubGraphIsoMapCallback user_callback,
+    bool(*user_step_callback)() = &vf2_trivial_step_callback)
 {
     return vf2_subgraph_mono(graph_small, graph_large, user_callback,
         get(vertex_index, graph_small), get(vertex_index, graph_large),
         vertex_order_by_mult(graph_small), always_equivalent(),
-        always_equivalent());
+        always_equivalent(), user_step_callback);
 }
 
 // Named parameter interface of vf2_subgraph_iso
@@ -1064,7 +1079,8 @@ template < typename GraphSmall, typename GraphLarge, typename VertexOrderSmall,
 bool vf2_subgraph_mono(const GraphSmall& graph_small,
     const GraphLarge& graph_large, SubGraphIsoMapCallback user_callback,
     const VertexOrderSmall& vertex_order_small,
-    const bgl_named_params< Param, Tag, Rest >& params)
+    const bgl_named_params< Param, Tag, Rest >& params,
+    bool(*user_step_callback)() = &vf2_trivial_step_callback)
 {
     return vf2_subgraph_mono(graph_small, graph_large, user_callback,
         choose_const_pmap(
@@ -1075,7 +1091,8 @@ bool vf2_subgraph_mono(const GraphSmall& graph_small,
         choose_param(
             get_param(params, edges_equivalent_t()), always_equivalent()),
         choose_param(
-            get_param(params, vertices_equivalent_t()), always_equivalent()));
+            get_param(params, vertices_equivalent_t()), always_equivalent()),
+        user_step_callback);
 }
 
 // Enumerates all graph sub-graph isomorphism mappings between graphs

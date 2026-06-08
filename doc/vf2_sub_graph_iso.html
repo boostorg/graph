@@ -44,7 +44,8 @@ template &lt;typename GraphSmall,
           typename SubGraphIsoMapCallback&gt;
 bool vf2_subgraph_iso(const GraphSmall&amp; graph_small,
                       const GraphLarge&amp; graph_large,
-                      SubGraphIsoMapCallback user_callback)
+                      SubGraphIsoMapCallback user_callback,
+                      bool(*user_step_callback)() = &vf2_trivial_step_callback)
 
 
 <em class="comment">// Named parameter version</em>
@@ -59,7 +60,8 @@ bool vf2_subgraph_iso(const GraphSmall&amp; graph_small,
                       const GraphLarge&amp; graph_large,
                       SubGraphIsoMapCallback user_callback,
                       const VertexOrderSmall&amp; vertex_order_small,
-                      const bgl_named_params&lt;Param, Tag, Rest&gt;&amp; params)
+                      const bgl_named_params&lt;Param, Tag, Rest&gt;&amp; params,
+                      bool(*user_step_callback)() = &vf2_trivial_step_callback)
 
 
 <em class="comment">// Non-named parameter version</em>
@@ -78,7 +80,8 @@ bool vf2_subgraph_iso(const GraphSmall&amp; graph_small,
                       IndexMapLarge index_map_large,
                       const VertexOrderSmall&amp; vertex_order_small,
                       EdgeEquivalencePredicate edge_comp,
-                      VertexEquivalencePredicate vertex_comp)
+                      VertexEquivalencePredicate vertex_comp,
+                      bool(*user_step_callback)() = &vf2_trivial_step_callback)
     </pre>
     <p>
       An isomorphism between two graphs <em>G<sub>1</sub>=(V<sub>1</sub>, E<sub>1</sub>)</em>
@@ -95,9 +98,9 @@ bool vf2_subgraph_iso(const GraphSmall&amp; graph_small,
     <p>
       This function finds all induced subgraph isomorphisms between
       graphs <tt>graph_small</tt> and <tt>graph_large</tt> and outputs them to
-      <tt>user_callback</tt>. It continues until <tt>user_callback</tt>
+      <tt>user_callback</tt>. It continues until <tt>user_callback</tt> or <tt>user_step_callback</tt>
       returns false or the search space has been fully explored. <tt>vf2_subgraph_iso</tt>
-      returns true if a graph-subgraph isomorphism exists and false otherwise.
+      returns true if a graph-subgraph isomorphism was found and false otherwise.
       <tt>EdgeEquivalencePredicate</tt> and
       <tt>VertexEquivalencePredicate</tt> predicates are used to test whether
       edges and vertices are equivalent. To use property maps for equivalence,
@@ -200,6 +203,18 @@ bool operator()(CorrespondenceMap1To2 f, CorrespondenceMap2To1 g) const
         the entire search space will be explored. A "default" print callback
         is provided as a <a href="#vf2_callback">utility function</a>.
         </p>
+    </blockquote>
+
+    <p>OUT: <tt>bool(*user_step_callback)() = &vf2_trivial_step_callback</tt></p>
+    <blockquote>
+      <p>
+        A function to be called at each step of the search. If it returns false,
+        the search is terminated. The default always returns true. Unlike
+        <tt>user_callback</tt> (which is only called when a match is found),
+        this callback is called with high frequency; it may be used, for
+        example, to stop the search when a time limit is exceeded or for other
+        external reasons.
+      </p>
     </blockquote>
 
     <p>IN: <tt>const VertexOrderSmall&amp; vertex_order_small</tt></p>

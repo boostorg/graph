@@ -39,6 +39,18 @@ struct false_predicate
     }
 };
 
+bool step_callback_always_false()
+{
+    return false;
+}
+
+bool step_callback_max_10_steps()
+{
+    static int n = 0;
+    n++;
+    return (n <= 10);
+}
+
 void test_empty_graph_cases()
 {
     typedef boost::adjacency_list< boost::vecS, boost::vecS,
@@ -201,9 +213,37 @@ BOOST_TEST(!got_hit);
 }
 }
 
+void test_step_callback()
+{
+    typedef boost::adjacency_list< boost::vecS, boost::vecS,
+        boost::bidirectionalS >
+        Graph;
+    Graph gEmpty, gLarge;
+    add_vertex(gLarge);
+
+    { // isomorphism exists but search aborted
+        bool got_hit = false;
+        test_callback callback(got_hit, true);
+        bool found = vf2_subgraph_mono(gEmpty, gEmpty, callback,
+            &step_callback_always_false);
+        BOOST_TEST(!found);
+        BOOST_TEST(!got_hit);
+    }
+
+    { // isomorphism exists and found within 10 steps
+        bool got_hit = false;
+        test_callback callback(got_hit, true);
+        bool found = vf2_subgraph_mono(gEmpty, gEmpty, callback,
+            &step_callback_max_10_steps);
+        BOOST_TEST(found);
+        BOOST_TEST(got_hit);
+    }
+}
+
 int main(int argc, char* argv[])
 {
     test_empty_graph_cases();
     test_return_value();
+    test_step_callback();
     return boost::report_errors();
 }
