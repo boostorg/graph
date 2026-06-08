@@ -1,0 +1,174 @@
+<HTML>
+<!--
+     Distributed under the Boost Software License, Version 1.0.
+     (See accompanying file LICENSE_1_0.txt or copy at
+     http://www.boost.org/LICENSE_1_0.txt)
+  -->
+<Head>
+<Title>Boost Graph Library: Topological Sort into Levels</Title>
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
+
+<BR Clear>
+
+
+<H1><A NAME="sec:topological-sort-levels">
+<TT>topological_sort_levels</TT>
+</H1>
+
+<PRE>
+// Property-map form. Returns the number of levels.
+template &lt;typename VertexListGraph, typename LevelMap&gt;
+typename graph_traits&lt;VertexListGraph&gt;::vertices_size_type
+topological_sort_levels(const VertexListGraph&amp; g, LevelMap level);
+
+template &lt;typename VertexListGraph, typename LevelMap,
+          typename P, typename T, typename R&gt;
+typename graph_traits&lt;VertexListGraph&gt;::vertices_size_type
+topological_sort_levels(const VertexListGraph&amp; g, LevelMap level,
+    const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>);
+
+// Convenience form. Fills <tt>levels</tt> so that <tt>levels[k]</tt> contains
+// every vertex assigned to level <i>k</i>.
+template &lt;typename VertexListGraph&gt;
+void topological_sort_levels(const VertexListGraph&amp; g,
+    std::vector&lt;std::vector&lt;
+        typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor&gt; &gt;&amp; levels);
+
+template &lt;typename VertexListGraph, typename P, typename T, typename R&gt;
+void topological_sort_levels(const VertexListGraph&amp; g,
+    std::vector&lt;std::vector&lt;
+        typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor&gt; &gt;&amp; levels,
+    const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>);
+</PRE>
+
+<P>
+A variant of <a href="./topological_sort.html"><tt>topological_sort</tt></a>
+that groups vertices into levels rather than producing a single linear
+ordering. Following BGL's edge convention, an edge <i>(u, v)</i> means <i>u</i>
+must precede <i>v</i>; equivalently <i>level(u) &lt; level(v)</i>. Level 0
+contains every vertex with no incoming edges. For <i>k &gt; 0</i>, level
+<i>k</i> contains every vertex whose deepest predecessor lies at level
+<i>k - 1</i>.
+</P>
+
+<P>
+The graph must be a directed acyclic graph (DAG). If it contains a cycle a
+<a href="./exception.html#not_a_dag"><tt>not_a_dag</tt></a> exception is
+thrown.
+</P>
+
+<P>
+Note on direction: <a href="./topological_sort.html"><tt>topological_sort</tt></a>
+emits its output in <b>reverse</b> topological order (sinks first when read in
+iteration order) and most users reverse the result to consume it forward.
+<tt>topological_sort_levels</tt> writes levels forward natively: <tt>levels[0]</tt>
+holds the sources and <tt>levels[n-1]</tt> the sinks.
+</P>
+
+<P>
+The implementation is Kahn's algorithm: it scans out-edges once to compute
+in-degrees, then peels off zero-in-degree vertices in waves.
+</P>
+
+<h3>Where Defined:</h3>
+<a href="../../../boost/graph/topological_sort_levels.hpp"><TT>boost/graph/topological_sort_levels.hpp</TT></a>
+
+<h3>Parameters</h3>
+
+IN: <tt>const VertexListGraph&amp; g</tt>
+<blockquote>
+  A directed acyclic graph (DAG). The graph type must be a model of
+  <a href="./VertexListGraph.html">Vertex List Graph</a> and
+  <a href="./IncidenceGraph.html">Incidence Graph</a>.
+  If the graph is not a DAG, a
+  <a href="./exception.html#not_a_dag"><tt>not_a_dag</tt></a> exception is
+  thrown and the contents of the output parameter are unspecified.
+</blockquote>
+
+OUT: <tt>LevelMap level</tt>
+<blockquote>
+  After the call, <tt>get(level, v)</tt> is the level of vertex <i>v</i>.
+  Must be a model of
+  <a href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
+  Property Map</a> whose key type is the graph's vertex descriptor and whose
+  value type is convertible from
+  <tt>graph_traits&lt;VertexListGraph&gt;::vertices_size_type</tt>.
+</blockquote>
+
+OUT: <tt>std::vector&lt;std::vector&lt;vertex_descriptor&gt; &gt;&amp; levels</tt>
+<blockquote>
+  (Convenience overload.) Resized to hold one inner vector per level. On
+  return, <tt>levels[k]</tt> contains every vertex at level <i>k</i>. The
+  order of vertices within a level is unspecified.
+</blockquote>
+
+<h3>Named Parameters</h3>
+
+IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
+<blockquote>
+  Maps each vertex to an integer in <tt>[0, num_vertices(g))</tt>, used
+  internally to store running in-degrees. The type must be a model of
+  <a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
+  Map</a> whose key type is the graph's vertex descriptor and whose value
+  type is an integer.<br>
+  <b>Default:</b> <tt>get(vertex_index, g)</tt>. If you use this default,
+  make sure your graph has an internal <tt>vertex_index</tt> property
+  (e.g. <tt>adjacency_list&lt;…, vecS, …&gt;</tt>).
+</blockquote>
+
+<H3>Return Value</H3>
+
+The property-map overloads return the number of levels (one more than the
+longest path length in the DAG, or 0 if the graph is empty).
+
+<H3>Complexity</H3>
+
+<i>O(V + E)</i> time and <i>O(V)</i> auxiliary space.
+
+<H3>Example</H3>
+
+<P>
+A diamond DAG with edges <i>0 &rarr; 1, 0 &rarr; 2, 1 &rarr; 3, 2 &rarr; 3</i>
+has three levels: <i>{0}, {1, 2}, {3}</i>.
+</P>
+
+<PRE>
+  typedef boost::adjacency_list&lt;boost::vecS, boost::vecS, boost::directedS&gt; Graph;
+  typedef boost::graph_traits&lt;Graph&gt;::vertex_descriptor Vertex;
+
+  Graph g(4);
+  add_edge(0, 1, g);
+  add_edge(0, 2, g);
+  add_edge(1, 3, g);
+  add_edge(2, 3, g);
+
+  std::vector&lt;std::vector&lt;Vertex&gt; &gt; levels;
+  boost::topological_sort_levels(g, levels);
+
+  for (std::size_t k = 0; k &lt; levels.size(); ++k) {
+    std::cout &lt;&lt; "level " &lt;&lt; k &lt;&lt; ":";
+    for (std::size_t i = 0; i &lt; levels[k].size(); ++i)
+      std::cout &lt;&lt; ' ' &lt;&lt; levels[k][i];
+    std::cout &lt;&lt; '\n';
+  }
+</PRE>
+The output is:
+<PRE>
+  level 0: 0
+  level 1: 1 2
+  level 2: 3
+</PRE>
+
+<P>
+Motivation:
+<a href="https://github.com/boostorg/graph/issues/240">issue&nbsp;#240</a>.
+</P>
+
+<br>
+<HR>
+
+</BODY>
+</HTML>
