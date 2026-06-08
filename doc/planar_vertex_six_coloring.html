@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<!--
+     Copyright (c) Hermann Stamm-Wilbrandt 2024
+
+     Distributed under the Boost Software License, Version 1.0.
+     (See accompanying file LICENSE_1_0.txt or copy at
+     http://www.boost.org/LICENSE_1_0.txt)
+  -->
+  <head>
+    <title>Boost Graph Library: Planar Vertex Six Coloring</title>
+  </head>
+
+  <body>
+    <IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
+<h1><tt>planar_vertex_six_coloring</tt></h1>
+
+    <p>
+    <pre>
+template&lt;class VertexListGraph, class ColorMap&gt;
+typename property_traits&lt;ColorMap&gt;::value_type
+planar_vertex_six_coloring(const VertexListGraph&amp; g, ColorMap color);
+    </pre>
+
+<p>Computes a <a href="graph_coloring.html">vertex coloring</a> for
+the vertices in the planar graph in linear time, using at most 6 colors.<br>
+Planar graphs can always be vertex colored with 4 colors, there 
+is a <a href="https://en.wikipedia.org/wiki/Four_color_theorem#Simplification_and_verification">quadratic time algorithm</a>.<br>
+Boost <a href="sequential_vertex_coloring.html">sequential_vertex_coloring</a> can be forced to use any number <em>k</em> of colors for a crafted planar graph (first test graph).
+
+<p>Here is the vertex coloring with 5 colors determined for icosahedron.
+
+<p><img src="figs/planar_vertex_coloring_with_5.png">  
+
+<p>Planar graphs with <em>n</em> vertices have at most <em>3n-6</em> edges. Therefore always a vertex of degree &#x2264;5 exists. Algorithm removes such "small" vertices until the graph becomes empty. Then the vertices are colored in reverse order they were removed, with the smallest color different to its at most 5 neighbors when it was removed. Therefore at most 6 colors are needed.
+
+<h3>Where Defined</h3>
+<a href="../../../boost/graph/planar_vertex_six_coloring.hpp"><tt>boost/graph/planar_vertex_six_coloring.hpp</tt></a>
+
+<h3>Parameters</h3>
+IN: <tt>const Graph&amp; g</tt>
+<blockquote>
+  The graph object on which the algorithm will be applied.  The type
+  <tt>Graph</tt> must be a model of <a
+  href="VertexListGraph.html">Vertex List Graph</a> and <a
+  href="AdjacencyGraph.html">Adjacency Graph</a>.<br>
+</blockquote>
+
+OUT: <tt>ColorMap color</tt>
+<blockquote>
+  This property map records the colors of each vertex. It must be a
+  model of
+  <a href="../../property_map/doc/WritablePropertyMap.html">Writeable
+  Property Map</a> whose key type is the same as the vertex descriptor
+  type of the graph and whose value type is an integral type that can
+  store all values of the graph's <tt>vertices_size_type</tt>.<br>
+</blockquote>
+
+<h3>Complexity</h3>
+
+The time complexity is <em>O(V)</em>, where <em>V</em> is the
+number of vertices of the planar graph.<br>
+This runtime is only possible using <a href="undirected_graph_constant_time_edge_add_and_remove.html">undirected_graph_constant_time_edge_add_and_remove</a> providing <em>O(1)</em> remove_edge().
+
+<h3>Example</h3>
+<a href="../example/planar_vertex_six_coloring.cpp"><tt>boost/graph/example/planar_vertex_six_coloring.cpp</tt></a>
+
+<pre>
+  template< class graph >  void simple_maximal_planar_random_graph(graph& g, int n);  // see example
+  typedef adjacency_list< listS, vecS, undirectedS > Graph;
+  typedef graph_traits< Graph >::vertices_size_type vertices_size_type;
+
+  Graph g;
+  simple_maximal_planar_random_graph(g, 1000000);
+
+  std::vector< vertices_size_type > color_vec(num_vertices(g));
+  auto color = make_container_vertex_map(color_vec, g);
+  <b>vertices_size_type num_colors = planar_vertex_six_coloring(g, color);</b>
+</pre>
+
+<h3>Test</h3>
+<a href="../test/planar_vertex_six_coloring.cpp"><tt>boost/graph/test/planar_vertex_six_coloring.cpp</tt></a> test determines vertex coloring for three planar graphs:  
+<ol>
+<li>"Fibonacci graph" (for k=15), with <em>fib(k+1)</em> vertices and <em>fib(k+2)-2</em> edges
+<li> <a href="../test/planar_input_graphs/pentakis_dodecahedron.leda"><tt>boost/graph/test/planar_input_graphs/pentakis_dodecahedron.leda</tt></a>
+<li> <a href="../test/planar_input_graphs/maximal_planar_1000.leda"><tt>boost/graph/test/planar_input_graphs/maximal_planar_1000.leda</tt></a>
+</ol>
+With 15/5/6 colors used by sequential_vertex_coloring() and 6/4/6 colors used by planar_vertex_six_coloring().
+
+<hr>
+
+<TABLE>
+<TR valign=top>
+<TD nowrap>Copyright &copy; 2024</TD><TD>
+<A HREF="https://github.com/Hermann-SW/">Hermann Stamm-Wilbrandt</A> (<A
+HREF="mailto:hermann@stamm-wilbrandt.de">hermann@stamm-wilbrandt.de</A>)
+</TD></TR></TABLE>
+
+</BODY>
+</HTML>

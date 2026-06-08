@@ -1,0 +1,91 @@
+<HTML>
+<!--
+     Copyright (c) Hermann Stamm-Wilbrandt 2024
+
+     Distributed under the Boost Software License, Version 1.0.
+     (See accompanying file LICENSE_1_0.txt or copy at
+     http://www.boost.org/LICENSE_1_0.txt)
+  -->
+<Head>
+<Title>Boost Graph Library: Undirected Graph with constant time edge add and remove</Title>
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
+
+<BR Clear>
+
+<H1><A NAME="sec:undirected-graph-class"></A>
+<pre>
+undirected_graph_constant_time_edge_add_and_remove&lt;VertexProp, EdgeProp, GraphProp&gt;
+</pre>
+</H1>
+
+
+<P>
+The <tt>undirected_graph_constant_time_edge_add_and_remove</tt> class template is derived from BGL undirected graph. This class is provided only for constant time edge remove, in case that is not needed use undirected graph instead.
+
+<H3>Example</H3>
+
+An example of using an undirected_graph_constant_time_edge_add_and_remove is available here <a href="../../../libs/graph/example/undirected_graph_constant_time_edge_add_and_remove.cpp"><tt>libs/graph/example/undirected_graph_constant_time_edge_add and_remove.cpp</tt></a>. It demonstrates that undirected_graph takes quadratic time while undirected_graph_constant_time_edge_and_remove takes only linear time for clearing all outer vertices of wheel graph W<sub>n</sub>.
+<P>
+
+
+<PRE>
+  typedef boost::undirected_graph_constant_time_edge_add_and_remove<
+    boost::no_property, boost::no_property, boost::no_property > Graph;
+  Graph g;
+  typedef typename Graph::vertex_descriptor vertex_descriptor;
+  typedef typename Graph::edge_descriptor edge_descriptor;
+
+  vertex_descriptor v0 = g.add_vertex();
+  vertex_descriptor v1 = g.add_vertex();
+  edge_descriptor e = g.add_edge(v0, v1).first;
+  g.remove_edge(e);
+</PRE>
+
+<H3>Template Parameters</H3>
+
+<P>
+<TABLE border>
+<TR>
+<th>Parameter</th><th>Description</th><th>Default</th>
+</tr>
+
+<TR><TD><TT>VertexProp</TT></TD>
+<TD>A property map for the graph vertices.</TD>
+<TD>&nbsp;</TD>
+</TR>
+
+<TR>
+<TD><TT>EdgeProp</TT></TD>
+<TD>A property map for the graph edges.</TD>
+<TD>&nbsp;</TD>
+</TR>
+
+<TR>
+<TD><TT>GraphProp</TT></TD>
+<TD>A property map for the graph itself.</TD>
+</TR>
+
+</TABLE>
+<P>
+
+<H3>Where Defined</H3>
+
+<P>
+<a href="../../../boost/graph/undirected_graph_constant_time_edge_add_and_remove.hpp"><TT>boost/graph/undirected_graph_constant_time_edge_add_and_remove.hpp</TT></a>
+
+<P>
+
+<br>
+<HR>
+<TABLE>
+<TR valign=top>
+<TD nowrap>Copyright &copy; 2024</TD><TD>
+<A HREF="https://github.com/Hermann-SW/">Hermann Stamm-Wilbrandt</A> (<A
+HREF="mailto:hermann@stamm-wilbrandt.de">hermann@stamm-wilbrandt.de</A>)
+</TD></TR></TABLE>
+
+</BODY>
+</HTML>
