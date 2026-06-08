@@ -1,0 +1,209 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+<head>
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
+
+  <title>Boost Link/Cut Trees</title>
+</head>
+
+<body bgcolor="#FFFFFF" link="#0000EE" text="#000000" vlink="#551A8B" alink=
+"#FF0000">
+  <img src="../../../boost.png" alt="C++ Boost" width="277" height=
+  "86"><br clear="none">
+
+  <h1><a name="sec:link-cut-trees" id="sec:link-cut-trees"></a> Link/Cut Trees</h1>
+  <pre>link_cut_trees&lt;ElementParentMap, ElementChildMap&gt;</pre>
+
+  <p>A link/cut-trees data structure
+  maintains a forest of element nodes subject to dynamic linking and cutting operations.
+  Rooted trees are encoded in both the <tt>ElementParentMap</tt> and <tt>ElementChildMap</tt>
+  property maps. Splay trees are used internally to represent every link/cut-tree [<a href="bibliography.html#tarjan83">77</a>]..</p>
+
+  <h3>Where Defined</h3><a href=
+  "../../../boost/graph/link_cut_trees.hpp"><tt>boost/graph/link_cut_trees.hpp</tt></a>
+
+  <h3>Template Parameters</h3>
+
+  <table border summary="">
+    <tr>
+      <td><tt>ElementParentMap</tt></td>
+
+      <td>Must be a model of <a href=
+      "../../property_map/doc/ReadWritePropertyMap.html">ReadWritePropertyMap</a>
+      and the key and value type the same as the trees' element type.</td>
+    </tr>
+
+    <tr>
+      <td><tt>ElementChildMap</tt></td>
+
+      <td>Default the same as <tt>ElementParentMap</tt>. Also must be a model of <a href=
+      "../../property_map/doc/ReadWritePropertyMap.html">ReadWritePropertyMap</a>
+      and the key and value type the same as the trees' element type.</td>
+    </tr>
+  </table>
+
+  <h3>Example</h3>
+
+  <p>A typical usage pattern for <tt>link_cut_trees</tt> can be seen in the
+  dynamic connectivity problem for acyclic graphs. Given two nodes <tt>x</tt> and <tt>y</tt>, 
+  they are connected if and only if <tt>find_root(x) == find_root(y)</tt>.</p>
+
+  <pre>
+  ...
+  link_cut_trees&lt;ElementParentMap, ElementChildMap&gt; lct(parent_map, left_child_map, right_child_map);
+
+  for (ui = vertices(G).first; ui != vertices(G).second; ++ui)
+    lct.make_tree(*ui);
+  ...
+  while ( !Q.empty() ) {
+    e = Q.front();
+    Q.pop();
+    u = lct.find_root(source(e));
+    v = lct.find_root(target(e));
+    if ( u != v ) {
+      *out++ = e;
+      lct.link(u, v);
+    }
+  }
+  ...
+  for (ui = vertices(G).first; ui != vertices(G).second; ++ui)
+    lct.cut(*ui);
+</pre>
+
+  <h3>Members</h3>
+
+  <table border summary="">
+    <tr>
+      <th>Member</th>
+
+      <th>Description</th>
+    </tr>
+
+    <tr>
+      <td><tt>link_cut_trees(ElementParentMap p, ElementChildMap l, ElementChildMap r)</tt></td>
+
+      <td>Constructor.</td>
+    </tr>
+
+    <tr>
+      <td><tt>link_cut_trees(const link_cut_trees&amp; c)</tt></td>
+
+      <td>Copy constructor.</td>
+    </tr>
+
+    <tr>
+      <td><tt>template &lt;class Element&gt;<br>
+      void make_tree(Element x)</tt></td>
+
+      <td>Create a singleton tree containing element <tt>x</tt>.</td>
+    </tr>
+
+    <tr>
+      <td><tt>template &lt;class Element&gt;<br>
+      Element find_root(Element x)</tt></td>
+
+      <td>Return the root of the tree containing element <tt>x</tt>.</td>
+    </tr>
+
+    <tr>
+      <td><tt>template &lt;class Element&gt;<br>
+      void link(Element x, Element y)</tt></td>
+
+      <td>Make the tree rooted at element <tt>x</tt> a subtree of Element <tt>y</tt>. Element <tt>x</tt> must be a tree root.</td>
+    </tr>
+
+    <tr>
+      <td><tt>template &lt;class Element&gt;<br>
+      void cut(Element x)</tt></td>
+
+      <td>Remove the edge connecting <tt>x</tt> to its parent and make <tt>x</tt> a tree root.</td>
+    </tr>
+
+    <tr>
+      <td><tt>template &lt;class Element&gt;<br>
+      Element lowest_common_ancestor(Element x, Element y)</tt></td>
+
+      <td>Return the lowest (i.e. nearest) common ancestor of elements <tt>x</tt> and <tt>y</tt>. Elements <tt>x</tt> and <tt>y</tt> must have the same root.</td>
+    </tr>
+
+  </table>
+
+  <h3>Complexity</h3>
+
+  <p>The amortized time complexity is <i>O(log n)</i> for <tt>link</tt>, <tt>cut</tt>, <tt>find_root</tt> and <tt>lowest_common_ancestor</tt> operations,
+   where <i>n</i> is the number of tree nodes. Operation <tt>make_tree</tt> is of constant time complexity.</p>
+
+  <hr>
+  <pre>link_cut_trees_with_storage&lt;ID, InverseID&gt;</pre>
+
+  <p>This class manages the storage for the parent and children properties
+  internally. The storage is in <tt>boost::unordered_map</tt>, which is indexed by element ID,
+  hence the requirement for the <tt>ID</tt> and <tt>InverseID</tt> functors.
+
+  <h3>Template Parameters</h3>
+
+  <table border summary="">
+    <tr>
+      <th>Parameter</th>
+
+      <th>Description</th>
+
+      <th>Default</th>
+    </tr>
+
+    <tr>
+      <td><tt>ID</tt></td>
+
+      <td>must be a model of <a href=
+      "../../property_map/doc/ReadablePropertyMap.html">ReadablePropertyMap</a> that
+      maps elements to values of any type that can be hashed to <tt>std::size_t</tt>.</td>
+
+      <td><tt>boost::identity_property_map</tt></td>
+    </tr>
+
+    <tr>
+      <td><tt>InverseID</tt></td>
+
+      <td>must be a model of <a href=
+      "../../property_map/doc/ReadablePropertyMap.html">ReadablePropertyMap</a> that
+      maps values of <tt>property_traits&lt;ID&gt;::value_type</tt> to elements.</td>
+
+      <td><tt>boost::unordered_map</tt></td>
+    </tr>
+
+  </table>
+
+  <h3>Members</h3>
+
+  <p>This class has all of the members in <tt>link_cut_trees</tt> as well as
+  the following constructor.</p>
+  <pre>link_cut_trees_with_storage(ID id = ID(), InverseID inverse_id = InverseID())</pre>
+
+  <hr>
+
+  <p><a href="http://validator.w3.org/check?uri=referer"><img border="0" src=
+  "../../doc/images/valid-html401.png" alt="Valid HTML 4.01 Transitional"
+  height="31" width="88"></a></p>
+
+  <p>Revised
+  <!--webbot bot="Timestamp" s-type="EDITED" s-format="%d %B, %Y" startspan -->
+  June, 2020<!--webbot bot="Timestamp" endspan i-checksum="38508" --></p>
+
+  <table summary="">
+    <tr valign="top">
+      <td nowrap><i>Copyright &copy; 2019</i></td>
+
+      <td>
+        <i><a>Yi Ji</a>, Peking University (<a href="mailto:jiy@pku.edu.cn">jiy@pku.edu.cn</a>)<br>
+      </td>
+    </tr>
+  </table>
+
+  <p><i>Distributed under the Boost Software License, Version 1.0. (See
+  accompanying file <a href="../../LICENSE_1_0.txt">LICENSE_1_0.txt</a> or
+  copy at <a href=
+  "http://www.boost.org/LICENSE_1_0.txt">http://www.boost.org/LICENSE_1_0.txt</a>)</i></p>
+</body>
+</html>

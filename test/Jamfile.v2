@@ -120,8 +120,7 @@ alias graph_test_regular :
     [ run cuthill_mckee_ordering.cpp ]
     [ run king_ordering.cpp ]
     [ run matching_test.cpp ]
-    [ run weighted_matching_test.cpp : $(WEIGHTED_MATCHING_INPUT_FILE) ]
-    [ run weighted_matching_test2.cpp ]
+    [ run weighted_matching_test.cpp ]
     [ run max_flow_test.cpp ]
     [ run boykov_kolmogorov_max_flow_test.cpp ]
     [ run cycle_ratio_tests.cpp /boost/graph//boost_graph : $(CYCLE_RATIO_INPUT_FILE) ]
@@ -174,6 +173,7 @@ alias graph_test_regular :
     [ run delete_edge.cpp ]
     [ run johnson-test.cpp ]
     [ run lvalue_pmap.cpp ]
+    [ run link_cut_trees_test.cpp ]
     ;
 
 alias graph_test_with_filesystem : :
