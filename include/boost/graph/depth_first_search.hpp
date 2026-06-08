@@ -263,7 +263,7 @@ namespace detail
 } // namespace detail
 
 template < class VertexListGraph, class DFSVisitor, class ColorMap >
-void depth_first_search(const VertexListGraph& g, DFSVisitor vis,
+DFSVisitor depth_first_search(const VertexListGraph& g, DFSVisitor vis,
     ColorMap color,
     typename graph_traits< VertexListGraph >::vertex_descriptor start_vertex)
 {
@@ -298,18 +298,19 @@ void depth_first_search(const VertexListGraph& g, DFSVisitor vis,
                 g, u, vis, color, detail::nontruth2());
         }
     }
+    return vis;
 }
 
 template < class VertexListGraph, class DFSVisitor, class ColorMap >
-void depth_first_search(
+DFSVisitor depth_first_search(
     const VertexListGraph& g, DFSVisitor vis, ColorMap color)
 {
     typedef typename boost::graph_traits< VertexListGraph >::vertex_iterator vi;
     std::pair< vi, vi > verts = vertices(g);
     if (verts.first == verts.second)
-        return;
+        return vis;
 
-    depth_first_search(g, vis, color, detail::get_default_starting_vertex(g));
+    return depth_first_search(g, vis, color, detail::get_default_starting_vertex(g));
 }
 
 template < class Visitors = null_visitor > class dfs_visitor
@@ -409,22 +410,24 @@ namespace graph
 BOOST_GRAPH_MAKE_OLD_STYLE_PARAMETER_FUNCTION(depth_first_search, 1)
 
 template < class IncidenceGraph, class DFSVisitor, class ColorMap >
-void depth_first_visit(const IncidenceGraph& g,
+DFSVisitor depth_first_visit(const IncidenceGraph& g,
     typename graph_traits< IncidenceGraph >::vertex_descriptor u,
     DFSVisitor vis, ColorMap color)
 {
     vis.start_vertex(u, g);
     detail::depth_first_visit_impl(g, u, vis, color, detail::nontruth2());
+    return vis;
 }
 
 template < class IncidenceGraph, class DFSVisitor, class ColorMap,
     class TerminatorFunc >
-void depth_first_visit(const IncidenceGraph& g,
+DFSVisitor depth_first_visit(const IncidenceGraph& g,
     typename graph_traits< IncidenceGraph >::vertex_descriptor u,
     DFSVisitor vis, ColorMap color, TerminatorFunc func = TerminatorFunc())
 {
     vis.start_vertex(u, g);
     detail::depth_first_visit_impl(g, u, vis, color, func);
+    return vis;
 }
 } // namespace boost
 
