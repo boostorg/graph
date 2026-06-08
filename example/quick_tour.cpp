@@ -20,7 +20,7 @@ using namespace boost;
 template < class Graph > struct exercise_vertex
 {
     exercise_vertex(Graph& g_, const char name_[]) : g(g_), name(name_) {}
-    typedef typename graph_traits< Graph >::vertex_descriptor Vertex;
+    using Vertex = typename graph_traits< Graph >::vertex_descriptor;
     void operator()(const Vertex& v) const
     {
         using namespace boost;
@@ -67,10 +67,9 @@ template < class Graph > struct exercise_vertex
 
 int main(int, char*[])
 {
-    // create a typedef for the Graph type
-    typedef adjacency_list< vecS, vecS, bidirectionalS, no_property,
-        property< edge_weight_t, float > >
-        Graph;
+    // create an alias for the Graph type
+    using Graph = adjacency_list< vecS, vecS, bidirectionalS, no_property,
+        property< edge_weight_t, float > >;
 
     // Make convenient labels for the vertices
     enum
@@ -86,7 +85,7 @@ int main(int, char*[])
     const char name[] = "ABCDE";
 
     // writing out the edges in the graph
-    typedef std::pair< int, int > Edge;
+    using Edge = std::pair< int, int >;
     Edge edge_array[] = {
         Edge(A, B),
         Edge(A, D),
@@ -125,7 +124,7 @@ int main(int, char*[])
         = get(edge_weight, g);
 
     std::cout << "vertices(g) = ";
-    typedef graph_traits< Graph >::vertex_iterator vertex_iter;
+    using vertex_iter = graph_traits< Graph >::vertex_iterator;
     std::pair< vertex_iter, vertex_iter > vp;
     for (vp = vertices(g); vp.first != vp.second; ++vp.first)
         std::cout << name[get(vertex_id, *vp.first)] << " ";

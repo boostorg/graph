@@ -25,7 +25,7 @@
 template < class Distance >
 struct total_length_visitor : public boost::dijkstra_visitor<>
 {
-    typedef typename boost::property_traits< Distance >::value_type D;
+    using D = typename boost::property_traits< Distance >::value_type;
     total_length_visitor(D& len, Distance d) : _total_length(len), _distance(d)
     {
     }

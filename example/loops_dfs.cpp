@@ -57,7 +57,7 @@ void find_loops(typename graph_traits< Graph >::vertex_descriptor entry,
     Loops& loops) // A container of sets of vertices
 {
     BOOST_CONCEPT_ASSERT((BidirectionalGraphConcept< Graph >));
-    typedef typename graph_traits< Graph >::edge_descriptor Edge;
+    using Edge = typename graph_traits< Graph >::edge_descriptor;
     std::vector< Edge > back_edges;
     std::vector< default_color_type > color_map(num_vertices(g));
     depth_first_visit(g, entry,
@@ -80,8 +80,8 @@ void compute_loop_extent(
     Set& loop_set)
 {
     BOOST_CONCEPT_ASSERT((BidirectionalGraphConcept< Graph >));
-    typedef typename graph_traits< Graph >::vertex_descriptor Vertex;
-    typedef color_traits< default_color_type > Color;
+    using Vertex = typename graph_traits< Graph >::vertex_descriptor;
+    using Color = color_traits< default_color_type >;
 
     Vertex loop_head, loop_tail;
     loop_tail = source(back_edge, g);
@@ -117,10 +117,9 @@ int main(int argc, char* argv[])
     GraphvizDigraph g_in;
     read_graphviz(argv[1], g_in);
 
-    typedef adjacency_list< vecS, vecS, bidirectionalS, GraphvizVertexProperty,
-        GraphvizEdgeProperty, GraphvizGraphProperty >
-        Graph;
-    typedef graph_traits< Graph >::vertex_descriptor Vertex;
+    using Graph = adjacency_list< vecS, vecS, bidirectionalS,
+        GraphvizVertexProperty, GraphvizEdgeProperty, GraphvizGraphProperty >;
+    using Vertex = graph_traits< Graph >::vertex_descriptor;
 
     Graph g;
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
@@ -130,8 +129,8 @@ int main(int argc, char* argv[])
 
     copy_graph(g_in, g);
 
-    typedef std::set< Vertex > set_t;
-    typedef std::list< set_t > list_of_sets_t;
+    using set_t = std::set< Vertex >;
+    using list_of_sets_t = std::list< set_t >;
     list_of_sets_t loops;
     auto entry = *vertices(g).first;
 

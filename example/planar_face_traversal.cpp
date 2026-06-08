@@ -43,9 +43,8 @@ struct edge_output_visitor : public output_visitor
 int main(int argc, char** argv)
 {
 
-    typedef adjacency_list< vecS, vecS, undirectedS,
-        property< vertex_index_t, int >, property< edge_index_t, int > >
-        graph;
+    using graph = adjacency_list< vecS, vecS, undirectedS,
+        property< vertex_index_t, int >, property< edge_index_t, int > >;
 
     // Create a graph - this is a biconnected, 3 x 3 grid.
     // It should have four small (four vertex/four edge) faces and
@@ -79,7 +78,7 @@ int main(int argc, char** argv)
 
     // Test for planarity - we know it is planar, we just want to
     // compute the planar embedding as a side-effect
-    typedef std::vector< graph_traits< graph >::edge_descriptor > vec_t;
+    using vec_t = std::vector< graph_traits< graph >::edge_descriptor >;
     std::vector< vec_t > embedding(num_vertices(g));
     if (boyer_myrvold_planarity_test(boyer_myrvold_params::graph = g,
             boyer_myrvold_params::embedding = &embedding[0]))

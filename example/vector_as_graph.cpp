@@ -30,7 +30,7 @@ int main()
         y
     };
     char name[] = "rstuvwxy";
-    typedef std::vector< std::list< int > > Graph;
+    using Graph = std::vector< std::list< int > >;
     Graph g = { { v }, // r
         { r, r, w }, // s
         { x }, // t

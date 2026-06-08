@@ -19,7 +19,7 @@
 int main()
 {
     using namespace boost;
-    typedef adjacency_list< vecS, vecS, bidirectionalS > Graph;
+    using Graph = adjacency_list< vecS, vecS, bidirectionalS >;
 
     Graph G(5);
     add_edge(0, 2, G);

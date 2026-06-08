@@ -42,12 +42,11 @@ int main(int, char*[])
 {
     using namespace boost;
 
-    typedef adjacency_list< listS, vecS, directedS, no_property,
-        property< edge_weight_t, int > >
-        Graph;
-    typedef graph_traits< Graph >::vertex_descriptor Vertex;
+    using Graph = adjacency_list< listS, vecS, directedS, no_property,
+        property< edge_weight_t, int > >;
+    using Vertex = graph_traits< Graph >::vertex_descriptor;
 
-    typedef std::pair< int, int > E;
+    using E = std::pair< int, int >;
 
     const char name[] = "abcdef";
 

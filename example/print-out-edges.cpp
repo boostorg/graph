@@ -17,7 +17,7 @@ template < typename Graph, typename VertexNamePropertyMap >
 void read_graph_file(std::istream& graph_in, std::istream& name_in, Graph& g,
     VertexNamePropertyMap name_map)
 {
-    typedef typename graph_traits< Graph >::vertices_size_type size_type;
+    using size_type = typename graph_traits< Graph >::vertices_size_type;
     size_type n_vertices;
     typename graph_traits< Graph >::vertex_descriptor u;
     typename property_traits< VertexNamePropertyMap >::value_type name;
@@ -74,13 +74,12 @@ inline name_equals_t< NameMap > name_equals(
 
 int main(int argc, const char** argv)
 {
-    typedef adjacency_list< listS, // Store out-edges of each vertex in a
-                                   // std::list
+    using graph_type = adjacency_list< listS, // Store out-edges of each vertex
+                                              // in a std::list
         vecS, // Store vertex set in a std::vector
         directedS, // The graph is directed
         property< vertex_name_t, std::string > // Add a vertex property
-        >
-        graph_type;
+        >;
 
     graph_type g; // use default constructor to create empty graph
     const char* dep_file_name
@@ -107,7 +106,7 @@ int main(int argc, const char** argv)
 
     graph_traits< graph_type >::vertex_iterator i, end;
     boost::tie(i, end) = vertices(g);
-    typedef property_map< graph_type, vertex_name_t >::type name_map_t;
+    using name_map_t = property_map< graph_type, vertex_name_t >::type;
     name_equals_t< name_map_t > predicate("dax.h", get(vertex_name, g));
     i = std::find_if(i, end, predicate);
     output_out_edges(std::cout, g, *i, get(vertex_name, g));

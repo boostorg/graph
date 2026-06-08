@@ -71,16 +71,15 @@ int main(int, char*[])
     using namespace std;
 
     // Defining the graph type
-    typedef adjacency_list< setS, vecS, undirectedS,
+    using Graph = adjacency_list< setS, vecS, undirectedS,
         property< vertex_color_t, default_color_type,
             property< vertex_degree_t, int,
-                property< vertex_priority_t, double > > > >
-        Graph;
+                property< vertex_priority_t, double > > > >;
 
-    typedef graph_traits< Graph >::vertex_descriptor Vertex;
-    typedef graph_traits< Graph >::vertices_size_type size_type;
+    using Vertex = graph_traits< Graph >::vertex_descriptor;
+    using size_type = graph_traits< Graph >::vertices_size_type;
 
-    typedef std::pair< std::size_t, std::size_t > Pair;
+    using Pair = std::pair< std::size_t, std::size_t >;
 
     Pair edges[14] = { Pair(0, 3), // a-d
         Pair(0, 5), // a-f

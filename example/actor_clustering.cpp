@@ -34,11 +34,10 @@ struct Actor
     int id;
 };
 
-typedef adjacency_list< vecS, vecS, undirectedS, Actor,
-    property< edge_centrality_t, double > >
-    ActorGraph;
-typedef graph_traits< ActorGraph >::vertex_descriptor Vertex;
-typedef graph_traits< ActorGraph >::edge_descriptor Edge;
+using ActorGraph = adjacency_list< vecS, vecS, undirectedS, Actor,
+    property< edge_centrality_t, double > >;
+using Vertex = graph_traits< ActorGraph >::vertex_descriptor;
+using Edge = graph_traits< ActorGraph >::edge_descriptor;
 
 void load_actor_graph(std::istream& in, ActorGraph& g)
 {
@@ -50,7 +49,7 @@ void load_actor_graph(std::istream& in, ActorGraph& g)
         std::vector< Vertex > actors_in_movie;
 
         // Map from the actor numbers on this line to the actor vertices
-        typedef tokenizer< char_separator< char > > Tok;
+        using Tok = tokenizer< char_separator< char > >;
         Tok tok(line, char_separator< char >(" "));
         for (auto const & id : tok)
         {
@@ -101,7 +100,7 @@ std::ostream& write_pajek_graph(std::ostream& out, const Graph& g,
 
 class actor_clustering_threshold : public bc_clustering_threshold< double >
 {
-    typedef bc_clustering_threshold< double > inherited;
+    using inherited = bc_clustering_threshold< double >;
 
 public:
     actor_clustering_threshold(

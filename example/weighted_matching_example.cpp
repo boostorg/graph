@@ -15,10 +15,10 @@
 
 using namespace boost;
 
-typedef property< edge_weight_t, float, property< edge_index_t, int > >
-    EdgeProperty;
-typedef adjacency_list< vecS, vecS, undirectedS, no_property, EdgeProperty >
-    my_graph;
+using EdgeProperty
+    = property< edge_weight_t, float, property< edge_index_t, int > >;
+using my_graph
+    = adjacency_list< vecS, vecS, undirectedS, no_property, EdgeProperty >;
 
 int main(int argc, const char* argv[])
 {

@@ -61,8 +61,8 @@ int main(int, char*[])
     print_graph(G, name);
     std::cout << std::endl;
 
-    typedef graph_traits<
-        adjacency_list< vecS, vecS, directedS > >::vertex_descriptor Vertex;
+    using Vertex = graph_traits<
+        adjacency_list< vecS, vecS, directedS > >::vertex_descriptor;
 
     std::vector< int > component(num_vertices(G)),
         discover_time(num_vertices(G));

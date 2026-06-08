@@ -47,7 +47,7 @@ public:
     void discover_vertex(
         typename boost::graph_traits< Graph >::vertex_descriptor v, Graph&)
     {
-        typedef typename boost::property_traits< DistanceMap >::value_type Dist;
+        using Dist = typename boost::property_traits< DistanceMap >::value_type;
         // indentation based on depth
         for (Dist i = 0; i < distance[v]; ++i)
             std::cout << "  ";
@@ -80,17 +80,16 @@ int main(int argc, const char** argv)
     //===========================================================================
     // Declare the graph type and object, and some property maps.
 
-    typedef adjacency_list< vecS, vecS, directedS,
+    using Graph = adjacency_list< vecS, vecS, directedS,
         property< vertex_name_t, std::string,
             property< vertex_color_t, default_color_type > >,
-        property< edge_name_t, std::string, property< edge_weight_t, int > > >
-        Graph;
+        property< edge_name_t, std::string, property< edge_weight_t, int > > >;
 
-    typedef graph_traits< Graph > Traits;
-    typedef Traits::vertex_descriptor Vertex;
-    typedef Traits::edge_descriptor Edge;
+    using Traits = graph_traits< Graph >;
+    using Vertex = Traits::vertex_descriptor;
+    using Edge = Traits::edge_descriptor;
 
-    typedef std::map< std::string, Vertex > NameVertexMap;
+    using NameVertexMap = std::map< std::string, Vertex >;
     NameVertexMap name2vertex;
     Graph g;
 
@@ -149,8 +148,8 @@ int main(int argc, const char** argv)
     //===========================================================================
     // Calculate the diameter of the graph.
 
-    typedef Traits::vertices_size_type size_type;
-    typedef std::vector< size_type > IntVector;
+    using size_type = Traits::vertices_size_type;
+    using IntVector = std::vector< size_type >;
     // Create N x N matrix for storing the shortest distances
     // between each vertex. Initialize all distances to zero.
     std::vector< IntVector > d_matrix(

@@ -29,10 +29,9 @@ int main()
         cout << "Number " << i << " is in bucket " << bucket[i] << endl;
     }
 
-    typedef boost::identity_property_map ID;
-    typedef bucket_sorter< std::size_t, int, vector< std::size_t >::iterator,
-        ID >
-        BS;
+    using ID = boost::identity_property_map;
+    using BS = bucket_sorter< std::size_t, int, vector< std::size_t >::iterator,
+        ID >;
     BS my_bucket_sorter(N, N, bucket.begin());
 
     for (std::size_t ii = 0; ii < N; ii++)

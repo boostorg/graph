@@ -24,7 +24,7 @@ public:
 
 int main()
 {
-    typedef std::pair< int, int > E;
+    using E = std::pair< int, int >;
     const char* urls[6] = {
         "http://www.boost.org/libs/graph/doc/index.html",
         "http://www.boost.org/libs/graph/doc/table_of_contents.html",
@@ -37,7 +37,7 @@ int main()
     E the_edges[] = { E(0, 1), E(0, 2), E(0, 3), E(1, 0), E(1, 3), E(1, 5),
         E(2, 0), E(2, 5), E(3, 1), E(3, 4), E(4, 1), E(5, 0), E(5, 2) };
 
-    typedef compressed_sparse_row_graph< directedS, WebPage > WebGraph;
+    using WebGraph = compressed_sparse_row_graph< directedS, WebPage >;
     WebGraph g(boost::edges_are_sorted, &the_edges[0],
         &the_edges[0] + sizeof(the_edges) / sizeof(E), 6);
 

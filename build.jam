@@ -27,6 +27,7 @@ constant boost_dependencies :
     /boost/move//boost_move
     /boost/mpl//boost_mpl
     /boost/multi_index//boost_multi_index
+    /boost/multiprecision//boost_multiprecision
     /boost/optional//boost_optional
     /boost/parameter//boost_parameter
     /boost/preprocessor//boost_preprocessor
@@ -37,7 +38,6 @@ constant boost_dependencies :
     /boost/serialization//boost_serialization
     /boost/smart_ptr//boost_smart_ptr
     /boost/spirit//boost_spirit
-    /boost/static_assert//boost_static_assert
     /boost/throw_exception//boost_throw_exception
     /boost/tti//boost_tti
     /boost/tuple//boost_tuple

@@ -38,15 +38,13 @@
 int main(int, char*[])
 {
     using namespace boost;
-    // typedef adjacency_list_traits<vecS, vecS, directedS> Traits;// Does
+    // using Traits = adjacency_list_traits<vecS, vecS, directedS>;// Does
     // nothing?
-    typedef property< vertex_color_t, int,
-        property< vertex_name_t, std::string > >
-        VertexProperty;
+    using VertexProperty = property< vertex_color_t, int,
+        property< vertex_name_t, std::string > >;
 
-    typedef subgraph< adjacency_list< vecS, vecS, directedS, VertexProperty,
-        property< edge_index_t, int > > >
-        Graph;
+    using Graph = subgraph< adjacency_list< vecS, vecS, directedS,
+        VertexProperty, property< edge_index_t, int > > >;
 
     const int N = 6;
     Graph G0(N);

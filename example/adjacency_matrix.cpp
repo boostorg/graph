@@ -28,7 +28,7 @@ int main()
 
     // A directed graph
 
-    typedef adjacency_matrix< directedS > Graph;
+    using Graph = adjacency_matrix< directedS >;
     Graph g(N);
     add_edge(B, C, g);
     add_edge(B, F, g);
@@ -52,7 +52,7 @@ int main()
 
     // An undirected graph
 
-    typedef adjacency_matrix< undirectedS > UGraph;
+    using UGraph = adjacency_matrix< undirectedS >;
     UGraph ug(N);
     add_edge(B, C, ug);
     add_edge(B, F, ug);

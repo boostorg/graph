@@ -22,7 +22,6 @@ if (NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
         Boost::array
         Boost::assert
         Boost::bimap
-        Boost::bind
         Boost::concept_check
         Boost::config
         Boost::container_hash
@@ -38,6 +37,7 @@ if (NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
         Boost::move
         Boost::mpl
         Boost::multi_index
+        Boost::multiprecision
         Boost::optional
         Boost::parameter
         Boost::preprocessor
@@ -48,7 +48,6 @@ if (NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
         Boost::serialization
         Boost::smart_ptr
         Boost::spirit
-        Boost::static_assert
         Boost::throw_exception
         Boost::tti
         Boost::tuple

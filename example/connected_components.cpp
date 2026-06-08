@@ -40,7 +40,7 @@ int main(int, char*[])
 {
     using namespace boost;
     {
-        typedef adjacency_list< vecS, vecS, undirectedS > Graph;
+        using Graph = adjacency_list< vecS, vecS, undirectedS >;
 
         Graph G;
         add_edge(0, 1, G);

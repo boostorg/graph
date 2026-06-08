@@ -15,7 +15,7 @@
 
 using namespace boost;
 
-typedef adjacency_list< vecS, vecS, undirectedS > my_graph;
+using my_graph = adjacency_list< vecS, vecS, undirectedS >;
 
 int main()
 {
