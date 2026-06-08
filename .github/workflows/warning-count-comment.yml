@@ -44,7 +44,14 @@ jobs:
 
       - name: Resolve PR number
         id: pr
-        run: echo "num=$(gh api "repos/$REPO/commits/$HEAD_SHA/pulls" --jq '.[0].number')" >> "$GITHUB_OUTPUT"
+        run: |
+          num=$(gh api "repos/$REPO/pulls?state=open&per_page=100" \
+                  --jq "map(select(.head.sha==\"$HEAD_SHA\"))[0].number")
+          if [ -z "$num" ]; then
+            echo "no open PR found with head $HEAD_SHA" >&2
+            exit 1
+          fi
+          echo "num=$num" >> "$GITHUB_OUTPUT"
 
       - name: Post or update sticky comment
         uses: marocchino/sticky-pull-request-comment@v2
