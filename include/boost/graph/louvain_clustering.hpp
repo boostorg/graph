@@ -55,7 +55,6 @@ auto aggregate(
     const IndexMap& index_map
 ){
     using vertex_descriptor = typename graph_traits<Graph>::vertex_descriptor;
-    using edge_descriptor = typename graph_traits<Graph>::edge_descriptor;
     using vertex_iterator = typename graph_traits<Graph>::vertex_iterator;
     using edge_iterator = typename graph_traits<Graph>::edge_iterator;
     using community_type = typename property_traits<CommunityMap>::value_type;
@@ -223,7 +222,6 @@ local_optimization_impl(
     
     // Use vertex_index map to support both integral (vecS) and non-integral (listS) vertex descriptors
     auto idx_map = get(vertex_index, g);
-    using index_map_t = decltype(idx_map);
     
     // Storage vectors backing property maps: enables both vertex_descriptor and integer access
     std::vector<weight_type> k_vec(n, weight_type(0));
@@ -240,7 +238,6 @@ local_optimization_impl(
     weight_type Q = f.quality(g, communities, w, k, in, tot, m);
     weight_type Q_new = Q;
     std::size_t num_moves = 0;
-    std::size_t pass_number = 0;
     bool has_rolled_back = false;
     
     // Randomize vertex order once
@@ -262,7 +259,6 @@ local_optimization_impl(
     {
         Q = Q_new;
         num_moves = 0;        
-        pass_number++;
         
         // Lazy save: only save state if we've previously needed to rollback
         if (has_rolled_back) {
@@ -400,7 +396,6 @@ local_optimization_impl(
     weight_type Q = f.quality(g, communities, w);
     weight_type Q_new = Q;
     std::size_t num_moves = 0;
-    std::size_t pass_number = 0;
     bool has_rolled_back = false;
 
     // Pre-allocate rollback buffer
@@ -410,7 +405,6 @@ local_optimization_impl(
     {
         Q = Q_new;
         num_moves = 0;
-        pass_number++;
 
         // Lazy save: only save state if we've previously needed to rollback
         if (has_rolled_back) {
@@ -526,7 +520,6 @@ louvain_clustering(
         "louvain_clustering requires an undirected graph"
     );
 
-    using vertex_descriptor = typename graph_traits<Graph>::vertex_descriptor;
     using weight_type = typename property_traits<WeightMap>::value_type;
     using vertex_iterator = typename graph_traits<Graph>::vertex_iterator;
     
@@ -555,10 +548,7 @@ louvain_clustering(
     auto coarse = louvain_detail::aggregate(g0, partition_idx_map, w0, idx);
     
     std::size_t prev_n_vertices = n;
-    std::size_t iteration = 0;
-
     while (true) {
-        iteration++;
         // Check convergence: graph didn't get smaller (no communities merged)
         std::size_t n_communities = num_vertices(coarse.graph);
         
