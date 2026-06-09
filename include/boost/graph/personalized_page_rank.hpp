@@ -70,7 +70,7 @@ namespace graph
                 l1_norm += v_constant;
             }
             
-            // Maintenance comment:
+            // Accumulate from neighbors.
             for (auto u : boost::make_iterator_range(vertices(g)))
             {
                 rank_type u_rank_factor = damping * get(from_rank, u);
@@ -217,7 +217,7 @@ namespace graph
         typename property_traits< RankMap >::value_type damping=0.85)
     {
         // This is the most traditional personalized PageRank implementation, with minimized signature.
-        using Edge = graph_traits<Graph>::edge_descriptor;
+        using Edge = typename graph_traits<Graph>::edge_descriptor;
         using rank_type = typename property_traits< RankMap >::value_type;
         std::vector< rank_type > ranks2(num_vertices(g));
         auto markovian_weights = make_function_property_map<Edge, double>([&g](Edge e){ return 1.0 / out_degree(source(e, g), g); });
