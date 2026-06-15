@@ -1,0 +1,170 @@
+= random_spanning_tree
+
+Generates a random spanning tree on a directed or undirected graph.
+
+*Complexity:* Expected _O(tau)_ (unweighted), where _tau_ is the mean hitting time +
+*Defined in:* `<boost/graph/random_spanning_tree.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/spanning_trees/random_spanning_tree.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/spanning_trees/random_spanning_tree.txt[]
+----
+
+'''
+
+=== (1) Positional version
+
+[source,cpp]
+----
+template <class Graph, class Gen, class PredMap,
+          class WeightMap, class ColorMap>
+void random_spanning_tree(const Graph& g, Gen& gen,
+    vertex_descriptor root, PredMap pred,
+    WeightMap weight, ColorMap color);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `const Graph& g`
+| A directed or undirected graph. The graph type must be a model of
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph] and
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph].
+
+| IN | `Gen& gen`
+| A random number generator. The generator type must be a model of
+  link:../../../doc/html/boost_random/reference.html#boost_random.reference.concepts.uniform_random_number_generator[Uniform
+  Random Number Generator] or a pointer or reference to such a type.
+
+| IN | `vertex_descriptor root`
+| The root of the spanning tree to be generated.
+
+| OUT | `PredMap pred`
+| This map, on output, will contain the predecessor of each vertex in the
+  graph in the spanning tree. The value `graph_traits<Graph>::null_vertex()`
+  will be used as the predecessor of the root of the tree. The type `PredMap`
+  must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map].
+  The key and value types of the map must both be the graph's vertex type.
+
+| IN | `WeightMap weight`
+| This map contains the weight of each edge in the graph. The probability of
+  any given spanning tree being produced as the result of the algorithm is
+  proportional to the product of its edge weights. The unweighted version can
+  be selected by passing an object of type `static_property_map<double>` as
+  the weight map. The type `WeightMap` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The key type of the map must be the graph's edge type, and the value type
+  must be a real number type (such as `double`).
+
+| UTIL | `ColorMap color`
+| This is used by the algorithm to keep track of its progress through the
+  graph. The type `ColorMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]
+  and its key type must be the graph's vertex descriptor type and the value
+  type of the color map must model xref:concepts/property_types/ColorValue.adoc[ColorValue].
+|===
+
+'''
+
+=== (2) Named parameter version
+
+[source,cpp]
+----
+template <class Graph, class Gen,
+          class P, class T, class R>
+void random_spanning_tree(Graph& G, Gen& gen,
+    const bgl_named_params<P, T, R>& params);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `Graph& G`
+| A directed or undirected graph. The graph type must be a model of
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph] and
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph].
+
+| IN | `Gen& gen`
+| A random number generator. The generator type must be a model of
+  link:../../../doc/html/boost_random/reference.html#boost_random.reference.concepts.uniform_random_number_generator[Uniform
+  Random Number Generator] or a pointer or reference to such a type.
+
+| IN | `root_vertex(vertex_descriptor root)`
+| This parameter, whose type must be the vertex descriptor type of `Graph`,
+  gives the root of the tree to be generated. +
+  *Default:* `*vertices(g).first`
+
+| UTIL | `color_map(ColorMap color)`
+| This is used by the algorithm to keep track of its progress through the
+  graph. The type `ColorMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]
+  and its key type must be the graph's vertex descriptor type and the value
+  type of the color map must model xref:concepts/property_types/ColorValue.adoc[ColorValue]. +
+  *Default:* a `two_bit_color_map` of size `num_vertices(g)` and using the
+  `i_map` for the index map.
+
+| IN | `vertex_index_map(VertexIndexMap i_map)`
+| This maps each vertex to an integer in the range `[0, num_vertices(g))`.
+  This parameter is only necessary when the default color property map is
+  used. The type `VertexIndexMap` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The vertex descriptor
+  type of the graph needs to be usable as the key type of the map.
+
+| OUT | `predecessor_map(PredMap pred)`
+| This map, on output, will contain the predecessor of each vertex in the
+  graph in the spanning tree. The value `graph_traits<Graph>::null_vertex()`
+  will be used as the predecessor of the root of the tree. The type `PredMap`
+  must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map].
+  The key and value types of the map must both be the graph's vertex type.
+
+| IN | `weight_map(WeightMap weight)`
+| This map contains the weight of each edge in the graph. The probability of
+  any given spanning tree being produced as the result of the algorithm is
+  proportional to the product of its edge weights. If the weight map is
+  omitted, a default that gives an equal weight to each edge will be used; a
+  faster algorithm that relies on constant weights will also be invoked. The
+  type `WeightMap` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The key type of the map must be the graph's edge type, and the value type
+  must be a real number type (such as `double`).
+|===
+
+== Description
+
+The `random_spanning_tree()` function generates a random spanning tree on a
+directed or undirected graph. The algorithm used is Wilson's algorithm
+(xref:about/bibliography.adoc#wilson96generating[67]), based on
+https://en.wikipedia.org/wiki/Loop-erased_random_walk[loop-erased random walks]. There must be a path from every non-root vertex of the graph to
+the root; the algorithm typically enters an infinite loop when given a graph
+that does not satisfy this property, but may also throw the exception
+`loop_erased_random_walk_stuck` if the search reaches a vertex with no
+outgoing edges.
+
+Both weighted and unweighted versions of `random_spanning_tree()` are
+implemented. In the unweighted version, all spanning trees are equally likely.
+In the weighted version, the probability of a particular spanning tree being
+selected is the product of its edge weights.
+
+In the non-named-parameter version of the algorithm, the unweighted version
+can be selected by passing an object of type `static_property_map<double>` as
+the weight map. In the named-parameter version, leaving off the `weight_map`
+parameter has the same effect.
+
+== Notes
+
+The `loop_erased_random_walk_stuck` exception is thrown when the random walk
+reaches a vertex with no outgoing edges and thus cannot continue. This
+typically indicates that the graph does not have a path from every vertex to
+the root.

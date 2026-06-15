@@ -1,0 +1,2 @@
+0 connected to 2: true
+0 connected to 3: false

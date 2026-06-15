@@ -1,0 +1,156 @@
+= Traits and Iterators
+
+Metaprogramming utilities that make generic BGL code possible. They are
+what let a single algorithm work across `adjacency_list`, `adjacency_matrix`,
+`grid_graph`, or a user-written graph type — each of which stores its data
+differently.
+
+You touch this section whenever you write a *_template function_* that takes
+a graph, or whenever you attach *_interior properties_* that need a
+descriptor type up front.
+
+[cols="2,5"]
+|===
+| Page | Why you might open it
+
+| xref:traits/graph_traits.adoc[`graph_traits<Graph>`]
+| Every time you want the `vertex_descriptor`, `edge_descriptor`, an iterator
+  type, or a size type of an unknown graph type. Also provides `null_vertex()`
+  and the directed/traversal category tags.
+
+| xref:traits/adjacency_list_traits.adoc[`adjacency_list_traits<…>`]
+| Only when you need to declare an interior property whose value is itself
+  a `vertex_descriptor` or `edge_descriptor` (e.g. an interior predecessor
+  map). Breaks the chicken-and-egg compile error between the graph type and
+  its property types.
+
+| xref:traits/property_map.adoc[`property_map<Graph, Tag>`]
+| When you want to spell out the concrete property-map type, usually in a
+  function signature. Distinguishes `::type` (mutable) from `::const_type`
+  (when the graph is `const`).
+
+| xref:traits/property.adoc[`property<Tag, T, Next>`]
+| Legacy tag-based interior properties. New code should prefer bundled
+  properties (see xref:property_maps/bundled.adoc[Bundled Properties]);
+  the two can coexist.
+
+| xref:traits/iterators/adjacency_iterator.adoc[`adjacency_iterator_generator`]
+| Graph-implementer tool. Synthesizes an `adjacency_iterator` from an
+  existing `out_edge_iterator`. Skip unless you are writing a new graph
+  class.
+
+| xref:traits/iterators/inv_adjacency_iterator.adoc[`inv_adjacency_iterator_generator`]
+| Same thing for `in_edge_iterator` → reverse-adjacency traversal on
+  bidirectional graphs. Also graph-implementer only.
+|===
+
+== Why `typename graph_traits<Graph>::…` and not just `Graph::…`?
+
+If `Graph` is a *concrete* type, both work:
+
+[source,cpp]
+----
+using Graph = boost::adjacency_list<>;
+Graph::vertex_descriptor v;                 // OK
+boost::graph_traits<Graph>::vertex_descriptor v;  // also OK
+----
+
+If `Graph` is a *template parameter*, you must use `typename graph_traits<…>::`
+to disambiguate the dependent name. The `graph_traits` indirection also lets
+third-party graph types (that don't have the exact nested typedef by that name)
+plug in via specialization.
+
+== Descriptors: what is a `vertex_descriptor` under the hood?
+
+[cols="1,2,4"]
+|===
+| Selector (for `adjacency_list`) | Concrete `vertex_descriptor` | Notes
+
+| `vecS` (default)
+| `std::size_t`
+| Comparable to integers. Stable unless you call `remove_vertex`, which
+  invalidates every descriptor past the removed one.
+
+| `listS`
+| Implementation-defined pointer/iterator type
+| Opaque. Do **not** compare to 0 or use as a vector index. Descriptors
+  survive `remove_vertex`. You must add `vertex_index_t` as an interior
+  property if any algorithm needs an index map.
+
+| `setS`, `hash_setS`
+| Implementation-defined
+| Same treatment as `listS`.
+|===
+
+The portable sentinel for "no vertex" is `graph_traits<Graph>::null_vertex()`
+(for `vecS` it happens to be `std::numeric_limits<std::size_t>::max()`, but
+don't rely on that).
+
+== Iterator / descriptor invalidation
+
+[cols="1,1,1,1"]
+|===
+| Operation | `vecS` | `listS` | `setS` / `hash_setS`
+
+| `add_vertex(g)`
+| iterators invalidated
+| all valid
+| all valid
+
+| `remove_vertex(v, g)`
+| **all vertex descriptors &gt;= v invalidated**, edge descriptors tracking
+  those vertices invalidated
+| descriptors `!= v` still valid
+| descriptors `!= v` still valid
+
+| `add_edge(u, v, g)`
+| edge iterators invalidated; out-edge iterators of `u` invalidated
+| edge iterators invalidated; out-edge iterators of `u` invalidated
+| edge iterators invalidated
+
+| `remove_edge(…)`
+| iterators pointing to the removed edge invalidated; others survive
+| same
+| same
+|===
+
+If you are about to mutate the graph inside a loop, copy the iterator range
+into a container first. See xref:graph_classes/adjacency_list.adoc[Adjacency
+List] for the authoritative per-selector invalidation table.
+
+== Common compile errors, decoded
+
+[cols="2,5"]
+|===
+| Error fragment | Likely cause
+
+| `no matching function for call to 'get(…)'`
+| Your graph has no `vertex_index` (or `edge_index`) property, or you passed
+  a `const Graph&` and the algorithm expects a non-const map.
+  Fix: declare the property via bundled properties or `property<vertex_index_t, int>`,
+  or switch to `property_map<G, tag>::const_type`.
+
+| `incomplete type` when using `property<…, Traits::vertex_descriptor>`
+| You used `graph_traits<Graph>` to obtain `vertex_descriptor` inside the
+  very declaration of `Graph`. Use
+  xref:traits/adjacency_list_traits.adoc[`adjacency_list_traits`] instead.
+
+| Template error mentioning `readable_property_map_tag`
+| You tried to write to a `const_type` property map. Remove the `const` from
+  your graph reference, or use a different map.
+
+| `edge_index` doesn't exist / `num_edges` doesn't match indexing
+| Unlike `vertex_index_t` (which `vecS` auto-provides), `edge_index_t` is
+  never automatic. Declare it as an interior edge property and assign values
+  yourself when calling `add_edge`.
+|===
+
+== See also
+
+* xref:graph_classes/adjacency_list.adoc[Adjacency List] — per-selector
+  trade-offs and invalidation rules.
+* xref:property_maps/overview.adoc[Property Maps] — the user-facing guide
+  to property maps; come here (traits) when you need the types the other
+  guide is silent on.
+* xref:concepts/graph_concepts.adoc[Graph Concepts] — what nested typedefs
+  each concept requires.

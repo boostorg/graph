@@ -1,0 +1,130 @@
+= IncidenceGraph
+
+The IncidenceGraph concept provides an interface for efficient access to
+the out-edges of each vertex in the graph.
+
+== Refinement of
+
+xref:concepts/Graph.adoc[Graph]
+
+== Notation
+
+[cols=",",]
+|===
+|`G` |A type that is a model of IncidenceGraph.
+
+|`g` |An object of type `G`.
+
+|`e` |An object of type
+`boost::graph_traits<G>::edge_descriptor`.
+
+|`u, v` |Are objects of type
+`boost::graph_traits<G>::vertex_descriptor`.
+|===
+
+== Associated Types
+
+[width="100%",cols="100%",]
+|===
+|`boost::graph_traits<G>::traversal_category` +
+ +
+This tag type must be convertible to `incidence_graph_tag`.
+
+a|
+[source,cpp]
+----
+boost::graph_traits<G>::out_edge_iterator
+----
+
+An out-edge iterator for a vertex _v_ provides access to the out-edges
+of the vertex. As such, the value type of an out-edge iterator is the
+edge descriptor type of its graph. An out-edge iterator must meet the
+requirements of `MultiPassInputIterator`.
+
+a|
+[source,cpp]
+----
+boost::graph_traits<G>::degree_size_type
+----
+
+The unsigned integral type used for representing the number out-edges or
+incident edges of a vertex.
+
+|===
+
+== Valid Expressions
+
+[width="100%",cols="50%,50%",]
+|===
+|`source(e, g)` |Returns the vertex descriptor for _u_ of
+the edge _(u,v)_ represented by `e`. +
+Return type: `vertex_descriptor`
+
+|`target(e, g)` |Returns the vertex descriptor for _v_ of
+the edge _(u,v)_ represented by `e`. +
+Return type: `vertex_descriptor`
+
+|`out_edges(u, g)` |Returns an iterator-range
+providing access to the out-edges (for directed graphs) or incident
+edges (for undirected graphs) of vertex `u` in graph `g`. The source
+vertex of an edge obtained via an out edge iterator is guaranteed (for
+both directed and undirected graphs) to be the vertex `u` used in the
+call to `out_edges(u, g)` and the target vertex must be a vertex
+adjacent to `u`.<<1,[1>>] +
+Return type:
+`std::pair<out_edge_iterator, out_edge_iterator>`
+
+|`out_degree(u, g)` |Returns the number of out-edges (for directed
+graphs) or the number of incident edges (for undirected graphs) of
+vertex `u` in graph `g`. +
+Return type: `degree_size_type`
+|===
+
+== Complexity guarantees
+
+The `source()`, `target()`, and `out_edges()` functions must all be
+constant time. The `out_degree()` function must be linear in the
+number of out-edges.
+
+== Notes
+
+[#1]#[1]# For undirected graphs, the edge `(u,v)` is the same as
+edge `(v,u)`, so without some extra guarantee an implementation would be
+free use any ordering for the pair of vertices in an out-edge. For
+example, if you call `out_edges(u, g)`, and `v` is one of the
+vertices adjacent to `u`, then the implementation would be free to
+return `(v,u)` as an out-edge which would be non-intuitive and cause
+trouble for algorithms. Therefore, the extra requirement is added that
+the out-edge connecting `u` and `v` must be given as `(u,v)` and not
+`(v,u)`.
+
+== Concept Checking Class
+
+[source,cpp]
+----
+
+  template <class G>
+  struct IncidenceGraphConcept
+  {
+    typedef typename boost::graph_traits<G>::out_edge_iterator out_edge_iterator;
+    void constraints() {
+      BOOST_CONCEPT_ASSERT(( GraphConcept<G> ));
+      BOOST_CONCEPT_ASSERT(( MultiPassInputIteratorConcept<out_edge_iterator> ));
+
+      p = out_edges(u, g);
+      e = *p.first;
+      u = source(e, g);
+      v = target(e, g);
+    }
+    void const_constraints(const G& g) {
+      p = out_edges(u, g);
+      e = *p.first;
+      u = source(e, g);
+      v = target(e, g);
+    }
+    std::pair<out_edge_iterator, out_edge_iterator> p;
+    typename boost::graph_traits<G>::vertex_descriptor u, v;
+    typename boost::graph_traits<G>::edge_descriptor e;
+    G g;
+  };
+----

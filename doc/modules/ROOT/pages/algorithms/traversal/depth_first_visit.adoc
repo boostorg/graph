@@ -1,0 +1,132 @@
+[#sec:dfs]
+= depth_first_visit
+
+Visits all vertices in the same connected component as a source vertex using a depth-first pattern.
+
+*Complexity:* _O(E)_ +
+*Defined in:* `<boost/graph/depth_first_search.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/traversal/dfs_visit.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/traversal/dfs_visit.txt[]
+----
+
+'''
+
+=== (1) Basic version
+
+[source,cpp]
+----
+template <class IncidenceGraph,
+          class DFSVisitor,
+          class ColorMap>
+void depth_first_visit(IncidenceGraph& g,
+    typename graph_traits<IncidenceGraph>::vertex_descriptor s,
+    DFSVisitor& vis,
+    ColorMap color);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `IncidenceGraph& g`
+| A directed or undirected graph. The graph type must be a model of
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| IN | `vertex_descriptor s`
+| The source vertex from which to start the search.
+
+| IN | `DFSVisitor vis`
+| A visitor object that is invoked inside the algorithm at the
+  event-points specified by the xref:visitors/DFSVisitor.adoc[DFS Visitor] concept.
+  The visitor object is passed by value <<notes,[1]>>.
+
+| UTIL | `ColorMap color`
+| This is used by the algorithm to keep track of its progress through the
+  graph. The type `ColorMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]
+  and its key type must be the graph's vertex descriptor type and the value type
+  of the color map must model xref:concepts/property_types/ColorValue.adoc[ColorValue].
+|===
+
+'''
+
+=== (2) With terminator function
+
+[source,cpp]
+----
+template <class IncidenceGraph,
+          class DFSVisitor,
+          class ColorMap,
+          class TerminatorFunc>
+void depth_first_visit(IncidenceGraph& g,
+    typename graph_traits<IncidenceGraph>::vertex_descriptor s,
+    DFSVisitor& vis,
+    ColorMap color,
+    TerminatorFunc func = TerminatorFunc());
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `IncidenceGraph& g`
+| A directed or undirected graph. The graph type must be a model of
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| IN | `vertex_descriptor s`
+| The source vertex from which to start the search.
+
+| IN | `DFSVisitor vis`
+| A visitor object that is invoked inside the algorithm at the
+  event-points specified by the xref:visitors/DFSVisitor.adoc[DFS Visitor] concept.
+  The visitor object is passed by value <<notes,[1]>>.
+
+| UTIL | `ColorMap color`
+| This is used by the algorithm to keep track of its progress through the
+  graph. The type `ColorMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]
+  and its key type must be the graph's vertex descriptor type and the value type
+  of the color map must model xref:concepts/property_types/ColorValue.adoc[ColorValue].
+
+| IN | `TerminatorFunc func`
+| A function object callable with two parameters -- the descriptor of a
+  vertex and the graph instance -- and returning `bool`. The call is made
+  immediately after the `discover_vertex` visitor event. If `true` is returned,
+  the out edges of the vertex are not examined, as if they don't exist.
+|===
+
+== Description
+
+This function visits all of the vertices in the same connected component
+as the source vertex `s`, using the
+xref:about/graph_theory_review.adoc#sec:dfs-algorithm[depth-first pattern].
+The main purpose of the function is for the implementation of
+`depth_first_search()` though sometimes it is useful on its own.
+
+The `DFSVisitor` supplied by the user determines what actions are taken
+at each event-point within the algorithm.
+
+The `ColorMap` is used by the algorithm to keep track of which vertices
+have been visited.
+
+The second variant can be used, for example, to find all marked vertices
+reachable from a start vertex by a path which does not contain any
+another marked vertices.
+
+== Notes
+
+[[notes]]
+[1] Since the visitor parameter is passed by value, if your visitor
+contains state then any changes to the state during the algorithm
+will be made to a copy of the visitor object, not the visitor object
+passed in. Therefore you may want the visitor to hold this state by
+pointer or reference.

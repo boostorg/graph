@@ -1,0 +1,64 @@
+= Edge Coloring
+
+Computes an edge coloring for the edges of an undirected, loop-free graph.
+
+*Complexity:* _O(|E| |V|)_ +
+*Defined in:* `<boost/graph/edge_coloring.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/coloring/edge_coloring.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/coloring/edge_coloring.txt[]
+----
+
+'''
+
+=== (1) Edge coloring
+
+[source,cpp]
+----
+template <class Graph, class ColorMap>
+typename boost::property_traits<ColorMap>::value_type
+edge_coloring(
+    const Graph& g,
+    ColorMap color);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| The graph object on which the algorithm will be applied.
+  The type `Graph` must be a model of
+  xref:concepts/EdgeListGraph.adoc[Edge List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| OUT
+| `ColorMap color`
+| This property map records the colors of each edge. It must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]
+  whose key type is the same as the edge descriptor type of the graph and
+  whose value type is an integral type that can store all values smaller or
+  equal to m.
+
+|===
+
+== Description
+
+Computes an https://en.wikipedia.org/wiki/Edge_coloring[edge coloring]
+for the vertices in the graph, using an algorithm proposed by Misra et al. Given edges ordered e~1~, e~2~, ..., e~n~ it
+assigns colors c~1~, c~2~, ..., c~n~ in a way that no vertex connects with
+2 edges of the same color. Furthermore at most m + 1 colors are used.
+
+== Returns
+
+The number of colors used, of type `property_traits<ColorMap>::value_type`.
+

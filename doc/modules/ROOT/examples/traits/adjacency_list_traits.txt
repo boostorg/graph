@@ -1,0 +1,2 @@
+0 -> 1  predecessor=0
+1 -> 2  predecessor=1

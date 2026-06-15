@@ -1,0 +1,7 @@
+Immediate dominators (entry = 0):
+  idom(0) = none (entry)
+  idom(1) = 0
+  idom(2) = 0
+  idom(3) = 0
+  idom(4) = 3
+  idom(5) = 4

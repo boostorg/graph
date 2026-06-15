@@ -1,0 +1,4 @@
+Matched edges:
+  0 -- 4 (w=5)
+  2 -- 3 (w=4)
+Total weight: 9

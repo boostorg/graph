@@ -1,0 +1,66 @@
+= KeyedUpdatableQueue
+
+A _KeyedUpdatableQueue_ is a refinement of the
+xref:concepts/property_types/UpdatableQueue.adoc[UpdatableQueue] concept. It requires that
+models order the contained values by their _keys_, to which values are
+mapped via a read/write key map.
+
+== Notation
+
+[cols=",",]
+|===
+|`Q` |is a type that models KeyedUpdatableQueue.
+|`T` |is the value type of `Q`.
+|===
+
+== Members
+
+For a type to model the KeyedUpdatableQueue concept it must have the
+following members in addition to the members that are required of types
+that model xref:concepts/property_types/UpdatableQueue.adoc[UpdatableQueue]:
+
+[cols=",",]
+|===
+|*Member* |*Description*
+
+|`key_type` |The type of keys that are associated with values
+
+|`key_map` |The key property map type. This type must model
+Read/Write Property Map.
+
+|`key_map keys() const` |Returns the key map
+|===
+
+== Concept Checking Class
+
+`boost/graph/buffer_concepts.hpp`
+
+[source,cpp]
+----
+
+  template <class Q>
+  struct KeyedUpdatableQueueConcept
+  {
+    typedef typename Q::key_type key_type;
+    typedef typename Q::key_map key_map;
+
+    void constraints() {
+      BOOST_CONCEPT_ASSERT(( UpdatableQueue<Q> ));
+      BOOST_CONCEPT_ASSERT(( ReadWritePropertyMap< key_map, typename Buffer<Q>::value_type > ));
+    }
+
+    void const_constraints(const Q& cq) {
+      km = cq.keys();
+      k = get(km, g_ct);
+    }
+
+    static const typename Buffer<Q>::value_type g_ct;
+    key_type k;
+    key_map km;
+    Q q;
+  };
+----
+
+== Models
+
+* `boost::d_ary_heap_indirect`

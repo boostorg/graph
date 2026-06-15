@@ -1,0 +1,255 @@
+[#sec:biconnected-components]
+= biconnected_components / articulation_points
+
+Computes the biconnected components and articulation points of an undirected graph.
+
+*Complexity:* _O(V + E)_ +
+*Defined in:* `<boost/graph/biconnected_components.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/connected_components/biconnected.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/connected_components/biconnected.txt[]
+----
+
+'''
+
+=== biconnected_components (1)
+
+[source,cpp]
+----
+template <typename Graph, typename ComponentMap, typename OutputIterator,
+          typename DiscoverTimeMap, typename LowPointMap>
+std::pair<std::size_t, OutputIterator>
+biconnected_components(
+    const Graph& g, ComponentMap comp, OutputIterator out,
+    DiscoverTimeMap discover_time, LowPointMap lowpt);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `const Graph& g` | An undirected graph. The graph type must be a model of xref:concepts/VertexListGraph.adoc[Vertex List Graph] and xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+| OUT | `ComponentMap comp` | The algorithm computes how many biconnected components are in the graph, and assigning each component an integer label. The algorithm then records which component each edge in the graph belongs to by recording the component number in the component property map. The `ComponentMap` type must be a model of link:../../property_map/doc/WritablePropertyMap.html[Writable Property Map]. The value type should be an integer type, preferably the same as the `edges_size_type` of the graph. The key type must be the graph's edge descriptor type.
+| OUT | `OutputIterator out` | The algorithm writes articulation points via this output iterator and returns the resulting iterator. +
+*Default:* a dummy iterator that ignores values written to it.
+| UTIL/OUT | `DiscoverTimeMap discover_time` | The discovery time of each vertex in the depth-first search. The type `DiscoverTimeMap` must be a model of link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]. The value type of the map must be an integer type. The vertex descriptor type of the graph needs to be usable as the key type of the map.
+| UTIL/OUT | `LowPointMap lowpt` | The low point of each vertex in the depth-first search, which is the smallest vertex reachable from a given vertex with at most one back edge. The type `LowPointMap` must be a model of link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]. The value type of the map must be an integer type. The vertex descriptor type of the graph needs to be usable as the key type of the map.
+|===
+
+'''
+
+=== biconnected_components (2)
+
+[source,cpp]
+----
+template <typename Graph, typename ComponentMap, typename OutputIterator>
+std::pair<std::size_t, OutputIterator>
+biconnected_components(
+    const Graph& g, ComponentMap comp, OutputIterator out);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `const Graph& g` | An undirected graph. The graph type must be a model of xref:concepts/VertexListGraph.adoc[Vertex List Graph] and xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+| OUT | `ComponentMap comp` | The algorithm computes how many biconnected components are in the graph, and assigning each component an integer label. The algorithm then records which component each edge in the graph belongs to by recording the component number in the component property map. The `ComponentMap` type must be a model of link:../../property_map/doc/WritablePropertyMap.html[Writable Property Map]. The value type should be an integer type, preferably the same as the `edges_size_type` of the graph. The key type must be the graph's edge descriptor type.
+| OUT | `OutputIterator out` | The algorithm writes articulation points via this output iterator and returns the resulting iterator. +
+*Default:* a dummy iterator that ignores values written to it.
+|===
+
+'''
+
+=== biconnected_components (3)
+
+[source,cpp]
+----
+template <typename Graph, typename ComponentMap>
+std::size_t biconnected_components(
+    const Graph& g, ComponentMap comp);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `const Graph& g` | An undirected graph. The graph type must be a model of xref:concepts/VertexListGraph.adoc[Vertex List Graph] and xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+| OUT | `ComponentMap comp` | The algorithm computes how many biconnected components are in the graph, and assigning each component an integer label. The algorithm then records which component each edge in the graph belongs to by recording the component number in the component property map. The `ComponentMap` type must be a model of link:../../property_map/doc/WritablePropertyMap.html[Writable Property Map]. The value type should be an integer type, preferably the same as the `edges_size_type` of the graph. The key type must be the graph's edge descriptor type.
+|===
+
+'''
+
+=== biconnected_components (4)
+
+[source,cpp]
+----
+template <typename Graph, typename ComponentMap, typename OutputIterator,
+          typename P, typename T, typename R>
+std::pair<std::size_t, OutputIterator>
+biconnected_components(
+    const Graph& g, ComponentMap comp, OutputIterator out,
+    const bgl_named_params<P, T, R>& params);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `const Graph& g` | An undirected graph. The graph type must be a model of xref:concepts/VertexListGraph.adoc[Vertex List Graph] and xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+| OUT | `ComponentMap comp` | The algorithm computes how many biconnected components are in the graph, and assigning each component an integer label. The algorithm then records which component each edge in the graph belongs to by recording the component number in the component property map. The `ComponentMap` type must be a model of link:../../property_map/doc/WritablePropertyMap.html[Writable Property Map]. The value type should be an integer type, preferably the same as the `edges_size_type` of the graph. The key type must be the graph's edge descriptor type. +
+*Default:* `dummy_property_map`.
+| OUT | `OutputIterator out` | The algorithm writes articulation points via this output iterator and returns the resulting iterator. +
+*Default:* a dummy iterator that ignores values written to it.
+|===
+
+Named Parameters::
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `vertex_index_map(VertexIndexMap i_map)` | This maps each vertex to an integer in the range `[0, num_vertices(g))`. The type `VertexIndexMap` must be a model of link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map]. The value type of the map must be an integer type. The vertex descriptor type of the graph needs to be usable as the key type of the map. +
+*Default:* `get(vertex_index, g)`
+| UTIL/OUT | `discover_time_map(DiscoverTimeMap discover_time)` | The discovery time of each vertex in the depth-first search. The type `DiscoverTimeMap` must be a model of link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]. The value type of the map must be an integer type. The vertex descriptor type of the graph needs to be usable as the key type of the map. +
+*Default:* an link:../../property_map/doc/iterator_property_map.html[iterator_property_map] created from a `std::vector` of `vertices_size_type` of size `num_vertices(g)` and using `get(vertex_index, g)` for the index map.
+| UTIL/OUT | `lowpoint_map(LowPointMap lowpt)` | The low point of each vertex in the depth-first search, which is the smallest vertex reachable from a given vertex with at most one back edge. The type `LowPointMap` must be a model of link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]. The value type of the map must be an integer type. The vertex descriptor type of the graph needs to be usable as the key type of the map. +
+*Default:* an link:../../property_map/doc/iterator_property_map.html[iterator_property_map] created from a `std::vector` of `vertices_size_type` of size `num_vertices(g)` and using `get(vertex_index, g)` for the index map.
+| UTIL/OUT | `predecessor_map(PredecessorMap p_map)` | The predecessor map records the depth first search tree. The `PredecessorMap` type must be a link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map] whose key and value types are the same as the vertex descriptor type of the graph. +
+*Default:* an link:../../property_map/doc/iterator_property_map.html[iterator_property_map] created from a `std::vector` of `vertex_descriptor` of size `num_vertices(g)` and using `get(vertex_index, g)` for the index map.
+| IN | `visitor(DFSVisitor vis)` | A visitor object that is invoked inside the algorithm at the event-points specified by the xref:visitors/DFSVisitor.adoc[DFS Visitor] concept. The visitor object is passed by value <<1,[1]>>. +
+*Default:* `dfs_visitor<null_visitor>`
+|===
+
+'''
+
+=== biconnected_components (5)
+
+[source,cpp]
+----
+template <typename Graph, typename ComponentMap,
+          typename P, typename T, typename R>
+std::size_t
+biconnected_components(
+    const Graph& g, ComponentMap comp,
+    const bgl_named_params<P, T, R>& params);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `const Graph& g` | An undirected graph. The graph type must be a model of xref:concepts/VertexListGraph.adoc[Vertex List Graph] and xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+| OUT | `ComponentMap comp` | The algorithm computes how many biconnected components are in the graph, and assigning each component an integer label. The algorithm then records which component each edge in the graph belongs to by recording the component number in the component property map. The `ComponentMap` type must be a model of link:../../property_map/doc/WritablePropertyMap.html[Writable Property Map]. The value type should be an integer type, preferably the same as the `edges_size_type` of the graph. The key type must be the graph's edge descriptor type. +
+*Default:* `dummy_property_map`.
+|===
+
+Named Parameters::
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `vertex_index_map(VertexIndexMap i_map)` | This maps each vertex to an integer in the range `[0, num_vertices(g))`. The type `VertexIndexMap` must be a model of link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map]. The value type of the map must be an integer type. The vertex descriptor type of the graph needs to be usable as the key type of the map. +
+*Default:* `get(vertex_index, g)`
+| UTIL/OUT | `discover_time_map(DiscoverTimeMap discover_time)` | The discovery time of each vertex in the depth-first search. The type `DiscoverTimeMap` must be a model of link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]. The value type of the map must be an integer type. The vertex descriptor type of the graph needs to be usable as the key type of the map. +
+*Default:* an link:../../property_map/doc/iterator_property_map.html[iterator_property_map] created from a `std::vector` of `vertices_size_type` of size `num_vertices(g)` and using `get(vertex_index, g)` for the index map.
+| UTIL/OUT | `lowpoint_map(LowPointMap lowpt)` | The low point of each vertex in the depth-first search, which is the smallest vertex reachable from a given vertex with at most one back edge. The type `LowPointMap` must be a model of link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]. The value type of the map must be an integer type. The vertex descriptor type of the graph needs to be usable as the key type of the map. +
+*Default:* an link:../../property_map/doc/iterator_property_map.html[iterator_property_map] created from a `std::vector` of `vertices_size_type` of size `num_vertices(g)` and using `get(vertex_index, g)` for the index map.
+| UTIL/OUT | `predecessor_map(PredecessorMap p_map)` | The predecessor map records the depth first search tree. The `PredecessorMap` type must be a link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map] whose key and value types are the same as the vertex descriptor type of the graph. +
+*Default:* an link:../../property_map/doc/iterator_property_map.html[iterator_property_map] created from a `std::vector` of `vertex_descriptor` of size `num_vertices(g)` and using `get(vertex_index, g)` for the index map.
+| IN | `visitor(DFSVisitor vis)` | A visitor object that is invoked inside the algorithm at the event-points specified by the xref:visitors/DFSVisitor.adoc[DFS Visitor] concept. The visitor object is passed by value <<1,[1]>>. +
+*Default:* `dfs_visitor<null_visitor>`
+|===
+
+'''
+
+[#sec:articulation_points]
+=== articulation_points (1)
+
+[source,cpp]
+----
+template <typename Graph, typename OutputIterator>
+OutputIterator articulation_points(
+    const Graph& g, OutputIterator out);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `const Graph& g` | An undirected graph. The graph type must be a model of xref:concepts/VertexListGraph.adoc[Vertex List Graph] and xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+| OUT | `OutputIterator out` | The algorithm writes articulation points via this output iterator and returns the resulting iterator. +
+*Default:* a dummy iterator that ignores values written to it.
+|===
+
+'''
+
+=== articulation_points (2)
+
+[source,cpp]
+----
+template <typename Graph, typename OutputIterator,
+          typename P, typename T, typename R>
+OutputIterator articulation_points(
+    const Graph& g, OutputIterator out,
+    const bgl_named_params<P, T, R>& params);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `const Graph& g` | An undirected graph. The graph type must be a model of xref:concepts/VertexListGraph.adoc[Vertex List Graph] and xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+| OUT | `OutputIterator out` | The algorithm writes articulation points via this output iterator and returns the resulting iterator. +
+*Default:* a dummy iterator that ignores values written to it.
+|===
+
+Named Parameters::
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `vertex_index_map(VertexIndexMap i_map)` | This maps each vertex to an integer in the range `[0, num_vertices(g))`. The type `VertexIndexMap` must be a model of link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map]. The value type of the map must be an integer type. The vertex descriptor type of the graph needs to be usable as the key type of the map. +
+*Default:* `get(vertex_index, g)`
+| UTIL/OUT | `discover_time_map(DiscoverTimeMap discover_time)` | The discovery time of each vertex in the depth-first search. The type `DiscoverTimeMap` must be a model of link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]. The value type of the map must be an integer type. The vertex descriptor type of the graph needs to be usable as the key type of the map. +
+*Default:* an link:../../property_map/doc/iterator_property_map.html[iterator_property_map] created from a `std::vector` of `vertices_size_type` of size `num_vertices(g)` and using `get(vertex_index, g)` for the index map.
+| UTIL/OUT | `lowpoint_map(LowPointMap lowpt)` | The low point of each vertex in the depth-first search, which is the smallest vertex reachable from a given vertex with at most one back edge. The type `LowPointMap` must be a model of link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]. The value type of the map must be an integer type. The vertex descriptor type of the graph needs to be usable as the key type of the map. +
+*Default:* an link:../../property_map/doc/iterator_property_map.html[iterator_property_map] created from a `std::vector` of `vertices_size_type` of size `num_vertices(g)` and using `get(vertex_index, g)` for the index map.
+| UTIL/OUT | `predecessor_map(PredecessorMap p_map)` | The predecessor map records the depth first search tree. The `PredecessorMap` type must be a link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map] whose key and value types are the same as the vertex descriptor type of the graph. +
+*Default:* an link:../../property_map/doc/iterator_property_map.html[iterator_property_map] created from a `std::vector` of `vertex_descriptor` of size `num_vertices(g)` and using `get(vertex_index, g)` for the index map.
+| IN | `visitor(DFSVisitor vis)` | A visitor object that is invoked inside the algorithm at the event-points specified by the xref:visitors/DFSVisitor.adoc[DFS Visitor] concept. The visitor object is passed by value <<1,[1]>>. +
+*Default:* `dfs_visitor<null_visitor>`
+|===
+
+== Description
+
+A connected graph is
+https://en.wikipedia.org/wiki/Biconnected_component[_biconnected_]
+if the removal of any single vertex (and all edges incident on that vertex) can not disconnect the graph. More generally, the biconnected components of a graph are the maximal subsets of vertices such that the removal of a vertex from a particular component will not disconnect the component. Unlike connected components, vertices may belong to multiple biconnected components: those vertices that belong to more than one biconnected component are called _articulation points_ or, equivalently, _cut vertices_. Articulation points are vertices whose removal would increase the number of connected components in the graph. Thus, a graph without articulation points is biconnected. The following figure illustrates the articulation points and biconnected components of a small graph:
+
+image::figs/biconnected.png[]
+
+Vertices can be present in multiple biconnected components, but each edge can only be contained in a single biconnected component. The output of the `biconnected_components` algorithm records the biconnected component number of each edge in the property map `comp`. Articulation points will be emitted to the (optional) output iterator argument to `biconnected_components`, or can be computed without the use of a biconnected component number map via `articulation_points`. These functions return the number of biconnected components, the articulation point output iterator, or a pair of these quantities, depending on what information was recorded.
+
+The algorithm implemented is due to Tarjan [xref:about/bibliography.adoc#tarjan72:dfs_and_linear_algo[36]].
+
+== Returns
+
+Depending on the overload:
+
+* `biconnected_components` overloads returning `std::pair<std::size_t, OutputIterator>` return the number of biconnected components and the output iterator past the last articulation point written.
+* `biconnected_components` overloads returning `std::size_t` return the number of biconnected components.
+* `articulation_points` overloads return the `OutputIterator` past the last articulation point written.
+
+== Notes
+
+[#1]#[1]# Since the visitor parameter is passed by value, if your visitor contains state then any changes to the state during the algorithm will be made to a copy of the visitor object, not the visitor object passed in. Therefore you may want the visitor to hold this state by pointer or reference.

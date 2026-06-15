@@ -1,0 +1,252 @@
+= Frequently Asked Questions
+
+== Graph construction
+
+=== Which container selectors (`vecS`, `listS`, `setS`) should I pick?
+
+[cols="1,1,1,3"]
+|===
+| Selector | Storage | Stable? | Notes
+
+| `vecS`
+| vector
+| No
+| Fast iteration; parallel edges allowed
+
+| `listS`
+| list
+| Yes
+| `O(E)` lookup; parallel edges allowed
+
+| `setS`
+| tree
+| Yes (edges)
+| `O(log E)` lookup; no parallel edges
+|===
+
+Rule of thumb: `vecS` on both slots unless you are actively removing
+vertices (then `listS` on the vertex slot) or need deduplicated
+out-edges (`setS` on the edge slot).
+
+=== Can I use a `std::vector<std::list<...>>` as a graph?
+
+Yes. Include `<boost/graph/vector_as_graph.hpp>` and the container
+models the BGL incidence and vertex-list concepts as-is. The vertex
+descriptor is the outer-vector index; each inner-list element is an
+integer edge target.
+
+[source,cpp]
+----
+include::example$faq/vector_as_graph.cpp[]
+----
+
+[,text]
+----
+include::example$faq/vector_as_graph.txt[]
+----
+
+== Properties
+
+=== Bundled or internal (tag-based) properties: which should I use?
+
+Bundled. The syntax is shorter, the runtime cost is identical, and the
+modern algorithms accept `get(&Bundle::field, g)` wherever they accept
+a property map. Use interior tags only when an algorithm hard-codes
+one (for example `edge_capacity_t` for the DIMACS flow readers). Full
+comparison on the xref:property_maps/bundled.adoc[Bundled Properties]
+page.
+
+=== I get `error_property_not_found`. What does it mean?
+
+[source]
+----
+error: no match for
+`boost::detail::error_property_not_found & ==
+ boost::detail::error_property_not_found &'
+----
+
+The algorithm expected a named property (weight, color, vertex_index,
+...) on the graph and did not find it. Add the property as a field on
+your bundle and pass it explicitly via the named-parameter API
+(`weight_map(...)`, `color_map(...)`, `vertex_index_map(...)`, ...).
+
+[source,cpp]
+----
+include::example$faq/property_not_found.cpp[]
+----
+
+[,text]
+----
+include::example$faq/property_not_found.txt[]
+----
+
+=== Where is `boost/property_map.hpp`?
+
+Moved a long time ago. Include `boost/property_map/property_map.hpp`.
+
+== Mutating a graph
+
+=== How do I remove a vertex from an `adjacency_list`?
+
+Call `clear_vertex` first, then `remove_vertex`. `remove_vertex` does
+not touch incident edges; calling it on a vertex that still has edges
+leaves dangling edge descriptors and will eventually segfault.
+
+[source,cpp]
+----
+include::example$faq/remove_vertex.cpp[]
+----
+
+[,text]
+----
+include::example$faq/remove_vertex.txt[]
+----
+
+=== When are my vertex or edge descriptors invalidated?
+
+With `VertexList = vecS`, `remove_vertex` reindexes every later
+vertex. Any saved descriptor past the removed one is stale. With
+`listS` or `setS`, descriptors are pointers and survive removals.
+Edge descriptors follow the same rule for `OutEdgeList`.
+
+[source,cpp]
+----
+include::example$faq/invalidation.cpp[]
+----
+
+[,text]
+----
+include::example$faq/invalidation.txt[]
+----
+
+=== How do I create a graph whose edges are sorted or deduplicated?
+
+Pick `setS` as the `OutEdgeList` selector. Out-edges are kept in
+target-vertex order and duplicates are dropped at insertion.
+
+[source,cpp]
+----
+include::example$faq/sorted_edges.cpp[]
+----
+
+[,text]
+----
+include::example$faq/sorted_edges.txt[]
+----
+
+== Using algorithms
+
+=== How do I stop a search early?
+
+Throw from the visitor and catch around the algorithm call. That is the
+only supported mechanism. The algorithms have no "return early" hook.
+
+[source,cpp]
+----
+include::example$faq/early_exit_bfs.cpp[]
+----
+
+[,text]
+----
+include::example$faq/early_exit_bfs.txt[]
+----
+
+=== Is there a non-throwing way to stop Dijkstra or BFS early?
+
+Not today. Every early-exit path in the public API raises an exception
+from the visitor. Community feedback at the Boost.Graph 2026 workshop
+identified this as a pain point; a graceful-termination hook is on the
+library's roadmap but not yet implemented.
+
+=== Why does algorithm X work with `vecS` but not `listS`?
+
+The algorithm needs a vertex index. With `VertexList = vecS`
+`adjacency_list` synthesizes one; with `listS` it does not, so you
+must supply your own. Add an index field to the bundle and pass it
+through the `vertex_index_map` named parameter.
+
+[source,cpp]
+----
+include::example$faq/list_vertex_index.cpp[]
+----
+
+[,text]
+----
+include::example$faq/list_vertex_index.txt[]
+----
+
+=== Why is the visitor passed by value?
+
+Because a temporary cannot bind to a non-`const` reference, and BGL
+wants to accept visitors constructed in-place at the call site. Any
+mutable state inside the visitor therefore lives on the internal copy
+and does not leak back out. Hold state by pointer or reference if you
+need it to.
+
+[source,cpp]
+----
+include::example$faq/visitor_by_value.cpp[]
+----
+
+[,text]
+----
+include::example$faq/visitor_by_value.txt[]
+----
+
+== Views, adaptors, I/O
+
+=== `filtered_graph` or `subgraph`: which one?
+
+`filtered_graph` is a non-owning *view* built from two predicates
+(vertex, edge). No copy, no heap allocation; the original graph is
+unchanged. Use it to run an algorithm over a subset.
+
+`subgraph` owns a copy of the edges and tracks a parent-child
+relationship. Use it when you need a mutable independent graph that
+mirrors back to a parent on `add_edge`.
+
+Rule of thumb: reach for `filtered_graph` first.
+
+[source,cpp]
+----
+include::example$faq/filtered_graph.cpp[]
+----
+
+[,text]
+----
+include::example$faq/filtered_graph.txt[]
+----
+
+=== How do I read GraphML or GraphViz with custom properties?
+
+Both readers take a `boost::dynamic_properties` object. Register each
+property map you want populated under a string name matching the
+attribute in the file. Full examples on the
+xref:io/graphml.adoc[GraphML] and xref:io/graphviz.adoc[GraphViz]
+pages.
+
+== C++ and library design
+
+=== Why doesn't `graph_traits<Graph>::vertex_descriptor` compile inside my function template?
+
+`Graph` is a template parameter, so `graph_traits<Graph>::vertex_descriptor`
+is a *dependent* name. C++ requires you to tell the compiler it names
+a type by prefixing with `typename`.
+
+[source,cpp]
+----
+include::example$faq/typename_in_template.cpp[]
+----
+
+[,text]
+----
+include::example$faq/typename_in_template.txt[]
+----
+
+=== Why free functions instead of member functions?
+
+Free functions can be overloaded for third-party types without
+modifying their source. That is how BGL adapts LEDA, Stanford
+GraphBase, and even a raw `std::vector<std::list<...>>`. A
+member-function-based API would have forced every integration to go
+through an adaptor class.

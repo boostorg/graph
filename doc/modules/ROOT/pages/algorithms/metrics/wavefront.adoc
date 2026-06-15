@@ -1,0 +1,325 @@
+= wavefront
+
+Functions for computing the wavefront and related metrics of a graph.
+
+*Defined in:* `<boost/graph/wavefront.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/metrics/wavefront.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/metrics/wavefront.txt[]
+----
+
+'''''
+
+[#sec:ith-wavefront]
+== ith_wavefront
+
+Calculates the wavefront of the _i-th_ vertex.
+
+*Complexity:* _O(|V| * max_out_degree)_ +
+*Defined in:* `<boost/graph/wavefront.hpp>`
+
+'''
+
+=== (1) Default vertex index overload
+
+[source,cpp]
+----
+template <typename Graph>
+typename graph_traits<Graph>::vertices_size_type
+ith_wavefront(
+    typename graph_traits<Graph>::vertex_descriptor i,
+    const Graph& g)
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `vertex_descriptor i`
+| The vertex for which to compute the wavefront.
+
+| IN
+| `const Graph& g`
+| The graph object on which the algorithm will be applied.
+  The type `Graph` must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+  The default `vertex_index` property map is used.
+|===
+
+'''
+
+=== (2) Explicit vertex index map overload
+
+[source,cpp]
+----
+template <typename Graph, typename VertexIndexMap>
+typename graph_traits<Graph>::vertices_size_type
+ith_wavefront(
+    typename graph_traits<Graph>::vertex_descriptor i,
+    const Graph& g,
+    VertexIndexMap index)
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `vertex_descriptor i`
+| The vertex for which to compute the wavefront.
+
+| IN
+| `const Graph& g`
+| The graph object on which the algorithm will be applied.
+  The type `Graph` must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| IN
+| `VertexIndexMap index`
+| This maps each vertex to an integer in the range `[0, num_vertices(g))`.
+  The type `VertexIndexMap` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The vertex descriptor
+  type of the graph needs to be usable as the key type of the map.
+|===
+
+== Description
+
+The *_i-th wavefront_* of a graph counts the number of distinct rows active at vertex _i_, including vertex _i_ itself. A row _v_ is active at _i_ if _index[v] \<= index[i]_ and _v_ has a neighbor _w_ with _index[w] >= index[i]_.
+
+== Returns
+
+The wavefront of the _i-th_ vertex as a `vertices_size_type` value.
+
+'''''
+
+[#sec:max-wavefront]
+== max_wavefront
+
+Calculates the maximum wavefront of a graph.
+
+*Complexity:* _O(|V|^2^ * max_out_degree)_ +
+*Defined in:* `<boost/graph/wavefront.hpp>`
+
+'''
+
+=== (1) Default vertex index overload
+
+[source,cpp]
+----
+template <typename Graph>
+typename graph_traits<Graph>::vertices_size_type
+max_wavefront(const Graph& g)
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| The graph object on which the algorithm will be applied.
+  The type `Graph` must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+  The default `vertex_index` property map is used.
+|===
+
+'''
+
+=== (2) Explicit vertex index map overload
+
+[source,cpp]
+----
+template <typename Graph, typename VertexIndexMap>
+typename graph_traits<Graph>::vertices_size_type
+max_wavefront(const Graph& g, VertexIndexMap index)
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| The graph object on which the algorithm will be applied.
+  The type `Graph` must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| IN
+| `VertexIndexMap index`
+| This maps each vertex to an integer in the range `[0, num_vertices(g))`.
+  The type `VertexIndexMap` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The vertex descriptor
+  type of the graph needs to be usable as the key type of the map.
+|===
+
+== Description
+
+Computes the *_maximum wavefront_* of a graph, which is the maximum over all vertices of the individual wavefront values.
+
+_W~max~(G) = max { W~i~(G) {nbsp}{nbsp}| i=0...++|++V++|++-1 }_
+
+== Returns
+
+The maximum wavefront of the graph as a `vertices_size_type` value.
+
+'''''
+
+[#sec:aver-wavefront]
+== aver_wavefront
+
+Calculates the average wavefront of a graph (sum of all wavefronts divided by the number of vertices).
+
+*Complexity:* _O(|V|^2^ * max_out_degree)_ +
+*Defined in:* `<boost/graph/wavefront.hpp>`
+
+'''
+
+=== (1) Default vertex index overload
+
+[source,cpp]
+----
+template <typename Graph>
+double aver_wavefront(const Graph& g)
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| The graph object on which the algorithm will be applied.
+  The type `Graph` must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+  The default `vertex_index` property map is used.
+|===
+
+'''
+
+=== (2) Explicit vertex index map overload
+
+[source,cpp]
+----
+template <typename Graph, typename VertexIndexMap>
+double aver_wavefront(const Graph& g, VertexIndexMap index)
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| The graph object on which the algorithm will be applied.
+  The type `Graph` must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| IN
+| `VertexIndexMap index`
+| This maps each vertex to an integer in the range `[0, num_vertices(g))`.
+  The type `VertexIndexMap` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The vertex descriptor
+  type of the graph needs to be usable as the key type of the map.
+|===
+
+== Description
+
+Computes the *_average wavefront_* of a graph, which is the sum of all individual vertex wavefronts divided by the number of vertices.
+
+_W~avg~(G) = (sum { W~i~(G) {nbsp}{nbsp}| i=0...++|++V++|++-1 }) / ++|++V++|++_
+
+== Returns
+
+The average wavefront as a `double` value.
+
+'''''
+
+[#sec:rms-wavefront]
+== rms_wavefront
+
+Calculates the root mean square of all wavefronts.
+
+*Complexity:* _O(|V|^2^ * max_out_degree)_ +
+*Defined in:* `<boost/graph/wavefront.hpp>`
+
+'''
+
+=== (1) Default vertex index overload
+
+[source,cpp]
+----
+template <typename Graph>
+double rms_wavefront(const Graph& g)
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| The graph object on which the algorithm will be applied.
+  The type `Graph` must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+  The default `vertex_index` property map is used.
+|===
+
+'''
+
+=== (2) Explicit vertex index map overload
+
+[source,cpp]
+----
+template <typename Graph, typename VertexIndexMap>
+double rms_wavefront(const Graph& g, VertexIndexMap index)
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| The graph object on which the algorithm will be applied.
+  The type `Graph` must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| IN
+| `VertexIndexMap index`
+| This maps each vertex to an integer in the range `[0, num_vertices(g))`.
+  The type `VertexIndexMap` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The vertex descriptor
+  type of the graph needs to be usable as the key type of the map.
+|===
+
+== Description
+
+Computes the *_root mean square wavefront_* of a graph, which is the square root of the mean of the squared wavefront values across all vertices.
+
+_W~rms~(G) = sqrt( (sum { W~i~(G)^2^ {nbsp}{nbsp}| i=0...++|++V++|++-1 }) / ++|++V++|++ )_
+
+== Returns
+
+The root mean square wavefront as a `double` value.
+

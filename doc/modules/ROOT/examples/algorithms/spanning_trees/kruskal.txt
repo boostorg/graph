@@ -1,0 +1,6 @@
+MST edges:
+  0 -- 3 (weight 1)
+  0 -- 1 (weight 2)
+  1 -- 2 (weight 3)
+  2 -- 4 (weight 4)
+Total weight: 10

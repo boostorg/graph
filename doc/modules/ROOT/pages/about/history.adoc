@@ -1,0 +1,212 @@
+= History
+
+The Boost Graph Library began its life as the Generic Graph Component
+Library (GGCL), a software project at the
+https://web.archive.org/web/20010516042117/http://www.lsc.nd.edu/[Lab
+for Scientific Computing (LSC)] at the University of Notre Dame, under
+the direction of Professor https://homes.cs.washington.edu/~al75[Andrew
+Lumsdaine]. The Lab's research directions include numerical linear
+algebra, parallel computing, and software engineering (including generic
+programming).
+
+Soon after the Standard Template Library was released, work began at the
+LSC to apply generic programming to scientific computing. The
+https://en.wikipedia.org/wiki/Matrix_Template_Library[Matrix Template
+Library] (Jeremy Siek's masters thesis) was one of the first projects.
+Many of the lessons learned during construction of the MTL were applied
+to the design and implementation of the GGCL.
+
+Graph algorithms play an important role in sparse matrix computations,
+so the LSC had a need for a good graph library. However, none of the
+available graph libraries (LEDA, GTL, Stanford GraphBase) were written
+using the generic programming style of the STL, and hence did not
+fulfill the flexibility and high-performance requirements of the LSC.
+Others were also expressing interest in a generic C++ graph library.
+During a meeting with Bjarne Stroustrup we were introduced to several
+people at AT&T who needed such a library. There had also been earlier
+work in the area of generic graph algorithms, including some codes
+written by Alexander Stepanov, and Dietmar Kühl's masters thesis.
+
+With this in mind, and motivated by homework assignments in his
+algorithms class, Jeremy began prototyping an interface and some graph
+classes in the spring of 1998. Lie-Quan Lee then developed the first
+version of GGCL, which became his masters thesis project.
+
+The following year, Jeremy went to work for SGI with Alexander Stepanov
+and Matt Austern. During this time Alex's disjoint-sets based connected
+components algorithm was added to GGCL, and Jeremy began working on the
+concept documentation for GGCL similar to Matt's STL documentation.
+
+While working at SGI, Jeremy heard about Boost and was excited to find a
+group of people interested in creating high-quality C++ libraries. At
+Boost there were several people interested in generic graph algorithms,
+most notably Dietmar Kühl. Some discussions about generic interfaces for
+graph structures resulted in a revision of GGCL which closely resembles
+the current Boost Graph Library interface.
+
+On September 4, 2000 GGCL passed the Boost formal review and became the
+Boost Graph Library (BGL). The first release of BGL was September 27,
+2000.
+
+== Historical changelog (through Boost 1.36)
+
+NOTE: This changelog is frozen at Boost 1.36 (2008). Modern release notes
+live in the Boost release announcements and the git history of
+https://github.com/boostorg/graph[boostorg/graph]. It is retained here as
+a record of the library's early evolution.
+
+=== Version 1.36.0
+
+*New algorithms and components*
+
+* xref:algorithms/shortest_paths/r_c_shortest_paths.adoc[`r_c_shortest_paths`],
+  resource-constrained shortest paths, from Michael Drexl.
+
+=== Version 1.35.0
+
+*New algorithms and components*
+
+* xref:algorithms/network_flow/boykov_kolmogorov_max_flow.adoc[`boykov_kolmogorov_max_flow`]
+  (formerly `kolmogorov_max_flow`), from Stephan Diederich as part of the
+  2006 Google Summer of Code.
+* `read_dimacs_max_flow` and `write_dimacs_max_flow` for max-flow problems,
+  from Stephan Diederich.
+* xref:io/graphml.adoc[`read_graphml` / `write_graphml`] for GraphML
+  input/output, from Tiago de Paula Peixoto.
+* xref:algorithms/cycle_detection/howard_cycle_ratio.adoc[`minimum_cycle_ratio`
+  and `maximum_cycle_ratio`], from Dmitry Bufistov and Andrey Parfenov.
+* xref:algorithms/planar/boyer_myrvold.adoc[`boyer_myrvold_planarity_test`],
+  along with a suite of xref:algorithms/planar/planar_graphs.adoc[algorithms
+  for planar graphs], from Aaron Windsor.
+
+*Enhancements*
+
+* xref:extending/leda_conversion.adoc[LEDA adaptor] improvements, from Jens Müller.
+
+=== Version 1.34.1
+
+*Bug fixes*
+
+* xref:algorithms/shortest_paths/bellman_ford_shortest.adoc[`bellman_ford_shortest_paths`]:
+  fixed a bug where certain negative cycles were not correctly detected.
+
+=== Version 1.34.0
+
+*New algorithms and components*
+
+* xref:algorithms/network_flow/maximum_matching.adoc[`edmonds_maximum_cardinality_matching`],
+  from Aaron Windsor.
+* xref:algorithms/utility/lengauer_tarjan_dominator.adoc[`lengauer_tarjan_dominator_tree`],
+  from JongSoo Park.
+* xref:graph_classes/compressed_sparse_row.adoc[`compressed_sparse_row_graph`],
+  from Jeremiah Willcock and Douglas Gregor of Indiana University.
+* `sorted_erdos_renyi_iterator`, from Jeremiah Willcock of Indiana University.
+
+*Enhancements*
+
+* The compiled library for GraphViz reading is now called `boost_graph`
+  rather than `bgl-viz`.
+* xref:algorithms/connected_components/biconnected_components.adoc[`biconnected_components`]
+  gained a visitor parameter and supports named parameters, from Janusz
+  Piwowarski.
+* xref:graph_classes/adjacency_matrix.adoc[`adjacency_matrix`] now models
+  xref:concepts/BidirectionalGraph.adoc[Bidirectional Graph].
+* xref:graph_classes/adjacency_list.adoc[`adjacency_list`] is now
+  Serializable.
+* Added `edges_size_type` and `vertices_size_type` to
+  xref:traits/adjacency_list_traits.adoc[`adjacency_list_traits`].
+* Added `operator<` etc. to `adjacency_list`'s edge descriptor.
+
+*Bug fixes*
+
+* Fixed a bug that caused the relaxed heap to fail on x86 Linux.
+* Bundled properties now work with adjacency list I/O.
+* xref:algorithms/shortest_paths/floyd_warshall_shortest.adoc[`floyd_warshall_all_pairs_shortest_paths`]
+  now properly uses its `compare`, `inf`, and `zero` parameters.
+* xref:algorithms/shortest_paths/johnson_all_pairs_shortest.adoc[`johnson_all_pairs_shortest_paths`]
+  now supports `compare`, `combine`, `inf`, and `zero`.
+* Fixed a bug in `smallest_last_vertex_ordering.hpp` that could cause a
+  vertex to be moved to the wrong bucket during a bucket-sorter update.
+
+=== Version 1.33.1
+
+*Bug fixes*
+
+* xref:algorithms/layout/fruchterman_reingold.adoc[`fruchterman_reingold_force_directed_layout`]:
+  fixed enumeration of grid-force pairs, which caused some odd graph
+  formations along grid lines.
+* xref:algorithms/ordering/king_ordering.adoc[`king_ordering`] and
+  xref:algorithms/ordering/cuthill_mckee_ordering.adoc[`cuthill_mckee_ordering`]:
+  fixed a bug that caused failures with the multi-component version of
+  these algorithms.
+
+=== Version 1.33.0
+
+*New algorithms and components*
+
+* Experimental Python bindings, from Doug Gregor and Indiana University.
+* xref:algorithms/shortest_paths/floyd_warshall_shortest.adoc[`floyd_warshall_all_pairs_shortest_paths`],
+  from Lauren Foutz and Scott Hill.
+* xref:algorithms/shortest_paths/astar_search.adoc[`astar_search`], from
+  Kristopher Beevers and Jufeng Peng.
+* xref:algorithms/layout/fruchterman_reingold.adoc[`fruchterman_reingold_force_directed_layout`],
+  from Doug Gregor and Indiana University.
+* xref:algorithms/connected_components/biconnected_components.adoc[`biconnected_components`
+  and `articulation_points`], from Indiana University.
+* xref:algorithms/layout/gursoy_atun_layout.adoc[`gursoy_atun_layout`], from
+  Jeremiah Willcock and Doug Gregor of Indiana University.
+* xref:algorithms/ordering/king_ordering.adoc[`king_ordering`], from D.
+  Kevin McGrath of Indiana University.
+* xref:generators/erdos_renyi_generator.adoc[`erdos_renyi_iterator`].
+* xref:generators/plod_generator.adoc[`plod_iterator`].
+* xref:generators/small_world_generator.adoc[`small_world_iterator`].
+
+*Enhancements*
+
+* xref:algorithms/shortest_paths/bellman_ford_shortest.adoc[`bellman_ford_shortest_paths`]
+  now permits one to specify the starting vertex, so that it will perform
+  its own initialization.
+* xref:algorithms/traversal/undirected_dfs.adoc[`undirected_dfs`] is now
+  data-recursive, resulting in improved performance in some cases, from
+  Synge Todo.
+* xref:algorithms/shortest_paths/dijkstra_shortest_paths.adoc[`dijkstra_shortest_paths`]
+  now uses a relaxed heap
+  [xref:about/bibliography.adoc#driscoll88[55]] as its priority queue,
+  improving its complexity to _O(V log V)_ and improving real-world
+  performance for larger graphs.
+* xref:io/graphviz.adoc[`read_graphviz`] now has a new, Spirit-based
+  parser that works for all graph types and supports arbitrary properties
+  on the graph, from Ron Garcia. The old, Bison-based GraphViz reader
+  has been deprecated and was later removed.
+* xref:io/graphviz.adoc[`write_graphviz`] now supports output of dynamic
+  properties (as read in through the new `read_graphviz`).
+* xref:algorithms/ordering/cuthill_mckee_ordering.adoc[`cuthill_mckee_ordering`]
+  has been recast as an invocation of `breadth_first_search` and now
+  supports graphs with multiple components.
+* xref:adaptors/subgraph.adoc[`subgraph`] now supports
+  xref:property_maps/bundled.adoc[bundled properties]. `get_property`
+  now refers to the subgraph property, not the root graph's property.
+* xref:adaptors/filtered_graph.adoc[`filtered_graph`] now supports
+  xref:property_maps/bundled.adoc[bundled properties].
+* xref:adaptors/reverse_graph.adoc[`reverse_graph`] now supports
+  xref:property_maps/bundled.adoc[bundled properties], `set_property`,
+  and `get_property`.
+
+*Bug fixes*
+
+* xref:algorithms/shortest_paths/bellman_ford_shortest.adoc[`bellman_ford_shortest_paths`]
+  now deals with unreachable vertices better.
+* xref:graph_classes/adjacency_list.adoc[`adjacency_list`]: parallel edge
+  removal with `OutEdgeListS = listS` has been fixed. Copying and swapping
+  has been fixed.
+* xref:algorithms/connected_components/incremental_components.adoc[Incremental
+  connected components]: fixed a bug in the `incremental_components`
+  routine that may have caused incorrect results.
+* The `remove_out_edge_if` function for an undirected
+  xref:graph_classes/adjacency_list.adoc[`adjacency_list`] has been
+  rewritten and should no longer dereference singular iterators.
+* `write_graphviz` now accepts a `vertex_id` parameter that is used to
+  name the nodes.
+* `read_graphviz` now accepts empty attribute lists.
+* xref:algorithms/coloring/sequential_vertex_coloring.adoc[`sequential_vertex_coloring`]
+  has been updated, tested, and documented.

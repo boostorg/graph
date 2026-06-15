@@ -1,0 +1,73 @@
+= ST Connected
+
+Tests whether two vertices s and t are connected by a path. Uses a
+bidirectional BFS that searches simultaneously from s and t.
+
+*Complexity:* O(V + E) worst case, typically much faster +
+*Defined in:* `<boost/graph/st_connected.hpp>`
+
+Both overloads live in namespace `boost::graph` (not `boost`).
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/connectivity/st_connected.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/connectivity/st_connected.txt[]
+----
+
+=== (1) With explicit color map
+
+[source,cpp]
+----
+template <typename Graph, typename ColorMap>
+bool st_connected(const Graph& g,
+    typename graph_traits<Graph>::vertex_descriptor s,
+    typename graph_traits<Graph>::vertex_descriptor t,
+    ColorMap color);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| Must model xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| IN
+| `vertex_descriptor s`
+| Source vertex.
+
+| IN
+| `vertex_descriptor t`
+| Target vertex.
+
+| UTIL
+| `ColorMap color`
+| ReadWritePropertyMap for working storage. One entry per vertex, initialized
+  to white. The value type must model xref:concepts/property_types/ColorValue.adoc[Color Value].
+|===
+
+'''
+
+=== (2) With default color map
+
+[source,cpp]
+----
+template <typename Graph>
+bool st_connected(const Graph& g,
+    typename graph_traits<Graph>::vertex_descriptor s,
+    typename graph_traits<Graph>::vertex_descriptor t);
+----
+
+Equivalent to overload (1) using a default `two_bit_color_map` of size `num_vertices(g)` indexed by `get(vertex_index, g)`.
+
+Returns `true` if there is a path from `s` to `t`.
+
+TIP: This is faster than running a full BFS when you only need to check
+reachability between two specific vertices.

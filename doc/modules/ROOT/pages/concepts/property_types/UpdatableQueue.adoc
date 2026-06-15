@@ -1,0 +1,89 @@
+= UpdatableQueue
+
+An _UpdatableQueue_ is a refinement of the xref:concepts/property_types/Buffer.adoc[Buffer]
+concept that additionally requires that the Buffer be updatable.
+
+Implicit in the definition is an ordering of values. Though access to
+the order is not required, types that model UpdatableQueue must document
+how an object of the type orders values so that a program may change the
+position of a given value in the ordering. For example, an
+UpdatableQueue may choose to order values by using a property map, and a
+value `v1` is considered less than a value `v2` if
+`get(pm, v1) < get(pm, v2)`. A program can update the properties of
+values, thus changing the order of values in the UpdatableQueue, and
+notify the UpdatableQueue of the specific values that have a different
+position in the ordering by calling the `update` member of the
+UpdatableQueue on each.
+
+A program that modifies the order must notify the UpdatableQueue of
+values that may have different positions in the ordering since they were
+inserted or last updated.
+
+== Notation
+
+[cols=",",]
+|===
+|`Q` |is a type that models UpdatableQueue.
+|`T` |is the value type of `Q`.
+|===
+
+== Members
+
+For a type to model the UpdatableQueue concept it must have the
+following members in addition to the members that are required of types
+that model xref:concepts/property_types/Buffer.adoc[Buffer]:
+
+[cols=",",]
+|===
+|*Member* |*Description*
+
+|`void update(const T& t)` |Informs
+the UpdatableQueue that the program has modified the position of `t` in
+the ordering
+
+|__`unspecified-bool-type`__` contains(const T& t) const` |Returns
+whether the queue contains `t`
+|===
+
+== Concept Checking Class
+
+`boost/graph/buffer_concepts.hpp`
+
+[source,cpp]
+----
+
+  template <class Q>
+  struct UpdatableQueueConcept
+  {
+    void constraints() {
+      BOOST_CONCEPT_ASSERT(( Buffer<Q> ));
+
+      q.update(g_ct);
+    }
+
+    void const_constraints(const Q& cq) {
+      if (cq.contains(g_ct));
+    }
+
+    static const typename Buffer<Q>::value_type g_ct;
+    Q q;
+  };
+----
+
+== Further Refinements
+
+* UpdatablePriorityQueue
+* xref:concepts/property_types/KeyedUpdatableQueue.adoc[KeyedUpdatableQueue]
+
+[#concept:UpdatablePriorityQueue]
+== UpdatablePriorityQueue
+
+An _UpdatablePriorityQueue_ is a slight refinement of
+UpdatableQueue that imposes the
+requirement that a program may not increase the position of a value that
+is held in the queue. That is, if a value `v` had position _n_ in the
+ordering, a program may update the position of `v` only to 0, 1, ...,
+_n_ - 1, or _n_, where 0 is the top of the queue.
+
+The behavior when a program attempts to increase a value's position in
+the ordering is undefined.

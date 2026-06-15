@@ -1,0 +1,59 @@
+= `circle_graph_layout`
+
+Lays out the graph with the vertices at the points of a regular n-polygon.
+
+*Defined in:* `<boost/graph/circle_layout.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/layout/circle_layout.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/layout/circle_layout.txt[]
+----
+
+'''
+
+=== Positional version
+
+[source,cpp]
+----
+template<typename VertexListGraph, typename PositionMap, typename Radius>
+void circle_graph_layout(
+    const VertexListGraph& g,
+    PositionMap position,
+    Radius radius);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const VertexListGraph& g`
+| The graph object on which the algorithm will be applied. The type
+  `VertexListGraph` must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph].
+
+| OUT
+| `PositionMap position`
+| This property map is used to store the position of each vertex. The
+  type `PositionMap` must be a model of
+  link:../../property_map/doc/WritablePropertyMap.html[Writable Property Map],
+  with the graph's vertex descriptor type as its key type. The value type
+  of this property map should be assignable from the type `Radius`.
+
+| IN
+| `Radius radius`
+| This is the radius of the circle on which points will be laid out.
+  It must be compatible with `double`.
+
+|===
+
+== Description
+
+The distance from the center of the polygon to each point is determined by the `radius` parameter. The `position` parameter must be an Lvalue Property Map whose value type is a class type containing `x` and `y` members that will be set to the `x` and `y` coordinates.

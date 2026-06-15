@@ -1,0 +1,37 @@
+= Vertex Mutable Graph
+
+A vertex mutable graph can be changed by adding or removing vertices.
+The memory management is the responsibility of the graph implementation.
+The graph user need only make calls to `add_vertex` and
+`remove_vertex` and the graph implementation does the rest.
+
+== Refinement of
+
+xref:concepts/Graph.adoc[Graph] and
+DefaultConstructible
+
+== Associated Types
+
+No additional associated types.
+
+== Valid Expressions
+
+* `add_vertex(g)` *returns*
+`vertex_descriptor` +
+ +
+*Semantics:* Add a new vertex to the graph. The `vertex_descriptor`
+for the new vertex is returned. +
+* `remove_vertex(u, g)` *returns* `void` +
+ +
+*Semantics:* Remove _u_ from the vertex set of the graph. +
+*Preconditions:* _u_ is a valid vertex descriptor of graph _g_ and there
+are no edges incident to vertex _u_. The function `clear_vertex` can
+be used to remove all incident edges. +
+*Postconditions:* `num_vertices(g)` is one less; _u_ no longer
+appears in the vertex set of the graph and it is no longer a valid
+vertex descriptor.
+
+== Complexity guarantees
+
+* Vertex insertion is guaranteed to be amortized constant time.
+* Vertex removal is at most _O(|E| + |V|)_.

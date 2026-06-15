@@ -1,0 +1,8 @@
+discover 0
+discover 1
+discover 3
+finish   3
+finish   1
+discover 2
+finish   2
+finish   0

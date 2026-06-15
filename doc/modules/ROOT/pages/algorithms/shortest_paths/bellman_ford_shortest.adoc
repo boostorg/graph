@@ -1,0 +1,317 @@
+[#sec:bellman-ford]
+= Bellman-Ford Shortest Paths
+
+Solves the single-source shortest-paths problem for a graph with both positive and negative edge weights.
+
+*Complexity:* _O(V E)_ +
+*Defined in:* `<boost/graph/bellman_ford_shortest_paths.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/shortest_paths/bellman_ford.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/shortest_paths/bellman_ford.txt[]
+----
+
+'''
+
+=== (1) Positional version
+
+[source,cpp]
+----
+template <class EdgeListGraph, class Size, class WeightMap,
+          class PredecessorMap, class DistanceMap,
+          class BinaryFunction, class BinaryPredicate,
+          class BellmanFordVisitor>
+bool bellman_ford_shortest_paths(
+    EdgeListGraph& g, Size N,
+    WeightMap weight, PredecessorMap pred, DistanceMap distance,
+    BinaryFunction combine, BinaryPredicate compare,
+    BellmanFordVisitor v);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `EdgeListGraph& g`
+| A directed or undirected graph whose type must be a model of
+  xref:concepts/EdgeListGraph.adoc[Edge List Graph]. If a root vertex is
+  provided, then the graph must also model
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph].
+
+| IN
+| `Size N`
+| The number of vertices in the graph. The type `Size` must be an integer type.
+
+| IN
+| `WeightMap weight`
+| The weight (also known as "length" or "cost") of each edge in the graph.
+  The `WeightMap` type must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The key type for this property map must be the edge descriptor of the graph.
+  The value type for the weight map must be _Addable_ with the distance map's
+  value type.
+
+| OUT
+| `PredecessorMap pred`
+| The predecessor map records the edges in the minimum spanning tree. Upon
+  completion of the algorithm, the edges _(p[u],u)_ for all _u in V_ are in
+  the minimum spanning tree. If _p[u] = u_ then _u_ is either the source
+  vertex or a vertex that is not reachable from the source. The
+  `PredecessorMap` type must be a
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]
+  whose key and value types are the same as the vertex descriptor type of the
+  graph.
+
+| IN/OUT
+| `DistanceMap distance`
+| The shortest path weight from the source vertex to each vertex in the graph
+  `g` is recorded in this property map. The type `DistanceMap` must be a model
+  of link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map].
+  The key type of the property map must be the vertex descriptor type of the
+  graph, and the value type of the distance map must be
+  http://www.boost.org/sgi/stl/LessThanComparable.html[Less Than Comparable].
+
+| IN
+| `BinaryFunction combine`
+| This function object replaces the role of addition in the relaxation step.
+  The first argument type must match the distance map's value type and the
+  second argument type must match the weight map's value type. The result type
+  must be the same as the distance map's value type.
+
+| IN
+| `BinaryPredicate compare`
+| This function object replaces the role of the less-than operator that
+  compares distances in the relaxation step. The argument types must match the
+  distance map's value type.
+
+| IN
+| `BellmanFordVisitor v`
+| The visitor object, whose type must be a model of
+  xref:visitors/BellmanFordVisitor.adoc[Bellman-Ford Visitor]. The visitor
+  object is passed by value <<1,[1]>>.
+
+|===
+
+'''
+
+=== (2) Named parameter version
+
+[source,cpp]
+----
+template <class EdgeListGraph, class Size, class P, class T, class R>
+bool bellman_ford_shortest_paths(
+    const EdgeListGraph& g, Size N,
+    const bgl_named_params<P, T, R>& params = all defaults);
+
+template <class VertexAndEdgeListGraph, class P, class T, class R>
+bool bellman_ford_shortest_paths(
+    const VertexAndEdgeListGraph& g,
+    const bgl_named_params<P, T, R>& params = all defaults);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const EdgeListGraph& g`
+| A directed or undirected graph whose type must be a model of
+  xref:concepts/EdgeListGraph.adoc[Edge List Graph]. If a root vertex is
+  provided, then the graph must also model
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph].
+
+| IN
+| `Size N`
+| The number of vertices in the graph. The type `Size` must be an integer type. +
+  *Default:* `num_vertices(g)`.
+
+| IN
+| `params`
+| Named parameters passed via `bgl_named_params`. The following are accepted:
+|===
+
+[cols="1,2,5"]
+|===
+| Direction | Named Parameter | Description / Default
+
+| IN
+| `weight_map(WeightMap w)`
+| Edge weights (see (1) `WeightMap weight`). +
+  *Default:* `get(edge_weight, g)`
+
+| OUT
+| `predecessor_map(PredecessorMap p_map)`
+| Predecessor map (see (1) `PredecessorMap pred`). +
+  *Default:* `dummy_property_map`
+
+| IN/OUT
+| `distance_map(DistanceMap d)`
+| Distance map (see (1) `DistanceMap distance`). +
+  *Default:* `get(vertex_distance, g)`
+
+| IN
+| `root_vertex(Vertex s)`
+| The starting (or "root") vertex from which shortest paths will be computed.
+  When provided, the distance map need not be initialized (the algorithm will
+  perform the initialization itself). However, the graph must model
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph] when this parameter is
+  provided. +
+  *Default:* None; if omitted, the user must initialize the distance map.
+
+| IN
+| `visitor(BellmanFordVisitor v)`
+| Visitor (see (1) `BellmanFordVisitor v`). +
+  *Default:* `bellman_visitor<null_visitor>`
+
+| IN
+| `distance_combine(BinaryFunction combine)`
+| Distance combination function (see (1) `BinaryFunction combine`). +
+  *Default:* `std::plus<D>` with
+  `D=typename property_traits<DistanceMap>::value_type`
+
+| IN
+| `distance_compare(BinaryPredicate compare)`
+| Distance comparison function (see (1) `BinaryPredicate compare`). +
+  *Default:* `std::less<D>` with
+  `D=typename property_traits<DistanceMap>::value_type`
+
+|===
+
+== Description
+
+The https://en.wikipedia.org/wiki/Bellman%E2%80%93Ford_algorithm[Bellman-Ford algorithm]
+[xref:about/bibliography.adoc#bellman58[2],xref:about/bibliography.adoc#ford62:_flows[8],xref:about/bibliography.adoc#lawler76:_comb_opt[16],xref:about/bibliography.adoc#clr90[5]]
+solves the single-source shortest paths problem for a graph with both
+positive and negative edge weights. For the definition of the shortest
+paths problem see Section
+xref:about/graph_theory_review.adoc#sec:shortest-paths-algorithms[Shortest-Paths
+Algorithms]. If you only need to solve the shortest paths problem for
+positive edge weights, Dijkstra's algorithm provides a more efficient
+alternative. If all the edge weights are all equal to one then
+breadth-first search provides an even more efficient alternative.
+
+Before calling the `bellman_ford_shortest_paths()` function, the user
+must assign the source vertex a distance of zero and all other vertices a
+distance of infinity _unless_ you are providing a starting vertex. The
+Bellman-Ford algorithm proceeds by looping through all of the edges in
+the graph, applying the relaxation operation to each edge. In the
+following pseudo-code, _v_ is a vertex adjacent to _u_, _w_ maps edges to
+their weight, and _d_ is a distance map that records the length of the
+shortest path to each vertex seen so far. _p_ is a predecessor map which
+records the parent of each vertex, which will ultimately be the parent in
+the shortest paths tree.
+
+=== Relaxation
+
+[cols="1a,1a"]
+|===
+|
+----
+RELAX(u, v, w, d, p)
+  if (w(u,v) + d[u] < d[v])
+    d[v] := w(u,v) + d[u]
+    p[v] := u
+  else
+    ...
+----
+|
+----
+.
+.
+relax edge (u,v)
+.
+.
+edge (u,v) is not relaxed
+----
+|===
+
+The algorithm repeats this loop _\|V\|_ times after which it is
+guaranteed that the distances to each vertex have been reduced to the
+minimum possible unless there is a negative cycle in the graph. If there
+is a negative cycle, then there will be edges in the graph that were not
+properly minimized. That is, there will be edges _(u,v)_ such that
+_w(u,v) + d[u] < d[v]_. The algorithm loops over the edges in the graph
+one final time to check if all the edges were minimized, returning `true`
+if they were and returning `false` otherwise.
+
+=== Pseudo-Code
+
+[source,text]
+----
+BELLMAN-FORD(G)
+  // Optional initialization
+  for each vertex u in V
+    d[u] := infinity
+    p[u] := u
+  end for
+  for i := 1 to |V|-1
+    for each edge (u,v) in E             // examine_edge
+      RELAX(u, v, w, d, p)               // edge_relaxed / edge_not_relaxed
+    end for
+  end for
+  for each edge (u,v) in E
+    if (w(u,v) + d[u] < d[v])            // edge_not_minimized
+      return (false, , )
+    else
+      ...                                // edge_minimized
+  end for
+  return (true, p, d)
+----
+
+There are two main options for obtaining output from the
+`bellman_ford_shortest_paths()` function. If the user provides a distance
+property map through the `distance_map()` parameter then the shortest
+distance from the source vertex to every other vertex in the graph will
+be recorded in the distance map (provided the function returns `true`).
+The second option is recording the shortest paths tree in the
+`predecessor_map()`. For each vertex _u in V_, _p[u]_ will be the
+predecessor of _u_ in the shortest paths tree (unless _p[u] = u_, in
+which case _u_ is either the source vertex or a vertex unreachable from
+the source). In addition to these two options, the user can provide her
+own custom-made visitor that can take actions at any of the algorithm's
+event points.
+
+== Returns
+
+Returns `true` if all edges were successfully minimized, indicating there
+are no negative-weight cycles reachable from the source. Returns `false`
+if a negative cycle is detected.
+
+== Visitor Event Points
+
+* *`vis.examine_edge(e, g)`* is invoked on every edge in the graph
+  _\|V\|_ times.
+* *`vis.edge_relaxed(e, g)`* is invoked when the distance label for
+  the target vertex is decreased. The edge _(u,v)_ that participated in
+  the last relaxation for vertex _v_ is an edge in the shortest paths
+  tree.
+* *`vis.edge_not_relaxed(e, g)`* is invoked if the distance label
+  for the target vertex is not decreased.
+* *`vis.edge_minimized(e, g)`* is invoked during the second stage of
+  the algorithm, during the test of whether each edge was minimized. If
+  the edge is minimized then this function is invoked.
+* *`vis.edge_not_minimized(e, g)`* is also invoked during the second
+  stage of the algorithm, during the test of whether each edge was
+  minimized. If the edge was not minimized, this function is invoked.
+  This happens when there is a negative cycle in the graph.
+
+== Example
+
+See link:../example/bellman-example.cpp[`example/bellman-example.cpp`]
+for an example of using the Bellman-Ford algorithm.
+
+== Notes
+
+[#1]#[1]# Since the visitor parameter is passed by value, if your
+visitor contains state then any changes to the state during the algorithm
+will be made to a copy of the visitor object, not the visitor object
+passed in. Therefore you may want the visitor to hold this state by
+pointer or reference.

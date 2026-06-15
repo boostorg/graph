@@ -1,0 +1,296 @@
+= Bibliography
+
+[unstyled]
+* [[austern99:_gener_progr_stl]]*[1]* M. H. Austern.
+_Generic Programming and the STL_. Professional computing series. Addison-Wesley, 1999.
+
+* [[bellman58]]*[2]* R. Bellman.
+https://pubs.ams.org/journals/qam/1958-16-01/S0033-569X-1958-0102435-2[_On a routing problem_].
+_Quarterly of Applied Mathematics_, 16(1):87-90, 1958.
+
+* [[coleman85:_algor]]*[3]* T. F. Coleman, B. S. Garbow, and J. J. Moré.
+https://dl.acm.org/doi/pdf/10.1145/6187.6193[_Algorithm 649: Fortran subroutines for estimating sparse hessian matrices_].
+_ACM Transactions on Mathematical Software_, 11(4):378, December 1985.
+
+* [[coleman84:_estim_jacob]]*[4]* T. F. Coleman and J. J. Moré.
+https://doi.org/10.1137/0720013[_Estimation of sparse jacobian matrices and graph coloring problems_].
+_SIAM Journal on Numerical Analysis_, 20:187-209, 1984.
+
+* [[clr90]]*[5]* T. Cormen, C. Leiserson, and R. Rivest.
+_Introduction to Algorithms_. McGraw-Hill, 1990.
+
+* [[curtis74:_jacob]]*[6]* A. Curtis, M. Powell, and J. Reid.
+https://academic.oup.com/imamat/article-abstract/13/1/117/721987[_On the estimation of sparse jacobian matrices_].
+_Journal of the Institute of Mathematics and its Applications_, 13:117-119, 1974.
+
+* [[dijkstra59]]*[7]* E. Dijkstra.
+https://doi.org/10.1007/BF01386390[_A note on two problems in connexion with graphs_].
+_Numerische Mathematik_, 1:269-271, 1959.
+
+* [[ford62:_flows]]*[8]* L. R. Ford and D. R. Fulkerson.
+_Flows in Networks_. Princeton University Press, 1962.
+
+* [[gamma95:_design_patterns]]*[9]* E. Gamma, R. Helm, R. Johnson, and J. Vlissides.
+https://faculty.chas.uni.edu/~wallingf/teaching/062/sessions/support/pattern-examples.pdf[_Design Patterns: Elements of Reusable Object-Oriented Software_]. Professional Computing. Addison-Wesley, 1995.
+
+* [[george93:graphtheory]]*[10]* A. George, J. R. Gilbert, and J. W. Liu, editors.
+https://books.google.com/books?id=-xEGCAAAQBAJ[_Graph Theory and Sparse Matrix Computation_]. Springer-Verlag New York, Inc, 1993.
+
+* [[george81:__sparse_pos_def]]*[11]* A. George and J. W.-H. Liu.
+_Computer Solution of Large Sparse Positive Definite Systems_. Computational Mathematics. Prentice-Hall, 1981.
+
+* [[graham85]]*[12]* R. Graham and P. Hell.
+https://doi.org/10.1109/MAHC.1985.10011[_On the history of the minimum spanning tree problem_].
+_Annals of the History of Computing_, 7(1):43-57, 1985.
+
+* [[hart68]]*[13]* P. E. Hart, N. J. Nilsson, and B. Raphael.
+https://doi.org/10.1109/TSSC.1968.300136[_A formal basis for the heuristic determination of minimum cost paths_].
+_IEEE Transactions on Systems Science and Cybernetics_, 4(2):100-107, 1968.
+
+* [[kruskal56]]*[14]* J. B. Kruskal.
+https://doi.org/10.1090/S0002-9939-1956-0078686-7[_On the shortest spanning subtree of a graph and the traveling salesman problem_].
+In _Proceedings of the American Mathematical Society_, volume 7, pages 48-50, 1956.
+
+* [[kuehl96:_design_patterns_for_graph_algo]]*[15]* D. Kühl.
+Design patterns for the implementation of graph algorithms.
+Master's thesis, Technische Universität Berlin, July 1996.
+
+* [[lawler76:_comb_opt]]*[16]* E. L. Lawler.
+https://books.google.com/books?id=m4MvtFenVjEC[_Combinatorial Optimization: Networks and Matroids_]. Holt, Rinehart, and Winston, 1976.
+
+* [[LIU:MMD]]*[17]* J. W. H. Liu.
+https://doi.org/10.1145/214392.214398[_Modification of the minimum-degree algorithm by multiple elimination_].
+_ACM Transactions on Mathematical Software_, 11(2):141-153, 1985.
+
+* [[mehlhorn99:_leda]]*[18]* K. Mehlhorn and S. Näher.
+https://link.springer.com/chapter/10.1007/3-540-63165-8_161[_The LEDA Platform of Combinatorial and Geometric Computing_]. Cambridge University Press, 1999.
+
+* [[myers95:_trait]]*[19]* N. C. Myers.
+Traits: a new and useful template technique.
+_C{plus}{plus} Report_, June 1995.
+
+* [[prim57:_short]]*[20]* R. Prim.
+https://doi.org/10.1002/j.1538-7305.1957.tb01515.x[_Shortest connection networks and some generalizations_].
+_Bell System Technical Journal_, 36:1389-1401, 1957.
+
+* [[saad96:imsms]]*[21]* Y. Saad.
+_Iterative Methods for Sparse Linear Systems_. PWS Publishing Company, 1996.
+
+* [[tarjan83:_data_struct_network_algo]]*[22]* R. E. Tarjan.
+_Data Structures and Network Algorithms_. Society for Industrial and Applied Mathematics, 1983.
+
+* [[parter61:_gauss]]*[23]* Seymour Parter.
+https://doi.org/10.1137/1003013[_The use of linear graphs in Gauss elimination_].
+_SIAM Review_, 3:119-130, 1961.
+
+* [[matula72:_graph_theory_computing]]*[24]* D. Matula, G. Marble, and J. Isaacson.
+Graph coloring algorithms in _Graph Theory and Computing_.
+Academic Press, pp. 104-122, 1972.
+
+* [[garey79:computers-and-intractability]]*[25]* M. R. Garey and D. S. Johnson.
+_Computers and Intractability: A Guide to the Theory of NP-Completeness_. W. H. Freeman, New York, 1979.
+
+* [[welsch67]]*[26]* D. Welsh and M. B. Powell.
+https://doi.org/10.1093/comjnl/10.1.85[_An upper bound for the chromatic number of a graph and its application to timetabling problems_].
+_Computer Journal_, 10:85-86, 1967.
+
+* [[brelaz79:_new]]*[27]* D. Brélaz.
+https://doi.org/10.1145/359094.359101[_New methods to color the vertices of a graph_].
+_Communications of the ACM_, 22:251-256, 1979.
+
+* [[heber99:_saw]]*[28]* G. Heber, R. Biswas, and G. R. Gao.
+Self-Avoiding Walks over Adaptive Unstructured Grids.
+_Parallel and Distributed Processing_, LNCS 1586, Springer-Verlag, pp. 968-977, 1999.
+
+* [[ng-raghavan]]*[29]* Esmond G. Ng and Padma Raghavan.
+Performance of greedy ordering heuristics for sparse Cholesky factorization.
+_SIAM Journal on Matrix Analysis and Applications_ (to appear).
+
+* [[George:evolution]]*[30]* Alan George and Joseph W. H. Liu.
+https://doi.org/10.1137/1031001[_The Evolution of the Minimum Degree Ordering Algorithm_].
+_SIAM Review_, 31(1):1-19, March 1989.
+
+* [[ford56:_maxim]]*[31]* L. R. Ford and D. R. Fulkerson.
+Maximal flow through a network.
+_Canadian Journal of Mathematics_, pp. 399-404, 1956.
+
+* [[goldberg85:_new_max_flow_algor]]*[32]* A. V. Goldberg.
+A New Max-Flow Algorithm.
+MIT Technical Report MIT/LCS/TM-291, 1985.
+
+* [[karzanov74:_deter]]*[33]* A. V. Karzanov.
+Determining the maximal flow in a network by the method of preflows.
+_Soviet Mathematics Doklady_, 1974.
+
+* [[ahuja93:_network_flows]]*[34]* Ravindra K. Ahuja, Thomas L. Magnanti, and James B. Orlin.
+_Network Flows: Theory, Algorithms, and Applications_. Prentice Hall, 1993.
+
+* [[edmonds72:_improvements_netflow]]*[35]* Jack Edmonds and Richard M. Karp.
+https://doi.org/10.1145/321694.321699[_Theoretical improvements in the algorithmic efficiency for network flow problems_].
+_Journal of the ACM_, 19:248-264, 1972.
+
+* [[tarjan72:dfs_and_linear_algo]]*[36]* Robert E. Tarjan.
+https://doi.org/10.1137/0201010[_Depth first search and linear graph algorithms_].
+_SIAM Journal on Computing_, 1(2):146-160, 1972.
+
+* [[eppstein97:dynamic_graph]]*[37]* David Eppstein, Zvi Galil, and Giuseppe F. Italiano.
+Dynamic Graph Algorithms.
+Chapter 22, _CRC Handbook of Algorithms and Theory of Computation_, 1997.
+
+* [[cuthill69:reducing_bandwith]]*[38]* E. Cuthill and J. McKee.
+https://doi.org/10.1145/800195.805928[_Reducing the bandwidth of sparse symmetric matrices_].
+_Proceedings of the 24th National Conference of the ACM_, 1969.
+
+* [[liu75:anal_cm_rcm]]*[39]* J. Liu and A. Sherman.
+Comparative analysis of the Cuthill-McKee and the reverse Cuthill-McKee ordering algorithms for sparse matrices.
+_SIAM Journal of Numerical Analysis_, 13:198-213, 1975.
+
+* [[george71:fem]]*[40]* Alan George.
+Computer implementation of the finite element method.
+Technical Report STAN-CS-208, Stanford University, 1971.
+
+* [[fortin96:_graph_iso_prob]]*[41]* Scott Fortin.
+The Graph Isomorphism Problem.
+TR 96-20, Dept. of Computer Science, University of Alberta, 1996.
+
+* [[mckay81:_pract_graph_iso]]*[42]* Brendan D. McKay.
+Practical Graph Isomorphism.
+_Congressus Numerantium_, 1981.
+
+* [[reingold77:_combin_algo]]*[43]* Reingold, Nievergelt, and Deo.
+_Combinatorial Algorithms: Theory and Practice_. Prentice Hall, 1977.
+
+* [[moore59]]*[44]* Edward Moore.
+The shortest path through a maze.
+_International Symposium on the Theory of Switching_, Harvard University Press, 1959.
+
+* [[nuutila95]]*[45]* E. Nuutila.
+Efficient transitive closure computation in large digraphs.
+PhD Thesis, Helsinki University of Technology, 1995.
+_Acta Polytechnica Scandinavica_, Mathematics and Computing in Engineering Series, No. 74.
+
+* [[goral79]]*[46]* A. Goralčíková and V. Koubek.
+A reduct and closure algorithm for graphs.
+In _Mathematical Foundations of Computer Science_, volume 74 of _Lecture Notes in Computer Science_, pages 301-307. Springer-Verlag, 1979.
+
+* [[simon86]]*[47]* Klaus Simon.
+An Improved Algorithm for Transitive Closure on Acyclic Digraphs.
+_Theoretical Computer Science_ 58 (Automata, Languages and Programming), 376-386, 1986.
+
+* [[purdom70]]*[48]* P. Purdom.
+A Transitive Closure Algorithm.
+_BIT_, 10:76-94, 1970.
+
+* [[brandes01]]*[49]* Ulrik Brandes.
+https://doi.org/10.1080/0022250X.2001.9990249[_A Faster Algorithm for Betweenness Centrality_].
+_Journal of Mathematical Sociology_, 25(2):163-177, 2001.
+
+* [[freeman77]]*[50]* Lindon C. Freeman.
+https://doi.org/10.2307/3033543[_A Set of Measures of Centrality Based on Betweenness_].
+_Sociometry_, 40:35-41, 1977.
+
+* [[anthonisse71]]*[51]* J. M. Anthonisse.
+The rush in a directed graph.
+Technical Report BN9/71, Stichting Mathematisch Centrum, Amsterdam, 1971.
+
+* [[kamada89]]*[52]* T. Kamada and S. Kawai.
+https://doi.org/10.1016/0020-0190(89)90102-6[_An algorithm for drawing general undirected graphs_].
+_Information Processing Letters_, 31:7-15, 1989.
+
+* [[fruchterman91]]*[53]* T. Fruchterman and E. Reingold.
+https://doi.org/10.1002/spe.4380211102[_Graph drawing by force-directed placement_].
+_Software. Practice & Experience_, 21(11):1129-1164, 1991.
+
+* [[gursoy00]]*[54]* Attila Gürsoy and Murat Atun.
+https://doi.org/10.1007/3-540-44520-X_44[_Neighborhood Preserving Load Balancing: A Self-Organizing Approach_].
+_Euro-Par Parallel Processing_, LNCS 1900, pp. 324-341, 2000.
+
+* [[driscoll88]]*[55]* James R. Driscoll, Harold N. Gabow, Ruth Shrairman, and Robert E. Tarjan.
+https://doi.org/10.1145/50087.50096[_Relaxed Heaps: An alternative for Fibonacci Heaps with applications to parallel computation_].
+_Communications of the ACM_, 31(11):1343-1354, November 1988.
+
+* [[king70]]*[56]* I. P. King.
+https://doi.org/10.1002/nme.1620020405[_An automatic reordering scheme for simultaneous equations derived from network analysis_].
+_International Journal for Numerical Methods in Engineering_, 2:523-533, 1970.
+
+* [[palmer2000]]*[57]* C. Palmer and J. Steffan.
+Generating Network Topologies That Obey Power Laws.
+_Proceedings of GLOBECOM_, November 2000.
+
+* [[edmonds65]]*[58]* J. Edmonds.
+https://doi.org/10.4153/CJM-1965-045-4[_Paths, trees, and flowers_].
+_Canadian Journal of Mathematics_, 17:449-467, 1965.
+
+* [[lengauer-tarjan79]]*[59]* Thomas Lengauer and Robert Endre Tarjan.
+https://doi.org/10.1145/357062.357071[_A fast algorithm for finding dominators in a flowgraph_].
+_ACM Transactions on Programming Languages and Systems_, 1(1):121-141, 1979.
+
+* [[muchnick97]]*[60]* Steven S. Muchnick.
+_Advanced Compiler Design and Implementation_. Morgan Kaufmann Publishers, San Francisco, 1997.
+
+* [[appel98]]*[61]* Andrew W. Appel.
+_Modern Compiler Implementation in Java_. Cambridge University Press, 1998.
+
+* [[kolmogorov03]]*[62]* Vladimir Kolmogorov.
+_Graph Based Algorithms for Scene Reconstruction from Two or More Views_. PhD thesis, Cornell University, September 2003.
+
+* [[boykov-kolmogorov04]]*[63]* Yuri Boykov and Vladimir Kolmogorov.
+https://doi.org/10.1109/TPAMI.2004.60[_An Experimental Comparison of Min-Cut/Max-Flow Algorithms for Energy Minimization in Vision_].
+In _IEEE Transactions on Pattern Analysis and Machine Intelligence_, 26(9):1124-1137, September 2004.
+
+* [[boyermyrvold04]]*[64]* John M. Boyer and Wendy J. Myrvold.
+https://doi.org/10.7155/jgaa.00091[_On the Cutting Edge: Simplified O(n) Planarity by Edge Addition_].
+_Journal of Graph Algorithms and Applications_, 8(2):241-273, 2004.
+
+* [[chrobakpayne95]]*[65]* M. Chrobak and T. Payne.
+https://doi.org/10.1016/0020-0190(95)00076-O[_A Linear-time Algorithm for Drawing a Planar Graph on the Grid_].
+_Information Processing Letters_, 54:241-246, 1995.
+
+* [[defraysseixpachpollack90]]*[66]* H. de Fraysseix, J. Pach, and R. Pollack.
+https://doi.org/10.1007/BF02122694[_How to Draw a Planar Graph on a Grid_].
+_Combinatorica_, 10:41-51, 1990.
+
+* [[wilson96generating]]*[67]* David Bruce Wilson.
+https://doi.org/10.1145/237814.237880[_Generating random spanning trees more quickly than the cover time_].
+_ACM Symposium on the Theory of Computing_, pp. 296-303, 1996.
+
+* [[edmonds65:_max_weighted_match]]*[68]* J. Edmonds.
+https://doi.org/10.6028/jres.069B.013[_Maximum Matching and a Polyhedron with 0, 1-Vertices_].
+_Journal of Research of the National Bureau of Standards B_, 69:125-130, 1965.
+
+* [[gabow76]]*[69]* Harold N. Gabow.
+https://doi.org/10.1145/321941.321942[_An Efficient Implementation of Edmonds' Algorithm for Maximum Matching on Graphs_].
+_Journal of the ACM_, 23(2):221-234, 1976.
+
+* [[gabow90]]*[70]* Harold N. Gabow.
+Data Structures for Weighted Matching and Nearest Common Ancestors with Linking.
+_Proceedings of the First Annual ACM-SIAM Symposium on Discrete Algorithms_, pp. 434-443, 1990.
+
+* [[galil86]]*[71]* Zvi Galil.
+https://doi.org/10.1145/6462.6502[_Efficient Algorithms for Finding Maximum Matching in Graphs_].
+_ACM Computing Surveys_, 18(1):23-38, 1986.
+
+* [[cochet-terrasson98]]*[72]* J. Cochet-Terrasson et al.
+_Numerical computation of spectral elements in max-plus algebra_, 1998.
+
+* [[dasdan99]]*[73]* A. Dasdan, S. S. Irani, and R. K. Gupta.
+https://doi.org/10.1145/309847.309972[_Efficient Algorithms for Optimum Cycle Mean and Optimum Cost to Time Ratio Problems_].
+Proceedings of the 36th ACM/IEEE Design Automation Conference (DAC '99), 1999.
+
+* [[mehlhorn-uhrig95]]*[74]* K. Mehlhorn and C. Uhrig.
+http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.31.614&rep=rep1&type=pdf[_The minimum cut algorithm of Stoer and Wagner_], 1995.
+
+* [[stoer-wagner97]]*[75]* M. Stoer and F. Wagner.
+https://doi.org/10.1145/263867.263872[_A simple min-cut algorithm_].
+_Journal of the ACM_, 44(4):585-591, 1997.
+
+* [[zwick08]]*[76]* U. Zwick.
+http://www.cs.tau.ac.il/~zwick/grad-algo-08/gmc.pdf[_Global minimum cuts_], 2008.
+
+* [[sloan86]]*[77]* S. W. Sloan.
+https://doi.org/10.1002/nme.1620230209[_An algorithm for profile and wavefront reduction of sparse matrices_].
+_International Journal for Numerical Methods in Engineering_, 23:239-251, 1986.
+
+* [[sloan89]]*[78]* S. W. Sloan.
+https://doi.org/10.1002/nme.1620281103[_A Fortran program for profile and wavefront reduction_].
+_International Journal for Numerical Methods in Engineering_, 28:2651-2679, 1989.

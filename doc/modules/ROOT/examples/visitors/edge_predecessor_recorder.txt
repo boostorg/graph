@@ -1,0 +1,3 @@
+vertex 1  arrived via edge 0 -> 1
+vertex 2  arrived via edge 0 -> 2
+vertex 3  arrived via edge 1 -> 3

@@ -1,0 +1,145 @@
+= Writing Algorithms for BGL
+
+BGL algorithms are template functions that accept graphs and property maps
+as parameters. This design means your algorithm works with any graph type
+and any storage strategy, without knowing the concrete types at compile time.
+
+== The pattern
+
+Every BGL algorithm follows the same structure:
+
+1. Accept the graph as a template parameter constrained by a graph concept
+   (e.g., VertexListGraph, IncidenceGraph).
+2. Accept data (weights, distances, colors) as property map parameters.
+3. Access data exclusively through `get(map, key)` and `put(map, key, value)`.
+
+The algorithm never knows whether the data lives inside the graph, in a
+`std::vector`, in a `std::map`, or is computed on the fly. It only knows
+the property map interface.
+
+== Example: edge relaxation
+
+The `relax()` function used inside Dijkstra's shortest paths illustrates
+this pattern. It needs two properties: edge weights and vertex distances.
+Both are accepted as template parameters and accessed through `get()` and
+`put()`.
+
+[source,cpp]
+----
+template <class Edge, class Graph,
+          class WeightPropertyMap,
+          class DistancePropertyMap>
+bool relax(Edge e, const Graph& g,
+           WeightPropertyMap weight,
+           DistancePropertyMap distance)
+{
+    auto u = source(e, g);
+    auto v = target(e, g);
+    if (get(distance, u) + get(weight, e) < get(distance, v)) {
+        put(distance, v, get(distance, u) + get(weight, e));
+        return true;
+    }
+    return false;
+}
+----
+
+This function works with any combination of graph type and storage:
+
+* `weight` could be a bundled property (`get(&Road::km, g)`), an external
+  vector, or a computed map.
+* `distance` could be a `std::vector` wrapped with
+  `make_iterator_property_map`, or a `vector_property_map`.
+
+The caller decides. The algorithm does not care.
+
+== Constraining your algorithm
+
+Use graph concepts to document and enforce what your algorithm requires:
+
+[cols="1,3"]
+|===
+| Your algorithm needs | Require this concept
+
+| Iterate over all vertices
+| xref:concepts/VertexListGraph.adoc[VertexListGraph]
+
+| Traverse out-edges of a vertex
+| xref:concepts/IncidenceGraph.adoc[IncidenceGraph]
+
+| Traverse both out-edges and in-edges
+| xref:concepts/BidirectionalGraph.adoc[BidirectionalGraph]
+
+| Check if an edge exists between two vertices
+| xref:concepts/AdjacencyMatrix.adoc[AdjacencyMatrix]
+
+| Add or remove vertices and edges
+| xref:concepts/MutableGraph.adoc[MutableGraph]
+|===
+
+For property maps, use `static_assert` to check the category:
+
+[source,cpp]
+----
+static_assert(
+    std::is_convertible<
+        typename property_traits<DistanceMap>::category,
+        read_write_property_map_tag>::value,
+    "distance_map must be a ReadWrite property map");
+----
+
+This gives the caller a clear error if they pass the wrong map type.
+
+== Writing a custom property map
+
+Implementing your own property map requires overloading `get()` and `put()`
+(and optionally `operator[]` for Lvalue maps), plus providing
+`property_traits` typedefs. Here is a simplified `iterator_property_map`:
+
+[source,cpp]
+----
+include::example$property_maps/custom_property_map.cpp[]
+----
+
+[,text]
+----
+include::example$property_maps/custom_property_map.txt[]
+----
+
+The key insight: the `IDMap` converts opaque descriptors to integer offsets,
+and the iterator provides contiguous storage at those offsets. The three
+functions (`get`, `put`, and optionally a reference-returning accessor) are
+all that algorithms need.
+
+=== How raw pointers become property maps
+
+The same mechanism is how raw C arrays work as property maps. The library
+provides a `property_traits` specialization for pointer types:
+
+[source,cpp]
+----
+namespace boost {
+    template <class T>
+    struct property_traits<T*> {
+        using value_type = T;
+        using key_type   = std::ptrdiff_t;
+        using category   = lvalue_property_map_tag;
+    };
+
+    template <class T>
+    void put(T* pa, std::ptrdiff_t key, const T& value) { pa[key] = value; }
+
+    template <class T>
+    const T& get(const T* pa, std::ptrdiff_t key) { return pa[key]; }
+}
+----
+
+This is why `int dist[N]` can be passed directly as a distance map when
+`VertexList=vecS` (vertex descriptors are integers). The same pattern applies
+to `std::vector::iterator`, which may be a pointer.
+
+== See also
+
+* xref:extending/constructing_algorithms.adoc[Worked example: graph coloring]
+* xref:extending/leda_conversion.adoc[Adapting existing graph structures]
+* xref:property_maps/overview.adoc[Property Maps overview]
+* xref:visitors/overview.adoc[Visitors overview]

@@ -1,0 +1,56 @@
+= Monoid
+
+
+A _Monoid_ is a concept that describes a simple kind of algebraic
+system. A *monoid* consists of a set of elements _S_, a binary
+operation, and an identity element. The C{plus}{plus} representation of
+a monoid consists of a function object that implements the binary
+operation, a set of objects that represent the elements of _S_, and an
+object that represents the identity element.
+
+== Refinement of
+
+The element type must be a model of
+Assignable and
+CopyConstructible. The
+function object type must be a model of
+BinaryFunction.
+
+== Notation
+
+[cols=",",]
+|===
+|`X` |Is the element type of the Monoid.
+
+|`a, b` |are objects of type `X`.
+
+|`op` |Is the function object implementing the Monoid operation.
+
+|`i` |is an object of type `X` and is the identity element for the
+Monoid.
+|===
+
+== Valid Expressions
+
+[width="100%",cols="50%,50%",]
+|===
+|`op(a, b)` |See below for semantics. +
+Return type: `X`
+
+|`a == b` |Returns true if `a` and `b` represent the same element of
+_S_. +
+Return type: `bool`
+
+|`a != b` |Returns true if `a` and `b` represent different elements of
+_S_. +
+Return type: `bool`
+|===
+
+== Invariants
+
+* Closure +
+The result of `op(a, b)` is also an element of _S_.
+* Associativity +
+`op(op(a, b), c) == op(a, op(b, c))`
+* Definition of Identity Element +
+`op(a, i) == a`

@@ -1,0 +1,48 @@
+= Shortest Paths
+
+Find the lowest-cost path between vertices in a weighted graph.
+
+[cols="1,1,3"]
+|===
+| Algorithm | Complexity | When to use
+
+| xref:algorithms/shortest_paths/dijkstra_shortest_paths.adoc[Dijkstra]
+| _O((V + E) log V)_
+| Single-source, non-negative weights. The default choice.
+
+| xref:algorithms/shortest_paths/dijkstra_shortest_paths_no_color_map.adoc[Dijkstra (no color map)]
+| _O((V + E) log V)_
+| Variant of Dijkstra that uses only the distance map to track visited
+  vertices (no separate color map). Trades a simpler interface / smaller
+  memory footprint for a slightly different visitor protocol.
+
+| xref:algorithms/shortest_paths/bellman_ford_shortest.adoc[Bellman-Ford]
+| _O(V · E)_
+| Single-source with negative weights. Detects negative cycles.
+
+| xref:algorithms/shortest_paths/dag_shortest_paths.adoc[DAG Shortest Paths]
+| O(V + E)
+| Single-source on a directed acyclic graph. Fastest possible.
+
+| xref:algorithms/shortest_paths/astar_search.adoc[A*]
+| O((V + E) log V)
+| Single-source, single-target with a heuristic. Finds the target
+  faster than Dijkstra when a good heuristic is available.
+
+| xref:algorithms/shortest_paths/johnson_all_pairs_shortest.adoc[Johnson]
+| O(V * E + V^2 log V)
+| All-pairs on sparse graphs with negative weights.
+
+| xref:algorithms/shortest_paths/floyd_warshall_shortest.adoc[Floyd-Warshall]
+| O(V^3)
+| All-pairs on dense graphs. Simple but cubic.
+
+| xref:algorithms/shortest_paths/r_c_shortest_paths.adoc[Resource-Constrained]
+| Depends on constraints
+| Shortest path with side constraints (e.g. time windows, capacity).
+|===
+
+TIP: Start with Dijkstra. Switch to Bellman-Ford only if you have negative
+weights. Use A* for single-target queries when you have a distance heuristic
+(e.g. Euclidean distance on a map). Use DAG shortest paths if your graph is
+acyclic.

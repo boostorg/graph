@@ -1,0 +1,15 @@
+= Boost Graph Library Related Publications
+
+* https://jacobfilipp.com/DrDobbs/articles/DDJ/2000/0009/0009b/0009b.htm[Dr.
+Dobb's Sept. 2000 Article]
+* http://www.acm.org/pubs/citations/proceedings/oops/320384/p399-siek/[OOPSLA'99
+GGCL Paper]
+* Lie-Quan Lee's Master's Thesis about GGCL:
+  https://web.archive.org/web/20030824105142/http://www.lsc.nd.edu/downloads/research/ggcl/papers/thesis.ps[(PostScript)],
+  https://web.archive.org/web/20030824113405/http://www.lsc.nd.edu/downloads/research/ggcl/papers/thesis.pdf[(PDF)]
+* http://www.dietmar-kuehl.de/generic-graph-algorithms.pdf[Dietmar
+Kühl's Master's Thesis: Design Pattern for the Implementation of Graph
+Algorithms]
+* ISCOPE'99 Sparse Matrix Ordering link:./iscope99.pdf[(pdf)]
+* http://www.oonumerics.org/tmpw00/[C{plus}{plus} Template Workshop
+2000], Concept Checking

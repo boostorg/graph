@@ -1,0 +1,169 @@
+= Closeness Centrality
+
+Measures how https://en.wikipedia.org/wiki/Closeness_centrality[close]
+a vertex is to all other vertices. Computed as the inverse
+of the sum of shortest distances from that vertex to every other vertex. A
+high closeness means the vertex can reach all others quickly.
+
+*Complexity:* O(V * (V + E) log V) (Dijkstra per vertex) +
+*Defined in:* `<boost/graph/closeness_centrality.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/metrics/closeness_centrality.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/metrics/closeness_centrality.txt[]
+----
+
+'''
+
+=== (1) closeness_centrality with explicit combinator
+
+[source,cpp]
+----
+template <typename Graph, typename DistanceMap,
+          typename Measure, typename Combinator>
+typename Measure::result_type
+closeness_centrality(const Graph& g, DistanceMap dist,
+                     Measure measure, Combinator combine);
+----
+
+Combines distances via `combine` (e.g. `std::plus`) before applying the measure.
+
+'''
+
+=== (2) closeness_centrality with measure
+
+[source,cpp]
+----
+template <typename Graph, typename DistanceMap, typename Measure>
+typename Measure::result_type
+closeness_centrality(const Graph& g, DistanceMap dist, Measure measure);
+----
+
+Equivalent to (1) with `combine = std::plus<distance_type>()`.
+
+'''
+
+=== (3) closeness_centrality with default measure (double)
+
+[source,cpp]
+----
+template <typename Graph, typename DistanceMap>
+double closeness_centrality(const Graph& g, DistanceMap dist);
+----
+
+Uses `measure_closeness(g, dist)` as the measure (reciprocal of sum of distances).
+
+'''
+
+=== (4) closeness_centrality with explicit result type
+
+[source,cpp]
+----
+template <typename T, typename Graph, typename DistanceMap>
+T closeness_centrality(const Graph& g, DistanceMap dist);
+----
+
+Same as (3) but the result type is parametrized as `T`.
+
+'''
+
+=== (5) all_closeness_centralities with measure
+
+[source,cpp]
+----
+template <typename Graph, typename DistanceMatrixMap,
+          typename CentralityMap, typename Measure>
+void all_closeness_centralities(const Graph& g, DistanceMatrixMap dist,
+                                CentralityMap cent, Measure measure);
+----
+
+For each vertex, runs overload (2) against its row of `dist` and writes the result into `cent`.
+
+'''
+
+=== (6) all_closeness_centralities with default measure
+
+[source,cpp]
+----
+template <typename Graph, typename DistanceMatrixMap,
+          typename CentralityMap>
+void all_closeness_centralities(const Graph& g, DistanceMatrixMap dist,
+                                CentralityMap cent);
+----
+
+Equivalent to (5) with `measure_closeness<Result>(g, DistanceMap())` where `Result` is the value type of `CentralityMap`.
+
+'''
+
+=== (7) Helper: measure_closeness
+
+[source,cpp]
+----
+template <typename Graph, typename DistanceMap>
+closeness_measure</*...*/, double, reciprocal<double>>
+measure_closeness(const Graph&, DistanceMap);
+
+template <typename T, typename Graph, typename DistanceMap>
+closeness_measure</*...*/, T, reciprocal<T>>
+measure_closeness(const Graph&, DistanceMap);
+
+template <typename T, typename Graph, typename DistanceMap, typename Reciprocal>
+closeness_measure</*...*/, T, Reciprocal>
+measure_closeness(const Graph&, DistanceMap);
+----
+
+Constructs the default `closeness_measure` functor. Three overloads let you choose the result type (`double` or `T`) and the reciprocal functor.
+
+'''
+
+=== (8) closeness_measure (struct)
+
+[source,cpp]
+----
+template <typename Graph, typename DistanceType, typename ResultType,
+          typename Reciprocal = detail::reciprocal<ResultType>>
+struct closeness_measure
+    : public geodesic_measure<Graph, DistanceType, ResultType>;
+----
+
+The default closeness functor: given a summed distance `d`, returns `0` if `d` is the infinite distance marker, otherwise `Reciprocal()(d)`.
+
+== Parameters
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| Must model xref:concepts/VertexListGraph.adoc[Vertex List Graph] for overloads that iterate vertices; the 2/3/4-arg overloads only require xref:concepts/Graph.adoc[Graph].
+
+| IN
+| `DistanceMap dist`
+| ReadablePropertyMap from vertex descriptor to distance. Must be populated by a shortest-paths algorithm (e.g. Dijkstra or BFS) before calling.
+
+| IN
+| `DistanceMatrixMap dist` (all_*)
+| ReadablePropertyMap from vertex to another property map (the row for that vertex).
+
+| IN
+| `Measure measure`
+| A `DistanceMeasureConcept` functor mapping summed distance to result. Default constructed via `measure_closeness`.
+
+| IN
+| `Combinator combine`
+| Binary operation used to reduce distances to a single scalar. Default in (2) is `std::plus<distance_type>`.
+
+| OUT
+| `CentralityMap cent`
+| (all_* only) WritablePropertyMap receiving the per-vertex closeness.
+|===
+
+NOTE: The single-vertex overloads take a pre-computed distance map, not the graph alone. Run a shortest-paths algorithm first to fill the distance map.

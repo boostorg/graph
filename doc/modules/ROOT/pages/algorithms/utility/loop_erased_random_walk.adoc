@@ -1,0 +1,117 @@
+= Loop-Erased Random Walk
+
+Performs a random walk from vertex `s` until it reaches a vertex that is
+already colored (not white) in the color map. Whenever the walk revisits a
+vertex already on the current path (creating a cycle), the cycle is erased
+and the walk continues from where the cycle started.
+
+This is the building block for Wilson's algorithm for generating uniformly
+random spanning trees. It is used internally by `random_spanning_tree`.
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/utility/loop_erased_random_walk.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/utility/loop_erased_random_walk.txt[]
+----
+
+*Complexity:* depends on graph structure, expected O(V) per walk on many graphs +
+*Defined in:* `<boost/graph/loop_erased_random_walk.hpp>`
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename Graph, typename ColorMap, typename NextEdge>
+void loop_erased_random_walk(
+    const Graph& g,
+    typename graph_traits<Graph>::vertex_descriptor s,
+    NextEdge next_edge,
+    ColorMap color,
+    std::vector<typename graph_traits<Graph>::vertex_descriptor>& path);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| Must model IncidenceGraph.
+
+| IN
+| `vertex_descriptor s`
+| Starting vertex. Must be colored white.
+
+| IN
+| `NextEdge next_edge`
+| Callable `(vertex_descriptor, Graph) -> edge_descriptor` that selects
+  the next edge to follow. Typically uses a random generator.
+
+| IN/OUT
+| `ColorMap color`
+| White = unvisited, gray = on current path, black (or other) = target.
+  The walk stops when it reaches a non-white, non-gray vertex.
+
+| OUT
+| `path`
+| Receives the loop-erased path from `s` to the target vertex.
+|===
+
+== Throws
+
+`loop_erased_random_walk_stuck` if the walk reaches a vertex with no
+out-edges.
+
+'''
+
+=== NextEdge helpers
+
+The header also provides two ready-made `NextEdge` functors that satisfy the callable signature expected by `loop_erased_random_walk`:
+
+[source,cpp]
+----
+template <typename Graph, typename Gen>
+class unweighted_random_out_edge_gen {
+public:
+    explicit unweighted_random_out_edge_gen(Gen& gen);
+
+    typename graph_traits<Graph>::edge_descriptor
+    operator()(typename graph_traits<Graph>::vertex_descriptor src,
+               const Graph& g) const;
+};
+
+template <typename Graph, typename WeightMap, typename Gen>
+class weighted_random_out_edge_gen {
+public:
+    weighted_random_out_edge_gen(const WeightMap& weight, Gen& gen);
+
+    typename graph_traits<Graph>::edge_descriptor
+    operator()(typename graph_traits<Graph>::vertex_descriptor src,
+               const Graph& g) const;
+};
+----
+
+`unweighted_random_out_edge_gen` picks an out-edge uniformly at random via `boost::random_out_edge(g, src, gen)`.
+
+`weighted_random_out_edge_gen` picks an out-edge with probability proportional to its weight via `boost::weighted_random_out_edge(g, src, weight, gen)`.
+
+Both throw `loop_erased_random_walk_stuck` if `out_degree(src, g) == 0`.
+
+'''
+
+=== loop_erased_random_walk_stuck (exception)
+
+[source,cpp]
+----
+struct loop_erased_random_walk_stuck : public std::exception {
+    virtual const char* what() const throw();
+};
+----
+
+Thrown when the walk encounters a vertex with no outgoing edges, which makes the algorithm unable to continue.

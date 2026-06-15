@@ -1,0 +1,55 @@
+[#sec:small-world-generator]
+= Small World Generator (Watts-Strogatz)
+
+Generates small-world graphs using the Watts-Strogatz model.
+
+*Defined in:* `<boost/graph/small_world_generator.hpp>`
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename RandomGenerator, typename Graph>
+class small_world_iterator;
+
+small_world_iterator();
+small_world_iterator(RandomGenerator& gen, vertices_size_type n, vertices_size_type k, double prob = 0.0, bool allow_self_loops = false);
+----
+
+A small-world graph starts as a ring lattice where each vertex is
+connected to its _k_ nearest neighbors. Each edge is then randomly
+rewired to a different vertex with probability _prob_. The resulting
+graphs exhibit high clustering (vertices stay connected to nearby
+neighbors) combined with short average path lengths (from the rewired
+long-range edges).
+
+WARNING: The Watts-Strogatz model is inherently undirected. This iterator
+must be used with an undirected graph (e.g.,
+`adjacency_list<vecS, vecS, undirectedS>`). Using it with a directed graph
+compiles silently but produces a broken graph where edges exist in only one
+direction, violating the degree guarantee of the model.
+
+== Parameters
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `RandomGenerator& gen` | A random number generator.
+| IN | `vertices_size_type n` | Number of vertices in the ring lattice.
+| IN | `vertices_size_type k` | Each vertex is connected to its `k` nearest neighbors (must be even).
+| IN | `double prob` | Probability that each edge is rewired. Default: `0.0`.
+| IN | `bool allow_self_loops` | When `true`, self-loops are permitted. Default: `false`.
+|===
+
+== Example
+
+[source,cpp]
+----
+include::example$generators/small_world.cpp[]
+----
+
+[,text]
+----
+include::example$generators/small_world.txt[]
+----

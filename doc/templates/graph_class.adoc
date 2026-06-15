@@ -1,0 +1,168 @@
+// ============================================================================
+// TEMPLATE: BGL Graph Data Structure Documentation Page
+// ============================================================================
+//
+// Copy, rename to the class name, place under modules/ROOT/pages/graph_classes/.
+// Delete every `//` comment line in the final page.
+//
+// ---- PAGE LAYOUT (top to bottom) ----
+//
+//   = Title
+//   one-line description
+//   *Defined in:* + *Models:*
+//   == Example          <-- compiled, with expected output, comes first
+//   == Synopsis
+//   == Template Parameters
+//   == Member Functions
+//   == Non-Member Functions
+//   == Associated Types
+//   == Operation Complexity
+//   == Stability and Invalidation
+//   == Convenience Wrappers (optional)
+//
+// ---- HEADING LEVEL RULES ----
+//
+//   == for top-level sections
+//   === for grouped subsections (one overload, one variant)
+//   ''' (thematic break) ONLY before a === heading. Never before ==.
+//
+// ---- EXAMPLE SECTION ----
+//
+//   The .cpp file goes in modules/ROOT/examples/graph_classes/<name>.cpp
+//   Run doc/build_example_outputs.sh to generate the sibling .txt sidecar.
+//
+// ============================================================================
+
+[#sec:class-name]
+= `class_name`
+
+One-line summary.
+
+*Defined in:* `<boost/graph/header.hpp>` +
+*Models:* concept1, concept2, concept3
+
+== Example
+
+[source,cpp]
+----
+include::example$graph_classes/class_name.cpp[]
+----
+
+[,text]
+----
+include::example$graph_classes/class_name.txt[]
+----
+
+== Synopsis
+
+[source,cpp]
+----
+template <class ParamA = defaultA,
+          class ParamB = defaultB>
+class class_name { ... };
+----
+
+Description of the class: what it is, what trade-offs the template
+parameters control. Keep it short (3-5 lines). Use bullet points for
+the key parameter choices if there are several.
+
+== Template Parameters
+
+[cols="1,3,1",options="header"]
+|===
+| Parameter | Description | Default
+
+| `ParamA` | ... | `defaultA`
+| `ParamB` | ... | `defaultB`
+|===
+
+// Add a NOTE after the table for important side-effects of parameter
+// choices (e.g., "With vecS, vertices have a builtin vertex_index").
+
+== Member Functions
+
+// One subsection per function group. Separate sibling overloads with '''.
+
+=== Constructors
+
+[source,cpp]
+----
+class_name();
+----
+
+...
+
+'''
+
+=== Constructors (with size hint)
+
+[source,cpp]
+----
+class_name(vertices_size_type n);
+----
+
+...
+
+== Non-Member Functions
+
+// Grouped by purpose.
+
+=== Structure Access
+
+// vertices(), edges(), out_edges(), source(), target(), num_vertices(), etc.
+
+=== Structure Modification
+
+// add_vertex(), add_edge(), remove_vertex(), remove_edge(), clear_vertex()
+// Include invalidation notes per function.
+
+=== Property Map Accessors
+
+// get(property, g), put(property, g, key, value)
+
+== Associated Types
+
+Algorithms are templates. To declare variables for vertices, edges, or
+iterators, extract the concrete types via `graph_traits`:
+
+[source,cpp]
+----
+using Vertex = graph_traits<Graph>::vertex_descriptor;
+----
+
+[cols="1,3",options="header"]
+|===
+| Type | Description
+
+| `vertex_descriptor` | ...
+| `edge_descriptor`   | ...
+| `vertex_iterator`   | ...
+|===
+
+== Operation Complexity
+
+[cols="1,1,1"]
+|===
+| Operation | Selector A | Selector B
+
+| `add_vertex()` | O(...) | O(...)
+|===
+
+== Stability and Invalidation
+
+// CRITICAL for mutable graph types. Skip for immutable types (e.g., CSR).
+// Lead with TIP, then table, then WARNING with code example.
+
+TIP: ...
+
+// Invalidation summary table
+
+WARNING: ...
+
+// Code example showing wrong way and right way.
+
+// ---- OPTIONAL ----
+
+== Convenience Wrappers
+
+// If shorthand aliases exist (e.g., directed_graph, undirected_graph).

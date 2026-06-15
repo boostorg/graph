@@ -1,0 +1,30 @@
+= incident
+
+Returns the pair of vertices incident to an edge.
+
+*Defined in:* `<boost/graph/graph_utility.hpp>` +
+*Complexity:* O(1)
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename Graph>
+std::pair<vertex_descriptor, vertex_descriptor>
+incident(edge_descriptor e, Graph& g);
+----
+
+For directed graphs, `first` is the source and `second` is the target.
+Equivalent to `std::make_pair(source(e, g), target(e, g))`.
+
+== Example
+
+[source,cpp]
+----
+include::example$auxiliary/incident_opposite.cpp[]
+----
+
+[,text]
+----
+include::example$auxiliary/incident_opposite.txt[]
+----

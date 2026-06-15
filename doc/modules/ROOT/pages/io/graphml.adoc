@@ -1,0 +1,136 @@
+= GraphML
+
+Read and write graphs in the GraphML XML format.
+
+**Defined in** `<boost/graph/graphml.hpp>` +
+**Linking:** `read_graphml` requires `libboost_graph`. `write_graphml` is header-only.
+
+TIP: By default, `dynamic_properties` throws `property_not_found` if the
+file contains an attribute that was not registered. To silently skip unknown
+attributes, pass `ignore_other_properties` to the constructor:
+
+[source,cpp]
+----
+dynamic_properties dp(ignore_other_properties);
+// All other attributes in the file are silently ignored
+----
+
+== Example
+
+[source,cpp]
+----
+include::example$io/graphml.cpp[]
+----
+
+[,text]
+----
+include::example$io/graphml.txt[]
+----
+
+== read_graphml
+
+[source,cpp]
+----
+template <typename MutableGraph>
+void read_graphml(std::istream& in, MutableGraph& graph,
+                  dynamic_properties& dp,
+                  size_t graph_index = 0);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `std::istream& in`
+| GraphML-formatted XML input
+
+| OUT
+| `MutableGraph& graph`
+| Populated graph. Must model MutableGraph. Directionality must match
+  the `edgedefault` attribute in the GraphML file.
+
+| IN/OUT
+| `dynamic_properties& dp`
+| Maps GraphML attribute names to property maps. Attribute types (string,
+  int, double, ...) are determined by the GraphML `<key>` declarations.
+
+| IN
+| `graph_index`
+| Which graph to load if the file contains multiple `<graph>` elements.
+  Default: 0 (the first graph). If `graph_index` is greater than or equal
+  to the number of graphs in the file, an empty graph is returned.
+|===
+
+WARNING: Nested graphs are not supported as distinct BGL entities. Nested
+vertices and edges are added to the root graph.
+
+NOTE: Hyperedges and ports are not supported.
+
+== write_graphml
+
+=== (1) Default vertex index
+
+[source,cpp]
+----
+template <typename Graph>
+void write_graphml(std::ostream& out, const Graph& g,
+                   const dynamic_properties& dp,
+                   bool ordered_vertices = false);
+----
+
+=== (2) Custom vertex index
+
+[source,cpp]
+----
+template <typename Graph, typename VertexIndexMap>
+void write_graphml(std::ostream& out, const Graph& g,
+                   VertexIndexMap vertex_index,
+                   const dynamic_properties& dp,
+                   bool ordered_vertices = false);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| OUT
+| `std::ostream& out`
+| Output stream
+
+| IN
+| `const Graph& g`
+| Must model VertexListGraph.
+
+| IN
+| `const dynamic_properties& dp`
+| All registered properties are emitted as GraphML attributes.
+
+| IN
+| `ordered_vertices`
+| If `true`, sets `parse.nodeids="canonical"` in the output (vertex order
+  matches indices). If `false`, sets `parse.nodeids="free"`.
+
+| IN
+| `VertexIndexMap vertex_index`
+| Only needed if the graph has no built-in `vertex_index` property.
+|===
+
+== Throws
+
+[cols="1,3"]
+|===
+| Exception | When
+
+| `parse_error`
+| The input is not valid GraphML XML
+
+| `directed_graph_error`
+| GraphML contains directed edges but graph type is undirected
+
+| `undirected_graph_error`
+| GraphML contains undirected edges but graph type is directed
+
+| `bad_parallel_edge`
+| GraphML contains a parallel edge but graph type does not allow them
+|===

@@ -1,0 +1,123 @@
+= Graph Concepts
+
+BGL algorithms are templates. They do not depend on a specific graph class.
+Instead, each algorithm specifies its requirements as a _concept_: a set of
+types and functions the graph must provide. Any graph type that satisfies the
+concept works with the algorithm.
+
+The concepts are small and composable. An algorithm that only needs to walk
+out-edges requires IncidenceGraph. One that also needs to list all vertices
+requires VertexListGraph. This keeps algorithms reusable: a graph type only
+needs to support the operations the algorithm actually uses.
+
+== Which concept does my algorithm need?
+
+[cols="1,2"]
+|===
+| I need to... | Require this concept
+
+| Walk out-edges of a vertex
+| xref:concepts/IncidenceGraph.adoc[IncidenceGraph]
+
+| Walk both out-edges and in-edges
+| xref:concepts/BidirectionalGraph.adoc[BidirectionalGraph]
+
+| List all vertices
+| xref:concepts/VertexListGraph.adoc[VertexListGraph]
+
+| List all edges
+| xref:concepts/EdgeListGraph.adoc[EdgeListGraph]
+
+| Check if an edge exists between two vertices
+| xref:concepts/AdjacencyMatrix.adoc[AdjacencyMatrix]
+
+| Add/remove vertices and edges
+| xref:concepts/MutableGraph.adoc[MutableGraph]
+
+| Read/write vertex or edge properties
+| xref:concepts/PropertyGraph.adoc[PropertyGraph]
+|===
+
+== Concept hierarchy
+
+image::figs/concepts.gif[Graph concept refinement hierarchy]
+
+Each concept refines (extends) a simpler one. IncidenceGraph refines Graph.
+BidirectionalGraph refines IncidenceGraph. An algorithm that requires
+IncidenceGraph accepts any type that models BidirectionalGraph, VertexListGraph,
+or any other refinement.
+
+== Quick reference
+
+[cols="1,1"]
+|===
+| *Expression* | *Return type*
+
+2+| *xref:concepts/Graph.adoc[Graph]* (base concept)
+
+| `graph_traits<G>::vertex_descriptor` | Vertex handle
+| `graph_traits<G>::edge_descriptor` | Edge handle
+| `graph_traits<G>::directed_category` | `directed_tag` or `undirected_tag`
+| `graph_traits<G>::edge_parallel_category` | `allow_parallel_edge_tag` or `disallow_parallel_edge_tag`
+
+2+| *xref:concepts/IncidenceGraph.adoc[IncidenceGraph]* refines Graph
+
+| `out_edges(v, g)` | `pair<out_edge_iterator, out_edge_iterator>`
+| `source(e, g)` | `vertex_descriptor`
+| `target(e, g)` | `vertex_descriptor`
+| `out_degree(v, g)` | `degree_size_type`
+
+2+| *xref:concepts/BidirectionalGraph.adoc[BidirectionalGraph]* refines IncidenceGraph
+
+| `in_edges(v, g)` | `pair<in_edge_iterator, in_edge_iterator>`
+| `in_degree(v, g)` | `degree_size_type`
+| `degree(v, g)` | `degree_size_type`
+
+2+| *xref:concepts/AdjacencyGraph.adoc[AdjacencyGraph]* refines Graph
+
+| `adjacent_vertices(v, g)` | `pair<adjacency_iterator, adjacency_iterator>`
+
+2+| *xref:concepts/VertexListGraph.adoc[VertexListGraph]* refines Graph
+
+| `vertices(g)` | `pair<vertex_iterator, vertex_iterator>`
+| `num_vertices(g)` | `vertices_size_type`
+
+2+| *xref:concepts/EdgeListGraph.adoc[EdgeListGraph]* refines Graph
+
+| `edges(g)` | `pair<edge_iterator, edge_iterator>`
+| `num_edges(g)` | `edges_size_type`
+
+2+| *xref:concepts/AdjacencyMatrix.adoc[AdjacencyMatrix]* refines Graph
+
+| `edge(u, v, g)` | `pair<edge_descriptor, bool>`
+
+2+| *xref:concepts/MutableGraph.adoc[MutableGraph]* refines Graph
+
+| `add_vertex(g)` | `vertex_descriptor`
+| `add_edge(u, v, g)` | `pair<edge_descriptor, bool>`
+| `remove_vertex(v, g)` | `void`
+| `remove_edge(u, v, g)` | `void`
+| `clear_vertex(v, g)` | `void`
+
+2+| *xref:concepts/PropertyGraph.adoc[PropertyGraph]* refines Graph
+
+| `get(property, g)` | Property map object
+| `get(property, g, x)` | Property value for vertex/edge `x`
+| `put(property, g, x, v)` | Set property value
+|===
+
+== Undirected graphs
+
+BGL uses the same interface for directed and undirected graphs. `out_edges()`,
+`source()`, and `target()` work on undirected graphs too. In an undirected
+graph, `out_edges(v, g)` returns all edges incident to `v` (there is no
+distinction between "in" and "out").
+
+The key difference is edge equality. In a directed graph, edge _(u,v)_ is
+never equal to _(v,u)_. In an undirected graph without parallel edges, they
+are the same edge. This also means edge properties are shared: `weight(u,v)`
+and `weight(v,u)` return the same value.
+
+WARNING: Do not subclass BGL graph types. Because `graph_traits` and
+`property_map` specializations are defined externally to the class, a subclass
+will not inherit them and many BGL functions will fail to compile.

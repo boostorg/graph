@@ -1,0 +1,6 @@
+Source city: Paris
+Shortest distances from Paris:
+  Paris: 0 km
+  Lyon: 460 km
+  Marseille: 770 km
+  Nice: 970 km

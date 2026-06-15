@@ -1,0 +1,70 @@
+= Bellman Ford Visitor Concept
+
+This concept defines the visitor interface for
+xref:algorithms/shortest_paths/bellman_ford_shortest.adoc[`bellman_ford_shortest_paths()`].
+Users can define a class with the Bellman Ford Visitor interface and
+pass and object of the class to
+`bellman_ford_shortest_paths()`, thereby augmenting the
+actions taken during the graph search.
+
+== Refinement of
+
+Copy Constructible (copying a
+visitor should be a lightweight operation).
+
+== Notation
+
+[cols=",",]
+|===
+|`V` |A type that is a model of Bellman Ford Visitor.
+
+|`vis` |An object of type `V`.
+
+|`G` |A type that is a model of Graph.
+
+|`g` |An object of type `G`.
+
+|`e` |An object of type
+`boost::graph_traits<G>::edge_descriptor`.
+
+|`s,u` |An object of type
+`boost::graph_traits<G>::vertex_descriptor`.
+|===
+
+== Associated Types
+
+none
+
+== Valid Expressions
+
+[width="100%",cols="25%,25%,25%,25%",options="header",]
+|===
+|Name |Expression |Return Type |Description
+|Examine Edge |`vis.examine_edge(e, g)` |`void` |This is invoked on
+every edge in the graph `num_vertices(g)` times.
+
+|Edge Relaxed |`vis.edge_relaxed(e, g)` |`void` |Upon examination,
+if the following condition holds then the edge is relaxed (its distance
+is reduced), and this method is invoked. +
+` tie(u,v) = incident(e, g);` +
+`D d_u = get(d, u), d_v = get(d, v);` +
+`W w_e = get(w, e);` +
+`assert(compare(combine(d_u, w_e), d_v));`
+
+|Edge Not Relaxed |`edge_not_relaxed(e, g)` |`void` |Upon
+examination, if the edge is not relaxed (see above) then this method is
+invoked.
+
+|Edge Minimized |`vis.edge_minimized(e, g)` |`void` |After
+`num_vertices(g)` iterations through the edge set of the graph are
+completed, one last iteration is made to test whether each edge was
+minimized. If the edge is minimized then this function is invoked.
+
+|Edge Not Minimized |`edge_not_minimized(e, g)` |`void` |If the
+edge is not minimized, this function is invoked. This happens when there
+is a negative cycle in the graph.
+|===
+
+== Models
+
+* xref:visitors/bellman_visitor.adoc[`bellman_visitor`]

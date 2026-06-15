@@ -1,0 +1,58 @@
+= Edge Mutable Graph
+
+The _Edge Mutable Graph_ concept defines the interface for a graph that
+supports the addition and removal of edges.
+
+== Refinement of
+
+xref:concepts/Graph.adoc[Graph]
+
+== Associated Types
+
+No additional associated types.
+
+== Valid Expressions
+
+* `add_edge(u, v, g)` *returns*
+`std::pair<edge_descriptor, bool>` +
+ +
+*Semantics:* Try to insert the edge _(u,v)_ into the graph, returning
+the inserted edge or a parallel edge and a flag that specifies whether
+an edge was inserted. This operation must not invalidate vertex
+descriptors or vertex iterators of the graph, though it may invalidate
+edge descriptors or edge iterators. +
+*Preconditions:* _u_ and _v_ are vertices in the graph. +
+*Postconditions:* _(u,v)_ is in the edge set of the graph. The returned
+edge descriptor will have _u_ in the source position and _v_ in the
+target position. If the graph allows parallel edges, then the returned
+flag is always `true`. If the graph does not allow parallel edges, if
+_(u,v)_ was already in the graph then the returned flag is `false`. If
+_(u,v)_ was not in the graph then the returned flag is `true`. +
++
+ +
+* `remove_edge(u, v, g)` *returns*
+`void` +
+ +
+*Semantics:* Remove the edge _(u,v)_ from the graph. If the graph allows
+parallel edges this removes all occurrences of _(u,v)_. +
+*Precondition:* _(u,v)_ is in the edge set of the graph. +
+*Postcondition:* _(u,v)_ is no longer in the edge set of the graph. +
++
+ +
+* `remove_edge(e, g)` *returns* `void` +
+ +
+*Semantics:* Remove the edge _e_ from the graph. +
+*Precondition:* _e_ is an edge in the graph. +
+*Postcondition:* _e_ is no longer in the edge set for `g`. +
++
+ +
+* `clear_vertex(u, g)` *returns* `void` +
+ +
+*Semantics:* Remove all edges to and from vertex _u_ from the graph. +
+*Precondition:* _u_ is a valid vertex descriptor of `g`. +
+*Postconditions:* _u_ does not appear as a source or target of any edge
+in `g`.
+
+== Complexity guarantees
+
+UNDER CONSTRUCTION

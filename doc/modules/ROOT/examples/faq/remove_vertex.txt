@@ -1,0 +1,2 @@
+before: 3 vertices, 3 edges
+after:  2 vertices, 1 edges

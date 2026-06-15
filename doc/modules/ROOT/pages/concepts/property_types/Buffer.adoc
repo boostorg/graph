@@ -1,0 +1,61 @@
+= Buffer
+
+== Buffer Concept
+
+A Buffer is something in which items can be put and removed. The Buffer
+_concept_ has very few requirements. It does not require any particular
+ordering of how the items are stored or in what order they will appear
+when removed, however, there is typically some sort of ordering policy.
+
+== Notation
+
+[cols=",",]
+|===
+|`B` |is a type that models Buffer.
+|`T` |is the value type of `B`.
+|`t` |is an object of type `T`.
+|===
+
+== Members
+
+For a type to model the Buffer concept it must have the following
+members.
+
+[cols=",",]
+|===
+|*Member* |*Description*
+
+|`value_type` |The type of object stored in the Buffer. The value
+type must be Assignable.
+
+|`size_type` |An unsigned integral type for representing the number
+of objects in the Buffer.
+
+|`void push(const T& t)` |Inserts `t` into the Buffer. `size()` will be
+incremented by one.
+
+|`void pop()` |Removes an object from the Buffer. `size()` will be
+decremented by one. Precondition: `empty()` is `false`.
+
+|`T& top()` |Returns a mutable reference to some object in the Buffer.
+Precondition: `empty()` is `false`.
+
+|`const T& top() const` |Returns a const reference to some object in the
+Buffer. Precondition: `empty()` is `false`.
+
+|`size_type size() const` |Returns the number of objects in the
+Buffer. Invariant: `size() >= 0`.
+
+|`bool empty() const` |Equivalent to `b.size() == 0`.
+|===
+
+== Complexity Guarantees
+
+* `push()`, `pop()`, and `size()` must be at most linear time complexity
+in the size of the Generalized Queue.
+* `top()` and `empty()` must be amortized constant time.
+
+== Models
+
+* `std::stack`
+* `boost::mutable_queue`

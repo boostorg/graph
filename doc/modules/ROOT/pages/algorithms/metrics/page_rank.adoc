@@ -1,0 +1,152 @@
+= PageRank
+
+Computes the https://en.wikipedia.org/wiki/PageRank[PageRank]
+of each vertex: a measure of importance based on the
+link structure of a directed graph. A vertex is important if it is pointed to
+by other important vertices.
+
+*Complexity:* O(V + E) per iteration +
+*Defined in:* `<boost/graph/page_rank.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/metrics/page_rank.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/metrics/page_rank.txt[]
+----
+
+Vertex 2 has the highest rank because it receives edges from three other
+vertices, including the high-ranked vertex 0.
+
+'''
+
+All overloads live in namespace `boost::graph` (not `boost`).
+
+=== (1) page_rank with explicit secondary rank buffer
+
+[source,cpp]
+----
+template <typename Graph, typename RankMap, typename Done,
+          typename RankMap2>
+void page_rank(const Graph& g, RankMap rank_map, Done done,
+               typename property_traits<RankMap>::value_type damping,
+               typename graph_traits<Graph>::vertices_size_type n,
+               RankMap2 rank_map2);
+----
+
+The algorithm double-buffers ranks between iterations; `rank_map2` is the second buffer (same concept requirements as `rank_map`). Useful if you want to reuse a pre-allocated buffer.
+
+'''
+
+=== (2) page_rank with custom iteration count
+
+[source,cpp]
+----
+template <typename Graph, typename RankMap, typename Done>
+void page_rank(const Graph& g, RankMap rank_map, Done done,
+               typename property_traits<RankMap>::value_type damping,
+               typename graph_traits<Graph>::vertices_size_type n);
+----
+
+Equivalent to (1) with an internally allocated `iterator_property_map` used for the second buffer.
+
+'''
+
+=== (3) page_rank with default vertex count
+
+[source,cpp]
+----
+template <typename Graph, typename RankMap, typename Done>
+void page_rank(const Graph& g, RankMap rank_map, Done done,
+               typename property_traits<RankMap>::value_type damping = 0.85);
+----
+
+Equivalent to (2) with `n = num_vertices(g)`.
+
+'''
+
+=== (4) page_rank (defaults)
+
+[source,cpp]
+----
+template <typename Graph, typename RankMap>
+void page_rank(const Graph& g, RankMap rank_map);
+----
+
+Equivalent to (3) with `done = n_iterations(20)` and `damping = 0.85`.
+
+'''
+
+=== (5) remove_dangling_links
+
+[source,cpp]
+----
+template <typename MutableGraph>
+void remove_dangling_links(MutableGraph& g);
+----
+
+Repeatedly removes all vertices with `out_degree == 0` until a fixed point is reached. Requires `MutableGraph` to model xref:concepts/VertexListGraph.adoc[Vertex List Graph] and xref:concepts/MutableGraph.adoc[Mutable Graph].
+
+'''
+
+=== (6) n_iterations
+
+[source,cpp]
+----
+struct n_iterations {
+    explicit n_iterations(std::size_t n);
+
+    template <typename RankMap, typename Graph>
+    bool operator()(const RankMap&, const Graph&);
+};
+----
+
+The built-in termination functor used by overload (4): returns `true` after `n` calls. Use `n_iterations(k)` to run exactly `k` iterations.
+
+== Parameters
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| Must model xref:concepts/VertexListGraph.adoc[Vertex List Graph] and xref:concepts/IncidenceGraph.adoc[Incidence Graph] (or xref:concepts/BidirectionalGraph.adoc[Bidirectional Graph] for better performance on large graphs).
+
+| OUT
+| `RankMap rank_map`
+| ReadWritePropertyMap. Vertex descriptor -> rank value (typically `double`).
+
+| UTIL
+| `RankMap2 rank_map2`
+| Second buffer used during iteration.
+
+| IN
+| `Done done`
+| Termination functor. Called with `(rank_map, g)` after each iteration. Return `true` to stop.
+
+| IN
+| `damping`
+| Probability of following a link (vs random jump). Default: `0.85`.
+
+| IN
+| `n`
+| Number of vertices used for the initial rank `1/n`. Default: `num_vertices(g)`.
+|===
+
+== Termination
+
+The default termination is `graph::n_iterations(20)`, which runs exactly 20
+iterations. For convergence-based termination, write a custom `Done` functor
+that compares rank values between iterations.
+
+== Dangling vertices
+
+Vertices with no outgoing edges (dangling nodes) cause rank to "leak" out of
+the graph. Use `graph::remove_dangling_links(g)` to remove them before
+running PageRank, or handle them in your model.

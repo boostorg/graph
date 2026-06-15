@@ -1,0 +1,130 @@
+= Eccentricity
+
+The eccentricity of a vertex is the maximum distance from it to any other
+vertex. From eccentricity values you can derive the graph's radius (minimum
+eccentricity) and diameter (maximum eccentricity).
+
+*Defined in:* `<boost/graph/eccentricity.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/metrics/eccentricity.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/metrics/eccentricity.txt[]
+----
+
+=== (1) eccentricity with explicit combinator
+
+[source,cpp]
+----
+template <typename Graph, typename DistanceMap, typename Combinator>
+typename property_traits<DistanceMap>::value_type
+eccentricity(const Graph& g, DistanceMap dist, Combinator combine);
+----
+
+The combinator reduces the distances into a single value (by default `max`).
+
+'''
+
+=== (2) eccentricity
+
+[source,cpp]
+----
+template <typename Graph, typename DistanceMap>
+typename property_traits<DistanceMap>::value_type
+eccentricity(const Graph& g, DistanceMap dist);
+----
+
+Equivalent to (1) with a default combinator that returns the maximum finite distance.
+
+'''
+
+=== (3) all_eccentricities
+
+[source,cpp]
+----
+template <typename Graph, typename DistanceMatrix, typename EccentricityMap>
+std::pair<
+    typename property_traits<EccentricityMap>::value_type,
+    typename property_traits<EccentricityMap>::value_type>
+all_eccentricities(const Graph& g, const DistanceMatrix& dist,
+                   EccentricityMap ecc);
+----
+
+Writes the eccentricity of every vertex into `ecc`. Returns the pair `(radius, diameter)` (the minimum and maximum eccentricities) computed along the way.
+
+'''
+
+=== (4) radius_and_diameter
+
+[source,cpp]
+----
+template <typename Graph, typename EccentricityMap>
+std::pair<
+    typename property_traits<EccentricityMap>::value_type,
+    typename property_traits<EccentricityMap>::value_type>
+radius_and_diameter(const Graph& g, EccentricityMap ecc);
+----
+
+Given an already-populated `ecc`, returns `(radius, diameter)` without recomputing the eccentricities. `EccentricityMap` is ReadablePropertyMap in this overload.
+
+'''
+
+=== (5) radius
+
+[source,cpp]
+----
+template <typename Graph, typename EccentricityMap>
+typename property_traits<EccentricityMap>::value_type
+radius(const Graph& g, EccentricityMap ecc);
+----
+
+Returns only the radius (`.first` of `radius_and_diameter`).
+
+'''
+
+=== (6) diameter
+
+[source,cpp]
+----
+template <typename Graph, typename EccentricityMap>
+typename property_traits<EccentricityMap>::value_type
+diameter(const Graph& g, EccentricityMap ecc);
+----
+
+Returns only the diameter (`.second` of `radius_and_diameter`).
+
+== Parameters
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| Must model xref:concepts/VertexListGraph.adoc[Vertex List Graph].
+
+| IN
+| `DistanceMap dist`
+| (single-vertex) ReadablePropertyMap from vertex to distance, pre-populated by a shortest-paths run.
+
+| IN
+| `DistanceMatrix dist`
+| (all_eccentricities) ReadablePropertyMap from vertex to another property map (that vertex's row of the distance matrix).
+
+| IN
+| `Combinator combine`
+| Binary functor reducing distances to a scalar (default: `max`).
+
+| OUT / IN
+| `EccentricityMap ecc`
+| WritablePropertyMap for overload (3); ReadablePropertyMap for overloads (4)/(5)/(6). Vertex-to-eccentricity mapping.
+|===
+
+NOTE: These functions require pre-computed distance maps. Run an all-pairs
+shortest paths algorithm first (Johnson or Floyd-Warshall).

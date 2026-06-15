@@ -1,0 +1,104 @@
+= Smallest Last Ordering
+
+Produces a vertex ordering by repeatedly removing the vertex with the smallest
+degree. This ordering is a good heuristic for graph coloring: using it with
+`sequential_vertex_coloring` often produces near-optimal results.
+
+*Complexity:* O(V + E) +
+*Defined in:* `<boost/graph/smallest_last_ordering.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/utility/smallest_last.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/utility/smallest_last.txt[]
+----
+
+=== (1) With full work-map set
+
+[source,cpp]
+----
+template <typename VertexListGraph, typename Order,
+          typename Degree, typename Marker>
+void smallest_last_vertex_ordering(const VertexListGraph& g,
+                                   Order order, Degree degree,
+                                   Marker marker);
+----
+
+Allocates a `bucket_sorter` keyed on `degree` and delegates to overload (2).
+
+'''
+
+=== (2) With explicit bucket sorter
+
+[source,cpp]
+----
+template <typename VertexListGraph, typename Order,
+          typename Degree, typename Marker, typename BucketSorter>
+void smallest_last_vertex_ordering(const VertexListGraph& g,
+                                   Order order, Degree degree,
+                                   Marker marker,
+                                   BucketSorter& degree_buckets);
+----
+
+Useful if you want to reuse a pre-allocated `bucket_sorter` across multiple runs.
+
+'''
+
+=== (3) With only the ordering map
+
+[source,cpp]
+----
+template <typename VertexListGraph, typename Order>
+void smallest_last_vertex_ordering(const VertexListGraph& g, Order order);
+----
+
+Equivalent to (1) with internally allocated degree and marker property maps built over `vertex_index`.
+
+'''
+
+=== (4) Returning a vector
+
+[source,cpp]
+----
+template <typename VertexListGraph>
+std::vector<typename graph_traits<VertexListGraph>::vertex_descriptor>
+smallest_last_vertex_ordering(const VertexListGraph& g);
+----
+
+Convenience form: returns a `std::vector<vertex_descriptor>` of length `num_vertices(g)` holding the ordering.
+
+== Parameters
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const VertexListGraph& g`
+| Must model xref:concepts/VertexListGraph.adoc[Vertex List Graph] and xref:concepts/IncidenceGraph.adoc[Incidence Graph] with an internal `vertex_index` property.
+
+| OUT
+| `Order order`
+| WritablePropertyMap from position (integer) to vertex descriptor — `put(order, i, v)` places vertex `v` at position `i` of the ordering.
+
+| UTIL
+| `Degree degree`
+| ReadWritePropertyMap from vertex to current (remaining) degree.
+
+| UTIL
+| `Marker marker`
+| ReadWritePropertyMap from vertex to marker value; used to track removed vertices.
+
+| UTIL
+| `BucketSorter& degree_buckets`
+| A `bucket_sorter` indexed by current degree. Reused across calls if desired.
+|===
+
+TIP: Combine with `sequential_vertex_coloring` for a simple but effective
+graph coloring pipeline.

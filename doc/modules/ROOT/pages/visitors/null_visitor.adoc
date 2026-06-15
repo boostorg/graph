@@ -1,0 +1,19 @@
+= null_visitor
+
+A no-op event visitor that does nothing. Used as a placeholder or default when
+combining event visitors and one slot is not needed.
+
+*Defined in:* `<boost/graph/visitors.hpp>` +
+*Models:* EventVisitor
+
+== Synopsis
+
+[source,cpp]
+----
+struct null_visitor {
+    using event_filter = void;
+
+    template <typename X, typename Graph>
+    void operator()(X, const Graph&) {}
+};
+----

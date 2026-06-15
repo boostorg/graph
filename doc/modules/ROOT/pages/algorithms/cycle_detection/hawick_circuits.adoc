@@ -1,0 +1,123 @@
+= Hawick Circuits
+
+Enumerates all elementary circuits in a directed multigraph, including self-loops and circuits caused by parallel edges.
+
+*Complexity:* Exponential in the worst case; use `max_length` to limit search depth +
+*Defined in:* `<boost/graph/hawick_circuits.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/cycle_detection/hawick_circuits.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/cycle_detection/hawick_circuits.txt[]
+----
+
+'''
+
+=== (1) hawick_circuits
+
+[source,cpp]
+----
+template <typename Graph, typename Visitor,
+          typename VertexIndexMap>
+void hawick_circuits(
+    Graph const& graph,
+    Visitor visitor,
+    VertexIndexMap const& vim = get(vertex_index, graph),
+    unsigned int max_length = 0);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `Graph const& graph`
+| The graph on which the algorithm is to be performed. It must be a model of
+  the `VertexListGraph` and `AdjacencyGraph` concepts.
+
+| IN
+| `Visitor visitor`
+| The visitor that will be notified on each circuit found by the algorithm.
+  The `visitor.cycle(circuit, graph)` expression must be valid, with `circuit`
+  being a `const`-reference to a random access sequence of `vertex_descriptor`s.
+  For example, if a circuit `u -> v -> w -> u` exists in the graph, the
+  visitor will be called with a sequence consisting of `(u, v, w)`.
+
+| IN
+| `VertexIndexMap const& vim`
+| A model of the `ReadablePropertyMap` concept mapping each `vertex_descriptor`
+  to an integer in the range `[0, num_vertices(graph))`. +
+  *Default:* `get(vertex_index, graph)`
+
+| IN
+| `unsigned int max_length`
+| The maximum circuit length to consider. Beyond this it truncates the
+  depth-first search, reducing the computation time by ignoring longer
+  circuits. +
+  *Default:* `0` (no maximum)
+
+|===
+
+'''
+
+=== (2) hawick_unique_circuits
+
+[source,cpp]
+----
+template <typename Graph, typename Visitor,
+          typename VertexIndexMap>
+void hawick_unique_circuits(
+    Graph const& graph,
+    Visitor visitor,
+    VertexIndexMap const& vim = get(vertex_index, graph),
+    unsigned int max_length = 0);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `Graph const& graph`
+| The graph on which the algorithm is to be performed. It must be a model of
+  the `VertexListGraph` and `AdjacencyGraph` concepts.
+
+| IN
+| `Visitor visitor`
+| The visitor that will be notified on each circuit found by the algorithm.
+  The `visitor.cycle(circuit, graph)` expression must be valid, with `circuit`
+  being a `const`-reference to a random access sequence of `vertex_descriptor`s.
+  For example, if a circuit `u -> v -> w -> u` exists in the graph, the
+  visitor will be called with a sequence consisting of `(u, v, w)`.
+
+| IN
+| `VertexIndexMap const& vim`
+| A model of the `ReadablePropertyMap` concept mapping each `vertex_descriptor`
+  to an integer in the range `[0, num_vertices(graph))`. +
+  *Default:* `get(vertex_index, graph)`
+
+| IN
+| `unsigned int max_length`
+| The maximum circuit length to consider. Beyond this it truncates the
+  depth-first search, reducing the computation time by ignoring longer
+  circuits. +
+  *Default:* `0` (no maximum)
+
+|===
+
+== Description
+
+Enumerate all the elementary circuits (of length &le; `max_length`, if nonzero) in a directed multigraph. Specifically, self-loops and redundant circuits caused by parallel edges are enumerated too. `hawick_unique_circuits` may be used if redundant circuits caused by parallel edges are not desired.
+
+The algorithm is described in detail in https://www.researchgate.net/publication/221440635_Enumerating_Circuits_and_Loops_in_Graphs_with_Self-Arcs_and_Multiple-Arcs[Enumerating Circuits and Loops in Graphs with Self-Arcs and Multiple-Arcs].
+
+== Notes
+
+* `hawick_circuits` enumerates all elementary circuits including redundant ones caused by parallel edges. Use `hawick_unique_circuits` to suppress those duplicates.
+* The visitor is passed by value. If your visitor contains state, consider holding it by pointer or reference so that changes made during the algorithm are visible to the caller.
