@@ -1,0 +1,45 @@
+= TSP Tour Visitor concept
+
+This concept defines the visitor interface for
+xref:algorithms/utility/metric_tsp_approx.adoc[`metric_tsp_approx()`] and related
+algorithms. The user can create a class that matches this interface, and
+then pass objects of the class into `metric_tsp_approx()` to
+augment the actions taken during the search.
+
+== Refinement of
+
+none
+
+== Notation
+
+[cols=",",]
+|===
+|`V` |A type that is a model of Dijkstra Visitor.
+
+|`vis` |An object of type `V`.
+
+|`G` |A type that is a model of Graph.
+
+|`g` |An object of type `G`.
+
+|`v` |An object of type
+`boost::graph_traits<G>::vertex_descriptor`.
+|===
+
+== Associated Types
+
+none
+
+== Valid Expressions
+
+[cols=",,,",options="header",]
+|===
+|Name |Expression |Return Type |Description
+|Visit Vertex |`vis.visit_vertex(v, g)` |`void` |This is invoked on
+each vertex of the graph when it is visited as part of the TSP tour.
+|===
+
+== Models
+
+* xref:visitors/tsp_tour_visitor.adoc[`tsp_tour_visitor`]
+* xref:visitors/tsp_tour_len_visitor.adoc[`tsp_tour_len_tsp_visitor`]

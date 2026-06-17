@@ -1,0 +1,47 @@
+= A* Visitor Adaptor
+
+Converts a list of event visitors into an AStarVisitor for use with
+`astar_search`.
+
+*Defined in:* `<boost/graph/astar_search.hpp>` +
+*Models:* AStarVisitor
+
+== Example
+
+[source,cpp]
+----
+include::example$visitors/astar_visitor.cpp[]
+----
+
+[,text]
+----
+include::example$visitors/astar_visitor.txt[]
+----
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename EventVisitorList = null_visitor>
+class astar_visitor;
+
+template <typename EventVisitorList>
+astar_visitor<EventVisitorList>
+make_astar_visitor(EventVisitorList ev_list);
+----
+
+== Parameters
+
+[cols="1,3,1",options="header"]
+|===
+| Parameter | Description | Default
+
+| `EventVisitorList`
+| One or more EventVisitors combined with `std::pair`.
+| `null_visitor`
+|===
+
+== Behavior
+
+Implements all AStarVisitor event points. Each event is dispatched to the
+matching EventVisitor in the list. Events with no matching visitor are ignored.

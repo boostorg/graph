@@ -1,0 +1,491 @@
+= McGregor Common Subgraphs
+
+Finds all common subgraphs between two graphs using McGregor's backtracking algorithm.
+
+*Complexity:* _O(V1 * V2)_ +
+*Defined in:* `<boost/graph/mcgregor_common_subgraphs.hpp>`
+
+[WARNING]
+.Algorithmic semantics
+====
+These functions compute the induced common subgraph variant: for every pair of mapped vertices, an edge must be present in both graphs, or absent in both. Non-edges are part of the structural match, not just edges.
+
+This is stricter than the non-induced (partial) common subgraph problem usually associated with McGregor's 1982 paper, where only present edges need to agree and additional edges in either graph are ignored. BGL does not currently provide the non-induced variant.
+
+The historical name is preserved because the underlying backtracking technique is McGregor's, even though the problem solved here is the induced variant that became standard in later literature.
+====
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/isomorphism/mcgregor.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/isomorphism/mcgregor.txt[]
+----
+
+'''
+
+[#mcgregor_common_subgraphs]
+=== mcgregor_common_subgraphs
+
+[source,cpp]
+----
+// named parameter version
+template <typename GraphFirst,
+          typename GraphSecond,
+          typename SubGraphCallback,
+          typename Param,
+          typename Tag,
+          typename Rest>
+void mcgregor_common_subgraphs(
+    const GraphFirst& graph1,
+    const GraphSecond& graph2,
+    SubGraphCallback user_callback,
+    bool only_connected_subgraphs,
+    const bgl_named_params<Param, Tag, Rest>& params);
+
+// non-named parameter version
+template <typename GraphFirst,
+          typename GraphSecond,
+          typename VertexIndexMapFirst,
+          typename VertexIndexMapSecond,
+          typename EdgeEquivalencePredicate,
+          typename VertexEquivalencePredicate,
+          typename SubGraphCallback>
+void mcgregor_common_subgraphs(
+    const GraphFirst& graph1,
+    const GraphSecond& graph2,
+    const VertexIndexMapFirst vindex_map1,
+    const VertexIndexMapSecond vindex_map2,
+    EdgeEquivalencePredicate edges_equivalent,
+    VertexEquivalencePredicate vertices_equivalent,
+    bool only_connected_subgraphs,
+    SubGraphCallback user_callback);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const GraphFirst& graph1`
+| The first graph of the pair to be searched. The type `GraphFirst` must be a
+  model of xref:concepts/VertexListGraph.adoc[Vertex List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph]. All parameters with a
+  "`1`" (i.e. `vindex_map1`, `correspondence_map_1_to_2`) use this graph's
+  vertices as keys.
+
+| IN
+| `const GraphSecond& graph2`
+| The second graph of the pair to be searched. The type `GraphSecond` must be a
+  model of xref:concepts/VertexListGraph.adoc[Vertex List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph]. All parameters with a
+  "`2`" (i.e. `vindex_map2`, `correspondence_map_2_to_1`) use this graph's
+  vertices as keys.
+
+| IN
+| `bool only_connected_subgraphs`
+| If `true`, subgraphs are expanded only when matching vertices have at least
+  one edge connecting them to the existing subgraph.
+
+| OUT
+| `SubGraphCallback user_callback`
+| A function object that will be invoked when a subgraph has been discovered.
+  See <<callback_requirements>> for details.
+
+|===
+
+Named parameters (named parameter version only):
+
+[cols="1,2,5"]
+|===
+| Direction | Named Parameter | Description / Default
+
+| IN
+| `vertex_index1(VertexIndexMapFirst vindex_map1)`
+| Maps each vertex to an integer in the range `[0, num_vertices(graph1)]`.
+  This is necessary for efficient storage of the subgraphs. The type
+  `VertexIndexMapFirst` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map]. +
+  *Default:* `get(vertex_index, graph1)`
+
+| IN
+| `vertex_index2(VertexIndexMapSecond vindex_map2)`
+| Maps each vertex to an integer in the range `[0, num_vertices(graph2)]`.
+  This is necessary for efficient storage of the subgraphs. The type
+  `VertexIndexMapSecond` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map]. +
+  *Default:* `get(vertex_index, graph2)`
+
+| IN
+| `edges_equivalent(EdgeEquivalencePredicate edges_equivalent)`
+| Used to determine if edges between `graph1` and `graph2` are equivalent.
+  The `EdgeEquivalencePredicate` type must be a model of
+  http://www.boost.org/sgi/stl/BinaryPredicate.html[Binary Predicate] and have
+  argument types of `graph_traits<GraphFirst>::edge_descriptor` and
+  `graph_traits<GraphSecond>::edge_descriptor`. A return value of `true`
+  indicates that the edges are equivalent. +
+  *Default:* `<<always_equivalent,always_equivalent>>`
+
+| IN
+| `vertices_equivalent(VertexEquivalencePredicate vertices_equivalent)`
+| Used to determine if vertices between `graph1` and `graph2` are equivalent.
+  The `VertexEquivalencePredicate` type must be a model of
+  http://www.boost.org/sgi/stl/BinaryPredicate.html[Binary Predicate] and have
+  argument types of `graph_traits<GraphFirst>::vertex_descriptor` and
+  `graph_traits<GraphSecond>::vertex_descriptor`. A return value of `true`
+  indicates that the vertices are equivalent. +
+  *Default:* `<<always_equivalent,always_equivalent>>`
+
+|===
+
+'''
+
+[#mcgregor_common_subgraphs_unique]
+=== mcgregor_common_subgraphs_unique
+
+[source,cpp]
+----
+// Takes the same parameters as mcgregor_common_subgraphs
+template <typename GraphFirst,
+          typename GraphSecond,
+          typename SubGraphCallback,
+          typename Param,
+          typename Tag,
+          typename Rest>
+void mcgregor_common_subgraphs_unique(
+    const GraphFirst& graph1,
+    const GraphSecond& graph2,
+    SubGraphCallback user_callback,
+    bool only_connected_subgraphs,
+    const bgl_named_params<Param, Tag, Rest>& params);
+----
+
+Keeps an internal cache of all discovered subgraphs and only invokes the
+`user_callback` for unique subgraphs. Returning `false` from `user_callback`
+will terminate the search as expected.
+
+Parameters are the same as <<mcgregor_common_subgraphs>>.
+
+'''
+
+[#mcgregor_common_subgraphs_maximum]
+=== mcgregor_common_subgraphs_maximum
+
+[source,cpp]
+----
+// Takes the same parameters as mcgregor_common_subgraphs
+template <typename GraphFirst,
+          typename GraphSecond,
+          typename SubGraphCallback,
+          typename Param,
+          typename Tag,
+          typename Rest>
+void mcgregor_common_subgraphs_maximum(
+    const GraphFirst& graph1,
+    const GraphSecond& graph2,
+    SubGraphCallback user_callback,
+    bool only_connected_subgraphs,
+    const bgl_named_params<Param, Tag, Rest>& params);
+----
+
+Explores the _entire_ search space and invokes the `user_callback` afterward
+with each of the largest discovered subgraphs. Returning `false` from the
+`user_callback` will *not* terminate the search because it is invoked after the
+search has been completed.
+
+Parameters are the same as <<mcgregor_common_subgraphs>>.
+
+'''
+
+[#mcgregor_common_subgraphs_maximum_unique]
+=== mcgregor_common_subgraphs_maximum_unique
+
+[source,cpp]
+----
+// Takes the same parameters as mcgregor_common_subgraphs
+template <typename GraphFirst,
+          typename GraphSecond,
+          typename SubGraphCallback,
+          typename Param,
+          typename Tag,
+          typename Rest>
+void mcgregor_common_subgraphs_maximum_unique(
+    const GraphFirst& graph1,
+    const GraphSecond& graph2,
+    SubGraphCallback user_callback,
+    bool only_connected_subgraphs,
+    const bgl_named_params<Param, Tag, Rest>& params);
+----
+
+Explores the _entire_ search space and invokes the `user_callback` afterward
+with each of the largest, unique discovered subgraphs. Returning `false` from
+the `user_callback` will *not* terminate the search because it is invoked after
+the search has been completed.
+
+Parameters are the same as <<mcgregor_common_subgraphs>>.
+
+'''
+
+=== Utility Functions and Structs
+
+[#make_property_map_equivalent]
+== make_property_map_equivalent
+
+[source,cpp]
+----
+template <typename PropertyMapFirst,
+          typename PropertyMapSecond>
+property_map_equivalent<PropertyMapFirst, PropertyMapSecond>
+make_property_map_equivalent(
+    const PropertyMapFirst property_map1,
+    const PropertyMapSecond property_map2);
+----
+
+Returns a binary predicate function object
+(`property_map_equivalent<PropertyMapFirst, PropertyMapSecond>`) that compares
+vertices or edges between graphs using property maps. If, for example,
+`vertex1` and `vertex2` are the two parameters given when the function object is
+invoked, the `operator()` is effectively:
+`return (get(m_property_map1, vertex1) == get(m_property_map2, vertex2));`
+
+[#always_equivalent]
+== always_equivalent
+
+[source,cpp]
+----
+struct always_equivalent;
+----
+
+A binary function object that returns true for any pair of items.
+
+[#fill_membership_map]
+== fill_membership_map
+
+[source,cpp]
+----
+template <typename GraphSecond,
+          typename GraphFirst,
+          typename CorrespondenceMapFirstToSecond,
+          typename MembershipMapFirst>
+void fill_membership_map(
+    const GraphFirst& graph1,
+    const CorrespondenceMapFirstToSecond correspondence_map_1_to_2,
+    MembershipMapFirst membership_map1);
+----
+
+Takes a subgraph (represented as a correspondence map) and fills the vertex
+membership map (vertex -> bool) (`true` means the vertex is present in the
+subgraph). `MembershipMapFirst` must model
+link:../../property_map/doc/WritablePropertyMap.html[Writable Property Map].
+
+[#make_membership_filtered_graph]
+== make_membership_filtered_graph
+
+[source,cpp]
+----
+template <typename Graph,
+          typename MembershipMap>
+typename membership_filtered_graph_traits<Graph, MembershipMap>::graph_type
+make_membership_filtered_graph(
+    const Graph& graph,
+    MembershipMap& membership_map);
+----
+
+Creates a xref:adaptors/filtered_graph.adoc[Filtered Graph] from a subgraph,
+represented here as a vertex membership map (vertex -> bool where a value of
+`true` means that the vertex is present in the subgraph). All edges between the
+included vertices are preserved. See the <<example>> section for details.
+
+== Description
+
+This algorithm finds all common subgraphs between `graph1` and `graph2` and
+outputs them to `user_callback`. The `edges_equivalent` and
+`vertices_equivalent` predicates are used to determine edges and vertex
+equivalence between the two graphs. To use property maps for equivalence, look
+at the <<make_property_map_equivalent,`make_property_map_equivalent`>> function.
+By default, <<always_equivalent,`always_equivalent`>> is used, which returns
+true for any pair of edges or vertices.
+
+McGregor's algorithm does a depth-first search on the space of possible common
+subgraphs. At each level, every unvisited pair of vertices from `graph1` and
+`graph2` are checked to see if they can extend the current subgraph. This is
+done in three steps (assume `vertex1` is from `graph1` and `vertex2` is from
+`graph2`):
+
+. Verify that `vertex1` and `vertex2` are equivalent using the
+  `vertices_equivalent` predicate.
+. For every vertex pair (`existing_vertex1`, `existing_vertex2`) in the current
+  subgraph, ensure that any edges between `vertex1` and `existing_vertex1` in
+  `graph1` and between `vertex2` and `existing_vertex2` in `graph2` match
+  (i.e. either both exist or both don't exist). If both edges exist, they are
+  checked for equivalence using the `edges_equivalent` predicate.
+. Lastly (and optionally), make sure that the new subgraph vertex has at least
+  one edge connecting it to the existing subgraph. When the
+  `only_connected_subgraphs` parameter is false, this step is skipped.
+
+All functions are defined in the `boost` namespace.
+
+[#callback_requirements]
+=== Callback Requirements
+
+The `user_callback` function object's `operator()` must have the following form:
+
+[source,cpp]
+----
+template <typename CorrespondenceMapFirstToSecond,
+          typename CorrespondenceMapSecondToFirst>
+bool operator()(CorrespondenceMapFirstToSecond correspondence_map_1_to_2,
+                CorrespondenceMapSecondToFirst correspondence_map_2_to_1,
+                typename graph_traits<GraphFirst>::vertices_size_type subgraph_size);
+----
+
+Both the `CorrespondenceMapFirstToSecond` and `CorrespondenceMapSecondToFirst`
+types are models of
+link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map] and
+map equivalent vertices across the two graphs given to
+`mcgregor_common_subgraphs`. For example, if `vertex1` is from `graph1`,
+`vertex2` is from `graph2`, and the vertices can be considered equivalent in the
+subgraph, then `get(correspondence_map_1_to_2, vertex1)` will be `vertex2` and
+`get(correspondence_map_2_to_1, vertex2)` will be `vertex1`. If any vertex, say
+`vertex1` in `graph1`, doesn't match a vertex in the other graph (`graph2` in
+this example), then `get(correspondence_map_1_to_2, vertex1)` will be
+`graph_traits<GraphSecond>::null_vertex()`. Likewise for any un-matched vertices
+from `graph2`, `get(correspondence_map_2_to_1, vertex2)` will be
+`graph_traits<GraphFirst>::null_vertex()`.
+
+The `subgraph_size` parameter is the number of vertices in the subgraph, or the
+number of matched vertex pairs contained in the correspondence maps. This can be
+used to quickly filter out subgraphs whose sizes do not fall within the desired
+range.
+
+Returning `false` from the callback will abort the search immediately.
+Otherwise, the entire search space will be explored <<1,[1]>>.
+
+[#example]
+== Writing a callback
+
+Before calling any of the `mcgregor_common_subgraphs` algorithms, you must
+create a function object to act as a callback:
+
+[source,cpp]
+----
+template <typename GraphFirst,
+          typename GraphSecond>
+struct print_callback {
+
+  print_callback(const GraphFirst& graph1,
+                 const GraphSecond& graph2) :
+    m_graph1(graph1), m_graph2(graph2) { }
+
+  template <typename CorrespondenceMapFirstToSecond,
+            typename CorrespondenceMapSecondToFirst>
+  bool operator()(CorrespondenceMapFirstToSecond correspondence_map_1_to_2,
+                  CorrespondenceMapSecondToFirst correspondence_map_2_to_1,
+                  typename graph_traits<GraphFirst>::vertices_size_type subgraph_size) {
+
+    // Print out correspondences between vertices
+    BGL_FORALL_VERTICES_T(vertex1, m_graph1, GraphFirst) {
+
+      // Skip unmapped vertices
+      if (get(correspondence_map_1_to_2, vertex1) != graph_traits<GraphSecond>::null_vertex()) {
+        std::cout << vertex1 << " <-> " << get(correspondence_map_1_to_2, vertex1) << std::endl;
+      }
+
+    }
+
+    std::cout << "---" << std::endl;
+
+    return (true);
+  }
+
+  private:
+    const GraphFirst& m_graph1;
+    const GraphSecond& m_graph2;
+
+};
+
+// Assuming the graph types GraphFirst and GraphSecond have already been defined
+GraphFirst graph1;
+GraphSecond graph2;
+
+print_callback<GraphFirst, GraphSecond> my_callback(graph1, graph2);
+----
+
+=== Example 1
+
+If all the vertices and edges in your graph are identical, you can start
+enumerating subgraphs immediately:
+
+[source,cpp]
+----
+// Print out all connected common subgraphs between graph1 and graph2.
+// All vertices and edges are assumed to be equivalent and both graph1 and graph2
+// have implicit vertex index properties.
+mcgregor_common_subgraphs(graph1, graph2, true, my_callback);
+----
+
+=== Example 2
+
+If the vertices and edges of your graphs can be differentiated with property
+maps, you can use the `make_property_map_equivalent` function to create a binary
+predicate for vertex or edge equivalence:
+
+[source,cpp]
+----
+// Assume both graphs were defined with implicit vertex name,
+// edge name, and vertex index properties
+property_map<GraphFirst, vertex_name_t> vname_map1 = get(vertex_name, graph1);
+property_map<GraphSecond, vertex_name_t> vname_map2 = get(vertex_name, graph2);
+
+property_map<GraphFirst, edge_name_t> ename_map1 = get(edge_name, graph1);
+property_map<GraphSecond, edge_name_t> ename_map2 = get(edge_name, graph2);
+
+// Print out all connected common subgraphs between graph1 and graph2.
+mcgregor_common_subgraphs(graph1, graph2, true, my_callback,
+  edges_equivalent(make_property_map_equivalent(ename_map1, ename_map2)).
+  vertices_equivalent(make_property_map_equivalent(vname_map1, vname_map2)));
+----
+
+=== Example 3
+
+There are some helper functions that can be used to obtain a filtered graph from
+the correspondence maps given in your callback:
+
+[source,cpp]
+----
+// Assuming we're inside the operator() of the callback with a member
+// variable m_graph1 representing the first graph passed to
+// mcgregor_common_subgraphs.
+// ...
+
+// Step 1: Transform a correspondence map into a membership map.
+// Any vertex -> bool property map will work
+typedef shared_array_property_map<bool, VertexIndexMap> MembershipMap;
+MembershipMap membership_map1(num_vertices(m_graph1), get(vertex_index, m_graph1));
+
+// Fill the membership map for m_graph1. GraphSecond is the type of the
+// second graph given to mcgregor_common_subgraphs.
+fill_membership_map<GraphSecond>(m_graph1, correspondence_map_1_to_2, membership_map1);
+
+// Step 2: Use the membership map from Step 1 to obtain a filtered graph
+typedef typename membership_filtered_graph_traits<GraphFirst, MembershipMap>::graph_type
+  MembershipFilteredGraph;
+
+MembershipFilteredGraph subgraph1 = make_membership_filtered_graph(m_graph1, membership_map1);
+
+// The filtered graph can be used like a regular BGL graph...
+BGL_FORALL_VERTICES_T(vertex1, subgraph1, MembershipFilteredGraph) {
+  std::cout << vertex1 << " is present in the subgraph of graph1" << std::endl;
+}
+----
+
+== Notes
+
+[#1]#[1]# For `mcgregor_common_subgraphs_maximum` and
+`mcgregor_common_subgraphs_maximum_unique` the entire search space is always
+explored, so the return value of the callback has no effect.

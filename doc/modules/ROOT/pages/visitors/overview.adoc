@@ -1,0 +1,231 @@
+= Visitors
+
+BGL algorithms are not just black boxes that return a result. As they run, they
+reach _event points_: moments where something interesting happens (a vertex is
+discovered, an edge is relaxed, a search backtracks). A _visitor_ is an object
+whose methods get called at these event points. This lets you inject custom
+logic into an algorithm without modifying or rewriting it.
+
+WARNING: Visitors are passed by value. If your visitor holds state (a counter,
+a reference to a container), the algorithm operates on a copy. Hold state by
+pointer or reference if you need to read it after the algorithm returns.
+
+== Quick start: pre-built event visitors
+
+For common tasks (recording predecessors, distances, timestamps), BGL provides
+ready-made event visitors. You pick the ones you need, combine them, and pass
+them to the algorithm.
+
+[source,cpp]
+----
+include::example$visitors/visitor_intro.cpp[]
+----
+
+[,text]
+----
+include::example$visitors/visitor_intro.txt[]
+----
+
+The key pattern:
+
+1. Pick event visitors (`record_predecessors`, `record_distances`, etc.)
+2. Bind each to an event tag (`on_tree_edge`, `on_discover_vertex`, etc.)
+3. Combine with `std::make_pair` (nest pairs for 3+:
+   `std::make_pair(a, std::make_pair(b, c))`)
+4. Wrap in an algorithm-specific adaptor (`make_bfs_visitor`, `make_dfs_visitor`,
+   `make_dijkstra_visitor`)
+
+== Writing a custom visitor
+
+When the pre-built visitors are not enough, write your own class. Inherit from
+a default visitor to get empty implementations for all event points, then
+override only the ones you care about.
+
+[source,cpp]
+----
+include::example$visitors/custom_visitor.cpp[]
+----
+
+[,text]
+----
+include::example$visitors/custom_visitor.txt[]
+----
+
+The base classes are:
+
+[cols="1,2"]
+|===
+| Base class | For use with
+
+| `default_bfs_visitor`
+| `breadth_first_search`
+
+| `default_dfs_visitor`
+| `depth_first_search`
+
+| `dijkstra_visitor<>`
+| `dijkstra_shortest_paths`
+
+| `bellman_visitor<>`
+| `bellman_ford_shortest_paths`
+
+| `astar_visitor<>`
+| `astar_search`
+|===
+
+== Event points by algorithm
+
+Each algorithm defines its own set of event points:
+
+=== BFS events
+
+`initialize_vertex`, `discover_vertex`, `examine_vertex`, `examine_edge`,
+`tree_edge`, `non_tree_edge`, `gray_target`, `black_target`, `finish_vertex`
+
+=== DFS events
+
+`initialize_vertex`, `start_vertex`, `discover_vertex`, `examine_edge`,
+`tree_edge`, `back_edge`, `forward_or_cross_edge`, `finish_edge`,
+`finish_vertex`
+
+=== Dijkstra events
+
+`initialize_vertex`, `discover_vertex`, `examine_vertex`, `examine_edge`,
+`edge_relaxed`, `edge_not_relaxed`, `finish_vertex`
+
+=== Bellman-Ford events
+
+`examine_edge`, `edge_relaxed`, `edge_not_relaxed`, `edge_minimized`,
+`edge_not_minimized`
+
+== Pre-built event visitors
+
+[cols="1,2,1"]
+|===
+| Visitor | What it does | Typical event
+
+| `record_predecessors`
+| Records the predecessor vertex in a property map
+| `on_tree_edge`
+
+| `record_edge_predecessors`
+| Records the predecessor edge (useful with parallel edges)
+| `on_tree_edge`
+
+| `record_distances`
+| Records the hop distance from the source
+| `on_tree_edge`
+
+| `stamp_times`
+| Records discover/finish timestamps
+| `on_discover_vertex` / `on_finish_vertex`
+
+| `property_writer`
+| Writes a property value to an output stream
+| any
+
+| `property_put`
+| Assigns a fixed value to a property
+| any
+
+| `null_visitor`
+| Does nothing (placeholder)
+| any
+|===
+
+== Algorithm adaptors
+
+Pre-built event visitors cannot be passed directly to an algorithm. They must
+be wrapped in an algorithm-specific adaptor that converts them into the full
+visitor interface the algorithm expects.
+
+[cols="1,2"]
+|===
+| Adaptor | Wraps event visitors for
+
+| `make_bfs_visitor(...)`
+| `breadth_first_search`
+
+| `make_dfs_visitor(...)`
+| `depth_first_search`
+
+| `make_dijkstra_visitor(...)`
+| `dijkstra_shortest_paths`
+
+| `make_bellman_ford_visitor(...)`
+| `bellman_ford_shortest_paths`
+
+| `make_astar_visitor(...)`
+| `astar_search`
+|===
+
+The adaptor dispatches each algorithm event to the matching event visitor in
+the list. Events that have no matching visitor are silently ignored.
+
+== Early termination
+
+The only way to stop an algorithm early from a visitor is to throw an exception.
+This is the standard BGL pattern for single-target searches:
+
+[source,cpp]
+----
+struct found_target {};
+
+struct stop_at : public boost::default_bfs_visitor {
+    stop_at(Vertex t) : m_target(t) {}
+    template <typename V, typename G>
+    void discover_vertex(V v, const G&) const {
+        if (v == m_target) { throw found_target(); }
+    }
+    Vertex m_target;
+};
+
+try {
+    breadth_first_search(g, src, visitor(stop_at(target)));
+} catch (const found_target&) {
+    // target found, algorithm stopped
+}
+----
+
+== Event tags
+
+Event tags connect an event visitor to a specific event point. Each tag
+corresponds to one event in one or more algorithms.
+
+[cols="1,2"]
+|===
+| Tag | Fires when
+
+| `on_initialize_vertex`
+| A vertex is initialized before the algorithm starts
+
+| `on_discover_vertex`
+| A vertex is first reached
+
+| `on_examine_edge`
+| An out-edge of a discovered vertex is examined
+
+| `on_tree_edge`
+| An edge becomes part of the search tree
+
+| `on_cycle_edge` / `on_back_edge`
+| An edge leads to an already-discovered vertex
+
+| `on_forward_or_cross_edge`
+| (DFS only) An edge leads to an already-finished vertex
+
+| `on_finish_vertex`
+| All out-edges of a vertex have been examined
+
+| `on_edge_relaxed`
+| (Shortest paths) A shorter path to a vertex is found
+
+| `on_edge_not_relaxed`
+| (Shortest paths) An edge does not improve the current distance
+
+| `on_edge_minimized`
+| (Bellman-Ford) An edge's distance is minimized in this pass
+
+| `on_edge_not_minimized`
+| (Bellman-Ford) An edge's distance was not improved in this pass
+|===

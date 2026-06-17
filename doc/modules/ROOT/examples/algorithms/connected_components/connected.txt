@@ -1,0 +1,8 @@
+Number of components: 3
+  Vertex 0 -> component 0
+  Vertex 1 -> component 0
+  Vertex 2 -> component 0
+  Vertex 3 -> component 1
+  Vertex 4 -> component 1
+  Vertex 5 -> component 2
+  Vertex 6 -> component 2

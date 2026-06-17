@@ -1,0 +1,4 @@
+dist[0] = 0
+dist[1] = 1
+dist[2] = 3
+dist[3] = 4

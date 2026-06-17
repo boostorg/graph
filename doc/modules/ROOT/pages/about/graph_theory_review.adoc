@@ -1,0 +1,448 @@
+= Review of Elementary Graph Theory
+
+This chapter is meant as a refresher on elementary graph theory. If the
+reader has some previous acquaintance with graph algorithms, this
+chapter should be enough to get started. If the reader has no previous
+background in graph algorithms we suggest a more thorough introduction
+such as https://mitpress.mit.edu/algorithms[Introduction to Algorithms]
+by Cormen, Leiserson, and Rivest.
+
+== The Graph Abstraction
+
+A graph is a mathematical abstraction that is useful for solving many
+kinds of problems. Fundamentally, a graph consists of a set of vertices,
+and a set of edges, where an edge is something that connects two
+vertices in the graph. More precisely, a [#def:graph]#_graph_# is a pair
+_(V,E)_, where _V_ is a finite set and _E_ is a binary relation on _V_.
+_V_ is called a [#def:vertex-set]#_vertex set_# whose elements are
+called _vertices_. _E_ is a collection of edges, where an
+[#def:edge]#_edge_# is a pair _(u,v)_ with _u,v_ in _V_. In a
+[#def:directed-graph]#_directed graph_#, edges are ordered pairs,
+connecting a [#def:source]#_source_# vertex to a [#def:target]#_target_#
+vertex. In an [#def:undirected-graph]#_undirected graph_# edges are
+unordered pairs and connect the two vertices in both directions, hence
+in an undirected graph _(u,v)_ and _(v,u)_ are two ways of writing the
+same edge.
+
+This definition of a graph is vague in certain respects; it does not say
+what a vertex or edge represents. They could be cities with connecting
+roads, or web-pages with hyperlinks. These details are left out of the
+definition of a graph for an important reason; they are not a necessary
+part of the graph _abstraction_. By leaving out the details we can
+construct a theory that is reusable, that can help us solve lots of
+different kinds of problems.
+
+Back to the definition: a graph is a set of vertices and edges. For
+purposes of demonstration, let us consider a graph where we have labeled
+the vertices with letters, and we write an edge simply as a pair of
+letters. Now we can write down an example of a directed graph as
+follows:
+
+[width="100%",cols="100%",]
+|===
+|`V = {v, b, x, z, a, y}` +
+`E = {(b,y), (b,y), (y,v), (z,a), (x,x), (b,x), (x,v), (a,z)}` +
+`G = (V, E)`
+|===
+
+ 
+
+<<fig:directed-graph,Figure 1>> gives a pictorial view of this graph.
+The edge _(x,x)_ is called a [#def:self-loop]#_self-loop_#. Edges
+_(b,y)_ and _(b,y)_ are _parallel edges_, which are allowed in a
+[#def:multigraph]#_multigraph_# (but are normally not allowed in a
+directed or undirected graph).
+
+[#fig:directed-graph]
+.*Figure 1:* Example of a directed graph.
+image:figs/digraph.gif[figs/digraph,width=124,height=163]
+
+Next we have a similar graph, though this time it is undirected.
+<<fig:undirected-graph,Figure 2>> gives the pictorial view. Self
+loops are not allowed in undirected graphs. This graph is the
+[#def:undirected-version]#_undirected version_# of the the previous
+graph (minus the parallel edge _(b,y)_), meaning it has the same
+vertices and the same edges with their directions removed. Also the self
+edge has been removed, and edges such as _(a,z)_ and _(z,a)_ are
+collapsed into one edge. One can go the other way, and make a
+[#def:directed-version]#_directed version_ of an undirected graph be
+replacing each edge by two edges, one pointing in each direction.#
+
+[width="100%",cols="100%",]
+|===
+|`V = {v, b, x, z, a, y}` +
+`E = {(b,y), (y,v), (z,a), (b,x), (x,v)}` +
+`G = (V, E)`
+|===
+
+ 
+
+[#fig:undirected-graph]
+
+.*Figure 2:* Example of an undirected graph.
+image:figs/undigraph.gif[figs/undigraph,width=103,height=163]
+
+Now for some more graph terminology. If some edge _(u,v)_ is in graph
+_G_, then vertex _v_ is [#def:adjacent]#_adjacent_# to vertex _u_. In a
+directed graph, edge _(u,v)_ is an [#def:out-edge]#_out-edge_# of vertex
+_u_ and an [#def:in-edge]#_in-edge_# of vertex _v_. In an undirected
+graph edge _(u,v)_ is [#def:incident-on]#_incident on_# vertices _u_ and
+_v_.
+
+In <<fig:directed-graph,Figure 1>>, vertex _y_ is adjacent to vertex
+_b_ (but _b_ is not adjacent to _y_). The edge _(b,y)_ is an out-edge of
+_b_ and an in-edge of _y_. In <<fig:undirected-graph,Figure 2>>, _y_
+is adjacent to _b_ and vice-versa. The edge _(y,b)_ is incident on
+vertices _y_ and _b_.
+
+In a directed graph, the number of out-edges of a vertex is its
+[#def:out-degree]#_out-degree_# and the number of in-edges is its
+[#def:in-degree]#_in-degree_#. For an undirected graph, the number of
+edges incident to a vertex is its [#def:degree]#_degree_#. In
+<<fig:directed-graph,Figure 1>>, vertex _b_ has an out-degree of 3
+and an in-degree of zero. In <<fig:undirected-graph,Figure 2>>,
+vertex _b_ simply has a degree of 2.
+
+Now a [#def:path]#_path_# is a sequence of edges in a graph such that
+the target vertex of each edge is the source vertex of the next edge in
+the sequence. If there is a path starting at vertex _u_ and ending at
+vertex _v_ we say that _v_ is [#def:reachable]#_reachable_# from _u_. A
+path is [#def:simple-path]#_simple_# if none of the vertices in the
+sequence are repeated. The path <(b,x), (x,v)> is simple, while
+the path <(a,z), (z,a)> is not. Also, the path <(a,z),
+(z,a)> is called a [#def:cycle]#_cycle_# because the first and last
+vertices in the path are the same. A graph with no cycles is
+[#def:acyclic]#_acyclic_#.
+
+A [#def:planar-graph]#_planar graph_# is a graph that can be drawn on a
+plane without any of the edges crossing over each other. Such a drawing
+is called a _plane graph_. A [#def:face]#_face_# of a plane graph is a
+connected region of the plane surrounded by edges. An important property
+of planar graphs is that the number of faces, edges, and vertices are
+related through Euler's formula: _++|++F++|++ - ++|++E++|++ +
+++|++V++|++ = 2_. This means that a simple planar graph has at most
+_O(++|++V++|++)_ edges.
+
+== Graph Data Structures
+
+The primary property of a graph to consider when deciding which data
+structure to use is _sparsity_, the number of edges relative to the
+number of vertices in the graph. A graph where _E_ is close to V^2^ is a
+_dense_ graph, whereas a graph where _E = alpha V_ and _alpha_ is much
+smaller than _V_ is a _sparse_ graph. For dense graphs, the
+_adjacency-matrix representation_ is usually the best choice, whereas
+for sparse graphs the _adjacency-list representation_ is a better
+choice. Also the _edge-list representation_ is a space efficient choice
+for sparse graphs that is appropriate in some situations.
+
+=== Adjacency Matrix Representation
+
+An adjacency-matrix representation of a graph is a 2-dimensional _V x V_
+array. Each element in the array _a~uv~_ stores a Boolean value saying
+whether the edge _(u,v)_ is in the graph. <<fig:adj-matrix,Figure 3>>
+depicts an adjacency matrix for the graph in
+<<fig:directed-graph,Figure 1>> (minus the parallel edge _(b,y)_).
+The amount of space required to store an adjacency-matrix is _O(V^2^)_.
+Any edge can be accessed, added, or removed in _O(1)_ time. To add or
+remove a vertex requires reallocating and copying the whole graph, an
+_O(V^2^)_ operation. The
+xref:graph_classes/adjacency_matrix.adoc[`adjacency_matrix`] class implements
+the BGL graph interface in terms of the adjacency-matrix data-structure.
+
+[#fig:adj-matrix]
+
+.*Figure 3:* The Adjacency Matrix Graph Representation.
+image:figs/adj_matrix.gif[figs/adj_matrix,width=136,height=135]
+
+[#sec:adjacency-list-representation]
+=== Adjacency List Representation
+
+An adjacency-list representation of a graph stores an out-edge sequence
+for each vertex. For sparse graphs this saves space since only _O(V
++ E)_ memory is required. In addition, the out-edges for each
+vertex can be accessed more efficiently. Edge insertion is _O(1)_,
+though accessing any given edge is _O(alpha)_, where _alpha_ is the
+sparsity factor of the matrix (which is equal to the maximum number of
+out-edges for any vertex in the graph). <<fig:adj-list,Figure 4>>
+depicts an adjacency-list representation of the graph in
+<<fig:directed-graph,Figure 1>>. The
+xref:graph_classes/adjacency_list.adoc[`adjacency_list`] class is an
+implementation of the adjacency-list representation.
+
+[#fig:adj-list]
+
+.*Figure 4:* The Adjacency List Graph Representation.
+image:figs/adj_list.gif[figs/adj_list,width=108,height=122]
+
+=== Edge List Representation
+
+An edge-list representation of a graph is simply a sequence of edges,
+where each edge is represented as a pair of vertex ID's. The memory
+required is only _O(E)_. Edge insertion is typically _O(1)_, though
+accessing a particular edge is _O(E)_ (not efficient).
+<<fig:edge-list,Figure 5>> shows an edge-list representation of the
+graph in <<fig:directed-graph,Figure 1>>. The
+xref:adaptors/edge_list.adoc[`edge_list`] adaptor class can be used to
+create implementations of the edge-list representation.
+
+[#fig:edge-list]
+
+.*Figure 5:* The Edge List Graph Representation.
+image:figs/edge_list.gif[figs/edge_list,width=322,height=22]
+
+== Graph Algorithms
+
+=== Graph Search Algorithms
+
+_Tree edges_ are edges in the search tree (or forest) constructed
+(implicitly or explicitly) by running a graph search algorithm over a
+graph. An edge _(u,v)_ is a tree edge if _v_ was first discovered while
+exploring (corresponding to the xref:visitors/overview.adoc[visitor]
+`explore()` method) edge _(u,v)_. _Back edges_ connect vertices to their
+ancestors in a search tree. So for edge _(u,v)_ the vertex _v_ must be
+the ancestor of vertex _u_. Self loops are considered to be back edges.
+_Forward edges_ are non-tree edges _(u,v)_ that connect a vertex _u_ to
+a descendant _v_ in a search tree. _Cross edges_ are edges that do not
+fall into the above three categories.
+
+[#sec:bfs-algorithm]
+=== Breadth-First Search
+
+Breadth-first search is a traversal through a graph that touches all of
+the vertices reachable from a particular source vertex. In addition, the
+order of the traversal is such that the algorithm will explore all of
+the neighbors of a vertex before proceeding on to the neighbors of its
+neighbors. One way to think of breadth-first search is that it expands
+like a wave emanating from a stone dropped into a pool of water.
+Vertices in the same ++``++wave'' are the same distance from the source
+vertex. A vertex is _discovered_ the first time it is encountered by the
+algorithm. A vertex is _finished_ after all of its neighbors are
+explored. Here's an example to help make this clear. A graph is shown in
+<<fig:bfs-example,Figure 6>> and the BFS discovery and finish order
+for the vertices is shown below.
+
+[#fig:bfs-example]
+
+.*Figure 6:* Breadth-first search spreading through a graph.
+image:figs/bfs_example.gif[figs/bfs_example,width=242,height=143]
+
+....
+
+  order of discovery: s r w v t x u y
+  order of finish:    s r w v t x u y
+....
+
+We start at vertex _s_, and first visit _r_ and _w_ (the two neighbors
+of _s_). Once both neighbors of _s_ are visited, we visit the neighbor
+of _r_ (vertex _v_), then the neighbors of _w_ (the discovery order
+between _r_ and _w_ does not matter) which are _t_ and _x_. Finally we
+visit the neighbors of _t_ and _x_, which are _u_ and _y_.
+
+For the algorithm to keep track of where it is in the graph, and which
+vertex to visit next, BFS needs to color the vertices (see the section
+on xref:property_maps/overview.adoc[Property Maps] for more details about
+attaching properties to graphs). The place to put the color can either
+be inside the graph, or it can be passed into the algorithm as an
+argument.
+
+[#sec:dfs-algorithm]
+=== Depth-First Search
+
+A depth first search (DFS) visits all the vertices in a graph. When
+choosing which edge to explore next, this algorithm always chooses to go
+++``++deeper'' into the graph. That is, it will pick the next adjacent
+unvisited vertex until reaching a vertex that has no unvisited adjacent
+vertices. The algorithm will then backtrack to the previous vertex and
+continue along any as-yet unexplored edges from that vertex. After DFS
+has visited all the reachable vertices from a particular source vertex,
+it chooses one of the remaining undiscovered vertices and continues the
+search. This process creates a set of _depth-first trees_ which together
+form the _depth-first forest_. A depth-first search categorizes the
+edges in the graph into three categories: tree-edges, back-edges, and
+forward or cross-edges (it does not specify which). There are typically
+many valid depth-first forests for a given graph, and therefore many
+different (and equally valid) ways to categorize the edges.
+
+One interesting property of depth-first search is that the discover and
+finish times for each vertex form a parenthesis structure. If we use an
+open-parenthesis when a vertex is discovered, and a close-parenthesis
+when a vertex is finished, then the result is a properly nested set of
+parenthesis. <<fig:dfs-example,Figure 7>> shows DFS applied to an
+undirected graph, with the edges labeled in the order they were
+explored. Below we list the vertices of the graph ordered by discover
+and finish time, as well as show the parenthesis structure. DFS is used
+as the kernel for several other graph algorithms, including topological
+sort and two of the connected component algorithms. It can also be used
+to detect cycles (use a DFS visitor that checks for back edges).
+
+[#fig:dfs-example]
+
+.*Figure 7:* Depth-first search on an undirected graph.
+image:figs/dfs.gif[figs/dfs,width=141,height=204]
+
+....
+
+  order of discovery: a b e d c f g h i
+  order of finish:    d f c e b a i h g
+  parenthesis: (a (b (e (d d) (c (f f) c) e) b) a) (g (h (i i) h) g)
+....
+
+[#sec:minimum-spanning-tree]
+=== Minimum Spanning Tree Problem
+
+The _minimum-spanning-tree problem_ is defined as follows: find an
+acyclic subset _T_ of _E_ that connects all of the vertices in the graph
+and whose total weight is minimized, where the total weight is given by
+
+_w(T)_ = sum of _w(u,v)_ over all _(u,v)_ in _T_, where _w(u,v)_ is the
+weight on the edge _(u,v)_
+
+ 
+
+_T_ is called the _spanning tree_.
+
+[#sec:shortest-paths-algorithms]
+=== Shortest-Paths Algorithms
+
+One of the classic problems in graph theory is to find the shortest path
+between two vertices in a graph. Formally, a _path_ is a sequence of
+vertices _<v~0~,v~1~,...,v~k~>_ in a graph _G = (V, E)_ such
+that each vertex is connected to the next vertex in the sequence (the
+edges _(v~i~,v~i{plus}1~)_ for _i=0,1,...,k-1_ are in the edge set _E_).
+In the shortest-path problem, each edge is given a real-valued weight.
+We can therefore talk about the _weight of a path_ 
+
+_w(p) = sum of w(v~i-1~,v~i~) for i=1..k_
+
+ 
+
+The _shortest path weight_ from vertex _u_ to _v_ is then 
+
+_delta (u,v) = min { w(p) : u --> v }_ if there is a path from
+_u_ to _v_ +
+_delta (u,v) = infinity_ otherwise.
+
+ 
+
+A _shortest path_ is any path whose path weight is equal to the
+_shortest path weight_.
+
+There are several variants of the shortest path problem. Above we
+defined the _single-pair_ problem, but there is also the _single-source
+problem_ (all shortest paths from one vertex to every other vertex in
+the graph), the equivalent _single-destination problem_, and the
+_all-pairs problem_. It turns out that there are no algorithms for
+solving the single-pair problem that are asymptotically faster than
+algorithms that solve the single-source problem.
+
+A _shortest-paths tree_ rooted at vertex _r_ in graph _G=(V,E)_ is a
+directed subgraph _G'=(V',E')_ where _V'_ is a subset of _V_ and _E'_ is
+a subset of _E_, _V'_ is the set of vertices reachable from _r_, _G'_
+forms a rooted tree with root _r_, and for all _v_ in _V'_ the unique
+simple path from _r_ to _v_ in _G'_ is a shortest path from _r_ to _v_
+in _G_. The result of a single-source algorithm is a shortest-paths
+tree.
+
+[#sec:network-flow-algorithms]
+=== Network Flow Algorithms
+
+A flow network is a directed graph _G=(V,E)_ with a *_source_* vertex
+_s_ and a *_sink_* vertex _t_. Each edge has a positive real valued
+*_capacity_* function _c_ and there is a *_flow_* function _f_ defined
+over every vertex pair. The flow function must satisfy three
+constraints:
+
+_f(u,v) <= c(u,v) for all (u,v) in V x V_ (Capacity constraint) +
+_f(u,v) = - f(v,u) for all (u,v) in V x V_ (Skew symmetry) +
+_sum~v in V~ f(u,v) = 0 for all v in V - {s,t}_ (Flow conservation)
+
+The *_flow_* of the network is the net flow entering the sink vertex _t_
+(which is equal to the net flow leaving the source vertex _s_).
+
+_++|++f++|++ = sum~u in V~ f(u,t) = sum~v in V~ f(s,v)_
+
+The *_residual capacity_* of an edge is _r(u,v) = c(u,v) - f(u,v)_. The
+edges with _r(u,v) > 0_ are residual edges _E~f~_ which induce the
+residual graph _G~f~ = (V, E~f~)_. An edge with _r(u,v) = 0_ is
+*_saturated_*.
+
+The *_maximum flow problem_* is to determine the maximum possible value
+for _++|++f++|++_ and the corresponding flow values for every vertex
+pair in the graph.
+
+The *_minimum cost maximum flow problem_* is to determine the maximum
+flow which minimizes _sum~(u,v) in E~ cost(u,v) * f(u,v)_ .
+
+A flow network is shown in <<fig:max-flow,Figure 8>>. Vertex _A_ is
+the source vertex and _H_ is the target vertex.
+
+[#fig:max-flow]
+.*Figure 8:* A Maximum Flow Network. +
+Edges are labeled with the flow and capacity values.
+image:figs/max-flow.gif[figs/max-flow,width=578,height=240]
+
+There is a long history of algorithms for solving the maximum flow
+problem, with the first algorithm due to
+xref:about/bibliography.adoc#ford56:_maxim[Ford and Fulkerson]. The best
+general purpose algorithm to date is the push-relabel algorithm of
+xref:about/bibliography.adoc#goldberg85:_new_max_flow_algor[Goldberg] which
+is based on the notion of a *_preflow_* introduced by
+xref:about/bibliography.adoc#karzanov74:_deter[Karzanov].
+
+[#sec:min-cut-algorithms]
+=== Minimum Cut Algorithms
+
+==== Undirected Graphs
+
+Given an undirected graph _G_ = (_V_, _E_), a _cut_ of _G_ is a
+partition of the vertices into two, non-empty sets _X_ and
+image:stoer_wagner_imgs/6e4.gif[++\++overline\{X} = V - X]. The
+_weight_ of a cut is defined as the number of edges between sets _X_ and
+image:stoer_wagner_imgs/f79.gif[++\++overline\{X}] if _G_ is
+unweighted, or the sum of the weights of all edges between sets _X_ and
+image:stoer_wagner_imgs/f79.gif[++\++overline\{X}] if _G_ is weighted
+(each edge has an associated, non-negative weight).
+
+When the weight of a cut image:stoer_wagner_imgs/8b7.gif[C = ++\{++X,
+++\++overline\{X}++\++}] is minimal for a graph _G_ (that is, no
+other cut of _G_ has a lesser weight), then the cut is known as a
+_minimum cut_ or a _min-cut_. For example, given this weighted graph:
+
+link:stoer_wagner_imgs/stoer_wagner-example.dot[image:stoer_wagner_imgs/stoer_wagner-example.gif[stoer_wagner_imgs/stoer_wagner-example]]
+
+The cut ++{{++0, 6}, {3, 2, 7, 1, 5, 4}} has weight 13:
+
+link:stoer_wagner_imgs/stoer_wagner-example-c1.dot[image:stoer_wagner_imgs/stoer_wagner-example-c1.gif[stoer_wagner_imgs/stoer_wagner-example-c1]]
+
+And the min-cut is ++{{++0, 1, 4, 5}, {2, 3, 6, 7}} (weight 4):
+
+link:stoer_wagner_imgs/stoer_wagner-example-min-cut.dot[image:stoer_wagner_imgs/stoer_wagner-example-min-cut.gif[stoer_wagner_imgs/stoer_wagner-example-min-cut]]
+
+Unlike this example, a graph will sometimes have multiple min-cuts, all
+of equal weight. A minimum cut algorithm determines one of them as well
+as the min-cut weight.
+
+==== Directed Graphs
+
+Given a directed graph _G_ = (_V_, _E_), a _cut_ of _G_ is a partition
+of the vertices into two, non-empty sets _S_ and _T_ where _S_ is known
+as the set of _source vertices_ and _T_ is known as the set of _sink
+vertices_. The _capacity_ of a cut _C_ = (_S_, _T_) is the number of
+edges from a vertex in _S_ to a vertex in _T_ if _G_ is unweighted, or
+the sum of weights of edges from a vertex in _S_ to a vertex in _T_ if
+_G_ is weighted.
+
+When the capacity of a cut _C_ = (_S_, _T_) of a directed graph is
+minimal (that is, no other cut of _G_ has lesser capacity), then _C_ is
+known as a _minimum cut_ or _min-cut_.
+
+For example, given this directed graph:
+
+link:stoer_wagner_imgs/digraph1.dot[image:stoer_wagner_imgs/digraph1.gif[stoer_wagner_imgs/digraph1]]
+
+A min-cut is:
+
+link:stoer_wagner_imgs/digraph1-min-cut.dot[image:stoer_wagner_imgs/digraph1-min-cut.gif[stoer_wagner_imgs/digraph1-min-cut]]
+
+where _S_ = \{0}, _T_ = \{1, 2, 3}, and the min-cut capacity is
+1.

@@ -1,0 +1,6 @@
+Closeness centrality (1 / sum of shortest distances):
+  vertex 0: 0.0909
+  vertex 1: 0.1000
+  vertex 2: 0.1111
+  vertex 3: 0.0833
+  vertex 4: 0.1000

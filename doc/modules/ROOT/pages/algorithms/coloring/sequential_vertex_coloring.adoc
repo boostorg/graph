@@ -1,0 +1,137 @@
+[#sec:sequential-vertex-coloring]
+= Sequential Vertex Coloring
+
+Computes a vertex coloring for the vertices in a graph using a greedy algorithm.
+
+*Complexity:* _O(V(d{plus}k))_ where _d_ is max degree and _k_ is the number of colors +
+*Defined in:* `<boost/graph/sequential_vertex_coloring.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/coloring/vertex_coloring.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/coloring/vertex_coloring.txt[]
+----
+
+'''
+
+=== (1) With vertex ordering
+
+[source,cpp]
+----
+template <class VertexListGraph, class OrderPA, class ColorMap>
+typename property_traits<ColorMap>::value_type
+sequential_vertex_coloring(
+    const VertexListGraph& g,
+    OrderPA order,
+    ColorMap color);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const VertexListGraph& g`
+| The graph object on which the algorithm will be applied.
+  The type `VertexListGraph` must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph]
+  and xref:concepts/AdjacencyGraph.adoc[Adjacency Graph].
+
+| IN
+| `OrderPA order`
+| A mapping from integers in the range _[0, num_vertices(g))_
+  to the vertices of the graph.
+
+| OUT
+| `ColorMap color`
+| This property map records the colors of each vertex. It must be a model of
+  link:../../property_map/doc/WritablePropertyMap.html[Writeable Property Map]
+  whose key type is the same as the vertex descriptor type of the graph and
+  whose value type is an integral type that can store all values of the
+  graph's `vertices_size_type`.
+
+|===
+
+'''
+
+=== (2) Without vertex ordering
+
+[source,cpp]
+----
+template <class VertexListGraph, class ColorMap>
+typename property_traits<ColorMap>::value_type
+sequential_vertex_coloring(
+    const VertexListGraph& g,
+    ColorMap color);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const VertexListGraph& g`
+| The graph object on which the algorithm will be applied.
+  The type `VertexListGraph` must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph]
+  and xref:concepts/AdjacencyGraph.adoc[Adjacency Graph].
+
+| OUT
+| `ColorMap color`
+| This property map records the colors of each vertex. It must be a model of
+  link:../../property_map/doc/WritablePropertyMap.html[Writeable Property Map]
+  whose key type is the same as the vertex descriptor type of the graph and
+  whose value type is an integral type that can store all values of the
+  graph's `vertices_size_type`.
+
+|===
+
+== Description
+
+Computes a https://en.wikipedia.org/wiki/Graph_coloring[vertex coloring]
+for the vertices in the graph, using a simple algorithm
+[xref:about/bibliography.adoc#coleman84:_estim_jacob[4]]. Given vertices ordered
+v~1~, v~2~, ... , v~n~, for k = 1, 2, ..., n the algorithm assigns v~k~
+to the smallest possible color. The algorithm does not guarantee an
+optimum coloring.
+
+Here is the coloring that would be produced on a graph given the vertex
+ordering A, B, C, D, E.
+
+image::figs/sequential_vertex_coloring.png[]
+
+Overload (2) uses a default ordering that matches the order produced by `vertices(g)`.
+
+== Returns
+
+The number of colors used, of type `property_traits<ColorMap>::value_type`.
+
+== Example
+
+[source,cpp]
+----
+typedef adjacency_list<listS, vecS, undirectedS> Graph;
+typedef graph_traits<Graph>::vertex_descriptor vertex_descriptor;
+typedef graph_traits<Graph>::vertices_size_type vertices_size_type;
+typedef property_map<Graph, vertex_index_t>::const_type vertex_index_map;
+
+typedef std::pair<int, int> Edge;
+enum nodes {A, B, C, D, E, n};
+Edge edge_array[] = { Edge(A, C), Edge(B, B), Edge(B, D), Edge(B, E),
+                      Edge(C, B), Edge(C, D), Edge(D, E), Edge(E, A),
+                      Edge(E, B) };
+int m = sizeof(edge_array) / sizeof(Edge);
+Graph g(edge_array, edge_array + m, n);
+
+// Test with the normal order
+std::vector<vertices_size_type> color_vec(num_vertices(g));
+iterator_property_map<vertices_size_type*, vertex_index_map>
+  color(&color_vec.front(), get(vertex_index, g));
+vertices_size_type num_colors = sequential_vertex_coloring(g, color);
+----

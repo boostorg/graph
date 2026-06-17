@@ -1,0 +1,967 @@
+[#sec:adjacency-list-class]
+= adjacency_list
+
+A generalized adjacency list graph with configurable storage for vertices, edges, and properties.
+
+*Defined in:* `<boost/graph/adjacency_list.hpp>` +
+*Serialization:* `<boost/graph/adj_list_serialize.hpp>` +
+*Models:* xref:concepts/VertexAndEdgeListGraph.adoc[VertexAndEdgeListGraph], xref:concepts/MutablePropertyGraph.adoc[MutablePropertyGraph], CopyConstructible, Assignable, Serializable
+
+== Synopsis
+
+[source,cpp]
+----
+template <class OutEdgeList = vecS,
+          class VertexList = vecS,
+          class Directed = directedS,
+          class VertexProperties = no_property,
+          class EdgeProperties = no_property,
+          class GraphProperties = no_property,
+          class EdgeList = listS>
+class adjacency_list { ... };
+----
+
+The general-purpose BGL graph class. Each vertex stores a list of its
+outgoing edges. The first three template parameters control the most
+important trade-offs:
+
+* `OutEdgeList`: which container stores each vertex's edges (`vecS` for speed, `setS` to prevent duplicates)
+* `VertexList`: which container stores the vertices (`vecS` for fast lookup, `listS` for stable descriptors)
+* `Directed`: `directedS`, `undirectedS`, or `bidirectionalS` (in-edges cost 2x memory per edge)
+
+See <<_operation_complexity>> for how these choices affect performance, and
+<<_stability_and_invalidation>> for which operations invalidate iterators.
+For the formal data structure definition, see
+xref:about/graph_theory_review.adoc#sec:adjacency-list-representation[Graph Theory Review].
+
+== Quick Usage
+
+[source,cpp]
+----
+include::example$graph_classes/adjacency_list_usage.cpp[]
+----
+
+[,text]
+----
+include::example$graph_classes/adjacency_list_usage.txt[]
+----
+
+== Template Parameters
+
+[cols="1,3,1",options="header"]
+|===
+| Parameter | Description | Default
+
+| `OutEdgeList`
+| The selector for the container used to represent the edge-list for each of the vertices.
+| `vecS`
+
+| `VertexList`
+| The selector for the container used to represent the vertex-list of the graph. With `vecS`, vertices have a builtin `vertex_index` in `[0, num_vertices(g))` that is renumbered on vertex removal.
+| `vecS`
+
+| `Directed`
+| A selector to choose whether the graph is directed, undirected, or directed with bidirectional edge access (access to both out-edges and in-edges). The options are `directedS`, `undirectedS`, and `bidirectionalS`.
+| `directedS`
+
+| `VertexProperties`
+| Bundled struct or `property<>` tag for vertex data. See xref:property_maps/overview.adoc[Property Maps].
+| `no_property`
+
+| `EdgeProperties`
+| Bundled struct or `property<>` tag for edge data. See xref:property_maps/overview.adoc[Property Maps].
+| `no_property`
+
+| `GraphProperties`
+| Property storage for the graph object.
+| `no_property`
+
+| `EdgeList`
+| The selector for the container used to represent the edge-list for the graph.
+| `listS`
+|===
+
+NOTE: Property maps obtained from `adjacency_list` are Lvalue Property Maps
+(mutable if the graph is non-const, constant otherwise).
+
+
+== Member Functions
+
+=== Constructors
+
+[source,cpp]
+----
+adjacency_list(const GraphProperty& p = GraphProperty())
+----
+
+Default constructor. Creates an empty graph object with zero vertices
+and zero edges.
+
+'''
+
+[source,cpp]
+----
+adjacency_list(const adjacency_list& x)
+----
+
+Copy constructor. Creates a new graph that is a copy of graph
+`x`, including the edges, vertices, and properties.
+
+'''
+
+[source,cpp]
+----
+adjacency_list& operator=(const adjacency_list& x)
+----
+
+Assignment operator. Makes this graph a copy of graph
+`x`, including the edges, vertices, and properties.
+
+'''
+
+[source,cpp]
+----
+adjacency_list(vertices_size_type n, const GraphProperty& p = GraphProperty())
+----
+
+Creates a graph object with `n` vertices and zero edges.
+
+'''
+
+[#sec:iterator-constructor]
+[source,cpp]
+----
+template <class EdgeIterator>
+adjacency_list(EdgeIterator first, 
+               EdgeIterator last,
+               vertices_size_type n,
+               edges_size_type m = 0,
+               const GraphProperty& p = GraphProperty())
+----
+
+Creates a graph object with `n` vertices and with the edges
+specified in the edge list given by the range `[first, last)`.
+The `EdgeIterator` must be a model of
+http://www.boost.org/sgi/stl/InputIterator.html[InputIterator].
+The value type of the `EdgeIterator` must be a
+`std::pair`, where the type in the pair is an integer type. The
+integers will correspond to vertices, and they must all fall in the
+range of `[0, n)`.
+
+'''
+
+[source,cpp]
+----
+template <class EdgeIterator, class EdgePropertyIterator>
+adjacency_list(EdgeIterator first, 
+               EdgeIterator last,
+               EdgePropertyIterator ep_iter,
+               vertices_size_type n,
+               edges_size_type m = 0,
+               const GraphProperty& p = GraphProperty())
+----
+
+Creates a graph object with `n` vertices and with the edges
+specified in the edge list given by the range `[first, last)`.
+The `EdgeIterator` and `EdgePropertyIterator` must be a
+model of
+http://www.boost.org/sgi/stl/InputIterator.html[InputIterator].
+The value type of the `EdgeIterator` must be a
+`std::pair`, where the type in the pair is an integer type. The
+integers will correspond to vertices, and they must all fall in the
+range of `[0, n)`. The `value_type` of the
+`ep_iter` should be `EdgeProperties`.
+
+=== clear
+
+[source,cpp]
+----
+void clear()
+----
+
+Remove all of the edges and vertices from the graph.
+
+=== swap
+
+[source,cpp]
+----
+void swap(adjacency_list& x)
+----
+
+Swap the vertices, edges, and properties of this graph with the
+vertices, edges, and properties of graph `x`.
+
+=== operator[]
+
+[source,cpp]
+----
+vertex_bundled& operator[](vertex_descriptor v);
+const vertex_bundled& operator[](vertex_descriptor v) const;
+edge_bundled& operator[](edge_descriptor e);
+const edge_bundled& operator[](edge_descriptor e) const;
+----
+
+Direct access to bundled property structs of vertices and edges.
+
+== Non-Member Functions
+
+=== Structure Access
+
+[source,cpp]
+----
+std::pair<vertex_iterator, vertex_iterator>
+vertices(const adjacency_list& g)
+----
+
+Returns an iterator-range providing access to the vertex set of graph
+`g`.
+
+'''
+
+[source,cpp]
+----
+std::pair<edge_iterator, edge_iterator>
+edges(const adjacency_list& g)
+----
+
+Returns an iterator-range providing access to the edge set of graph
+`g`.
+
+'''
+
+[source,cpp]
+----
+std::pair<adjacency_iterator, adjacency_iterator>
+adjacent_vertices(vertex_descriptor u, const adjacency_list& g)
+----
+
+Returns an iterator-range providing access to the vertices adjacent to
+vertex `u` in graph `g`. For example, if `u -> v`
+is an edge in the graph, then `v` will be in this iterator-range.
+
+'''
+
+[source,cpp]
+----
+std::pair<inv_adjacency_iterator, inv_adjacency_iterator>
+inv_adjacent_vertices(vertex_descriptor u, const adjacency_list& g)
+----
+
+Returns an iterator-range providing access to the vertices in graph
+`g` to which `u` is adjacent. (`inv` is for
+inverse.) For example, if `v -> u` is an edge in the graph,
+then `v` will be in this iterator range. This function is only
+available for bidirectional and undirected `adjacency_list`'s.
+
+'''
+
+[source,cpp]
+----
+std::pair<out_edge_iterator, out_edge_iterator>
+out_edges(vertex_descriptor u, const adjacency_list& g)
+----
+
+Returns an iterator-range providing access to the out-edges of vertex
+`u` in graph `g`. If the graph is undirected, this
+iterator-range provides access to all edges incident on vertex
+`u`. For both directed and undirected graphs, for an out-edge
+`e`, `source(e, g) == u` and `target(e, g) == v`
+where `v` is a vertex adjacent to `u`.
+
+'''
+
+[source,cpp]
+----
+std::pair<in_edge_iterator, in_edge_iterator>
+in_edges(vertex_descriptor v, const adjacency_list& g)
+----
+
+Returns an iterator-range providing access to the in-edges of vertex
+`v` in graph `g`.  This operation is only available if
+`bidirectionalS` was specified for the `Directed`
+template parameter. For an in-edge `e`, `target(e, g) == v`
+and `source(e, g) == u` for some vertex `u` that is
+adjacent to `v`, whether the graph is directed or undirected.
+
+'''
+
+[source,cpp]
+----
+vertex_descriptor
+source(edge_descriptor e, const adjacency_list& g)
+----
+
+Returns the source vertex of edge `e`.
+
+'''
+
+[source,cpp]
+----
+vertex_descriptor
+target(edge_descriptor e, const adjacency_list& g)
+----
+
+Returns the target vertex of edge `e`.
+
+'''
+
+[source,cpp]
+----
+degree_size_type
+out_degree(vertex_descriptor u, const adjacency_list& g)
+----
+
+Returns the number of edges leaving vertex `u`.
+
+'''
+
+[source,cpp]
+----
+degree_size_type
+in_degree(vertex_descriptor u, const adjacency_list& g)
+----
+
+Returns the number of edges entering vertex `u`. This operation
+is only available if `bidirectionalS` was specified for
+the `Directed` template parameter.
+
+'''
+
+[source,cpp]
+----
+degree_size_type
+degree(vertex_descriptor u, const adjacency_list& g)
+----
+
+Returns `out_degree(u, g) + in_degree(u, g)` for directed/bidirectional graphs,
+or `out_degree(u, g)` for undirected graphs.
+
+'''
+
+[source,cpp]
+----
+vertices_size_type
+num_vertices(const adjacency_list& g)
+----
+
+Returns the number of vertices in the graph `g`.
+
+'''
+
+[source,cpp]
+----
+edges_size_type
+num_edges(const adjacency_list& g)
+----
+
+Returns the number of edges in the graph `g`.
+
+'''
+
+[source,cpp]
+----
+vertex_descriptor
+vertex(vertices_size_type n, const adjacency_list& g)
+----
+
+Returns the nth vertex in the graph's vertex list.
+
+'''
+
+[source,cpp]
+----
+std::pair<edge_descriptor, bool>
+edge(vertex_descriptor u, vertex_descriptor v, const adjacency_list& g)
+----
+
+If an edge from vertex `u` to vertex `v` exists, return a pair
+containing one such edge and `true`.  If there are no edges between
+`u` and `v`, return a pair with an arbitrary edge descriptor and
+`false`.
+
+'''
+
+[source,cpp]
+----
+std::pair<out_edge_iterator, out_edge_iterator>
+edge_range(vertex_descriptor u, vertex_descriptor v, const adjacency_list& g)
+----
+
+Returns a pair of out-edge iterators that give the range for
+all the parallel edges from `u` to `v`. This
+function only works when the `OutEdgeList` for the
+`adjacency_list` is a container that sorts the
+out edges according to target vertex, and allows for
+parallel edges. The `multisetS` selector chooses
+such a container.
+
+=== Structure Modification
+
+[source,cpp]
+----
+std::pair<edge_descriptor, bool>
+add_edge(vertex_descriptor u, vertex_descriptor v, adjacency_list& g)
+----
+
+Adds edge _(u,v)_ to the graph and returns the edge descriptor
+for the new edge. For graphs that do not allow parallel edges, if the
+edge is already in the graph then a duplicate will not be added and
+the `bool` flag will be `false`. When the flag is
+`false`, the
+returned edge descriptor points to the already existing edge.
+
+The placement of the new edge in the out-edge list is in general
+unspecified, though ordering of the out-edge list can be accomplished
+through the choice of `OutEdgeList`.
+
+If the `VertexList` selector is
+`vecS`, and if either vertex descriptor `u` or
+`v` (which are integers) has a value greater than the current
+number of vertices in the graph, the graph is enlarged so that the
+number of vertices is `std::max(u,v) + 1`.
+
+If the `OutEdgeList` selector is `vecS` then this operation
+will invalidate any `out_edge_iterator` for vertex
+_u_. This also applies if the `OutEdgeList` is a user-defined
+container that invalidates its iterators when `push(container,
+x)` is invoked (see Section
+xref:extending/custom_storage.adoc[Customizing the
+Adjacency List Storage]). If the graph is also bidirectional then
+any `in_edge_iterator` for _v_ is also invalidated.  If
+instead the graph is undirected then any `out_edge_iterator`
+for _v_ is also invalidated. If instead the graph is directed,
+then `add_edge()` also invalidates any `edge_iterator`.
+
+'''
+
+[source,cpp]
+----
+std::pair<edge_descriptor, bool>
+add_edge(vertex_descriptor u, 
+         vertex_descriptor v,
+         const EdgeProperties& p,
+         adjacency_list& g)
+----
+
+Adds edge _(u,v)_ to the graph and attaches `p` as the
+value of the edge's internal property storage.  Also see the previous
+`add_edge()` non-member function for more details.
+
+'''
+
+[source,cpp]
+----
+void remove_edge(vertex_descriptor u, vertex_descriptor v, adjacency_list& g)
+----
+
+Removes the edge _(u,v)_ from the graph.
+
+This operation causes any outstanding edge descriptors or iterators
+that point to edge _(u,v)_ to become invalid.  In addition, if
+the `OutEdgeList` selector is `vecS` then this operation
+will invalidate any iterators that point into the edge-list for vertex
+_u_ and also for vertex _v_ in the undirected and
+bidirectional case. Also, for directed graphs this invalidates any
+`edge_iterator`.
+
+'''
+
+[source,cpp]
+----
+void remove_edge(edge_descriptor e, adjacency_list& g)
+----
+
+Removes the edge `e` from the graph. This differs from the
+`remove_edge(u, v, g)` function in the case of a
+multigraph. This `remove_edge(e, g)` function removes a single
+edge, whereas the `remove_edge(u, v, g)` function removes all
+edges _(u,v)_.
+
+This operation invalidates any outstanding edge descriptors and
+iterators for the same edge pointed to by descriptor `e`.  In
+addition, this operation will invalidate any iterators that point into
+the edge-list for the `target(e, g)`.  Also, for directed
+graphs this invalidates any `edge_iterator` for the graph.
+
+'''
+
+[source,cpp]
+----
+void remove_edge(out_edge_iterator iter, adjacency_list& g)
+----
+
+This has the same effect as `remove_edge(*iter, g)`. The
+difference is that this function has constant time complexity
+in the case of directed graphs, whereas `remove_edge(e, g)`
+has time complexity _O(E/V)_.
+
+'''
+
+[source,cpp]
+----
+template <class Predicate>
+void remove_out_edge_if(vertex_descriptor u, Predicate predicate, adjacency_list& g)
+----
+
+Removes all out-edges of vertex _u_ from the graph that satisfy
+the `predicate`. That is, if the predicate returns true when
+applied to an edge descriptor, then the edge is removed.
+
+The affect on descriptor and iterator stability is the same as that of
+invoking `remove_edge()` on each of the removed edges.
+
+'''
+
+[source,cpp]
+----
+template <class Predicate>
+void remove_in_edge_if(vertex_descriptor v, Predicate predicate, adjacency_list& g)
+----
+
+Removes all in-edges of vertex _v_ from the graph that satisfy
+the `predicate`. That is, if the predicate returns true when
+applied to an edge descriptor, then the edge is removed.
+
+The affect on descriptor and iterator stability is the
+same as that of invoking `remove_edge()` on each of the
+removed edges.
+
+This operation is available for undirected and bidirectional
+`adjacency_list` graphs, but not for directed.
+
+'''
+
+[source,cpp]
+----
+template <class Predicate>
+void remove_edge_if(Predicate predicate, adjacency_list& g)
+----
+
+Removes all edges from the graph that satisfy
+the `predicate`. That is, if the predicate returns true when
+applied to an edge descriptor, then the edge is removed.
+
+The affect on descriptor and iterator stability is the same as that of
+invoking `remove_edge()` on each of the removed edges.
+
+'''
+
+[#sec:add-vertex]
+[source,cpp]
+----
+vertex_descriptor
+add_vertex(adjacency_list& g)
+----
+
+Adds a vertex to the graph and returns the vertex descriptor for the
+new vertex.
+
+'''
+
+[source,cpp]
+----
+vertex_descriptor
+add_vertex(const VertexProperties& p, adjacency_list& g)
+----
+
+Adds a vertex to the graph with the specified properties. Returns the
+vertex descriptor for the new vertex.
+
+'''
+
+[source,cpp]
+----
+void clear_vertex(vertex_descriptor u, adjacency_list& g)
+----
+
+Removes all edges to and from vertex _u_. The vertex still appears
+in the vertex set of the graph.
+
+The affect on descriptor and iterator stability is the
+same as that of invoking `remove_edge()` for all of
+the edges that have `u` as the source or target.
+
+'''
+
+[source,cpp]
+----
+void clear_out_edges(vertex_descriptor u, adjacency_list& g)
+----
+
+Removes all out-edges from vertex _u_. The vertex still appears
+in the vertex set of the graph.
+
+The affect on descriptor and iterator stability is the
+same as that of invoking `remove_edge()` for all of
+the edges that have `u` as the source.
+
+This operation is not applicable to undirected graphs
+(use `clear_vertex()` instead).
+
+'''
+
+[source,cpp]
+----
+void clear_in_edges(vertex_descriptor u, adjacency_list& g)
+----
+
+Removes all in-edges from vertex _u_. The vertex still appears
+in the vertex set of the graph.
+
+The affect on descriptor and iterator stability is the
+same as that of invoking `remove_edge()` for all of
+the edges that have `u` as the target.
+
+This operation is only applicable to bidirectional graphs.
+
+'''
+
+[source,cpp]
+----
+void remove_vertex(vertex_descriptor u, adjacency_list& g)
+----
+
+Remove vertex _u_ from the vertex set of the graph. It is assumed
+that there are no edges to or from vertex _u_ when it is removed.
+One way to make sure of this is to invoke `clear_vertex()`
+beforehand.
+
+If the `VertexList` template parameter of the
+`adjacency_list` was `vecS`, then all vertex
+descriptors, edge descriptors, and iterators for the graph are
+invalidated by this operation. The builtin
+`vertex_index_t` property for each vertex is renumbered so that
+after the operation the vertex indices still form a contiguous range
+`[0, num_vertices(g))`. If you are using external property
+storage based on the builtin vertex index, then the external storage
+will need to be adjusted. Another option is to not use the builtin
+vertex index, and instead use a property to add your own vertex index
+property. If you need to make frequent use of the
+`remove_vertex()` function the `listS` selector is a
+much better choice for the `VertexList` template parameter.
+
+[#property-map-accessors]
+=== Property Map Accessors
+
+[source,cpp]
+----
+template <class PropertyTag>
+property_map<adjacency_list, PropertyTag>::type
+get(PropertyTag, adjacency_list& g)
+
+template <class PropertyTag>
+property_map<adjacency_list, Tag>::const_type
+get(PropertyTag, const adjacency_list& g)
+----
+
+Returns the property map object for the vertex property specified by
+`PropertyTag`. The `PropertyTag` must match one of the
+properties specified in the graph's `VertexProperty` template
+argument.
+
+'''
+
+[source,cpp]
+----
+template <class PropertyTag, class X>
+typename property_traits<property_map<adjacency_list, PropertyTag>::const_type>::value_type
+get(PropertyTag, const adjacency_list& g, X x)
+----
+
+This returns the property value for `x`, where `x` is either
+a vertex or edge descriptor.
+
+'''
+
+[source,cpp]
+----
+template <class PropertyTag, class X, class Value>
+void
+put(PropertyTag, const adjacency_list& g, X x, const Value& value)
+----
+
+This sets the property value for `x` to
+`value`. `x` is either a vertex or edge descriptor.
+`Value` must be convertible to
+`typename property_traits<property_map<adjacency_list, PropertyTag>::type>::value_type`
+
+'''
+
+[source,cpp]
+----
+template <class GraphProperties, class GraphPropertyTag>
+typename graph_property<adjacency_list, GraphPropertyTag>::type&
+get_property(adjacency_list& g, GraphPropertyTag)
+----
+
+Return the property specified by `GraphPropertyTag` that is
+attached to the graph object `g`. The `graph_property`
+traits class is defined in
+link:../../../boost/graph/adjacency_list.hpp[`boost/graph/adjacency_list.hpp`].
+
+'''
+
+[source,cpp]
+----
+template <class GraphProperties, class GraphPropertyTag>
+const typename graph_property<adjacency_list, GraphPropertyTag>::type&
+get_property(const adjacency_list& g, GraphPropertyTag)
+----
+
+Return the property specified by `GraphPropertyTag` that is
+attached to the graph object `g`.
+
+'''
+
+[source,cpp]
+----
+template <typename Tag, typename Value>
+void set_property(adjacency_list& g, Tag tag, const Value& value)
+----
+
+Sets the graph property specified by `Tag` to `value`.
+
+[#serialization]
+=== Serialization
+
+[source,cpp]
+----
+template <class SavingArchive>
+SavingArchive& operator<<(SavingArchive& ar, const adjacency_list& graph)
+----
+
+Serializes the graph into the archive. Requires the vertex and edge properties of the
+graph to be
+link:../../serialization/doc/index.html[Serializable]. +
+Include link:../../../boost/graph/adj_list_serialize.hpp[`boost/graph/adj_list_serialize.hpp`].
+
+'''
+
+[source,cpp]
+----
+template <class LoadingArchive>
+LoadingArchive& operator>>(LoadingArchive& ar, const adjacency_list& graph)
+----
+
+Reads the graph from the archive. Requires the vertex and edge properties of the
+graph to be
+link:../../serialization/doc/index.html[Serializable]. +
+Include link:../../../boost/graph/adj_list_serialize.hpp[`boost/graph/adj_list_serialize.hpp`].
+
+== Associated Types
+
+BGL algorithms are templates. To declare variables for vertices, edges,
+or iterators, you need the concrete types from your specific graph.
+`graph_traits` extracts them:
+
+[source,cpp]
+----
+using Graph = adjacency_list<vecS, vecS, directedS, City, Road>;
+using Vertex = graph_traits<Graph>::vertex_descriptor;
+using Edge   = graph_traits<Graph>::edge_descriptor;
+
+Vertex u = vertex(0, g);
+----
+
+The full set of types available via `graph_traits<adjacency_list>`:
+
+[cols="1,3",options="header"]
+|===
+| Type | Description
+
+| `vertex_descriptor`
+| Handle to a vertex. With `vecS` this is an integer; with `listS` it is a pointer. Do not assume the type.
+
+| `edge_descriptor`
+| Handle to an edge. Contains source, target, and edge property reference.
+
+| `vertex_iterator`
+| Iterator returned by `vertices()`. RandomAccessIterator when `VertexList=vecS`, BidirectionalIterator otherwise.
+
+| `edge_iterator`
+| Iterator returned by `edges()`. Models BidirectionalIterator.
+
+| `out_edge_iterator`
+| Iterator returned by `out_edges()`. RandomAccessIterator when `OutEdgeList=vecS`, ForwardIterator when `slistS`, BidirectionalIterator otherwise.
+
+| `adjacency_iterator`
+| Iterator returned by `adjacent_vertices()`. Same category as `out_edge_iterator`.
+
+| `inv_adjacency_iterator`
+| Iterator returned by `inv_adjacent_vertices()`. Same category as `out_edge_iterator`.
+
+| `directed_category`
+| `directed_tag` or `undirected_tag`.
+
+| `edge_parallel_category`
+| `allow_parallel_edge_tag` (sequence selectors) or `disallow_parallel_edge_tag` (`setS`, `hash_setS`).
+
+| `vertices_size_type`
+| Unsigned integer type for vertex counts.
+
+| `edges_size_type`
+| Unsigned integer type for edge counts.
+
+| `degree_size_type`
+| Unsigned integer type for vertex degree.
+|===
+
+Property map types are obtained via `property_map<Graph, Property>::type`
+and `property_map<Graph, Property>::const_type`.
+
+== Operation Complexity
+
+The time complexity of graph operations depends on the `VertexList` and
+`OutEdgeList` selector choices.
+
+=== By VertexList selector
+
+[cols="1,1,1",options="header"]
+|===
+| Operation | `vecS` | `listS`
+
+| `add_vertex()`
+| Amortized O(1) (occasional reallocation)
+| O(1)
+
+| `remove_vertex()`
+| O(V + E) (renumbers all descriptors)
+| O(1)
+
+| `vertex()`
+| O(1)
+| O(V)
+|===
+
+=== By OutEdgeList selector
+
+[cols="1,1,1",options="header"]
+|===
+| Operation | Sequence (`vecS`, `listS`, `slistS`) | Associative (`setS`, `hash_setS`)
+
+| `add_edge()`
+| Amortized O(1) (no parallel edge check)
+| O(log(E/V)) (enforces no parallel edges)
+
+| `remove_edge()`
+| O(E/V)
+| O(log(E/V))
+
+| `edge()`
+| O(E/V)
+| O(log(E/V))
+
+| `clear_vertex()` (directed)
+| O(V + E)
+| O(V log(E/V))
+
+| `remove_vertex()`
+| O(V + E)
+| O(V + E)
+|===
+
+=== Traversal Speed
+
+The `OutEdgeList` selector affects how fast iterators advance through
+the edge list of a vertex. Fastest to slowest:
+
+`vecS` > `slistS` > `listS` > `setS` > `hash_setS`
+
+=== Memory Overhead
+
+Each edge stored in the `OutEdgeList` carries container overhead that
+depends on the selector. Least to most per edge:
+
+`vecS` < `slistS` < `listS` < `setS`
+
+== Stability and Invalidation
+
+TIP: Use `listS` or `setS` for stable descriptors, `vecS` for speed.
+
+Mutating operations can invalidate iterators and descriptors that point
+into the graph. The table below shows which selectors are affected.
+Cells marked `OK` are never invalidated; other cells show the selector
+combination that triggers invalidation.
+
+NOTE: Removing an edge or vertex obviously invalidates any iterator or
+descriptor pointing to that specific edge or vertex. The table
+only describes *collateral* invalidation: whether *other* iterators and
+descriptors are also affected.
+
+`EL` = `OutEdgeList`, `VL` = `VertexList`
+
+*Adj Iter* includes `out_edge_iterator`, `in_edge_iterator`, and `adjacency_iterator`.
+
+[width="99%",cols="20%,^16%,^16%,^16%,^16%,^16%",options="header"]
+|===
+|Function |Vertex Desc |Edge Desc |Vertex Iter |Edge Iter |Adj Iter
+|`add_edge()` ^|`OK` ^|`OK` ^|`OK` ^|`EL=vecS &&` +
+`Directed=directedS` ^|`EL=vecS`
+
+|`remove_edge()` +
+`remove_edge_if()` +
+`remove_out_edge_if()` +
+`remove_in_edge_if()` +
+`clear_vertex()` ^|`OK` ^|`OK` ^|`OK` ^|`EL=vecS &&` +
+`Directed=directedS` ^|`EL=vecS`
+
+|`add_vertex()` ^|`OK` ^|`OK` ^|`OK` ^|`VL=vecS &&` +
+`Directed=directedS` ^|`VL=vecS &&` +
+`Directed=directedS`
+
+|`remove_vertex()` ^|`VL=vecS` ^|`VL=vecS` ^|`VL=vecS` ^|`VL=vecS`
+^|`VL=vecS`
+|===
+
+WARNING: With `VL=vecS`, `remove_vertex()` invalidates *everything*:
+all descriptors, all iterators. Any vertex descriptor you stored (in a
+vector, a predecessor map, etc.) becomes invalid. You cannot iterate
+and remove at the same time:
+
+[source,cpp]
+----
+using Graph = adjacency_list<listS, vecS>;
+Graph g(N);
+
+// WRONG: remove_vertex invalidates vi and vi_end
+graph_traits<Graph>::vertex_iterator vi, vi_end;
+for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
+    remove_vertex(*vi, g);  // undefined behavior
+}
+----
+
+With `VL=listS`, only the removed vertex's own descriptor and iterator
+are invalidated. Other iterators survive:
+
+[source,cpp]
+----
+using Graph = adjacency_list<listS, listS>;
+Graph g(N);
+
+// OK: advance iterator before removing
+graph_traits<Graph>::vertex_iterator vi, vi_end, next;
+boost::tie(vi, vi_end) = vertices(g);
+for (next = vi; vi != vi_end; vi = next) {
+    ++next;
+    remove_vertex(*vi, g);  // only *vi is invalidated
+}
+----
+
+== Convenience Wrappers
+
+BGL provides two shorthand class templates with fixed selectors:
+
+[cols="1,2,1"]
+|===
+| Class | Equivalent to | Header
+
+| `directed_graph<VP, EP, GP>`
+| `adjacency_list<vecS, vecS, bidirectionalS, VP, EP, GP>`
+| `<boost/graph/directed_graph.hpp>`
+
+| `undirected_graph<VP, EP, GP>`
+| `adjacency_list<vecS, vecS, undirectedS, VP, EP, GP>`
+| `<boost/graph/undirected_graph.hpp>`
+|===
+
+These also provide builtin vertex and edge index properties.

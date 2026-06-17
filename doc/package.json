@@ -1,0 +1,11 @@
+{
+  "name": "boost-graph-docs",
+  "private": true,
+  "description": "Build dependencies for the Boost.Graph Antora documentation site. Consumed by boostorg/release-tools via doc/build_antora.sh.",
+  "devDependencies": {
+    "@antora/cli": "3.1.14",
+    "@antora/site-generator": "3.1.14",
+    "antora": "3.1.14",
+    "@antora/lunr-extension": "^1.0.0-alpha.13"
+  }
+}

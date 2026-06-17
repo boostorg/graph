@@ -1,0 +1,58 @@
+= AdjacencyMatrix
+
+The AdjacencyMatrix concept refines xref:concepts/Graph.adoc[Graph] concept and
+adds the requirement for efficient access to any edge in the graph given
+the source and target vertices. No Boost Graph Library algorithms
+currently use this concept. However there are algorithms not yet
+implemented such as Floyd-Warshall that would require this concept.
+
+== Refinement of
+
+xref:concepts/Graph.adoc[Graph]
+
+== Associated Types
+
+[width="100%",cols="100%",]
+|===
+|`boost::graph_traits<G>::traversal_category` +
+ +
+This tag type must be convertible to `adjacency_matrix_tag`.
+|===
+
+== Valid Expressions
+
+[cols=",,,",options="header",]
+|===
+|Name |Expression |Return Type |Description
+|Direct Edge Access |`edge(u,v,g)`
+|`std::pair<edge_descriptor, bool>` |Returns a pair
+consisting of a flag saying whether there exists an edge between `u` and
+`v` in graph `g`, and consisting of the edge descriptor if the edge was
+found.
+|===
+
+== Complexity guarantees
+
+The `edge()` function must return in constant time.
+
+== Models
+
+xref:graph_classes/adjacency_matrix.adoc[`adjacency_matrix`]
+
+== Concept Checking Class
+
+[source,cpp]
+----
+
+  template <class G>
+  struct AdjacencyMatrix
+  {
+    typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
+    void constraints() {
+      p = edge(u, v, g);
+    }
+    typename boost::graph_traits<G>::vertex_descriptor u, v;
+    std::pair<bool, edge_descriptor> p;
+    G g;
+  };
+----

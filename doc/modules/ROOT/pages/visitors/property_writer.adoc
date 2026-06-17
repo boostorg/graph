@@ -1,0 +1,52 @@
+= property_writer
+
+Writes the property value of a vertex or edge to an output iterator when an
+event occurs. Useful for debugging or logging during graph traversal.
+
+*Defined in:* `<boost/graph/visitors.hpp>` +
+*Models:* EventVisitor +
+*Typical event:* `on_discover_vertex`, `on_examine_edge`
+
+== Example
+
+[source,cpp]
+----
+include::example$visitors/property_writer.cpp[]
+----
+
+[,text]
+----
+include::example$visitors/property_writer.txt[]
+----
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename PropertyMap, typename OutputIterator, typename EventTag>
+struct property_writer;
+
+template <typename PropertyMap, typename OutputIterator, typename EventTag>
+property_writer<PropertyMap, OutputIterator, EventTag>
+write_property(PropertyMap pa, OutputIterator out, EventTag);
+----
+
+== Parameters
+
+[cols="1,3",options="header"]
+|===
+| Parameter | Description
+
+| `PropertyMap`
+| ReadablePropertyMap. Key type is vertex or edge descriptor.
+
+| `OutputIterator`
+| Output iterator. The property's value type must be writable to it.
+
+| `EventTag`
+| Any event tag (vertex or edge).
+|===
+
+== Behavior
+
+Writes the property value to the output iterator: `*out++ = get(pa, x)`.

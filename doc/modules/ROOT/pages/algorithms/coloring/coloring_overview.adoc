@@ -1,0 +1,32 @@
+= Graph Coloring
+
+Assign labels (colors) to vertices or edges so that no two adjacent elements
+share the same color. The minimum number of colors needed is the chromatic
+number (vertices) or chromatic index (edges).
+
+[cols="1,3"]
+|===
+| Algorithm | What it does
+
+| xref:algorithms/coloring/sequential_vertex_coloring.adoc[Sequential Vertex Coloring]
+| Greedy vertex coloring in _O(V(d+k))_ where _d_ is max degree and _k_ the
+  number of colors used. The color count depends on the vertex ordering;
+  combine with xref:algorithms/utility/smallest_last_ordering.adoc[`smallest_last_vertex_ordering`]
+  for better results.
+
+| xref:algorithms/coloring/edge_coloring.adoc[Edge Coloring]
+| Colors edges so no two edges sharing a vertex have the same color. Runs in
+  _O(|E| |V|)_ using the Misra-Gries variant of Vizing's theorem; uses at
+  most `max_degree(g) + 1` colors.
+
+| xref:algorithms/coloring/is_bipartite.adoc[Is Bipartite]
+| Tests if a graph can be 2-colored (vertices split into two independent sets).
+
+| xref:algorithms/coloring/find_odd_cycle.adoc[Find Odd Cycle]
+| If the graph is not bipartite, returns an odd-length cycle as proof.
+|===
+
+TIP: Vertex coloring is NP-hard in general
+[xref:about/bibliography.adoc#garey79:computers-and-intractability[25]].
+`sequential_vertex_coloring` is a fast heuristic that does not guarantee the
+minimum number of colors. For exact 2-colorability, use `is_bipartite`.

@@ -1,0 +1,1 @@
+Planar canonical ordering: 0 1 2

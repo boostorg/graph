@@ -1,0 +1,292 @@
+= Successive Shortest Path for Min Cost Max Flow
+
+Calculates the minimum cost maximum flow of a network with nonnegative edge weights using successive shortest path augmentation.
+
+*Complexity:* _O(U * (|E| + |V| log |V|))_ for integer capacities with max flow _U_ +
+*Defined in:* `<boost/graph/successive_shortest_path_nonnegative_weights.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/network_flow/successive_shortest_path.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/network_flow/successive_shortest_path.txt[]
+----
+
+'''
+
+=== (1) Positional version
+
+[source,cpp]
+----
+template <class Graph, class Capacity, class ResidualCapacity,
+          class Reversed, class Pred, class Weight,
+          class Distance, class Distance2, class VertexIndex>
+void successive_shortest_path_nonnegative_weights(
+    const Graph& g,
+    typename graph_traits<Graph>::vertex_descriptor s,
+    typename graph_traits<Graph>::vertex_descriptor t,
+    Capacity capacity,
+    ResidualCapacity residual_capacity,
+    Weight weight,
+    Reversed rev,
+    VertexIndex index,
+    Pred pred,
+    Distance distance,
+    Distance2 distance_prev);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| A directed graph. The graph's type must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+  For each edge _(u,v)_ in the graph, the reverse edge _(v,u)_ must also
+  be in the graph.
+
+| IN
+| `vertex_descriptor s`
+| The source vertex for the flow network graph.
+
+| IN
+| `vertex_descriptor t`
+| The sink vertex for the flow network graph.
+
+| IN
+| `Capacity capacity`
+| The edge capacity property map. The type must be a model of a constant
+  link:../../property_map/doc/LvaluePropertyMap.html[Lvalue Property Map].
+  The key type of the map must be the graph's edge descriptor type.
+
+| OUT
+| `ResidualCapacity residual_capacity`
+| This maps edges to their residual capacity. The type must be a model of
+  a mutable link:../../property_map/doc/LvaluePropertyMap.html[Lvalue
+  Property Map]. The key type of the map must be the graph's edge
+  descriptor type.
+
+| IN
+| `Weight weight`
+| The weight or "cost" of each edge in the graph. The weights must all be
+  non-negative, and the algorithm will throw a
+  xref:exception.adoc#negative_edge[`negative_edge`] exception if
+  one of the edges is negative. The type `Weight` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The edge descriptor type of the graph needs to be usable as the key type
+  for the weight map. The value type for this map must be the same as the
+  value type of the distance map.
+
+| IN
+| `Reversed rev`
+| An edge property map that maps every edge _(u,v)_ in the graph to the
+  reverse edge _(v,u)_. The map must be a model of constant
+  link:../../property_map/doc/LvaluePropertyMap.html[Lvalue Property Map].
+  The key type of the map must be the graph's edge descriptor type.
+
+| IN
+| `VertexIndex index`
+| Maps each vertex of the graph to a unique integer in the range
+  `[0, num_vertices(g))`. The vertex index map must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The key type of the map must be the graph's vertex descriptor type.
+
+| UTIL
+| `Pred pred`
+| Used by the algorithm to store augmenting paths. The map must be a model
+  of mutable link:../../property_map/doc/LvaluePropertyMap.html[Lvalue
+  Property Map]. The key type must be the graph's vertex descriptor type
+  and the value type must be the graph's edge descriptor type.
+
+| UTIL
+| `Distance distance`
+| The shortest path weight from the source vertex `s` to each vertex in
+  the graph `g` is recorded in this property map. The shortest path weight
+  is the sum of the edge weights along the shortest path. The type
+  `Distance` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map].
+  The vertex descriptor type of the graph needs to be usable as the key
+  type of the distance map.
+
+| UTIL
+| `Distance2 distance_prev`
+| The shortest path computation in iteration _k_ uses distances computed
+  in iteration _k_. The type `Distance2` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map].
+  The vertex descriptor type of the graph needs to be usable as the key
+  type of the distance map.
+
+|===
+
+'''
+
+=== (2) Named parameter version
+
+[source,cpp]
+----
+template <class Graph, class P, class T, class R>
+void successive_shortest_path_nonnegative_weights(
+    Graph& g,
+    typename graph_traits<Graph>::vertex_descriptor s,
+    typename graph_traits<Graph>::vertex_descriptor t,
+    const bgl_named_params<P, T, R>& params = all defaults);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `Graph& g`
+| A directed graph. The graph's type must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+  For each edge _(u,v)_ in the graph, the reverse edge _(v,u)_ must also
+  be in the graph.
+
+| IN
+| `vertex_descriptor s`
+| The source vertex for the flow network graph.
+
+| IN
+| `vertex_descriptor t`
+| The sink vertex for the flow network graph.
+
+| IN
+| `params`
+| Named parameters passed via `bgl_named_params`. The following are accepted:
+|===
+
+[cols="1,2,5"]
+|===
+| Direction | Named Parameter | Description / Default
+
+| IN
+| `capacity_map(CapacityEdgeMap cap)`
+| The edge capacity property map. The type must be a model of a constant
+  link:../../property_map/doc/LvaluePropertyMap.html[Lvalue Property Map].
+  The key type of the map must be the graph's edge descriptor type. +
+  *Default:* `get(edge_capacity, g)`
+
+| OUT
+| `residual_capacity_map(ResidualCapacityEdgeMap res)`
+| This maps edges to their residual capacity. The type must be a model of
+  a mutable link:../../property_map/doc/LvaluePropertyMap.html[Lvalue
+  Property Map]. The key type of the map must be the graph's edge
+  descriptor type. +
+  *Default:* `get(edge_residual_capacity, g)`
+
+| IN
+| `reverse_edge_map(ReverseEdgeMap rev)`
+| An edge property map that maps every edge _(u,v)_ in the graph to the
+  reverse edge _(v,u)_. The map must be a model of constant
+  link:../../property_map/doc/LvaluePropertyMap.html[Lvalue Property Map].
+  The key type of the map must be the graph's edge descriptor type. +
+  *Default:* `get(edge_reverse, g)`
+
+| IN
+| `weight_map(WeightMap w_map)`
+| The weight or "cost" of each edge in the graph. The weights must all be
+  non-negative, and the algorithm will throw a
+  xref:exception.adoc#negative_edge[`negative_edge`] exception if
+  one of the edges is negative. The type `WeightMap` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The edge descriptor type of the graph needs to be usable as the key type
+  for the weight map. The value type for this map must be the same as the
+  value type of the distance map. +
+  *Default:* `get(edge_weight, g)`
+
+| UTIL
+| `predecessor_map(PredEdgeMap pred)`
+| Used by the algorithm to store augmenting paths. The map must be a model
+  of mutable link:../../property_map/doc/LvaluePropertyMap.html[Lvalue
+  Property Map]. The key type must be the graph's vertex descriptor type
+  and the value type must be the graph's edge descriptor type. +
+  *Default:* an
+  link:../../property_map/doc/iterator_property_map.html[`iterator_property_map`]
+  created from a `std::vector` of edge descriptors of size
+  `num_vertices(g)` and using the `i_map` for the index map.
+
+| UTIL
+| `distance_map(DistanceMap d_map)`
+| The shortest path weight from the source vertex `s` to each vertex in
+  the graph `g` is recorded in this property map. The shortest path weight
+  is the sum of the edge weights along the shortest path. The type
+  `DistanceMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map].
+  The vertex descriptor type of the graph needs to be usable as the key
+  type of the distance map. +
+  *Default:*
+  link:../../property_map/doc/iterator_property_map.html[`iterator_property_map`]
+  created from a `std::vector` of the `WeightMap`'s value type of size
+  `num_vertices(g)` and using the `i_map` for the index map.
+
+| UTIL
+| `distance_map2(DistanceMap2 d_map2)`
+| The shortest path computation in iteration _k_ uses distances computed
+  in iteration _k_. The type `DistanceMap2` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map].
+  The vertex descriptor type of the graph needs to be usable as the key
+  type of the distance map. +
+  *Default:*
+  link:../../property_map/doc/iterator_property_map.html[`iterator_property_map`]
+  created from a `std::vector` of the `WeightMap`'s value type of size
+  `num_vertices(g)` and using the `i_map` for the index map.
+
+| IN
+| `vertex_index_map(VertexIndexMap i_map)`
+| Maps each vertex of the graph to a unique integer in the range
+  `[0, num_vertices(g))`. This property map is only needed if the default
+  for the distance or distance2 or predecessor map is used. The vertex
+  index map must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The key type of the map must be the graph's vertex descriptor type. +
+  *Default:* `get(vertex_index, g)`.
+  Note: if you use this default, make sure your graph has an internal
+  `vertex_index` property. For example, `adjacency_list` with
+  `VertexList=listS` does not have an internal `vertex_index` property.
+
+|===
+
+== Description
+
+The `successive_shortest_path_nonnegative_weights()` function calculates
+the minimum cost maximum flow of a network. See Section
+xref:about/graph_theory_review.adoc#sec:network-flow-algorithms[Network Flow
+Algorithms] for a description of maximum flow. The function calculates
+the flow values _f(u,v)_ for all _(u,v)_ in _E_, which are returned in
+the form of the residual capacity _r(u,v) = c(u,v) - f(u,v)_.
+
+There are several special requirements on the input graph and property
+map parameters for this algorithm. First, the directed graph _G=(V,E)_
+that represents the network must be augmented to include the reverse
+edge for every edge in _E_. That is, the input graph should be _G~in~ =
+(V,{E U E^T^})_. The `ReverseEdgeMap` argument `rev` must map each
+edge in the original graph to its reverse edge, that is _(u,v) ->
+(v,u)_ for all _(u,v)_ in _E_. The `CapacityEdgeMap` argument `cap` must
+map each edge in _E_ to a positive number, and each edge in _E^T^_ to 0.
+The `WeightMap` has to map each edge from _E_ to nonnegative number, and
+each edge from _E^T^_ to _-weight_ of its reversed edge.
+
+The algorithm is described in
+xref:about/bibliography.adoc#ahuja93:_network_flows[Network Flows].
+
+This algorithm starts with empty flow and in each round augments the
+shortest path (in terms of weight) in the residual graph.
+
+In order to find the cost of the result flow use:
+xref:algorithms/network_flow/find_flow_cost.adoc[`find_flow_cost()`].
+
+See also link:../example/successive_shortest_path_nonnegative_weights_example.cpp[`example/successive_shortest_path_nonnegative_weights_example.cpp`]
+for an additional example of using this algorithm.
+
+== Notes
+
+The return type is `void`. The result of the algorithm is obtained through the residual capacity property map, which encodes the flow as _r(u,v) = c(u,v) - f(u,v)_. To obtain the cost of the computed flow, use xref:algorithms/network_flow/find_flow_cost.adoc[`find_flow_cost()`].

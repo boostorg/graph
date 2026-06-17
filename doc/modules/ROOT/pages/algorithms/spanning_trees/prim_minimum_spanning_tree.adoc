@@ -1,0 +1,326 @@
+[#sec:prim]
+= Prim Minimum Spanning Tree
+
+Solves the minimum spanning tree problem for an undirected graph with weighted edges using Prim's algorithm.
+
+*Complexity:* _O(E log V)_ +
+*Defined in:* `<boost/graph/prim_minimum_spanning_tree.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/spanning_trees/prim.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/spanning_trees/prim.txt[]
+----
+
+'''
+
+=== (1) Positional version
+
+[source,cpp]
+----
+template <typename Graph, typename DijkstraVisitor,
+          typename PredecessorMap, typename DistanceMap,
+          typename WeightMap, typename IndexMap>
+void prim_minimum_spanning_tree(
+    const Graph& g,
+    typename graph_traits<Graph>::vertex_descriptor s,
+    PredecessorMap predecessor, DistanceMap distance, WeightMap weight,
+    IndexMap index_map, DijkstraVisitor vis);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| An undirected graph. The type `Graph` must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph]
+  and xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+  It should not contain parallel edges.
+
+| IN
+| `vertex_descriptor s`
+| The root vertex for the minimum spanning tree.
+  The choice of the root vertex is arbitrary.
+
+| OUT
+| `PredecessorMap predecessor`
+| The predecessor map records the edges in the minimum spanning tree. Upon
+  completion of the algorithm, the edges _(p[u],u)_ for all _u in V_ are in
+  the minimum spanning tree. If _p[u] = u_ then _u_ is either the root of
+  the tree or is a vertex that is not reachable from the root. The
+  `PredecessorMap` type must be a
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]
+  with key and vertex types the same as the vertex descriptor type of the graph.
+
+| UTIL/OUT
+| `DistanceMap distance`
+| The weight of the spanning tree edge into each vertex in the graph `g`
+  is recorded in this property map, with edges directed away from the
+  spanning tree root. The type `DistanceMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map].
+  The vertex descriptor type of the graph needs to be usable as the key type
+  of the distance map, and the value type needs to be the same as the value
+  type of the `WeightMap` argument.
+
+| IN
+| `WeightMap weight`
+| The weight or "length" of each edge in the graph. The type `WeightMap`
+  must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The edge descriptor type of the graph needs to be usable as the key type
+  for the weight map. The value type for the map must be the same as the
+  value type of the distance map, and that type must be
+  http://www.boost.org/sgi/stl/LessThanComparable.html[Less Than Comparable].
+
+| IN
+| `IndexMap index_map`
+| This maps each vertex to an integer in the range `[0, num_vertices(g))`.
+  This is necessary for efficient updates of the heap data structure when an
+  edge is relaxed. The type `IndexMap` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The vertex descriptor
+  type of the graph needs to be usable as the key type of the map.
+
+| IN
+| `DijkstraVisitor vis`
+| Use this to specify actions that you would like to happen during certain
+  event points within the algorithm. The type `DijkstraVisitor` must be a
+  model of the xref:visitors/DijkstraVisitor.adoc[Dijkstra Visitor] concept.
+  The visitor object is passed by value <<1,[1]>>.
+
+|===
+
+'''
+
+=== (2) Named parameter version
+
+[source,cpp]
+----
+template <typename Graph, typename PredMap,
+          typename P, typename T, typename R>
+void prim_minimum_spanning_tree(
+    const Graph& g, PredMap p_map,
+    const bgl_named_params<P, T, R>& params);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| An undirected graph. The type `Graph` must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph]
+  and xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+  It should not contain parallel edges.
+
+| OUT
+| `PredMap p_map`
+| The predecessor map records the edges in the minimum spanning tree. Upon
+  completion of the algorithm, the edges _(p[u],u)_ for all _u in V_ are in
+  the minimum spanning tree. If _p[u] = u_ then _u_ is either the root of
+  the tree or is a vertex that is not reachable from the root. The
+  `PredMap` type must be a
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]
+  with key and vertex types the same as the vertex descriptor type of the graph.
+
+| IN
+| `params`
+| Named parameters passed via `bgl_named_params`. The following are accepted:
+|===
+
+[cols="1,2,5"]
+|===
+| Direction | Named Parameter | Description / Default
+
+| IN
+| `root_vertex(vertex_descriptor r)`
+| The vertex that will be the root of the minimum spanning tree. The choice
+  of the root vertex is arbitrary. +
+  *Default:* `*vertices(g).first`
+
+| IN
+| `weight_map(WeightMap w_map)`
+| The weight or "length" of each edge in the graph. The type `WeightMap`
+  must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The edge descriptor type of the graph needs to be usable as the key type
+  for the weight map. The value type for the map must be the same as the
+  value type of the distance map, and that type must be
+  http://www.boost.org/sgi/stl/LessThanComparable.html[Less Than Comparable]. +
+  *Default:* `get(edge_weight, g)`
+
+| IN
+| `vertex_index_map(VertexIndexMap i_map)`
+| This maps each vertex to an integer in the range `[0, num_vertices(g))`.
+  This is necessary for efficient updates of the heap data structure when an
+  edge is relaxed. The type `VertexIndexMap` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The vertex descriptor
+  type of the graph needs to be usable as the key type of the map. +
+  *Default:* `get(vertex_index, g)`.
+  Note: if you use this default, make sure your graph has an internal
+  `vertex_index` property. For example, `adjacency_list` with
+  `VertexList=listS` does not have an internal `vertex_index` property.
+
+| UTIL/OUT
+| `distance_map(DistanceMap d_map)`
+| The weight of the spanning tree edge into each vertex in the graph `g`
+  is recorded in this property map, with edges directed away from the
+  spanning tree root. The type `DistanceMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map].
+  The vertex descriptor type of the graph needs to be usable as the key type
+  of the distance map, and the value type needs to be the same as the value
+  type of the `weight_map` argument. +
+  *Default:*
+  link:../../property_map/doc/iterator_property_map.html[`iterator_property_map`]
+  created from a `std::vector` of the `WeightMap`'s value type of size
+  `num_vertices(g)` and using the `i_map` for the index map.
+
+| UTIL/OUT
+| `color_map(ColorMap c_map)`
+| This is used during the execution of the algorithm to mark the vertices.
+  The vertices start out white and become gray when they are inserted in
+  the queue. They then turn black when they are removed from the queue. At
+  the end of the algorithm, vertices reachable from the source vertex will
+  have been colored black. All other vertices will still be white. The type
+  `ColorMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map].
+  A vertex descriptor must be usable as the key type of the map, and the
+  value type of the map must be a model of
+  xref:concepts/property_types/ColorValue.adoc[Color Value]. +
+  *Default:* an
+  link:../../property_map/doc/iterator_property_map.html[`iterator_property_map`]
+  created from a `std::vector` of `default_color_type` of size
+  `num_vertices(g)` and using the `i_map` for the index map.
+
+| OUT
+| `visitor(DijkstraVisitor v)`
+| Use this to specify actions that you would like to happen during certain
+  event points within the algorithm. The type `DijkstraVisitor` must be a
+  model of the xref:visitors/DijkstraVisitor.adoc[Dijkstra Visitor] concept.
+  The visitor object is passed by value <<1,[1]>>. +
+  *Default:* `dijkstra_visitor<null_visitor>`
+
+|===
+
+== Description
+
+This is https://en.wikipedia.org/wiki/Prim%27s_algorithm[Prim's algorithm]
+[xref:about/bibliography.adoc#prim57:_short[20],xref:about/bibliography.adoc#clr90[5],xref:about/bibliography.adoc#tarjan83:_data_struct_network_algo[22],xref:about/bibliography.adoc#graham85[12]]
+for solving the minimum spanning tree problem for an undirected graph
+with weighted edges. A MST is a set of edges that connects all the
+vertices in the graph where the total weight of the edges in the tree is
+minimized. See Section
+xref:about/graph_theory_review.adoc#sec:minimum-spanning-tree[Minimum Spanning
+Tree Problem] for more details. The implementation is simply a call to
+xref:algorithms/shortest_paths/dijkstra_shortest_paths.adoc[`dijkstra_shortest_paths()`]
+with the appropriate choice of comparison and combine functors. The
+pseudo-code for Prim's algorithm is listed below. The algorithm as
+implemented in Boost.Graph does not produce correct results on graphs
+with parallel edges.
+
+=== Pseudo-Code
+
+[cols="1a,1a"]
+|===
+|
+----
+PRIM-MST(G, s, w)
+  for each vertex u in V[G]
+    color[u] := WHITE
+    d[u] := infinity
+  end for
+  color[s] := GRAY
+  d[s] := 0
+  ENQUEUE(PQ, s)
+  p[s] := s
+  while (PQ != Ø)
+    u := DEQUEUE(PQ)
+    for each v in Adj[u]
+      if (w(u,v) < d[v])
+        d[v] := w(u,v)
+        p[v] := u
+        if (color[v] = WHITE)
+          ENQUEUE(PQ, v)
+          color[v] := GRAY
+        else if (color[v] = GRAY)
+          UPDATE(PQ, v)
+      else
+        do nothing
+    end for
+    color[u] := BLACK
+  end while
+  return (p, d)
+----
+|
+----
+.
+initialize vertex u
+.
+.
+.
+start vertex s
+discover vertex s
+.
+.
+examine vertex u
+examining edge (u,v)
+.
+edge (u,v) relaxed
+.
+.
+discover vertex v
+.
+.
+.
+.
+edge (u,v) not relaxed
+.
+finish u
+.
+.
+.
+----
+|===
+
+== Visitor Event Points
+
+* *`vis.initialize_vertex(u, g)`* is invoked on each vertex in the
+  graph before the start of the algorithm.
+* *`vis.examine_vertex(u, g)`* is invoked on a vertex as it is
+  removed from the priority queue.
+* *`vis.examine_edge(e, g)`* is invoked on each out-edge of a vertex
+  immediately after it has been examined.
+* *`vis.edge_relaxed(e, g)`* is invoked on edge _(u,v)_ if
+  _w(u,v) < d[v]_. The edge _(u,v)_ that participated in the last
+  relaxation for vertex _v_ is an edge in the minimum spanning tree.
+* *`vis.discover_vertex(v, g)`* is invoked on vertex _v_ when the
+  edge _(u,v)_ is examined and _v_ is WHITE. Since a vertex is colored
+  GRAY when it is discovered, each reachable vertex is discovered exactly
+  once. This is also when the vertex is inserted into the priority queue.
+* *`vis.edge_not_relaxed(e, g)`* is invoked if the edge is not
+  relaxed (see above).
+* *`vis.finish_vertex(u, g)`* is invoked on a vertex after all of
+  its out edges have been examined.
+
+== Example
+
+See link:../example/prim-example.cpp[`example/prim-example.cpp`]
+for an example of using Prim's algorithm.
+
+== Notes
+
+[#1]#[1]# Since the visitor parameter is passed by value, if
+your visitor contains state then any changes to the state during the
+algorithm will be made to a copy of the visitor object, not the visitor
+object passed in. Therefore you may want the visitor to hold this state
+by pointer or reference.

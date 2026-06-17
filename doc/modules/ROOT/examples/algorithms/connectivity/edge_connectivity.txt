@@ -1,0 +1,2 @@
+Edge connectivity: 2
+Min cut edges: 2

@@ -1,0 +1,77 @@
+= `sloan_start_end_vertices`
+
+Finds good start and end vertices for the Sloan profile and wavefront reduction ordering algorithm.
+
+*Complexity:* Depends on graph structure (multiple internal BFS traversals) +
+*Defined in:* `<boost/graph/sloan_ordering.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/ordering/sloan_start_end.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/ordering/sloan_start_end.txt[]
+----
+
+'''
+
+=== (1) Single starting vertex
+
+[source,cpp]
+----
+template <class Graph, class ColorMap, class DegreeMap>
+typename graph_traits<Graph>::vertex_descriptor
+sloan_start_end_vertices(
+    Graph& G,
+    typename graph_traits<Graph>::vertex_descriptor& s,
+    ColorMap color,
+    DegreeMap degree);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `Graph& G`
+| An undirected graph. The graph's type must be a model of
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| IN
+| `vertex_descriptor s`
+| The starting vertex.
+
+| WORK
+| `ColorMap color`
+| Used internally to keep track of the progress of the algorithm
+  (to avoid visiting the same vertex twice).
+
+| IN
+| `DegreeMap degree`
+| This must map vertices to their degree.
+
+|===
+
+== Description
+
+The goal of the `sloan_start_end_vertices` algorithm [xref:about/bibliography.adoc#sloan86[77], xref:about/bibliography.adoc#sloan89[78]] is to find good
+start- and end-vertices for the profile and wavefront reduction algorithm
+xref:algorithms/ordering/sloan_ordering.adoc[`sloan_ordering`]. The algorithm is similar
+to `pseudo_peripheral_pair` and also based on
+xref:algorithms/traversal/breadth_first_search.adoc[`breadth_first_search`]. With this
+breadth-first search a so-called rooted level structure (RLS) is formed, where
+the vertices with the same distance to the starting vertex are grouped together.
+The maximum number of vertices in one group is called the width of the RLS.
+`sloan_start_end_vertices` tries to find a pseudoperipheral pair with a minimum
+RLS-width.
+
+See also link:../example/sloan_ordering.cpp[`example/sloan_ordering.cpp`].
+
+== References
+
+* xref:about/bibliography.adoc#sloan86[[77\]] S. W. Sloan, _An algorithm for profile and wavefront reduction of sparse matrices_, Int. j. numer. methods eng., *23*, 239-251 (1986).
+* xref:about/bibliography.adoc#sloan89[[78\]] S. W. Sloan, _A fortran program for profile and wavefront reduction_, Int. j. numer. methods eng., *28*, 2651-2679 (1989).

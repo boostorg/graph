@@ -1,0 +1,120 @@
+= `adjacency_list_traits<EdgeList, VertexList, Directed>`
+
+Pre-declares the descriptor types of an `adjacency_list` *_before_* the
+`adjacency_list` itself is declared. Exists to break a chicken-and-egg
+compile error users hit exactly once — and then want to know about forever.
+
+*Defined in:* `<boost/graph/adjacency_list.hpp>`
+
+== Why this class exists
+
+Suppose you want an interior edge property whose value is a
+`vertex_descriptor` — say, storing a *_predecessor_* directly on each
+edge instead of maintaining an external predecessor map. The naive spelling
+
+[source,cpp]
+----
+// This does NOT compile:
+using Graph = adjacency_list<
+    vecS, vecS, directedS,
+    no_property,
+    property<edge_name_t,
+             graph_traits<Graph>::vertex_descriptor>>;  // Graph not yet defined
+----
+
+fails because `graph_traits<Graph>` cannot be instantiated until `Graph`
+is a complete type, but `Graph` cannot be completed until its property
+type is known. `adjacency_list_traits` exposes the descriptor types
+computed purely from the three selectors — no property types required —
+so it is fine to instantiate before the full graph type exists.
+
+== Example
+
+[source,cpp]
+----
+include::example$traits/adjacency_list_traits.cpp[]
+----
+
+[,text]
+----
+include::example$traits/adjacency_list_traits.txt[]
+----
+
+Observe that `Traits` and the final `Graph` use the *_same_* three
+selectors (`vecS, vecS, directedS`). If they diverge, the descriptor
+types also diverge and the program is ill-formed.
+
+TIP: For most use cases, an *_external_* predecessor map —
+`std::vector<vertex_descriptor>` wrapped in `iterator_property_map` — is
+simpler and every BGL algorithm already accepts one. Reach for
+`adjacency_list_traits` only when you genuinely need the property to
+travel with the graph (serialization, subgraph adaptors, mixing with
+xref:io/graphml.adoc[GraphML] I/O that round-trips interior properties, …).
+
+== Synopsis
+
+[source,cpp]
+----
+namespace boost {
+
+template <class EdgeList   = vecS,
+          class VertexList = vecS,
+          class Directed   = directedS>
+struct adjacency_list_traits {
+    typedef /* implementation-defined */ vertex_descriptor;
+    typedef /* implementation-defined */ edge_descriptor;
+    typedef /* implementation-defined */ directed_category;
+    typedef /* implementation-defined */ edge_parallel_category;
+};
+
+} // namespace boost
+----
+
+== Template parameters
+
+[cols="1,3,1"]
+|===
+| Parameter | Description | Default
+
+| `EdgeList`
+| Selector for per-vertex edge-list storage (`vecS`, `listS`, `setS`, …).
+| `vecS`
+
+| `VertexList`
+| Selector for the vertex container storage.
+| `vecS`
+
+| `Directed`
+| `directedS`, `undirectedS`, or `bidirectionalS`.
+| `directedS`
+|===
+
+== Members
+
+[cols="1,4"]
+|===
+| Member | Description
+
+| `vertex_descriptor`
+| Same concrete type as `graph_traits<adjacency_list<EdgeList, VertexList, Directed, …>>::vertex_descriptor`, but available without naming the full graph type.
+
+| `edge_descriptor`
+| Likewise for edge descriptors.
+
+| `directed_category`
+| `directed_tag`, `undirected_tag`, or `bidirectional_tag`.
+
+| `edge_parallel_category`
+| Whether the chosen `EdgeList` stores parallel edges (`allow_parallel_edge_tag`)
+  or collapses them (`disallow_parallel_edge_tag`).
+|===
+
+Iterator and size types are *not* exposed here (they depend on the full
+graph type, which has not been declared yet). If you need them, use
+`graph_traits<Graph>` on the completed graph.
+
+== See also
+
+* xref:traits/overview.adoc[Traits and Iterators overview]
+* xref:graph_classes/adjacency_list.adoc[`adjacency_list`]
+* xref:property_maps/bundled.adoc[Bundled Properties]

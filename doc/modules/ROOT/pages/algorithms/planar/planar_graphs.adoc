@@ -1,0 +1,90 @@
+= Planar Graphs
+
+A graph is planar if it can be drawn in a plane with no edge crossings.
+BGL provides a complete pipeline for planarity testing, embedding, and drawing.
+
+== Quick decision
+
+[cols="1,3"]
+|===
+| I want to... | Use
+
+| Test if a graph is planar
+| xref:algorithms/planar/boyer_myrvold.adoc[Boyer-Myrvold Planarity Test]
+
+| Get a proof of non-planarity
+| `boyer_myrvold_planarity_test` with Kuratowski subgraph output, then
+  xref:algorithms/planar/is_kuratowski_subgraph.adoc[is_kuratowski_subgraph] to verify
+
+| Draw a planar graph with no crossings
+| Full pipeline (see below)
+
+| Traverse the faces of an embedded graph
+| xref:algorithms/planar/planar_face_traversal.adoc[Planar Face Traversal]
+|===
+
+== The drawing pipeline
+
+To produce a straight-line drawing (no edge crossings, all edges are line
+segments), the input must be a maximal planar graph with a planar embedding.
+BGL provides functions to build up to that step by step:
+
+1. xref:algorithms/planar/make_connected.adoc[make_connected] -- add edges to make the graph connected
+2. xref:algorithms/planar/make_biconnected_planar.adoc[make_biconnected_planar] -- add edges to make it biconnected (preserving planarity)
+3. xref:algorithms/planar/make_maximal_planar.adoc[make_maximal_planar] -- add edges to make it maximal planar (triangulated)
+4. xref:algorithms/planar/planar_canonical_ordering.adoc[planar_canonical_ordering] -- produce a vertex ordering for drawing
+5. xref:algorithms/planar/straight_line_drawing.adoc[chrobak_payne_straight_line_drawing] -- compute integer coordinates on a (2n-4) x (n-2) grid
+6. xref:algorithms/planar/is_straight_line_drawing.adoc[is_straight_line_drawing] -- verify no edges cross
+
+Each step requires a planar embedding, which is produced by the Boyer-Myrvold
+planarity test.
+
+== Key facts
+
+- A graph with no self-loops or parallel edges is planar iff it has no
+  subgraph that is an expansion of K~5~ or K~3,3~ (Kuratowski's theorem).
+- A planar graph on n vertices has at most 3n-6 edges and 2n-4 faces
+  (Euler's formula: n + f = e + c + 1).
+- All algorithms in this section run in O(n) time on planar graphs.
+
+== Planar embedding
+
+A planar embedding specifies, for each vertex, the clockwise (or
+counter-clockwise) order of incident edges. It is the central data structure
+connecting the planarity test to all downstream algorithms. In BGL it is a
+property map from vertices to sequences of edge descriptors. See
+xref:concepts/property_types/PlanarEmbedding.adoc[PlanarEmbedding concept].
+
+== All algorithms
+
+[cols="1,3"]
+|===
+| Algorithm | What it does
+
+| xref:algorithms/planar/boyer_myrvold.adoc[Boyer-Myrvold]
+| Planarity test. Produces embedding or Kuratowski subgraph.
+
+| xref:algorithms/planar/planar_face_traversal.adoc[Planar Face Traversal]
+| Visit all faces of an embedded planar graph.
+
+| xref:algorithms/planar/planar_canonical_ordering.adoc[Canonical Ordering]
+| Vertex ordering for straight-line drawing.
+
+| xref:algorithms/planar/straight_line_drawing.adoc[Straight Line Drawing]
+| Compute integer coordinates with no crossings.
+
+| xref:algorithms/planar/is_straight_line_drawing.adoc[Is Straight Line Drawing]
+| Verify a drawing has no crossings.
+
+| xref:algorithms/planar/is_kuratowski_subgraph.adoc[Is Kuratowski Subgraph]
+| Verify a non-planarity certificate.
+
+| xref:algorithms/planar/make_connected.adoc[Make Connected]
+| Add minimal edges to connect the graph.
+
+| xref:algorithms/planar/make_biconnected_planar.adoc[Make Biconnected Planar]
+| Add edges to make biconnected while preserving planarity.
+
+| xref:algorithms/planar/make_maximal_planar.adoc[Make Maximal Planar]
+| Add edges to triangulate while preserving planarity.
+|===

@@ -1,0 +1,2 @@
+4-cycle is bipartite: yes
+Triangle is bipartite: no

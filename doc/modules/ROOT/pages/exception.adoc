@@ -1,0 +1,55 @@
+= Exceptions
+
+BGL algorithms throw these exceptions when preconditions are not met.
+
+*Defined in:* `<boost/graph/exception.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$auxiliary/exception.cpp[]
+----
+
+[,text]
+----
+include::example$auxiliary/exception.txt[]
+----
+
+== Exception classes
+
+[source,cpp]
+----
+struct bad_graph : public std::invalid_argument {
+    bad_graph(const std::string& what_arg);
+};
+struct not_a_dag : public bad_graph {
+    not_a_dag();
+};
+struct negative_edge : public bad_graph {
+    negative_edge();
+};
+struct negative_cycle : public bad_graph {
+    negative_cycle();
+};
+struct not_connected : public bad_graph {
+    not_connected();
+};
+----
+
+[cols="1,2"]
+|===
+| Exception | Thrown when
+
+| `not_a_dag`
+| `topological_sort` is called on a graph with a cycle
+
+| `negative_edge`
+| `dijkstra_shortest_paths` encounters a negative edge weight
+
+| `negative_cycle`
+| `bellman_ford_shortest_paths` detects a negative-weight cycle
+
+| `not_connected`
+| An algorithm requiring a connected graph receives a disconnected one
+|===

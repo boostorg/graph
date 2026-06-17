@@ -1,0 +1,307 @@
+= `sloan_ordering`
+
+Reduces the profile and wavefront of an undirected graph by reordering vertex indices.
+
+*Complexity:* _O(log(m)|E|)_ where _m = max { degree(v) | v in V }_ +
+*Defined in:* `<boost/graph/sloan_ordering.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/ordering/sloan.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/ordering/sloan.txt[]
+----
+
+'''
+
+=== (1) With start/end vertices and weights
+
+[source,cpp]
+----
+template <class Graph, class OutputIterator,
+          class ColorMap, class DegreeMap,
+          class PriorityMap, class Weight>
+OutputIterator sloan_ordering(
+    Graph& g,
+    typename graph_traits<Graph>::vertex_descriptor s,
+    typename graph_traits<Graph>::vertex_descriptor e,
+    OutputIterator permutation,
+    ColorMap color,
+    DegreeMap degree,
+    PriorityMap priority,
+    Weight W1,
+    Weight W2);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `Graph& g`
+| An undirected graph. The graph's type must be a model of
+  xref:concepts/IncidenceGraph.adoc[IncidenceGraph].
+
+| IN
+| `vertex_descriptor s`
+| The starting vertex.
+
+| IN
+| `vertex_descriptor e`
+| The ending vertex.
+
+| OUT
+| `OutputIterator permutation`
+| The new vertex ordering. The vertices are written to the
+  http://www.boost.org/sgi/stl/OutputIterator.html[output iterator] in
+  their new order.
+
+| WORK
+| `ColorMap color`
+| Used internally to keep track of the progress of the algorithm (to avoid
+  visiting the same vertex twice).
+
+| IN
+| `DegreeMap degree`
+| This must map vertices to their degree.
+
+| IN
+| `PriorityMap priority`
+| Used internally to store the priority for renumbering of each vertex.
+
+| IN
+| `Weight W1`
+| First heuristical weight for the Sloan algorithm.
+
+| IN
+| `Weight W2`
+| Second heuristical weight for the Sloan algorithm.
+
+|===
+
+'''
+
+=== (2) Without start/end vertices, with weights
+
+[source,cpp]
+----
+template <class Graph, class OutputIterator,
+          class ColorMap, class DegreeMap,
+          class PriorityMap, class Weight>
+OutputIterator sloan_ordering(
+    Graph& g,
+    OutputIterator permutation,
+    ColorMap color,
+    DegreeMap degree,
+    PriorityMap priority,
+    Weight W1,
+    Weight W2);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `Graph& g`
+| An undirected graph. The graph's type must be a model of
+  xref:concepts/IncidenceGraph.adoc[IncidenceGraph].
+
+| OUT
+| `OutputIterator permutation`
+| The new vertex ordering. The vertices are written to the
+  http://www.boost.org/sgi/stl/OutputIterator.html[output iterator] in
+  their new order.
+
+| WORK
+| `ColorMap color`
+| Used internally to keep track of the progress of the algorithm (to avoid
+  visiting the same vertex twice).
+
+| IN
+| `DegreeMap degree`
+| This must map vertices to their degree.
+
+| IN
+| `PriorityMap priority`
+| Used internally to store the priority for renumbering of each vertex.
+
+| IN
+| `Weight W1`
+| First heuristical weight for the Sloan algorithm.
+
+| IN
+| `Weight W2`
+| Second heuristical weight for the Sloan algorithm.
+
+|===
+
+'''
+
+=== (3) With start/end vertices, default weights
+
+[source,cpp]
+----
+template <class Graph, class OutputIterator,
+          class ColorMap, class DegreeMap,
+          class PriorityMap>
+OutputIterator sloan_ordering(
+    Graph& g,
+    typename graph_traits<Graph>::vertex_descriptor s,
+    typename graph_traits<Graph>::vertex_descriptor e,
+    OutputIterator permutation,
+    ColorMap color,
+    DegreeMap degree,
+    PriorityMap priority);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `Graph& g`
+| An undirected graph. The graph's type must be a model of
+  xref:concepts/IncidenceGraph.adoc[IncidenceGraph].
+
+| IN
+| `vertex_descriptor s`
+| The starting vertex.
+
+| IN
+| `vertex_descriptor e`
+| The ending vertex.
+
+| OUT
+| `OutputIterator permutation`
+| The new vertex ordering. The vertices are written to the
+  http://www.boost.org/sgi/stl/OutputIterator.html[output iterator] in
+  their new order.
+
+| WORK
+| `ColorMap color`
+| Used internally to keep track of the progress of the algorithm (to avoid
+  visiting the same vertex twice).
+
+| IN
+| `DegreeMap degree`
+| This must map vertices to their degree.
+
+| IN
+| `PriorityMap priority`
+| Used internally to store the priority for renumbering of each vertex.
+
+|===
+
+'''
+
+=== (4) Without start/end vertices, default weights
+
+[source,cpp]
+----
+template <class Graph, class OutputIterator,
+          class ColorMap, class DegreeMap,
+          class PriorityMap>
+OutputIterator sloan_ordering(
+    Graph& g,
+    OutputIterator permutation,
+    ColorMap color,
+    DegreeMap degree,
+    PriorityMap priority);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `Graph& g`
+| An undirected graph. The graph's type must be a model of
+  xref:concepts/IncidenceGraph.adoc[IncidenceGraph].
+
+| OUT
+| `OutputIterator permutation`
+| The new vertex ordering. The vertices are written to the
+  http://www.boost.org/sgi/stl/OutputIterator.html[output iterator] in
+  their new order.
+
+| WORK
+| `ColorMap color`
+| Used internally to keep track of the progress of the algorithm (to avoid
+  visiting the same vertex twice).
+
+| IN
+| `DegreeMap degree`
+| This must map vertices to their degree.
+
+| IN
+| `PriorityMap priority`
+| Used internally to store the priority for renumbering of each vertex.
+
+|===
+
+== Description
+
+The goal of the Sloan ordering algorithm [xref:about/bibliography.adoc#sloan86[77], xref:about/bibliography.adoc#sloan89[78]] is to reduce the profile and
+the wavefront of a graph by reordering the indices assigned to each vertex.
+The Sloan algorithm needs a start and an end vertex. These vertices can be
+assigned manually. But there is also an algorithm `sloan_starting_nodes` that
+provides usually quite good start and end vertices. Each vertex is assigned
+with a priority. This priority is a weighted sum of the distance of the vertex
+to the end vertex (a global criterion) and is called the current degree of
+vertex. This current degree basically reflects the status of the renumbering in
+the neighborhood of a vertex (a local criterion). Therefore the Sloan
+algorithm (in contrast to McKee) takes into account local as well as global
+criteria for the renumbering sequence. One can play around with the relative
+weights, but the default values proposed by Sloan (weight1/weight2=1/2) turn
+out to be pretty good in most cases.
+
+Overload (1) lets the user choose the start and end vertex whereas overload (2)
+finds a good starting vertex using the `sloan_starting_node` algorithm. The
+choice of these vertices can have a significant effect on the quality of the
+ordering. Overloads (3) and (4) are identical to (1) and (2) respectively,
+except that the standard weights W1=1 and W2=2 are used.
+
+The output of the algorithm are the vertices in the new ordering. Depending on
+what kind of output iterator you use, you can get either the Sloan ordering or
+the reverse Sloan ordering. For example, if you store the output into a vector
+using the vector's reverse iterator, then you get the reverse Sloan ordering.
+
+[source,cpp]
+----
+std::vector<vertex_descriptor> inv_perm(num_vertices(G));
+sloan_ordering(G, inv_perm.rbegin());
+----
+
+Either way, storing the output into a vector gives you the permutation from the
+new ordering to the old ordering.
+
+....
+inv_perm[new_index[u]] == u
+....
+
+Sometimes, it is the opposite permutation that you want, the permutation from
+the old index to the new index. This can easily be computed in the following
+way.
+
+....
+for (size_type i = 0; i != inv_perm.size(); ++i)
+  perm[old_index[inv_perm[i]]] = i;
+....
+
+Usually you need the reversed ordering with the Cuthill-McKee algorithm and
+the direct ordering with the Sloan algorithm.
+
+== Returns
+
+An `OutputIterator` pointing past the end of the permutation output.
+
+== References
+
+* xref:about/bibliography.adoc#sloan86[[77\]] S. W. Sloan, _An algorithm for profile and wavefront reduction of sparse matrices_, Int. j. numer. methods eng., *23*, 239-251 (1986).
+* xref:about/bibliography.adoc#sloan89[[78\]] S. W. Sloan, _A fortran program for profile and wavefront reduction_, Int. j. numer. methods eng., *28*, 2651-2679 (1989).

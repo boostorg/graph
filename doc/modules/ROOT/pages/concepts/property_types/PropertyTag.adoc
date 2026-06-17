@@ -1,0 +1,65 @@
+[#concept:PropertyTag]
+= Property
+
+== PropertyTag
+
+A Property Tag is a type used to name or identify properties that are
+attached to the vertices and edges of a graph. A Property type is not
+the type of the actual property values. Objects of the Property type are
+not used except to carry the type information which specifies the
+property. See the section about
+xref:property_maps/overview.adoc[Custom Edge
+Properties] for a description of how to define your own property tags.
+
+== Associated Types
+
+[cols=",,",]
+|===
+|Property Kind |`property_kind<PropertyTag>::type` |This
+specifies whether the property is a [#VertexPropertyTag]#*Vertex
+Property Tag*# (`vertex_property_tag`), an
+[#EdgePropertyTag]#*Edge Property Tag*# (`edge_property_tag`),
+or a [#GraphPropertyTag]#*Graph Property Tag*# which is attached to the
+graph object itself (`graph_property_tag`). The tags are defined
+in
+`boost/graph/properties.hpp`.
+The `property_kind` traits class is defined in
+`boost/pending/property.hpp`.
+
+|Property ID Number |`property_num<PropertyTag>::value`
+|This is needed as a workaround when using compilers that do not support
+partial specialization (and hence prevent us from using
+`boost::is_same` to detect if two property tags are the same). The
+`property_num` traits class is defined in
+`boost/pending/property.hpp`.
+|===
+
+== Refinement of
+
+DefaultConstructible
+
+== Models
+
+The following models of the Property Tag concept are defined in
+`boost/graph/properties.hpp`.
+
+* `vertex_index_t`
+* `edge_index_t`
+* `graph_name_t`
+* `vertex_name_t`
+* `edge_name_t`
+* `edge_weight_t`
+* `vertex_distance_t`
+* `vertex_color_t`
+* `vertex_degree_t`
+* `vertex_out_degree_t`
+* `vertex_in_degree_t`
+* `vertex_discover_time_t`
+* `vertex_finish_time_t`
+
+== Notes
+
+On compilers that do not support partial specialization, each Property
+type is also required to specialize
+`property_num<PropertyTag>` to contain an enum named `value`
+which uniquely identifies the property type.

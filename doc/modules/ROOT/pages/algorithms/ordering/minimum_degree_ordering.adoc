@@ -1,0 +1,163 @@
+[#sec:mmd]
+= Minimum Degree Ordering
+
+A fill-in reduction matrix reordering algorithm for sparse Cholesky factorization.
+
+*Complexity:* UNDER CONSTRUCTION +
+*Defined in:* `<boost/graph/minimum_degree_ordering.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/ordering/minimum_degree.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/ordering/minimum_degree.txt[]
+----
+
+'''
+
+=== (1) Positional version
+
+[source,cpp]
+----
+template <class AdjacencyGraph, class OutDegreeMap,
+          class InversePermutationMap,
+          class PermutationMap, class SuperNodeSizeMap,
+          class VertexIndexMap>
+void minimum_degree_ordering(
+    AdjacencyGraph& G,
+    OutDegreeMap outdegree,
+    InversePermutationMap inverse_perm,
+    PermutationMap perm,
+    SuperNodeSizeMap supernode_size,
+    int delta,
+    VertexIndexMap id);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `AdjacencyGraph& G`
+| A directed graph. The graph's type must be a model of
+  xref:concepts/AdjacencyGraph.adoc[Adjacency Graph],
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph],
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph], and
+  xref:concepts/MutableGraph.adoc[Mutable Graph].
+  In addition, the functions `num_vertices()` and `out_degree()` are required.
+
+| WORK
+| `OutDegreeMap outdegree`
+| This is used internally to store the out degree of vertices. This must be a
+  link:../../property_map/doc/LvaluePropertyMap.html[LvaluePropertyMap]
+  with key type the same as the vertex descriptor type of the graph, and
+  with a value type that is an integer type.
+
+| OUT
+| `InversePermutationMap inverse_perm`
+| The new vertex ordering, given as the mapping from the new indices to
+  the old indices (an inverse permutation). This must be an
+  link:../../property_map/doc/LvaluePropertyMap.html[LvaluePropertyMap]
+  with a value type and key type a signed integer.
+
+| OUT
+| `PermutationMap perm`
+| The new vertex ordering, given as the mapping from the old indices to
+  the new indices (a permutation). This must be an
+  link:../../property_map/doc/LvaluePropertyMap.html[LvaluePropertyMap]
+  with a value type and key type a signed integer.
+
+| WORK/OUT
+| `SuperNodeSizeMap supernode_size`
+| This is used internally to record the size of supernodes and is also
+  useful information to have. This is a
+  link:../../property_map/doc/LvaluePropertyMap.html[LvaluePropertyMap]
+  with an unsigned integer value type and key type of vertex descriptor.
+
+| IN
+| `int delta`
+| Multiple elimination control variable. If it is larger than or equal to
+  zero then multiple elimination is enabled. The value of `delta`
+  specifies the difference between the minimum degree and the degree of
+  vertices that are to be eliminated.
+
+| IN
+| `VertexIndexMap id`
+| Used internally to map vertices to their indices. This must be a
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map]
+  with key type the same as the vertex descriptor of the graph and a
+  value type that is some unsigned integer type.
+
+|===
+
+== Description
+
+The https://en.wikipedia.org/wiki/Minimum_degree_algorithm[minimum degree ordering]
+algorithm [xref:about/bibliography.adoc#LIU:MMD[17],
+xref:about/bibliography.adoc#George:evolution[30]] is a fill-in reduction
+matrix reordering algorithm. When solving a system of equations such as
+_A x = b_ using a sparse version of Cholesky factorization (which is a
+variant of Gaussian elimination for symmetric matrices), often times
+elements in the matrix that were once zero become non-zero due to the
+elimination process. This is what is referred to as "fill-in", and
+fill-in is bad because it makes the matrix less sparse and therefore
+consume more time and space in later stages of the elimintation and in
+computations that use the resulting factorization. Now it turns out that
+reordering the rows of a matrix can have a dramatic affect on the amount
+of fill-in that occurs. So instead of solving _A x = b_, we instead
+solve the reordered (but equivalent) system _(P A P^T^)(P x) = P b_.
+Finding the optimal ordering is an NP-complete problem (e.i., it can not
+be solved in a reasonable amount of time) so instead we just find an
+ordering that is "good enough" using heuristics. The minimum degree
+ordering algorithm is one such approach.
+
+A symmetric matrix `A` is typically represented with an undirected
+graph, however for this function we require the input to be a directed
+graph. Each nonzero matrix entry `A(i, j)` must be represented by two
+directed edges (`e(i,j)` and `e(j,i)`) in `G`.
+
+The output of the algorithm are the vertices in the new ordering.
+
+[source,cpp]
+----
+inverse_perm[new_index[u]] == old_index[u]
+----
+
+and the permutation from the old index to the new index.
+
+[source,cpp]
+----
+perm[old_index[u]] == new_index[u]
+----
+
+The following equations are always held.
+
+[source,cpp]
+----
+for (size_type i = 0; i != inverse_perm.size(); ++i)
+  perm[inverse_perm[i]] == i;
+----
+
+== Notes
+
+It chooses the vertex with minimum degree in the graph at each step of
+simulating Gaussian elimination process.
+
+This implementation provided a number of enhancements including mass
+elimination, incomplete degree update, multiple elimination, and
+external degree.
+See xref:about/bibliography.adoc#George:evolution[[30\]] for a
+historical survey of the minimum degree algorithm.
+
+An *elimination graph* _G~v~_ is obtained from the graph _G_ by removing
+vertex _v_ and all of its incident edges and by then adding edges to
+make all of the vertices adjacent to _v_ into a clique (that is, add an
+edge between each pair of adjacent vertices if an edge doesn't already
+exist). Suppose that graph _G_ is the graph representing the nonzero
+structure of a matrix _A_. Then performing a step of Guassian
+elimination on row _i_ of matrix _A_ is equivalent to

@@ -1,0 +1,83 @@
+= EventVisitor Concept
+
+This concept defines the interface for single-event visitors. An
+EventVisitor has an apply member function (`operator()`) which is
+invoked within the graph algorithm at the event-point specified by the
+`event_filter` typedef within the EventVisitor. EventVisitor's can
+be combined into an xref:visitors/EventVisitorList.adoc[EventVistorList].
+
+The following is the list of event tags that can be invoked in BGL
+algorithms. Each tag corresponds to a member function of the visitor for
+an algorithm. For example, the xref:visitors/BFSVisitor.adoc[BFSVisitor] of
+xref:algorithms/traversal/breadth_first_search.adoc[`breadth_first_search()`] has a
+`cycle_edge()` member function. The corresponding tag is
+`on_cycle_edge`. The first argument is the event visitor's
+`operator()` must be either an edge or vertex descriptor depending on
+the event tag.
+
+[source,cpp]
+----
+
+namespace boost {
+  struct on_initialize_vertex { };
+  struct on_start_vertex { };
+  struct on_discover_vertex { };
+  struct on_examine_edge { };
+  struct on_tree_edge { };
+  struct on_cycle_edge { };
+  struct on_finish_vertex { };
+  struct on_forward_or_cross_edge { };
+  struct on_back_edge { };
+  struct on_edge_relaxed { };
+  struct on_edge_not_relaxed { };
+  struct on_edge_minimized { };
+  struct on_edge_not_minimized { };
+} // namespace boost
+----
+
+== Refinement of
+
+Copy Constructible (copying a
+visitor should be a lightweight operation).
+
+== Notation
+
+[cols=",",]
+|===
+|`G` |A type that is a model of xref:concepts/Graph.adoc[Graph].
+
+|`g` |An object of type `G`.
+
+|`V` |A type that is a model of EventVisitor.
+
+|`vis` |An object of type `V`.
+
+|`x` |An object of type
+`boost::graph_traits<G>::vertex_descriptor` or
+`boost::graph_traits<G>::edge_descriptor`.
+|===
+
+== Associated Types
+
+[cols=",,",]
+|===
+|Event Filter |`V::event_filter` |A tag struct to specify on which
+event the visitor should be invoked.
+|===
+
+== Valid Expressions
+
+[cols=",,,",options="header",]
+|===
+|Name |Expression |Return Type |Description
+|Apply Visitor |`vis(x, g)` |`void` |Invokes the visitor operation on
+object `x`, which is either a vertex or edge descriptor of the graph.
+|===
+
+== Models
+
+* xref:visitors/predecessor_recorder.adoc[`predecessor_recorder`]
+* xref:visitors/distance_recorder.adoc[`distance_recorder`]
+* xref:visitors/time_stamper.adoc[`time_stamper`]
+* xref:visitors/property_writer.adoc[`property_writer`]
+* xref:visitors/null_visitor.adoc[`null_visitor`]

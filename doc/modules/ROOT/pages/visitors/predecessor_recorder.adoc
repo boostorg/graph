@@ -1,0 +1,54 @@
+= predecessor_recorder
+
+Records the predecessor (parent) vertex for each vertex in a property map.
+
+*Defined in:* `<boost/graph/visitors.hpp>` +
+*Models:* EventVisitor +
+*Typical event:* `on_tree_edge` or `on_relax_edge` (edge events only)
+
+== Example
+
+[source,cpp]
+----
+include::example$visitors/predecessor_recorder.cpp[]
+----
+
+[,text]
+----
+include::example$visitors/predecessor_recorder.txt[]
+----
+
+TIP: Initialize the source vertex's predecessor to itself before running the
+algorithm. This marks the root of the search tree as the only vertex that is
+its own parent. For DFS (which creates a forest), initialize every vertex to
+itself.
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename PredecessorMap, typename EventTag>
+struct predecessor_recorder;
+
+template <typename PredecessorMap, typename EventTag>
+predecessor_recorder<PredecessorMap, EventTag>
+record_predecessors(PredecessorMap pa, EventTag);
+----
+
+== Parameters
+
+[cols="1,3",options="header"]
+|===
+| Parameter | Description
+
+| `PredecessorMap`
+| WritablePropertyMap. Key type and value type are both the vertex descriptor.
+
+| `EventTag`
+| Must be an edge event tag (e.g. `on_tree_edge`, `on_relax_edge`).
+|===
+
+== Behavior
+
+Given edge `e = (u, v)`, records `u` as the predecessor of `v`:
+`put(predecessor_map, v, u)`.

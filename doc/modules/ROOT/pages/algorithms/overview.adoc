@@ -1,0 +1,77 @@
+= Algorithms
+
+Boost.Graph ships with ~80 generic graph algorithms, grouped into the
+categories below. Every algorithm is a function template and works
+against any graph type that models the required concepts (see
+xref:concepts/graph_concepts.adoc[Graph Concepts]).
+
+[cols="1,3"]
+|===
+| Category | What it covers
+
+| xref:algorithms/traversal/traversal_overview.adoc[Traversal]
+| Breadth-first and depth-first search, with visitor-based
+  customization points for tracking discovery, finish order, edge
+  classification, and more.
+
+| xref:algorithms/shortest_paths/shortest_paths_overview.adoc[Shortest Paths]
+| Dijkstra, Bellman-Ford, DAG shortest paths, Johnson all-pairs,
+  Floyd-Warshall, A*, and resource-constrained shortest paths.
+
+| xref:algorithms/spanning_trees/spanning_trees_overview.adoc[Spanning Trees]
+| Kruskal, Prim, random spanning trees (Wilson's algorithm), and
+  common spanning trees of two graphs.
+
+| xref:algorithms/connected_components/connected_components_overview.adoc[Connected Components]
+| Connected, strongly connected (Tarjan), biconnected components with
+  articulation points, and incremental/disjoint-sets variants.
+
+| xref:algorithms/network_flow/network_flow_overview.adoc[Network Flow]
+| Max-flow (Edmonds-Karp, push-relabel, Boykov-Kolmogorov),
+  min-cost-flow (cycle canceling, successive shortest paths),
+  Stoer-Wagner min cut, Edmonds maximum matching.
+
+| xref:algorithms/topological_sort/topological_sort_overview.adoc[Topological Sort]
+| Topological ordering of a DAG via DFS.
+
+| xref:algorithms/coloring/coloring_overview.adoc[Graph Coloring]
+| Sequential vertex coloring, edge coloring, bipartiteness test,
+  odd-cycle extraction.
+
+| xref:algorithms/connectivity/connectivity_overview.adoc[Connectivity]
+| Edge connectivity, s-t connectivity.
+
+| xref:algorithms/metrics/metrics_overview.adoc[Graph Metrics]
+| PageRank, Brandes betweenness, degree / closeness / eccentricity,
+  geodesic distance, clustering coefficient, core numbers, profile,
+  wavefront, bandwidth.
+
+| xref:algorithms/isomorphism/isomorphism_overview.adoc[Graph Isomorphism]
+| General isomorphism, VF2 subgraph isomorphism, McGregor common
+  subgraphs.
+
+| xref:algorithms/planar/planar_graphs.adoc[Planar Graphs]
+| Boyer-Myrvold planarity test and embedding, Chrobak-Payne straight
+  line drawing, Kuratowski subgraph extraction, face traversal,
+  make-connected / biconnected / maximal-planar.
+
+| xref:algorithms/layout/layout_overview.adoc[Layout]
+| Random, circle, Kamada-Kawai spring, Fruchterman-Reingold
+  force-directed, Gürsoy-Atun layouts.
+
+| xref:algorithms/ordering/ordering_overview.adoc[Sparse Matrix Ordering]
+| Cuthill-McKee, King, minimum-degree, Sloan orderings for bandwidth
+  and profile reduction.
+
+| xref:algorithms/cycle_detection/cycle_detection_overview.adoc[Cycle Detection]
+| Hawick circuits (all elementary cycles), Tiernan all cycles, Howard
+  cycle ratio.
+
+| xref:algorithms/clique_detection/clique_detection_overview.adoc[Clique Detection]
+| Bron-Kerbosch enumeration of maximal cliques.
+
+| xref:algorithms/utility/utility_overview.adoc[Utility]
+| Copy, transpose, transitive closure / reduction, Lengauer-Tarjan
+  dominators, metric-TSP approximation, maximum adjacency search,
+  neighbor BFS, loop-erased random walk, graph statistics, and more.
+|===

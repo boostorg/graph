@@ -1,0 +1,49 @@
+[#sec:mesh-generator]
+= Mesh Generator (Input Iterator)
+
+Generate a 2D mesh (grid) graph.
+
+*Defined in:* `<boost/graph/mesh_graph_generator.hpp>`
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename Graph>
+class mesh_iterator;
+
+mesh_iterator();
+mesh_iterator(vertices_size_type x, vertices_size_type y, bool toroidal = true);
+----
+
+Generates edges for an _x_ by _y_ mesh graph. Vertices are numbered in
+row-major order (for a 3x2 mesh: 0,1,2 in the first row, 3,4,5 in the second). Each interior vertex is connected to its 4 neighbors (up,
+down, left, right). If `toroidal` is `true`, boundary vertices wrap around
+to form a torus. Both _x_ and _y_ must be greater than 1.
+
+Supports both directed and undirected graphs (detected from `Graph` traits).
+For directed graphs each adjacency produces edges in all four directions;
+for undirected graphs each adjacency produces one edge.
+
+== Parameters
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `vertices_size_type x` | Number of columns. Must be > 1.
+| IN | `vertices_size_type y` | Number of rows. Must be > 1.
+| IN | `bool toroidal` | If `true`, wrap edges around (torus). Default: `true`.
+|===
+
+== Example
+
+[source,cpp]
+----
+include::example$generators/mesh.cpp[]
+----
+
+[,text]
+----
+include::example$generators/mesh.txt[]
+----

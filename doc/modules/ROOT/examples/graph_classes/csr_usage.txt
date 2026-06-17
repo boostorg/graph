@@ -1,0 +1,4 @@
+Paris -> Lyon (460 km)
+Paris -> Marseille (775 km)
+Lyon -> Marseille (310 km)
+Marseille -> Nice (200 km)

@@ -1,0 +1,197 @@
+= MutableGraph
+
+A MutableGraph can be changed via the addition or removal of edges and
+vertices.
+
+== Refinement of
+
+xref:concepts/Graph.adoc[Graph]
+
+== Notation
+
+`G`
+
+A type that is a model of Graph.
+
+`g`
+
+An object of type `G`.
+
+`e`
+
+An object of type
+`boost::graph_traits<G>::edge_descriptor`.
+
+`u,v`
+
+are objects of type
+`boost::graph_traits<G>::vertex_descriptor`.
+
+`iter`
+
+is an object of type
+`boost::graph_traits<G>::out_edge_iterator`.
+
+`p`
+
+is an object of a type that models Predicate and whose
+argument type matches the `edge_descriptor` type.
+
+== Valid Expressions
+
+[width="100%",cols="50%,50%",]
+|===
+|`add_edge(u, v, g)` |Inserts the edge _(u,v)_ into
+the graph, and returns an edge descriptor pointing to the new edge. If
+the graph disallows parallel edges, and the edge _(u,v)_ is already in
+the graph, then the `bool` flag returned is `false` and the returned
+edge descriptor points to the already existing edge. Note that for
+undirected graphs, _(u,v)_ is the same edge as _(v,u)_, so after a call
+to the function `add_edge()`, this implies that edge _(u,v)_ will
+appear in the out-edges of _u_ and _(u,v)_ (or equivalently _(v,u)_)
+will appear in the out-edges of _v_. Put another way, _v_ will be
+adjacent to _u_ and _u_ will be adjacent to _v_. +
+Return type: `std::pair<edge_descriptor, bool>`
+
+|`remove_edge(u, v, g)` |Remove the edge _(u,v)_
+from the graph. If the graph allows parallel edges this remove all
+occurrences of _(u,v)_. +
+Return type: `void` +
+Precondition: _u_ and _v_ are vertices in the graph. +
+Postcondition: _(u,v)_ is no longer in the edge set for `g`.
+
+|`remove_edge(e, g)` |Remove the edge _e_ from the graph. +
+Return type: `void` +
+Precondition: _e_ is an edge in the graph. +
+Postcondition: _e_ is no longer in the edge set for `g`.
+
+|`remove_edge(iter, g)` |Remove the edge pointed to be `iter` from
+the graph. This expression is only required when the graph also models
+xref:concepts/IncidenceGraph.adoc[IncidenceGraph]. +
+Return type: `void` +
+Precondition: `*iter` is an edge in the graph. +
+Postcondition: `*iter` is no longer in the edge set for `g`.
+
+|`remove_edge_if(p, g)` |Remove all the edges from graph `g` for
+which the predicate `p` returns true. +
+Return type: `void`
+
+|`remove_out_edge_if(u, p, g)` |Remove all the out-edges of
+vertex `u` for which the predicate `p` returns true. This expression is
+only required when the graph also models
+xref:concepts/IncidenceGraph.adoc[IncidenceGraph]. +
+Return type: `void`
+
+|`remove_in_edge_if(u, p, g)` |Remove all the in-edges of
+vertex `u` for which the predicate `p` returns true. This expression is
+only required when the graph also models
+xref:concepts/BidirectionalGraph.adoc[BidirectionalGraph]. +
+Return type: `void`
+
+|`add_vertex(g)` |Add a new vertex to the graph.
+The `vertex_descriptor` for the new vertex is returned. +
+Return type: `vertex_descriptor`
+
+|`clear_vertex(u, g)` |Remove all edges to and from vertex `u` from
+the graph. +
+Return type: `void` +
+Precondition: `u` is a valid vertex descriptor of `g`. +
+Postcondition: `u` does not appear as a source or target of any edge in
+`g`.
+
+|`remove_vertex(u, g)` |Remove _u_ from the
+vertex set of the graph. Note that undefined behavior may result if
+there are edges remaining in the graph who's target is _u_. Typically
+the `clear_vertex()` function should be called first. +
+Return type: `void` +
+Precondition: `u` is a valid vertex descriptor of `g`. +
+Postcondition: `num_vertices(g)` is one less, `u` no longer appears
+in the vertex set of the graph and it is no longer a valid vertex
+descriptor.
+|===
+
+== Complexity Guarantees
+
+* Edge insertion must be either amortized constant time or it can be
+_O(log(E/V))_ if the insertion also checks to prevent the addition of
+parallel edges (which is a "feature" of some graph types).
+* Edge removal is guaranteed to be _O(E)_.
+* Vertex insertion is guaranteed to be amortized constant time.
+* Clearing a vertex is _O(E + V)_.
+* Vertex removal is _O(E + V)_.
+
+== Models
+
+* `adjacency_list`
+
+== Concept Checking Class
+
+[source,cpp]
+----
+
+  template <class G>
+  struct MutableGraphConcept
+  {
+    typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
+    void constraints() {
+      v = add_vertex(g);
+      clear_vertex(v, g);
+      remove_vertex(v, g);
+      e_b = add_edge(u, v, g);
+      remove_edge(u, v, g);
+      remove_edge(e, g);
+    }
+    G g;
+    edge_descriptor e;
+    std::pair<edge_descriptor, bool> e_b;
+    typename boost::graph_traits<G>::vertex_descriptor u, v;
+    typename boost::graph_traits<G>::out_edge_iterator iter;
+  };
+
+  template <class edge_descriptor>
+  struct dummy_edge_predicate {
+    bool operator()(const edge_descriptor& e) const {
+      return false;
+    }
+  };
+
+  template <class G>
+  struct MutableIncidenceGraphConcept
+  {
+    void constraints() {
+      BOOST_CONCEPT_ASSERT(( MutableGraph<G> ));
+      remove_edge(iter, g);
+      remove_out_edge_if(u, p, g);
+    }
+    G g;
+    typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
+    dummy_edge_predicate<edge_descriptor> p;
+    typename boost::graph_traits<G>::vertex_descriptor u;
+    typename boost::graph_traits<G>::out_edge_iterator iter;
+  };
+
+  template <class G>
+  struct MutableBidirectionalGraphConcept
+  {
+    void constraints() {
+      BOOST_CONCEPT_ASSERT(( MutableIncidenceGraph<G> ));
+      remove_in_edge_if(u, p, g);
+    }
+    G g;
+    typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
+    dummy_edge_predicate<edge_descriptor> p;
+    typename boost::graph_traits<G>::vertex_descriptor u;
+  };
+
+  template <class G>
+  struct MutableEdgeListGraphConcept
+  {
+    void constraints() {
+      BOOST_CONCEPT_ASSERT(( MutableGraph<G> ));
+      remove_edge_if(p, g);
+    }
+    G g;
+    typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
+    dummy_edge_predicate<edge_descriptor> p;
+  };
+----

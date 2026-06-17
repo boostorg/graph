@@ -1,0 +1,81 @@
+= The Boost Graph Library (BGL)
+
+A C++ library of graph algorithms and data structures, generic enough to work on your existing graph representation without conversion.
+
+== Features
+
+* Multiple representations for your graph data, each with different performance trade-offs
+* Generic algorithms that work across any graph representation, with fine control on allocations
+* Extensible algorithms: inject your own logic at key points during traversal using visitor hooks
+
+
+[subs=attributes+]
+++++
+<video autoplay loop muted playsinline
+       style="display: block; width: 100%; max-width: 800px; margin: 1.5em auto; border-radius: 6px;">
+  <source src="{imagesdir}/animations/bfs_shortest_path.mp4" type="video/mp4">
+</video>
+++++
+
+== Example
+
+++++
+<p style="padding-left: 2em;"><a href="https://godbolt.org/z/TnnMzW7da">Try it on Compiler Explorer</a></p>
+++++
+
+[source,cpp]
+----
+include::example$algorithms/traversal/bfs_shortest_path.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/traversal/bfs_shortest_path.txt[]
+----
+
+== Get started
+
+**xref:graph_classes/overview.adoc[Representing your Graph.]** 
+BGL provides several graph representations (`adjacency_list`, `adjacency_matrix`,
+`compressed_sparse_row_graph`), each with different trade-offs in memory layout,
+insertion speed, and traversal performance. Choosing the right one is the first
+decision you make.
+
+**xref:property_maps/overview.adoc[Understanding Property maps.]**
+Algorithms need data attached to vertices and edges: weights, colors, distances.
+Property maps decouple how that data is stored (a vector, a map, a struct member)
+from how algorithms access it. Understanding this mechanism is essential for using
+any BGL algorithm beyond trivial examples.
+
+**xref:visitors/overview.adoc[Injecting Visitors.]**
+Visitors are what make BGL algorithms adaptable to your problem without modifying
+library code. Rather than writing a new algorithm from scratch, you inject custom logic into an
+existing one at specific event points (vertex discovered, edge relaxed, etc.).
+
+
+== Requirements
+
+* C++14 or later
+* Boost headers: BGL is part of the Boost distribution and requires no separate install.
+  It is header-only, so no build step is needed. The only exceptions are the
+  xref:io/graphviz.adoc[GraphViz parser] and the
+  xref:io/graphml.adoc[GraphML parser].
+* Compile with `-O2` or `-O3`. Template-heavy code is significantly slower in debug builds,
+  to the point of being misleading about real performance.
+
+== Help and feedback
+
+[cols="1,3"]
+|===
+| https://github.com/boostorg/graph/issues[GitHub Issues]
+| Bug reports and confirmed problems. Search before opening a new one.
+
+| https://github.com/boostorg/graph/discussions[GitHub Discussions]
+| Questions, design ideas, and general conversation about the library.
+
+| https://lists.boost.org/mailman3/lists/boost-users.lists.boost.org/[Boost mailing list]
+| General Boost development list. Use the `[graph]` tag in the subject line.
+
+| https://cppalliance.org/slack[CppLang Slack]
+| Real-time chat. Request an invite, then join the `#boost` channel.
+|===

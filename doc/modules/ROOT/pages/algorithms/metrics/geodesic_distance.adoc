@@ -1,0 +1,182 @@
+= Geodesic Distance
+
+Computes the mean shortest-path distance from a vertex to all other vertices.
+A low mean geodesic indicates a centrally located vertex.
+
+*Defined in:* `<boost/graph/geodesic_distance.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/metrics/geodesic_distance.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/metrics/geodesic_distance.txt[]
+----
+
+=== (1) mean_geodesic with explicit measure and combinator
+
+[source,cpp]
+----
+template <typename Graph, typename DistanceMap,
+          typename Measure, typename Combinator>
+typename Measure::result_type
+mean_geodesic(const Graph& g, DistanceMap dist,
+              Measure measure, Combinator combine);
+----
+
+Reduces `dist` via `combine` (default behavior in (2) uses `std::plus`) and applies `measure`.
+
+'''
+
+=== (2) mean_geodesic with measure
+
+[source,cpp]
+----
+template <typename Graph, typename DistanceMap, typename Measure>
+typename Measure::result_type
+mean_geodesic(const Graph& g, DistanceMap dist, Measure measure);
+----
+
+Equivalent to (1) with `combine = std::plus<distance_type>()`.
+
+'''
+
+=== (3) mean_geodesic (default double result)
+
+[source,cpp]
+----
+template <typename Graph, typename DistanceMap>
+double mean_geodesic(const Graph& g, DistanceMap dist);
+----
+
+Uses `measure_mean_geodesic(g, dist)` as the measure — (sum of distances) / (num_vertices(g) - 1).
+
+'''
+
+=== (4) mean_geodesic with explicit result type
+
+[source,cpp]
+----
+template <typename T, typename Graph, typename DistanceMap>
+T mean_geodesic(const Graph& g, DistanceMap dist);
+----
+
+Same as (3) but the result type is parametrized as `T`.
+
+'''
+
+=== (5) all_mean_geodesics with measure
+
+[source,cpp]
+----
+template <typename Graph, typename DistanceMatrixMap,
+          typename GeodesicMap, typename Measure>
+typename property_traits<GeodesicMap>::value_type
+all_mean_geodesics(const Graph& g, DistanceMatrixMap dist,
+                   GeodesicMap geo, Measure measure);
+----
+
+Writes the mean geodesic for every vertex into `geo` and returns the average of those values (the graph's mean geodesic).
+
+'''
+
+=== (6) all_mean_geodesics (default measure)
+
+[source,cpp]
+----
+template <typename Graph, typename DistanceMatrixMap,
+          typename GeodesicMap>
+typename property_traits<GeodesicMap>::value_type
+all_mean_geodesics(const Graph& g, DistanceMatrixMap dist,
+                   GeodesicMap geo);
+----
+
+Equivalent to (5) with `measure_mean_geodesic<Result>(g, DistanceMap())` where `Result` is the value type of `GeodesicMap`.
+
+'''
+
+=== (7) small_world_distance with measure
+
+[source,cpp]
+----
+template <typename Graph, typename GeodesicMap, typename Measure>
+typename Measure::result_type
+small_world_distance(const Graph& g, GeodesicMap geo, Measure measure);
+----
+
+'''
+
+=== (8) small_world_distance (default measure)
+
+[source,cpp]
+----
+template <typename Graph, typename GeodesicMap>
+typename property_traits<GeodesicMap>::value_type
+small_world_distance(const Graph& g, GeodesicMap geo);
+----
+
+Sums the per-vertex mean geodesics in `geo` and applies `measure_graph_mean_geodesic(g, geo)` (sum divided by `num_vertices(g)`).
+
+'''
+
+=== (9) Measure helpers and structs
+
+[source,cpp]
+----
+template <typename Graph, typename DistanceType, typename ResultType,
+          typename Divides = std::divides<ResultType>>
+struct mean_geodesic_measure
+    : public geodesic_measure<Graph, DistanceType, ResultType>;
+
+template <typename Graph, typename DistanceType>
+struct mean_graph_distance_measure
+    : public geodesic_measure<Graph, DistanceType, DistanceType>;
+
+template <typename Graph, typename DistanceMap>
+mean_geodesic_measure</*...*/, double> measure_mean_geodesic(const Graph&, DistanceMap);
+
+template <typename T, typename Graph, typename DistanceMap>
+mean_geodesic_measure</*...*/, T>      measure_mean_geodesic(const Graph&, DistanceMap);
+
+template <typename Graph, typename DistanceMap>
+mean_graph_distance_measure</*...*/>   measure_graph_mean_geodesic(const Graph&, DistanceMap);
+----
+
+Functors and factory helpers. `mean_geodesic_measure` returns `d / (num_vertices(g) - 1)`; `mean_graph_distance_measure` returns `d / num_vertices(g)`. Both map the infinite-distance marker to an infinite result.
+
+== Parameters
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| Must model xref:concepts/VertexListGraph.adoc[Vertex List Graph] for overloads iterating vertices; the 2/3/4-arg `mean_geodesic` overloads only require xref:concepts/Graph.adoc[Graph].
+
+| IN
+| `DistanceMap dist`
+| ReadablePropertyMap from vertex to distance. Populate via a shortest-paths algorithm before calling.
+
+| IN
+| `DistanceMatrixMap dist` (all_*)
+| ReadablePropertyMap from vertex to its distance map row.
+
+| IN
+| `Measure measure`
+| Model of `DistanceMeasureConcept` (see overload (9) for the built-in choices).
+
+| IN
+| `Combinator combine`
+| Binary reduction over distances. Default: `std::plus<distance_type>`.
+
+| OUT / IN
+| `GeodesicMap geo`
+| WritablePropertyMap for overload (5)/(6); ReadablePropertyMap for overload (7)/(8).
+|===
+
+NOTE: Requires pre-computed distance maps from an all-pairs shortest paths algorithm.

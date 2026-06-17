@@ -1,0 +1,112 @@
+= EdgeListGraph
+
+The EdgeListGraph concept refines the xref:concepts/Graph.adoc[Graph] concept,
+and adds the requirement for efficient access to all the edges in the
+graph.
+
+== Refinement of
+
+xref:concepts/Graph.adoc[Graph]
+
+== Notation
+
+[cols=",",]
+|===
+|`G` |A type that is a model of EdgeListGraph.
+
+|`g` |An object of type `G`.
+
+|`e` |An object of type
+`boost::graph_traits<G>::edge_descriptor`.
+|===
+
+== Associated Types
+
+`boost::graph_traits<G>::traversal_category` +
+ +
+This tag type must be convertible to `edge_list_graph_tag`.
+
+[source,cpp]
+----
+boost::graph_traits<G>::edge_iterator
+----
+
+An edge iterator (obtained via `edges(g)`) provides access to all of the
+edges in a graph. An edge iterator type must meet the requirements of
+`MultiPassInputIterator`.
+The value type of the edge iterator must be the same as the edge
+descriptor of the graph.
+
+[source,cpp]
+----
+boost::graph_traits<G>::edges_size_type
+----
+
+The unsigned integer type used to represent the number of edges in the
+graph.
+
+== Valid Expressions
+
+[width="100%",cols="50%,50%",]
+|===
+|`edges(g)` |Returns an iterator-range providing access to
+all the edges in the graph `g`. +
+Return type: `std::pair<edge_iterator, edge_iterator>`
+
+|`num_edges(g)` |Returns the number of edges in the graph `g`. +
+Return type: `edges_size_type`
+
+|`source(e, g)` |Returns the vertex descriptor for _u_ of the edge
+_(u,v)_ represented by `e`. +
+Return type: `vertex_descriptor`
+
+|`target(e, g)` |Returns the vertex descriptor for _v_ of the edge
+_(u,v)_ represented by `e`. +
+Return type: `vertex_descriptor`
+|===
+
+== Models
+
+* xref:graph_classes/adjacency_list.adoc[`adjacency_list`]
+* xref:adaptors/edge_list.adoc[`edge_list`]
+
+== Complexity guarantees
+
+The `edges()`, `source()`, and `target()` functions must all return in
+constant time.
+
+== Concept Checking Class
+
+[source,cpp]
+----
+
+  template <class G>
+  struct EdgeListGraphConcept
+  {
+    typedef typename boost::graph_traits<G>::edge_iterator
+      edge_iterator;
+    void constraints() {
+      BOOST_CONCEPT_ASSERT(( GraphConcept<G> ));
+      BOOST_CONCEPT_ASSERT(( MultiPassInputIteratorConcept<edge_iterator> ));
+
+      p = edges(g);
+      E = num_edges(g);
+      e = *p.first;
+      u = source(e, g);
+      v = target(e, g);
+      const_constraints(g);
+    }
+    void const_constraints(const G& g) {
+      p = edges(g);
+      E = num_edges(g);
+      e = *p.first;
+      u = source(e, g);
+      v = target(e, g);
+    }
+    std::pair<edge_iterator,edge_iterator> p;
+    typename boost::graph_traits<G>::vertex_descriptor u, v;
+    typename boost::graph_traits<G>::edge_descriptor e;
+    typename boost::graph_traits<G>::edges_size_type E;
+    G g;
+  };
+----

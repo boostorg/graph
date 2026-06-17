@@ -1,0 +1,107 @@
+= Customizing Adjacency List Storage
+
+The `adjacency_list` is constructed from two kinds of containers: one for
+the vertex set, and another for each vertex's out-edge list. BGL provides
+selector classes (`vecS`, `listS`, `setS`, etc.) that map to STL containers.
+You can also use your own container types.
+
+When customizing the `VertexList`, define a container generator. When
+customizing the `OutEdgeList`, define a container generator and the parallel
+edge traits.
+
+== Container Generator
+
+The `adjacency_list` uses a traits class called `container_gen` to map
+selectors to container types. The default version and an example
+specialization for `listS`:
+
+[source,cpp]
+----
+namespace boost {
+    template <class Selector, class ValueType>
+    struct container_gen {};
+
+    template <class ValueType>
+    struct container_gen<listS, ValueType> {
+        typedef std::list<ValueType> type;
+    };
+}
+----
+
+To use your own container, define a selector class and specialize
+`container_gen`:
+
+[source,cpp]
+----
+struct custom_containerS {};
+
+namespace boost {
+    template <class ValueType>
+    struct container_gen<custom_containerS, ValueType> {
+        typedef custom_container<ValueType> type;
+    };
+}
+----
+
+To pass additional template parameters (e.g., an allocator), add them to
+the selector:
+
+[source,cpp]
+----
+template <class Allocator>
+struct list_with_allocatorS {};
+
+namespace boost {
+    template <class Alloc, class ValueType>
+    struct container_gen<list_with_allocatorS<Alloc>, ValueType> {
+        typedef typename Alloc::template rebind<ValueType>::other Allocator;
+        typedef std::list<ValueType, Allocator> type;
+    };
+}
+
+using MyGraph = adjacency_list<list_with_allocatorS<std::allocator<int>>, vecS, directedS>;
+----
+
+== Push and Erase
+
+You must tell `adjacency_list` how to add and remove elements from your
+container by overloading `push()` and `erase()`:
+
+[source,cpp]
+----
+template <class T>
+std::pair<typename custom_container<T>::iterator, bool>
+push(custom_container<T>& c, const T& v) {
+    c.push_back(v);
+    return std::make_pair(boost::prior(c.end()), true);
+}
+
+template <class T>
+void erase(custom_container<T>& c, const T& x) {
+    c.erase(std::remove(c.begin(), c.end(), x), c.end());
+}
+----
+
+Default `push()` and `erase()` implementations are provided for all STL
+container types.
+
+== Parallel Edge Traits
+
+When customizing the `OutEdgeList`, specialize `parallel_edge_traits` to
+indicate whether the container allows parallel edges:
+
+[source,cpp]
+----
+template <>
+struct parallel_edge_traits<custom_containerS> {
+    typedef allow_parallel_edge_tag type;
+};
+----
+
+Use `allow_parallel_edge_tag` for Sequence containers and
+`disallow_parallel_edge_tag` for AssociativeContainers.
+
+== See also
+
+* xref:graph_classes/adjacency_list.adoc[adjacency_list reference]
+* xref:extending/overview.adoc[Writing Algorithms for BGL]

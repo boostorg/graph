@@ -1,0 +1,218 @@
+= Converting Existing Graphs to BGL
+
+How to Convert Existing Graphs to BGL
+
+Though the main goal of BGL is to aid the development of new
+applications and graph algorithms, there are quite a few existing codes
+that could benefit from using BGL algorithms. One way to use the BGL
+algorithms with existing graph data structures is to copy data from the
+older graph format into a BGL graph which could then be used in the BGL
+algorithms. The problem with this approach is that it can be expensive
+to make this copy. Another approach is to wrap the existing graph data
+structure with a BGL interface.
+
+The Adaptor
+pattern [xref:about/bibliography.adoc#gamma95:_design_patterns[9]]
+typically requires that the adaptee object be contained inside a new
+class that provides the desired interface. This containment is not
+required when wrapping a graph for BGL because the BGL graph interface
+consists solely of free (global) functions. Instead of creating a new
+graph class, you need to overload all the free functions required by the
+interface. We call this free function wrapper approach _external
+adaptation_.
+
+One of the more commonly used graph classes is the LEDA parameterized
+https://algorithmic-solutions.info/leda_guide/graphs/param_graph.html[`GRAPH`]
+class [xref:about/bibliography.adoc#mehlhorn99:_leda[18]]. In this
+section we will show how to create a BGL interface for this class. The
+first question is which BGL interfaces (or concepts) we should
+implement. The following concepts are straightforward and easy to
+implement on top of LEDA: xref:concepts/VertexListGraph.adoc[VertexListGraph],
+xref:concepts/BidirectionalGraph.adoc[BidirectionalGraph], and
+xref:concepts/MutableGraph.adoc[MutableGraph].
+
+All types associated with a BGL graph class are accessed though the
+`graph_traits` class. We can partially specialize this traits class
+for the LEDA `GRAPH` class in the following way. The `node` and `edge`
+are the LEDA types for representing vertices and edges. The LEDA `GRAPH`
+is for directed graphs, so we choose `directed_tag` for the
+`directed_category`. The LEDA `GRAPH` does not automatically prevent
+the insertion of parallel edges, so we choose
+`allow_parallel_edge_tag` for the
+`edge_parallel_category`. The return type for the LEDA function
+`number_of_nodes()` and `number_of_edges()` is `int`, so
+we choose that type for the `vertices_size_type` and
+`edges_size_type` of the graph. The iterator types will be more
+complicated, so we leave that for later.
+
+[source,cpp]
+----
+
+namespace boost {
+  template <class vtype, class etype>
+  struct graph_traits< GRAPH<vtype,etype> > {
+    typedef node vertex_descriptor;
+    typedef edge edge_descriptor;
+
+    // iterator typedefs...
+
+    typedef directed_tag directed_category;
+    typedef allow_parallel_edge_tag edge_parallel_category;
+    typedef int vertices_size_type;
+    typedef int edges_size_type;
+  };
+} // namespace boost
+----
+
+First we will write the `source()` and `target()` functions of the
+xref:concepts/IncidenceGraph.adoc[IncidenceGraph] concept, which is part of the
+xref:concepts/VertexListGraph.adoc[VertexListGraph] concept. We use the LEDA
+`GRAPH` type for the graph parameter, and use `graph_traits` to
+specify the edge parameter and the vertex return type. We could also
+just use the LEDA types `node` and `edge` here, but it is better
+practice to always use `graph_traits`. If there is a need to change
+the associated vertex or edge type, you will only need to do it in one
+place, inside the specialization of `graph_traits` instead of
+throughout your code. LEDA provides `source()` and `target()` functions,
+so we merely call them.
+
+[source,cpp]
+----
+
+namespace boost {
+  template <class vtype, class etype>
+  typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor
+  source(
+    typename graph_traits< GRAPH<vtype,etype> >::edge_descriptor e,
+    const GRAPH<vtype,etype>& g)
+  {
+    return source(e);
+  }
+
+  template <class vtype, class etype>
+  typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor
+  target(
+    typename graph_traits< GRAPH<vtype,etype> >::edge_descriptor e,
+    const GRAPH<vtype,etype>& g)
+  {
+    return target(e);
+  }
+} // namespace boost
+----
+
+The next function from xref:concepts/IncidenceGraph.adoc[IncidenceGraph] that
+we need to implement is `out_edges()`. This function returns a pair
+of out-edge iterators. Since LEDA does not use STL-style iterators we
+need to implement some. There is a very handy boost utility for
+implementing iterators, called `iterator_adaptor`. Writing a
+standard conforming iterator classes is actually quite difficult, harder
+than you may think. With the `iterator_adaptor` class, you just
+implement a policy class and the rest is taken care of. The following
+code is the policy class for our out-edge iterator. In LEDA, the edge
+object itself is used like an iterator. It has functions
+`Succ_Adj_Edge()` and `Pred_Adj_Edge()` to move to the
+next and previous (successor and predecessor) edge. One gotcha in using
+the LEDA `edge` as an iterator comes up in the `dereference()` function,
+which merely returns the edge object. The dereference operator for
+standard compliant iterators must be a const member function, which is
+why the edge argument is const. However, the return type should not be
+const, hence the need for `const_cast`.
+
+[source,cpp]
+----
+
+namespace boost {
+  struct out_edge_iterator_policies
+  {
+    static void increment(edge& e)
+    { e = Succ_Adj_Edge(e,0); }
+
+    static void decrement(edge& e)
+    { e = Pred_Adj_Edge(e,0); }
+
+    template <class Reference>
+    static Reference dereference(type<Reference>, const edge& e)
+    { return const_cast<Reference>(e); }
+
+    static bool equal(const edge& x, const edge& y)
+    { return x == y; }
+  };
+} // namespace boost
+----
+
+Now we go back to the `graph_traits` class, and use
+`iterator_adaptor` to fill in the `out_edge_iterator`. We
+use the `iterator` type to specify the associated types of the iterator,
+including iterator category and value type.
+
+[source,cpp]
+----
+
+  namespace boost {
+    template <class vtype, class etype>
+    struct graph_traits< GRAPH<vtype,etype> > {
+      // ...
+      typedef iterator_adaptor<edge,
+        out_edge_iterator_policies,
+        iterator<std::bidirectional_iterator_tag,edge>
+      > out_edge_iterator;
+      // ...
+    };
+  } // namespace boost
+----
+
+With the `out_edge_iterator` defined in `graph_traits` we
+are ready to define the `out_edges()` function. The following
+definition looks complicated at first glance, but it is really quite
+simple. The return type should be a pair of out-edge iterators, so we
+use `std::pair` and then `graph_traits` to access the out-edge
+iterator types. In the body of the function we construct the out-edge
+iterators by passing in the first adjacenct edge for the begin iterator,
+and 0 for the end iterator (which is used in LEDA as the end sentinel).
+The 0 argument to `First_Adj_Edge` tells LEDA we want out-edges
+(and not in-edges).
+
+[source,cpp]
+----
+
+namespace boost {
+  template <class vtype, class etype>
+  inline std::pair<
+    typename graph_traits< GRAPH<vtype,etype> >::out_edge_iterator,
+    typename graph_traits< GRAPH<vtype,etype> >::out_edge_iterator >
+  out_edges(
+    typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor u,
+    const GRAPH<vtype,etype>& g)
+  {
+    typedef typename graph_traits< GRAPH<vtype,etype> >
+      ::out_edge_iterator Iter;
+    return std::make_pair( Iter(First_Adj_Edge(u,0)), Iter(0) );
+  }
+} // namespace boost
+----
+
+The rest of the iterator types and interface functions are constructed
+using the same techniques as above. The complete code for the LEDA
+wrapper interface is in
+link:../../../boost/graph/leda_graph.hpp[`boost/graph/leda_graph.hpp`].
+In the following code we use the BGL concept checks to make sure that we
+correctly implemented the BGL interface. These checks do not test the
+run-time behaviour of the implementation; that is tested in
+link:../test/graph.cpp[`test/graph.cpp`].
+
+[source,cpp]
+----
+
+  #include <boost/graph/graph_concepts.hpp>
+  #include <boost/graph/leda_graph.hpp>
+
+  int
+  main(int,char*[])
+  {
+    typedef GRAPH<int,int> Graph;
+    BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( BidirectionalGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( MutableGraphConcept<Graph> ));
+    return 0;
+  }
+----

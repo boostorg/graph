@@ -1,0 +1,85 @@
+// ============================================================================
+// TEMPLATE: BGL Graph Generator Documentation Page
+// ============================================================================
+//
+// Copy, rename to the generator name, place under modules/ROOT/pages/generators/
+// (or pages/auxiliary/ for iterator-style helpers).
+// Delete every `//` comment line in the final page.
+//
+// ---- PAGE LAYOUT (top to bottom) ----
+//
+//   = Title
+//   one-line description
+//   *Defined in:*
+//   == Example          <-- compiled, with expected output, comes first
+//   == Synopsis
+//   == Parameters
+//   == Variants / Notes (optional)
+//
+// ---- HEADING LEVEL RULES ----
+//
+//   == for top-level sections
+//   === only for grouped variants under a parent (numbered or named)
+//   ''' (thematic break) ONLY before a === heading. Never before ==.
+//
+// ---- EXAMPLE SECTION ----
+//
+//   The .cpp file goes in modules/ROOT/examples/generators/<name>.cpp
+//   Run doc/build_example_outputs.sh to generate the sibling .txt sidecar.
+//
+// ============================================================================
+
+[#sec:generator-name]
+= `generator_name`
+
+One-line summary of what kind of graph this generates.
+
+*Defined in:* `<boost/graph/header.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$generators/generator_name.cpp[]
+----
+
+[,text]
+----
+include::example$generators/generator_name.txt[]
+----
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename RandomGenerator, typename Graph>
+class generator_iterator;
+
+generator_iterator(RandomGenerator& gen, vertices_size_type n, ...);
+----
+
+Description of the model: what graph structure it produces, what the
+parameters control, when to use it.
+
+== Parameters
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `RandomGenerator& gen`     | A random number generator.
+| IN | `vertices_size_type n`     | Number of vertices.
+| ... | ...                        | ...
+|===
+
+// ---- OPTIONAL SECTIONS BELOW. DELETE WHAT YOU DO NOT NEED. ----
+
+== Variants
+
+For generators with sorted/unique/etc. variants in the same header,
+add them as `=== Variant name` subsections under this `==` parent.
+Separate sibling subsections with `'''`.
+
+== Notes
+
+. Caveats, edge cases, footnotes.

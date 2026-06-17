@@ -1,0 +1,130 @@
+[#sec:connected-components]
+[#sec:strongly-connected-components]
+= strong_components
+
+Computes the strongly connected components of a directed graph using Tarjan's algorithm based on DFS.
+
+*Complexity:* _O(V + E)_ +
+*Defined in:* `<boost/graph/strong_components.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/connected_components/strong.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/connected_components/strong.txt[]
+----
+
+'''
+
+=== (1) Named parameter version
+
+[source,cpp]
+----
+template <class Graph, class ComponentMap,
+          class P, class T, class R>
+typename property_traits<ComponentMap>::value_type
+strong_components(
+    Graph& g, ComponentMap comp,
+    const bgl_named_params<P, T, R>& params = all defaults);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `const Graph& g` | A directed graph. The graph type must be a model of xref:concepts/VertexListGraph.adoc[Vertex List Graph] and xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+| OUT | `ComponentMap c` | The algorithm computes how many connected components are in the graph, and assigning each component an integer label. The algorithm then records which component each vertex in the graph belongs to by recording the component number in the component property map. The `ComponentMap` type must be a model of link:../../property_map/doc/WritablePropertyMap.html[Writable Property Map]. The value type should be an integer type, preferably the same as the `vertices_size_type` of the graph. The key type must be the graph's vertex descriptor type.
+|===
+
+Named Parameters::
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| UTIL | `root_map(RootMap r_map)` | This is used by the algorithm to record the candidate root vertex for each vertex. By the end of the algorithm, there is a single root vertex for each component and `get(r_map, v)` returns the root vertex for whichever component vertex `v` is a member. The `RootMap` must be a link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map], where the key type and the value type are the vertex descriptor type of the graph. +
+*Default:* an link:../../property_map/doc/iterator_property_map.html[`iterator_property_map`] created from a `std::vector` of vertex descriptors of size `num_vertices(g)` and using the `i_map` for the index map.
+| UTIL | `discover_time_map(TimeMap t_map)` | This is used by the algorithm to keep track of the DFS ordering of the vertices. The `TimeMap` must be a model of link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map] and its value type must be an integer type. The key type must be the vertex descriptor type of the graph. +
+*Default:* an link:../../property_map/doc/iterator_property_map.html[`iterator_property_map`] created from a `std::vector` of integers with size `num_vertices(g)` and using the `i_map` for the index map.
+| UTIL | `color_map(ColorMap c_map)` | This is used by the algorithm to keep track of its progress through the graph. The type `ColorMap` must be a model of link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map] and its key type must be the graph's vertex descriptor type and the value type of the color map must model xref:concepts/property_types/ColorValue.adoc[ColorValue]. +
+*Default:* an link:../../property_map/doc/iterator_property_map.html[`iterator_property_map`] created from a `std::vector` of `default_color_type` of size `num_vertices(g)` and using the `i_map` for the index map.
+| IN | `vertex_index_map(VertexIndexMap i_map)` | This maps each vertex to an integer in the range `[0, num_vertices(g))`. This parameter is only necessary when a default is used for one of the other named parameters. The type `VertexIndexMap` must be a model of link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map]. The value type of the map must be an integer type. The vertex descriptor type of the graph needs to be usable as the key type of the map. +
+*Default:* `get(vertex_index, g)`. Note: if you use this default, make sure your graph has an internal `vertex_index` property. For example, `adjacency_list` with `VertexList=listS` does not have an internal `vertex_index` property.
+|===
+
+'''
+
+=== (2) Positional version
+
+[source,cpp]
+----
+template <class Graph, class ComponentMap>
+typename property_traits<ComponentMap>::value_type
+strong_components(const Graph& g, ComponentMap comp);
+----
+
+Equivalent to (1) with every named parameter left at its default. Uses `get(vertex_index, g)` for the index map and internally allocated maps for the root / discover-time / color work arrays.
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `const Graph& g` | Same concept requirements as (1).
+| OUT | `ComponentMap comp` | Same as (1).
+|===
+
+'''
+
+=== (3) `kosaraju_strong_components`
+
+[source,cpp]
+----
+template <class Graph, class DFSVisitor, class ComponentsMap,
+          class DiscoverTime, class FinishTime, class ColorMap>
+typename property_traits<ComponentsMap>::value_type
+kosaraju_strong_components(
+    Graph& G, ComponentsMap c,
+    FinishTime finish_time, ColorMap color);
+----
+
+Alternate implementation using Kosaraju's two-DFS-forest algorithm (CLR / Aho-Hopcroft-Ullman). Slower than Tarjan's by a constant factor, uses more memory, and requires the graph to model xref:concepts/MutableGraph.adoc[Mutable Graph].
+
+WARNING: The template has six parameters but the function signature only
+uses four — `DFSVisitor` and `DiscoverTime` are declared yet neither
+deducible from the function arguments nor referenced in the body. Calling
+this function therefore requires explicit template argument specification,
+and there are no uses of `kosaraju_strong_components` anywhere in the
+Boost tree itself. Prefer overloads (1) or (2) above.
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN/OUT | `Graph& G` | A directed graph modelling xref:concepts/MutableGraph.adoc[Mutable Graph]. The algorithm temporarily transposes the graph internally.
+| OUT | `ComponentsMap c` | Per-vertex component index. Same requirements as `ComponentMap` in (1).
+| UTIL | `FinishTime finish_time` | Read/Write property map. Stores DFS finish timestamps used to order the second pass.
+| UTIL | `ColorMap color` | Read/Write property map with `default_color_type` values. Used by both DFS passes.
+|===
+
+== Description
+
+The `strong_components()` function computes the strongly connected components of a directed graph using
+https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm[Tarjan's algorithm] based on DFS [xref:about/bibliography.adoc#tarjan72:dfs_and_linear_algo[36]].
+
+A [#def:strongly-connected-component]#*_strongly connected component_*# of a directed graph _G=(V,E)_ is a maximal set of vertices _U_ which is in _V_ such that for every pair of vertices _u_ and _v_ in _U_, we have both a path from _u_ to _v_ and path from _v_ to _u_. That is to say that _u_ and _v_ are reachable from each other.
+
+The output of the algorithm is recorded in the component property map `comp`, which will contain numbers giving the component ID assigned to each vertex. The number of components is the return value of the function.
+
+== Returns
+
+The number of strongly connected components, as a value of type `property_traits<ComponentMap>::value_type`.
+
+== Example
+
+See link:../example/strong_components.cpp[`examples/strong_components.cpp`].
+

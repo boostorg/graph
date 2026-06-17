@@ -1,0 +1,62 @@
+name: docs-check
+
+# PR-time sanity check for the Antora documentation:
+#   - b2 builds every example .cpp and regenerates its .txt sidecar
+#     (catches broken examples; failures here fail the job)
+#   - Antora renders the full site (catches broken .adoc, missing
+#     includes, broken xrefs)
+#
+# No deployment. The real publishing path is boostorg/release-tools,
+# which auto-detects doc/build_antora.sh and ships to
+# www.boost.org/doc/libs/<version>/libs/graph/.
+
+on:
+  pull_request:
+    branches: ["develop", "documentation"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  docs-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Set up boost-root so b2 can build the example .cpp files (needs
+      # the full Boost build tree, not just the headers we ship in this
+      # repo).
+      - name: Set up boost-root
+        run: |
+          git clone -b develop --depth 1 https://github.com/boostorg/boost.git ../boost-root
+          cd ../boost-root
+          git submodule update --init tools/boostdep
+          rm -rf libs/graph
+          cp -r "$GITHUB_WORKSPACE" libs/graph
+          python tools/boostdep/depinst/depinst.py --git_args "--jobs 3" graph
+          git submodule update --init --depth 1 libs/static_assert
+          ./bootstrap.sh
+          ./b2 headers
+
+      - name: Snapshot example outputs (b2)
+        working-directory: ../boost-root
+        run: ./b2 -j$(nproc) libs/graph/doc/modules/ROOT/examples
+
+      # Mirror the regenerated .txt sidecars back into the workspace so
+      # the Antora build below renders pages against fresh outputs.
+      - name: Mirror generated .txt back to workspace
+        run: rsync -a ../boost-root/libs/graph/doc/modules/ROOT/examples/ doc/modules/ROOT/examples/
+
+      # Build the site exactly as boostorg/release-tools will at release
+      # time: invoke doc/build_antora.sh, which runs npm ci + npx antora
+      # against the committed package-lock.json.
+      - name: Build the site (release-tools entry point)
+        working-directory: doc
+        run: ./build_antora.sh playbook.yml

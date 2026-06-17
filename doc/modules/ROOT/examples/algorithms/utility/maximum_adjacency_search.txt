@@ -1,0 +1,2 @@
+Maximum adjacency search completed
+Last vertex visited has highest connectivity

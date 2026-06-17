@@ -1,0 +1,177 @@
+= Disjoint Sets
+
+A union-find data structure with _union by rank_ and _path compression_.
+Maintains a collection of disjoint sets where each set is identified by a
+representative element. Used internally by `connected_components`,
+`incremental_components`, and `kruskal_minimum_spanning_tree`.
+
+*Defined in:* `<boost/pending/disjoint_sets.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$auxiliary/disjoint_sets.cpp[]
+----
+
+[,text]
+----
+include::example$auxiliary/disjoint_sets.txt[]
+----
+
+== Template Parameters
+
+[cols=",",]
+|===
+|`Rank` |must be a model of
+ReadWritePropertyMap
+with an integer value type and a key type equal to the set's element
+type.
+
+|`Parent` |must be a model of
+ReadWritePropertyMap
+and the key and value type the same as the set's element type.
+
+|`FindCompress` |should be one of the find representative and path
+compress function objects.
+|===
+
+== Members
+
+[width="100%",cols="50%,50%",options="header",]
+|===
+|Member |Description
+|`disjoint_sets(Rank r, Parent p)` |Constructor.
+
+|`disjoint_sets(const disjoint_sets& x)` |Copy constructor.
+
+|`template <class Element>` +
+`void make_set(Element x)` |Creates a singleton set containing
+Element `x`.
+
+|`template <class Element>` +
+`void link(Element x, Element y)` |Union the two sets _represented_ by
+element `x` and `y`.
+
+|`template <class Element>` +
+`void union_set(Element x, Element y)` |Union the two sets that
+_contain_ elements `x` and `y`. This is equivalent to
+`link(find_set(x),find_set(y))`.
+
+|`template <class Element>` +
+`Element find_set(Element x)` |Return the representative for the set
+containing element `x`.
+
+|`template <class ElementIterator>` +
+`std::size_t count_sets(ElementIterator first, ElementIterator last)`
+|Returns the number of disjoint sets.
+
+|`template <class ElementIterator>` +
+`void compress_sets(ElementIterator first, ElementIterator last)`
+|Flatten the parents tree so that the parent of every element is its
+representative.
+|===
+
+== Complexity
+
+The time complexity is _O(m alpha(m,n))_, where _alpha_ is the inverse
+Ackermann's function, _m_ is the number of disjoint-set operations
+(`make_set()`, `find_set()`, and `link()` and _n_ is the number
+of elements. The _alpha_ function grows very slowly, much more slowly
+than the _log_ function.
+
+== disjoint_sets_with_storage
+
+....
+
+disjoint_sets_with_storage<ID,InverseID,FindCompress>
+....
+
+This class manages the storage for the rank and parent properties
+internally. The storage is in arrays, which are indexed by element ID,
+hence the requirement for the `ID` and `InverseID` functors. The rank
+and parent properties are initialized during construction so the each
+element is in a set by itself (so it is not necessary to initialize
+objects of this class with the
+xref:algorithms/connected_components/incremental_components.adoc#sec:initialize-incremental-components[`initialize_incremental_components()`]
+function). This class is especially useful when computing the (dynamic)
+connected components of an `edge_list` graph which does not provide
+a place to store vertex properties.
+
+== Template Parameters
+
+[cols=",,",options="header",]
+|===
+|Parameter |Description |Default
+|`ID` |must be a model of
+ReadablePropertyMap
+that maps elements to integers between zero 0 and N, the total number of
+elements in the sets. |`boost::identity_property_map`
+
+|`InverseID` |must be a model of
+ReadablePropertyMap
+that maps integers to elements. |`boost::identity_property_map`
+
+|`FindCompress` |should be one of the find representative and path
+compress function objects.
+|`representative_with_full_path_compression`
+|===
+
+== Members
+
+This class has all of the members in `disjoint_sets` as well as the
+following members.
+
+....
+
+disjoint_sets_with_storage(size_type n = 0,
+                           ID id = ID(),
+                           InverseID inv = InverseID())
+....
+
+Constructor.
+
+[source,cpp]
+----
+
+template <class ElementIterator>
+void disjoint_sets_with_storage::
+  normalize_sets(ElementIterator first, ElementIterator last)
+----
+
+This rearranges the representatives such that the representative of each
+set is the element with the smallest ID. +
+Postcondition: `v >= parent[v]` +
+Precondition: the disjoint sets structure must be compressed.
+
+== representative_with_path_halving
+
+....
+
+representative_with_path_halving<Parent>
+....
+
+This is a functor which finds the representative vertex for the same
+component as the element `x`. While traversing up the representative
+tree, the functor also applies the path halving technique to shorten the
+height of the tree.
+
+....
+
+Element operator()(Parent p, Element x)
+....
+
+== representative_with_full_path_compression
+
+....
+
+representative_with_full_path_compression<Parent>
+....
+
+This is a functor which finds the representative element for the set
+that element `x` belongs to.
+
+....
+
+Element operator()(Parent p, Element x)
+....

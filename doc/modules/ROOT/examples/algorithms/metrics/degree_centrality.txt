@@ -1,0 +1,13 @@
+Degree centrality (influence = out-degree):
+  Alice: 3
+  Bob: 1
+  Carol: 2
+  Dave: 1
+  Eve: 0
+
+Degree centrality (prestige = in-degree):
+  Alice: 0
+  Bob: 1
+  Carol: 2
+  Dave: 2
+  Eve: 2

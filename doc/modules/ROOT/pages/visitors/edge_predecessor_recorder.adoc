@@ -1,0 +1,57 @@
+= edge_predecessor_recorder
+
+Records the predecessor _edge_ (not vertex) for each vertex. Useful when a
+graph has parallel edges and you need to know which specific edge the search
+used to reach a vertex.
+
+*Defined in:* `<boost/graph/visitors.hpp>` +
+*Models:* EventVisitor +
+*Typical event:* `on_tree_edge` or `on_relax_edge` (edge events only)
+
+== Example
+
+[source,cpp]
+----
+include::example$visitors/edge_predecessor_recorder.cpp[]
+----
+
+[,text]
+----
+include::example$visitors/edge_predecessor_recorder.txt[]
+----
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename PredEdgeMap, typename EventTag>
+struct edge_predecessor_recorder;
+
+template <typename PredEdgeMap, typename EventTag>
+edge_predecessor_recorder<PredEdgeMap, EventTag>
+record_edge_predecessors(PredEdgeMap pa, EventTag);
+----
+
+== Parameters
+
+[cols="1,3",options="header"]
+|===
+| Parameter | Description
+
+| `PredEdgeMap`
+| WritablePropertyMap. Key type is vertex descriptor, value type is edge
+  descriptor.
+
+| `EventTag`
+| Must be an edge event tag (e.g. `on_tree_edge`, `on_relax_edge`).
+|===
+
+== Behavior
+
+Given edge `e = (u, v)`, records `e` as the predecessor edge of `v`:
+`put(pred_edge_map, v, e)`.
+
+TIP: The source vertex (root of the search tree) will not have a predecessor
+edge assigned. Initialize it to a sentinel value before running the algorithm.
+For DFS (which creates a forest), do the same for every vertex so that all
+roots can be identified.

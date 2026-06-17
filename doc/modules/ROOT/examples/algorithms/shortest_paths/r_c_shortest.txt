@@ -1,0 +1,2 @@
+Cost: 5, hops: 2
+Path edges: 2

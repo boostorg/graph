@@ -1,0 +1,685 @@
+[#sec:espprc]
+= Resource-Constrained Shortest Paths
+
+Solves the shortest path problem with resource constraints (SPPRC) on a directed graph using a label-setting algorithm based on dynamic programming.
+
+*Complexity:* Problem-dependent; polynomial for non-elementary or acyclic cases, exponential for elementary with negative cycles +
+*Defined in:* `<boost/graph/r_c_shortest_paths.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/shortest_paths/r_c_shortest.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/shortest_paths/r_c_shortest.txt[]
+----
+
+'''
+
+=== (1) All Pareto-optimal solutions, with allocator and visitor
+
+[source,cpp]
+----
+template <class Graph,
+          class VertexIndexMap,
+          class EdgeIndexMap,
+          class Resource_Container,
+          class Resource_Extension_Function,
+          class Dominance_Function,
+          class Label_Allocator,
+          class Visitor>
+void r_c_shortest_paths(
+    const Graph& g,
+    const VertexIndexMap& vertex_index_map,
+    const EdgeIndexMap& edge_index_map,
+    typename graph_traits<Graph>::vertex_descriptor s,
+    typename graph_traits<Graph>::vertex_descriptor t,
+    std::vector<std::vector<typename graph_traits<Graph>::edge_descriptor>>& pareto_optimal_solutions,
+    std::vector<Resource_Container>& pareto_optimal_resource_containers,
+    const Resource_Container& rc,
+    const Resource_Extension_Function& ref,
+    const Dominance_Function& dominance,
+    Label_Allocator la,
+    Visitor vis)
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| The graph object on which the algorithm is applied.
+  The type `Graph` must be directed and must be a model of
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph] and
+  xref:concepts/PropertyGraph.adoc[PropertyGraph].
+
+| IN
+| `const VertexIndexMap& vertex_index_map`
+| A link:../../property_map/doc/ReadablePropertyMap.html[ReadablePropertyMap]
+  mapping vertex descriptors to integers in [0, `num_vertices(g)`).
+
+| IN
+| `const EdgeIndexMap& edge_index_map`
+| A link:../../property_map/doc/ReadablePropertyMap.html[ReadablePropertyMap]
+  mapping edge descriptors to integers in [0, `num_edges(g)`).
+
+| IN
+| `vertex_descriptor s`
+| The start vertex of the path.
+
+| IN
+| `vertex_descriptor t`
+| The end vertex of the path.
+
+| OUT
+| `std::vector<std::vector<edge_descriptor>>& pareto_optimal_solutions`
+| A container for storing all Pareto-optimal (undominated) _s_-_t_-paths.
+  The paths are returned as sequences of edge descriptors in reverse order
+  (from `t` to `s`).
+
+| OUT
+| `std::vector<Resource_Container>& pareto_optimal_resource_containers`
+| A container for storing the Pareto-optimal resource containers
+  corresponding to all Pareto-optimal solutions.
+
+| IN
+| `const Resource_Container& rc`
+| An object specifying the initial resource consumptions at vertex `s`.
+  The type `Resource_Container` must be a model of the ResourceContainer concept.
+
+| IN
+| `const Resource_Extension_Function& ref`
+| A function object, function pointer, or function specifying how a label is to
+  be extended along an arc. The type `Resource_Extension_Function` must be a model
+  of the ResourceExtensionFunction concept.
+
+| IN
+| `const Dominance_Function& dominance`
+| A function object, function pointer, or function specifying a dominance
+  relation between two labels. The type `Dominance_Function` must be a model of
+  the DominanceFunction concept.
+
+| IN
+| `Label_Allocator la`
+| An object specifying a strategy for the memory management of the labels.
+  It must offer the same interface as
+  `std::allocator<r_c_shortest_paths_label<Graph, Resource_Container>>`.
+  There is a default type `default_r_c_shortest_paths_allocator` for this
+  parameter using the STL standard allocator. If one wants to use a specialized
+  allocator, one can specify an arbitrary type as template parameter for
+  the value type to the allocator; it is rebound to the correct type.
+
+| IN
+| `Visitor vis`
+| A visitor object specifying what operations are to be performed at the
+  event points in the algorithm. The type `Visitor` must be a model of the
+  ResourceConstrainedShortestPathsVisitor concept. There is a default type
+  `default_r_c_shortest_paths_visitor` for this parameter with empty function
+  bodies.
+|===
+
+'''
+
+=== (2) One Pareto-optimal solution, with allocator and visitor
+
+[source,cpp]
+----
+template <class Graph,
+          class VertexIndexMap,
+          class EdgeIndexMap,
+          class Resource_Container,
+          class Resource_Extension_Function,
+          class Dominance_Function,
+          class Label_Allocator,
+          class Visitor>
+void r_c_shortest_paths(
+    const Graph& g,
+    const VertexIndexMap& vertex_index_map,
+    const EdgeIndexMap& edge_index_map,
+    typename graph_traits<Graph>::vertex_descriptor s,
+    typename graph_traits<Graph>::vertex_descriptor t,
+    std::vector<typename graph_traits<Graph>::edge_descriptor>& pareto_optimal_solution,
+    Resource_Container& pareto_optimal_resource_container,
+    const Resource_Container& rc,
+    const Resource_Extension_Function& ref,
+    const Dominance_Function& dominance,
+    Label_Allocator la,
+    Visitor vis)
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| The graph object on which the algorithm is applied.
+  The type `Graph` must be directed and must be a model of
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph] and
+  xref:concepts/PropertyGraph.adoc[PropertyGraph].
+
+| IN
+| `const VertexIndexMap& vertex_index_map`
+| A link:../../property_map/doc/ReadablePropertyMap.html[ReadablePropertyMap]
+  mapping vertex descriptors to integers in [0, `num_vertices(g)`).
+
+| IN
+| `const EdgeIndexMap& edge_index_map`
+| A link:../../property_map/doc/ReadablePropertyMap.html[ReadablePropertyMap]
+  mapping edge descriptors to integers in [0, `num_edges(g)`).
+
+| IN
+| `vertex_descriptor s`
+| The start vertex of the path.
+
+| IN
+| `vertex_descriptor t`
+| The end vertex of the path.
+
+| OUT
+| `std::vector<edge_descriptor>& pareto_optimal_solution`
+| A container for storing the first Pareto-optimal (undominated) _s_-_t_-path.
+  The path is returned as a sequence of edge descriptors in reverse order
+  (from `t` to `s`). This argument is not modified if there are no solutions.
+
+| OUT
+| `Resource_Container& pareto_optimal_resource_container`
+| A `Resource_Container` object for storing the Pareto-optimal resource
+  container corresponding to the first Pareto-optimal path. This argument
+  is not modified if there are no solutions.
+
+| IN
+| `const Resource_Container& rc`
+| An object specifying the initial resource consumptions at vertex `s`.
+  The type `Resource_Container` must be a model of the ResourceContainer concept.
+
+| IN
+| `const Resource_Extension_Function& ref`
+| A function object, function pointer, or function specifying how a label is to
+  be extended along an arc. The type `Resource_Extension_Function` must be a model
+  of the ResourceExtensionFunction concept.
+
+| IN
+| `const Dominance_Function& dominance`
+| A function object, function pointer, or function specifying a dominance
+  relation between two labels. The type `Dominance_Function` must be a model of
+  the DominanceFunction concept.
+
+| IN
+| `Label_Allocator la`
+| An object specifying a strategy for the memory management of the labels.
+  It must offer the same interface as
+  `std::allocator<r_c_shortest_paths_label<Graph, Resource_Container>>`.
+  There is a default type `default_r_c_shortest_paths_allocator` for this
+  parameter using the STL standard allocator.
+
+| IN
+| `Visitor vis`
+| A visitor object specifying what operations are to be performed at the
+  event points in the algorithm. The type `Visitor` must be a model of the
+  ResourceConstrainedShortestPathsVisitor concept. There is a default type
+  `default_r_c_shortest_paths_visitor` for this parameter with empty function
+  bodies.
+|===
+
+'''
+
+=== (3) All Pareto-optimal solutions, default allocator and visitor
+
+[source,cpp]
+----
+template <class Graph,
+          class VertexIndexMap,
+          class EdgeIndexMap,
+          class Resource_Container,
+          class Resource_Extension_Function,
+          class Dominance_Function>
+void r_c_shortest_paths(
+    const Graph& g,
+    const VertexIndexMap& vertex_index_map,
+    const EdgeIndexMap& edge_index_map,
+    typename graph_traits<Graph>::vertex_descriptor s,
+    typename graph_traits<Graph>::vertex_descriptor t,
+    std::vector<std::vector<typename graph_traits<Graph>::edge_descriptor>>& pareto_optimal_solutions,
+    std::vector<Resource_Container>& pareto_optimal_resource_containers,
+    const Resource_Container& rc,
+    const Resource_Extension_Function& ref,
+    const Dominance_Function& dominance)
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| The graph object on which the algorithm is applied.
+  The type `Graph` must be directed and must be a model of
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph] and
+  xref:concepts/PropertyGraph.adoc[PropertyGraph].
+
+| IN
+| `const VertexIndexMap& vertex_index_map`
+| A link:../../property_map/doc/ReadablePropertyMap.html[ReadablePropertyMap]
+  mapping vertex descriptors to integers in [0, `num_vertices(g)`).
+
+| IN
+| `const EdgeIndexMap& edge_index_map`
+| A link:../../property_map/doc/ReadablePropertyMap.html[ReadablePropertyMap]
+  mapping edge descriptors to integers in [0, `num_edges(g)`).
+
+| IN
+| `vertex_descriptor s`
+| The start vertex of the path.
+
+| IN
+| `vertex_descriptor t`
+| The end vertex of the path.
+
+| OUT
+| `std::vector<std::vector<edge_descriptor>>& pareto_optimal_solutions`
+| A container for storing all Pareto-optimal (undominated) _s_-_t_-paths.
+  The paths are returned as sequences of edge descriptors in reverse order
+  (from `t` to `s`).
+
+| OUT
+| `std::vector<Resource_Container>& pareto_optimal_resource_containers`
+| A container for storing the Pareto-optimal resource containers
+  corresponding to all Pareto-optimal solutions.
+
+| IN
+| `const Resource_Container& rc`
+| An object specifying the initial resource consumptions at vertex `s`.
+  The type `Resource_Container` must be a model of the ResourceContainer concept.
+
+| IN
+| `const Resource_Extension_Function& ref`
+| A function object, function pointer, or function specifying how a label is to
+  be extended along an arc. The type `Resource_Extension_Function` must be a model
+  of the ResourceExtensionFunction concept.
+
+| IN
+| `const Dominance_Function& dominance`
+| A function object, function pointer, or function specifying a dominance
+  relation between two labels. The type `Dominance_Function` must be a model of
+  the DominanceFunction concept.
+|===
+
+'''
+
+=== (4) One Pareto-optimal solution, default allocator and visitor
+
+[source,cpp]
+----
+template <class Graph,
+          class VertexIndexMap,
+          class EdgeIndexMap,
+          class Resource_Container,
+          class Resource_Extension_Function,
+          class Dominance_Function>
+void r_c_shortest_paths(
+    const Graph& g,
+    const VertexIndexMap& vertex_index_map,
+    const EdgeIndexMap& edge_index_map,
+    typename graph_traits<Graph>::vertex_descriptor s,
+    typename graph_traits<Graph>::vertex_descriptor t,
+    std::vector<typename graph_traits<Graph>::edge_descriptor>& pareto_optimal_solution,
+    Resource_Container& pareto_optimal_resource_container,
+    const Resource_Container& rc,
+    const Resource_Extension_Function& ref,
+    const Dominance_Function& dominance)
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| The graph object on which the algorithm is applied.
+  The type `Graph` must be directed and must be a model of
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph] and
+  xref:concepts/PropertyGraph.adoc[PropertyGraph].
+
+| IN
+| `const VertexIndexMap& vertex_index_map`
+| A link:../../property_map/doc/ReadablePropertyMap.html[ReadablePropertyMap]
+  mapping vertex descriptors to integers in [0, `num_vertices(g)`).
+
+| IN
+| `const EdgeIndexMap& edge_index_map`
+| A link:../../property_map/doc/ReadablePropertyMap.html[ReadablePropertyMap]
+  mapping edge descriptors to integers in [0, `num_edges(g)`).
+
+| IN
+| `vertex_descriptor s`
+| The start vertex of the path.
+
+| IN
+| `vertex_descriptor t`
+| The end vertex of the path.
+
+| OUT
+| `std::vector<edge_descriptor>& pareto_optimal_solution`
+| A container for storing the first Pareto-optimal (undominated) _s_-_t_-path.
+  The path is returned as a sequence of edge descriptors in reverse order
+  (from `t` to `s`). This argument is not modified if there are no solutions.
+
+| OUT
+| `Resource_Container& pareto_optimal_resource_container`
+| A `Resource_Container` object for storing the Pareto-optimal resource
+  container corresponding to the first Pareto-optimal path. This argument
+  is not modified if there are no solutions.
+
+| IN
+| `const Resource_Container& rc`
+| An object specifying the initial resource consumptions at vertex `s`.
+  The type `Resource_Container` must be a model of the ResourceContainer concept.
+
+| IN
+| `const Resource_Extension_Function& ref`
+| A function object, function pointer, or function specifying how a label is to
+  be extended along an arc. The type `Resource_Extension_Function` must be a model
+  of the ResourceExtensionFunction concept.
+
+| IN
+| `const Dominance_Function& dominance`
+| A function object, function pointer, or function specifying a dominance
+  relation between two labels. The type `Dominance_Function` must be a model of
+  the DominanceFunction concept.
+|===
+
+== Description
+
+=== Introduction and Problem Description
+
+The shortest path problem with resource constraints (SPPRC) seeks a shortest (cheapest, fastest) path in a directed graph with arbitrary arc lengths (travel times, costs) from an origin node to a destination node subject to one or more resource constraints. For example, one might seek a path of minimum length from _s_ to _t_ subject to the constraints that
+
+* the total travel time must not exceed some upper bound and/or
+* the total amount of some good that has to be picked up at the vertices along the path be less than or equal to some capacity limit and/or
+* if two vertices _i_ and _j_ are visited on a path, then _i_ must be visited before _j_
+* etc.
+
+The problem is NP-hard in the strong sense. If the path need not be elementary, i.e., if it is allowed that vertices are visited more than once, the problem can be solved in pseudopolynomial time. A central aspect is that two (partial) paths in an SPPRC can be incomparable, contrary to the SPP without resource constraints. This makes the SPPRC similar to a multi-criteria decision problem. +
+A recent survey on the problem is: +
+Irnich, S.; Desaulniers, G. (2005): +
+Shortest Path Problems with Resource Constraints +
+in: +
+Desaulniers, G.; Desrosiers, J.; Solomon, M. (eds.) (2005): +
+Column Generation +
+Springer, New York, pp. 33-65 +
+(available online
+https://www.researchgate.net/publication/227142556_Shortest_Path_Problems_with_Resource_Constraints[here])
+
+The present document cannot give a complete introduction to SPPRCs. To get a thorough understanding of the problem, the reader is referred to the above paper. However, to understand the algorithm and its implementation, it is necessary to explain some fundamental ideas and point out the differences to a labelling algorithm for the shortest path problem without resource constraints (SPP).
+
+The standard solution technique for SPPRCs is a labelling algorithm based on dynamic programming. This approach uses the concepts of _resources_ and _resource extension functions_. A resource is an arbitrarily scaled one-dimensional piece of information that can be determined or measured at the vertices of a directed walk in a graph. Examples are cost, time, load, or the information 'Is a vertex _i_ visited on the current path?'. A resource is _constrained_ if there is at least one vertex in the graph where the resource must not take all possible values. The _resource window_ of a resource at a vertex is the set of allowed values for the resource at this vertex.
+
+A resource extension function is defined on each arc in a graph for each resource considered. A resource extension function for a resource maps the set of all possible vectors (in a mathematical sense, not to be confused with a `std::vector`) of resource values at the source of an arc to the set of possible values of the resource at the target of the arc. This means that the value of a resource at a vertex may depend on the values of one or more other resources at the preceding vertex.
+
+_Labels_ are used to store the information on the resource values for partial paths. A label in an SPPRC labelling algorithm is not a mere triple of resident vertex, current cost and predecessor vertex, as it is the case in labelling algorithms for the SPP. A label for an SPPRC labelling algorithm stores its resident vertex, its predecessor _arc_ over which it has been extended, its predecessor label, and its current vector of resource values. The criterion to be minimized (cost, travel time, travel distance, whatsoever) is also treated as a (possibly unconstrained) resource. It is necessary to store the predecessor arc instead of the predecessor vertex, because, due to the resource constraints, one can not assume that the underlying graph is simple. Labels reside at vertices, and they are propagated via resource extension functions when they are extended along an arc. An _extension_ of a label along an arc (_i_, _j_) is _feasible_ if the resulting label _l_ at _j_ is feasible, which is the case if and only if all resource values of _l_ are within their resource windows.
+
+To keep the number of labels as small as possible, it is decisive to perform a _dominance step_ for eliminating unnecessary labels. A label __l__~1~ _dominates_ a label __l__~2~ if both reside at the same vertex and if, for each feasible extension of __l__~2~, there is also a feasible extension of __l__~1~ where the value of each cardinally scaled resource is less than or equal to the value of the resource in the extension of __l__~2~, and where the value of each nominally scaled resource is equal to the value of the resource in the extension of __l__~2~. Dominated labels need not be extended. A label which is not dominated by any other label is called undominated or Pareto-optimal. The application of the dominance principle is optional -- at least from a theoretical perspective.
+
+The implementation is a label-setting algorithm. This means that there must be one or more resources whose cumulated consumption(s) after extension is/are always at least as high as before. This is similar to the Dijkstra algorithm for the SPP without resource constraints where the distance measure must be non-negative. It is sufficient if there is one resource with a non-negative resource consumption along all arcs (for example, non-negative arc lengths or non-negative arc traversal times).
+
+=== Concepts
+
+[#ResourceContainer]
+== ResourceContainer
+
+A type modelling the ResourceContainer concept is used to store the current resource consumptions of a label.
+
+*Refinement of* +
+http://www.boost.org/sgi/stl/DefaultConstructible.html[DefaultConstructible],
+link:../../utility/CopyConstructible.html[CopyConstructible],
+http://www.boost.org/sgi/stl/Assignable.html[Assignable],
+http://www.boost.org/sgi/stl/LessThanComparable.html[LessThanComparable],
+http://www.boost.org/sgi/stl/EqualityComparable.html[EqualityComparable]
+
+*Valid Expressions* +
+See <<ResourceExtensionFunction,ResourceExtensionFunction>> concept.
+
+[#Label]
+== Label
+
+This concept defines the interface for a label in the `r_c_shortest_paths` functions. It is a design decision not to parameterize the functions on the type of label. The type `template<class Graph, class Resource_Container> struct r_c_shortest_paths_label` is used to model this concept.
+
+*Valid Expressions* +
+If `label` is an object of type `r_c_shortest_paths_label`, the following expressions are valid:
+
+[cols="1,3"]
+|===
+| Expression | Description
+
+| `label.num`
+| Returns an unsigned integer value specifying the number of the label. Labels are numbered consecutively in order of their creation.
+
+| `label.cumulated_resource_consumption`
+| Returns the object associated with `label` modelling the ResourceContainer concept.
+
+| `label.p_pred_label`
+| Returns a `const` pointer to the predecessor label, i.e., to the label whose extension along `label.pred_edge` yielded the `label` object.
+
+| `label.pred_edge`
+| Returns an edge descriptor for the arc along which `label.p_pred_label` was extended to yield the `label` object.
+
+| `label.resident_vertex`
+| Returns a vertex descriptor for the vertex at which the `label` object resides.
+
+| `label.b_is_dominated`
+| Returns a boolean value indicating whether the `label` object is dominated by some other label residing at the vertex `label.resident_vertex`. Is useful only after dominance checking has been performed, i.e. only in the visitor functions `on_label_dominated` and `on_label_not_dominated` (see <<ResourceConstrainedShortestPathsVisitor,below>>).
+|===
+
+*Invariants* +
+Every `r_c_shortest_paths_label` object, except for the first label, has a valid (not null) `p_pred_label` pointer and a valid `pred_edge` member. The `p_pred_label` pointer of the label with `num` member equal to zero is a null pointer, and the `pred_edge` member of this label is a default-constructed edge descriptor.
+
+[#ResourceExtensionFunction]
+== ResourceExtensionFunction
+
+A model of the ResourceExtensionFunction concept is used to specify how a label is to be extended along an arc.
+
+*Valid Expressions* +
+If `ref` models the ResourceExtensionFunction concept, and if the type `Resource_Container` models the ResourceContainer concept, the following expression is valid:
+
+[cols="1,1"]
+|===
+a|
+[source,cpp]
+----
+bool b = ref( const Graph& g,
+              Resource_Container& new_cont,
+              const Resource_Container& old_cont,
+              graph_traits<Graph>::edge_descriptor ed )
+----
+
+| `ref` must return `true` if and only if the extension is feasible, i.e., if `new_cont` fulfills all resource constraints at the target vertex of `ed`.
+|===
+
+Moreover, a reference to a type modelling the ResourceExtensionFunction concept can be passed as a parameter to `r_c_shortest_paths`, see above.
+
+Hence, a type modelling the ResourceExtensionFunction concept is likely to be a function or a http://www.boost.org/sgi/stl/functors.html[function object].
+
+*Invariants* +
+If `ref` models the ResourceExtensionFunction concept, and if the type `Resource_Container` models the ResourceContainer concept, after the call
+
+[source,cpp]
+----
+ref( const Graph& g,
+     Resource_Container& new_cont,
+     const Resource_Container& old_cont,
+     graph_traits<Graph>::edge_descriptor )
+----
+
+the expression `old_cont \<= new_cont` evaluates to `true`. +
+This is because, as stated above, the implementation is a label-setting algorithm. Therefore, the Less-Than operator for ResourceContainer must compare one or more resource(s) whose resource consumption(s) along any arc is/are non-decreasing in order for the algorithm to work properly.
+
+== DominanceFunction
+
+A model of DominanceFunction is used to specify a dominance relation between two labels.
+
+*Refinement of* +
+http://www.boost.org/sgi/stl/BinaryPredicate.html[BinaryPredicate]
+
+*Valid Expressions* +
+If `dominance` models the DominanceFunction concept, and if the type `Resource_Container` models the ResourceContainer concept, the following expression is valid:
+
+[cols="1,1"]
+|===
+a|
+....
+bool b = dominance(const Resource_Container& rc1, const Resource_Container& rc2)
+....
+
+| `dominance` must return `true` if and only if `rc1` dominates `rc2`.
+|===
+
+Moreover, a reference to a type modelling the DominanceFunction concept can be passed as a parameter to `r_c_shortest_paths`, see above.
+
+*Invariants* +
+A type modelling the DominanceFunction concept must return `true` if and only if `rc1\<=rc2`. It must _not_ return `false` if `rc1==rc2`. Then, it is guaranteed that no two labels with identical resource consumption dominate each other and are both considered as dominated by the `r_c_shortest_paths` functions.
+
+[#ResourceConstrainedShortestPathsVisitor]
+== ResourceConstrainedShortestPathsVisitor
+
+This concept defines the visitor interface for `r_c_shortest_paths`. A user can define a type with this interface and pass an object of this type to `r_c_shortest_paths` to perform user-defined actions at the event points of the algorithm. Note that the object is passed by value.
+
+*Refinement of* +
+http://www.boost.org/sgi/stl/DefaultConstructible.html[DefaultConstructible],
+link:../../utility/CopyConstructible.html[CopyConstructible]
+
+*Valid Expressions* +
+If `vis` is an object of a type modelling the ResourceConstrainedShortestPathsVisitor concept, and if `g` is an object of a type `Graph` modelling the IncidenceGraph and the PropertyGraph concepts, and if it is a directed graph, and if `l` is an object of a type `Label` modelling the Label concept, the following expressions are valid:
+
+[cols="1"]
+|===
+| `vis.on_enter_loop(const Queue& queue, const Graph& g)`
+| `vis.on_label_popped(const Label& l, const Graph& g)`
+| `vis.on_label_feasible(const Label& l, const Graph& g)`
+| `vis.on_label_not_feasible(const Label& l, const Graph& g)`
+| `vis.on_label_dominated(const Label& l, const Graph& g)`
+| `vis.on_label_not_dominated(const Label& l, const Graph& g)`
+|===
+
+Note that _on_enter_loop_ returns a boolean that signals whether the main loop should continue (see the _default_r_c_shortest_paths_visitor_ in the link:../../../boost/graph/r_c_shortest_paths.hpp[`source code`] for inspiration). See the <<Label,description of the Label concept>> for the interface of a Label. See the <<FunctionsDescription,algorithm description>> for information on when these functions are called.
+
+[#FunctionsDescription]
+=== Algorithm Description
+
+The functions are an implementation of a priority-queue-based label-setting algorithm. At each iteration, the algorithm picks a label _l_ from a priority queue (the set of unprocessed labels) and checks it for dominance against the current set of labels at the vertex _i_ where _l_ resides. If _l_ is dominated by some other label residing at _i_, _l_ is deleted from the set of labels residing at _i_. If _l_ is undominated, it is extended along all out-edges of _i_. Each resulting new label is checked for feasibility, and if it is feasible, it is added to the set of unprocessed labels and to the set of labels residing at the respective successor vertex of _i_. If a new label is not feasible, it is discarded. The algorithm stops when there are no more unprocessed labels. It then checks whether the destination vertex could be reached (which may not be the case even for a strongly connected graph because of the resource constraints), constructs one or all Pareto-optimal (i.e., undominated) _s_-_t_-path(s) and returns. A pseudo-code of the algorithm follows.
+
+[source,cpp]
+----
+r_c_shortest_paths( g,
+                    vertex_index_map,
+                    edge_index_map,
+                    s,
+                    t,
+                    pareto_optimal_solutions,
+                    pareto_optimal_resource_containers,
+                    rc,
+                    ref,
+                    dominance,
+                    la,
+                    vis )
+{
+  Label first_label, cur_label, new_label
+  Set of Labels unprocessed_labels, labels_cur_vertex
+  initialize first_label with rc
+  INSERT(unprocessed_labels, first_label)
+  while(unprocessed_labels != Ø)
+    cur_label := EXTRACTMIN(unprocessed_labels)                      ◁ vis.on_label_popped(cur_label)
+    if(cur_label is not dominated)
+      vertex i = ResidentVertex(cur_label)
+      perform pairwise dominance check over labels resident at i
+      mark all dominated labels as dominated
+      DELETE all labels which are dominated AND processed
+    if(cur_label is not dominated)                                   ◁ vis.on_label_not_dominated(cur_label)
+      mark cur_label as processed
+      for each arc (i, j) in the forward star of i
+        new_label := ref(cur_label)
+        if(new_label is not feasible)                                ◁ vis.on_label_not_feasible(new_label)
+          DELETE(new_label)
+        else                                                         ◁ vis.on_label_feasible(new_label)
+          INSERT(unprocessed_labels, new_label)
+          INSERT(set of labels resident at j,new_label)
+    else                                                             ◁ vis.on_label_dominated(cur_label)
+      DELETE(cur_label)
+  if(t could be reached from s)
+    for each label resident at t
+      INSERT(pareto_optimal_resource_containers, label.resource_container)
+      recursively construct pareto_optimal_path
+      INSERT(pareto_optimal_solutions, pareto_optimal_path)
+      if(only one Pareto-optimal solution is sought)
+        BREAK
+}
+----
+
+=== Preconditions
+
+* `s` and `t` are valid vertex descriptors for `g`.
+* `rc` is within the resource windows at `s`, i.e., it constitutes a feasible `Resource_Container` object at `s` (see <<Discussion,discussion>>).
+
+== Throws
+
+The function itself does not throw any exceptions. However, depending on the template parameters, exceptions may be thrown from within the function.
+
+[#Discussion]
+== Notes
+
+=== Discussion
+
+The function leaves a lot of work to the user. It is almost like a small framework for SPPRCs. This, however, is a property inherent to the problem. It is entirely up to the user to make sure that he stores the 'right' resources in his resource container object, that the resource extension function extends a label in the desired way, and that the dominance function declares the 'right' labels as dominated and not dominated. In particular, the precondition that the initial ResourceContainer object supplied to the function must be feasible is as important as it is unpleasant. The implementation does not check this and, hence, sacrifices comfort for genericity here. It was a design decision not to make any assumptions with respect to the relationship between the type modelling ResourceContainer and the vertex properties of the graph type.
+
+In case the underlying graph does not contain negative cycles (cycles with overall negative resource consumption for the unconstrained resource whose consumption is to be minimized, such as cost or distance), the resulting paths will always be elementary, i.e., without repetitions of vertices. In the presence of negative cycles, the algorithm is finite if there is at least one strictly increasing resource, i.e., one resource with strictly positive resource consumption on all arcs (this is a sufficient condition). Otherwise, one must provide a customized type for the ResourceContainer concept to ensure finiteness. See, for example +
+Feillet, D.; Dejax, P.; Gendreau, M.; Gueguen, C. (2004): +
+An Exact Algorithm for the Elementary Shortest Path Problem with Resource Constraints: Application to Some Vehicle Routing Problems +
+Networks, vol. 44, pp. 216-229.
+
+Experience shows that for 'small' resource containers, it may be useful to try a specialized small object allocator, e.g., from the Boost Pool library. For larger resource containers (i.e., for a large number of resources), the default allocator is the right choice.
+
+=== Allocator and Visitor Defaults
+
+If the third or the fourth overload of the function is used, objects of type `default_r_c_shortest_paths_allocator` and `default_r_c_shortest_paths_visitor` are used as the `Label_Allocator` and `Visitor` parameters respectively. If the first or the second overload is used, one must specify both a `Label_Allocator` and a `Visitor` parameter. If one wants to develop a user-defined type only for `Visitor`, one can use `default_r_c_shortest_paths_allocator` as `Label_Allocator` parameter. If one wants to use only a specialized allocator, one can use `default_r_c_shortest_paths_visitor` as `Visitor` parameter.
+
+=== Utility Function: check_r_c_path
+
+There is a utility function called `check_r_c_path` that can be used for debugging purposes, if `r_c_shortest_paths` returns a path as feasible and Pareto-optimal and the user is of the opinion that the path is either infeasible or not optimal:
+
+[source,cpp]
+----
+template <class Graph,
+          class Resource_Container,
+          class Resource_Extension_Function>
+void check_r_c_path(
+    const Graph& g,
+    const std::vector<typename graph_traits<Graph>::edge_descriptor>& ed_vec_path,
+    const Resource_Container& initial_resource_levels,
+    bool b_result_must_be_equal_to_desired_final_resource_levels,
+    const Resource_Container& desired_final_resource_levels,
+    Resource_Container& actual_final_resource_levels,
+    const Resource_Extension_Function& ref,
+    bool& b_is_a_path_at_all,
+    bool& b_feasible,
+    bool& b_correctly_extended,
+    typename graph_traits<Graph>::edge_descriptor& ed_last_extended_arc)
+----
+
+The boolean parameters have the following meaning:
+
+* If `b_result_must_be_equal_to_desired_final_resource_levels==true`, computed accumulated final resource levels must be equal to `desired_final_resource_levels`.
+* If `b_result_must_be_equal_to_desired_final_resource_levels==false`, computed accumulated final resource levels must be less than or equal to `desired_final_resource_levels`.
+* `b_is_a_path_at_all==true` if and only if `ed_vec_path` specifies a walk in a graph-theoretical sense, i.e., a sequence of arcs where the target of an arc is the source of the next arc, or a reverse walk, where the source of one arc is the target of the next arc. Note that in the world of resource-constrained shortest paths, a path need not be elementary: Repetitions of vertices or arcs are allowed. When the graph does not have any cycles of negative cost (traversal cost, travel time etc.), the paths returned by `r_c_shortest_paths` will be elementary. Otherwise, one must use appropriate resource containers and resource extension and dominance functions (see the abovementioned references).
+* `b_feasible==true` if and only if `b_is_a_path_at_all==true` and all resource windows at all vertices along the path are maintained.
+* When `b_result_must_be_equal_to_desired_final_resource_levels==true` (`false`), `b_correctly_extended==true` if and only if `b_feasible==true` and the computed resource levels at the end of the path are equal to (less than or equal to) the desired final resource levels as specified in `desired_final_resource_levels`.
+
+`ed_last_extended_arc` stores the edge descriptor of the last extended arc. If `ed_vec_path` is a path of positive length and `b_feasible==false`, `ed_last_extended_arc` is the edge descriptor of the arc at whose target vertex the first violation of a resource window occured.
+
+The file link:../example/r_c_shortest_paths_example.cpp[`example/r_c_shortest_paths_example.cpp`] provides additional examples for how SPPRCs can be solved with the `r_c_shortest_paths` functions. There is an example for an SPP without resource constraints and an example for a shortest path problem with time windows. +
+It is obvious that one would not use the algorithm for SPPs without resource constraints, because there are faster algorithms for this problem, but one would expect a code for the SPP with resource constraints to be able to handle such a case.
+
