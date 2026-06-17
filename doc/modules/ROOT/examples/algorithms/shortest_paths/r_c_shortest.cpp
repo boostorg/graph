@@ -42,7 +42,7 @@ int main() {
 
     std::vector<Descriptor> path;
     Res result{0, 0};
-    r_c_shortest_paths(g, get(vertex_index, g), get(&Edge::idx, g),
+    r_c_shortest_paths(g, get(vertex_index, g), 
         vertex(0, g), vertex(3, g), path, result,
         Res{0, 0}, ResExt{}, Dom{});
 
