@@ -26,7 +26,6 @@ include::example$algorithms/shortest_paths/r_c_shortest.txt[]
 ----
 template <class Graph,
           class VertexIndexMap,
-          class EdgeIndexMap,
           class Resource_Container,
           class Resource_Extension_Function,
           class Dominance_Function,
@@ -35,7 +34,6 @@ template <class Graph,
 void r_c_shortest_paths(
     const Graph& g,
     const VertexIndexMap& vertex_index_map,
-    const EdgeIndexMap& edge_index_map,
     typename graph_traits<Graph>::vertex_descriptor s,
     typename graph_traits<Graph>::vertex_descriptor t,
     std::vector<std::vector<typename graph_traits<Graph>::edge_descriptor>>& pareto_optimal_solutions,
@@ -62,11 +60,6 @@ void r_c_shortest_paths(
 | `const VertexIndexMap& vertex_index_map`
 | A link:../../property_map/doc/ReadablePropertyMap.html[ReadablePropertyMap]
   mapping vertex descriptors to integers in [0, `num_vertices(g)`).
-
-| IN
-| `const EdgeIndexMap& edge_index_map`
-| A link:../../property_map/doc/ReadablePropertyMap.html[ReadablePropertyMap]
-  mapping edge descriptors to integers in [0, `num_edges(g)`).
 
 | IN
 | `vertex_descriptor s`
@@ -131,7 +124,6 @@ void r_c_shortest_paths(
 ----
 template <class Graph,
           class VertexIndexMap,
-          class EdgeIndexMap,
           class Resource_Container,
           class Resource_Extension_Function,
           class Dominance_Function,
@@ -140,7 +132,6 @@ template <class Graph,
 void r_c_shortest_paths(
     const Graph& g,
     const VertexIndexMap& vertex_index_map,
-    const EdgeIndexMap& edge_index_map,
     typename graph_traits<Graph>::vertex_descriptor s,
     typename graph_traits<Graph>::vertex_descriptor t,
     std::vector<typename graph_traits<Graph>::edge_descriptor>& pareto_optimal_solution,
@@ -167,11 +158,6 @@ void r_c_shortest_paths(
 | `const VertexIndexMap& vertex_index_map`
 | A link:../../property_map/doc/ReadablePropertyMap.html[ReadablePropertyMap]
   mapping vertex descriptors to integers in [0, `num_vertices(g)`).
-
-| IN
-| `const EdgeIndexMap& edge_index_map`
-| A link:../../property_map/doc/ReadablePropertyMap.html[ReadablePropertyMap]
-  mapping edge descriptors to integers in [0, `num_edges(g)`).
 
 | IN
 | `vertex_descriptor s`
@@ -235,14 +221,12 @@ void r_c_shortest_paths(
 ----
 template <class Graph,
           class VertexIndexMap,
-          class EdgeIndexMap,
           class Resource_Container,
           class Resource_Extension_Function,
           class Dominance_Function>
 void r_c_shortest_paths(
     const Graph& g,
     const VertexIndexMap& vertex_index_map,
-    const EdgeIndexMap& edge_index_map,
     typename graph_traits<Graph>::vertex_descriptor s,
     typename graph_traits<Graph>::vertex_descriptor t,
     std::vector<std::vector<typename graph_traits<Graph>::edge_descriptor>>& pareto_optimal_solutions,
@@ -267,11 +251,6 @@ void r_c_shortest_paths(
 | `const VertexIndexMap& vertex_index_map`
 | A link:../../property_map/doc/ReadablePropertyMap.html[ReadablePropertyMap]
   mapping vertex descriptors to integers in [0, `num_vertices(g)`).
-
-| IN
-| `const EdgeIndexMap& edge_index_map`
-| A link:../../property_map/doc/ReadablePropertyMap.html[ReadablePropertyMap]
-  mapping edge descriptors to integers in [0, `num_edges(g)`).
 
 | IN
 | `vertex_descriptor s`
@@ -318,14 +297,12 @@ void r_c_shortest_paths(
 ----
 template <class Graph,
           class VertexIndexMap,
-          class EdgeIndexMap,
           class Resource_Container,
           class Resource_Extension_Function,
           class Dominance_Function>
 void r_c_shortest_paths(
     const Graph& g,
     const VertexIndexMap& vertex_index_map,
-    const EdgeIndexMap& edge_index_map,
     typename graph_traits<Graph>::vertex_descriptor s,
     typename graph_traits<Graph>::vertex_descriptor t,
     std::vector<typename graph_traits<Graph>::edge_descriptor>& pareto_optimal_solution,
@@ -350,11 +327,6 @@ void r_c_shortest_paths(
 | `const VertexIndexMap& vertex_index_map`
 | A link:../../property_map/doc/ReadablePropertyMap.html[ReadablePropertyMap]
   mapping vertex descriptors to integers in [0, `num_vertices(g)`).
-
-| IN
-| `const EdgeIndexMap& edge_index_map`
-| A link:../../property_map/doc/ReadablePropertyMap.html[ReadablePropertyMap]
-  mapping edge descriptors to integers in [0, `num_edges(g)`).
 
 | IN
 | `vertex_descriptor s`
