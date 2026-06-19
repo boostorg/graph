@@ -22,6 +22,7 @@
 #include <boost/graph/properties.hpp>
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/graph/detail/augment.hpp>
+#include <boost/concept/assert.hpp>
 
 namespace boost
 {
@@ -34,6 +35,13 @@ namespace detail
     : public put_get_helper< typename property_traits< Weight >::value_type,
           MapReducedWeight< Graph, Weight, Distance, Reversed > >
     {
+        
+        using edge_descriptor = typename graph_traits< Graph >::edge_descriptor;
+        using vertex_descriptor = typename graph_traits< Graph >::vertex_descriptor;
+
+        BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<Weight, edge_descriptor> ));
+        BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<Distance, vertex_descriptor> ));
+        
         using g_traits = graph_traits< Graph >;
 
     public:
@@ -55,9 +63,9 @@ namespace detail
 
     private:
         const Graph& g_;
-        const Weight weight_;
-        const Distance distance_;
-        const Reversed rev_;
+        Weight weight_;
+        Distance distance_;
+        Reversed rev_;
     };
 
     template < class Graph, class Weight, class Distance, class Reversed >
@@ -79,9 +87,11 @@ void successive_shortest_path_nonnegative_weights(const Graph& g,
     ResidualCapacity residual_capacity, Weight weight, Reversed rev,
     VertexIndex index, Pred pred, Distance distance, Distance2 distance_prev)
 {
+
+    using edge_descriptor = typename graph_traits< Graph >::edge_descriptor;
+    
     filtered_graph< const Graph, is_residual_edge< ResidualCapacity > > gres
         = detail::residual_graph(g, residual_capacity);
-    typedef typename graph_traits< Graph >::edge_descriptor edge_descriptor;
 
     BGL_FORALL_EDGES_T(e, g, Graph)
     {
