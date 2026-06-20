@@ -5,7 +5,7 @@
 #include <vector>
 
 int main() {
-    using Graph  = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS>;
+    using Graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS>;
     using Vertex = Graph::vertex_descriptor;
 
     // Undirected graph given as a list of (source, target) vertex-index pairs
@@ -23,15 +23,15 @@ int main() {
     const Vertex target = 13;
 
     // External storage for the results, one slot per vertex
-    std::vector<int>    distance_storage(boost::num_vertices(g));
+    std::vector<int> distance_storage(boost::num_vertices(g));
     std::vector<Vertex> predecessor_storage(boost::num_vertices(g));
 
     // Three property maps:
     // vertex -> its index (provided by the graph type)
     auto vertex_index_map = boost::get(boost::vertex_index, g);
     // vertex -> BFS distance from the source (wraps distance_storage)
-    auto distance    = boost::make_iterator_property_map(distance_storage.begin(), vertex_index_map);
-    // vertex -> its parent in the BFS tree    (wraps predecessor_storage)
+    auto distance = boost::make_iterator_property_map(distance_storage.begin(), vertex_index_map);
+    // vertex -> its parent in the BFS tree (wraps predecessor_storage)
     auto predecessor = boost::make_iterator_property_map(predecessor_storage.begin(), vertex_index_map);
 
     boost::breadth_first_search(g, source,
