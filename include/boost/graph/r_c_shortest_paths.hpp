@@ -479,27 +479,27 @@ namespace detail
 struct default_r_c_shortest_paths_visitor
 {
     template < class Label, class Graph >
-    void on_label_popped(const Label&, const Graph&) const
+    void on_label_popped(const Label&, const Graph&)
     {
     }
     template < class Label, class Graph >
-    void on_label_feasible(const Label&, const Graph&) const
+    void on_label_feasible(const Label&, const Graph&)
     {
     }
     template < class Label, class Graph >
-    void on_label_not_feasible(const Label&, const Graph&) const
+    void on_label_not_feasible(const Label&, const Graph&)
     {
     }
     template < class Label, class Graph >
-    void on_label_dominated(const Label&, const Graph&) const
+    void on_label_dominated(const Label&, const Graph&)
     {
     }
     template < class Label, class Graph >
-    void on_label_not_dominated(const Label&, const Graph&) const 
+    void on_label_not_dominated(const Label&, const Graph&) 
     {
     }
     template < class Queue, class Graph >
-    bool on_enter_loop(const Queue&, const Graph&) const
+    bool on_enter_loop(const Queue&, const Graph&)
     {
         return true;
     }
