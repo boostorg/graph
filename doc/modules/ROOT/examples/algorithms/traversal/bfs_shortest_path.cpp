@@ -17,8 +17,8 @@ int main() {
     };
 
     // Build the graph from the edge list
-    constexpr int num_vertices = 20;
-    Graph g(edges.begin(), edges.end(), num_vertices);
+    constexpr int nb_vertices = 20;
+    Graph g(edges.begin(), edges.end(), nb_vertices);
     const Vertex source = 9;
     const Vertex target = 13;
 
