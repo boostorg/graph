@@ -41,7 +41,7 @@ int main()
             ICmp cmp(&w[0], std::less< float >());
             fibonacci_heap< int, ICmp > Q(N, cmp);
 
-            for (int c = 0; c < w.size(); ++c)
+            for (std::size_t c = 0; c < w.size(); ++c)
                 w[c] = c;
             std::shuffle(w.begin(), w.end(), gen);
 
