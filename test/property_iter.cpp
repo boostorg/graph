@@ -60,7 +60,7 @@ using std::find;
 int main(int, char*[])
 {
     int ret = 0;
-    std::size_t N = 5, E = 0;
+    std::size_t N = 5;
 
     typedef ::Graph Graph;
     Graph g;
@@ -114,7 +114,6 @@ int main(int, char*[])
             std::cout << "finished printing" << std::endl;
 #endif
         }
-        ++E;
     }
 
     typedef boost::graph_property_iter_range< Graph, vertex_id_t >::iterator
