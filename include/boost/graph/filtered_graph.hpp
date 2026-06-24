@@ -182,28 +182,28 @@ public:
     typedef typename Traits::traversal_category traversal_category;
 
     // IncidenceGraph requirements
-    typedef filter_iterator< OutEdgePred, typename Traits::out_edge_iterator >
+    typedef filter_iterator< OutEdgePred, typename detail::get_opt_member_out_edge_iterator< Traits >::type >
         out_edge_iterator;
 
-    typedef typename Traits::degree_size_type degree_size_type;
+    typedef typename detail::get_opt_member_degree_size_type< Traits >::type degree_size_type;
 
     // AdjacencyGraph requirements
     typedef typename adjacency_iterator_generator< self, vertex_descriptor,
         out_edge_iterator >::type adjacency_iterator;
 
     // BidirectionalGraph requirements
-    typedef filter_iterator< InEdgePred, typename Traits::in_edge_iterator >
+    typedef filter_iterator< InEdgePred, typename detail::get_opt_member_in_edge_iterator< Traits >::type >
         in_edge_iterator;
 
     // VertexListGraph requirements
-    typedef filter_iterator< VertexPredicate, typename Traits::vertex_iterator >
+    typedef filter_iterator< VertexPredicate, typename detail::get_opt_member_vertex_iterator< Traits >::type >
         vertex_iterator;
-    typedef typename Traits::vertices_size_type vertices_size_type;
+    typedef typename detail::get_opt_member_vertices_size_type< Traits >::type vertices_size_type;
 
     // EdgeListGraph requirements
-    typedef filter_iterator< EdgePred, typename Traits::edge_iterator >
+    typedef filter_iterator< EdgePred, typename detail::get_opt_member_edge_iterator< Traits >::type >
         edge_iterator;
-    typedef typename Traits::edges_size_type edges_size_type;
+    typedef typename detail::get_opt_member_edges_size_type< Traits >::type edges_size_type;
 
     typedef filtered_graph_tag graph_tag;
 
