@@ -1,0 +1,56 @@
+[#sec:is-straight-line-drawing]
+= is_straight_line_drawing
+
+Verifies that no two edges in a straight line drawing intersect.
+
+*Complexity:* _O(n log n)_ +
+*Defined in:* `<boost/graph/is_straight_line_drawing.hpp>`
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename Graph, typename GridPositionMap,
+          typename VertexIndexMap>
+bool is_straight_line_drawing(
+    const Graph& g,
+    GridPositionMap drawing,
+    VertexIndexMap vm);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| An undirected graph. The type `Graph` must be a model of
+  xref:concepts/EdgeListGraph.adoc[EdgeListGraph].
+
+| IN
+| `GridPositionMap drawing`
+| A Readable LValue Property Map that models the Position Map concept. The value mapped to
+  must be an object with members `x` and `y`. For example, if `p` models PositionMap and
+  `v` is a vertex, `p[v].x` and `p[v].y` are valid expressions. The type of `x` and `y`
+  must be implicitly convertible to `std::size_t`.
+
+| IN
+| `VertexIndexMap vm`
+| A Readable Property Map that maps vertices from `g` to distinct integers in the range
+  `[0, num_vertices(g))`. +
+  *Default*: `get(vertex_index, g)`
+|===
+
+== Description
+
+If `drawing` is a property map modeling the Position Map concept, `is_straight_line_drawing` returns `true` exactly when no two of the line segments induced by edges in the graph under `drawing` intersect.
+This function works correctly in the presence of self-loops and parallel edges, and can be used to verify the output of the function xref:algorithms/planar/straight_line_drawing.adoc[`chrobak_payne_straight_line_drawing`].
+
+== Returns
+
+`true` if no two edge segments in the drawing intersect, `false` otherwise.
+
+== Example
+
+See link:../example/straight_line_drawing.cpp[`example/straight_line_drawing.cpp`].
+

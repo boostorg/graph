@@ -1,0 +1,134 @@
+= PropertyGraph
+
+A PropertyGraph is a graph that has some property associated with each
+of the vertices or edges in the graph. As a given graph may have several
+properties associated with each vertex or edge, a tag is used to
+identify which property is being accessed. The graph provides a function
+which returns a property map object.
+
+== Refinement of
+
+xref:concepts/Graph.adoc[Graph]
+
+== Notation
+
+[cols=",",]
+|===
+|`G` |A type that is a model of PropertyGraph.
+
+|`g` |An object of type `G`.
+
+|`X` |Either the vertex or edge descriptor type for `G`.
+
+|`x` |An object of type `X`.
+
+|`Map` |The type
+`boost::property_map<G, Property>::const_type`.
+
+|`v` |An object of type
+`boost::property_traits<Map>::value_type`.
+
+|`PropertyTag` |A type that models the
+xref:concepts/property_types/PropertyTag.adoc[PropertyTag] concept.
+
+|`p` |An object of type `PropertyTag`.
+
+|`pmap` |An object of type `Map`.
+|===
+
+== Associated types
+
+[width="100%",cols="100%",]
+|===
+a|
+[source,cpp]
+----
+boost::property_map<G, PropertyTag>::type
+----
+
+The type of the property map for the property specified by
+`PropertyTag`. This type must be a model of `ReadWritePropertyMap`
+with a key type the same as the graph's vertex or edge descriptor type.
+
+a|
+[source,cpp]
+----
+boost::property_map<G, PropertyTag>::const_type
+----
+
+The type of the const property map for the property specified by
+`PropertyTag`. This type must be a model of `ReadablePropertyMap`
+with a key type the same as the graph's vertex or edge descriptor type.
+
+|===
+
+== Valid Expressions
+
+[width="100%",cols="50%,50%",]
+|===
+|`get(p, g)` |Returns the property map for the property specified by the
+`PropertyTag` type. The object `p` is only used to carry the type. +
+Return type: `boost::property_map<G, PropertyTag>::type` if
+`g` is mutable and +
+`boost::property_map<G, PropertyTag>::const_type`
+otherwise.
+
+|`get(p, g, x)` |Returns the property value (specified by the
+`PropertyTag` type) associated with object `x` (a vertex or edge). The
+object `p` is only used to carry the type. This function is equivalent
+to: +
+`get(get(p, g), x)` +
+Return type: `boost::property_traits<Map>::value_type`
+
+|`put(p, g, x, v)` |Set the property (specified by the `PropertyTag`
+type) associated with object `x` (a vertex or edge) to the value `v`.
+The object `p` is only used to carry the type. This function is
+equivalent to: +
+` pmap = get(p, g);` +
+`put(pmap, x, v) ` +
+Return type: `void`
+|===
+
+== Complexity
+
+The `get()` property map function must be constant time.
+
+== Models
+
+* `adjacency_list` with
+`VertexProperty=property<vertex_distance_t,int,property<vertex_in_degree_t,int> >`
+and `PropertyTag=vertex_distance_t`.
+* `adjacency_list` with
+`VertexPropertyTag=property<vertex_distance_t,int,property<vertex_in_degree_t,int> >`
+and `PropertyTag=vertex_in_degree_t`.
+
+== Concept Checking Class
+
+[source,cpp]
+----
+
+  template <class Graph, class X, class PropertyTag>
+  struct PropertyGraphConcept
+  {
+    typedef typename property_map<G, PropertyTag>::type Map;
+    typedef typename property_map<G, PropertyTag>::const_type const_Map;
+    void constraints() {
+      BOOST_CONCEPT_ASSERT(( GraphConcept<G> ));
+      BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<Map, X> ));
+      BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<const_Map, X> ));
+
+      Map pmap = get(PropertyTag(), g);
+      pval = get(PropertyTag(), g, x);
+      put(PropertyTag(), g, x, pval);
+      ignore_unused_variable_warning(pmap);
+    }
+    void const_constraints(const G& g) {
+      const_Map pmap = get(PropertyTag(), g);
+      pval = get(PropertyTag(), g, x);
+      ignore_unused_variable_warning(pmap);
+    }
+    G g;
+    X x;
+    typename property_traits<Map>::value_type pval;
+  };
+----

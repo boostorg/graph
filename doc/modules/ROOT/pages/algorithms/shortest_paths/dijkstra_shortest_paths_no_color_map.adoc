@@ -1,0 +1,231 @@
+[#sec:dijkstra]
+= Dijkstra's Shortest Paths (No Color Map)
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/shortest_paths/dijkstra_no_color.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/shortest_paths/dijkstra_no_color.txt[]
+----
+
+'''
+
+[source,cpp]
+----
+
+// named parameter version
+template <typename Graph, typename Param, typename Tag, typename Rest>
+void dijkstra_shortest_paths_no_color_map
+  (const Graph& graph,
+   typename graph_traits<Graph>::vertex_descriptor start_vertex,
+   const bgl_named_params& params);
+
+// non-named parameter version
+template <typename Graph, typename DijkstraVisitor,
+      typename PredecessorMap, typename DistanceMap,
+      typename WeightMap, typename VertexIndexMap, typename DistanceCompare, typename DistanceWeightCombine,
+      typename DistanceInfinity, typename DistanceZero>
+void dijkstra_shortest_paths_no_color_map
+  (const Graph& graph,
+   typename graph_traits<Graph>::vertex_descriptor start_vertex,
+   PredecessorMap predecessor_map, DistanceMap distance_map, WeightMap weight_map,
+   VertexIndexMap index_map,
+   DistanceCompare distance_compare, DistanceWeightCombine distance_weight_combine,
+   DistanceInfinity distance_infinity, DistanceZero distance_zero);
+
+// version that does not initialize the property maps
+template <typename Graph, typename DijkstraVisitor,
+      typename PredecessorMap, typename DistanceMap,
+      typename WeightMap, typename VertexIndexMap, typename DistanceCompare, typename DistanceWeightCombine,
+      typename DistanceInfinity, typename DistanceZero>
+void dijkstra_shortest_paths_no_color_map_no_init
+  (const Graph& graph,
+   typename graph_traits<Graph>::vertex_descriptor start_vertex,
+   PredecessorMap predecessor_map, DistanceMap distance_map, WeightMap weight_map,
+   VertexIndexMap index_map,
+   DistanceCompare distance_compare, DistanceWeightCombine distance_weight_combine,
+   DistanceInfinity distance_infinity, DistanceZero distance_zero);
+----
+
+== Description
+
+This
+algorithm [xref:about/bibliography.adoc#dijkstra59[7],xref:about/bibliography.adoc#clr90[5]]
+solves the single-source shortest-paths problem on a weighted, directed
+or undirected graph for the case where all edge weights are nonnegative.
+Use the Bellman-Ford algorithm for the case when some edge weights are
+negative. Use breadth-first search instead of Dijkstra's algorithm when
+all edge weights are equal to one. For the definition of the
+shortest-path problem see Section
+xref:about/graph_theory_review.adoc#sec:shortest-paths-algorithms[Shortest-Paths
+Algorithms] for some background to the shortest-path problem.
+
+`dijkstra_shortest_paths_no_color_map` differs from
+the original `dijkstra_shortest_paths` algorithm by not using a
+color map to identify vertices as discovered or undiscovered. Instead,
+this is done with the distance map: a vertex _u_ such that
+_distance_compare(distance_map[u],
+distance_infinity) == false_ is considered to be undiscovered. Note
+that this means that edges with infinite weight will not work correctly
+in this algorithm.
+
+There are two main options for obtaining output from the
+`dijkstra_shortest_paths_no_color_map()` function.
+If you provide a distance property map through the `distance_map()`
+parameter then the shortest distance from the start vertex to every
+other vertex in the graph will be recorded in the distance map. Also you
+can record the shortest paths tree in a predecessor map: for each vertex
+_u in V_, _p[u]_ will be the predecessor of _u_ in the shortest
+paths tree (unless _p[u] = u_, in which case _u_ is either the
+source or a vertex unreachable from the source). In addition to these
+two options, the user can provide their own custom-made visitor that
+takes actions during any of the algorithm's event points.
+
+Dijkstra's algorithm finds all the shortest paths from the source vertex
+to every other vertex by iteratively "growing" the set of vertices _S_
+to which it knows the shortest path. At each step of the algorithm, the
+next vertex added to _S_ is determined by a priority queue. The queue
+contains the vertices in _V - S_ prioritized by
+their distance label, which is the length of the shortest path seen so
+far for each vertex. The vertex _u_ at the top of the priority queue is
+then added to _S_, and each of its out-edges is relaxed: if the distance
+to _u_ plus the weight of the out-edge _(u,v)_ is less than the distance
+label for _v_ then the estimated distance for vertex _v_ is reduced. The
+algorithm then loops back, processing the next vertex at the top of the
+priority queue. The algorithm finishes when the priority queue is empty.
+
+The following is the pseudo-code for Dijkstra's single-source shortest
+paths algorithm. _w_ is the edge weight, _d_ is the distance label, and
+_p_ is the predecessor of each vertex which is used to encode the
+shortest paths tree. _Q_ is a priority queue that supports the
+DECREASE-KEY operation. The visitor event points for the algorithm are
+indicated by the labels on the right.
+
+[width="100%",cols="50%,50%",]
+|===
+a|
+[source,cpp]
+----
+
+DIJKSTRA(G, s, w)
+  d[s] := 0
+  INSERT(Q, s)
+  while (Q != Ø)
+    u := EXTRACT-MIN(Q)
+    for each vertex v in Adj[u]
+      if (w(u,v) + d[u] < d[v])
+        d[v] := w(u,v) + d[u]
+        p[v] := u
+        if (d[v] was originally infinity)
+          INSERT(Q, v)
+        else
+          DECREASE-KEY(Q, v)
+      else
+        ...
+    end for
+  end while
+  return (d, p)
+----
+
+a|
+....
+
+discover vertex s
+
+examine vertex u
+examine edge (u,v)
+
+edge (u,v) relaxed
+
+discover vertex v
+
+edge (u,v) not relaxed
+
+finish vertex u
+....
+
+|===
+
+== Parameters
+
+[cols="1,2,5"]
+|===
+| IN
+| `const Graph& graph`
+| The graph object on which the algorithm will be applied. The type `Graph` must be a model of xref:concepts/VertexListGraph.adoc[Vertex List Graph] and xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| IN
+| `vertex_descriptor start_vertex`
+| The source vertex. All distance will be calculated from this vertex, and the shortest paths tree will be rooted at this vertex.
+
+| IN
+| `weight_map(WeightMap weight_map)`
+| The weight or "length" of each edge in the graph. The weights must all be non-negative and non-infinite. The algorithm will throw a xref:exception.adoc#negative_edge[`negative_edge`] exception is one of the edges is negative. The type `WeightMap` must be a model of link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map]. The edge descriptor type of the graph needs to be usable as the key type for the weight map. The value type for this map must be the same as the value type of the distance map. Default: `get(edge_weight, graph)`
+
+| IN
+| `index_map(VertexIndexMap index_map)`
+| This maps each vertex to an integer in the range `[0, num_vertices(graph))`. This is necessary for efficient updates of the heap data structure [xref:about/bibliography.adoc#driscoll88[55]] when an edge is relaxed. The type `VertexIndexMap` must be a model of link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map]. The value type of the map must be an integer type. The vertex descriptor type of the graph needs to be usable as the key type of the map. Default: `get(vertex_index, graph)`. Note: if you use this default, make sure your graph has an internal `vertex_index` property. For example, `adjacency_list` with `VertexList=listS` does not have an internal `vertex_index` property.
+
+| OUT
+| `predecessor_map(PredecessorMap predecessor_map)`
+| The predecessor map records the edges in the minimum spanning tree. Upon completion of the algorithm, the edges _(p[u],u)_ for all _u in V_ are in the minimum spanning tree. If _p[u] = u_ then _u_ is either the source vertex or a vertex that is not reachable from the source. The `PredecessorMap` type must be a link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map] whose key and value types are the same as the vertex descriptor type of the graph. Default: `dummy_property_map`
+
+| UTIL/OUT
+| `distance_map(DistanceMap distance_map)`
+| The shortest path weight from the source vertex `start_vertex` to each vertex in the graph `graph` is recorded in this property map. The shortest path weight is the sum of the edge weights along the shortest path. The type `DistanceMap` must be a model of link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]. The vertex descriptor type of the graph needs to be usable as the key type of the distance map. The value type of the distance map is the element type of a xref:concepts/property_types/Monoid.adoc[Monoid] formed with the `distance_weight_combine` function object and the `distance_zero` object for the identity element. Also the distance value type must have a http://www.boost.org/sgi/stl/StrictWeakOrdering.html[StrictWeakOrdering] provided by the `distance_compare` function object. Default: link:../../property_map/doc/iterator_property_map.html[`iterator_property_map`] created from a `std::vector` of the `WeightMap`'s value type of size `num_vertices(graph)` and using the `index_map` for the index map.
+
+| IN
+| `distance_compare(CompareFunction distance_compare)`
+| This function is use to compare distances to determine which vertex is closer to the source vertex. The `DistanceCompareFunction` type must be a model of http://www.boost.org/sgi/stl/BinaryPredicate.html[Binary Predicate] and have argument types that match the value type of the `DistanceMap` property map. Default: `std::less<D>` with `D=typename property_traits<DistanceMap>::value_type`
+
+| IN
+| `distance_combine(CombineFunction distance_weight_combine)`
+| This function is used to combine distances to compute the distance of a path. The `DistanceWeightCombineFunction` type must be a model of http://www.boost.org/sgi/stl/BinaryFunction.html[Binary Function]. The first argument type of the binary function must match the value type of the `DistanceMap` property map and the second argument type must match the value type of the `WeightMap` property map. The result type must be the same type as the distance value type. Default: `boost::closed_plus<D>` with `D=typename property_traits<DistanceMap>::value_type`
+
+| IN
+| `distance_inf(D distance_infinity)`
+| The `distance_infinity` object must be the greatest value of any `D` object. That is, `distance_compare(d, distance_infinity) == true` for any `d != distance_infinity`. The type `D` is the value type of the `DistanceMap`. All edges are assumed to have weight less than (by `distance_compare`) this value. Default: `std::numeric_limits<D>::max()`
+
+| IN
+| `distance_zero(D distance_zero)`
+| The `distance_zero` value must be the identity element for the xref:concepts/property_types/Monoid.adoc[Monoid] formed by the distance values and the `distance_weight_combine` function object. The type `D` is the value type of the `DistanceMap`. Default: `D()` with `D=typename property_traits<DistanceMap>::value_type`
+
+| OUT
+| `visitor(DijkstraVisitor v)`
+| Use this to specify actions that you would like to happen during certain event points within the algorithm. The type `DijkstraVisitor` must be a model of the xref:visitors/DijkstraVisitor.adoc[Dijkstra Visitor] concept. The visitor object is passed by value. Default: `dijkstra_visitor<null_visitor>`
+|===
+
+== Complexity
+
+The time complexity is _O(V log V + E)_.
+
+== Visitor Event Points
+
+* *`vis.initialize_vertex(u, g)`* is invoked on each vertex in the
+graph before the start of the algorithm.
+* *`vis.examine_vertex(u, g)`* is invoked on a vertex as it is
+removed from the priority queue and added to set _S_. At this point we
+know that _(p[u],u)_ is a shortest-paths tree edge so
+_d[u] = delta(s,u) = d[p[u++]]++ +
+w(p[u],u)_. Also, the distances of the examined vertices is
+monotonically increasing _d[u~1~] <= d[u~2~] <=
+d[u~n~]_.
+* *`vis.examine_edge(e, g)`* is invoked on each out-edge of a vertex
+immediately after it has been added to set _S_.
+* *`vis.edge_relaxed(e, g)`* is invoked on edge _(u,v)_ if
+_d[u] + w(u,v) < d[v]_. The edge _(u,v)_ that
+participated in the last relaxation for vertex _v_ is an edge in the
+shortest paths tree.
+* *`vis.discover_vertex(v, g)`* is invoked on vertex _v_ when the
+edge _(u,v)_ is examined and _v_ has not yet been discovered (i.e. its
+distance was infinity before relaxation was attempted on the edge). This
+is also when the vertex is inserted into the priority queue.
+* *`vis.edge_not_relaxed(e, g)`* is invoked if the edge is not
+relaxed (see above).
+* *`vis.finish_vertex(u, g)`* is invoked on a vertex after all of
+its out edges have been examined.

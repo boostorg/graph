@@ -1,0 +1,52 @@
+= time_stamper
+
+Stamps a monotonically increasing time value when an event occurs. Commonly
+used to record discover and finish times during DFS.
+
+*Defined in:* `<boost/graph/visitors.hpp>` +
+*Models:* EventVisitor +
+*Typical event:* `on_discover_vertex`, `on_finish_vertex`
+
+== Example
+
+[source,cpp]
+----
+include::example$visitors/time_stamper.cpp[]
+----
+
+[,text]
+----
+include::example$visitors/time_stamper.txt[]
+----
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename TimeMap, typename TimeT, typename EventTag>
+struct time_stamper;
+
+template <typename TimeMap, typename TimeT, typename EventTag>
+time_stamper<TimeMap, TimeT, EventTag>
+stamp_times(TimeMap pa, TimeT& t, EventTag);
+----
+
+== Parameters
+
+[cols="1,3",options="header"]
+|===
+| Parameter | Description
+
+| `TimeMap`
+| WritablePropertyMap. Key type is the vertex or edge descriptor.
+
+| `TimeT`
+| The time counter type. Passed by reference; incremented on each event.
+
+| `EventTag`
+| Any event tag (vertex or edge).
+|===
+
+== Behavior
+
+Increments the counter and stamps the time: `put(time_map, x, ++t)`.

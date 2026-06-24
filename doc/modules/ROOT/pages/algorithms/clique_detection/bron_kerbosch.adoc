@@ -1,0 +1,80 @@
+= Bron-Kerbosch All Cliques
+
+Enumerates all maximal cliques in an undirected graph using the
+https://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm[Bron-Kerbosch]
+backtracking algorithm with pivoting.
+
+*Complexity:* O(3^(V/3)) worst case +
+*Defined in:* `<boost/graph/bron_kerbosch_all_cliques.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/clique_detection/bron_kerbosch.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/clique_detection/bron_kerbosch.txt[]
+----
+
+'''
+
+=== (1) bron_kerbosch_all_cliques
+
+[source,cpp]
+----
+template <typename Graph, typename Visitor>
+void bron_kerbosch_all_cliques(const Graph& g, Visitor vis,
+                               std::size_t min);
+
+template <typename Graph, typename Visitor>
+void bron_kerbosch_all_cliques(const Graph& g, Visitor vis);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| Must model xref:concepts/IncidenceGraph.adoc[Incidence Graph],
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph], and
+  xref:concepts/AdjacencyMatrix.adoc[Adjacency Matrix]. Undirected.
+
+| IN
+| `Visitor vis`
+| Called with `vis.clique(clique, g)` for each maximal clique found.
+  `clique` is a `std::deque<vertex_descriptor>`.
+
+| IN
+| `std::size_t min`
+| Minimum clique size to report. +
+  *Default:* `2` (singleton cliques are suppressed).
+|===
+
+'''
+
+=== (2) bron_kerbosch_clique_number
+
+[source,cpp]
+----
+template <typename Graph>
+std::size_t bron_kerbosch_clique_number(const Graph& g);
+----
+
+Returns the size of the largest clique in the graph (the clique number). Internally calls `bron_kerbosch_all_cliques` with a `find_max_clique` visitor.
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| Must satisfy the same concepts as overload (1).
+|===
+
+NOTE: The graph must model AdjacencyMatrix (the `edge()` function must be
+available). `adjacency_list` with `vecS` satisfies this, but performance
+is better with `adjacency_matrix`.

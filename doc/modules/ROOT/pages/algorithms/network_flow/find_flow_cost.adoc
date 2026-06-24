@@ -1,0 +1,148 @@
+= find_flow_cost
+
+Calculates the cost of a network flow from edge flow values and edge weights.
+
+*Complexity:* _O(|E|)_ +
+*Defined in:* `<boost/graph/find_flow_cost.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/network_flow/find_flow_cost.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/network_flow/find_flow_cost.txt[]
+----
+
+'''
+
+=== (1) Positional version
+
+[source,cpp]
+----
+template <class Graph,
+          class Capacity,
+          class ResidualCapacity,
+          class Weight>
+typename property_traits<typename property_map<Graph, edge_capacity_t>::type>::value_type
+find_flow_cost(
+    const Graph& g,
+    Capacity capacity,
+    ResidualCapacity residual_capacity,
+    Weight weight);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| A directed graph. The graph's type must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+  For each edge _(u,v)_ in the graph, the reverse edge _(v,u)_ must also
+  be in the graph.
+
+| IN
+| `Capacity capacity`
+| The edge capacity property map. The type must be a model of a constant
+  link:../../property_map/doc/LvaluePropertyMap.html[Lvalue Property Map].
+  The key type of the map must be the graph's edge descriptor type.
+
+| IN
+| `ResidualCapacity residual_capacity`
+| This maps edges to their residual capacity. The type must be a model of
+  a mutable link:../../property_map/doc/LvaluePropertyMap.html[Lvalue Property Map].
+  The key type of the map must be the graph's edge descriptor type.
+
+| IN
+| `Weight weight`
+| The weight or "cost" of each edge in the graph. The type `Weight` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The edge descriptor type of the graph needs to be usable as the key type
+  for the weight map. The value type for this map must be the same as the
+  value type of the distance map.
+
+|===
+
+'''
+
+=== (2) Named parameter version
+
+[source,cpp]
+----
+template <class Graph>
+typename property_traits<typename property_map<Graph, edge_capacity_t>::type>::value_type
+find_flow_cost(
+    const Graph& g,
+    const bgl_named_params<P, T, R>& params = all defaults);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| A directed graph. The graph's type must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+  For each edge _(u,v)_ in the graph, the reverse edge _(v,u)_ must also
+  be in the graph.
+
+| IN
+| `params`
+| Named parameters passed via `bgl_named_params`. The following are accepted:
+|===
+
+[cols="1,2,5"]
+|===
+| Direction | Named Parameter | Description / Default
+
+| IN
+| `capacity_map(CapacityEdgeMap cap)`
+| The edge capacity property map. The type must be a model of a constant
+  link:../../property_map/doc/LvaluePropertyMap.html[Lvalue Property Map].
+  The key type of the map must be the graph's edge descriptor type. +
+  *Default:* `get(edge_capacity, g)`
+
+| IN
+| `residual_capacity_map(ResidualCapacityEdgeMap res)`
+| This maps edges to their residual capacity. The type must be a model of
+  a mutable link:../../property_map/doc/LvaluePropertyMap.html[Lvalue Property Map].
+  The key type of the map must be the graph's edge descriptor type. +
+  *Default:* `get(edge_residual_capacity, g)`
+
+| IN
+| `weight_map(WeightMap w_map)`
+| The weight or "cost" of each edge in the graph. The type `WeightMap` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The edge descriptor type of the graph needs to be usable as the key type
+  for the weight map. The value type for this map must be the same as the
+  value type of the distance map. +
+  *Default:* `get(edge_weight, g)`
+
+|===
+
+== Description
+
+The `find_flow_cost()` function calculates the minimum cost maximum flow value
+of a network and given flow. See Section
+xref:about/graph_theory_review.adoc#sec:network-flow-algorithms[Network Flow
+Algorithms] for a description of maximum flow. The function calculates the cost
+from the flow values _f(u,v)_ for _(u,v)_ in _E_, which are passed in the form
+of the residual capacity _r(u,v) = c(u,v) - f(u,v)_.
+
+In order to compute the min cost max flow use
+xref:algorithms/network_flow/successive_shortest_path_nonnegative_weights.adoc[`successive_shortest_path_nonnegative_weights()`]
+or xref:algorithms/network_flow/cycle_canceling.adoc[`cycle_canceling()`].
+
+== Returns
+
+The cost of the network flow, whose type is
+`typename property_traits<typename property_map<Graph, edge_capacity_t>::type>::value_type`.
+

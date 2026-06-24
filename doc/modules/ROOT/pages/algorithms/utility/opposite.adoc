@@ -1,0 +1,30 @@
+= opposite
+
+Given an edge and one of its endpoints, returns the other endpoint.
+
+*Defined in:* `<boost/graph/graph_utility.hpp>` +
+*Complexity:* O(1)
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename Graph>
+vertex_descriptor
+opposite(edge_descriptor e, vertex_descriptor v, const Graph& g);
+----
+
+If `v` is the source of `e`, returns the target. If `v` is the target, returns
+the source.
+
+== Example
+
+[source,cpp]
+----
+include::example$auxiliary/incident_opposite.cpp[]
+----
+
+[,text]
+----
+include::example$auxiliary/incident_opposite.txt[]
+----

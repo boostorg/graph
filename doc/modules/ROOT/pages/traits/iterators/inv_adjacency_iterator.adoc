@@ -1,0 +1,92 @@
+= `inv_adjacency_iterator_generator`
+
+Synthesizes a vertex-iterator out of an existing *_in-edge_* iterator.
+Reads each in-edge and yields its *_source_* vertex.
+
+*Defined in:* `<boost/graph/adjacency_iterator.hpp>`
+
+IMPORTANT: You almost certainly do not need this page.
+
+Most BGL users just call `inv_adjacent_vertices(v, g)` on a graph that
+models xref:concepts/BidirectionalGraph.adoc[Bidirectional Graph]
+(such as `adjacency_list<…, bidirectionalS>` or
+`adjacency_list<…, undirectedS>`). This page is for people *_implementing
+a new graph class_* that models Bidirectional Graph and who want the
+compiler to give them the reverse adjacency iterator for free.
+
+== Example
+
+[source,cpp]
+----
+include::example$iterators/inv_adjacency_iterator.cpp[]
+----
+
+[,text]
+----
+include::example$iterators/inv_adjacency_iterator.txt[]
+----
+
+For any existing BGL graph class you never need to instantiate the
+generator — the class already exposes
+`graph_traits<Graph>::inv_adjacency_iterator`.
+
+== Synopsis
+
+[source,cpp]
+----
+namespace boost {
+
+template <class Graph,
+          class VertexDescriptor = typename graph_traits<Graph>::vertex_descriptor,
+          class InEdgeIter       = typename graph_traits<Graph>::in_edge_iterator>
+class inv_adjacency_iterator_generator {
+public:
+    typedef /* iterator_adaptor instantiation */ type;
+};
+
+} // namespace boost
+----
+
+== Template parameters
+
+[cols="1,4"]
+|===
+| Parameter | Description
+
+| `Graph`
+| The graph type. Must model xref:concepts/BidirectionalGraph.adoc[Bidirectional Graph].
+
+| `VertexDescriptor`
+| The vertex-descriptor type. Defaults to
+  `graph_traits<Graph>::vertex_descriptor`. The parameter exists because
+  the generator is typically instantiated *_inside_* the graph class's
+  declaration, where `graph_traits<Graph>` cannot yet be resolved.
+
+| `InEdgeIter`
+| The source in-edge iterator type. Defaults to
+  `graph_traits<Graph>::in_edge_iterator`, with the same caveat as above.
+|===
+
+== Members
+
+`inv_adjacency_iterator_generator<…>::type` satisfies the
+link:../../utility/MultiPassInputIterator.html[Multi-Pass Input Iterator]
+concept. It exposes every operator required of a
+link:../../utility/RandomAccessIterator.html[Random Access Iterator],
+except that `reference` equals `value_type`, so `operator*()` returns
+by value.
+
+Constructor:
+
+[source,cpp]
+----
+inv_adjacency_iterator_generator<…>::type(const InEdgeIter& it, const Graph* g);
+----
+
+== See also
+
+* xref:traits/overview.adoc[Traits and Iterators overview]
+* xref:concepts/BidirectionalGraph.adoc[BidirectionalGraph concept] —
+  `inv_adjacent_vertices(v, g)`, what you probably want.
+* xref:traits/iterators/adjacency_iterator.adoc[`adjacency_iterator_generator`] —
+  the forward counterpart.

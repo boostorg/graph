@@ -1,0 +1,120 @@
+= BidirectionalGraph
+
+The BidirectionalGraph concept refines
+xref:concepts/IncidenceGraph.adoc[IncidenceGraph] and adds the requirement for
+efficient access to the in-edges of each vertex. This concept is
+separated from xref:concepts/IncidenceGraph.adoc[IncidenceGraph] because for
+directed graphs efficient access to in-edges typically requires more
+storage space, and many algorithms do not require access to in-edges.
+For undirected graphs this is not an issue, since the `in_edges()`
+and `out_edges()` functions are the same, they both return the edges
+incident to the vertex.
+
+== Refinement of
+
+xref:concepts/IncidenceGraph.adoc[IncidenceGraph]
+
+== Notation
+
+[cols=",",]
+|===
+|`G` |A type that is a model of Graph.
+
+|`g` |An object of type `G`.
+
+|`v` |An object of type
+`boost::graph_traits<G>::vertex_descriptor`.
+|===
+
+== Associated Types
+
+[width="100%",cols="100%",]
+|===
+|`boost::graph_traits<G>::traversal_category` +
+ +
+This tag type must be convertible to `bidirectional_graph_tag`.
+
+a|
+[source,cpp]
+----
+boost::graph_traits<G>::in_edge_iterator
+----
+
+An in-edge iterator for a vertex _v_ provides access to the in-edges of
+_v_. As such, the value type of an in-edge iterator is the edge
+descriptor type of its graph. An in-edge iterator must meet the
+requirements of `MultiPassInputIterator`.
+
+|===
+
+== Valid Expressions
+
+[width="100%",cols="50%,50%",]
+|===
+|`in_edges(v, g)` |Returns an iterator-range
+providing access to the in-edges (for directed graphs) or incident edges
+(for undirected graphs) of vertex `v` in graph `g`. For both directed
+and undirected graphs, the target of an out-edge is required to be
+vertex `v` and the source is required to be a vertex that is adjacent to
+`v`. +
+Return type:
+`std::pair<in_edge_iterator, in_edge_iterator>`
+
+|`in_degree(v, g)` |Returns the number of in-edges (for directed
+graphs) or the number of incident edges (for undirected graphs) of
+vertex `v` in graph `g`. +
+Return type: `degree_size_type`
+
+|`degree(v, g)` |Returns the number of in-edges plus out-edges (for
+directed graphs) or the number of incident edges (for undirected graphs)
+of vertex `v` in graph `g`. +
+Return type: `degree_size_type`
+|===
+
+== Models
+
+* xref:graph_classes/adjacency_list.adoc[`adjacency_list`] with
+`Directed=bidirectionalS`
+* xref:graph_classes/adjacency_list.adoc[`adjacency_list`] with
+`Directed=undirectedS`
+
+== Complexity guarantees
+
+The `in_edges()` function is required to be constant time. The
+`in_degree()` and `degree()` functions must be linear in the number
+of in-edges (for directed graphs) or incident edges (for undirected
+graphs).
+
+== Concept Checking Class
+
+[source,cpp]
+----
+
+  template <class G>
+  struct BidirectionalGraphConcept
+  {
+    typedef typename boost::graph_traits<G>::in_edge_iterator
+      in_edge_iterator;
+    void constraints() {
+      BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept<G> ));
+      BOOST_CONCEPT_ASSERT(( MultiPassInputIteratorConcept<in_edge_iterator> ));
+
+      p = in_edges(v, g);
+      n = in_degree(v, g);
+      n = degree(v, g);
+      e = *p.first;
+      const_constraints(g);
+    }
+    void const_constraints(const G& g) {
+      p = in_edges(v, g);
+      n = in_degree(v, g);
+      n = degree(v, g);
+      e = *p.first;
+    }
+    std::pair<in_edge_iterator, in_edge_iterator> p;
+    typename boost::graph_traits<G>::vertex_descriptor v;
+    typename boost::graph_traits<G>::edge_descriptor e;
+    typename boost::graph_traits<G>::degree_size_type n;
+    G g;
+  };
+----

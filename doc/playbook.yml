@@ -1,0 +1,30 @@
+output:
+  dir: ./build/site
+
+site:
+  title: Boost.Graph Documentation
+  start_page: graph::index.adoc
+
+antora:
+  extensions:
+    - require: '@antora/lunr-extension'
+      index_latest_only: true
+
+content:
+  sources:
+    - url: ..
+      start_path: doc
+      branches: HEAD
+      edit_url: 'https://github.com/boostorg/graph/edit/develop/{path}'
+
+asciidoc:
+  attributes:
+    source-highlighter: highlight.js
+    # Enable the cppalliance theme's right-rail floating TOC on every page.
+    page-toc: ''
+
+ui:
+  bundle:
+    url: https://github.com/boostorg/website-v2-docs/releases/download/ui-master/ui-bundle.zip
+    snapshot: true
+  supplemental_files: ./supplemental-ui

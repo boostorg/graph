@@ -1,0 +1,91 @@
+[#sec:connected-components]
+= connected_components
+
+Computes the connected components of an undirected graph using a DFS-based approach.
+
+*Complexity:* _O(V + E)_ +
+*Defined in:* `<boost/graph/connected_components.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/connected_components/connected.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/connected_components/connected.txt[]
+----
+
+'''
+
+=== (1) Named parameter version
+
+[source,cpp]
+----
+template <class VertexListGraph, class ComponentMap,
+          class P, class T, class R>
+typename property_traits<ComponentMap>::value_type
+connected_components(
+    VertexListGraph& G, ComponentMap comp,
+    const bgl_named_params<P, T, R>& params = all defaults);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `const Graph& g` | An undirected graph. The graph type must be a model of xref:concepts/VertexListGraph.adoc[Vertex List Graph] and xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+| OUT | `ComponentMap c` | The algorithm computes how many connected components are in the graph, and assigning each component an integer label. The algorithm then records which component each vertex in the graph belongs to by recording the component number in the component property map. The `ComponentMap` type must be a model of link:../../property_map/doc/WritablePropertyMap.html[Writable Property Map]. The value type should be an integer type, preferably the same as the `vertices_size_type` of the graph. The key type must be the graph's vertex descriptor type.
+|===
+
+Named Parameters::
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| UTIL | `color_map(ColorMap color)` | This is used by the algorithm to keep track of its progress through the graph. The type `ColorMap` must be a model of link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map] and its key type must be the graph's vertex descriptor type and the value type of the color map must model xref:concepts/property_types/ColorValue.adoc[ColorValue]. +
+*Default:* an link:../../property_map/doc/iterator_property_map.html[iterator_property_map] created from a `std::vector` of `default_color_type` of size `num_vertices(g)` and using the `i_map` for the index map.
+| IN | `vertex_index_map(VertexIndexMap i_map)` | This maps each vertex to an integer in the range `[0, num_vertices(g))`. This parameter is only necessary when the default color property map is used. The type `VertexIndexMap` must be a model of link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map]. The value type of the map must be an integer type. The vertex descriptor type of the graph needs to be usable as the key type of the map. +
+*Default:* `get(vertex_index, g)`. Note: if you use this default, make sure your graph has an internal `vertex_index` property. For example, `adjacency_list` with `VertexList=listS` does not have an internal `vertex_index` property.
+|===
+
+'''
+
+=== (2) Positional version
+
+[source,cpp]
+----
+template <class VertexListGraph, class ComponentMap>
+typename property_traits<ComponentMap>::value_type
+connected_components(
+    const VertexListGraph& g, ComponentMap c);
+----
+
+Equivalent to (1) with every named parameter left at its default. Uses `get(vertex_index, g)` for the index map and an internally allocated `default_color_type` color map.
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `const Graph& g` | An undirected graph. Same concept requirements as (1).
+| OUT | `ComponentMap c` | Same as (1).
+|===
+
+== Description
+
+The `connected_components()` function computes the
+https://en.wikipedia.org/wiki/Component_(graph_theory)[connected components] of an undirected graph using a DFS-based approach. A *_connected component_* of an undirected graph is a set of vertices that are all reachable from each other. If the connected components need to be maintained while a graph is growing the disjoint-set based approach of function xref:algorithms/connected_components/incremental_components.adoc[`incremental_components()`] is faster. For ``static'' graphs this DFS-based approach is faster [xref:about/bibliography.adoc#clr90[5]].
+
+The output of the algorithm is recorded in the component property map `comp`, which will contain numbers giving the component number assigned to each vertex. The total number of components is the return value of the function.
+
+== Returns
+
+The total number of connected components, as a value of type `property_traits<ComponentMap>::value_type`.
+
+== Example
+
+The file link:../example/connected_components.cpp[`examples/connected_components.cpp`] contains an example of calculating the connected components of an undirected graph.
+

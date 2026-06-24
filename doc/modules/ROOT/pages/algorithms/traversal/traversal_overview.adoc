@@ -1,0 +1,31 @@
+= Traversal
+
+Graph traversal algorithms visit vertices and edges in a systematic order.
+They are the foundation for most other graph algorithms: shortest paths,
+connected components, and topological sort all build on BFS or DFS internally.
+
+[cols="1,3"]
+|===
+| Algorithm | When to use
+
+| xref:algorithms/traversal/breadth_first_search.adoc[Breadth-First Search]
+| Unweighted shortest paths, level-by-level exploration. Finds the shortest
+  hop count from a source to all reachable vertices.
+
+| xref:algorithms/traversal/depth_first_search.adoc[Depth-First Search]
+| Cycle detection, topological sort, strongly connected components.
+  Explores as deep as possible before backtracking.
+
+| xref:algorithms/traversal/undirected_dfs.adoc[Undirected DFS]
+| DFS on undirected graphs with proper back-edge classification.
+|===
+
+BFS uses a queue (FIFO). DFS uses a stack (LIFO, or recursion). Both have
+_O(V + E)_ time complexity.
+
+The `_visit` variants skip initialization and operate on a subset of
+vertices — useful when you have already initialized colors or want to search
+from a specific vertex without resetting state:
+
+* xref:algorithms/traversal/breadth_first_visit.adoc[`breadth_first_visit`]
+* xref:algorithms/traversal/depth_first_visit.adoc[`depth_first_visit`]

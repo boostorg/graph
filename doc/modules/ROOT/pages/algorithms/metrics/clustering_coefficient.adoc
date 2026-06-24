@@ -1,0 +1,102 @@
+= Clustering Coefficient
+
+Measures the https://en.wikipedia.org/wiki/Clustering_coefficient[density of triangles]
+around a vertex. For vertex v, it is the
+fraction of pairs of v's neighbors that are also connected to each other.
+A high value means v's neighborhood is tightly knit.
+
+*Defined in:* `<boost/graph/clustering_coefficient.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/metrics/clustering_coefficient.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/metrics/clustering_coefficient.txt[]
+----
+
+=== (1) clustering_coefficient (default double result)
+
+[source,cpp]
+----
+template <typename Graph, typename Vertex>
+double clustering_coefficient(const Graph& g, Vertex v);
+----
+
+'''
+
+=== (2) clustering_coefficient with explicit result type
+
+[source,cpp]
+----
+template <typename T, typename Graph, typename Vertex>
+T clustering_coefficient(const Graph& g, Vertex v);
+----
+
+For each ordered pair `(u, w)` of neighbors of `v`, counts whether edge `(u, w)` is present. Returns `num_triangles_on_vertex(g, v) / num_paths_through_vertex(g, v)` (or zero if the denominator is zero).
+
+'''
+
+=== (3) all_clustering_coefficients
+
+[source,cpp]
+----
+template <typename Graph, typename ClusteringMap>
+typename property_traits<ClusteringMap>::value_type
+all_clustering_coefficients(const Graph& g, ClusteringMap cm);
+----
+
+Writes the clustering coefficient of each vertex to `cm` and returns the mean (sum / `num_vertices(g)`).
+
+'''
+
+=== (4) mean_clustering_coefficient
+
+[source,cpp]
+----
+template <typename Graph, typename ClusteringMap>
+typename property_traits<ClusteringMap>::value_type
+mean_clustering_coefficient(const Graph& g, ClusteringMap cm);
+----
+
+Given an already-populated `cm`, returns the mean of the values without recomputing them. `ClusteringMap` is a ReadablePropertyMap in this overload.
+
+'''
+
+=== (5) Helpers: num_paths_through_vertex / num_triangles_on_vertex
+
+[source,cpp]
+----
+template <typename Graph, typename Vertex>
+typename graph_traits<Graph>::degree_size_type
+num_paths_through_vertex(const Graph& g, Vertex v);
+
+template <typename Graph, typename Vertex>
+typename graph_traits<Graph>::degree_size_type
+num_triangles_on_vertex(const Graph& g, Vertex v);
+----
+
+`num_paths_through_vertex` counts ordered pairs of `v`'s neighbors (the denominator of the clustering coefficient). `num_triangles_on_vertex` counts the actual edges between those neighbors (the numerator).
+
+== Parameters
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| Must model xref:concepts/AdjacencyGraph.adoc[Adjacency Graph] and xref:concepts/IncidenceGraph.adoc[Incidence Graph]. The single-vertex overloads also require xref:concepts/AdjacencyMatrix.adoc[Adjacency Matrix] (the `edge()` function).
+
+| IN
+| `Vertex v`
+| The vertex to compute the coefficient for (single-vertex overloads).
+
+| IN/OUT
+| `ClusteringMap cm`
+| WritablePropertyMap for overload (3); ReadablePropertyMap for overload (4). Key type is the graph's vertex descriptor; value type is the coefficient's numeric type.
+|===

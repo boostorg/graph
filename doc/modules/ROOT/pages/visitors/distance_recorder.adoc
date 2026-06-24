@@ -1,0 +1,49 @@
+= distance_recorder
+
+Records the hop distance of each vertex from the source during a graph search.
+
+*Defined in:* `<boost/graph/visitors.hpp>` +
+*Models:* EventVisitor +
+*Typical event:* `on_tree_edge` (edge events only)
+
+== Example
+
+[source,cpp]
+----
+include::example$visitors/distance_recorder.cpp[]
+----
+
+[,text]
+----
+include::example$visitors/distance_recorder.txt[]
+----
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename DistanceMap, typename EventTag>
+struct distance_recorder;
+
+template <typename DistanceMap, typename EventTag>
+distance_recorder<DistanceMap, EventTag>
+record_distances(DistanceMap pa, EventTag);
+----
+
+== Parameters
+
+[cols="1,3",options="header"]
+|===
+| Parameter | Description
+
+| `DistanceMap`
+| WritablePropertyMap. Key type is vertex descriptor.
+
+| `EventTag`
+| Must be an edge event tag (e.g. `on_tree_edge`).
+|===
+
+== Behavior
+
+Given edge `e = (u, v)`, sets the distance of `v` to one plus the distance
+of `u`: `put(dist_map, v, get(dist_map, u) + 1)`.

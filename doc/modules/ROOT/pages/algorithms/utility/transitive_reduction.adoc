@@ -1,0 +1,54 @@
+= Transitive Reduction
+
+Computes the https://en.wikipedia.org/wiki/Transitive_reduction[minimal equivalent graph]: removes all edges that can be inferred from other paths. If there is an edge u->v and also a longer path u->...->v,
+the direct edge is redundant and is removed.
+
+*Complexity:* O(V * (V + E)) +
+*Defined in:* `<boost/graph/transitive_reduction.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/utility/transitive_reduction.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/utility/transitive_reduction.txt[]
+----
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename Graph, typename GraphTR,
+          typename VertexMap, typename VertexIndexMap>
+void transitive_reduction(const Graph& g, GraphTR& tr,
+                          VertexMap g_to_tr_map,
+                          VertexIndexMap index_map);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| The input DAG. Must model VertexListGraph and IncidenceGraph.
+
+| OUT
+| `GraphTR& tr`
+| The output graph (transitive reduction). Must model MutableGraph.
+
+| OUT
+| `VertexMap g_to_tr_map`
+| Maps vertices of `g` to corresponding vertices in `tr`.
+
+| IN
+| `VertexIndexMap index_map`
+| Vertex index map for `g`.
+|===
+
+WARNING: The input graph must be a DAG. Behavior is undefined on graphs with
+cycles.

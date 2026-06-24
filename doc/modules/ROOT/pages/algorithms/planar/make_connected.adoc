@@ -1,0 +1,77 @@
+[#sec:make-connected]
+= make_connected
+
+Adds a minimal set of edges to make an undirected graph connected.
+
+*Complexity:* _O(n + m)_ +
+*Defined in:* `<boost/graph/make_connected.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/planar/make_connected.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/planar/make_connected.txt[]
+----
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename Graph, typename VertexIndexMap,
+          typename AddEdgeVisitor>
+void make_connected(
+    Graph& g,
+    VertexIndexMap vm,
+    AddEdgeVisitor& vis);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN/OUT
+| `Graph& g`
+| An undirected graph. The type `Graph` must be a model of
+  xref:concepts/VertexListGraph.adoc[VertexListGraph],
+  xref:concepts/IncidenceGraph.adoc[IncidenceGraph], and
+  xref:concepts/EdgeMutableGraph.adoc[MutableGraph].
+
+| IN
+| `VertexIndexMap vm`
+| A Readable Property Map that maps vertices from `g` to distinct integers in the range
+  `[0, num_vertices(g))`. +
+  *Default*: `get(vertex_index, g)`
+
+| IN
+| `AddEdgeVisitor& vis`
+| A model of xref:visitors/AddEdgeVisitor.adoc[AddEdgeVisitor]. +
+  *Default*: `default_add_edge_visitor`, a class that defines `visit_vertex_pair` to
+  dispatch its calls to `add_edge`.
+|===
+
+== Description
+
+An undirected graph _G_ is connected if, for every pair of vertices _u,v_ in _G_, there is a path from _u_ to _v_.
+`make_connected` adds the minimum number of edges needed to make the input graph connected.
+The algorithm first identifies all of the xref:algorithms/connected_components/connected_components.adoc[connected components] in the graph, then adds edges to connect those components together in a path.
+For example, if a graph contains three connected components _A_, _B_, and _C_, `make_connected` will add two edges.
+The two edges added might consist of one connecting a vertex in _A_ with a vertex in _B_ and one connecting a vertex in _B_ with a vertex in _C_.
+
+The default behavior of `make_connected` is to modify the graph `g` by calling `add_edge(u,v,g)` for every pair of vertices _(u,v)_ where an edge needs to be added to connect `g`.
+This behavior can be overridden by providing a visitor as the `AddEdgeVisitor` parameter.
+The only requirement for an `AddEdgeVisitor` is that it define a member function with the following signature:
+
+[source,cpp]
+----
+template <typename Graph, typename Vertex>
+void visit_vertex_pair(Vertex u, Vertex v, Graph& g);
+----
+
+This event point can also be used as a hook to update the underlying edge index map automatically as edges are added.
+See the documentation for the xref:visitors/AddEdgeVisitor.adoc[AddEdgeVisitor] concept for more information.
+

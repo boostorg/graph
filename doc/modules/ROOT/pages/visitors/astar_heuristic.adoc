@@ -1,0 +1,39 @@
+= astar_heuristic
+
+This class is a default implementation of the
+xref:visitors/AStarHeuristic.adoc[AStarHeuristic] concept. It implements a
+"zero" heuristic -- a heuristic function that returns a cost of zero
+regardless of the vertex it is passed.
+
+== Model of
+
+xref:visitors/AStarHeuristic.adoc[AStarHeuristic]
+
+== Template Parameters
+
+[cols=",,",options="header",]
+|===
+|Parameter |Description |Default
+|`Graph` |The type of the graph being searched. |
+
+|`CostType` |A type that can be used with the `compare` and `combine`
+functions passed to A*. Typically an integer or floating point type.
+|
+|===
+
+== Where Defined
+
+`boost/graph/astar_search.hpp`
+
+== Member Functions
+
+This class implements the single member function required by
+xref:visitors/AStarHeuristic.adoc[AStarHeuristic]:
+
+[cols=",",options="header",]
+|===
+|Function |Description
+|` CostType operator()(graph_traits<Graph>::vertex_descriptor u); `
+|Called for the target of every out edge of a vertex being examined.
+Returns the cost, estimated by the heuristic, from vertex `u` to a goal.
+|===

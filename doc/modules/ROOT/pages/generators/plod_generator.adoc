@@ -1,0 +1,91 @@
+[#sec:plod-generator]
+= PLOD Generator (Scale-Free Graph)
+
+Generates scale-free graphs using the Power Law Out Degree (PLOD) algorithm.
+
+*Defined in:* `<boost/graph/plod_generator.hpp>`
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename RandomGenerator, typename Graph>
+class plod_iterator;
+
+plod_iterator();
+plod_iterator(RandomGenerator& gen, std::size_t n, double alpha, double beta, bool allow_self_loops = false);
+----
+
+The PLOD algorithm [xref:about/bibliography.adoc#palmer2000[57]]
+generates a scale-free graph from three parameters, _n_, _alpha_, and
+_beta_, by allocating degree "credits" to each vertex drawn from a
+power-law distribution. It then creates edges between
+vertices, deducting a credit from each involved vertex (undirected case)
+or the source vertex (directed case). The number of credits assigned to a
+vertex is _beta * x^-alpha^_, where _x_ is a random value between 0 and
+_n - 1_. Increasing _beta_ increases the average degree. Increasing
+_alpha_ steepens the drop-off (the web graph has _alpha ~ 2.72_).
+
+`plod_iterator` selects between `out_directed_plod_iterator` and
+`undirected_plod_iterator` at compile time based on the `directed_category`
+of `Graph`.
+
+== Parameters
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `RandomGenerator& gen` | A random number generator.
+| IN | `std::size_t n` | Number of vertices in the generated graph.
+| IN | `double alpha` | Power-law exponent controlling the steepness of the degree distribution.
+| IN | `double beta` | Scaling factor controlling the y-intercept (average degree).
+| IN | `bool allow_self_loops` | When `true`, self-loops are permitted. Default: `false`.
+|===
+
+== Example
+
+[source,cpp]
+----
+include::example$generators/plod.cpp[]
+----
+
+[,text]
+----
+include::example$generators/plod.txt[]
+----
+
+== Variants
+
+The header provides two underlying iterator classes that `plod_iterator`
+dispatches to at compile time.
+
+=== `out_directed_plod_iterator`
+
+[source,cpp]
+----
+template <typename RandomGenerator>
+class out_directed_plod_iterator;
+
+out_directed_plod_iterator();
+out_directed_plod_iterator(RandomGenerator& gen, std::size_t n, double alpha, double beta, bool allow_self_loops);
+----
+
+Generates only out-edges for directed graphs. The `allow_self_loops`
+parameter has no default value in this variant.
+
+=== `undirected_plod_iterator`
+
+[source,cpp]
+----
+template <typename RandomGenerator>
+class undirected_plod_iterator;
+
+undirected_plod_iterator();
+undirected_plod_iterator(RandomGenerator& gen, std::size_t n, double alpha, double beta, bool allow_self_loops = false);
+----
+
+Generates undirected edges by pairing vertices with remaining degree
+credits. Each edge consumes one credit from both endpoints. Vertices with
+zero credits are assigned a minimum degree of 1; vertices with degree
+greater than or equal to _n_ are capped at _n - 1_.

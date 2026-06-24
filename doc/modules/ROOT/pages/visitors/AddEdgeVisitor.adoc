@@ -1,0 +1,69 @@
+= AddEdgeVisitor Concept
+
+The AddEdgeVisitor concept exists to allow for some indirection in
+algorithms that modify graphs by adding edges. In such algorithms, it
+may be convenient to perform additional operations (such as updating an
+edge index map) at points in the algorithm where an edge addition
+occurs. Replacing calls to to `add_edge` with calls to
+`AddEdgeVisitor::visit_vertex_pair` allows for such operations
+to be defined independently from the algorithm.
+
+== Notation
+
+[cols=",",]
+|===
+|`Visitor` |is a type that models the AddEdgeVisitor concept
+
+|`vis` |is an object of type Visitor
+
+|`Graph` |is the type of a graph
+
+|`u,v` |are objects of type
+`graph_traits<Graph>::vertex_descriptor`
+
+|`e` |is an object of type
+`graph_traits<Graph>::edge_descriptor`
+
+|`v` |is an object of type
+`graph_traits<Graph>::vertex_descriptor`
+
+| |
+|===
+
+== Associated Types
+
+None
+
+== Valid Expressions
+
+[cols=",,,",]
+|===
+|Name |Expression |Return Type |Description
+
+|Add an Edge |`vis.visit_vertex_pair(u, v, g)` |`void` |Invoked
+every time an edge between vertices `u` and `v` should be added to the
+graph `g`.
+|===
+
+== Models
+
+Two models of this concept are defined in the file
+link:../../../boost/graph/planar_detail/add_edge_visitors.hpp[`add_edge_visitors.hpp`]:
+
+* `default_add_edge_visitor`: The constructor of this class
+takes no arguments.`visit_vertex_pair(u, v, g)` is just a
+dispatch to `add_edge(u, v, g)`.
+* `edge_index_update_visitor`: The constructor of this class
+takes two arguments: the first, an EdgeIndexMap, is a
+ReadWritePropertyMap
+that maps each edge in the associated graph `g` to a distinct integer in
+the range `[0, num_edges(g))`. The second argument is the number
+of edges in the underlying graph, which serves as the "next available
+index" counter within the visitor. For example, in the case the graph
+used has an initialized interior edge index, the
+`edge_index_update_visitor` constructor should be called
+with `get(edge_index, g)` as the edge index and `num_edges(g)`
+as the next available index. When `visit_vertex_pair(u, v, g)`
+is called, the `edge_index_update_visitor` will add the edge
+_(u,v)_ to the graph and update the edge index for the newly created
+edge.

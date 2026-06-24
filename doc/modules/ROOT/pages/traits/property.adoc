@@ -1,0 +1,206 @@
+= `property<Tag, T, NextProperty>`
+
+The legacy way to attach interior properties to an `adjacency_list` or
+`adjacency_matrix`. A property is a (tag, value, rest) triple; the third
+parameter chains additional properties at the same attachment point
+(vertex, edge, or graph).
+
+*Defined in:* `<boost/pending/property.hpp>`, re-exported via
+`<boost/graph/properties.hpp>`.
+
+TIP: For new code, prefer xref:property_maps/bundled.adoc[bundled
+properties] — they are a regular struct and read far better. Use
+`property<>` when you need to interoperate with an algorithm that looks
+up a well-known tag (e.g. `edge_weight_t`), or when you are required to
+declare `vertex_index_t` explicitly (as with `listS` vertex storage).
+
+== Synopsis
+
+[source,cpp]
+----
+namespace boost {
+
+template <class Tag, class T, class NextProperty = no_property>
+struct property : public NextProperty {
+    typedef NextProperty next_type;
+    typedef Tag          tag_type;
+    typedef T            value_type;
+
+    property();
+    property(const T& v);
+    property(const T& v, const NextProperty& b);
+
+    T m_value;
+};
+
+} // namespace boost
+----
+
+[cols="1,3,1"]
+|===
+| Template parameter | Description | Default
+
+| `Tag`
+| A property-tag type such as `edge_weight_t`. Uniquely names the property
+  so algorithms can find it via `get(Tag(), g)`.
+|
+
+| `T`
+| The value type stored per vertex / edge / graph for this property.
+|
+
+| `NextProperty`
+| Another `property<…>` to chain at the same attachment point, or
+  `no_property` for the tail of the chain.
+| `no_property`
+|===
+
+== Example
+
+[source,cpp]
+----
+include::example$traits/property_nested.cpp[]
+----
+
+[,text]
+----
+include::example$traits/property_nested.txt[]
+----
+
+The outermost `property<>` is consumed first by `add_edge`. If you are
+chaining more than two properties, the syntax (and the compile errors)
+become bad enough that bundled properties are almost always the better
+choice.
+
+== Predefined property tags
+
+The tags below are declared in `<boost/graph/properties.hpp>`. Each tag
+`foo_t` is accompanied by a constant of that type spelled `foo` for use
+as a runtime argument to `get(foo, g)`.
+
+=== Vertex tags
+
+[cols="1,3"]
+|===
+| Tag | Typical use
+
+| `vertex_index_t`
+| Integer index in `[0, num_vertices(g))`. Automatic for `vecS` vertex
+  storage; you must declare and populate it yourself for `listS` / `setS`.
+
+| `vertex_name_t`
+| Vertex labels, usually `std::string`.
+
+| `vertex_color_t`
+| Traversal color used by BFS/DFS-based algorithms.
+
+| `vertex_distance_t`
+| Shortest-path distance from a source.
+
+| `vertex_predecessor_t`
+| Predecessor vertex in a shortest-path or spanning tree.
+
+| `vertex_degree_t` / `vertex_in_degree_t` / `vertex_out_degree_t`
+| Cached or externally-tracked degrees (rarely needed as an interior property).
+
+| `vertex_current_degree_t`, `vertex_priority_t`
+| Working maps for Sloan ordering.
+
+| `vertex_discover_time_t`, `vertex_finish_time_t`
+| DFS event timestamps.
+
+| `vertex_rank_t`, `vertex_root_t`
+| Disjoint-sets rank and parent maps.
+
+| `vertex_centrality_t`
+| Betweenness centrality values.
+
+| `vertex_lowpoint_t`
+| Biconnected-components lowpoint.
+
+| `vertex_potential_t`
+| Min-cost-flow dual variables.
+|===
+
+=== Edge tags
+
+[cols="1,3"]
+|===
+| Tag | Typical use
+
+| `edge_weight_t`
+| Primary edge weight / length / cost.
+
+| `edge_index_t`
+| Edge index. **Never** automatic — you must declare it and assign values
+  yourself inside `add_edge` if any algorithm needs an edge-index map.
+
+| `edge_name_t`
+| Edge label.
+
+| `edge_color_t`
+| Edge traversal colors.
+
+| `edge_capacity_t`, `edge_residual_capacity_t`, `edge_reverse_t`, `edge_flow_t`
+| Properties required by the max-flow and min-cost-flow families.
+
+| `edge_centrality_t`
+| Edge betweenness centrality (used by
+  xref:algorithms/utility/bc_clustering.adoc[`bc_clustering`]).
+
+| `edge_discover_time_t`, `edge_finished_t`
+| DFS / traversal markers.
+|===
+
+=== Graph tags
+
+[cols="1,3"]
+|===
+| Tag | Typical use
+
+| `graph_name_t`
+| Stored with the graph (used by GraphViz / GraphML I/O).
+
+| `graph_visitor_t`
+| Visitor override used internally by some algorithms.
+|===
+
+NOTE: The BGL also defines bundle tags (`vertex_bundle_t`, `edge_bundle_t`,
+`graph_bundle_t`), `*_all_t` (everything attached at that point), and
+`*_global_t` / `*_local_t` / `*_owner_t` for distributed graphs. You will
+rarely name these directly.
+
+== Members
+
+[cols="1,4"]
+|===
+| Member | Description
+
+| `next_type`
+| The `NextProperty` template parameter.
+
+| `tag_type`
+| The `Tag` template parameter.
+
+| `value_type`
+| The `T` template parameter.
+
+| `property()`
+| Default-constructs `m_value` and the base-class chain. Requires every
+  `T` in the chain to be `DefaultConstructible`.
+
+| `property(const T& v)`
+| Sets `m_value` to `v`; defaults the rest.
+
+| `property(const T& v, const NextProperty& b)`
+| Sets `m_value` to `v` and copy-initializes the rest from `b`.
+|===
+
+== See also
+
+* xref:traits/overview.adoc[Traits and Iterators overview]
+* xref:property_maps/overview.adoc[Property Maps]
+* xref:property_maps/bundled.adoc[Bundled Properties] — the modern
+  alternative to nested `property<>` chains.
+* xref:property_maps/tags.adoc[Internal Tags (Legacy)] — usage notes for
+  declared tag-based properties.

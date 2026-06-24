@@ -1,0 +1,167 @@
+= Internal Property Tags (Legacy)
+
+WARNING: Prefer bundled properties for new code. This page documents the
+older tag-based approach that attaches properties via `property<>` template
+chains at graph definition time.
+
+== When tags are required
+
+Some BGL utilities only work with tag-based internal properties. For example,
+`randomize_property<edge_weight_t>(g, gen)` calls `get(Property(), g)`
+internally, which requires the property to be declared as an internal tag in
+the graph type. Bundled properties will not satisfy this lookup.
+
+WARNING: Unlike `vertex_index_t` which is automatic with `vecS`, there is no
+automatic `edge_index`. If you need an edge index (e.g. for exterior edge
+property maps), you must declare it as an internal property and assign values
+manually when adding edges.
+
+== Syntax
+
+Declare the property when you define the graph type:
+
+[source,cpp]
+----
+using Graph = adjacency_list<vecS, vecS, directedS,
+    no_property,
+    property<edge_weight_t, double>>;
+----
+
+Obtain the property map through the tag:
+
+[source,cpp]
+----
+auto weight = get(edge_weight, g);
+double w = get(weight, some_edge);
+put(weight, some_edge, 3.14);
+----
+
+Chain multiple properties with a nested `property<>`:
+
+[source,cpp]
+----
+using Graph = adjacency_list<vecS, vecS, directedS,
+    no_property,
+    property<edge_weight_t, int,
+        property<edge_color_t, default_color_type>>>;
+----
+
+== Example
+
+[source,cpp]
+----
+include::example$property_maps/tags.cpp[]
+----
+
+[,text]
+----
+include::example$property_maps/tags.txt[]
+----
+
+== Available tags
+
+=== Vertex tags
+
+[cols="1,3"]
+|===
+| Tag | Typical use
+
+| `vertex_index_t`
+| Built-in vertex numbering (automatic with `vecS`)
+
+| `vertex_index1_t`, `vertex_index2_t`
+| Secondary indices (used by isomorphism algorithms)
+
+| `vertex_name_t`
+| Vertex labels
+
+| `vertex_distance_t`, `vertex_distance2_t`
+| Shortest-path distances
+
+| `vertex_color_t`
+| Algorithm traversal colors
+
+| `vertex_degree_t`, `vertex_in_degree_t`, `vertex_out_degree_t`
+| Degree properties
+
+| `vertex_current_degree_t`
+| Used by Sloan ordering
+
+| `vertex_priority_t`
+| Used by Sloan ordering
+
+| `vertex_discover_time_t`, `vertex_finish_time_t`
+| DFS time stamps
+
+| `vertex_predecessor_t`
+| Predecessor in shortest-path tree
+
+| `vertex_rank_t`
+| Disjoint sets rank
+
+| `vertex_centrality_t`
+| Betweenness centrality values
+
+| `vertex_lowpoint_t`
+| Biconnected components lowpoint
+
+| `vertex_potential_t`
+| Min-cost flow potentials
+
+| `vertex_root_t`
+| Disjoint sets root
+
+|===
+
+=== Edge tags
+
+[cols="1,3"]
+|===
+| Tag | Typical use
+
+| `edge_index_t`
+| Edge numbering (must be supplied manually, unlike `vertex_index`)
+
+| `edge_name_t`
+| Edge labels
+
+| `edge_weight_t`, `edge_weight2_t`
+| Edge weights / costs
+
+| `edge_color_t`
+| Edge traversal colors
+
+| `edge_capacity_t`
+| Max-flow capacity
+
+| `edge_residual_capacity_t`
+| Max-flow residual capacity
+
+| `edge_reverse_t`
+| Reverse-edge descriptor (max-flow)
+
+| `edge_flow_t`
+| Current flow (min-cost flow)
+
+| `edge_centrality_t`
+| Edge betweenness centrality
+
+| `edge_discover_time_t`
+| Edge discovery time
+
+|===
+
+=== Graph tags
+
+[cols="1,3"]
+|===
+| Tag | Typical use
+
+| `graph_name_t`
+| Name of the graph (used by GraphViz I/O)
+
+| `graph_visitor_t`
+| Internal use by algorithms
+
+|===
+

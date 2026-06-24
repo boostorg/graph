@@ -1,0 +1,93 @@
+= Network Flow
+
+Compute the maximum amount of flow that can be sent through a network from a
+source to a sink, or the minimum-cost way to route a given amount of flow.
+
+== Max flow / min cut
+
+[cols="1,1,3"]
+|===
+| Algorithm | Complexity | When to use
+
+| xref:algorithms/network_flow/push_relabel_max_flow.adoc[Push-Relabel]
+| _O(V^3^)_
+| General-purpose max flow. Goldberg's algorithm; fastest in practice for
+  most graphs.
+
+| xref:algorithms/network_flow/edmonds_karp_max_flow.adoc[Edmonds-Karp]
+| _O(V · E^2^)_ or _O(V · E · U)_ for integer capacities bounded by _U_
+| Augmenting-path based. Simpler to understand; generally slower than
+  push-relabel for dense graphs.
+
+| xref:algorithms/network_flow/boykov_kolmogorov_max_flow.adoc[Boykov-Kolmogorov]
+| No tight worst-case bound; very fast in practice
+| Optimized for vision/segmentation graphs (grid-like structure with short
+  augmenting paths). Reuses source/sink search trees across iterations.
+
+| xref:algorithms/network_flow/stoer_wagner_min_cut.adoc[Stoer-Wagner]
+| _O(V · E + V^2^ log V)_
+| Global minimum cut (no source/sink). Undirected graphs only.
+|===
+
+== Min-cost flow
+
+[cols="1,3"]
+|===
+| Algorithm | When to use
+
+| xref:algorithms/network_flow/cycle_canceling.adoc[Cycle Canceling]
+| Simple min-cost flow. Slow but correct.
+
+| xref:algorithms/network_flow/successive_shortest_path_nonnegative_weights.adoc[Successive Shortest Path]
+| Min-cost flow with non-negative edge costs. Faster than cycle canceling.
+
+| xref:algorithms/network_flow/find_flow_cost.adoc[Find Flow Cost]
+| Computes the total cost of an existing flow solution.
+|===
+
+== Matching
+
+[cols="1,3"]
+|===
+| Algorithm | When to use
+
+| xref:algorithms/network_flow/maximum_matching.adoc[Edmonds Matching]
+| Maximum cardinality matching (most edges, ignoring weights).
+
+| xref:algorithms/network_flow/maximum_weighted_matching.adoc[Maximum Weighted Matching]
+| Maximum weight matching (highest total edge weight).
+|===
+
+TIP: For max flow, start with push-relabel. Use Boykov-Kolmogorov only for
+grid-like graphs (image segmentation). For minimum cut without a fixed
+source/sink, use Stoer-Wagner.
+
+== Setting up a flow network
+
+All max-flow algorithms require internal property tags: `edge_capacity_t`,
+`edge_residual_capacity_t`, and `edge_reverse_t`. For every edge (u,v) you
+must also add a reverse edge (v,u) and link them via the reverse-edge map.
+
+[source,cpp]
+----
+using Traits = adjacency_list_traits<vecS, vecS, directedS>;
+using Graph = adjacency_list<vecS, vecS, directedS,
+    no_property,
+    property<edge_capacity_t, int,
+    property<edge_residual_capacity_t, int,
+    property<edge_reverse_t, Traits::edge_descriptor>>>>;
+
+// Helper to add an edge and its reverse
+void add_flow_edge(Graph& g, int u, int v, int cap) {
+    auto e1 = add_edge(u, v, g).first;
+    auto e2 = add_edge(v, u, g).first;
+    put(edge_capacity, g, e1, cap);
+    put(edge_capacity, g, e2, 0);    // reverse edge has 0 capacity
+    put(edge_reverse, g, e1, e2);
+    put(edge_reverse, g, e2, e1);
+}
+----
+
+WARNING: Boykov-Kolmogorov additionally requires `vertex_color_t`,
+`vertex_distance_t`, and `vertex_predecessor_t` internal properties on
+vertices. Push-Relabel and Edmonds-Karp do not.

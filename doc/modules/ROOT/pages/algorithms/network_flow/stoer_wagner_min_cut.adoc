@@ -1,0 +1,191 @@
+[#sec:stoer_wagner]
+= `stoer_wagner_min_cut`
+
+Determines a min-cut and the min-cut weight of a connected, undirected graph.
+
+*Complexity:* _O_(_V_ * _E_ + _V_^2^ log _V_) +
+*Defined in:* `<boost/graph/stoer_wagner_min_cut.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/network_flow/stoer_wagner.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/network_flow/stoer_wagner.txt[]
+----
+
+'''
+
+=== (1) Named parameter version
+
+.A min-cut of a weighted graph having min-cut weight 4
+image::stoer_wagner_imgs/stoer_wagner-example-min-cut.gif[A min-cut of a weighted graph having min-cut weight 4,width=376]
+
+[source,cpp]
+----
+template <class UndirectedGraph, class WeightMap,
+          class P, class T, class R>
+weight_type stoer_wagner_min_cut(
+    const UndirectedGraph& g,
+    WeightMap weights,
+    const bgl_named_params<P, T, R>& params = all defaults);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const UndirectedGraph& g`
+| A connected, undirected graph. The graph type must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph]
+  and xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| IN
+| `WeightMap weights`
+| The weight or length of each edge in the graph. The `WeightMap` type
+  must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map]
+  and its value type must be
+  http://www.boost.org/sgi/stl/LessThanComparable.html[Less Than Comparable]
+  and summable. The key type of this map needs to be the graph's edge
+  descriptor type.
+
+|===
+
+
+[cols="1,2,5"]
+|===
+| Direction | Named Parameter | Description / Default
+
+| OUT
+| `parity_map(ParityMap parities)`
+| The algorithm computes a min-cut, which divides the set of vertices into
+  two, non-empty sets. The `stoer_wagner_min_cut` function records which of
+  the two sets that each vertex belongs to by setting the parity to `true`
+  (representing one set) or `false` (for the other). `ParityMap` must be a
+  model of a
+  link:../../property_map/doc/WritablePropertyMap.html[Writable Property Map]
+  and its value type should be a bool type. The key type must be the graph's
+  vertex descriptor type. +
+  *Default:* `boost::dummy_property_map`
+
+| IN
+| `vertex_index_map(VertexIndexMap vertexIndices)`
+| This maps each vertex to an integer in the range [0, `num_vertices(g)`).
+  This is only necessary if the default is used for the assignment,
+  index-in-heap, or distance maps. `VertexIndexMap` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The key type must be
+  the graph's vertex descriptor type. +
+  *Default:* `get(boost::vertex_index, g)`
+
+| UTIL
+| `assignment_map(AssignmentMap assignments)`
+| `AssignmentMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map].
+  The key and value types must be the graph's vertex descriptor type. +
+  *Default:* A `boost::iterator_property_map` using a `std::vector` of
+  `num_vertices(g)` vertex descriptors and `vertexIndices` for the index map.
+
+| UTIL
+| `max_priority_queue(MaxPriorityQueue& pq)`
+| `MaxPriorityQueue` must be a model of
+  xref:concepts/property_types/KeyedUpdatableQueue.adoc[Keyed Updatable Queue] and a
+  max-xref:concepts/property_types/UpdatableQueue.adoc[Updatable Priority Queue].
+  The value type must be the graph's vertex descriptor and the key type
+  must be the weight type. +
+  *Default:* A `boost::d_ary_heap_indirect` using a default index-in-heap
+  and distance map.
+
+| UTIL
+| `index_in_heap_map(IndexInHeapMap indicesInHeap)`
+| This parameter only has an effect when the default max-priority queue is
+  used. +
+  `IndexInHeapMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map].
+  The key type must be the graph's vertex descriptor type. The value type
+  must be a size type
+  (`typename std::vector<vertex_descriptor>::size_type`). +
+  *Default:* A `boost::iterator_property_map` using a `std::vector` of
+  `num_vertices(g)` size type objects and `vertexIndices` for the index map.
+
+| UTIL
+| `distance_map(DistanceMap wAs)`
+| This parameter only has an effect when the default max-priority queue is
+  used. +
+  `DistanceMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map].
+  The key type must be the graph's vertex descriptor type. The value type
+  must be the weight type
+  (`typename boost::property_traits<WeightMap>::value_type`). +
+  *Default:* A `boost::iterator_property_map` using a `std::vector` of
+  `num_vertices(g)` weight type objects and `vertexIndices` for the index map.
+
+|===
+
+'''
+
+=== (2) Positional version (explicit index map)
+
+[source,cpp]
+----
+template <class UndirectedGraph, class WeightMap, class ParityMap,
+          class VertexAssignmentMap, class KeyedUpdatablePriorityQueue,
+          class IndexMap>
+typename property_traits<WeightMap>::value_type
+stoer_wagner_min_cut(
+    const UndirectedGraph& g, WeightMap weights,
+    ParityMap parities, VertexAssignmentMap assignments,
+    KeyedUpdatablePriorityQueue& pq, IndexMap index_map);
+----
+
+Explicit positional form with every working map supplied by the caller. Prefer overload (1) unless you have a reason to pre-allocate the work maps and priority queue.
+
+'''
+
+=== (3) Positional version (default index map)
+
+[source,cpp]
+----
+template <class UndirectedGraph, class WeightMap, class ParityMap,
+          class VertexAssignmentMap, class KeyedUpdatablePriorityQueue>
+typename property_traits<WeightMap>::value_type
+stoer_wagner_min_cut(
+    const UndirectedGraph& g, WeightMap weights,
+    ParityMap parities, VertexAssignmentMap assignments,
+    KeyedUpdatablePriorityQueue& pq);
+----
+
+Lives in namespace `boost::graph`. Same as (2) with `index_map = get(vertex_index, g)`; requires the graph to have an interior `vertex_index_t` property.
+
+== Description
+
+A _cut_ of a graph _G_ is a partition of the vertices into two, non-empty sets. The _weight_ of such a partition is the number of edges between the two sets if _G_ is unweighted, or the sum of the weights of all edges between the two sets if _G_ is weighted. A _min-cut_ is a cut having the least weight.
+
+Sometimes a graph has multiple min-cuts, but all have the same weight. The `stoer_wagner_min_cut` function implements the
+https://en.wikipedia.org/wiki/Stoer%E2%80%93Wagner_algorithm[Stoer-Wagner algorithm] and determines exactly one of the min-cuts as well as its weight.
+
+== Returns
+
+The weight of the min-cut.
+
+== Throws
+
+`bad_graph`:: If `num_vertices(g)` is less than 2.
+`std::invalid_argument`:: If a max-priority queue is given as an argument and it is not empty.
+
+== Example
+
+The file link:../example/stoer_wagner.cpp[`examples/stoer_wagner.cpp`] contains an example of calculating a min-cut of a weighted, undirected graph and its min-cut weight.
+
+== References
+
+* xref:about/bibliography.adoc#mehlhorn-uhrig95[[74\]] Mehlhorn, Kurt and Christian Uhrig (1995). _The minimum cut algorithm of Stoer and Wagner_.
+* xref:about/bibliography.adoc#stoer-wagner97[[75\]] Stoer, Mechthild and Frank Wagner (1997). _A simple min-cut algorithm_. Journal of the ACM 44 (4), 585-591.
+* xref:about/bibliography.adoc#zwick08[[76\]] Zwick, Uri (2008). _Global minimum cuts_.
+

@@ -357,7 +357,7 @@ namespace detail
             boost::tie(uv_itr, vie) = vertices(m_g);
             float_t mcr = m_bound;
             while ((uv_itr = std::find_if(uv_itr, vie,
-                        [this, &vcm_](const auto& uv)
+                        [&](const auto& uv)
                         {
                             return std::equal_to< my_color_type >()(
                                 my_white, vcm_[uv]);

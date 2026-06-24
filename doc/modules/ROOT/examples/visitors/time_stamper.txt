@@ -1,0 +1,4 @@
+vertex 0  discover=1  finish=8
+vertex 1  discover=2  finish=5
+vertex 2  discover=6  finish=7
+vertex 3  discover=3  finish=4

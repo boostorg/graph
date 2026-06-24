@@ -1,0 +1,138 @@
+= is_bipartite
+
+Tests whether an undirected graph is bipartite using a DFS-based coloring approach.
+
+*Complexity:* _O(V + E)_ +
+*Defined in:* `<boost/graph/bipartite.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/coloring/is_bipartite.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/coloring/is_bipartite.txt[]
+----
+
+'''
+
+=== (1) With partition map and index map
+
+[source,cpp]
+----
+template <typename Graph, typename IndexMap,
+          typename PartitionMap>
+bool is_bipartite(
+    const Graph& graph,
+    const IndexMap index_map,
+    PartitionMap partition_map);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& graph`
+| An undirected graph. The graph type must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| IN
+| `const IndexMap index_map`
+| This maps each vertex to an integer in the range
+  `[0, num_vertices(graph))`. The type `VertexIndexMap` must be a
+  model of link:../../property_map/doc/ReadablePropertyMap.html[Readable
+  Property Map]. The value type of the map must be an integer type. The
+  vertex descriptor type of the graph needs to be usable as the key type
+  of the map.
+
+| OUT
+| `PartitionMap partition_map`
+| The algorithm tests whether the graph is bipartite and assigns each
+  vertex either a white or a black color, according to the partition. The
+  `PartitionMap` type must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property
+  Map] and link:../../property_map/doc/WritablePropertyMap.html[Writable
+  Property Map]. The value type must model
+  xref:concepts/property_types/ColorValue.adoc[ColorValue].
+
+|===
+
+'''
+
+=== (2) With index map only
+
+[source,cpp]
+----
+template <typename Graph, typename IndexMap>
+bool is_bipartite(
+    const Graph& graph,
+    const IndexMap index_map);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& graph`
+| An undirected graph. The graph type must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| IN
+| `const IndexMap index_map`
+| This maps each vertex to an integer in the range
+  `[0, num_vertices(graph))`. The type `VertexIndexMap` must be a
+  model of link:../../property_map/doc/ReadablePropertyMap.html[Readable
+  Property Map]. The value type of the map must be an integer type. The
+  vertex descriptor type of the graph needs to be usable as the key type
+  of the map.
+
+|===
+
+'''
+
+=== (3) Using internal index map
+
+[source,cpp]
+----
+template <typename Graph>
+bool is_bipartite(
+    const Graph& graph);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& graph`
+| An undirected graph. The graph type must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+|===
+
+== Description
+
+The `is_bipartite()` function tests a given graph for
+https://en.wikipedia.org/wiki/Bipartite_graph[bipartiteness]
+using a DFS-based coloring approach.
+
+An undirected graph is bipartite if one can partition its set of vertices into two sets "left" and "right", such that each edge goes from either side to the other. Obviously, a two-coloring of the graph is exactly the same as a two-partition. `is_bipartite()` tests whether such a two-coloring is possible and can return it in a given property map.
+
+The bipartition is recorded in the color map `partition_map`, which will contain a two-coloring of the graph, i.e. an assignment of _black_ and _white_ to the vertices such that no edge is monochromatic. The predicate whether the graph is bipartite is the return value of the function.
+
+== Returns
+
+`true` if the graph is bipartite, `false` otherwise. When a `partition_map` is provided (overload (1)), it will additionally contain the two-coloring of the vertices.
+
+== Example
+
+The file link:../example/bipartite_example.cpp[`examples/bipartite.cpp`] contains an example of testing an undirected graph for bipartiteness.
+

@@ -1,0 +1,80 @@
+[#sec:planar-canonical-ordering]
+= Planar Canonical Ordering
+
+Computes a canonical ordering of the vertices of a maximal planar graph.
+
+*Complexity:* _O(n + m)_ +
+*Defined in:* `<boost/graph/planar_canonical_ordering.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/planar/canonical_ordering.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/planar/canonical_ordering.txt[]
+----
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename Graph, typename PlanarEmbedding,
+          typename OutputIterator, typename VertexIndexMap>
+void planar_canonical_ordering(
+    const Graph& g,
+    PlanarEmbedding embedding,
+    OutputIterator ordering,
+    VertexIndexMap vm);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| An undirected graph. The type `Graph` must be a model of
+  xref:concepts/VertexAndEdgeListGraph.adoc[VertexAndEdgeListGraph].
+  The graph must be maximal planar and have at least two vertices.
+
+| IN
+| `PlanarEmbedding embedding`
+| A model of xref:concepts/property_types/PlanarEmbedding.adoc[PlanarEmbedding].
+
+| OUT
+| `OutputIterator ordering`
+| An OutputIterator with `value_type` equal to
+  `graph_traits<Graph>::vertex_descriptor`. The canonical ordering
+  will be written to this iterator.
+
+| IN
+| `VertexIndexMap vm`
+| A Readable Property Map that maps vertices from `g` to distinct integers in the range
+  `[0, num_vertices(g))`. +
+  *Default*: `get(vertex_index, g)`
+|===
+
+== Description
+
+A _planar canonical ordering_ is an ordering _v~1~, v~2~, ..., v~n~_ of the vertices of a xref:algorithms/planar/make_maximal_planar.adoc[maximal] xref:algorithms/planar/planar_graphs.adoc[planar] graph having the property that, for each _k_, _3 \<= k < n_, the graph induced by _v~1~, v~2~, ..., v~k~_:
+
+* is biconnected and contains the edge _{v~1~, v~2~}_ on its outer face.
+* has any vertices in the range _v~1~, v~2~, ..., v~k~_ that are adjacent to _v~(k+1)~_ on its outer face, and these vertices form a path along the outer face.
+
+Let _G~k~_ be the graph induced by the first _k_ vertices in the canonical ordering, along with all edges between any of the first _k_ vertices.
+After _G~k~_ has been drawn, the _(k+1)_ st vertex can be drawn easily without edge crossings, since it's adjacent only to a consecutive sequence of vertices on the outer face of _G~k~_.
+
+image::figs/canonical_ordering.png[Canonical ordering illustration]
+
+A planar canonical ordering exists for every maximal planar graph with at least 2 vertices.
+`planar_canonical_ordering` expects the input graph to have at least 2 vertices.
+
+The planar canonical ordering is used as an input in some planar graph drawing algorithms, particularly those that create a straight line embedding.
+de Fraysseix, Pach, and Pollack [xref:about/bibliography.adoc#defraysseixpachpollack90[66]] first proved the existence of such an ordering and showed how to compute one in time _O(n)_ on a maximal planar graph with _n_ vertices.
+
+See also link:../example/canonical_ordering.cpp[`example/canonical_ordering.cpp`].
+

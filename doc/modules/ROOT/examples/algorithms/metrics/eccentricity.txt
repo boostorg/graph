@@ -1,0 +1,5 @@
+Radius: 3, Diameter: 4
+eccentricity[0] = 4
+eccentricity[1] = 3
+eccentricity[2] = 3
+eccentricity[3] = 4

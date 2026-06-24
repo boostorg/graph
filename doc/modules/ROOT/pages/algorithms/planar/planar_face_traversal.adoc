@@ -1,0 +1,132 @@
+[#sec:planar-face-traversal]
+= Planar Face Traversal
+
+Traverses all faces of a planar graph defined by a planar embedding, invoking visitor event points along the way.
+
+*Complexity:* _O(n + m)_ +
+*Defined in:* `<boost/graph/planar_face_traversal.hpp>`
+
+[WARNING]
+====
+With multiple connected components, each component reports its own outer face
+instead of one shared outer face, so the count is `C - 1` higher than Euler's
+`F = E - V + C + 1`. Two disjoint triangles, for instance, report four faces
+where the correct count is three. To recover it, subtract `C - 1`, where `C`
+counts only components with at least one edge (isolated vertices add no faces,
+yet xref:algorithms/connected_components/connected_components.adoc[connected_components]
+includes them).
+====
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/planar/planar_face_traversal.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/planar/planar_face_traversal.txt[]
+----
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename Graph, typename PlanarEmbedding,
+          typename PlanarFaceVisitor, typename EdgeIndexMap>
+void planar_face_traversal(
+    const Graph& g,
+    PlanarEmbedding embedding,
+    PlanarFaceVisitor& visitor,
+    EdgeIndexMap em);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| An undirected graph. The type `Graph` must be a model of
+  xref:concepts/VertexAndEdgeListGraph.adoc[VertexAndEdgeListGraph].
+
+| IN
+| `PlanarEmbedding embedding`
+| A model of xref:concepts/property_types/PlanarEmbedding.adoc[PlanarEmbedding].
+
+| IN
+| `PlanarFaceVisitor& visitor`
+| A model of xref:visitors/PlanarFaceVisitor.adoc[PlanarFaceVisitor].
+
+| IN
+| `EdgeIndexMap em`
+| A Readable Property Map that maps edges from `g` to distinct integers in the range
+  `[0, num_edges(g))`. +
+  *Default*: `get(edge_index, g)`
+|===
+
+== Description
+
+A graph is _planar_ if it can be drawn in two-dimensional space with no two of its edges crossing.
+Any embedding of a planar graph separates the plane into distinct regions that are bounded by sequences of edges in the graph.
+These regions are called _faces_.
+
+image::figs/face_illustration.png[A plane drawing of a graph (left) and the 8 faces defined by the planar embedding (right)]
+
+A traversal of the faces of a planar graph involves iterating through all faces of the graph, and on each face, iterating through all vertices and edges of the face.
+The iteration through all vertices and edges of each face follows a path around the border of the face.
+
+In a biconnected graph, each face is bounded by a cycle and each edge belongs to exactly two faces.
+For this reason, when `planar_face_traversal` is called on a biconnected graph, each edge will be visited exactly twice: once on each of two distinct faces, and no vertex will be visited more than once on a particular face.
+The output of `planar_face_traversal` on non-biconnected graphs is less intuitive -- for example, if the graph consists solely of a path of vertices (and therefore a single face), `planar_face_traversal` will iterate _around_ the path, visiting each edge twice and visiting some vertices more than once.
+`planar_face_traversal` does not visit isolated vertices.
+
+Like other graph traversal algorithms in the Boost Graph Library, the planar face traversal is a generic traversal that can be customized by the redefinition of certain visitor event points.
+By defining an appropriate visitor, this traversal can be used to enumerate the faces of a planar graph, triangulate a planar graph, or even construct a dual of a planar graph.
+
+image::figs/face_traversal_example.png[Face traversal example graph]
+
+For example, on the above graph, an instance `my_visitor` of the following visitor:
+
+[source,cpp]
+----
+struct output_visitor: public planar_face_traversal_visitor
+{
+    void begin_face() { std::cout << "New face: "; }
+    template <typename Vertex> void next_vertex(Vertex v) { std::cout << v << " "; }
+    void finish_face() { std::cout << std::endl; }
+};
+----
+
+can be passed to the `planar_face_traversal` function:
+
+[source,cpp]
+----
+output_visitor my_visitor;
+planar_face_traversal(g, embed, my_visitor); //embed is a planar embedding of g
+----
+
+and might produce the output:
+
+----
+New face: 1 2 5 4
+New face: 2 3 4 5
+New face: 3 0 1 4
+New face: 1 0 3 2
+----
+
+== Visitor Event Points
+
+* *`visitor.begin_traversal()`*: called once before any faces are visited.
+* *`visitor.begin_face()`*: called once, for each face, before any vertex or edge on that face has been visited.
+* *`visitor.end_face()`*: called once, for each face, after all vertices and all edges on that face have been visited.
+* *`visitor.next_vertex(Vertex v)`*: called once on each vertex in the current face in order according to the planar embedding.
+* *`visitor.next_edge(Edge e)`*: called once on each edge in the current face in order according to the planar embedding.
+* *`visitor.end_traversal()`*: called once after all faces have been visited.
+
+Although `next_vertex` is guaranteed to be called in sequence for each vertex as the traversal moves around a face and `next_edge` is guaranteed to be called in sequence for each edge as the traversal moves around a face, there's no guarantee about the order in which `next_vertex` and `next_edge` are called with respect to each other in between calls to `begin_face` and `end_face`.
+These calls may be interleaved, all vertex visits may precede all edge visits, or vice-versa.
+
+`planar_face_traversal` iterates over a copy of the edges of the input graph, so it is safe to add edges to the graph during visitor event points.
+

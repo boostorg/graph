@@ -1,0 +1,98 @@
+= IteratorConstructibleGraph
+
+The IteratorConstructibleGraph concept describes the interface for graph
+types that can be constructed using a kind of edge iterator. The edge
+iterator can be any InputIterator that
+dereferences to a pair of integers _(i,j)_, which represent an edge that
+should be in the graph. The two integers _i_ and _j_ represent vertices
+where _0 <= i < |V|_ and _0 <= j < |V|_.
+The edge iterator's value type should be `std::pair<T,T>` (or at
+least be a structure that has members `first` and `second`) and the
+value type `T` of the pair must be convertible to the
+`vertices_size_type` of the graph (an integer). There are two
+valid expressions required by this concept, both of which are
+constructors. The first creates a graph object from a first/last
+iterator range. The second constructor also takes a first/last iterator
+range and in addition requires the number of vertices and number of
+edges. For some graph and edge iterator types the second constructor can
+be more efficient than the first.
+
+== Example
+
+The following exampe creates two graph objects from an array of edges
+(vertex pairs). The type `Edge*` satisfies the requirements for an
+InputIterator and can
+therefore be used to construct a graph.
+
+[source,cpp]
+----
+
+  typedef ... IteratorConstructibleGraph;
+  typedef boost::graph_traits Traits;
+
+  typedef std::pair Edge;
+  Edge edge_array[] =
+    { Edge(0,1), Edge(0,2), Edge(0,3), Edge(0,4), Edge(0,5),
+      Edge(1, 2), Edge(1,5), Edge(1,3),
+      Edge(2, 4), Edge(2,5),
+      Edge(3, 2),
+      Edge(4, 3), Edge(4,1),
+      Edge(5, 4) };
+  Edge* first = edge_array,
+    last = edge_array + sizeof(edge_array)/sizeof(Edge);
+
+  IteratorConstructibleGraph G1(first, last);
+  // do something with G1 ...
+
+  Traits::vertices_size_type size_V = 6;
+  Traits::edges_size_type size_E = sizeof(edge_array)/sizeof(Edge);
+  IteratorConstructibleGraph G2(first, last, size_V, size_E);
+  // do something with G2 ...
+----
+
+== Refinement of
+
+xref:concepts/Graph.adoc[Graph]
+
+== Notation
+
+`G`
+
+is a graph type that models IteratorConstructibleGraph.
+
+`g`
+
+is an object of type `G`.
+
+`first, last`
+
+are edge iterators (see above).
+
+`Tr`
+
+is an object of type `graph_traits<G>`.
+
+`n_vertices`
+
+is an object of type `Tr::vertices_size_type`.
+
+`n_edges`
+
+is an object of type `Tr::edges_size_type`.
+
+== Valid Expressions
+
+....
+G g(first, last);
+....
+
+Construct graph object `g` given an edge range `[first,last)`.
+
+....
+G g(first, last, n_vertices, n_edges);
+....
+
+Construct graph object `g` given an edge range `[first,last)`, the
+number of vertices, and the number of edges. Sometimes this constructor
+is more efficient than the constructor lacking the graph size
+information.

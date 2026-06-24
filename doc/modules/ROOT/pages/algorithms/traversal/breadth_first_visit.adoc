@@ -1,0 +1,168 @@
+[#sec:bfv]
+= breadth_first_visit
+
+Performs a breadth-first traversal without initializing color markers.
+
+*Complexity:* _O(E)_ +
+*Defined in:* `<boost/graph/breadth_first_search.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/traversal/bfs_visit.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/traversal/bfs_visit.txt[]
+----
+
+'''
+
+=== (1) Positional version
+
+[source,cpp]
+----
+template <class IncidenceGraph, class Buffer,
+          class BFSVisitor, class ColorMap>
+void breadth_first_visit(const IncidenceGraph& g,
+    typename graph_traits<IncidenceGraph>::vertex_descriptor s,
+    Buffer& Q, BFSVisitor vis, ColorMap color);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `const IncidenceGraph& g`
+| A directed or undirected graph. The graph type must be a model of
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| IN | `vertex_descriptor s`
+| The source vertex where the search is started.
+
+| UTIL | `Buffer& Q`
+| The queue used to determine the order in which vertices will be
+  discovered. If a FIFO queue is used, then the traversal will be
+  according to the usual BFS ordering. Other types of queues can be used,
+  but the traversal order will be different. For example Dijkstra's
+  algorithm can be implemented using a priority queue. The type `Buffer`
+  must be a model of xref:concepts/property_types/Buffer.adoc[Buffer].
+
+| IN | `BFSVisitor vis`
+| A visitor object that is invoked inside the algorithm at the
+  event-points specified by the xref:visitors/BFSVisitor.adoc[BFS Visitor] concept.
+  The visitor object is passed by value <<notes,[1]>>.
+
+| UTIL/OUT | `ColorMap color`
+| This is used by the algorithm to keep track of its progress through the
+  graph. The type `ColorMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]
+  and its key type must be the graph's vertex descriptor type and the value type
+  of the color map must model xref:concepts/property_types/ColorValue.adoc[ColorValue].
+|===
+
+'''
+
+=== (2) Named parameter version
+
+[source,cpp]
+----
+template <class IncidenceGraph, class P, class T, class R>
+void breadth_first_visit(IncidenceGraph& G,
+    typename graph_traits<IncidenceGraph>::vertex_descriptor s,
+    const bgl_named_params<P, T, R>& params);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `IncidenceGraph& g`
+| A directed or undirected graph. The graph type must be a model of
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| IN | `vertex_descriptor s`
+| The source vertex where the search is started.
+
+| IN | `visitor(BFSVisitor vis)`
+| A visitor object that is invoked inside the algorithm at the
+  event-points specified by the xref:visitors/BFSVisitor.adoc[BFS Visitor] concept.
+  The visitor object is passed by value <<notes,[1]>>. +
+  *Default:* `bfs_visitor<null_visitor>`
+
+| UTIL/OUT | `color_map(ColorMap color)`
+| This is used by the algorithm to keep track of its progress through the
+  graph. The type `ColorMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]
+  and its key type must be the graph's vertex descriptor type and the value type
+  of the color map must model xref:concepts/property_types/ColorValue.adoc[ColorValue]. +
+  *Default:* `get(vertex_color, g)`
+
+| UTIL | `buffer(Buffer& Q)`
+| The queue used to determine the order in which vertices will be
+  discovered. If a FIFO queue is used, then the traversal will be
+  according to the usual BFS ordering. Other types of queues can be used,
+  but the traversal order will be different. For example Dijkstra's
+  algorithm can be implemented using a priority queue. The type `Buffer`
+  must be a model of xref:concepts/property_types/Buffer.adoc[Buffer]. +
+  *Default:* `boost::queue`
+|===
+
+== Description
+
+This function is basically the same as
+xref:algorithms/traversal/breadth_first_search.adoc[`breadth_first_search()`]
+except that the color markers are not initialized in the algorithm. The
+user is responsible for making sure the color for every vertex is white
+before calling the algorithm. With this difference, the graph type is
+only required to be an xref:concepts/IncidenceGraph.adoc[Incidence Graph]
+instead of a xref:concepts/VertexListGraph.adoc[Vertex List Graph]. Also, this
+difference allows for more flexibility in the color property map. For
+example, one could use a map that only implements a partial function on
+the vertices, which could be more space efficient when the search only
+reaches a small portion of the graph.
+
+== Visitor Event Points
+
+* *`vis.examine_vertex(u, g)`* is invoked on each vertex as it is
+  removed from the queue.
+
+* *`vis.examine_edge(e, g)`* is invoked on every out-edge of each
+  vertex immediately after the vertex is removed from the queue.
+
+* *`vis.tree_edge(e, g)`* is invoked (in addition to
+  `examine_edge()`) if the edge is a tree edge. The target vertex of
+  edge `e` is discovered at this time.
+
+* *`vis.discover_vertex(u, g)`* is invoked the first time the
+  algorithm encounters vertex _u_. All vertices closer to the source
+  vertex have been discovered, and vertices further from the source have
+  not yet been discovered.
+
+* *`vis.non_tree_edge(e, g)`* is invoked (in addition to
+  `examine_edge()`) if the edge is not a tree edge.
+
+* *`vis.gray_target(e, g)`* is invoked (in addition to
+  `non_tree_edge()`) if the target vertex is colored gray at the
+  time of examination. The color gray indicates that the vertex is
+  currently in the queue.
+
+* *`vis.black_target(e, g)`* is invoked (in addition to
+  `non_tree_edge()`) if the target vertex is colored black at the
+  time of examination. The color black indicates that the vertex is no
+  longer in the queue.
+
+* *`vis.finish_vertex(u, g)`* is invoked after all of the out edges
+  of _u_ have been examined and all of the adjacent vertices have been
+  discovered.
+
+== Notes
+
+[[notes]]
+[1] Since the visitor parameter is passed by value, if your visitor
+contains state then any changes to the state during the algorithm
+will be made to a copy of the visitor object, not the visitor object
+passed in. Therefore you may want the visitor to hold this state by
+pointer or reference.

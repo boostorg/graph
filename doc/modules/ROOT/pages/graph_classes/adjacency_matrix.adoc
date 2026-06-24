@@ -1,0 +1,533 @@
+[#sec:adjacency-matrix-class]
+= Adjacency Matrix
+
+Fixed-size, matrix-backed graph for dense graphs with O(1) edge insertion, removal, and lookup.
+
+*Defined in:* `<boost/graph/adjacency_matrix.hpp>` +
+*Models:* xref:concepts/VertexAndEdgeListGraph.adoc[VertexAndEdgeListGraph],
+xref:concepts/IncidenceGraph.adoc[IncidenceGraph],
+xref:concepts/AdjacencyMatrix.adoc[AdjacencyMatrix],
+xref:concepts/MutablePropertyGraph.adoc[MutablePropertyGraph],
+CopyConstructible, Assignable
+
+== Synopsis
+
+[source,cpp]
+----
+template <class Directed = directedS,
+          class VertexProperty = no_property,
+          class EdgeProperty = no_property,
+          class GraphProperty = no_property,
+          class Allocator = std::allocator<bool>>
+class adjacency_matrix { ... };
+----
+
+The `adjacency_matrix` class implements the BGL graph interface using the
+traditional adjacency matrix storage format. For a graph with _V_ vertices, a
+_V x V_ matrix is used, where each element _a~ij~_ is a boolean flag that says
+whether there is an edge from vertex _i_ to vertex _j_.
+
+* *Edge insertion, removal, and lookup are O(1).*
+* Memory usage is _O(V^2^)_ instead of _O(V + E)_.
+* Traversal of all out-edges of every vertex (e.g., BFS) runs in _O(V^2^)_ time
+  instead of _O(V + E)_.
+* Best suited for dense graphs (where _E_ is close to _V^2^_). For sparse
+  graphs, prefer xref:graph_classes/adjacency_list.adoc[`adjacency_list`].
+
+The class extends the traditional data-structure by allowing objects to be
+attached to vertices and edges via xref:property_maps/bundled.adoc[bundled properties]
+or xref:property_maps/overview.adoc[interior properties]. All property value
+types must be Copy Constructible, Assignable, and Default Constructible.
+
+For undirected graphs, only the lower triangle (diagonal and below) is stored,
+reducing memory to _(V^2^)/2_.
+
+WARNING: `adjacency_matrix` does not support `add_vertex()` or `remove_vertex()`.
+The vertex count is fixed at construction time.
+
+WARNING: `adjacency_matrix` does not support `bidirectionalS` as the `Directed`
+template parameter. Use `directedS` or `undirectedS` only.
+
+NOTE: Neighbor iteration (`out_edges()`, `in_edges()`, `adjacent_vertices()`) is
+O(V) per vertex even for sparse graphs, because every potential neighbor must be
+checked in the matrix row.
+
+== Quick Usage
+
+[source,cpp]
+----
+include::example$graph_classes/adjacency_matrix_usage.cpp[]
+----
+
+[,text]
+----
+include::example$graph_classes/adjacency_matrix_usage.txt[]
+----
+
+== Template Parameters
+
+[cols="1,3,1",options="header"]
+|===
+| Parameter | Description | Default
+
+| `Directed`
+| Selector for directed or undirected graph. Options: `directedS`, `undirectedS`.
+| `directedS`
+
+| `VertexProperty`
+| Specifies internal vertex property storage (bundled or interior).
+| `no_property`
+
+| `EdgeProperty`
+| Specifies internal edge property storage (bundled or interior).
+| `no_property`
+
+| `GraphProperty`
+| Specifies property storage for the graph object itself.
+| `no_property`
+
+| `Allocator`
+| Allocator type for internal storage.
+| `std::allocator<bool>`
+|===
+
+== Member Functions
+
+=== Constructors
+
+[source,cpp]
+----
+adjacency_matrix(vertices_size_type n, const GraphProperty& p = GraphProperty())
+----
+
+Creates a graph object with `n` vertices and zero edges. +
+(Required by xref:concepts/MutableGraph.adoc[MutableGraph].)
+
+'''
+
+[source,cpp]
+----
+template <typename EdgeIterator>
+adjacency_matrix(EdgeIterator first,
+                 EdgeIterator last,
+                 vertices_size_type n,
+                 const GraphProperty& p = GraphProperty())
+----
+
+Creates a graph object with `n` vertices with the edges specified by the range
+`[first, last)`. The value type of `EdgeIterator` must be a `std::pair` whose
+element type is an integer in `[0, n)`. +
+(Required by xref:concepts/IteratorConstructibleGraph.adoc[IteratorConstructibleGraph].)
+
+'''
+
+[source,cpp]
+----
+template <typename EdgeIterator, typename EdgePropertyIterator>
+adjacency_matrix(EdgeIterator first, 
+                 EdgeIterator last,
+                 EdgePropertyIterator ep_iter,
+                 vertices_size_type n,
+                 const GraphProperty& p = GraphProperty())
+----
+
+Creates a graph object with `n` vertices and edges from `[first, last)`,
+attaching properties from `ep_iter`. The `value_type` of `ep_iter` should be
+`EdgeProperty`. The value type of `EdgeIterator` must be a `std::pair` whose
+element type is an integer in `[0, n)`.
+
+=== operator[]
+
+[source,cpp]
+----
+vertex_bundled& operator[](vertex_descriptor v);
+const vertex_bundled& operator[](vertex_descriptor v) const;
+edge_bundled& operator[](edge_descriptor e);
+const edge_bundled& operator[](edge_descriptor e) const;
+----
+
+Direct access to bundled property structs of vertices and edges.
+
+== Non-Member Functions
+
+=== Structure Access
+
+[source,cpp]
+----
+std::pair<vertex_iterator, vertex_iterator>
+vertices(const adjacency_matrix& g)
+----
+
+Returns an iterator-range providing access to the vertex set of graph `g`. +
+(Required by xref:concepts/VertexListGraph.adoc[VertexListGraph].)
+
+'''
+
+[source,cpp]
+----
+std::pair<edge_iterator, edge_iterator>
+edges(const adjacency_matrix& g)
+----
+
+Returns an iterator-range providing access to the edge set of graph `g`. +
+(Required by xref:concepts/EdgeListGraph.adoc[EdgeListGraph].)
+
+'''
+
+[source,cpp]
+----
+std::pair<adjacency_iterator, adjacency_iterator>
+adjacent_vertices(vertex_descriptor v, const adjacency_matrix& g)
+----
+
+Returns an iterator-range providing access to the vertices adjacent to vertex
+`v` in graph `g`. +
+(Required by xref:concepts/AdjacencyGraph.adoc[AdjacencyGraph].)
+
+'''
+
+[source,cpp]
+----
+std::pair<out_edge_iterator, out_edge_iterator>
+out_edges(vertex_descriptor v, const adjacency_matrix& g)
+----
+
+Returns an iterator-range providing access to the out-edges of vertex `v` in
+graph `g`. For undirected graphs, this provides access to all incident edges. +
+(Required by xref:concepts/IncidenceGraph.adoc[IncidenceGraph].)
+
+'''
+
+[source,cpp]
+----
+std::pair<in_edge_iterator, in_edge_iterator>
+in_edges(vertex_descriptor v, const adjacency_matrix& g)
+----
+
+Returns an iterator-range providing access to the in-edges of vertex `v` in
+graph `g`. For undirected graphs, this provides access to all incident edges. +
+(Required by xref:concepts/BidirectionalGraph.adoc[BidirectionalGraph].)
+
+'''
+
+[source,cpp]
+----
+vertex_descriptor
+source(edge_descriptor e, const adjacency_matrix& g)
+----
+
+Returns the source vertex of edge `e`. +
+(Required by xref:concepts/IncidenceGraph.adoc[IncidenceGraph].)
+
+'''
+
+[source,cpp]
+----
+vertex_descriptor
+target(edge_descriptor e, const adjacency_matrix& g)
+----
+
+Returns the target vertex of edge `e`. +
+(Required by xref:concepts/IncidenceGraph.adoc[IncidenceGraph].)
+
+'''
+
+[source,cpp]
+----
+degree_size_type
+out_degree(vertex_descriptor u, const adjacency_matrix& g)
+----
+
+Returns the number of edges leaving vertex `u`. +
+(Required by xref:concepts/IncidenceGraph.adoc[IncidenceGraph].)
+
+'''
+
+[source,cpp]
+----
+degree_size_type
+in_degree(vertex_descriptor u, const adjacency_matrix& g)
+----
+
+Returns the number of edges entering vertex `u`. +
+(Required by xref:concepts/BidirectionalGraph.adoc[BidirectionalGraph].)
+
+'''
+
+[source,cpp]
+----
+degree_size_type
+degree(vertex_descriptor u, const adjacency_matrix& g)
+----
+
+Returns `out_degree(u, g) + in_degree(u, g)` for directed graphs,
+or `out_degree(u, g)` for undirected graphs.
+
+'''
+
+[source,cpp]
+----
+vertices_size_type
+num_vertices(const adjacency_matrix& g)
+----
+
+Returns the number of vertices in the graph `g`. +
+(Required by xref:concepts/VertexListGraph.adoc[VertexListGraph].)
+
+'''
+
+[source,cpp]
+----
+edges_size_type
+num_edges(const adjacency_matrix& g)
+----
+
+Returns the number of edges in the graph `g`. +
+(Required by xref:concepts/EdgeListGraph.adoc[EdgeListGraph].)
+
+'''
+
+[source,cpp]
+----
+vertex_descriptor
+vertex(vertices_size_type n, const adjacency_matrix& g)
+----
+
+Returns the nth vertex in the graph's vertex list.
+
+'''
+
+[source,cpp]
+----
+std::pair<edge_descriptor, bool>
+edge(vertex_descriptor u, vertex_descriptor v, const adjacency_matrix& g)
+----
+
+Returns the edge connecting vertex `u` to vertex `v` in graph `g`. The `bool`
+is `true` if the edge exists. +
+(Required by xref:concepts/AdjacencyMatrix.adoc[AdjacencyMatrix].)
+
+=== Structure Modification
+
+[source,cpp]
+----
+std::pair<edge_descriptor, bool>
+add_edge(vertex_descriptor u, vertex_descriptor v, adjacency_matrix& g)
+----
+
+Adds edge `(u,v)` to the graph and returns the edge descriptor for the new
+edge. If the edge already exists, no duplicate is added and the `bool` flag is
+`false`. This operation does not invalidate any iterators or descriptors. +
+(Required by xref:concepts/MutableGraph.adoc[MutableGraph].)
+
+'''
+
+[source,cpp]
+----
+std::pair<edge_descriptor, bool>
+add_edge(vertex_descriptor u, 
+         vertex_descriptor v,
+         const EdgeProperty& p,
+         adjacency_matrix& g)
+----
+
+Adds edge `(u,v)` to the graph and attaches `p` as the edge's internal property
+value. See the previous `add_edge()` for duplicate-edge behavior.
+
+'''
+
+[source,cpp]
+----
+void remove_edge(vertex_descriptor u, vertex_descriptor v, adjacency_matrix& g)
+----
+
+Removes the edge `(u,v)` from the graph. +
+(Required by xref:concepts/MutableGraph.adoc[MutableGraph].)
+
+'''
+
+[source,cpp]
+----
+void remove_edge(edge_descriptor e, adjacency_matrix& g)
+----
+
+Removes the edge `e` from the graph. Equivalent to
+`remove_edge(source(e, g), target(e, g), g)`. +
+(Required by xref:concepts/MutableGraph.adoc[MutableGraph].)
+
+'''
+
+[source,cpp]
+----
+void clear_vertex(vertex_descriptor u, adjacency_matrix& g)
+----
+
+Removes all edges to and from vertex `u`. The vertex still appears in the vertex
+set of the graph. +
+(Required by xref:concepts/MutableGraph.adoc[MutableGraph].)
+
+=== Property Map Accessors
+
+[source,cpp]
+----
+template <typename Property>
+property_map<adjacency_matrix, Property>::type
+get(Property, adjacency_matrix& g)
+
+template <typename Property>
+property_map<adjacency_matrix, Property>::const_type
+get(Property, const adjacency_matrix& g)
+----
+
+Returns the property map object for the vertex or edge property specified by
+`Property`. The `Property` must match one of the properties specified in the
+graph's `VertexProperty` or `EdgeProperty` template argument. +
+(Required by xref:concepts/PropertyGraph.adoc[PropertyGraph].)
+
+'''
+
+[source,cpp]
+----
+template <typename Property, typename X>
+typename property_traits<
+  typename property_map<adjacency_matrix, Property>::const_type
+>::value_type
+get(Property, const adjacency_matrix& g, X x)
+----
+
+Returns the property value for `x`, which is either a vertex or edge
+descriptor. +
+(Required by xref:concepts/PropertyGraph.adoc[PropertyGraph].)
+
+'''
+
+[source,cpp]
+----
+template <typename Property, typename X, typename Value>
+void
+put(Property, const adjacency_matrix& g, X x, const Value& value)
+----
+
+Sets the property value for `x` to `value`. `x` is either a vertex or edge
+descriptor. `Value` must be convertible to
+`typename property_traits<property_map<adjacency_matrix, Property>::type>::value_type`. +
+(Required by xref:concepts/PropertyGraph.adoc[PropertyGraph].)
+
+'''
+
+[source,cpp]
+----
+template <typename GraphProperty, typename GraphProperty>
+typename property_value<GraphProperty, GraphProperty>::type&
+get_property(adjacency_matrix& g, GraphProperty)
+----
+
+Returns the property specified by `GraphProperty` that is attached to the graph
+object `g`. The `property_value` traits class is defined in
+`boost/pending/property.hpp`.
+
+'''
+
+[source,cpp]
+----
+template <typename GraphProperty, typename GraphProperty>
+const typename property_value<GraphProperty, GraphProperty>::type&
+get_property(const adjacency_matrix& g, GraphProperty)
+----
+
+Returns the property specified by `GraphProperty` that is attached to the graph
+object `g` (const version).
+
+'''
+
+[source,cpp]
+----
+template <typename Tag, typename Value>
+void set_property(adjacency_matrix& g, Tag tag, const Value& value)
+----
+
+Sets the graph property specified by `Tag` to `value`.
+
+== Associated Types
+
+Algorithms are templates. To declare variables for vertices, edges, or
+iterators, extract the concrete types via `graph_traits`:
+
+[source,cpp]
+----
+using Graph = adjacency_matrix<directedS>;
+using Vertex = graph_traits<Graph>::vertex_descriptor;
+using Edge = graph_traits<Graph>::edge_descriptor;
+----
+
+[cols="1,3",options="header"]
+|===
+| Type | Description
+
+| `graph_traits<adjacency_matrix>::vertex_descriptor`
+| Type for vertex descriptors. (Required by xref:concepts/Graph.adoc[Graph].)
+
+| `graph_traits<adjacency_matrix>::edge_descriptor`
+| Type for edge descriptors. (Required by xref:concepts/Graph.adoc[Graph].)
+
+| `graph_traits<adjacency_matrix>::vertex_iterator`
+| Iterator returned by `vertices()`. Models RandomAccessIterator. (Required by xref:concepts/VertexListGraph.adoc[VertexListGraph].)
+
+| `graph_traits<adjacency_matrix>::edge_iterator`
+| Iterator returned by `edges()`. Models MultiPassInputIterator. (Required by xref:concepts/EdgeListGraph.adoc[EdgeListGraph].)
+
+| `graph_traits<adjacency_matrix>::out_edge_iterator`
+| Iterator returned by `out_edges()`. Models MultiPassInputIterator. (Required by xref:concepts/IncidenceGraph.adoc[IncidenceGraph].)
+
+| `graph_traits<adjacency_matrix>::in_edge_iterator`
+| Iterator returned by `in_edges()`. Models MultiPassInputIterator. (Required by xref:concepts/BidirectionalGraph.adoc[BidirectionalGraph].)
+
+| `graph_traits<adjacency_matrix>::adjacency_iterator`
+| Iterator returned by `adjacent_vertices()`. Models the same concept as the out-edge iterator. (Required by xref:concepts/AdjacencyGraph.adoc[AdjacencyGraph].)
+
+| `graph_traits<adjacency_matrix>::directed_category`
+| `directed_tag` or `undirected_tag` depending on the `Directed` parameter. (Required by xref:concepts/Graph.adoc[Graph].)
+
+| `graph_traits<adjacency_matrix>::edge_parallel_category`
+| Always `disallow_parallel_edge_tag`. Parallel edges are not allowed. (Required by xref:concepts/Graph.adoc[Graph].)
+
+| `graph_traits<adjacency_matrix>::vertices_size_type`
+| Type for the number of vertices. (Required by xref:concepts/VertexListGraph.adoc[VertexListGraph].)
+
+| `graph_traits<adjacency_matrix>::edges_size_type`
+| Type for the number of edges. (Required by xref:concepts/EdgeListGraph.adoc[EdgeListGraph].)
+
+| `graph_traits<adjacency_matrix>::degree_size_type`
+| Type for the number of out-edges of a vertex. (Required by xref:concepts/IncidenceGraph.adoc[IncidenceGraph].)
+
+| `property_map<adjacency_matrix, PropertyTag>::type` / `const_type`
+| Map type for vertex or edge properties. `PropertyTag` must match a property in `VertexProperty` or `EdgeProperty`. (Required by xref:concepts/PropertyGraph.adoc[PropertyGraph].)
+|===
+
+== Operation Complexity
+
+[cols="2,1",options="header"]
+|===
+| Operation | Complexity
+
+| `add_edge(u, v, g)` | O(1)
+| `remove_edge(u, v, g)` | O(1)
+| `edge(u, v, g)` | O(1)
+| `out_edges(v, g)` | O(V)
+| `in_edges(v, g)` | O(V)
+| `adjacent_vertices(v, g)` | O(V)
+| `vertices(g)` | O(1)
+| `edges(g)` | O(V^2^)
+| `num_vertices(g)` | O(1)
+| `num_edges(g)` | O(1)
+| `out_degree(v, g)` | O(V)
+| `in_degree(v, g)` | O(V)
+| `degree(v, g)` | O(V)
+| Memory | O(V^2^) directed, O(V^2^/2) undirected
+|===
+
+== Stability and Invalidation
+
+The vertex count is fixed at construction. Vertex descriptors are integers in
+`[0, n)` and never change. `add_edge()` and `remove_edge()` do not invalidate
+any iterators or descriptors.

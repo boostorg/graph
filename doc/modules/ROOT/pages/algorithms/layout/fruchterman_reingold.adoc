@@ -1,0 +1,230 @@
+= `fruchterman_reingold_force_directed_layout`
+
+Force-directed layout for unweighted, undirected graphs using the Fruchterman-Reingold algorithm.
+
+*Complexity:* _O(|V|^2^ + |E|)_ per iteration (worst case); _O(|V| + |E|)_ average case for grid variant +
+*Defined in:* `<boost/graph/fruchterman_reingold.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/layout/fruchterman_reingold.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/layout/fruchterman_reingold.txt[]
+----
+
+'''
+
+=== (1) Named parameter version
+
+[source,cpp]
+----
+template<typename Graph, typename PositionMap, typename Topology,
+         typename Param, typename Tag, typename Rest>
+void fruchterman_reingold_force_directed_layout(
+    const Graph& g,
+    PositionMap position,
+    const Topology& space,
+    const bgl_named_params<Param, Tag, Rest>& params);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| The graph object on which the algorithm will be applied. The type
+  `Graph` must be a model of
+  xref:concepts/VertexAndEdgeListGraph.adoc[Vertex And Edge List Graph].
+
+| IN/OUT
+| `PositionMap position`
+| The property map that stores the position of each vertex. It should
+  typically be initialized with the vertices at random locations (use
+  xref:algorithms/layout/random_layout.adoc[`random_graph_layout`]). The type
+  `PositionMap` must be a model of
+  link:../../property_map/doc/LvaluePropertyMap.html[Lvalue Property Map]
+  such that the vertex descriptor type of `Graph` is convertible to its
+  key type. Its value type must be `Topology::point_type`, representing
+  the coordinates of the vertex.
+
+| IN
+| `const Topology& space`
+| The topology used to lay out the vertices. This parameter describes both
+  the size and shape of the layout area. Topologies are described in more
+  detail (with a list of BGL-provided topologies)
+  xref:algorithms/layout/topology.adoc[in separate documentation].
+
+| IN
+| `params`
+| Named parameters passed via `bgl_named_params`. The following are accepted:
+
+|===
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `attractive_force(AttractiveForce fa)`
+| Computes the magnitude of the attractive force between two adjacent
+  vertices. The function object `fa` must accept four parameters: the edge
+  descriptor, `k`, the distance between the vertices, and the graph. `k` is
+  the square root of the ratio of the display area to the number of
+  vertices. +
+  *Default:* `square_distance_attractive_force()`, which computes the
+  attractive force as `dist^2/k`.
+
+| IN
+| `repulsive_force(RepulsiveForce fr)`
+| Computes the magnitude of the repulsive force between any two vertices.
+  The function object `fr` must accept five parameters: the two vertex
+  descriptors, `k`, the distance between the vertices, and the graph. `k` is
+  the square root of the ratio of the display area to the number of
+  vertices. +
+  *Default:* `square_distance_repulsive_force()`, which computes the
+  repulsive force as `k^2/dist`.
+
+| IN
+| `force_pairs(ForcePairs fp)`
+| Enumerates the pairs of vertices on which the repulsive force should be
+  applied. `fp` is a function object taking two parameters: the graph `g`
+  and a binary function object that should be passed each pair of vertices
+  to be considered. The basic formulation of the Fruchterman-Reingold
+  algorithm computes repulsive forces between all pairs of vertices (pass
+  `all_force_pairs()` for this parameter), which is functional for
+  disconnected graphs but tends to push the connected components toward the
+  edges of the display area. The grid variant of the algorithm places a grid
+  over the display area and only computes repulsive forces among vertices
+  within each rectangle in the grid. The grid variant can be more efficient
+  than the basic formulation and tends to produce better layouts for
+  disconnected graphs, but is not better overall: pass
+  `make_grid_force_pairs(width, height, position, g)` as this parameter to
+  use the grid variant. Other enumeration strategies may yield better results
+  for particular graphs. +
+  *Default:* `make_grid_force_pairs(width, height, position, g)`
+
+| IN
+| `cooling(Cooling cool)`
+| Determines the cooling schedule for the algorithm, which affects the rate
+  of movement of vertices and termination of the algorithm. The `cool`
+  parameter is a nullary function object (i.e., one that takes no arguments)
+  and returns the temperature for the current iteration. When the returned
+  temperature is zero, the algorithm terminates. Cooling schedules should
+  begin with some initial temperature and gradually reduce the temperature
+  to zero. +
+  *Default:* `linear_cooling<double>(100)`
+
+| UTIL
+| `displacement_map(DisplacementMap displacement)`
+| The displacement map is used to compute the amount by which each vertex
+  will move in each step. The `DisplacementMap` type must be a property map
+  whose key type is the graph's vertex type and whose value type is
+  `Topology::point_difference_type`. +
+  *Default:* An `iterator_property_map` with the specified value type and
+  using the given vertex index map.
+
+| IN
+| `vertex_index_map(VertexIndexMap i_map)`
+| This maps each vertex to an integer in the range
+  `[0, num_vertices(g))`. This is only necessary when no displacement map
+  is provided. The type `VertexIndexMap` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The vertex descriptor
+  type of the graph needs to be usable as the key type of the map. +
+  *Default:* `get(vertex_index, g)` Note: if you use this default, make
+  sure your graph has an internal `vertex_index` property. For example,
+  `adjacency_list` with `VertexList=listS` does not have an internal
+  `vertex_index` property.
+
+|===
+
+'''
+
+=== (2) Positional version
+
+[source,cpp]
+----
+template<typename Graph, typename PositionMap, typename Topology,
+         typename AttractiveForce, typename RepulsiveForce,
+         typename ForcePairs, typename DisplacementMap,
+         typename Cooling>
+void fruchterman_reingold_force_directed_layout(
+    const Graph& g,
+    PositionMap position,
+    const Topology& space,
+    AttractiveForce fa,
+    RepulsiveForce fr,
+    ForcePairs fp,
+    Cooling cool,
+    DisplacementMap displacement);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| The graph object on which the algorithm will be applied. The type
+  `Graph` must be a model of
+  xref:concepts/VertexAndEdgeListGraph.adoc[Vertex And Edge List Graph].
+
+| IN/OUT
+| `PositionMap position`
+| The property map that stores the position of each vertex. Its value type
+  must be `Topology::point_type`.
+
+| IN
+| `const Topology& space`
+| The topology used to lay out the vertices.
+
+| IN
+| `AttractiveForce fa`
+| Computes the magnitude of the attractive force between two adjacent vertices.
+
+| IN
+| `RepulsiveForce fr`
+| Computes the magnitude of the repulsive force between any two vertices.
+
+| IN
+| `ForcePairs fp`
+| Enumerates the pairs of vertices on which the repulsive force should be applied.
+
+| IN
+| `Cooling cool`
+| Determines the cooling schedule for the algorithm.
+
+| UTIL
+| `DisplacementMap displacement`
+| The displacement map used to compute vertex movement in each step.
+
+|===
+
+'''
+
+=== (3) All-defaults version
+
+[source,cpp]
+----
+template<typename Topology, typename Graph, typename PositionMap>
+void fruchterman_reingold_force_directed_layout(
+    const Graph& g,
+    PositionMap position,
+    const Topology& topology);
+----
+
+Equivalent to the named parameter version (1) with every named parameter left at its default.
+
+== Description
+
+This https://en.wikipedia.org/wiki/Force-directed_graph_drawing[algorithm]
+[xref:about/bibliography.adoc#fruchterman91[53]] performs layout of unweighted, undirected graphs. Unlike the xref:algorithms/layout/kamada_kawai_spring_layout.adoc[Kamada-Kawai] layout algorithm, this algorithm directly supports the layout of disconnected graphs (but see the `force_pairs` named parameter). It is a _force-directed_ algorithm, meaning that vertex layout is determined by the forces pulling vertices together and pushing them apart. Attractive forces occur between adjacent vertices only, whereas repulsive forces occur between every pair of vertices. Each iteration computes the sum of the forces on each vertex, then moves the vertices to their new positions. The movement of vertices is mitigated by the _temperature_ of the system for that iteration: as the algorithm progresses through successive iterations, the temperature should decrease so that vertices settle in place. The cooling schedule, attractive forces, and repulsive forces can be provided by the user.
+
+The vertices are often placed randomly prior to execution of this algorithm via xref:algorithms/layout/random_layout.adoc[`random_graph_layout`].
+

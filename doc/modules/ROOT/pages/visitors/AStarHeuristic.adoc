@@ -1,0 +1,73 @@
+= AStar Heuristic Concept
+
+This concept defines the interface for the heuristic function of an
+A* search, which is responsible for estimating the remaining cost
+from some vertex to a goal. The user can create a class that matches
+this interface, and then pass objects of the class into
+xref:algorithms/shortest_paths/astar_search.adoc[`astar_search()`] to guide the order of
+vertex examination of the search. The heuristic instance must
+incorporate any necessary information about goal vertices in the graph.
+For further discussion of the use of heuristics in an A* search, see
+the documentation of xref:algorithms/shortest_paths/astar_search.adoc[astar_search()].
+
+== Refinement of
+
+http://www.boost.org/sgi/stl/UnaryFunction.html[Unary Function] (must
+take a single argument -- a graph vertex -- and return a cost value) and
+Copy Constructible (copying a
+heuristic should be a lightweight operation).
+
+== Notation
+
+[cols=",",]
+|===
+|`H` |A type that is a model of AStar Heuristic.
+
+|`h` |An object of type `H`.
+
+|`G` |A type that is a model of Graph.
+
+|`g` |An object of type `G`.
+
+|`u` |An object of type
+`boost::graph_traits<G>::vertex_descriptor`.
+
+|`CostType` |A type that can be used with the `compare` and `combine`
+functions passed to A*.
+
+|`c` |An object of type `CostType`.
+|===
+
+== Associated Types
+
+none
+
+== Valid Expressions
+
+[cols=",,,",options="header",]
+|===
+|Name |Expression |Return Type |Description
+|Call Heuristic |`CostType c = h(u)` |`CostType` |Called for the target
+of every out edge of a vertex being examined.
+|===
+
+== Models
+
+* xref:visitors/astar_heuristic.adoc[`astar_heuristic`]
+
+== Concept Checking Class
+
+[source,cpp]
+----
+
+  template <class Heuristic, class Graph>
+  struct AStarHeuristicConcept {
+    void constraints()
+    {
+      BOOST_CONCEPT_ASSERT(( CopyConstructibleConcept<Heuristic> ));
+      h(u);
+    }
+    Heuristic h;
+    typename graph_traits<Graph>::vertex_descriptor u;
+  };
+----

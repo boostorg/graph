@@ -1,0 +1,70 @@
+= Utility Algorithms
+
+Graph manipulation and analysis tools that don't fit into a specific algorithm
+family.
+
+== Graph transformations
+
+[cols="1,3"]
+|===
+| Algorithm | What it does
+
+| xref:algorithms/utility/copy_graph.adoc[Copy Graph]
+| Deep copy of a graph.
+
+| xref:algorithms/utility/transpose_graph.adoc[Transpose Graph]
+| Reverse all edges (creates a new graph, unlike `reverse_graph` adaptor).
+
+| xref:algorithms/utility/transitive_closure.adoc[Transitive Closure]
+| Add edges so that if u reaches v through any path, edge (u,v) exists.
+
+| xref:algorithms/utility/transitive_reduction.adoc[Transitive Reduction]
+| Remove redundant transitive edges. The opposite of transitive closure.
+|===
+
+== Analysis
+
+[cols="1,3"]
+|===
+| Algorithm | What it does
+
+| xref:algorithms/utility/lengauer_tarjan_dominator.adoc[Dominator Tree]
+| Compute the dominator tree of a directed graph (used in compiler analysis).
+
+| xref:algorithms/utility/maximum_adjacency_search.adoc[Maximum Adjacency Search]
+| Visit vertices in order of connectivity to the already-visited set.
+
+| xref:algorithms/utility/bc_clustering.adoc[Betweenness Centrality Clustering]
+| Remove high-betweenness edges to partition a graph into clusters.
+
+| xref:algorithms/utility/metric_tsp_approx.adoc[Metric TSP Approximation]
+| 2-approximation for the Travelling Salesman Problem on complete metric graphs.
+
+| xref:algorithms/utility/graph_stats.adoc[Graph Statistics]
+| Degree distribution, duplicate edge count, weighted degree distribution.
+
+| xref:algorithms/utility/smallest_last_ordering.adoc[Smallest Last Ordering]
+| Vertex ordering by minimum degree. Good heuristic for graph coloring.
+|===
+
+== Internal utilities
+
+[cols="1,3"]
+|===
+| Algorithm | What it does
+
+| xref:algorithms/utility/neighbor_bfs.adoc[Neighbor BFS]
+| BFS that follows both in-edges and out-edges on directed graphs.
+
+| xref:algorithms/utility/loop_erased_random_walk.adoc[Loop-Erased Random Walk]
+| Building block for Wilson's random spanning tree algorithm.
+
+| xref:algorithms/utility/disjoint_sets.adoc[Disjoint Sets]
+| Union-find data structure used by Kruskal and incremental components.
+
+| xref:algorithms/utility/incident.adoc[Incident]
+| Returns both endpoints of an edge as a pair.
+
+| xref:algorithms/utility/opposite.adoc[Opposite]
+| Given an edge and one endpoint, returns the other.
+|===

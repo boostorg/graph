@@ -1,0 +1,112 @@
+// ============================================================================
+// TEMPLATE: BGL Algorithm Documentation Page
+// ============================================================================
+//
+// Copy, rename to function name, place under modules/ROOT/pages/algorithms/.
+// Delete every `//` comment line in the final page.
+//
+// ---- PAGE LAYOUT (top to bottom) ----
+//
+//   = Title
+//   one-line description
+//   *Complexity:* + *Defined in:*
+//   == Example          <-- compiled, with expected output
+//   === (1) ...         <-- one subsection per overload
+//   === (2) ...
+//   === (N) named-param overload (put it last — it's being deprecated)
+//   == Description
+//   == Returns / Throws / Visitor Event Points / Notes / References   (optional)
+//
+// ---- HEADING LEVEL RULES ----
+//
+//   == for top-level sections (Example, Description, Returns, Notes, ...)
+//   === only for overload variants grouped under a parent (numbered list)
+//   ''' (thematic break) ONLY before a === heading. Never before ==.
+//
+// ---- EXAMPLE SECTION ----
+//
+//   The .cpp file goes in modules/ROOT/examples/<category>/<name>.cpp
+//   Run doc/build_example_outputs.sh to generate the sibling .txt.
+//   The adoc then includes both so docs and outputs stay in sync.
+//
+// ---- SIGNATURE FORMATTING ----
+//
+//   template <typename A, typename B,
+//             typename C>
+//   ReturnType function_name(
+//       const Graph& g,
+//       WeightMap weight);
+//
+// ============================================================================
+
+[#sec:function-name]
+= `function_name`
+
+One-line summary of what the algorithm does.
+
+*Complexity:* _O(V + E)_ +
+*Defined in:* `<boost/graph/header.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/<category>/<name>.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/<category>/<name>.txt[]
+----
+
+'''
+
+=== (1) Positional version
+
+[source,cpp]
+----
+template <typename Graph, typename WeightMap, typename DistanceMap>
+ReturnType function_name(
+    const Graph& g,
+    WeightMap weight, DistanceMap distance);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN       | `const Graph& g`       | ...
+| IN       | `WeightMap weight`     | ...
+| UTIL/OUT | `DistanceMap distance` | ...
+|===
+
+// Add === (2), === (3), etc. with '''  between them for additional overloads.
+// Put the named-parameter overload LAST.
+
+== Description
+
+Longer explanation of what the algorithm does, its inputs/outputs, and any
+non-obvious behaviour.
+
+// ---- OPTIONAL SECTIONS BELOW. DELETE WHAT YOU DO NOT NEED. ----
+
+== Returns
+
+What the function returns.
+
+== Throws
+
+What exceptions, if any.
+
+== Visitor Event Points
+
+* *`vis.discover_vertex(u, g)`* — ...
+* *`vis.examine_edge(e, g)`*    — ...
+
+== Notes
+
+. Caveats, footnotes, edge cases.
+
+== References
+
+* xref:about/bibliography.adoc#tag[[N\]] Full citation.

@@ -1,0 +1,5 @@
+vertex 0  dist=0  pred=0
+vertex 1  dist=1  pred=0
+vertex 2  dist=3  pred=1
+vertex 3  dist=6  pred=2
+vertex 4  dist=7  pred=3

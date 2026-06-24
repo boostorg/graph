@@ -1,0 +1,64 @@
+= Event Visitor List
+
+An EventVisitorList is how you pass multiple event visitors to an algorithm.
+It is either a single EventVisitor, or several EventVisitors combined with
+`std::make_pair`.
+
+== Combining two event visitors
+
+[source,cpp]
+----
+auto vis = make_bfs_visitor(
+    std::make_pair(
+        record_predecessors(pred.data(), on_tree_edge()),
+        record_distances(dist.data(), on_tree_edge())
+    )
+);
+----
+
+== Combining three or more
+
+Nest the pairs:
+
+[source,cpp]
+----
+auto vis = make_dfs_visitor(
+    std::make_pair(
+        stamp_times(dtime.data(), on_discover_vertex()),
+        std::make_pair(
+            stamp_times(ftime.data(), on_finish_vertex()),
+            put_property(back_map, true, on_back_edge())
+        )
+    )
+);
+----
+
+== A single event visitor
+
+No pairing needed:
+
+[source,cpp]
+----
+auto vis = make_bfs_visitor(
+    record_predecessors(pred.data(), on_tree_edge())
+);
+----
+
+== Writing custom event visitors
+
+A custom event visitor is a struct with an `event_filter` typedef and an
+`operator()`:
+
+[source,cpp]
+----
+struct print_vertex : public boost::base_visitor<print_vertex> {
+    using event_filter = boost::on_discover_vertex;
+
+    template <typename Vertex, typename Graph>
+    void operator()(Vertex v, const Graph&) const {
+        std::cout << v << " ";
+    }
+};
+----
+
+Custom event visitors can be combined with pre-built ones in the same list.

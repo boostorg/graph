@@ -1,0 +1,228 @@
+= King Ordering
+
+Reduces the bandwidth of a graph by reordering the indices assigned to each vertex using local minimization of i-th bandwidths.
+
+*Complexity:* _O(m^2^ log(m) |E|)_ where _m = max { degree(v) | v in V }_ +
+*Defined in:* `<boost/graph/king_ordering.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/ordering/king.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/ordering/king.txt[]
+----
+
+'''
+
+=== (1) Single starting vertex
+
+[source,cpp]
+----
+template <class IncidenceGraph, class OutputIterator,
+          class ColorMap, class DegreeMap, class VertexIndexMap>
+OutputIterator king_ordering(
+    const IncidenceGraph& g,
+    typename graph_traits<Graph>::vertex_descriptor s,
+    OutputIterator inverse_permutation,
+    ColorMap color, DegreeMap degree, VertexIndexMap index_map);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const IncidenceGraph& g`
+| An undirected graph. The graph's type must be a model of
+  xref:concepts/IncidenceGraph.adoc[IncidenceGraph].
+
+| IN
+| `vertex_descriptor s`
+| The starting vertex.
+
+| OUT
+| `OutputIterator inverse_permutation`
+| The new vertex ordering. The vertices are written to the
+  output iterator in their new order.
+
+| WORK
+| `ColorMap color`
+| Used internally to keep track of the progress of the algorithm
+  (to avoid visiting the same vertex twice).
+
+| IN
+| `DegreeMap degree`
+| This must map vertices to their degree.
+
+| IN
+| `VertexIndexMap index_map`
+| This maps each vertex to an integer in the range `[0, num_vertices(g))`.
+  The type `VertexIndexMap` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The vertex descriptor
+  type of the graph needs to be usable as the key type of the map.
+|===
+
+'''
+
+=== (2) Automatic starting vertex selection
+
+[source,cpp]
+----
+template <class IncidenceGraph, class OutputIterator>
+OutputIterator king_ordering(
+    const IncidenceGraph& g,
+    OutputIterator inverse_permutation);
+----
+
+[source,cpp]
+----
+template <class IncidenceGraph, class OutputIterator, class VertexIndexMap>
+OutputIterator king_ordering(
+    const IncidenceGraph& g,
+    OutputIterator inverse_permutation,
+    VertexIndexMap index_map);
+----
+
+[source,cpp]
+----
+template <class VertexListGraph, class OutputIterator,
+          class ColorMap, class DegreeMap, class VertexIndexMap>
+OutputIterator king_ordering(
+    const VertexListGraph& G,
+    OutputIterator inverse_permutation,
+    ColorMap color, DegreeMap degree, VertexIndexMap index_map);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const VertexListGraph& g`
+| An undirected graph. The graph's type must be a model of
+  xref:concepts/VertexListGraph.adoc[VertexListGraph].
+
+| OUT
+| `OutputIterator inverse_permutation`
+| The new vertex ordering. The vertices are written to the
+  output iterator in their new order.
+
+| WORK
+| `ColorMap color`
+| Used internally to keep track of the progress of the algorithm
+  (to avoid visiting the same vertex twice).
+
+| IN
+| `DegreeMap degree`
+| This must map vertices to their degree.
+
+| IN
+| `VertexIndexMap index_map`
+| This maps each vertex to an integer in the range `[0, num_vertices(g))`.
+  The type `VertexIndexMap` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The vertex descriptor
+  type of the graph needs to be usable as the key type of the map.
+|===
+
+'''
+
+=== (3) Explicit starting vertex queue
+
+[source,cpp]
+----
+template <class IncidenceGraph, class OutputIterator,
+          class ColorMap, class DegreeMap, class VertexIndexMap>
+OutputIterator king_ordering(
+    const IncidenceGraph& g,
+    std::deque<typename graph_traits<Graph>::vertex_descriptor> vertex_queue,
+    OutputIterator permutation,
+    ColorMap color, DegreeMap degree, VertexIndexMap index_map);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const IncidenceGraph& g`
+| An undirected graph. The graph's type must be a model of
+  xref:concepts/IncidenceGraph.adoc[IncidenceGraph].
+
+| IN
+| `std::deque<typename graph_traits<Graph>::vertex_descriptor> vertex_queue`
+| The deque containing the starting vertices for each component.
+
+| OUT
+| `OutputIterator permutation`
+| The new vertex ordering. The vertices are written to the
+  output iterator in their new order.
+
+| WORK
+| `ColorMap color`
+| Used internally to keep track of the progress of the algorithm
+  (to avoid visiting the same vertex twice).
+
+| IN
+| `DegreeMap degree`
+| This must map vertices to their degree.
+
+| IN
+| `VertexIndexMap index_map`
+| This maps each vertex to an integer in the range `[0, num_vertices(g))`.
+  The type `VertexIndexMap` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The vertex descriptor
+  type of the graph needs to be usable as the key type of the map.
+|===
+
+== Description
+
+The goal of the King ordering algorithm
+[xref:about/bibliography.adoc#king70[56]] is to reduce the
+xref:algorithms/metrics/bandwidth.adoc[bandwidth] of a graph by reordering the indices
+assigned to each vertex. The King ordering algorithm works by a local
+minimization of the i-th bandwidths. The vertices are basically assigned
+a breadth-first search order, except that at each step, the adjacent
+vertices are placed in the queue in order of increasing pseudo-degree,
+where pseudo-degree is defined as the number of outgoing edges with
+white endpoints (vertices yet to be examined).
+
+Overload (1) lets the user choose the "starting vertex".
+Overload (2) finds a good starting vertex using the pseudo-peripheral pair
+heuristic (among each component).
+Overload (3) contains the starting nodes for each vertex in the deque.
+The choice of the "starting vertex" can have a significant effect on the
+quality of the ordering.
+
+The output of the algorithm are the vertices in the new ordering.
+Storing the output into a vector gives you the permutation from the new
+ordering to the old ordering.
+
+....
+inv_perm[new_index[u]] == u
+....
+
+Often times, it is the opposite permutation that you want, the
+permutation from the old index to the new index. This can easily be
+computed in the following way.
+
+[source,cpp]
+----
+for (size_type i = 0; i != inv_perm.size(); ++i)
+    perm[old_index[inv_perm[i]]] = i;
+----
+
+== Returns
+
+`OutputIterator` -- the iterator past the end of the output sequence of reordered vertices.
+
+== Notes
+
+This algorithm was introduced in: King, I.P. "An automatic reordering scheme for simultaneous equations derived from network analysis." _Int. J. Numer. Methods Engrg._ 2 (1970), 523-533.

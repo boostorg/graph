@@ -1,0 +1,197 @@
+= GraphViz (DOT)
+
+Read and write graphs in the GraphViz DOT format.
+
+**Defined in** `<boost/graph/graphviz.hpp>` +
+**Linking:** requires `libboost_graph`
+
+TIP: By default, `dynamic_properties` throws `property_not_found` if the
+file contains an attribute that was not registered. To silently skip unknown
+attributes, pass `ignore_other_properties` to the constructor:
+
+[source,cpp]
+----
+dynamic_properties dp(ignore_other_properties);
+// All other attributes in the file are silently ignored
+----
+
+== Example
+
+[source,cpp]
+----
+include::example$io/graphviz.cpp[]
+----
+
+[,text]
+----
+include::example$io/graphviz.txt[]
+----
+
+== read_graphviz
+
+=== (1) From stream
+
+[source,cpp]
+----
+template <typename MutableGraph>
+bool read_graphviz(std::istream& in, MutableGraph& graph,
+                   dynamic_properties& dp,
+                   const std::string& node_id = "node_id");
+----
+
+=== (2) From string
+
+[source,cpp]
+----
+template <typename MutableGraph>
+bool read_graphviz(const std::string& data, MutableGraph& graph,
+                   dynamic_properties& dp,
+                   const std::string& node_id = "node_id");
+----
+
+=== (3) From iterator range
+
+[source,cpp]
+----
+template <typename InputIterator, typename MutableGraph>
+bool read_graphviz(InputIterator begin, InputIterator end,
+                   MutableGraph& graph, dynamic_properties& dp,
+                   const std::string& node_id = "node_id");
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `in` / `data` / `begin,end`
+| DOT-formatted input (stream, string, or iterator range)
+
+| OUT
+| `MutableGraph& graph`
+| Populated graph. Must model MutableGraph. Directionality must match
+  the DOT keyword (`digraph` vs `graph`).
+
+| IN/OUT
+| `dynamic_properties& dp`
+| Maps attribute names to property maps. Unspecified attributes get
+  default-constructed values.
+
+| IN
+| `node_id`
+| Name of the property map used as vertex identifier. Default: `"node_id"`.
+|===
+
+Returns `true` on success.
+
+== write_graphviz
+
+=== (1) With property writers
+
+[source,cpp]
+----
+template <typename Graph>
+void write_graphviz(std::ostream& out, const Graph& g);
+
+template <typename Graph, typename VertexWriter>
+void write_graphviz(std::ostream& out, const Graph& g,
+                    VertexWriter vw);
+
+template <typename Graph, typename VertexWriter, typename EdgeWriter>
+void write_graphviz(std::ostream& out, const Graph& g,
+                    VertexWriter vw, EdgeWriter ew);
+
+template <typename Graph, typename VertexWriter,
+          typename EdgeWriter, typename GraphWriter>
+void write_graphviz(std::ostream& out, const Graph& g,
+                    VertexWriter vw, EdgeWriter ew,
+                    GraphWriter gw);
+
+template <typename Graph, typename VertexWriter,
+          typename EdgeWriter, typename GraphWriter, typename VertexID>
+void write_graphviz(std::ostream& out, const Graph& g,
+                    VertexWriter vw, EdgeWriter ew,
+                    GraphWriter gw, VertexID vertex_id);
+----
+
+Each writer is a functor called with `(std::ostream&, descriptor)` for
+vertices/edges, or `(std::ostream&)` for the graph. It should output DOT
+attribute syntax: `[name1=value1, name2=value2]`.
+
+Use `default_writer()` to skip a writer. The convenience function
+`make_label_writer(name_map)` creates a writer that emits `[label="..."]`:
+
+[source,cpp]
+----
+write_graphviz(std::cout, g, make_label_writer(get(vertex_name, g)));
+----
+
+WARNING: The default overloads use `get(vertex_index, g)` for vertex IDs.
+If your graph uses `listS` for the vertex container (no built-in vertex
+index), you must pass an explicit `vertex_id` map using the last overload.
+
+=== (2) With dynamic_properties
+
+[source,cpp]
+----
+template <typename Graph>
+void write_graphviz_dp(std::ostream& out, const Graph& g,
+                       const dynamic_properties& dp,
+                       const std::string& node_id = "node_id");
+
+template <typename Graph, typename VertexID>
+void write_graphviz_dp(std::ostream& out, const Graph& g,
+                       const dynamic_properties& dp,
+                       const std::string& node_id,
+                       VertexID vertex_id);
+----
+
+Emits all properties registered in `dp`. This is the natural counterpart to
+`read_graphviz`: a round-trip preserves all attributes.
+
+The `node_id` parameter names the property map in `dp` that stores vertex
+identifiers. The second overload accepts an explicit `vertex_id` map for
+graphs without a built-in vertex index.
+
+== Throws
+
+[cols="1,3"]
+|===
+| Exception | When
+
+| `bad_graphviz_syntax`
+| The input is not valid DOT
+
+| `directed_graph_error`
+| DOT says `digraph` but graph type is undirected
+
+| `undirected_graph_error`
+| DOT says `graph` but graph type is directed
+
+| `bad_parallel_edge`
+| DOT contains a parallel edge but graph type does not allow them
+  (e.g. `adjacency_list<setS, ...>`)
+
+| `property_not_found`
+| The DOT file contains an attribute not registered in `dynamic_properties`
+  (see `ignore_other_properties` above)
+|===
+
+== Subgraphs
+
+DOT subgraphs are treated as syntactic sugar. They do not create BGL subgraph
+objects. They are used to shorten edge definitions and apply shared
+properties. For example:
+
+....
+digraph { a -> subgraph {b -> c} -> e }
+....
+
+is equivalent to:
+
+....
+digraph { a -> b -> e ; a -> c -> e ; b -> c }
+....
+
+Subgraph IDs refer to subgraphs defined earlier in the file. An undefined
+subgraph ID is treated as an empty subgraph `{}`.

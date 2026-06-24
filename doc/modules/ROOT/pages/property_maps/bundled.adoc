@@ -1,0 +1,129 @@
+= Bundled Properties
+
+The recommended way to attach data to vertices and edges.
+
+== Define your structs
+
+[source,cpp]
+----
+struct City {
+    std::string name;
+};
+
+struct Road {
+    double km;
+};
+
+using Graph = adjacency_list<vecS, vecS, directedS, City, Road>;
+----
+
+The third and fourth template parameters of `adjacency_list` are the vertex
+and edge bundles. Every vertex now carries a `City` and every edge carries a
+`Road`.
+
+== Access the data
+
+Direct access on a single vertex or edge:
+
+[source,cpp]
+----
+g[v].name = "Paris";
+auto e = add_edge(0, 1, Road{460}, g).first;
+std::cout << g[e].km;
+----
+
+Property map for use with algorithms:
+
+[source,cpp]
+----
+auto weight_map = get(&Road::km, g);   // property map over all edges
+double w = get(weight_map, e);         // read one edge
+----
+
+== Pass a bundled property map to an algorithm
+
+Algorithms accept bundled property maps the same way they accept any other
+property map. Here is Dijkstra with a bundled edge weight, using the
+positional overload:
+
+[source,cpp]
+----
+auto weight_map = get(&Road::km, g);
+
+std::vector<Vertex> pred(num_vertices(g));
+std::vector<double> dist(num_vertices(g));
+
+auto pred_map = make_iterator_property_map(pred.begin(), get(vertex_index, g));
+auto dist_map = make_iterator_property_map(dist.begin(), get(vertex_index, g));
+
+dijkstra_shortest_paths(g, source,
+    pred_map,
+    dist_map,
+    weight_map,
+    get(vertex_index, g),
+    std::less<double>(),
+    std::plus<double>(),
+    (std::numeric_limits<double>::max)(),
+    double(0),
+    make_dijkstra_visitor(null_visitor()));
+----
+
+== Complete example
+
+[source,cpp]
+----
+include::example$property_maps/bundled.cpp[]
+----
+
+[,text]
+----
+include::example$property_maps/bundled.txt[]
+----
+
+== Graph-level bundles
+
+The sixth template parameter of `adjacency_list` attaches a bundle to the graph
+object itself (not to any vertex or edge). Access it with `graph_bundle`:
+
+[source,cpp]
+----
+struct Country {
+    std::string name;
+    bool use_metric;
+};
+
+using Map = adjacency_list<listS, vecS, bidirectionalS,
+    City, Road, Country>;
+
+Map m;
+m[graph_bundle].name = "France";
+m[graph_bundle].use_metric = true;
+----
+
+NOTE: There is currently no support for creating property maps from
+graph-level bundled properties.
+
+== Type traits
+
+To extract the bundle type from a graph type at compile time:
+
+[source,cpp]
+----
+using VBundle = vertex_bundle_type<Graph>::type;   // City
+using EBundle = edge_bundle_type<Graph>::type;     // Road
+----
+
+If the graph has no vertex bundle, `vertex_bundle_type<Graph>::type` is
+`no_vertex_bundle`. Same pattern for edges with `no_edge_bundle`.
+
+You can also access the entire vertex or edge bundle as a property map:
+
+[source,cpp]
+----
+auto city_map = get(vertex_bundle, g);   // Lvalue property map over City
+auto road_map = get(edge_bundle, g);     // Lvalue property map over Road
+----
+
+The return type of `get(&Road::km, g)` is
+`property_map<Graph, double Road::*>::type` (or `const_type` for a const graph).
+

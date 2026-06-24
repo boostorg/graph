@@ -1,0 +1,29 @@
+= Spanning Trees
+
+A spanning tree connects all vertices with the minimum number of edges (V-1)
+and no cycles. A _minimum_ spanning tree (MST) minimizes total edge weight.
+
+[cols="1,1,3"]
+|===
+| Algorithm | Complexity | When to use
+
+| xref:algorithms/spanning_trees/kruskal_min_spanning_tree.adoc[Kruskal]
+| O(E log E)
+| MST on sparse graphs. Sorts edges by weight, adds them greedily.
+
+| xref:algorithms/spanning_trees/prim_minimum_spanning_tree.adoc[Prim]
+| O((V + E) log V)
+| MST on dense graphs. Grows a tree from a single root vertex.
+
+| xref:algorithms/spanning_trees/random_spanning_tree.adoc[Random Spanning Tree]
+| O(V * E) expected
+| Uniformly random spanning tree. Uses loop-erased random walks.
+
+| xref:algorithms/spanning_trees/two_graphs_common_spanning_trees.adoc[Common Spanning Trees]
+| Exponential
+| Enumerates spanning trees common to two graphs.
+|===
+
+TIP: For MST, use Kruskal when E is small relative to V (sparse), Prim when
+the graph is dense. Both produce the same MST (or one of several if weights
+are not unique).

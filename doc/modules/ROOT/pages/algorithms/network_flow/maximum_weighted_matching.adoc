@@ -1,0 +1,346 @@
+[#sec:maximum_weighted_matching]
+= Maximum Weighted Matching
+
+Finds a matching in an undirected edge-weighted graph that maximizes the sum of matched edge weights.
+
+*Complexity:* _O(n^3^)_ for `maximum_weighted_matching`; exponential in _m_ for brute force +
+*Defined in:* `<boost/graph/maximum_weighted_matching.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/network_flow/maximum_weighted_matching.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/network_flow/maximum_weighted_matching.txt[]
+----
+
+'''
+
+=== (1) maximum_weighted_matching (default maps)
+
+[source,cpp]
+----
+template <typename Graph, typename MateMap>
+void maximum_weighted_matching(
+    const Graph& g,
+    MateMap mate);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| An undirected graph. The graph type must be a model of
+  xref:concepts/VertexAndEdgeListGraph.adoc[Vertex and Edge List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+  The graph may not contain parallel edges.
+
+| OUT
+| `MateMap mate`
+| Must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[ReadWritePropertyMap],
+  mapping vertices to vertices. For any vertex v in the graph,
+  `get(mate, v)` will be the vertex that v is matched to, or
+  `graph_traits<Graph>::null_vertex()` if v is not matched.
+
+|===
+
+'''
+
+=== (2) maximum_weighted_matching (with vertex index map)
+
+[source,cpp]
+----
+template <typename Graph, typename MateMap,
+          typename VertexIndexMap>
+void maximum_weighted_matching(
+    const Graph& g,
+    MateMap mate,
+    VertexIndexMap vm);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| An undirected graph. The graph type must be a model of
+  xref:concepts/VertexAndEdgeListGraph.adoc[Vertex and Edge List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+  The graph may not contain parallel edges.
+
+| OUT
+| `MateMap mate`
+| Must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[ReadWritePropertyMap],
+  mapping vertices to vertices. For any vertex v in the graph,
+  `get(mate, v)` will be the vertex that v is matched to, or
+  `graph_traits<Graph>::null_vertex()` if v is not matched.
+
+| IN
+| `VertexIndexMap vm`
+| Must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[ReadablePropertyMap],
+  mapping vertices to integer indices in the range `[0, num_vertices(g))`.
+
+|===
+
+'''
+
+=== (3) maximum_weighted_matching (with vertex index map and edge weight map)
+
+[source,cpp]
+----
+template <typename Graph, typename MateMap,
+          typename VertexIndexMap, typename EdgeWeightMap>
+void maximum_weighted_matching(
+    const Graph& g,
+    MateMap mate,
+    VertexIndexMap vm,
+    EdgeWeightMap weights);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| An undirected graph. The graph type must be a model of
+  xref:concepts/VertexAndEdgeListGraph.adoc[Vertex and Edge List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+  The graph may not contain parallel edges.
+
+| OUT
+| `MateMap mate`
+| Must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[ReadWritePropertyMap],
+  mapping vertices to vertices. For any vertex v in the graph,
+  `get(mate, v)` will be the vertex that v is matched to, or
+  `graph_traits<Graph>::null_vertex()` if v is not matched.
+
+| IN
+| `VertexIndexMap vm`
+| Must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[ReadablePropertyMap],
+  mapping vertices to integer indices in the range `[0, num_vertices(g))`.
+
+| IN
+| `EdgeWeightMap weights`
+| Must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[ReadablePropertyMap],
+  mapping edges to weights. Edge weights must be integers or floating point values.
+
+|===
+
+'''
+
+=== (4) brute_force_maximum_weighted_matching (default maps)
+
+[source,cpp]
+----
+template <typename Graph, typename MateMap>
+void brute_force_maximum_weighted_matching(
+    const Graph& g,
+    MateMap mate);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| An undirected graph. The graph type must be a model of
+  xref:concepts/VertexAndEdgeListGraph.adoc[Vertex and Edge List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+  The graph may not contain parallel edges.
+
+| OUT
+| `MateMap mate`
+| Must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[ReadWritePropertyMap],
+  mapping vertices to vertices. For any vertex v in the graph,
+  `get(mate, v)` will be the vertex that v is matched to, or
+  `graph_traits<Graph>::null_vertex()` if v is not matched.
+
+|===
+
+'''
+
+=== (5) brute_force_maximum_weighted_matching (with vertex index map)
+
+[source,cpp]
+----
+template <typename Graph, typename MateMap,
+          typename VertexIndexMap>
+void brute_force_maximum_weighted_matching(
+    const Graph& g,
+    MateMap mate,
+    VertexIndexMap vm);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| An undirected graph. The graph type must be a model of
+  xref:concepts/VertexAndEdgeListGraph.adoc[Vertex and Edge List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+  The graph may not contain parallel edges.
+
+| OUT
+| `MateMap mate`
+| Must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[ReadWritePropertyMap],
+  mapping vertices to vertices. For any vertex v in the graph,
+  `get(mate, v)` will be the vertex that v is matched to, or
+  `graph_traits<Graph>::null_vertex()` if v is not matched.
+
+| IN
+| `VertexIndexMap vm`
+| Must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[ReadablePropertyMap],
+  mapping vertices to integer indices in the range `[0, num_vertices(g))`.
+
+|===
+
+== Description
+
+[#sec:weighted_matching]
+Before you continue, it is recommended to read about
+xref:algorithms/network_flow/maximum_matching.adoc[maximal cardinality matching] first.
+A https://en.wikipedia.org/wiki/Maximum_weight_matching[_maximum weighted matching_]
+of an edge-weighted graph is a matching
+for which the sum of the weights of the edges is maximum.
+Two different matchings (edges in the matching are colored blue) in the same graph are
+illustrated below.
+The matching on the left is a maximum cardinality matching of size 8 and a maximal
+weighted matching of weight sum 30, meaning that it has maximum size over all matchings in the graph
+and its weight sum can't be increased by adding edges.
+The matching on the right is a maximum weighted matching of size 7 and weight sum 38, meaning that it has maximum
+weight sum over all matchings in the graph.
+
+[cols=",,"]
+|===
+|[#fig:maximal_weighted_matching]#image:figs/maximal-weighted-match.png[figs/maximal-weighted-match]#
+|
+|[#fig:maximum_weighted_matching]#image:figs/maximum-weighted-match.png[figs/maximum-weighted-match]#
+|===
+
+Both `maximum_weighted_matching` and
+`brute_force_maximum_weighted_matching` find a
+maximum weighted matching in any undirected graph. The matching is returned in a
+`MateMap`, which is a
+link:../../property_map/doc/ReadWritePropertyMap.html[ReadWritePropertyMap]
+that maps vertices to vertices. In the mapping returned, each vertex is
+either mapped to the vertex it's matched to, or to
+`graph_traits<Graph>::null_vertex()` if it doesn't participate in the matching.
+
+If the `VertexIndexMap` is not explicitly specified, it is obtained from the internal vertex property
+of the graph by calling `get(vertex_index, g)`.
+If the `EdgeWeightMap` is not explicitly specified, it is obtained from the internal edge property
+of the graph by calling `get(edge_weight, g)`.
+
+=== Algorithm Description
+
+The maximum weighted matching problem was solved by Edmonds in
+[xref:about/bibliography.adoc#edmonds65:_max_weighted_match[68]].
+Subsequently, Gabow [xref:about/bibliography.adoc#gabow76[69]] and
+Lawler [xref:about/bibliography.adoc#lawler76:_comb_opt[16]] developed methods
+to reduce the run time from _O(V^4^)_ to _O(V^3^)_.
+The implementation of `maximum_weighted_matching` follows a description
+of the _O(V^3^)_ algorithm by Galil [xref:about/bibliography.adoc#galil86[71]].
+The best known time complexity for maximum weighted matching in general
+graphs is _O(VE + V^2^ log V)_ by Gabow
+[xref:about/bibliography.adoc#gabow90[70]], but it relies on an efficient
+algorithm for the nearest common ancestor problem on trees, which Boost
+does not currently provide.
+
+Starting from an empty matching, the algorithm repeatedly augments the
+matching until no further improvement is possible.
+Alternating trees and blossoms are used to find an augmenting path, in a way that is similar
+to maximum cardinality matching.
+A linear programming technique is used to ensure that the selected augmenting path has maximum weight.
+This involves assigning dual variables to vertices and blossoms, and computing slack values for edges.
+
+The outline of the algorithm is as follows:
+
+[start=0]
+. Start with an empty matching and initialize dual variables to half of the maximum edge weight.
+. (Labeling) Root a tree at each non-matched vertex, and proceed to construct alternating trees by labeling, using only edges with zero slack value.
+If an augmenting path is found, go to step 2. If a blossom is formed, go to step 3. Otherwise, go to step 4.
+. (Augmentation) Find the augmenting path, tracing the path through shrunken blossoms. Augment the matching.
+Deconstruct and unlabel the alternating trees traversed by the augmenting path.
+Go to step 1.
+. (Blossoming) Identify the blossoms in the alternating cycle and shrink these into a newly formed blossom.
+Return to step 1.
+. (Updating dual variables) Adjust the dual variables based on the primal-dual method.
+If this enables further growth of the alternating trees, return to step 1.
+Otherwise, halt the algorithm; the matching has maximum weight.
+
+The implementation deviates from the description in
+[xref:about/bibliography.adoc#galil86[71]] on a few points:
+
+* After augmenting the matching,
+[xref:about/bibliography.adoc#galil86[71]] expands all blossoms with
+zero dual. This is correct but potentially unnecessary; some of the
+expanded blossoms will be recreated during the next stage. The
+implementation holds off on the expansion of such blossoms. In any
+scenario where a blossom _must_ be expanded to make progress, label T
+will be assigned to it. At that point, the blossom will be expanded
+through a zero-delta dual step. The additional cost is _O(V)_ per
+expanded blossom, and the total number of blossom expansions is
+_O(V^2^)_, therefore this does not change the overall time complexity of
+the algorithm.
+* The algorithm records a minimum-slack edge _e~k,l~_ for every pair of
+blossoms _B~k~, B~l~_. Storing these edges in a 2-dimensional array
+would increase the space complexity to _O(V^2^)_; an unfortunate cost
+for large sparse graphs. The implementation of
+`maximum_weighted_matching` avoids this by maintaining, for each
+blossom _B~k~_, a list `B~k~.best_edge_set` that contains
+the non-empty elements of _e~k,l~_, plus edges between _B~k~_ and _B~l~_
+discovered after shrinking _B~k~_. The combined length of these lists is
+_O(E)_, since any edge is contained in at most two lists. The algorithm
+only ever examines _e~k,l~_ during the process of merging _B~k~_ into a
+larger blossom. In that case, it sequentially examines _e~k,l~_ for all
+_l_, taking time _O(V)_. The implementation handles this by examining
+every element of `B~k~.best_edge_set`, taking time _O(V)_
+plus a constant time per newly discovered edge. This does not change the
+overall time complexity of the algorithm.
+* After augmenting, [xref:about/bibliography.adoc#galil86[71]] removes
+all labels and alternating trees. This keeps the algorithm simple, but
+it causes many trees and labels to be rediscovered at the beginning of
+the new stage. To avoid such redundant work,
+`maximum_weighted_matching` removes labels only from the two
+alternating trees that are touched by the augmenting path. All other
+labels and trees are reused in the next stage. Erasing labels from a
+subset of the graph requires updating the data structures that track
+minimum-slack edges. This involves examining all edges that either touch
+a blossom which loses its label or touch a vertex which depended on a
+lost label. These steps take _O(V + E)_ per stage, adding up to
+_O(V^3^)_ in total. Although this strategy does not improve the
+worst-case time complexity of the algorithm, it achieves a significant
+speedup in benchmarks on random graphs.
+
+If edge weights are integers, the algorithm uses only integer
+computations. This is achieved by internally multiplying edge weights by
+2, which ensures that all dual variables are also integers.
+
+A brute-force implementation
+`brute_force_maximum_weighted_matching` is also
+provided. This algorithm simply searches all possible matchings and
+selects one with the maximum weight sum.
+
+== Notes
+
+All five overloads return `void`. The result is written into the `MateMap` output parameter.

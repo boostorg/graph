@@ -1,0 +1,189 @@
+= `find_odd_cycle`
+
+Tests a graph for bipartiteness and, if not bipartite, finds an odd-length cycle.
+
+*Complexity:* _O(V + E)_ +
+*Defined in:* `<boost/graph/bipartite.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/coloring/find_odd_cycle.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/coloring/find_odd_cycle.txt[]
+----
+
+'''
+
+=== (1) With partition map and index map
+
+[source,cpp]
+----
+template <typename Graph, typename IndexMap,
+          typename PartitionMap, typename OutputIterator>
+OutputIterator find_odd_cycle(
+    const Graph& graph,
+    const IndexMap index_map,
+    PartitionMap partition_map,
+    OutputIterator result);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& graph`
+| An undirected graph. The graph type must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| IN
+| `const IndexMap index_map`
+| This maps each vertex to an integer in the range
+  `[0, num_vertices(graph))`. The type `VertexIndexMap` must be a
+  model of link:../../property_map/doc/ReadablePropertyMap.html[Readable
+  Property Map]. The value type of the map must be an integer type. The
+  vertex descriptor type of the graph needs to be usable as the key type
+  of the map.
+
+| OUT
+| `PartitionMap partition_map`
+| The algorithm tests whether the graph is bipartite and assigns each
+  vertex either a white or a black color, according to the partition. The
+  `PartitionMap` type must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property
+  Map] and link:../../property_map/doc/WritablePropertyMap.html[Writable
+  Property Map]. The value type must model
+  xref:concepts/property_types/ColorValue.adoc[ColorValue].
+
+| OUT
+| `OutputIterator result`
+| The `find_odd_cycle` function finds an odd-length cycle if the graph is
+  not bipartite. The sequence of vertices producing such a cycle is written
+  into this iterator. The `OutputIterator` type must be a model of
+  http://www.boost.org/sgi/stl/OutputIterator.html[OutputIterator]. The
+  graph's vertex descriptor type must be in the set of value types of the
+  iterator. The final value is returned by the function. If the graph is
+  bipartite (i.e. no odd-length cycle exists), nothing is written, thus
+  the given iterator matches the return value.
+
+|===
+
+'''
+
+=== (2) With index map (no partition map)
+
+[source,cpp]
+----
+template <typename Graph, typename IndexMap,
+          typename OutputIterator>
+OutputIterator find_odd_cycle(
+    const Graph& graph,
+    const IndexMap index_map,
+    OutputIterator result);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& graph`
+| An undirected graph. The graph type must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| IN
+| `const IndexMap index_map`
+| This maps each vertex to an integer in the range
+  `[0, num_vertices(graph))`. The type `VertexIndexMap` must be a
+  model of link:../../property_map/doc/ReadablePropertyMap.html[Readable
+  Property Map]. The value type of the map must be an integer type. The
+  vertex descriptor type of the graph needs to be usable as the key type
+  of the map.
+
+| OUT
+| `OutputIterator result`
+| The `find_odd_cycle` function finds an odd-length cycle if the graph is
+  not bipartite. The sequence of vertices producing such a cycle is written
+  into this iterator. The `OutputIterator` type must be a model of
+  http://www.boost.org/sgi/stl/OutputIterator.html[OutputIterator]. The
+  graph's vertex descriptor type must be in the set of value types of the
+  iterator. The final value is returned by the function. If the graph is
+  bipartite (i.e. no odd-length cycle exists), nothing is written, thus
+  the given iterator matches the return value.
+
+|===
+
+'''
+
+=== (3) Using the internal index map
+
+[source,cpp]
+----
+template <typename Graph, typename OutputIterator>
+OutputIterator find_odd_cycle(
+    const Graph& graph,
+    OutputIterator result);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& graph`
+| An undirected graph. The graph type must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| OUT
+| `OutputIterator result`
+| The `find_odd_cycle` function finds an odd-length cycle if the graph is
+  not bipartite. The sequence of vertices producing such a cycle is written
+  into this iterator. The `OutputIterator` type must be a model of
+  http://www.boost.org/sgi/stl/OutputIterator.html[OutputIterator]. The
+  graph's vertex descriptor type must be in the set of value types of the
+  iterator. The final value is returned by the function. If the graph is
+  bipartite (i.e. no odd-length cycle exists), nothing is written, thus
+  the given iterator matches the return value.
+
+|===
+
+== Description
+
+The `find_odd_cycle` function tests a given graph for bipartiteness
+using a DFS-based coloring approach.
+
+An undirected graph is bipartite if one can partition its set of
+vertices into two sets "left" and "right", such that each edge goes from
+either side to the other. Obviously, a two-coloring of the graph is
+exactly the same as a two-partition. `is_bipartite()` tests whether
+such a two-coloring is possible and can return it in a given property
+map.
+
+Another equivalent characterization is the non-existance of odd-length
+cycles, meaning that a graph is bipartite if and only if it does not
+contain a cycle with an odd number of vertices as a subgraph.
+`find_odd_cycle()` does nearly the same as
+xref:algorithms/coloring/is_bipartite.adoc[`is_bipartite()`], but additionally
+constructs an odd-length cycle if the graph is found to be not
+bipartite.
+
+The bipartition is recorded in the color map `partition_map`, which
+will contain a two-coloring of the graph, i.e. an assignment of _black_
+and _white_ to the vertices such that no edge is monochromatic. The
+odd-length cycle is written into the Output Iterator `result` if one
+exists. The final final iterator is returned by the function.
+
+== Returns
+
+The function returns an `OutputIterator` pointing past the last vertex
+written. If the graph is bipartite (i.e. no odd-length cycle exists),
+nothing is written, and the returned iterator equals the input `result`.
+

@@ -1,0 +1,172 @@
+= Graph Data Structures
+
+BGL provides three graph data structures, each suited to different assumptions
+about mutability, memory, and access patterns.
+When in doubt, start with `adjacency_list`: it covers the majority of use cases.
+The other two are specialized for dense or large static graphs.
+
+[cols="1,1,1,1"]
+|===
+| | `adjacency_matrix` | `adjacency_list` | `compressed_sparse_row_graph`
+
+| *Mutability*
+| Fixed vertex count at construction
+| Add/remove vertices and edges freely
+| Immutable after construction
+
+| *Memory*
+| O(V²)
+| O(V + E)
+| O(V + E), most compact
+
+| *Best for*
+| Dense graphs (E ≈ V²)
+| Best for most programs with sparse, dynamic graphs
+| Large static graphs, read-heavy workloads
+
+| *Edge lookup*
+| O(1)
+| O(degree)
+| O(log degree)
+
+| *Neighbor iteration*
+| O(V): must scan the full matrix row
+| O(out-degree): direct access
+| O(out-degree): direct access, cache-friendly
+|===
+
+The `adjacency_list` will be the right choice for the majority of programs.
+
+== adjacency_list
+
+The general-purpose structure. Parameterized to cover most use cases:
+
+[source,cpp]
+----
+using Graph = boost::adjacency_list
+    boost::vecS,        // OutEdgeList: container for out-edges per vertex
+    boost::vecS,        // VertexList:  container for the vertex set
+    boost::directedS,   // Directed:    directedS, undirectedS, or bidirectionalS
+    boost::no_property, // vertex data
+    boost::no_property, // edge data
+    boost::no_property  // graph data
+>;
+----
+
+Internally, `adjacency_list` stores the vertex set and each vertex's out-edge list
+in STL containers. The selector tags (`vecS`, `listS`, `setS`) control which
+container is used:
+
+[cols="1,2,2"]
+|===
+| Selector | Use when | Trade-off
+
+| `vecS`
+| Fast traversal, graph structure is stable
+| **Vertex removal invalidates all descriptors**
+
+| `listS`
+| You add or remove vertices at runtime
+| Stable descriptors, slightly higher memory
+
+| `setS`
+| You need to prevent duplicate edges
+| Slower `add_edge`, faster `remove_edge`
+|===
+
+Common configurations:
+
+[source,cpp]
+----
+// Default: fast iteration, allows parallel edges
+using Graph = adjacency_list<vecS, vecS, directedS>;
+
+// Prevent duplicate edges
+using Graph = adjacency_list<setS, vecS, directedS>;
+
+// Stable descriptors when mutating the graph
+using Graph = adjacency_list<vecS, listS, directedS>;
+
+// Undirected
+using Graph = adjacency_list<vecS, vecS, undirectedS>;
+
+// Access both in-edges and out-edges
+using Graph = adjacency_list<vecS, vecS, bidirectionalS>;
+----
+
+NOTE: Algorithms return _vertex descriptors_ to identify vertices. Your code
+will store them in vectors, maps, predecessor arrays, etc. The concrete type
+of a descriptor depends on the `VertexList` selector: with `vecS` it happens
+to be an integer index, but with `listS` it is a pointer. **Never assume a descriptor is an
+integer.**
+
+WARNING: With `vecS`, calling `remove_vertex()` shifts all subsequent indices,
+so every descriptor you previously stored now points to the wrong vertex.
+**If you plan on removing vertices, use `listS`.**
+
+xref:graph_classes/adjacency_list.adoc[Full adjacency_list reference]
+
+== adjacency_matrix
+
+Stores edges in a V×V matrix. Edge existence checks are O(1), but memory
+is always O(V²) regardless of actual edge count.
+
+[source,cpp]
+----
+using Graph = boost::adjacency_matrix
+    boost::directedS,   // directedS = full V×V matrix
+                        // undirectedS = lower triangle, saves 50% space
+    boost::no_property, // vertex data
+    boost::no_property, // edge data
+    boost::no_property  // graph data
+>;
+----
+
+Use `adjacency_matrix` only when your graph is dense (more than ~25% of all
+possible edges present) and vertex count is bounded and known upfront.
+Above 10K vertices the memory cost becomes prohibitive.
+
+WARNING: The vertex count is fixed at construction. `add_vertex()` is not
+implemented. Parallel edges are silently rejected (the second `add_edge()`
+returns `false`). `bidirectionalS` is not supported: use `directedS`.
+
+NOTE: Even for sparse graphs, iterating a vertex's neighbors scans the entire
+matrix row in O(V), not O(out-degree). This is the main reason to prefer
+`adjacency_list` for sparse graphs.
+
+xref:graph_classes/adjacency_matrix.adoc[Full adjacency_matrix reference]
+
+== compressed_sparse_row_graph
+
+The most memory-efficient structure. Immutable after construction: vertices
+and edges cannot be added or removed. Cache-friendly layout makes traversal
+fast on large graphs.
+
+[source,cpp]
+----
+using Graph = boost::compressed_sparse_row_graph
+    boost::directedS,   // directedS or bidirectionalS
+    boost::no_property, // vertex data
+    boost::no_property, // edge data
+    boost::no_property, // graph data
+    uint32_t,           // Vertex index type
+    uint32_t            // Edge index type
+>;
+----
+
+Use smaller integer types (`uint16_t`, `uint32_t`) to reduce memory on very
+large graphs. Use `bidirectionalS` only if your algorithm needs to traverse
+edges backward.
+
+WARNING: Build your edge list first, then construct the graph in one shot.
+There is no `add_edge()` or `remove_edge()` after construction. The
+constructor has several variants (`edges_are_sorted`, `edges_are_unsorted`,
+`construct_inplace_from_sources_and_targets`). Passing unsorted edges to the
+sorted constructor silently produces a wrong graph. The in-place constructor
+mutates your input vectors: do not reuse them.
+
+NOTE: Parallel edges are allowed. Deduplicate your edge list before
+construction if you need a simple graph. Only `directedS` and `bidirectionalS`
+are supported (no `undirectedS`).
+
+xref:graph_classes/compressed_sparse_row.adoc[Full CSR reference]

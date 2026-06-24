@@ -1,0 +1,47 @@
+= Edge Connectivity
+
+Computes the minimum number of edges whose removal disconnects the graph.
+Optionally outputs the disconnecting edge set.
+
+*Complexity:* O(V * max_flow) +
+*Defined in:* `<boost/graph/edge_connectivity.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/connectivity/edge_connectivity.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/connectivity/edge_connectivity.txt[]
+----
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename VertexListGraph, typename OutputIterator>
+typename graph_traits<VertexListGraph>::degree_size_type
+edge_connectivity(VertexListGraph& g, OutputIterator disconnecting_set);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `VertexListGraph& g`
+| Must model VertexListGraph and EdgeMutableGraph (the algorithm
+  internally constructs a flow network).
+
+| OUT
+| `OutputIterator disconnecting_set`
+| Receives the edges in the minimum disconnecting set.
+|===
+
+Returns the edge connectivity (minimum cut size).
+
+NOTE: This function internally uses max-flow. It constructs a temporary copy
+of the graph for flow computation.

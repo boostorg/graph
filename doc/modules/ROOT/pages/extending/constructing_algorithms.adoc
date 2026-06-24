@@ -1,0 +1,135 @@
+= Constructing graph algorithms with BGL
+
+The _main_ goal of BGL is not to provide a nice graph class, or to
+provide a comprehensive set of reusable graph algorithms (though these
+are goals). The main goal of BGL is to encourage others to write
+reusable graph algorithms. By reusable we mean maximally reusable.
+Generic programming is a methodology for making algorithms maximally
+reusable, and in this section we will discuss how to apply generic
+programming to constructing graph algorithms.
+
+To illustrate the generic programming process we will step though the
+construction of a graph coloring algorithm. The graph coloring problem
+(or more specifically, the vertex coloring problem) is to label each
+vertex in a graph _G_ with a color such that no two adjacent vertices
+are labeled with the same color and such that the minimum number of
+colors are used. In general, the graph coloring problem is NP-complete,
+and therefore it is impossible to find an optimal solution in a
+reasonable amount of time. However, there are many algorithms that use
+heuristics to find colorings that are close to the minimum.
+
+The particular algorithm we present here is based on the linear time
+`SEQ` subroutine that is used in the estimation of sparse Jacobian and
+Hessian
+matrices [xref:about/bibliography.adoc#curtis74:_jacob[6],xref:about/bibliography.adoc#coleman84:_estim_jacob[4],xref:about/bibliography.adoc#coleman85:_algor[3]].
+This algorithm visits all of the vertices in the graph according to the
+order defined by the input order. At each vertex the algorithm marks the
+colors of the adjacent vertices, and then chooses the smallest unmarked
+color for the color of the current vertex. If all of the colors are
+already marked, a new color is created. A color is considered marked if
+its mark number is equal to the current vertex number. This saves the
+trouble of having to reset the marks for each vertex. The effectiveness
+of this algorithm is highly dependent on the input vertex order. There
+are several ordering algorithms, including the
+_largest-first_ [xref:about/bibliography.adoc#welsch67[26]],
+_smallest-last_ [xref:about/bibliography.adoc#matula72:_graph_theory_computing[24]],
+and _incidence
+degree_ [xref:about/bibliography.adoc#brelaz79:_new[27]] algorithms,
+which improve the effectiveness of this coloring algorithm.
+
+The first decision to make when constructing a generic graph algorithm
+is to decide what graph operations are necessary for implementing the
+algorithm, and which graph concepts the operations map to. In this
+algorithm we will need to traverse through all of the vertices to
+intialize the vertex colors. We also need to access the adjacent
+vertices. Therefore, we will choose the
+xref:concepts/VertexListGraph.adoc[VertexListGraph] concept because it is the
+minimum concept that includes these operations. The graph type will be
+parameterized in the template function for this algorithm. We do not
+restrict the graph type to a particular graph class, such as the BGL
+xref:graph_classes/adjacency_list.adoc[`adjacency_list`], for this would
+drastically limit the reusability of the algorithm (as most algorithms
+written to date are). We do restrict the graph type to those types that
+model xref:concepts/VertexListGraph.adoc[VertexListGraph]. This is enforced by
+the use of those graph operations in the algorithm, and furthermore by
+our explicit requirement added as a concept check with
+`BOOST_CONCEPT_ASSERT()` (see Section
+link:../../concept_check/concept_check.htm[Concept Checking] for more
+details about concept checking).
+
+Next we need to think about what vertex or edge properties will be used
+in the algorithm. In this case, the only property is vertex color. The
+most flexible way to specify access to vertex color is to use the
+propery map interface. This gives the user of the algorithm the ability
+to decide how they want to store the properties. Since we will need to
+both read and write the colors we specify the requirements as
+link:../../property_map/doc/ReadWritePropertyMap.html[ReadWritePropertyMap].
+The `key_type` of the color map must be the `vertex_descriptor`
+from the graph, and the `value_type` must be some kind of integer.
+We also specify the interface for the `order` parameter as a property
+map, in this case a
+link:../../property_map/doc/ReadablePropertyMap.html[ReadablePropertyMap].
+For order, the `key_type` is an integer offset and the
+`value_type` is a `vertex_descriptor`. Again we enforce these
+requirements with concept checks. The return value of this algorithm is
+the number of colors that were needed to color the graph, hence the
+return type of the function is the graph's `vertices_size_type`.
+The following code shows the interface for our graph algorithm as a
+template function, the concept checks, and some typedefs. The
+implementation is straightforward, the only step not discussed above is
+the color initialization step, where we set the color of all the
+vertices to "uncolored."
+
+[source,cpp]
+----
+
+namespace boost {
+  template <class VertexListGraph, class Order, class Color>
+  typename graph_traits<VertexListGraph>::vertices_size_type
+  sequential_vertex_color_ting(const VertexListGraph& G,
+    Order order, Color color)
+  {
+    typedef graph_traits<VertexListGraph> GraphTraits;
+    typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
+    typedef typename GraphTraits::vertices_size_type size_type;
+    typedef typename property_traits<Color>::value_type ColorType;
+    typedef typename property_traits<Order>::value_type OrderType;
+
+    BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<VertexListGraph> ));
+    BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<Color, vertex_descriptor> ));
+    BOOST_CONCEPT_ASSERT(( IntegerConcept<ColorType> ));
+    BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<Order, size_type> ));
+    BOOST_STATIC_ASSERT((is_same<OrderType, vertex_descriptor>::value));
+
+    size_type max_color = 0;
+    const size_type V = num_vertices(G);
+    std::vector<size_type>
+      mark(V, numeric_limits_max(max_color));
+
+    typename GraphTraits::vertex_iterator v, vend;
+    for (boost::tie(v, vend) = vertices(G); v != vend; ++v)
+      color[*v] = V - 1; // which means "not colored"
+
+    for (size_type i = 0; i < V; i++) {
+      vertex_descriptor current = order[i];
+
+      // mark all the colors of the adjacent vertices
+      typename GraphTraits::adjacency_iterator ai, aend;
+      for (boost::tie(ai, aend) = adjacent_vertices(current, G); ai != aend; ++ai)
+        mark[color[*ai]] = i;
+
+      // find the smallest color unused by the adjacent vertices
+      size_type smallest_color = 0;
+      while (smallest_color < max_color && mark[smallest_color] == i)
+        ++smallest_color;
+
+      // if all the colors are used up, increase the number of colors
+      if (smallest_color == max_color)
+        ++max_color;
+
+      color[current] = smallest_color;
+    }
+    return max_color;
+  }
+} // namespace boost
+----

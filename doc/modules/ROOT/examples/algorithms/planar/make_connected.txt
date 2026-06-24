@@ -1,0 +1,2 @@
+Edges before: 3
+Edges after:  5
