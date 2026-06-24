@@ -14,7 +14,7 @@ none
 
 [cols=",",]
 |===
-|`V` |A type that is a model of Dijkstra Visitor.
+|`V` |A type that is a model of TSP Tour Visitor.
 
 |`vis` |An object of type `V`.
 
@@ -42,4 +42,4 @@ each vertex of the graph when it is visited as part of the TSP tour.
 == Models
 
 * xref:visitors/tsp_tour_visitor.adoc[`tsp_tour_visitor`]
-* xref:visitors/tsp_tour_len_visitor.adoc[`tsp_tour_len_tsp_visitor`]
+* xref:visitors/tsp_tour_len_visitor.adoc[`tsp_tour_len_visitor`]
