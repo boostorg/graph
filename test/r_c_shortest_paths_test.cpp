@@ -157,9 +157,8 @@ public:
         spp_spptw_res_cont& new_cont, const spp_spptw_res_cont& old_cont,
         graph_traits< SPPRC_Example_Graph >::edge_descriptor ed) const
     {
-        const SPPRC_Example_Graph_Arc_Prop& arc_prop = get(edge_bundle, g)[ed];
-        const SPPRC_Example_Graph_Vert_Prop& vert_prop
-            = get(vertex_bundle, g)[target(ed, g)];
+        const auto& arc_prop = get(edge_bundle, g)[ed];
+        const auto& vert_prop = get(vertex_bundle, g)[target(ed, g)];
         new_cont.cost = old_cont.cost + arc_prop.cost;
         int& i_time = new_cont.time;
         i_time = old_cont.time + arc_prop.time;
@@ -253,17 +252,15 @@ public:
         const spp_spptw_marked_res_cont& old_cont,
         graph_traits< SPPRC_Example_Graph >::edge_descriptor ed) const
     {
-        const graph_traits< SPPRC_Example_Graph >::vertex_descriptor dest
-            = target(ed, g);
+        const auto dest = target(ed, g);
 
         if (old_cont.marked.find(dest) != old_cont.marked.end())
         {
             return false;
         }
 
-        const SPPRC_Example_Graph_Arc_Prop& arc_prop = get(edge_bundle, g)[ed];
-        const SPPRC_Example_Graph_Vert_Prop& vert_prop
-            = get(vertex_bundle, g)[dest];
+        const auto& arc_prop = get(edge_bundle, g)[ed];
+        const auto& vert_prop = get(vertex_bundle, g)[dest];
         new_cont.cost = old_cont.cost + arc_prop.cost;
         new_cont.marked = old_cont.marked;
         new_cont.marked.insert(dest);
@@ -363,8 +360,7 @@ int main(int, char*[])
     {
         for (int t = 0; t < 10; ++t)
         {
-            r_c_shortest_paths(g, get(&SPPRC_Example_Graph_Vert_Prop::num, g),
-                get(&SPPRC_Example_Graph_Arc_Prop::num, g), s, t, opt_solutions,
+            r_c_shortest_paths(g, get(&SPPRC_Example_Graph_Vert_Prop::num, g), s, t, opt_solutions,
                 pareto_opt_rcs_no_rc, spp_no_rc_res_cont(0), ref_no_res_cont(),
                 dominance_no_res_cont(),
                 std::allocator< r_c_shortest_paths_label< SPPRC_Example_Graph,
@@ -522,8 +518,7 @@ int main(int, char*[])
     {
         for (int t = 0; t < 10; ++t)
         {
-            r_c_shortest_paths(g, get(&SPPRC_Example_Graph_Vert_Prop::num, g),
-                get(&SPPRC_Example_Graph_Arc_Prop::num, g), s, t,
+            r_c_shortest_paths(g, get(&SPPRC_Example_Graph_Vert_Prop::num, g), s, t,
                 opt_solutions_spptw, pareto_opt_rcs_spptw,
                 // be careful, do not simply take 0 as initial value for time
                 spp_spptw_res_cont(0, g[s].eat), ref_spptw(), dominance_spptw(),
@@ -684,8 +679,7 @@ int main(int, char*[])
     std::vector< graph_traits< SPPRC_Example_Graph >::edge_descriptor >
         opt_solution;
     spp_spptw_res_cont pareto_opt_rc;
-    r_c_shortest_paths(g2, get(&SPPRC_Example_Graph_Vert_Prop::num, g2),
-        get(&SPPRC_Example_Graph_Arc_Prop::num, g2), 0, 3, opt_solution,
+    r_c_shortest_paths(g2, get(&SPPRC_Example_Graph_Vert_Prop::num, g2), 0, 3, opt_solution,
         pareto_opt_rc, spp_spptw_res_cont(0, 0), ref_spptw(), dominance_spptw(),
         std::allocator< r_c_shortest_paths_label< SPPRC_Example_Graph,
             spp_spptw_res_cont > >(),
@@ -729,8 +723,7 @@ int main(int, char*[])
 
     graph_traits< SPPRC_Example_Graph >::vertex_descriptor g3_source = 0,
                                                            g3_target = 1;
-    r_c_shortest_paths(g3, get(&SPPRC_Example_Graph_Vert_Prop::num, g3),
-        get(&SPPRC_Example_Graph_Arc_Prop::num, g3), g3_source, g3_target,
+    r_c_shortest_paths(g3, get(&SPPRC_Example_Graph_Vert_Prop::num, g3), g3_source, g3_target,
         pareto_opt_marked_solutions, pareto_opt_marked_resource_containers,
         spp_spptw_marked_res_cont(0, 0, 0), ref_spptw_marked(),
         dominance_spptw_marked(),
