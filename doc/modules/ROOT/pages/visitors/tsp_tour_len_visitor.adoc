@@ -4,7 +4,8 @@ Records the vertices of a TSP tour into an output iterator and computes the
 total tour length.
 
 *Defined in:* `<boost/graph/metric_tsp_approx.hpp>` +
-*Models:* TSP Tour Visitor
+*Models:* xref:visitors/TSPTourVisitor.adoc[TSP Tour Visitor] +
+*Used with:* xref:algorithms/utility/metric_tsp_approx.adoc[`metric_tsp_approx()`]
 
 == Usage
 
