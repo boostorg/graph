@@ -1,0 +1,86 @@
+= profile
+
+Computes the profile of a graph, which is the sum of all vertex bandwidths plus one for each vertex.
+
+*Complexity:* _O(|V| * max_out_degree)_ +
+*Defined in:* `<boost/graph/profile.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/metrics/profile.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/metrics/profile.txt[]
+----
+
+'''
+
+=== (1) Default vertex index overload
+
+[source,cpp]
+----
+template <typename Graph>
+typename graph_traits<Graph>::vertices_size_type
+profile(const Graph& g)
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| The graph object on which the algorithm will be applied.
+  The type `Graph` must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+  The default `vertex_index` property map is used.
+|===
+
+'''
+
+=== (2) Explicit vertex index map overload
+
+[source,cpp]
+----
+template <typename Graph, typename VertexIndexMap>
+typename graph_traits<Graph>::vertices_size_type
+profile(const Graph& g, VertexIndexMap index_map)
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| The graph object on which the algorithm will be applied.
+  The type `Graph` must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| IN
+| `VertexIndexMap index_map`
+| This maps each vertex to an integer in the range `[0, num_vertices(g))`.
+  The type `VertexIndexMap` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The vertex descriptor
+  type of the graph needs to be usable as the key type of the map.
+|===
+
+== Description
+
+The *_profile_* of a graph is the sum of all the maximum distances between the _i-th_ vertex and any of its neighbors with an index _j>i_, plus one for each vertex. More precisely, the profile is the sum of all individual vertex bandwidths plus one:
+
+_P(G) = sum { B~i~(G) + 1 {nbsp}{nbsp}| i=0...++|++V++|++-1 }_
+
+where _B~i~(G)_ is the xref:algorithms/metrics/bandwidth.adoc#sec:ith-bandwidth[i-th bandwidth].
+
+== Returns
+
+The profile of the graph as a `vertices_size_type` value.
+

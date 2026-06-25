@@ -1,0 +1,52 @@
+= Graph Generators
+
+BGL provides iterator-based generators that produce edges for common graph
+models. Pass a generator iterator pair to a graph constructor or use
+`generate_random_graph()` for the simplest case.
+
+== Quick start
+
+[source,cpp]
+----
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/erdos_renyi_generator.hpp>
+#include <boost/random/mersenne_twister.hpp>
+
+using Graph = boost::adjacency_list<>;
+boost::mt19937 gen(42);
+
+// 100 vertices, 500 random edges
+boost::erdos_renyi_iterator<boost::mt19937, Graph> start(gen, 100, 500);
+boost::erdos_renyi_iterator<boost::mt19937, Graph> end;
+
+Graph g(start, end, 100);
+----
+
+== Choosing a generator
+
+[cols="2,3,2"]
+|===
+| Model | Use when | Iterator
+
+| Uniform random
+| No structure assumed, baseline for testing
+| `erdos_renyi_iterator`
+
+| Scale-free (power law)
+| Real-world networks (web, social, biological)
+| `rmat_iterator`, `plod_iterator`
+
+| Small world
+| High clustering with short average path length
+| `small_world_iterator`
+
+| 2D mesh / grid
+| Regular lattice, spatial problems
+| `mesh_iterator`
+
+| Clustered benchmark
+| Dense cliques with sparse inter-clique edges
+| `ssca_iterator`
+|===
+
+

@@ -1,0 +1,177 @@
+= Reverse Graph
+
+A view of a graph with all edges reversed (transposed). Construction is O(1).
+
+*Defined in:* `<boost/graph/reverse_graph.hpp>` +
+*Models:* BidirectionalGraph, VertexListGraph, PropertyGraph (depending on
+underlying graph)
+
+== Example
+
+[source,cpp]
+----
+include::example$adaptors/reverse_graph.cpp[]
+----
+
+[,text]
+----
+include::example$adaptors/reverse_graph.txt[]
+----
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename BidirectionalGraph,
+          typename GraphRef = const BidirectionalGraph&>
+class reverse_graph;
+
+template <typename BidirectionalGraph>
+reverse_graph<BidirectionalGraph, const BidirectionalGraph&>
+make_reverse_graph(const BidirectionalGraph& g);
+
+template <typename BidirectionalGraph>
+reverse_graph<BidirectionalGraph, BidirectionalGraph&>
+make_reverse_graph(BidirectionalGraph& g);
+----
+
+The `reverse_graph` does not copy the original graph. It holds a reference and
+swaps the meaning of `out_edges` and `in_edges`. This makes `source()` and
+`target()` return the opposite of what they return on the original graph.
+
+The `GraphRef` parameter controls const-ness: `const BidirectionalGraph&`
+(default) gives a read-only view, `BidirectionalGraph&` gives a mutable view.
+
+== Template Parameters
+
+[cols="1,3,1",options="header"]
+|===
+| Parameter | Description | Default
+
+| `BidirectionalGraph`
+| The underlying graph type. Must model BidirectionalGraph.
+|
+
+| `GraphRef`
+| Reference type to the underlying graph. Use `const BidirectionalGraph&` for a
+  read-only view, `BidirectionalGraph&` for a mutable view.
+| `const BidirectionalGraph&`
+|===
+
+== Non-Member Functions
+
+=== Structure Access
+
+[source,cpp]
+----
+std::pair<vertex_iterator, vertex_iterator>
+vertices(const reverse_graph& g);
+----
+
+Same vertices as the underlying graph.
+
+'''
+
+[source,cpp]
+----
+vertex_descriptor vertex(vertices_size_type n, const reverse_graph& g);
+----
+
+Returns the nth vertex.
+
+'''
+
+[source,cpp]
+----
+std::pair<adjacency_iterator, adjacency_iterator>
+adjacent_vertices(vertex_descriptor v, const reverse_graph& g);
+----
+
+Returns the vertices adjacent to `v` through reversed edges.
+
+'''
+
+[source,cpp]
+----
+std::pair<out_edge_iterator, out_edge_iterator>
+out_edges(vertex_descriptor v, const reverse_graph& g);
+----
+
+Returns the in-edges of `v` in the underlying graph (as out-edges of the
+reversed view).
+
+'''
+
+[source,cpp]
+----
+std::pair<in_edge_iterator, in_edge_iterator>
+in_edges(vertex_descriptor v, const reverse_graph& g);
+----
+
+Returns the out-edges of `v` in the underlying graph (as in-edges of the
+reversed view).
+
+'''
+
+[source,cpp]
+----
+vertex_descriptor source(edge_descriptor e, const reverse_graph& g);
+vertex_descriptor target(edge_descriptor e, const reverse_graph& g);
+----
+
+Reversed: `source()` returns the target of the underlying edge, and vice versa.
+
+'''
+
+[source,cpp]
+----
+degree_size_type out_degree(vertex_descriptor u, const reverse_graph& g);
+degree_size_type in_degree(vertex_descriptor u, const reverse_graph& g);
+vertices_size_type num_vertices(const reverse_graph& g);
+edges_size_type num_edges(const reverse_graph& g);
+----
+
+Degree and count functions. `out_degree` returns the in-degree of the
+underlying graph, and vice versa.
+
+=== Property Map Access
+
+Property maps from the underlying graph are accessible through the reversed
+view. Additionally, the `edge_underlying_t` property maps reversed edge
+descriptors back to the underlying edge descriptors.
+
+[source,cpp]
+----
+template <typename PropertyTag>
+property_map<reverse_graph, PropertyTag>::type
+get(PropertyTag, reverse_graph& g);
+
+template <typename PropertyTag>
+property_map<reverse_graph, PropertyTag>::const_type
+get(PropertyTag, const reverse_graph& g);
+----
+
+== Associated Types
+
+[cols="1,3",options="header"]
+|===
+| Type | Description
+
+| `vertex_descriptor`
+| Same as the underlying graph.
+
+| `edge_descriptor`
+| Same as the underlying graph.
+
+| `out_edge_iterator`
+| Corresponds to `in_edge_iterator` of the underlying graph.
+
+| `in_edge_iterator`
+| Corresponds to `out_edge_iterator` of the underlying graph.
+
+| `directed_category`
+| From the underlying graph.
+
+| `edge_parallel_category`
+| From the underlying graph.
+|===

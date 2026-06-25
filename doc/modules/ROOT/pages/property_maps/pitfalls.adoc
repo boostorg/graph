@@ -1,0 +1,172 @@
+= Common Mistakes
+
+Recurring problems when working with BGL property maps, with minimal
+reproduction and fixes.
+
+== Category mismatch
+
+`make_function_property_map` produces a read-only map. Passing it where
+an algorithm expects ReadWrite fails to compile. The `color_map` and
+`distance_map` parameters are written to by most algorithms.
+
+.Broken
+[source,cpp]
+----
+auto color = make_function_property_map<Vertex>([](Vertex) {
+    return default_color_type::white_color;
+});
+breadth_first_search(g, s, visitor(default_bfs_visitor()),
+    color_map(color));
+// Compile error: no matching function for call to 'put'
+----
+
+The algorithm calls `put(color, v, gray)` during traversal, but
+`make_function_property_map` does not support `put`.
+
+.Fix: use a vector instead
+[source,cpp]
+----
+std::vector<default_color_type> colors(num_vertices(g));
+auto color = make_iterator_property_map(colors.begin(), get(vertex_index, g));
+----
+
+== Container too small
+
+A vector sized to `N` when the graph has `N + 1` vertices causes silent
+out-of-bounds writes. Results are wrong or the program crashes
+intermittently.
+
+.Broken
+[source,cpp]
+----
+std::vector<int> dist(10);  // hope the graph has <= 10 vertices
+auto dist_map = make_iterator_property_map(dist.begin(), get(vertex_index, g));
+----
+
+.Fix: always size from the graph
+[source,cpp]
+----
+std::vector<int> dist(num_vertices(g));
+auto dist_map = make_iterator_property_map(dist.begin(), get(vertex_index, g));
+----
+
+== Dangling storage
+
+A vector allocated inside a function is destroyed when the function
+returns. Any property map that wraps it becomes a dangling reference.
+
+.Broken
+[source,cpp]
+----
+auto make_map(const Graph& g) {
+    std::vector<double> v(num_vertices(g), 0.0);
+    return make_iterator_property_map(v.begin(), get(vertex_index, g));
+    // v is destroyed here; the returned map points to freed memory
+}
+----
+
+.Fix: allocate in the caller scope
+[source,cpp]
+----
+std::vector<double> v(num_vertices(g), 0.0);
+auto pm = make_iterator_property_map(v.begin(), get(vertex_index, g));
+// v and pm have the same lifetime
+----
+
+Alternatively, use `vector_property_map` which owns its storage internally.
+
+== Missing include
+
+`vector_property_map` lives in its own header. Omitting the include produces
+long template errors that do not mention the missing header.
+
+.Broken
+[source,cpp]
+----
+#include <boost/property_map/property_map.hpp>  // not enough
+vector_property_map<double> pm(num_vertices(g), get(vertex_index, g));
+// error: 'vector_property_map' was not declared in this scope
+----
+
+.Fix
+[source,cpp]
+----
+#include <boost/property_map/vector_property_map.hpp>
+----
+
+== Const graph, wrong property map type
+
+When a function receives `const Graph&`, you need `const_type` instead of
+`type`. Using the wrong one produces long template errors.
+
+.Broken
+[source,cpp]
+----
+void analyze(const Graph& g) {
+    property_map<Graph, edge_weight_t>::type w = get(edge_weight, g);
+    // error: conversion from const_type to type
+}
+----
+
+.Fix: use const_type for const graphs
+[source,cpp]
+----
+void analyze(const Graph& g) {
+    property_map<Graph, edge_weight_t>::const_type w = get(edge_weight, g);
+}
+----
+
+Or simply use `auto`.
+
+== No automatic edge_index
+
+Unlike `vertex_index_t` which is provided automatically when `VertexList=vecS`,
+there is no automatic `edge_index`. You must declare it explicitly and assign
+values manually.
+
+.Broken
+[source,cpp]
+----
+auto eidx = get(edge_index, g);  // compile error if edge_index not declared
+----
+
+.Fix: declare edge_index in the graph type
+[source,cpp]
+----
+using Graph = adjacency_list<vecS, vecS, directedS,
+    no_property,
+    property<edge_index_t, std::size_t>>;
+// Assign indices when adding edges:
+add_edge(0, 1, 0, g);
+add_edge(1, 2, 1, g);
+----
+
+== No vertex_index with listS
+
+With `VertexList = listS`, there is no built-in `vertex_index` property.
+This breaks not just `get(vertex_index, g)` but also any algorithm that
+internally creates default property maps (color maps, distance maps, etc.)
+using vertex_index. BFS, DFS, Dijkstra, `copy_graph`, `topological_sort`,
+and most other algorithms are affected.
+
+.Broken
+[source,cpp]
+----
+using Graph = adjacency_list<vecS, listS, directedS>;
+Graph g;
+// ...
+auto idx = get(vertex_index, g);  // compile error
+----
+
+.Fix: supply your own index
+[source,cpp]
+----
+using Vertex = graph_traits<Graph>::vertex_descriptor;
+std::map<Vertex, int> index_map;
+int i = 0;
+for (auto [vi, vi_end] = vertices(g); vi != vi_end; ++vi) {
+    index_map[*vi] = i++;
+}
+auto idx = make_assoc_property_map(index_map);
+----
+

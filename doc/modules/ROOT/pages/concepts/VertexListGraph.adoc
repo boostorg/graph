@@ -1,0 +1,96 @@
+= VertexListGraph
+
+The _VertexListGraph_ concept refines the xref:concepts/Graph.adoc[Graph]
+concept, and adds the requirement for efficient traversal of all the
+vertices in the graph.
+
+== Refinement of
+
+xref:concepts/Graph.adoc[Graph]
+
+== Associated Types
+
+[width="100%",cols="100%",]
+|===
+|`boost::graph_traits<G>::traversal_category` +
+ +
+This tag type must be convertible to
+`vertex_list_graph_tag`.
+
+|`boost::graph_traits<G>::vertex_iterator` +
+ +
+A vertex iterator (obtained via `vertices(g)`) provides access to all of
+the vertices in a graph. A vertex iterator type must meet the
+requirements of `MultiPassInputIterator`.
+The value type of the vertex iterator must be the vertex descriptor of
+the graph.
+
+|`boost::graph_traits<G>::vertices_size_type` +
+ +
+The unsigned integer type used to represent the number of vertices in
+the graph.
+|===
+
+== Valid Expressions
+
+[cols=",,,",options="header",]
+|===
+|Name |Expression |Return Type |Description
+|Vertex Set of the Graph |`vertices(g)`
+|`std::pair<vertex_iterator, vertex_iterator>` |Returns
+an iterator-range providing access to all the vertices in the graph`g`.
+
+|Number of Vertices in the Graph |`num_vertices(g)`
+|`vertices_size_type` |Returns the number of vertices in the
+graph `g`.
+|===
+
+== Complexity guarantees
+
+The `vertices()` function must return in constant time.
+
+== Design Rationale
+
+One issue in the design of this concept is whether to include the
+refinement from the xref:concepts/IncidenceGraph.adoc[IncidenceGraph] and
+xref:concepts/AdjacencyGraph.adoc[AdjacencyGraph] concepts. The ability to
+traverse the vertices of a graph is orthogonal to traversing out-edges,
+so it would make sense to have a VertexListGraph concept that only
+includes vertex traversal. However, such a concept would no longer
+really be a graph, but would just be a set, and the STL already has
+concepts for dealing with such things. However, there are many BGL
+algorithms that need to traverse the vertices and out-edges of a graph,
+so for convenience a concept is needed that groups these requirements
+together, hence the VertexListGraph concept.
+
+== Concept Checking Class
+
+[source,cpp]
+----
+
+  template <class G>
+  struct VertexListGraphConcept
+  {
+    typedef typename boost::graph_traits<G>::vertex_iterator
+      vertex_iterator;
+    void constraints() {
+      BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept<G> ));
+      BOOST_CONCEPT_ASSERT(( AdjacencyGraphConcept<G> ));
+      BOOST_CONCEPT_ASSERT(( MultiPassInputIteratorConcept<vertex_iterator> ));
+
+      p = vertices(g);
+      V = num_vertices(g);
+      v = *p.first;
+      const_constraints(g);
+    }
+    void const_constraints(const G& g) {
+      p = vertices(g);
+      V = num_vertices(g);
+      v = *p.first;
+    }
+    std::pair<vertex_iterator, vertex_iterator> p;
+    typename boost::graph_traits<G>::vertex_descriptor v;
+    typename boost::graph_traits<G>::vertices_size_type V;
+    G g;
+  };
+----

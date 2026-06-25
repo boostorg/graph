@@ -1,0 +1,308 @@
+[#sec:dag_shortest_paths]
+= DAG Shortest Paths
+
+Solves the single-source shortest-paths problem on a weighted, directed acyclic graph (DAG), more efficiently than either Dijkstra or Bellman-Ford.
+
+*Complexity:* _O(V + E)_ +
+*Defined in:* `<boost/graph/dag_shortest_paths.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/shortest_paths/dag_shortest.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/shortest_paths/dag_shortest.txt[]
+----
+
+'''
+
+=== (1) Positional version
+
+[source,cpp]
+----
+template <class VertexListGraph, class DijkstraVisitor,
+          class DistanceMap, class WeightMap, class ColorMap,
+          class PredecessorMap,
+          class Compare, class Combine,
+          class DistInf, class DistZero>
+void dag_shortest_paths(
+    const VertexListGraph& g,
+    typename graph_traits<VertexListGraph>::vertex_descriptor s,
+    DistanceMap distance, WeightMap weight, ColorMap color,
+    PredecessorMap pred, DijkstraVisitor vis,
+    Compare compare, Combine combine, DistInf inf, DistZero zero);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const VertexListGraph& g`
+| The graph object on which the algorithm will be applied.
+  The type `VertexListGraph` must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph].
+
+| IN
+| `vertex_descriptor s`
+| The source vertex. All distances will be calculated from this vertex,
+  and the shortest paths tree will be rooted at this vertex.
+
+| UTIL/OUT
+| `DistanceMap distance`
+| The shortest path weight from the source vertex `s` to each vertex in
+  the graph `g` is recorded in this property map. The shortest path weight
+  is the sum of the edge weights along the shortest path. The type
+  `DistanceMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map].
+  The vertex descriptor type of the graph needs to be usable as the key type
+  of the distance map. The value type of the distance map is the element type
+  of a xref:concepts/property_types/Monoid.adoc[Monoid] formed with the `combine` function
+  object and the `zero` object for the identity element. Also the distance
+  value type must have a
+  http://www.boost.org/sgi/stl/StrictWeakOrdering.html[StrictWeakOrdering]
+  provided by the `compare` function object.
+
+| IN
+| `WeightMap weight`
+| The weight or "length" of each edge in the graph. The type `WeightMap`
+  must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The edge descriptor type of the graph needs to be usable as the key type
+  for the weight map. The value type for the map must be _Addable_ with the
+  value type of the distance map.
+
+| UTIL/OUT
+| `ColorMap color`
+| This is used during the execution of the algorithm to mark the vertices.
+  The vertices start out white and become gray when they are inserted in
+  the queue. They then turn black when they are removed from the queue. At
+  the end of the algorithm, vertices reachable from the source vertex will
+  have been colored black. All other vertices will still be white. The
+  type `ColorMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map].
+  A vertex descriptor must be usable as the key type of the map, and the
+  value type of the map must be a model of
+  xref:concepts/property_types/ColorValue.adoc[Color Value].
+
+| OUT
+| `PredecessorMap pred`
+| The predecessor map records the edges in the minimum spanning tree. Upon
+  completion of the algorithm, the edges _(p[u],u)_ for all _u in V_ are
+  in the minimum spanning tree. If _p[u] = u_ then _u_ is either the source
+  vertex or a vertex that is not reachable from the source. The
+  `PredecessorMap` type must be a
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]
+  whose key and value types are the same as the vertex descriptor type of the
+  graph.
+
+| IN
+| `DijkstraVisitor vis`
+| Use this to specify actions that you would like to happen during certain
+  event points within the algorithm. The type `DijkstraVisitor` must be a
+  model of the xref:visitors/DijkstraVisitor.adoc[Dijkstra Visitor] concept.
+  The visitor object is passed by value <<1,[1]>>.
+
+| IN
+| `Compare compare`
+| This function is used to compare distances to determine which vertex is
+  closer to the source vertex. The `Compare` type must be a model of
+  http://www.boost.org/sgi/stl/BinaryPredicate.html[Binary Predicate]
+  and have argument types that match the value type of the `DistanceMap`
+  property map.
+
+| IN
+| `Combine combine`
+| This function is used to combine distances to compute the distance of a
+  path. The `Combine` type must be a model of
+  http://www.boost.org/sgi/stl/BinaryFunction.html[Binary Function]. The
+  first argument type of the binary function must match the value type of
+  the `DistanceMap` property map and the second argument type must match
+  the value type of the `WeightMap` property map. The result type must be
+  the same type as the distance value type.
+
+| IN
+| `DistInf inf`
+| The `inf` object must be the greatest value of any `D` object. That is,
+  `compare(d, inf) == true` for any `d != inf`. The type `D` is the value
+  type of the `DistanceMap`.
+
+| IN
+| `DistZero zero`
+| The `zero` value must be the identity element for the
+  xref:concepts/property_types/Monoid.adoc[Monoid] formed by the distance values and the
+  `combine` function object. The type `D` is the value type of the
+  `DistanceMap`.
+
+|===
+
+'''
+
+=== (2) Named parameter version
+
+[source,cpp]
+----
+template <class VertexListGraph, class Param, class Tag, class Rest>
+void dag_shortest_paths(
+    const VertexListGraph& g,
+    typename graph_traits<VertexListGraph>::vertex_descriptor s,
+    const bgl_named_params<Param, Tag, Rest>& params);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const VertexListGraph& g`
+| The graph object on which the algorithm will be applied.
+  The type `VertexListGraph` must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph].
+
+| IN
+| `vertex_descriptor s`
+| The source vertex. All distances will be calculated from this vertex,
+  and the shortest paths tree will be rooted at this vertex.
+
+| IN
+| `params`
+| Named parameters passed via `bgl_named_params`. The following are accepted:
+|===
+
+[cols="1,2,5"]
+|===
+| Direction | Named Parameter | Description / Default
+
+| IN
+| `weight_map(WeightMap w_map)`
+| Edge weights (see (1) `WeightMap weight`). +
+  *Default:* `get(edge_weight, g)`
+
+| IN
+| `vertex_index_map(VertexIndexMap i_map)`
+| This maps each vertex to an integer in the range `[0, num_vertices(g))`.
+  This is necessary for efficient updates of the heap data structure when
+  an edge is relaxed. The type `VertexIndexMap` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The vertex descriptor
+  type of the graph needs to be usable as the key type of the map. +
+  *Default:* `get(vertex_index, g)`.
+  Note: if you use this default, make sure your graph has an internal
+  `vertex_index` property. For example, `adjacency_list` with
+  `VertexList=listS` does not have an internal `vertex_index` property.
+
+| OUT
+| `predecessor_map(PredecessorMap p_map)`
+| Predecessor map (see (1) `PredecessorMap pred`). +
+  *Default:* `dummy_property_map`
+
+| UTIL/OUT
+| `distance_map(DistanceMap d_map)`
+| Distance map (see (1) `DistanceMap distance`). +
+  *Default:*
+  link:../../property_map/doc/iterator_property_map.html[`iterator_property_map`]
+  created from a `std::vector` of the `WeightMap`'s value type of size
+  `num_vertices(g)` and using the `i_map` for the index map.
+
+| IN
+| `distance_compare(CompareFunction cmp)`
+| Distance comparison function (see (1) `Compare compare`). +
+  *Default:* `std::less<D>` with
+  `D=typename property_traits<DistanceMap>::value_type`
+
+| IN
+| `distance_combine(CombineFunction cmb)`
+| Distance combination function (see (1) `Combine combine`). +
+  *Default:* `std::plus<D>` with
+  `D=typename property_traits<DistanceMap>::value_type`
+
+| IN
+| `distance_inf(D inf)`
+| Infinity value (see (1) `DistInf inf`). +
+  *Default:* `std::numeric_limits<D>::max()`
+
+| IN
+| `distance_zero(D zero)`
+| Identity element (see (1) `DistZero zero`). +
+  *Default:* `D()` with
+  `D=typename property_traits<DistanceMap>::value_type`
+
+| UTIL/OUT
+| `color_map(ColorMap c_map)`
+| Color map (see (1) `ColorMap color`). +
+  *Default:* an
+  link:../../property_map/doc/iterator_property_map.html[`iterator_property_map`]
+  created from a `std::vector` of `default_color_type` of size
+  `num_vertices(g)` and using the `i_map` for the index map.
+
+| OUT
+| `visitor(DijkstraVisitor v)`
+| Visitor (see (1) `DijkstraVisitor vis`). +
+  *Default:* `dijkstra_visitor<null_visitor>`
+
+|===
+
+== Description
+
+This algorithm [xref:about/bibliography.adoc#clr90[5]] solves the
+single-source shortest-paths problem on a weighted, directed acyclic
+graph (DAG). This algorithm is more efficient for DAG's than either the
+Dijkstra or Bellman-Ford algorithm. Use breadth-first search instead of
+this algorithm when all edge weights are equal to one. For the
+definition of the shortest-path problem see Section
+xref:about/graph_theory_review.adoc#sec:shortest-paths-algorithms[Shortest-Paths
+Algorithms] for some background to the shortest-path problem.
+
+There are two main options for obtaining output from the
+`dag_shortest_paths()` function. If you provide a distance
+property map through the `distance_map()` parameter then the
+shortest distance from the source vertex to every other vertex in the
+graph will be recorded in the distance map. Also you can record the
+shortest paths tree in a predecessor map: for each vertex _u in V_,
+_p[u]_ will be the predecessor of _u_ in the shortest paths tree
+(unless _p[u] = u_, in which case _u_ is either the source or a
+vertex unreachable from the source). In addition to these two options,
+the user can provide their own custom-made visitor that takes actions
+during any of the algorithm's event points.
+
+== Visitor Event Points
+
+* *`vis.initialize_vertex(u, g)`* is invoked on each vertex in the
+  graph before the start of the algorithm.
+* *`vis.examine_vertex(u, g)`* is invoked on a vertex as it is added
+  to set _S_. At this point we know that _(p[u],u)_ is a
+  shortest-paths tree edge so
+  _d[u] = delta(s,u) = d[p[u]] + w(p[u],u)_. Also, the distances
+  of the examined vertices is monotonically increasing
+  _d[u~1~] \<= d[u~2~] \<= d[u~n~]_.
+* *`vis.examine_edge(e, g)`* is invoked on each out-edge of a vertex
+  immediately after it has been added to set _S_.
+* *`vis.edge_relaxed(e, g)`* is invoked on edge _(u,v)_ if
+  _d[u] + w(u,v) < d[v]_. The edge _(u,v)_ that
+  participated in the last relaxation for vertex _v_ is an edge in the
+  shortest paths tree.
+* *`vis.discover_vertex(v, g)`* is invoked on vertex _v_ when the
+  edge _(u,v)_ is examined and _v_ is WHITE. Since a vertex is colored
+  GRAY when it is discovered, each reachable vertex is discovered exactly
+  once.
+* *`vis.edge_not_relaxed(e, g)`* is invoked if the edge is not
+  relaxed (see above).
+* *`vis.finish_vertex(u, g)`* is invoked on a vertex after all of
+  its out edges have been examined.
+
+== Example
+
+See link:../example/dag_shortest_paths.cpp[`example/dag_shortest_paths.cpp`]
+for an example of using this algorithm.
+
+== Notes
+
+[#1]#[1]# Since the visitor parameter is passed by value, if
+your visitor contains state then any changes to the state during the
+algorithm will be made to a copy of the visitor object, not the visitor
+object passed in. Therefore you may want the visitor to hold this state
+by pointer or reference.

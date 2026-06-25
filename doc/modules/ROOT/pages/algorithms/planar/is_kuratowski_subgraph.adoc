@@ -1,0 +1,71 @@
+[#sec:is-kuratowski-subgraph]
+= is_kuratowski_subgraph
+
+Verifies that a set of edges forms a Kuratowski subgraph in a graph.
+
+*Complexity:* _O(n)_ +
+*Defined in:* `<boost/graph/is_kuratowski_subgraph.hpp>`
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename Graph, typename ForwardIterator,
+          typename VertexIndexMap>
+bool is_kuratowski_subgraph(
+    const Graph& g,
+    ForwardIterator begin,
+    ForwardIterator end,
+    VertexIndexMap vm);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| An undirected graph with no self-loops or parallel edges. The type `Graph` must be a
+  model of xref:concepts/VertexListGraph.adoc[VertexListGraph].
+
+| IN
+| `ForwardIterator begin, end`
+| A ForwardIterator range with `value_type` equal to
+  `graph_traits<Graph>::edge_descriptor`.
+
+| IN
+| `VertexIndexMap vm`
+| A Readable Property Map that maps vertices from `g` to distinct integers in the range
+  `[0, num_vertices(g))`. +
+  *Default*: `get(vertex_index, g)`
+|===
+
+== Description
+
+`is_kuratowski_subgraph(g, begin, end)` returns `true` exactly when the sequence of edges defined by the range `[begin, end)` forms a xref:algorithms/planar/planar_graphs.adoc#kuratowskisubgraphs[Kuratowski subgraph] in the graph `g`.
+If you need to verify that an arbitrary graph has a _K~5~_ or _K~3,3~_ minor, you should use the function xref:algorithms/planar/boyer_myrvold.adoc[`boyer_myrvold_planarity_test`] to isolate such a minor instead of this function.
+`is_kuratowski_subgraph` exists to aid in testing and verification of the function `boyer_myrvold_planarity_test`, and for that reason, it expects its input to be a restricted set of edges forming a Kuratowski subgraph, as described in detail below.
+
+`is_kuratowski_subgraph` creates a temporary graph out of the sequence of edges given and repeatedly contracts edges until it ends up with a graph with either all vertices of degree 3 or all vertices of degree 4.
+The final contracted graph is then checked against _K~5~_ or _K~3,3~_ using the Boost Graph Library's xref:algorithms/isomorphism/isomorphism.adoc[isomorphism] function.
+The contraction process starts by choosing edges adjacent to a vertex of degree 1 and contracting those.
+When none are left, it moves on to edges adjacent to a vertex of degree 2.
+If only degree 3 vertices are left after this stage, the graph is checked against _K~3,3~_.
+Otherwise, if there's at least one degree 4 vertex, edges adjacent to degree 3 vertices are contracted as needed and the final graph is compared to _K~5~_.
+
+In order for this process to be deterministic, we make the following two restrictions on the input graph given to `is_kuratowski_subgraph`:
+
+. No edge contraction needed to produce a Kuratowski subgraph results in multiple edges between the same pair of vertices (no edge _{a,b}_ will be contracted at any point in the contraction process if _a_ and _b_ share a common neighbor.)
+. If the graph contracts to a _K~5~_, once the graph has been contracted to only vertices of degree at least 3, no cycles exist that contain solely degree 3 vertices.
+
+The second restriction is needed both to discriminate between targeting a _K~5~_ or a _K~3,3~_ and to deterministically contract the vertices of degree 4 once the _K~5~_ has been targeted.
+The Kuratowski subgraph output by the function xref:algorithms/planar/boyer_myrvold.adoc[`boyer_myrvold_planarity_test`] is guaranteed to meet both of the above requirements.
+
+== Returns
+
+`true` if the edge range forms a Kuratowski subgraph, `false` otherwise.
+
+== Example
+
+See link:../example/kuratowski_subgraph.cpp[`example/kuratowski_subgraph.cpp`].
+

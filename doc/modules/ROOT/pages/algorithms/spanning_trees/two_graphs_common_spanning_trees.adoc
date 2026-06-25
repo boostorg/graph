@@ -1,0 +1,139 @@
+[#sec:two-graphs-common-spanning-trees]
+= Two-Graphs Common Spanning Trees
+
+Finds all common spanning trees of two undirected graphs using the MRT algorithm of Minty, Read and Tarjan.
+
+*Defined in:* `<boost/graph/two_graphs_common_spanning_trees.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/spanning_trees/two_graphs_common.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/spanning_trees/two_graphs_common.txt[]
+----
+
+'''
+
+=== (1) Ordered Edges List
+
+[source,cpp]
+----
+template <typename Graph, typename Order,
+          typename Func, typename Seq>
+void two_graphs_common_spanning_trees(
+    const Graph& iG,
+    Order iG_map,
+    const Graph& vG,
+    Order vG_map,
+    Func func,
+    Seq inL);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& iG`
+| The first graph to be analyzed.
+  The type `Graph` must be a model of VertexAndEdgeListGraphConcept and IncidenceGraphConcept.
+  In addition, the `directed_category` should be of type `undirected_tag`.
+
+| IN
+| `Order iG_map`
+| A list of references to edges that defines the preferred order for access to the edge list of `iG`.
+  The type `Order` must be a model of RandomAccessContainer.
+
+| IN
+| `const Graph& vG`
+| The second graph to be analyzed.
+  The type `Graph` must be a model of VertexAndEdgeListGraphConcept and IncidenceGraphConcept.
+  In addition, the `directed_category` should be of type `undirected_tag`.
+
+| IN
+| `Order vG_map`
+| A list of references to edges that defines the preferred order for access to the edge list of `vG`.
+  The type `Order` must be a model of RandomAccessContainer.
+
+| IN
+| `Func func`
+| A callback that is invoked by the algorithm for each common spanning tree found.
+  The type `Func` must be a model of UnaryFunction with `void` as return value, and an object of type _typeof(inL)_ as argument.
+
+| IN/OUT
+| `Seq inL`
+| A sequence that marks which edges belong to the common spanning tree.
+  The type `Seq` must be a model of Mutable_RandomAccessContainer. In addition, the `value_type` should be of type `bool`.
+  If the i-th edge or _inL[i]_ is `true`, then it belongs to the common spanning tree, otherwise it does not belong.
+  See <<1,[1]>> for details on the purpose of this parameter.
+
+|===
+
+'''
+
+=== (2) Unordered Edges List
+
+[source,cpp]
+----
+template <typename Graph, typename Func,
+          typename Seq>
+void two_graphs_common_spanning_trees(
+    const Graph& iG,
+    const Graph& vG,
+    Func func,
+    Seq inL);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& iG`
+| The first graph to be analyzed.
+  The type `Graph` must be a model of VertexAndEdgeListGraphConcept and IncidenceGraphConcept.
+  In addition, the `directed_category` should be of type `undirected_tag`.
+
+| IN
+| `const Graph& vG`
+| The second graph to be analyzed.
+  The type `Graph` must be a model of VertexAndEdgeListGraphConcept and IncidenceGraphConcept.
+  In addition, the `directed_category` should be of type `undirected_tag`.
+
+| IN
+| `Func func`
+| A callback that is invoked by the algorithm for each common spanning tree found.
+  The type `Func` must be a model of UnaryFunction with `void` as return value, and an object of type _typeof(inL)_ as argument.
+
+| IN/OUT
+| `Seq inL`
+| A sequence that marks which edges belong to the common spanning tree.
+  The type `Seq` must be a model of Mutable_RandomAccessContainer. In addition, the `value_type` should be of type `bool`.
+  If the i-th edge or _inL[i]_ is `true`, then it belongs to the common spanning tree, otherwise it does not belong.
+  See <<1,[1]>> for details on the purpose of this parameter.
+
+|===
+
+== Description
+
+The *MRT* algorithm, based on an academic article of *Minty*, *Read* and *Tarjan*, is an efficient algorithm for the common spanning tree problem.
+This kind of algorithm is widely used in electronics, being the basis of the analysis of electrical circuits. Another area of interest may be that of the networking.
+
+The problem of common spanning tree is easily described.
+Imagine we have two graphs that are represented as lists of edges. A common spanning tree is a set of indices that identifies a spanning tree for both the first and for the second of the two graphs. Despite it is easily accomplished with edge list representation for graphs, it is intuitively difficult to achieve with adjacency list representation. This is due to the fact that it is necessary to represent an edge with an absolute index.
+
+Note that the set of common spanning trees of the two graphs is a subset of the set of spanning trees of the first graph, as well as those of the second graph.
+
+The proposed algorithm receives several arguments and works with callbacks. Overload (1) accepts explicit edge orderings for the two graphs, while overload (2) uses the default edge iteration order.
+
+The file link:../example/two_graphs_common_spanning_trees.cpp[`examples/two_graphs_common_spanning_trees.cpp`] contains an additional example of finding common spanning trees of two undirected graphs.
+
+== Notes
+
+[#1]#[1]# The presence of _inL_ may seem senseless. The algorithm can use a vector of placeholders internally generated. However, doing so has more flexibility on the callback function. Moreover, being largely involved in the electronics world, there are cases where some edges have to be forced in every tree (ie you want to search all the trees that have the same root): With this solution, the problem is easily solved.
+Intuitively from the above, _inL_ must be of a size equal to _(V-1)_, where _V_ is the number of vertices of the graph.

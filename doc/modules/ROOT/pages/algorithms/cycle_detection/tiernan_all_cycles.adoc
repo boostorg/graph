@@ -1,0 +1,117 @@
+= Tiernan All Cycles
+
+Enumerates all elementary cycles in a directed graph. An elementary cycle
+visits each vertex at most once.
+
+*Complexity:* exponential in the number of cycles +
+*Defined in:* `<boost/graph/tiernan_all_cycles.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/cycle_detection/tiernan_all_cycles.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/cycle_detection/tiernan_all_cycles.txt[]
+----
+
+'''
+
+=== (1) tiernan_all_cycles (explicit min and max)
+
+[source,cpp]
+----
+template <typename Graph, typename Visitor>
+void tiernan_all_cycles(const Graph& g, Visitor vis,
+                        std::size_t minlen,
+                        std::size_t maxlen);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| Must model xref:concepts/VertexListGraph.adoc[Vertex List Graph] with a `vertex_index` property.
+
+| IN
+| `Visitor vis`
+| Called with `vis.cycle(path, g)` for each cycle found.
+  `path` is a `const std::vector<vertex_descriptor>&`.
+
+| IN
+| `std::size_t minlen`
+| Minimum cycle length (inclusive). Cycles shorter than this are skipped.
+
+| IN
+| `std::size_t maxlen`
+| Maximum cycle length (inclusive).
+|===
+
+'''
+
+=== (2) tiernan_all_cycles (explicit max, default min)
+
+[source,cpp]
+----
+template <typename Graph, typename Visitor>
+void tiernan_all_cycles(const Graph& g, Visitor vis, std::size_t maxlen);
+----
+
+Same as overload (1) with `minlen` defaulted to the smallest cycle length admissible for the graph's directed category (loops and length-1 cycles excluded as appropriate).
+
+'''
+
+=== (3) tiernan_all_cycles (default min and max)
+
+[source,cpp]
+----
+template <typename Graph, typename Visitor>
+void tiernan_all_cycles(const Graph& g, Visitor vis);
+----
+
+Equivalent to overload (2) with `maxlen` set to `std::numeric_limits<std::size_t>::max()` (no upper bound).
+
+'''
+
+=== (4) tiernan_girth_and_circumference
+
+[source,cpp]
+----
+template <typename Graph>
+std::pair<std::size_t, std::size_t>
+tiernan_girth_and_circumference(const Graph& g);
+----
+
+Returns `(girth, circumference)` — the smallest and largest cycle lengths in the graph. If the graph is acyclic, both values equal `std::numeric_limits<std::size_t>::max()`.
+
+'''
+
+=== (5) tiernan_girth
+
+[source,cpp]
+----
+template <typename Graph>
+std::size_t tiernan_girth(const Graph& g);
+----
+
+Returns the girth (shortest cycle length). Thin wrapper over `tiernan_girth_and_circumference`.
+
+'''
+
+=== (6) tiernan_circumference
+
+[source,cpp]
+----
+template <typename Graph>
+std::size_t tiernan_circumference(const Graph& g);
+----
+
+Returns the circumference (longest cycle length). Thin wrapper over `tiernan_girth_and_circumference`.
+
+TIP: For simply detecting whether a cycle exists (without enumerating), use
+DFS with a back-edge visitor. That is O(V + E) instead of exponential.

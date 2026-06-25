@@ -1,0 +1,60 @@
+= BasicMatrix
+
+
+The BasicMatrix concept provides a minimalist interface for accessing
+elements from a 2 dimensional table of values.
+
+== Refinement of
+
+none
+
+== Notation
+
+[cols=",",]
+|===
+|{`M,I,V`} |The matrix, index, and values types that together model
+the BasicMatrix concept.
+
+|`A` |An object of type `M`.
+
+|`i, j` |Objects of type `I`.
+|===
+
+== Associated Types
+
+none
+
+== Valid Expressions
+
+[width="100%",cols="50%,50%",]
+|===
+|`A[i][j]` |Returns a reference to the
+element object stored at index `(i,j)` +
+Return type: `V&` for mutable `A` or `const V&` for constant `A`.
+|===
+
+== Complexity guarantees
+
+Element access is constant time.
+
+== Concept Checking Class
+
+[source,cpp]
+----
+
+  template <class M, class I, class V>
+  struct BasicMatrixConcept
+  {
+    void constraints() {
+      V& elt = A[i][j];
+      const_constraints(A);
+      ignore_unused_variable_warning(elt);
+    }
+    void const_constraints(const M& A) {
+      const V& elt = A[i][j];
+      ignore_unused_variable_warning(elt);
+    }
+    M A;
+    I i, j;
+  };
+----

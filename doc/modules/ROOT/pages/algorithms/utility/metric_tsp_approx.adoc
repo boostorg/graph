@@ -1,0 +1,368 @@
+[#sec:metric_tsp_approx]
+= Metric Traveling Salesperson Approximation
+
+A https://en.wikipedia.org/wiki/Travelling_salesman_problem[traveling salesperson] heuristic for generating a tour of vertices for a fully connected undirected graph with weighted edges that obey the triangle inequality.
+
+*Complexity:* _O(E log V)_ +
+*Defined in:* `<boost/graph/metric_tsp_approx.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/utility/metric_tsp_approx.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/utility/metric_tsp_approx.txt[]
+----
+
+'''
+
+=== (1) metric_tsp_approx_from_vertex (full)
+
+[source,cpp]
+----
+template <typename VertexListGraph,
+          typename WeightMap,
+          typename VertexIndexMap,
+          typename TSPVertexVisitor>
+void metric_tsp_approx_from_vertex(
+    const VertexListGraph& g,
+    typename graph_traits<VertexListGraph>::vertex_descriptor start,
+    WeightMap weightmap,
+    VertexIndexMap indexmap,
+    TSPVertexVisitor vis);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const VertexListGraph& g`
+| An undirected graph. The type `VertexListGraph` must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph]
+  and xref:concepts/IncidenceGraph.adoc[Incidence Graph] <<2,[2]>>.
+
+| IN
+| `vertex_descriptor start`
+| The vertex that will be the start (and end) of the tour.
+
+| IN
+| `WeightMap weightmap`
+| The weight of each edge in the graph. The type `WeightMap` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The edge descriptor type of the graph needs to be usable as the key type for
+  the weight map.
+
+| IN
+| `VertexIndexMap indexmap`
+| This maps each vertex to an integer in the range `[0, num_vertices(g))`.
+  This is necessary for efficient updates of the heap data structure when an
+  edge is relaxed. The type `VertexIndexMap` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The vertex descriptor type
+  of the graph needs to be usable as the key type of the map.
+
+| OUT
+| `TSPVertexVisitor vis`
+| Use this to specify actions that you would like to happen when the algorithm
+  visits a vertex of the tour. The type `TSPVertexVisitor` must be a model of
+  the xref:visitors/TSPTourVisitor.adoc[TSP Tour Visitor] concept. The visitor
+  object is passed by value <<1,[1]>>.
+
+|===
+
+'''
+
+=== (2) metric_tsp_approx_tour (2 args)
+
+[source,cpp]
+----
+template <typename VertexListGraph,
+          typename OutputIterator>
+void metric_tsp_approx_tour(
+    VertexListGraph& g,
+    OutputIterator o);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `VertexListGraph& g`
+| An undirected graph (see (1)).
+
+| OUT
+| `OutputIterator o`
+| The OutputIterator holds the vertices of the tour. The type `OutputIterator`
+  must be a model of the OutputIterator concept.
+
+|===
+
+'''
+
+=== (3) metric_tsp_approx_tour (3 args)
+
+[source,cpp]
+----
+template <typename VertexListGraph,
+          typename WeightMap,
+          typename OutputIterator>
+void metric_tsp_approx_tour(
+    VertexListGraph& g,
+    WeightMap w,
+    OutputIterator o);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `VertexListGraph& g`
+| An undirected graph (see (1)).
+
+| IN
+| `WeightMap w`
+| Edge weight map (see (1) `WeightMap weightmap`).
+
+| OUT
+| `OutputIterator o`
+| Output iterator for the tour vertices (see (2)).
+
+|===
+
+'''
+
+=== (4) metric_tsp_approx_tour_from_vertex (3 args)
+
+[source,cpp]
+----
+template <typename VertexListGraph,
+          typename OutputIterator>
+void metric_tsp_approx_tour_from_vertex(
+    VertexListGraph& g,
+    typename graph_traits<VertexListGraph>::vertex_descriptor start,
+    OutputIterator o);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `VertexListGraph& g`
+| An undirected graph (see (1)).
+
+| IN
+| `vertex_descriptor start`
+| The vertex that will be the start (and end) of the tour.
+
+| OUT
+| `OutputIterator o`
+| Output iterator for the tour vertices (see (2)).
+
+|===
+
+'''
+
+=== (5) metric_tsp_approx_tour_from_vertex (4 args)
+
+[source,cpp]
+----
+template <typename VertexListGraph,
+          typename WeightMap,
+          typename OutputIterator>
+void metric_tsp_approx_tour_from_vertex(
+    VertexListGraph& g,
+    typename graph_traits<VertexListGraph>::vertex_descriptor start,
+    WeightMap w,
+    OutputIterator o);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `VertexListGraph& g`
+| An undirected graph (see (1)).
+
+| IN
+| `vertex_descriptor start`
+| The vertex that will be the start (and end) of the tour.
+
+| IN
+| `WeightMap w`
+| Edge weight map (see (1) `WeightMap weightmap`).
+
+| OUT
+| `OutputIterator o`
+| Output iterator for the tour vertices (see (2)).
+
+|===
+
+'''
+
+=== (6) metric_tsp_approx (visitor, 2 args)
+
+[source,cpp]
+----
+template <typename VertexListGraph,
+          typename TSPVertexVisitor>
+void metric_tsp_approx(
+    VertexListGraph& g,
+    TSPVertexVisitor vis);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `VertexListGraph& g`
+| An undirected graph (see (1)).
+
+| OUT
+| `TSPVertexVisitor vis`
+| Visitor invoked at each tour vertex (see (1) `TSPVertexVisitor vis`).
+
+|===
+
+'''
+
+=== (7) metric_tsp_approx (visitor, 3 args)
+
+[source,cpp]
+----
+template <typename VertexListGraph,
+          typename Weightmap,
+          typename VertexIndexMap,
+          typename TSPVertexVisitor>
+void metric_tsp_approx(
+    VertexListGraph& g,
+    Weightmap w,
+    TSPVertexVisitor vis);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `VertexListGraph& g`
+| An undirected graph (see (1)).
+
+| IN
+| `Weightmap w`
+| Edge weight map (see (1) `WeightMap weightmap`).
+
+| OUT
+| `TSPVertexVisitor vis`
+| Visitor invoked at each tour vertex (see (1) `TSPVertexVisitor vis`).
+
+|===
+
+'''
+
+=== (8) metric_tsp_approx (visitor, 4 args)
+
+[source,cpp]
+----
+template <typename VertexListGraph,
+          typename WeightMap,
+          typename VertexIndexMap,
+          typename TSPVertexVisitor>
+void metric_tsp_approx(
+    VertexListGraph& g,
+    WeightMap w,
+    VertexIndexMap id,
+    TSPVertexVisitor vis);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `VertexListGraph& g`
+| An undirected graph (see (1)).
+
+| IN
+| `WeightMap w`
+| Edge weight map (see (1) `WeightMap weightmap`).
+
+| IN
+| `VertexIndexMap id`
+| Vertex index map (see (1) `VertexIndexMap indexmap`).
+
+| OUT
+| `TSPVertexVisitor vis`
+| Visitor invoked at each tour vertex (see (1) `TSPVertexVisitor vis`).
+
+|===
+
+'''
+
+=== (9) metric_tsp_approx_from_vertex (visitor, 4 args)
+
+[source,cpp]
+----
+template <typename VertexListGraph,
+          typename WeightMap,
+          typename TSPVertexVisitor>
+void metric_tsp_approx_from_vertex(
+    VertexListGraph& g,
+    typename graph_traits<VertexListGraph>::vertex_descriptor start,
+    WeightMap w,
+    TSPVertexVisitor vis);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `VertexListGraph& g`
+| An undirected graph (see (1)).
+
+| IN
+| `vertex_descriptor start`
+| The vertex that will be the start (and end) of the tour.
+
+| IN
+| `WeightMap w`
+| Edge weight map (see (1) `WeightMap weightmap`).
+
+| OUT
+| `TSPVertexVisitor vis`
+| Visitor invoked at each tour vertex (see (1) `TSPVertexVisitor vis`).
+
+|===
+
+== Description
+
+This is a traveling salesperson heuristic for generating a tour of vertices for a fully connected undirected graph with weighted edges that obey the triangle inequality. The current implementation is based off of the algorithm presented in _Introduction to Algorithms_ on page 1029. This implementation generates solutions that are twice as long as the optimal tour in the worst case. The pseudo-code is listed below.
+
+=== Pseudo-Code
+
+----
+TSP-APPROX(G, w)
+  select a vertex r in V[G]
+  compute a minimum spanning tree T for G from root r
+    using PRIM-MST(G, r, w)
+  let L be the list of vertices visited in a preorder traversal of T
+  return (the Hamiltonian cycle H that visites the vertices in the order L)
+----
+
+The overloads that do not accept a `start` vertex use `*vertices(g).first` as the default starting vertex. The overloads that do not accept a `WeightMap` use `get(edge_weight, g)` as the default. The overloads that do not accept a `VertexIndexMap` use `get(vertex_index, g)` as the default -- if you use this default, make sure your graph has an internal `vertex_index` property (for example, `adjacency_list` with `VertexList=listS` does not have an internal `vertex_index` property).
+
+== Notes
+
+[#1]#[1]# Since the visitor parameter is passed by value, if your visitor contains state then any changes to the state during the algorithm will be made to a copy of the visitor object, not the visitor object passed in. Therefore you may want the visitor to hold this state by pointer or reference.
+
+[#2]#[2]# Passing an `adjacency_list` with a vertex _not_ set selected by `vecS` will result in _O(n^2^)_ performance.

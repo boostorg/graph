@@ -1,0 +1,64 @@
+= Planar Face Visitor Concept
+
+This concept defines the visitor interface for
+xref:algorithms/planar/planar_face_traversal.adoc[`planar_face_traversal`].
+Users can define a class with the Planar Face Visitor interface and pass
+an object of the class to `planar_face_traversal`, thereby
+augmenting the actions taken during the traversal. Note that objects
+passed to `planar_face_traversal` are passed by reference.
+
+== Notation
+
+[cols=",",]
+|===
+|`V` |A type that is a model of Planar Face Visitor.
+
+|`vis` |An object of type `V`.
+
+|`G` |A type that is a model of Graph.
+
+|`e` |An object of type
+`boost::graph_traits<G>::edge_descriptor`.
+
+|`v` |An object of type
+`boost::graph_traits<G>::vertex_descriptor`.
+|===
+
+== Valid Expressions
+
+[cols=",,,",]
+|===
+|Name |Expression |Return Type |Description
+
+|Begin Traversal |`vis.begin_traversal()` |`void` |This is invoked
+once per traversal, before the traversal begins.
+
+|Begin Face |`vis.begin_face()` |`void` |This is invoked once for
+each face, before any vertices or edges on the face are visited.
+
+|Next Vertex |`vis.next_vertex(v)` |`void` |This is invoked when a
+vertex is encountered while traversing a face.
+
+|Next Edge |`vis.next_edge(e)` |`void` |This is invoked when an edge
+is encountered while traversing a face.
+
+|End Face |`vis.end_face()` |`void` |This is invoked once for each
+face, after all vertices and edges on the face are visited.
+
+|End Traversal |`vis.end_traversal()` |`void` |This is invoked once
+per traversal, after the traversal ends.
+|===
+
+== Models
+
+* The file
+link:../../../boost/graph/planar_face_traversal.hpp[`planar_face_traversal.hpp`]
+contains a class `planar_face_traversal_visitor` that
+implements empty actions for all event points of a Planar Face Visitor.
+In the case where only a few of the event points of Planar Face Visitor
+need to be implemented, one can derive from
+`planar_face_traversal_visitor` and only implement the
+necessary event points.
+* The implementation of
+xref:algorithms/planar/make_maximal_planar.adoc[`make_maximal_planar`] uses a
+`triangulation_visitor` that is a model of Planar Face Visitor.

@@ -1,0 +1,6 @@
+Colors used: 3
+  Vertex 0 -> color 0
+  Vertex 1 -> color 1
+  Vertex 2 -> color 2
+  Vertex 3 -> color 0
+  Vertex 4 -> color 1

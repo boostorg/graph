@@ -1,0 +1,108 @@
+= External Properties
+
+When data lives outside the graph.
+
+== Why external?
+
+Not all data belongs inside the graph object. Common reasons to store
+properties externally:
+
+- **Algorithm output.** Distances, predecessors, and components are produced
+  by algorithms and do not need to persist inside the graph.
+- **Temporary data.** Color maps and other bookkeeping exist only for the
+  duration of one algorithm call.
+- **Reusable storage.** A single pre-allocated vector can serve multiple
+  algorithm runs, avoiding repeated heap allocations.
+- **Custom allocators.** You control the container, so you choose the
+  allocator, memory layout, or backing store.
+
+== Vectors with index maps
+
+This is the core pattern for external properties.
+
+Vertex and edge descriptors are opaque handles. They are not always integers,
+so you cannot use them directly as array indices. An _index map_ bridges
+descriptors to contiguous offsets in a container.
+
+[source,cpp]
+----
+auto index = get(vertex_index, g);
+std::vector<int> dist(num_vertices(g));
+auto dist_map = make_iterator_property_map(dist.begin(), index);
+----
+
+`make_iterator_property_map` combines an iterator (the start of the storage)
+with an index map (the descriptor-to-offset mapping) into a property map that
+algorithms can read and write through `get(dist_map, v)` and
+`put(dist_map, v, value)`.
+
+WARNING: The vector must be sized to at least `num_vertices(g)` (or
+`num_edges(g)` for edge properties) before you create the property map.
+An undersized vector causes undefined behavior with no compile-time warning.
+
+[source,cpp]
+----
+include::example$property_maps/external_vector.cpp[]
+----
+
+[,text]
+----
+include::example$property_maps/external_vector.txt[]
+----
+
+== Raw arrays
+
+When `VertexList=vecS`, vertex descriptors are integers starting at zero.
+Raw C arrays and pointers work directly as property maps with no wrapper
+needed.
+
+[source,cpp]
+----
+include::example$property_maps/external_array.cpp[]
+----
+
+[,text]
+----
+include::example$property_maps/external_array.txt[]
+----
+
+== Edge-based external properties
+
+The same pattern works for edges when you have an `edge_index` property.
+Store capacity or flow in external arrays, then wrap them with the edge
+index map.
+
+[source,cpp]
+----
+include::example$property_maps/external_edge.cpp[]
+----
+
+[,text]
+----
+include::example$property_maps/external_edge.txt[]
+----
+
+== std::map for non-integer keys
+
+When `VertexList=listS`, vertex descriptors are pointers, not integers. There
+is no built-in vertex index map. Use `std::map` with
+`make_assoc_property_map` instead.
+
+[source,cpp]
+----
+auto depth_map = make_assoc_property_map(my_map);
+----
+
+This wraps the map so that `get(depth_map, v)` and `put(depth_map, v, val)`
+call `my_map[v]` and `my_map[v] = val` respectively.
+
+[source,cpp]
+----
+include::example$property_maps/external_assoc.cpp[]
+----
+
+[,text]
+----
+include::example$property_maps/external_assoc.txt[]
+----
+

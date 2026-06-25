@@ -1,0 +1,33 @@
+= Acknowledgements
+
+We owe many debts of thanks to a number of individuals who both inspired
+and encouraged us in developing the Boost Graph Library.
+
+A most profound thanks goes to Alexander Stepanov for his pioneering
+work in generic programming, for his encouragement, and for his
+algorithm contributions to the BGL. We thank Matthew Austern for his
+work on documenting the concepts of STL which provided a foundation for
+creating the concepts in the BGL. We thank Dietmar Kühl for his work on
+generic graph algorithms and design patterns; especially for the
+property map abstraction.
+
+Dave Abrahams, Jens Maurer, Beman Dawes, Gary Powell, Greg Colvin,
+Valentin Bonnard, and the rest of the group at Boost provided valuable
+input to the BGL interface, numerous suggestions for improvement, proof
+reads of the documentation, and help with polishing the code. A special
+thanks to Dave Abrahams for managing the formal review.
+
+We also thank the following BGL users whose questions helped to improve
+the BGL: Gordon Woodhull, Dave Longhorn, Joel Phillips, and Edward Luke.
+
+A special thanks to Jeffrey Squyres for editing and proof reading of the
+documentation.
+
+Our original work on the Boost Graph Library was supported in part by
+NSF grant ACI-9982205 and by the Director, Office of Science, Division
+of Mathematical, Information, and Computational Sciences of the U.S.
+Department of Energy under contract number DE-AC03-76SF00098.
+
+In our work we also used resources of the National Energy Research
+Scientific Computing Center, which is supported by the Office of Science
+of the U.S. Department of Energy.

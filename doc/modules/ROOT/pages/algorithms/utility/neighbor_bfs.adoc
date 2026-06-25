@@ -1,0 +1,97 @@
+= Neighbor BFS
+
+A BFS variant for directed graphs that explores both out-edges and in-edges
+at each vertex. In a standard BFS on a directed graph, only out-edges are
+followed. Neighbor BFS also follows in-edges, effectively treating the graph
+as undirected during traversal while preserving edge direction information.
+
+*Complexity:* O(V + E) +
+*Defined in:* `<boost/graph/neighbor_bfs.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/utility/neighbor_bfs.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/utility/neighbor_bfs.txt[]
+----
+
+=== (1) neighbor_breadth_first_search (named parameter version)
+
+[source,cpp]
+----
+template <typename VertexListGraph, typename P, typename T, typename R>
+void neighbor_breadth_first_search(
+    const VertexListGraph& g,
+    typename graph_traits<VertexListGraph>::vertex_descriptor s,
+    const bgl_named_params<P, T, R>& params);
+----
+
+Initializes the color map to white, then runs the search from `s`.
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const VertexListGraph& g`
+| Must model xref:concepts/BidirectionalGraph.adoc[Bidirectional Graph] and xref:concepts/VertexListGraph.adoc[Vertex List Graph].
+
+| IN
+| `vertex_descriptor s`
+| Source vertex for the search.
+
+| IN
+| `params`
+| Accepts `color_map(ColorMap)`, `visitor(NeighborBFSVisitor)`, and `buffer(Buffer&)`. Defaults: a `two_bit_color_map` indexed by `vertex_index`, a null neighbor-BFS visitor, and a `boost::queue<vertex_descriptor>`.
+|===
+
+'''
+
+=== (2) neighbor_breadth_first_visit (named parameter version)
+
+[source,cpp]
+----
+template <typename IncidenceGraph, typename P, typename T, typename R>
+void neighbor_breadth_first_visit(
+    IncidenceGraph& g,
+    typename graph_traits<IncidenceGraph>::vertex_descriptor s,
+    const bgl_named_params<P, T, R>& params);
+----
+
+Same as (1) but does *not* initialize the color map — the caller must pre-populate it. Only requires xref:concepts/IncidenceGraph.adoc[Incidence Graph] (plus whatever the visitor events require) because no vertex enumeration is needed.
+
+'''
+
+=== (3) neighbor_bfs_visitor
+
+[source,cpp]
+----
+template <class Visitors = null_visitor>
+class neighbor_bfs_visitor;
+
+template <class Visitors>
+neighbor_bfs_visitor<Visitors> make_neighbor_bfs_visitor(Visitors vis);
+----
+
+Visitor adapter that models `NeighborBFSVisitorConcept`. In addition to the standard BFS event points (`discover_vertex`, `examine_vertex`, `examine_out_edge`, `tree_out_edge`, etc.) it also dispatches `examine_in_edge` and `tree_in_edge` events for the incoming edges of each vertex. Use `make_neighbor_bfs_visitor(...)` to construct one from a user-supplied visitor (or event-visitor list).
+
+== Visitor Event Points
+
+The following members of the visitor (modelling `NeighborBFSVisitorConcept`) are called during traversal:
+
+* `vis.initialize_vertex(v, g)` — for every vertex before the search begins (only (1)).
+* `vis.discover_vertex(v, g)` — when a vertex is first encountered.
+* `vis.examine_vertex(v, g)` — when a vertex is pulled from the queue.
+* `vis.examine_out_edge(e, g)` / `vis.examine_in_edge(e, g)` — on each outgoing / incoming edge of the examined vertex.
+* `vis.tree_out_edge(e, g)` / `vis.tree_in_edge(e, g)` — on each edge whose target was previously white.
+* `vis.non_tree_out_edge(e, g)` / `vis.non_tree_in_edge(e, g)` — otherwise.
+* `vis.gray_target(e, g)` / `vis.black_target(e, g)` — when the target was gray / black.
+* `vis.finish_vertex(v, g)` — after all incident edges of `v` have been examined.
+
+TIP: If you just need undirected traversal on a directed graph, consider using
+`make_reverse_graph` to get a bidirectional view, then run standard BFS.

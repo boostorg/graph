@@ -1,0 +1,30 @@
+= VertexAndEdgeListGraph
+
+The VertexAndEdgeListGraph concept refines the
+xref:concepts/VertexListGraph.adoc[VertexListGraph] and the
+xref:concepts/EdgeListGraph.adoc[EdgeListGraph] concepts. No further
+requirements are added.
+
+== Refinement of
+
+xref:concepts/VertexListGraph.adoc[VertexListGraph],
+xref:concepts/EdgeListGraph.adoc[EdgeListGraph]
+
+== Models
+
+* `adjacency_list`
+
+== Concept Checking Class
+
+[source,cpp]
+----
+
+  template <class G>
+  struct VertexAndEdgeListGraphConcept
+  {
+    void constraints() {
+      BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<G> ));
+      BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<G> ));
+    }
+  };
+----

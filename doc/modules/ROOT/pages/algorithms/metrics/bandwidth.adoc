@@ -1,0 +1,179 @@
+[#sec:bandwidth]
+= bandwidth
+
+Computes the bandwidth of a graph, which is the maximum distance between two adjacent vertices when vertices are placed at unit intervals on a line.
+
+*Complexity:* _O(|E|)_ +
+*Defined in:* `<boost/graph/bandwidth.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/metrics/bandwidth.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/metrics/bandwidth.txt[]
+----
+
+'''
+
+=== (1) Default vertex index overload
+
+[source,cpp]
+----
+template <typename Graph>
+typename graph_traits<Graph>::vertices_size_type
+bandwidth(const Graph& g)
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| The graph object on which the algorithm will be applied.
+  The type `Graph` must be a model of
+  xref:concepts/EdgeListGraph.adoc[Edge List Graph].
+  The default `vertex_index` property map is used.
+|===
+
+'''
+
+=== (2) Explicit vertex index map overload
+
+[source,cpp]
+----
+template <typename Graph, typename VertexIndexMap>
+typename graph_traits<Graph>::vertices_size_type
+bandwidth(const Graph& g, VertexIndexMap index_map)
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| The graph object on which the algorithm will be applied.
+  The type `Graph` must be a model of
+  xref:concepts/EdgeListGraph.adoc[Edge List Graph].
+
+| IN
+| `VertexIndexMap index_map`
+| This maps each vertex to an integer in the range `[0, num_vertices(g))`.
+  The type `VertexIndexMap` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The vertex descriptor
+  type of the graph needs to be usable as the key type of the map.
+|===
+
+== Description
+
+The *_bandwidth_* of a graph is the maximum distance between two adjacent vertices, with distance measured on a line upon which the vertices have been placed at unit intervals. To put it another way, if the vertices of a graph _G=(V,E)_ are each assigned an index from zero to _++|++V++|++ - 1_ given by _index[v]_, then the bandwidth of _G_ is
+
+_B(G) = max { ++|++index[u] - index[v++]|++ {nbsp}{nbsp}| (u,v) in E }_
+
+== Example
+
+The `bandwidth` function is used in the following ordering examples:
+xref:algorithms/ordering/cuthill_mckee_ordering.adoc[`cuthill_mckee_ordering`],
+xref:algorithms/ordering/king_ordering.adoc[`king_ordering`],
+xref:algorithms/ordering/sloan_ordering.adoc[`sloan_ordering`].
+
+'''''
+
+[#sec:ith-bandwidth]
+== ith_bandwidth
+
+Computes the bandwidth of the i-th vertex, which is the maximum distance between that vertex and any of its neighbors.
+
+*Complexity:* _O(out_degree(i))_ +
+*Defined in:* `<boost/graph/bandwidth.hpp>`
+
+'''
+
+=== (1) Default vertex index overload
+
+[source,cpp]
+----
+template <typename Graph>
+typename graph_traits<Graph>::vertices_size_type
+ith_bandwidth(
+    typename graph_traits<Graph>::vertex_descriptor i,
+    const Graph& g)
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `vertex_descriptor i`
+| The vertex for which to compute the bandwidth.
+
+| IN
+| `const Graph& g`
+| The graph object on which the algorithm will be applied.
+  The type `Graph` must be a model of
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+  The default `vertex_index` property map is used.
+|===
+
+'''
+
+=== (2) Explicit vertex index map overload
+
+[source,cpp]
+----
+template <typename Graph, typename VertexIndexMap>
+typename graph_traits<Graph>::vertices_size_type
+ith_bandwidth(
+    typename graph_traits<Graph>::vertex_descriptor i,
+    const Graph& g,
+    VertexIndexMap index)
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `vertex_descriptor i`
+| The vertex for which to compute the bandwidth.
+
+| IN
+| `const Graph& g`
+| The graph object on which the algorithm will be applied.
+  The type `Graph` must be a model of
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| IN
+| `VertexIndexMap index`
+| This maps each vertex to an integer in the range `[0, num_vertices(g))`.
+  The type `VertexIndexMap` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The vertex descriptor
+  type of the graph needs to be usable as the key type of the map.
+|===
+
+== Description
+
+The *_i-th bandwidth_* of a graph is the maximum distance between the _i-th_ vertex and any of its neighbors.
+
+_B~i~(G) = max { ++|++index[i] - index[j++]|++ {nbsp}{nbsp}| (i,j) in E }_
+
+So the bandwidth _B(G)_ can be expressed as the maximum of the i-th bandwidths _B~i~(G)_.
+
+_B(G) = max { B~i~(G) {nbsp}{nbsp}| i=0...++|++V++|++-1 }_
+
+== Example
+
+The `ith_bandwidth` function is used internally by `bandwidth` and by the ordering examples:
+xref:algorithms/ordering/cuthill_mckee_ordering.adoc[`cuthill_mckee_ordering`],
+xref:algorithms/ordering/king_ordering.adoc[`king_ordering`],
+xref:algorithms/ordering/sloan_ordering.adoc[`sloan_ordering`].
+

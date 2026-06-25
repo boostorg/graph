@@ -1,0 +1,136 @@
+= DIMACS
+
+Read and write graphs in the extended DIMACS max-flow format.
+
+**Read:** `<boost/graph/read_dimacs.hpp>` +
+**Write:** `<boost/graph/write_dimacs.hpp>` +
+**Linking:** header-only
+
+This format is designed for network flow benchmarks. Each edge carries a
+capacity, and the file specifies source and sink vertices.
+
+NOTE: `read_dimacs_max_flow` automatically adds a reverse edge (with capacity 0)
+for every edge in the file. The output graph has twice as many edges as the
+input file.
+
+== Example
+
+[source,cpp]
+----
+include::example$io/dimacs.cpp[]
+----
+
+[,text]
+----
+include::example$io/dimacs.txt[]
+----
+
+== read_dimacs_max_flow
+
+[source,cpp]
+----
+template <class Graph, class CapacityMap, class ReverseEdgeMap>
+int read_dimacs_max_flow(Graph& g,
+                         CapacityMap capacity,
+                         ReverseEdgeMap reverse_edge,
+                         typename graph_traits<Graph>::vertex_descriptor& src,
+                         typename graph_traits<Graph>::vertex_descriptor& sink,
+                         std::istream& in = std::cin);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| OUT
+| `Graph& g`
+| Populated graph. Must model IncidenceGraph and MutableGraph.
+
+| OUT
+| `CapacityMap capacity`
+| Mutable Lvalue property map. Edge descriptor -> capacity value.
+
+| OUT
+| `ReverseEdgeMap reverse_edge`
+| Mutable Lvalue property map. Edge descriptor -> reverse edge descriptor.
+
+| OUT
+| `vertex_descriptor& src`
+| Set to the source vertex from the DIMACS file.
+
+| OUT
+| `vertex_descriptor& sink`
+| Set to the sink vertex from the DIMACS file.
+
+| IN
+| `std::istream& in`
+| DIMACS-formatted input. Default: `std::cin`.
+|===
+
+Returns 0 on success.
+
+== read_dimacs_min_cut
+
+[source,cpp]
+----
+template <class Graph, class CapacityMap, class ReverseEdgeMap>
+int read_dimacs_min_cut(Graph& g,
+                        CapacityMap capacity,
+                        ReverseEdgeMap reverse_edge,
+                        std::istream& in = std::cin);
+----
+
+Same as `read_dimacs_max_flow` but without source/sink output parameters.
+
+== write_dimacs_max_flow
+
+[source,cpp]
+----
+template <class Graph, class CapacityMap, class IndexMap>
+void write_dimacs_max_flow(const Graph& g,
+                           CapacityMap capacity,
+                           IndexMap idx,
+                           typename graph_traits<Graph>::vertex_descriptor src,
+                           typename graph_traits<Graph>::vertex_descriptor sink,
+                           std::ostream& out);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| Must model VertexListGraph and EdgeListGraph.
+
+| IN
+| `CapacityMap capacity`
+| Readable property map. Edge descriptor -> capacity value.
+
+| IN
+| `IndexMap idx`
+| Readable property map. Vertex descriptor -> integer index.
+
+| IN
+| `src`, `sink`
+| Source and sink vertex descriptors.
+
+| OUT
+| `std::ostream& out`
+| Output stream.
+|===
+
+WARNING: Cannot be used with `filtered_graph` because `num_vertices()` and
+`num_edges()` return counts for the unfiltered graph.
+
+== DIMACS format
+
+....
+c comment line
+p max NODES EDGES
+n NODE_ID s          (source)
+n NODE_ID t          (sink)
+a FROM TO CAPACITY   (arc)
+....
+
+Node IDs are 1-based in the file but 0-based in BGL.

@@ -1,0 +1,285 @@
+= Graph Interface Primitives
+
+[NOTE]
+.What is a graph?
+====
+Formally, a graph is a pair _G = (V, E)_ where _V_ is a set of _vertices_
+and _E_ is a set of _edges_. Each edge is a pair _(u, v)_ with _u, v_ in _V_.
+
+- In a *directed graph*, edges are ordered pairs: the edge _(u, v)_ goes from
+its _source_ vertex _u_ to its _target_ vertex _v_. 
+- In an *undirected graph*, edges are unordered pairs and connect both vertices in either direction.
+
+The terms _vertex_, _edge_, _source_, _target_, and the directed vs.
+undirected distinction map directly onto the operations listed below.
+
+For a fuller introduction (degrees, paths, cycles, planarity), see
+xref:about/graph_theory_review.adoc[Graph Theory Review].
+====
+
+All BGL graph types share a common set of free functions for accessing
+and modifying the graph structure. These functions are how algorithms
+interact with graphs, regardless of the underlying data structure.
+
+[source,cpp]
+----
+include::example$primitives/primitives_traversal.cpp[]
+----
+
+[,text]
+----
+include::example$primitives/primitives_traversal.txt[]
+----
+
+== Traversal
+
+[subs=attributes+]
+++++
+<div class="videoblock" style="margin-left: 2rem; align-items: flex-start;">
+<div class="content">
+<video src="{imagesdir}/animations/primitives_traversal.mp4" width="60%" autoplay loop muted playsinline></video>
+</div>
+</div>
+++++
+
+[cols="2,3,2"]
+|===
+| Function | Returns | Concept
+
+| `vertices(g)`
+| Pair of vertex iterators (all vertices)
+| xref:concepts/VertexListGraph.adoc[VertexListGraph]
+
+| `edges(g)`
+| Pair of edge iterators (all edges)
+| xref:concepts/EdgeListGraph.adoc[EdgeListGraph]
+
+| `out_edges(v, g)`
+| Pair of out-edge iterators
+| xref:concepts/IncidenceGraph.adoc[IncidenceGraph]
+
+| `in_edges(v, g)`
+| Pair of in-edge iterators
+| xref:concepts/BidirectionalGraph.adoc[BidirectionalGraph]
+
+| `adjacent_vertices(v, g)`
+| Pair of adjacency iterators
+| xref:concepts/AdjacencyGraph.adoc[AdjacencyGraph]
+|===
+
+NOTE: All pairs can be used with `make_iterator_range` for range-based for loops (see example above).
+
+== Edge access
+
+[subs=attributes+]
+++++
+<div class="videoblock" style="margin-left: 2rem; align-items: flex-start;">
+<div class="content">
+<video src="{imagesdir}/animations/primitives_edge_access.mp4" width="60%" autoplay loop muted playsinline></video>
+</div>
+</div>
+++++
+
+[cols="2,3,2"]
+|===
+| Function | Returns | Concept
+
+| `source(e, g)`
+| Source vertex of edge `e`
+| xref:concepts/IncidenceGraph.adoc[IncidenceGraph]
+
+| `target(e, g)`
+| Target vertex of edge `e`
+| xref:concepts/IncidenceGraph.adoc[IncidenceGraph]
+
+| `edge(u, v, g)`
+| Pair of (edge_descriptor, bool). Bool is true if the edge exists.
+| xref:concepts/AdjacencyMatrix.adoc[AdjacencyMatrix]
+|===
+
+[source,cpp]
+----
+include::example$primitives/primitives_edge_access.cpp[]
+----
+
+[,text]
+----
+include::example$primitives/primitives_edge_access.txt[]
+----
+
+== Counts
+
+[subs=attributes+]
+++++
+<div class="videoblock" style="margin-left: 2rem; align-items: flex-start;">
+<div class="content">
+<video src="{imagesdir}/animations/primitives_counts.mp4" width="60%" autoplay loop muted playsinline></video>
+</div>
+</div>
+++++
+
+[cols="2,3,2"]
+|===
+| Function | Returns | Concept
+
+| `num_vertices(g)`
+| Number of vertices
+| xref:concepts/VertexListGraph.adoc[VertexListGraph]
+
+| `num_edges(g)`
+| Number of edges
+| xref:concepts/EdgeListGraph.adoc[EdgeListGraph]
+
+| `out_degree(v, g)`
+| Number of out-edges of vertex `v`
+| xref:concepts/IncidenceGraph.adoc[IncidenceGraph]
+
+| `in_degree(v, g)`
+| Number of in-edges of vertex `v`
+| xref:concepts/BidirectionalGraph.adoc[BidirectionalGraph]
+
+| `degree(v, g)`
+| `out_degree + in_degree`
+| xref:concepts/BidirectionalGraph.adoc[BidirectionalGraph]
+|===
+
+[source,cpp]
+----
+include::example$primitives/primitives_counts.cpp[]
+----
+
+[,text]
+----
+include::example$primitives/primitives_counts.txt[]
+----
+
+== Mutation
+
+[subs=attributes+]
+++++
+<div class="videoblock" style="margin-left: 2rem; align-items: flex-start;">
+<div class="content">
+<video src="{imagesdir}/animations/primitives_mutation.mp4" width="60%" autoplay loop muted playsinline></video>
+</div>
+</div>
+++++
+
+[cols="2,3,2"]
+|===
+| Function | Effect | Concept
+
+| `add_vertex(g)`
+| Add a vertex, return its descriptor
+| xref:concepts/MutableGraph.adoc[MutableGraph]
+
+| `remove_vertex(v, g)`
+| Remove vertex `v` and all incident edges
+| xref:concepts/MutableGraph.adoc[MutableGraph]
+
+| `add_edge(u, v, g)`
+| Add edge from `u` to `v`, return pair (descriptor, bool)
+| xref:concepts/MutableGraph.adoc[MutableGraph]
+
+| `remove_edge(u, v, g)`
+| Remove edge(s) between `u` and `v`
+| xref:concepts/MutableGraph.adoc[MutableGraph]
+
+| `remove_edge(e, g)`
+| Remove specific edge `e`
+| xref:concepts/MutableGraph.adoc[MutableGraph]
+
+| `clear_vertex(v, g)`
+| Remove all edges incident to `v` (vertex remains)
+| xref:concepts/MutableGraph.adoc[MutableGraph]
+|===
+
+WARNING: With `adjacency_list<vecS, vecS, ...>`, `remove_vertex()`
+invalidates all vertex descriptors after the removed vertex. See
+xref:graph_classes/overview.adoc[Graph Data Structures] for details.
+
+[source,cpp]
+----
+include::example$primitives/primitives_mutation.cpp[]
+----
+
+[,text]
+----
+include::example$primitives/primitives_mutation.txt[]
+----
+
+== Property access
+
+[cols="2,3"]
+|===
+| Function | Returns
+
+| `get(&Struct::member, g)`
+| Property map for bundled property member
+
+| `get(map, key)`
+| Value of `key` in property map `map`
+
+| `put(map, key, value)`
+| Set value of `key` in property map `map`
+
+| `g[v]` or `g[e]`
+| Direct reference to bundled property struct of vertex `v` or edge `e`
+
+| `get(tag, g)`
+| Property map for internal property tag (legacy, prefer bundled properties)
+|===
+
+[source,cpp]
+----
+include::example$primitives/primitives_properties.cpp[]
+----
+
+[,text]
+----
+include::example$primitives/primitives_properties.txt[]
+----
+
+== Types
+
+Obtained via `graph_traits<Graph>`:
+
+[cols="1,3"]
+|===
+| Type | Description
+
+| `vertex_descriptor`
+| Handle to a vertex. Opaque type, do not assume it is an integer.
+
+| `edge_descriptor`
+| Handle to an edge. Contains source and target information.
+
+| `vertex_iterator`
+| Iterator over all vertices.
+
+| `edge_iterator`
+| Iterator over all edges.
+
+| `out_edge_iterator`
+| Iterator over the out-edges of a vertex.
+
+| `in_edge_iterator`
+| Iterator over the in-edges of a vertex (requires `bidirectionalS`).
+
+| `adjacency_iterator`
+| Iterator over the adjacent vertices of a vertex.
+
+| `vertices_size_type`
+| Unsigned integer type for vertex counts.
+
+| `edges_size_type`
+| Unsigned integer type for edge counts.
+
+| `degree_size_type`
+| Unsigned integer type for vertex degree.
+|===
+
+== See also
+
+* xref:graph_classes/overview.adoc[Graph Data Structures (choosing a representation)]
+* xref:concepts/graph_concepts.adoc[Graph Concepts (detailed reference)]
+* xref:property_maps/overview.adoc[Property Maps]

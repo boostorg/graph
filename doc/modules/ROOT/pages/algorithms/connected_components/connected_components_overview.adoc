@@ -1,0 +1,31 @@
+= Connected Components
+
+Partition a graph into groups of mutually reachable vertices.
+
+[cols="1,1,3"]
+|===
+| Algorithm | Complexity | When to use
+
+| xref:algorithms/connected_components/connected_components.adoc[Connected Components]
+| O(V + E)
+| Undirected graphs. Labels each vertex with its component number.
+
+| xref:algorithms/connected_components/strong_components.adoc[Strong Components]
+| O(V + E)
+| Directed graphs. Vertices u and v are in the same component iff there
+  is a path from u to v _and_ from v to u.
+
+| xref:algorithms/connected_components/biconnected_components.adoc[Biconnected Components]
+| O(V + E)
+| Undirected graphs. Finds 2-connected subgraphs and articulation points
+  (vertices whose removal disconnects the graph).
+
+| xref:algorithms/connected_components/incremental_components.adoc[Incremental Components]
+| Near O(1) per edge
+| Online: edges are added one at a time and component queries are
+  answered between insertions. Uses disjoint sets.
+|===
+
+TIP: For a static undirected graph, use `connected_components`. For directed
+graphs, use `strong_components`. If edges arrive incrementally and you need
+live connectivity queries, use `incremental_components`.

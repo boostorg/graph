@@ -1,0 +1,161 @@
+[#sec:rmat-generator]
+= R-MAT Generator (Input Iterator)
+
+Generate scale-free graphs using the Recursive Matrix (R-MAT) model.
+
+*Defined in:* `<boost/graph/rmat_graph_generator.hpp>`
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename RandomGenerator, typename Graph>
+class rmat_iterator;
+
+rmat_iterator();
+rmat_iterator(RandomGenerator& gen, vertices_size_type n, edges_size_type m, double a, double b, double c, double d, bool permute_vertices = true);
+----
+
+The R-MAT model generates graphs with a power-law degree distribution and
+community structure, similar to many real-world networks. The algorithm
+recursively partitions the adjacency matrix into four quadrants, choosing each
+quadrant with probabilities _a_, _b_, _c_, _d_. The sum `a + b + c + d`
+must equal 1. The number of vertices _n_ must be a power of 2.
+
+Typical parameters for a Graph500-style generator: `a=0.57, b=0.19, c=0.19, d=0.05`.
+
+May produce parallel edges and self-loops.
+
+== Parameters
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `RandomGenerator& gen` | A random number generator.
+| IN | `vertices_size_type n` | Number of vertices. Must be a power of 2.
+| IN | `edges_size_type m` | Number of edges to generate.
+| IN | `double a` | Probability for quadrant (low, low). Typically ~0.57.
+| IN | `double b` | Probability for quadrant (low, high). Typically ~0.19.
+| IN | `double c` | Probability for quadrant (high, low). Typically ~0.19.
+| IN | `double d` | Probability for quadrant (high, high). Typically ~0.05.
+| IN | `bool permute_vertices` | If `true`, randomly permute vertex labels. Default: `true`.
+|===
+
+== Example
+
+[source,cpp]
+----
+include::example$generators/rmat.cpp[]
+----
+
+[,text]
+----
+include::example$generators/rmat.txt[]
+----
+
+== Variants
+
+=== `sorted_rmat_iterator`
+
+[source,cpp]
+----
+template <typename RandomGenerator, typename Graph, typename EdgePredicate = keep_all_edges>
+class sorted_rmat_iterator;
+
+sorted_rmat_iterator();
+sorted_rmat_iterator(RandomGenerator& gen, vertices_size_type n, edges_size_type m, double a, double b, double c, double d, bool permute_vertices = true, EdgePredicate ep = keep_all_edges());
+----
+
+Same parameters as `rmat_iterator`, but generates all edges up front and
+returns them in sorted order. Suitable for building CSR graphs.
+
+Additional parameters:
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `bool permute_vertices` | If `true`, randomly permute vertex labels. Default: `true`.
+| IN | `EdgePredicate ep` | A binary predicate `(vertices_size_type, vertices_size_type) -> bool` that filters which edges are kept. Default: `keep_all_edges` (keeps everything).
+|===
+
+[source,cpp]
+----
+include::example$generators/sorted_rmat.cpp[]
+----
+
+[,text]
+----
+include::example$generators/sorted_rmat.txt[]
+----
+
+=== `unique_rmat_iterator`
+
+[source,cpp]
+----
+template <typename RandomGenerator, typename Graph, typename EdgePredicate = keep_all_edges>
+class unique_rmat_iterator;
+
+unique_rmat_iterator();
+unique_rmat_iterator(RandomGenerator& gen, vertices_size_type n, edges_size_type m, double a, double b, double c, double d, bool permute_vertices = true, EdgePredicate ep = keep_all_edges());
+----
+
+Same parameters as `rmat_iterator`, but filters out duplicate edges.
+For undirected graphs, edges (u,v) and (v,u) are considered identical.
+Requesting _m_ close to _n^2_ may cause very slow generation or an infinite loop.
+
+[source,cpp]
+----
+include::example$generators/unique_rmat.cpp[]
+----
+
+[,text]
+----
+include::example$generators/unique_rmat.txt[]
+----
+
+Additional parameters:
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `bool permute_vertices` | If `true`, randomly permute vertex labels. Default: `true`.
+| IN | `EdgePredicate ep` | A binary predicate `(vertices_size_type, vertices_size_type) -> bool` that filters which edges are kept. Default: `keep_all_edges` (keeps everything).
+|===
+
+=== `sorted_unique_rmat_iterator`
+
+[source,cpp]
+----
+template <typename RandomGenerator, typename Graph, typename EdgePredicate = keep_all_edges>
+class sorted_unique_rmat_iterator;
+
+sorted_unique_rmat_iterator();
+sorted_unique_rmat_iterator(RandomGenerator& gen, vertices_size_type n, edges_size_type m, double a, double b, double c, double d, bool bidirectional = false, bool permute_vertices = true, EdgePredicate ep = keep_all_edges());
+----
+
+Produces edges that are both sorted and deduplicated. Combines the behaviors
+of `sorted_rmat_iterator` and `unique_rmat_iterator`.
+
+Additional parameters:
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `bool bidirectional` | If `true`, for each generated edge (u,v) also insert (v,u). Default: `false`.
+| IN | `bool permute_vertices` | If `true`, randomly permute vertex labels. Default: `true`.
+| IN | `EdgePredicate ep` | A binary predicate `(vertices_size_type, vertices_size_type) -> bool` that filters which edges are kept. Default: `keep_all_edges` (keeps everything).
+|===
+
+[source,cpp]
+----
+include::example$generators/sorted_unique_rmat.cpp[]
+----
+
+[,text]
+----
+include::example$generators/sorted_unique_rmat.txt[]
+----

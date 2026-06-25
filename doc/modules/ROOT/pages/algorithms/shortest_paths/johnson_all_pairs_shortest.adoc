@@ -1,0 +1,312 @@
+[#sec:johnson]
+= Johnson All Pairs Shortest Paths
+
+Finds the shortest distance between every pair of vertices in a graph, suitable for sparse graphs with positive or negative edge weights.
+
+*Complexity:* _O(V E log V)_ +
+*Defined in:* `<boost/graph/johnson_all_pairs_shortest.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/shortest_paths/johnson.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/shortest_paths/johnson.txt[]
+----
+
+'''
+
+=== (1) Positional version
+
+[source,cpp]
+----
+template <typename Graph, typename DistanceMatrix,
+          typename VertexIndex, typename WeightMap, typename DT>
+bool johnson_all_pairs_shortest_paths(
+    VertexAndEdgeListGraph& g1,
+    DistanceMatrix& D,
+    VertexIndex i_map, WeightMap w_map, DT zero);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `VertexAndEdgeListGraph& g1`
+| A directed or undirected graph. The graph type must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph],
+  xref:concepts/EdgeListGraph.adoc[Edge List Graph], and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| OUT
+| `DistanceMatrix& D`
+| The length of the shortest path between each pair of vertices _u,v_ in the
+  graph is stored in `D[u][v]`. The tuple of types
+  (`DistanceMatrix, vertices_size_type, D`) must be a model of
+  xref:concepts/property_types/BasicMatrix.adoc[BasicMatrix] where `D` is the value type of the
+  `DistanceMap`. There must be implicit conversions between the value type of the
+  distance matrix and the value type of the weight map.
+
+| IN
+| `VertexIndex i_map`
+| Maps each vertex to an integer in the range `[0, num_vertices(g))`. This is
+  necessary for efficient updates of the heap data structure in the internal call
+  to Dijkstra's algorithm. The type `VertexIndex` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The vertex descriptor type
+  of the graph needs to be usable as the key type of the map.
+
+| IN
+| `WeightMap w_map`
+| The weight or "length" of each edge in the graph. The type `WeightMap` must be
+  a model of link:../../property_map/doc/ReadablePropertyMap.html[Readable
+  Property Map]. The edge descriptor type of the graph needs to be usable as the
+  key type for the weight map. The value type of the weight map must support a
+  subtraction operation.
+
+| IN
+| `DT zero`
+| The value used to initialize the distance for the source vertex before the
+  start of the algorithm. The type `DT` must be the value type of the
+  `WeightMap`.
+
+|===
+
+'''
+
+=== (2) Positional parameter version
+
+[source,cpp]
+----
+template <class VertexAndEdgeListGraph, class DistanceMatrix,
+          class VertexID, class Weight, class BinaryPredicate,
+          class BinaryFunction, class Infinity, class DistanceZero>
+bool johnson_all_pairs_shortest_paths(
+    VertexAndEdgeListGraph& g1,
+    DistanceMatrix& D,
+    VertexID id1, Weight w1, const BinaryPredicate& compare,
+    const BinaryFunction& combine, const Infinity& inf,
+    DistanceZero zero);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `VertexAndEdgeListGraph& g1`
+| A directed or undirected graph. The graph type must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph],
+  xref:concepts/EdgeListGraph.adoc[Edge List Graph], and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| OUT
+| `DistanceMatrix& D`
+| The length of the shortest path between each pair of vertices _u,v_ in the
+  graph is stored in `D[u][v]`. The tuple of types
+  (`DistanceMatrix, vertices_size_type, D`) must be a model of
+  xref:concepts/property_types/BasicMatrix.adoc[BasicMatrix] where `D` is the value type of the
+  `DistanceMap`. There must be implicit conversions between the value type of the
+  distance matrix and the value type of the weight map.
+
+| IN
+| `VertexID id1`
+| Maps each vertex to an integer in the range `[0, num_vertices(g))`. This is
+  necessary for efficient updates of the heap data structure in the internal call
+  to Dijkstra's algorithm. The type `VertexID` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The vertex descriptor type
+  of the graph needs to be usable as the key type of the map.
+
+| IN
+| `Weight w1`
+| The weight or "length" of each edge in the graph. The type `Weight` must be
+  a model of link:../../property_map/doc/ReadablePropertyMap.html[Readable
+  Property Map]. The edge descriptor type of the graph needs to be usable as the
+  key type for the weight map. The value type of the weight map must support a
+  subtraction operation.
+
+| IN
+| `const BinaryPredicate& compare`
+| This function is used to compare distances to determine which vertex is closer
+  to the source vertex. The `BinaryPredicate` type must be a model of
+  http://www.boost.org/sgi/stl/BinaryPredicate.html[Binary Predicate] and have
+  argument types that match the value type of the `Weight` property map.
+
+| IN
+| `const BinaryFunction& combine`
+| This function is used to combine distances to compute the distance of a path.
+  The `BinaryFunction` type must be a model of
+  http://www.boost.org/sgi/stl/BinaryFunction.html[Binary Function]. Both
+  argument types and the return type of the binary function must match the value
+  type of the `Weight` property map. This operation is required to act as the sum
+  operation for the weight type; in particular, it must be the inverse of the
+  binary `-` operator on that type.
+
+| IN
+| `const Infinity& inf`
+| This value is used to initialize the distance for each vertex before the start
+  of the algorithm. The type `Infinity` must be the value type of the `Weight`
+  map.
+
+| IN
+| `DistanceZero zero`
+| This value is used to initialize the distance for the source vertex before the
+  start of the algorithm. The type `DistanceZero` must be the value type of the
+  `Weight` map.
+
+|===
+
+'''
+
+=== (3) Named parameter version
+
+[source,cpp]
+----
+template <typename Graph, typename DistanceMatrix,
+          typename P, typename T, typename R>
+bool johnson_all_pairs_shortest_paths(
+    Graph& g, DistanceMatrix& D,
+    const bgl_named_params<P, T, R>& params = all defaults);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `Graph& g`
+| A directed or undirected graph. The graph type must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph],
+  xref:concepts/EdgeListGraph.adoc[Edge List Graph], and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| OUT
+| `DistanceMatrix& D`
+| The length of the shortest path between each pair of vertices _u,v_ in the
+  graph is stored in `D[u][v]`. The tuple of types
+  (`DistanceMatrix, vertices_size_type, D`) must be a model of
+  xref:concepts/property_types/BasicMatrix.adoc[BasicMatrix] where `D` is the value type of the
+  `DistanceMap`. There must be implicit conversions between the value type of the
+  distance matrix and the value type of the weight map.
+
+| IN
+| `params`
+| Named parameters passed via `bgl_named_params`. The following are accepted:
+|===
+
+[cols="1,2,5"]
+|===
+| Direction | Named Parameter | Description / Default
+
+| IN
+| `weight_map(WeightMap w_map)`
+| The weight or "length" of each edge in the graph. The type `WeightMap` must be
+  a model of link:../../property_map/doc/ReadablePropertyMap.html[Readable
+  Property Map]. The edge descriptor type of the graph needs to be usable as the
+  key type for the weight map. The value type of the weight map must support a
+  subtraction operation. +
+  *Default:* `get(edge_weight, g)`
+
+| UTIL
+| `weight_map2(WeightMap2 w2_map)`
+| This parameter is no longer needed, and will be ignored.
+
+| IN
+| `vertex_index_map(VertexIndexMap i_map)`
+| This maps each vertex to an integer in the range `[0, num_vertices(g))`. This
+  is necessary for efficient updates of the heap data structure in the internal
+  call to Dijkstra's algorithm. The type `VertexIndexMap` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The vertex descriptor type
+  of the graph needs to be usable as the key type of the map. +
+  *Default:* `get(vertex_index, g)`. Note: if you use this default, make sure
+  your graph has an internal `vertex_index` property. For example,
+  `adjacency_list` with `VertexList=listS` does not have an internal
+  `vertex_index` property.
+
+| UTIL
+| `distance_map(DistanceMap d_map)`
+| This parameter is no longer needed, and will be ignored.
+
+| IN
+| `distance_compare(CompareFunction cmp)`
+| This function is used to compare distances to determine which vertex is closer
+  to the source vertex. The `CompareFunction` type must be a model of
+  http://www.boost.org/sgi/stl/BinaryPredicate.html[Binary Predicate] and have
+  argument types that match the value type of the `WeightMap` property map. +
+  *Default:* `std::less<DT>` with
+  `DT=typename property_traits<WeightMap>::value_type`
+
+| IN
+| `distance_combine(CombineFunction cmb)`
+| This function is used to combine distances to compute the distance of a path.
+  The `CombineFunction` type must be a model of
+  http://www.boost.org/sgi/stl/BinaryFunction.html[Binary Function]. Both
+  argument types and the return type of the binary function must match the value
+  type of the `WeightMap` property map. This operation is required to act as the
+  sum operation for the weight type; in particular, it must be the inverse of the
+  binary `-` operator on that type. +
+  *Default:* `std::plus<DT>` with
+  `DT=typename property_traits<WeightMap>::value_type`
+
+| IN
+| `distance_inf(DT inf)`
+| This value is used to initialize the distance for each vertex before the start
+  of the algorithm. The type `DT` must be the value type of the `WeightMap`. +
+  *Default:* `std::numeric_limits::max()`
+
+| IN
+| `distance_zero(DT zero)`
+| This value is used to initialize the distance for the source vertex before the
+  start of the algorithm. The type `DT` must be the value type of the
+  `WeightMap`. +
+  *Default:* `0`
+
+| UTIL/OUT
+| `color_map(ColorMap c_map)`
+| This is used during the execution of the algorithm to mark the vertices. The
+  vertices start out white and become gray when they are inserted in the queue.
+  They then turn black when they are removed from the queue. At the end of the
+  algorithm, vertices reachable from the source vertex will have been colored
+  black. All other vertices will still be white. The type `ColorMap` must be a
+  model of link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write
+  Property Map]. A vertex descriptor must be usable as the key type of the map,
+  and the value type of the map must be a model of
+  xref:concepts/property_types/ColorValue.adoc[Color Value]. +
+  *Default:* an
+  link:../../property_map/doc/iterator_property_map.html[`iterator_property_map`]
+  created from a `std::vector` of `default_color_type` of size
+  `num_vertices(g)` and using the `i_map` for the index map.
+
+|===
+
+== Description
+
+This https://en.wikipedia.org/wiki/Johnson%27s_algorithm[algorithm]
+finds the shortest distance between every pair of vertices in the
+graph. The distance between each pair of vertices is stored in the distance
+matrix `D`. The algorithm returns `false` if there is a negative weight cycle in
+the graph and `true` otherwise.
+
+This algorithm should be used to compute shortest paths between every pair of
+vertices for sparse graphs. For dense graphs, use
+xref:algorithms/shortest_paths/floyd_warshall_shortest.adoc[`floyd_warshall_all_pairs_shortest_paths`].
+
+== Returns
+
+Returns `true` if all shortest paths were successfully computed (no negative
+weight cycle exists). Returns `false` if a negative weight cycle is detected in
+the graph.
+
+== Example
+
+See link:../example/johnson-eg.cpp[`example/johnson-eg.cpp`] for an example that
+applies Johnson's algorithm for all-pairs shortest paths to the example graph
+from page 568 of the CLR [xref:about/bibliography.adoc#clr90[5]].
+

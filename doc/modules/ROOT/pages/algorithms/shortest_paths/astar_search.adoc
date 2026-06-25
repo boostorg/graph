@@ -1,0 +1,544 @@
+[#sec:astar]
+= A* Heuristic Search
+
+Implements a heuristic search on a weighted, directed or undirected graph for the case where all edge weights are non-negative.
+
+*Complexity:* _O((E + V) log V)_ +
+*Defined in:* `<boost/graph/astar_search.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/shortest_paths/astar.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/shortest_paths/astar.txt[]
+----
+
+'''
+
+=== (1) Positional version
+
+[source,cpp]
+----
+template <typename VertexListGraph, typename AStarHeuristic,
+          typename AStarVisitor, typename PredecessorMap,
+          typename CostMap, typename DistanceMap,
+          typename WeightMap, typename VertexIndexMap,
+          typename ColorMap,
+          typename CompareFunction, typename CombineFunction,
+          typename CostInf, typename CostZero>
+inline void astar_search(
+    const VertexListGraph& g,
+    typename graph_traits<VertexListGraph>::vertex_descriptor s,
+    AStarHeuristic h, AStarVisitor vis,
+    PredecessorMap predecessor, CostMap cost,
+    DistanceMap distance, WeightMap weight,
+    VertexIndexMap index_map, ColorMap color,
+    CompareFunction compare, CombineFunction combine,
+    CostInf inf, CostZero zero);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const VertexListGraph& g`
+| The graph object on which the algorithm will be applied.
+  The type `VertexListGraph` must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph]
+  and xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| IN
+| `vertex_descriptor s`
+| The start vertex for the search. All distances will be calculated from
+  this vertex, and the shortest paths tree (recorded in the predecessor
+  map) will be rooted at this vertex.
+
+| IN
+| `AStarHeuristic h`
+| The heuristic function that guides the search. The type `AStarHeuristic`
+  must be a model of the xref:visitors/AStarHeuristic.adoc[AStarHeuristic] concept.
+
+| IN
+| `AStarVisitor vis`
+| Use this to specify actions that you would like to happen during certain
+  event points within the algorithm. The type `AStarVisitor` must be a
+  model of the xref:visitors/AStarVisitor.adoc[AStarVisitor] concept. The
+  visitor object is passed by value <<1,[1]>>.
+
+| OUT
+| `PredecessorMap predecessor`
+| The predecessor map records the edges in the minimum spanning tree. Upon
+  completion of the algorithm, the edges _(p[u],u)_ for all _u_ in _V_
+  are in the minimum spanning tree. If _p[u] = u_ then _u_ is either the
+  start vertex or a vertex that is not reachable from the start. The
+  `PredecessorMap` type must be a
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]
+  with key and vertex types the same as the vertex descriptor type of the graph.
+
+| UTIL/OUT
+| `CostMap cost`
+| The _f_-value for each vertex. The _f_-value is defined as the sum of
+  the cost to get to a vertex from the start vertex, and the estimated
+  cost (as returned by the heuristic function `h`) from the vertex to a
+  goal. The type `CostMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map].
+  The vertex descriptor type of the graph needs to be usable as the key
+  type of the cost map. The value type for this map must be the same as
+  the value type for the distance map.
+
+| UTIL/OUT
+| `DistanceMap distance`
+| The shortest path weight from the start vertex `s` to each vertex in the
+  graph `g` is recorded in this property map. The shortest path weight is
+  the sum of the edge weights along the shortest path. The type
+  `DistanceMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map].
+  The vertex descriptor type of the graph needs to be usable as the key
+  type of the distance map. The value type of the distance map is the
+  element type of a xref:concepts/property_types/Monoid.adoc[Monoid] formed with the `combine`
+  function object and the `zero` object for the identity element. Also the
+  distance value type must have a
+  http://www.boost.org/sgi/stl/StrictWeakOrdering.html[StrictWeakOrdering]
+  provided by the `compare` function object.
+
+| IN
+| `WeightMap weight`
+| The weight or "length" of each edge in the graph. The weights must all
+  be non-negative; the algorithm will throw a
+  xref:exception.adoc#negative_edge[`negative_edge`] exception if
+  one of the edges is negative. The type `WeightMap` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The edge descriptor type of the graph needs to be usable as the key type
+  for the weight map. The value type for this map must be the same as the
+  value type of the distance map.
+
+| IN
+| `VertexIndexMap index_map`
+| This maps each vertex to an integer in the range `[0, num_vertices(g))`.
+  This is necessary for efficient updates of the heap data structure when
+  an edge is relaxed. The type `VertexIndexMap` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The vertex descriptor
+  type of the graph needs to be usable as the key type of the map.
+
+| UTIL/OUT
+| `ColorMap color`
+| This is used during the execution of the algorithm to mark the vertices,
+  indicating whether they are on the OPEN or CLOSED lists. The vertices
+  start out white and become gray when they are inserted into the OPEN
+  list. They then turn black when they are examined and placed on the
+  CLOSED list. At the end of the algorithm, vertices reachable from the
+  source vertex will have been colored black. All other vertices will
+  still be white. The type `ColorMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map].
+  A vertex descriptor must be usable as the key type of the map, and the
+  value type of the map must be a model of
+  xref:concepts/property_types/ColorValue.adoc[Color Value].
+
+| IN
+| `CompareFunction compare`
+| This function is used to compare distances to determine which vertex
+  is closer to the start vertex, and to compare _f_-values to determine
+  which vertex on the OPEN list to examine next. The `CompareFunction`
+  type must be a model of
+  http://www.boost.org/sgi/stl/BinaryPredicate.html[Binary Predicate]
+  and have argument types that match the value type of the `DistanceMap`
+  property map.
+
+| IN
+| `CombineFunction combine`
+| This function is used to combine distances to compute the distance of a
+  path, and to combine distance and heuristic values to compute the
+  _f_-value of a vertex. The `CombineFunction` type must be a model of
+  http://www.boost.org/sgi/stl/BinaryFunction.html[Binary Function]. Both
+  argument types of the binary function must match the value type of the
+  `DistanceMap` property map (which is the same as that of the `WeightMap`
+  and `CostMap` property maps). The result type must be the same type as
+  the distance value type.
+
+| IN
+| `CostInf inf`
+| The `inf` object must be the greatest value of any `D` object. That is,
+  `compare(d, inf) == true` for any `d != inf`. The type `D` is the value
+  type of the `DistanceMap`.
+
+| IN
+| `CostZero zero`
+| The `zero` value must be the identity element for the
+  xref:concepts/property_types/Monoid.adoc[Monoid] formed by the distance values and the
+  `combine` function object. The type `D` is the value type of the
+  `DistanceMap`.
+
+|===
+
+'''
+
+=== (2) Positional tree version
+
+[source,cpp]
+----
+template <typename VertexListGraph, typename AStarHeuristic,
+          typename AStarVisitor, typename PredecessorMap,
+          typename CostMap, typename DistanceMap,
+          typename WeightMap,
+          typename CompareFunction, typename CombineFunction,
+          typename CostInf, typename CostZero>
+inline void astar_search_tree(
+    const VertexListGraph& g,
+    typename graph_traits<VertexListGraph>::vertex_descriptor s,
+    AStarHeuristic h, AStarVisitor vis,
+    PredecessorMap predecessor, CostMap cost,
+    DistanceMap distance, WeightMap weight,
+    CompareFunction compare, CombineFunction combine,
+    CostInf inf, CostZero zero);
+----
+
+Same parameters as (1), but without `VertexIndexMap` and `ColorMap`. For the tree versions of the algorithm, all vertices are assumed to always be white, leading to checking for repeated vertices being done using the distance map. If a dummy value is used for the distance map and the graph contains cycles, the algorithm will probably enter an infinite loop.
+
+'''
+
+=== (3) Positional no-init version
+
+[source,cpp]
+----
+template <typename IncidenceGraph, typename AStarHeuristic,
+          typename AStarVisitor, typename PredecessorMap,
+          typename CostMap, typename DistanceMap,
+          typename WeightMap, typename ColorMap,
+          typename VertexIndexMap,
+          typename CompareFunction, typename CombineFunction,
+          typename CostInf, typename CostZero>
+inline void astar_search_no_init(
+    const IncidenceGraph& g,
+    typename graph_traits<IncidenceGraph>::vertex_descriptor s,
+    AStarHeuristic h, AStarVisitor vis,
+    PredecessorMap predecessor, CostMap cost,
+    DistanceMap distance, WeightMap weight,
+    ColorMap color, VertexIndexMap index_map,
+    CompareFunction compare, CombineFunction combine,
+    CostInf inf, CostZero zero);
+----
+
+Same parameters as (1), but does not initialize the property maps. Use this for implicit graphs. The type `IncidenceGraph` must be a model of the xref:concepts/IncidenceGraph.adoc[Incidence Graph] concept.
+
+NOTE: The `index_map` and `color` parameters are swapped in `astar_search_no_init()` relative to `astar_search()`; the named parameter interfaces are not affected.
+
+'''
+
+=== (4) Positional no-init tree version
+
+[source,cpp]
+----
+template <typename IncidenceGraph, typename AStarHeuristic,
+          typename AStarVisitor, typename PredecessorMap,
+          typename CostMap, typename DistanceMap,
+          typename WeightMap,
+          typename CompareFunction, typename CombineFunction,
+          typename CostInf, typename CostZero>
+inline void astar_search_no_init_tree(
+    const IncidenceGraph& g,
+    typename graph_traits<IncidenceGraph>::vertex_descriptor s,
+    AStarHeuristic h, AStarVisitor vis,
+    PredecessorMap predecessor, CostMap cost,
+    DistanceMap distance, WeightMap weight,
+    CompareFunction compare, CombineFunction combine,
+    CostInf inf, CostZero zero);
+----
+
+Same parameters as (3), but without `ColorMap` and `VertexIndexMap`. Combines the no-init and tree behaviors.
+
+'''
+
+=== (5) Named parameter version
+
+[source,cpp]
+----
+template <typename VertexListGraph,
+          typename AStarHeuristic,
+          typename P, typename T, typename R>
+void astar_search(
+    const VertexListGraph& g,
+    typename graph_traits<VertexListGraph>::vertex_descriptor s,
+    AStarHeuristic h,
+    const bgl_named_params<P, T, R>& params);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const VertexListGraph& g`
+| The graph object. Must model xref:concepts/VertexListGraph.adoc[Vertex List Graph]
+  and xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| IN
+| `vertex_descriptor s`
+| The start vertex for the search. All distances will be calculated from
+  this vertex, and the shortest paths tree will be rooted at this vertex.
+
+| IN
+| `AStarHeuristic h`
+| The heuristic function that guides the search. The type `AStarHeuristic`
+  must be a model of the xref:visitors/AStarHeuristic.adoc[AStarHeuristic] concept.
+
+| IN
+| `params`
+| Named parameters passed via `bgl_named_params`. The following are accepted:
+|===
+
+[cols="1,2,5"]
+|===
+| Direction | Named Parameter | Description / Default
+
+| IN
+| `weight_map(WeightMap w_map)`
+| Edge weights (see (1) `WeightMap weight`). +
+  *Default:* `get(edge_weight, g)`
+
+| IN
+| `vertex_index_map(VertexIndexMap i_map)`
+| Vertex-to-integer mapping (see (1) `VertexIndexMap index_map`). +
+  *Default:* `get(vertex_index, g)`.
+  Note: if you use this default, make sure your graph has an internal
+  `vertex_index` property. For example, `adjacency_list` with
+  `VertexList=listS` does not have an internal `vertex_index` property.
+
+| OUT
+| `predecessor_map(PredecessorMap p_map)`
+| Predecessor map (see (1) `PredecessorMap predecessor`). +
+  *Default:* `dummy_property_map`
+
+| UTIL/OUT
+| `distance_map(DistanceMap d_map)`
+| Distance map (see (1) `DistanceMap distance`).
+  A `constant_writable_property_map` returning the infinity value can be
+  used for this parameter in tree versions of the algorithm when the graph
+  does not contain a directed cycle. +
+  *Default:* `shared_array_property_map` with the same value type as the
+  `WeightMap`, and of size `num_vertices(g)`, and using the `i_map` for
+  the index map.
+
+| UTIL/OUT
+| `rank_map(CostMap c_map)`
+| The _f_-value for each vertex (see (1) `CostMap cost`). In non-tree
+  versions, the type `CostMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map];
+  in tree versions, a
+  link:../../property_map/doc/WritablePropertyMap.html[Writable Property Map].
+  In tree versions, `null_property_map` can be used for this parameter. +
+  *Default:* `shared_array_property_map` with the same value type as the
+  `DistanceMap`, and of size `num_vertices(g)`, and using the `i_map` for
+  the index map.
+
+| UTIL/OUT
+| `color_map(ColorMap c_map)`
+| Color map (see (1) `ColorMap color`). +
+  *Default:* `shared_array_property_map` of value type
+  `default_color_type`, with size `num_vertices(g)`, and using the
+  `i_map` for the index map.
+
+| IN
+| `distance_compare(CompareFunction cmp)`
+| Distance comparison function (see (1) `CompareFunction compare`). +
+  *Default:* `std::less<D>` with
+  `D=typename property_traits<DistanceMap>::value_type`
+
+| IN
+| `distance_combine(CombineFunction cmb)`
+| Distance combination function (see (1) `CombineFunction combine`). +
+  *Default:* `std::plus<D>` with
+  `D=typename property_traits<DistanceMap>::value_type`
+
+| IN
+| `distance_inf(D inf)`
+| Infinity value (see (1) `CostInf inf`). +
+  *Default:* `std::numeric_limits<D>::max()`
+
+| IN
+| `distance_zero(D zero)`
+| Identity element (see (1) `CostZero zero`). +
+  *Default:* `D()` with
+  `D=typename property_traits<DistanceMap>::value_type`
+
+| OUT
+| `visitor(AStarVisitor v)`
+| Visitor (see (1) `AStarVisitor vis`). +
+  *Default:* `astar_visitor<null_visitor>`
+
+|===
+
+'''
+
+=== (6) Named parameter no-init version
+
+[source,cpp]
+----
+template <typename VertexListGraph,
+          typename AStarHeuristic,
+          typename P, typename T, typename R>
+void astar_search_no_init(
+    const IncidenceGraph& g,
+    typename graph_traits<VertexListGraph>::vertex_descriptor s,
+    AStarHeuristic h,
+    const bgl_named_params<P, T, R>& params);
+----
+
+Same named parameters as (5). Does not initialize property maps. Use this for implicit graphs. The type `IncidenceGraph` must be a model of the xref:concepts/IncidenceGraph.adoc[Incidence Graph] concept.
+
+'''
+
+=== (7) Named parameter tree version
+
+[source,cpp]
+----
+template <typename VertexListGraph,
+          typename AStarHeuristic,
+          typename P, typename T, typename R>
+void astar_search_tree(
+    const VertexListGraph& g,
+    typename graph_traits<VertexListGraph>::vertex_descriptor s,
+    AStarHeuristic h,
+    const bgl_named_params<P, T, R>& params);
+----
+
+Same named parameters as (5). Uses the tree formulation (no color map).
+
+'''
+
+=== (8) Named parameter no-init tree version
+
+[source,cpp]
+----
+template <typename VertexListGraph,
+          typename AStarHeuristic,
+          typename P, typename T, typename R>
+void astar_search_no_init_tree(
+    const IncidenceGraph& g,
+    typename graph_traits<VertexListGraph>::vertex_descriptor s,
+    AStarHeuristic h,
+    const bgl_named_params<P, T, R>& params);
+----
+
+Same named parameters as (5). Combines the no-init and tree behaviors.
+
+== Description
+
+The https://en.wikipedia.org/wiki/A%2A_search_algorithm[A* algorithm]
+[xref:about/bibliography.adoc#hart68[13]]
+is a _heuristic graph search algorithm_: an A* search is "guided" by a _heuristic function_. A heuristic function _h(v)_ is one which estimates the cost from a non-goal state (_v_) in the graph to some goal state, _g_. Intuitively, A* follows paths (through the graph) to the goal that are estimated by the heuristic function to be the best paths. Unlike best-first search, A* takes into account the known cost from the start of the search to _v_; the paths A* takes are guided by a function _f(v) = g(v) + h(v)_, where _h(v)_ is the heuristic function, and _g(v)_ (sometimes denoted _c(s, v)_) is the known cost from the start to _v_. Clearly, the efficiency of A* is highly dependent on the heuristic function with which it is used.
+
+The A* algorithm is very similar to Dijkstra's Shortest Paths algorithm. This implementation finds all the shortest paths from the start vertex to every other vertex by creating a search tree, examining vertices according to their remaining cost to some goal, as estimated by a heuristic function. Most commonly, A* is used to find some specific goal vertex or vertices in a graph, after which the search is terminated.
+
+A* is particularly useful for searching _implicit_ graphs. Implicit graphs are graphs that are not completely known at the beginning of the search. Upon visiting a vertex, its neighbors are "generated" and added to the search. Implicit graphs are particularly useful for searching large state spaces -- in game-playing scenarios (e.g. chess), for example -- in which it may not be possible to store the entire graph. Implicit searches can be performed with this implementation of A* by creating special visitors that generate neighbors of newly-expanded vertices. Please note that `astar_search_no_init()` or `astar_search_no_init_tree()` must be used for implicit graphs; the basic `astar_search()` function requires a graph that models the xref:concepts/VertexListGraph.adoc[Vertex List Graph] concept. Both versions also require the graph type to model the xref:concepts/IncidenceGraph.adoc[Incidence Graph] concept.
+
+For the non-tree versions of the algorithm, this implementation of A* is based on an OPEN/CLOSED list formulation. Vertices on the OPEN list have been "discovered" by the algorithm, but not "expanded" (we have not discovered their adjacent vertices). Vertices on the CLOSED list have been completely examined by our search (we have expanded them and added their children to the OPEN list). Vertices that are on neither list have not been encountered in any context so far in our search. A major advantage of this formulation of the A* algorithm over other approaches is that it avoids "cycles" in the state space; the search will not become trapped by loops in the graph. The OPEN/CLOSED lists are implemented using BGL's vertex coloring mechanisms. Vertices in OPEN are colored gray, vertices in CLOSED are colored black, and undiscovered vertices are colored white. For the versions of the algorithm whose names end in `_tree`, all vertices are assumed to always be white, leading to checking for repeated vertices being done using the distance map. If a dummy value is used for the distance map and the graph contains cycles, the algorithm will probably enter an infinite loop.
+
+The criteria for expanding a vertex on the OPEN list is that it has the lowest _f(v) = g(v) + h(v)_ value of all vertices on OPEN. Cost information about vertices is stored in a property map.
+
+=== Pseudo-Code
+
+The following is the pseudocode for the A* heuristic search algorithm. In the pseudocode, _h_ is the heuristic function, _w_ is the edge weight, _d_ is the distance of a vertex from _s_, and _Q_ is a priority queue, sorted by _f_, the estimated cost to the goal of the path through a vertex. _p_ is a predecessor map. The visitor event points for the algorithm are indicated by the labels on the right.
+
+[cols="1a,1a"]
+|===
+|
+----
+A*(G, s, h)
+  for each vertex u in V
+    d[u] := f[u] := infinity
+    color[u] := WHITE
+    p[u] := u
+  end for
+  color[s] := GRAY
+  d[s] := 0
+  f[s] := h(s)
+  INSERT(Q, s)
+  while (Q != O)
+    u := EXTRACT-MIN(Q)
+    for each vertex v in Adj[u]
+      if (w(u,v) + d[u] < d[v])
+        d[v] := w(u,v) + d[u]
+        f[v] := d[v] + h(v)
+        p[v] := u
+        if (color[v] = WHITE)
+          color[v] := GRAY
+          INSERT(Q, v)
+        else if (color[v] = BLACK)
+          color[v] := GRAY
+          INSERT(Q, v)
+        end if
+      else
+        ...
+    end for
+    color[u] := BLACK
+  end while
+----
+|
+----
+.
+initialize vertex u
+.
+.
+.
+.
+.
+.
+.
+discover vertex s
+.
+examine vertex u
+examine edge (u,v)
+.
+edge (u,v) relaxed
+.
+.
+.
+.
+discover vertex v
+.
+.
+reopen vertex v
+.
+.
+edge (u,v) not relaxed
+.
+finish vertex u
+.
+----
+|===
+
+== Visitor Event Points
+
+* *`vis.initialize_vertex(u, g)`* is invoked on each vertex in the
+  graph before the start of the algorithm.
+* *`vis.discover_vertex(v, g)`* is invoked when a vertex is first
+  discovered and is added to the OPEN list.
+* *`vis.examine_vertex(u, g)`* is invoked when a vertex is popped
+  from the queue (i.e., it has the lowest cost on the OPEN list).
+* *`vis.examine_edge(e, g)`* is invoked on each out-edge of a vertex
+  immediately after it is examined.
+* *`vis.edge_relaxed(e, g)`* is invoked on edge _(u,v)_ if
+  _d[u] + w(u,v) < d[v]_.
+* *`vis.edge_not_relaxed(e, g)`* is invoked if the edge is not
+  relaxed (see above).
+* *`vis.black_target(e, g)`* is invoked when a vertex that is on the
+  CLOSED list is "rediscovered" via a more efficient path, and is re-added
+  to the OPEN list.
+* *`vis.finish_vertex(u, g)`* is invoked on a vertex when it is
+  added to the CLOSED list, which happens after all of its out edges have
+  been examined.
+
+== Example
+
+See link:../example/astar-cities.cpp[`example/astar-cities.cpp`] for an example of using A* search.
+
+== Notes
+
+[#1]#[1]# Since the visitor parameter is passed by value, if your visitor contains state then any changes to the state during the algorithm will be made to a copy of the visitor object, not the visitor object passed in. Therefore you may want the visitor to hold this state by pointer or reference.

@@ -1,0 +1,1 @@
+Stoer-Wagner min cut: 5

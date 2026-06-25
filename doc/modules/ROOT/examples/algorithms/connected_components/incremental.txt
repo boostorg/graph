@@ -1,0 +1,5 @@
+Incremental connected components:
+  After adding 0-1: 4 components
+  After adding 2-3: 3 components
+  After adding 1-2: 2 components
+  After adding 3-4: 1 components

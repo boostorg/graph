@@ -1,0 +1,109 @@
+[#sec:kruskal]
+= kruskal_minimum_spanning_tree
+
+Find a minimum spanning tree in an undirected graph with weighted edges using Kruskal's algorithm.
+
+*Complexity:* _O(E log E)_ +
+*Defined in:* `<boost/graph/kruskal_min_spanning_tree.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/spanning_trees/kruskal.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/spanning_trees/kruskal.txt[]
+----
+
+'''
+
+=== (1) Named parameter version
+
+[source,cpp]
+----
+template <class Graph, class OutputIterator,
+          class P, class T, class R>
+OutputIterator
+kruskal_minimum_spanning_tree(
+    Graph& g, OutputIterator tree_edges,
+    const bgl_named_params<P, T, R>& params = all defaults);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `const Graph& g`
+| An undirected graph. The graph type must be a model of xref:concepts/VertexListGraph.adoc[Vertex List Graph] and xref:concepts/EdgeListGraph.adoc[Edge List Graph].
+
+| IN | `OutputIterator spanning_tree_edges`
+| The edges of the minimum spanning tree are output to this http://www.boost.org/sgi/stl/OutputIterator.html[Output Iterator].
+
+| IN | `weight_map(WeightMap w_map)`
+| The weight or "length" of each edge in the graph. The `WeightMap` type must be a model of link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map] and its value type must be http://www.boost.org/sgi/stl/LessThanComparable.html[Less Than Comparable]. The key type of this map needs to be the graph's edge descriptor type. +
+*Default:* `get(edge_weight, g)`
+
+| UTIL | `rank_map(RankMap r_map)`
+| This is used by the disjoint sets data structure. The type `RankMap` must be a model of link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]. The vertex descriptor type of the graph needs to be usable as the key type of the rank map. The value type of the rank map must be an integer type. +
+*Default:* an link:../../property_map/doc/iterator_property_map.html[`iterator_property_map`] created from a `std::vector` of the integers of size `num_vertices(g)` and using the `i_map` for the index map.
+
+| UTIL | `predecessor_map(PredecessorMap p_map)`
+| This is used by the disjoint sets data structure, and is *not* used for storing predecessors in the spanning tree. The predecessors of the spanning tree can be obtained from the spanning tree edges output. The type `PredecessorMap` must be a model of link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]. The key type value types of the predecessor map must be the vertex descriptor type of the graph. +
+*Default:* an link:../../property_map/doc/iterator_property_map.html[`iterator_property_map`] created from a `std::vector` of vertex descriptors of size `num_vertices(g)` and using the `i_map` for the index map.
+
+| IN | `vertex_index_map(VertexIndexMap i_map)`
+| This maps each vertex to an integer in the range `[0, num_vertices(g))`. This is only necessary if the default is used for the rank or predecessor maps. The type `VertexIndexMap` must be a model of link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map]. The value type of the map must be an integer type. The vertex descriptor type of the graph needs to be usable as the key type of the map. +
+*Default:* `get(vertex_index, g)` +
+Note: if you use this default, make sure your graph has an internal `vertex_index` property. For example, `adjacency_list` with `VertexList=listS` does not have an internal `vertex_index` property.
+|===
+
+'''
+
+=== (2) Positional version
+
+[source,cpp]
+----
+template <class Graph, class OutputIterator>
+OutputIterator
+kruskal_minimum_spanning_tree(
+    const Graph& g, OutputIterator spanning_tree_edges);
+----
+
+Equivalent to (1) with every named parameter left at its default. Internally calls `get(edge_weight, g)` and `get(vertex_index, g)`, so the graph must have both interior properties (this is automatic for `adjacency_list` with `vecS` vertex storage, but you must declare `vertex_index_t` when using `listS` / `setS`).
+
+If you need to supply a weight map or a custom disjoint-sets backing, use overload (1).
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `const Graph& g` | Same concept requirements as (1).
+| IN | `OutputIterator spanning_tree_edges` | Same as (1).
+|===
+
+== Description
+
+The `kruskal_minimum_spanning_tree()` function find a minimum spanning tree (MST) in an undirected graph with weighted edges. A MST is a set of edges that connects all the vertices in the graph where the total weight of the edges in the tree is minimized. For more details, see section xref:about/graph_theory_review.adoc#sec:minimum-spanning-tree[Minimum Spanning Tree Problem]. The edges in the MST are output to the `tree_edges` output iterator. This function uses https://en.wikipedia.org/wiki/Kruskal%27s_algorithm[Kruskal's algorithm] to compute the MST [xref:about/bibliography.adoc#kruskal56[14],xref:about/bibliography.adoc#clr90[5],xref:about/bibliography.adoc#tarjan83:_data_struct_network_algo[22],xref:about/bibliography.adoc#graham85[12]].
+
+Kruskal's algorithm starts with each vertex in a tree by itself, and with no edges in the minimum spanning tree _T_. The algorithm then examines each edge in the graph in order of increasing edge weight. If an edge connects two vertices in different trees the algorithm merges the two trees into a single tree and adds the edge to _T_. We use the "union by rank" and "path compression" heuristics to provide fast implementations of the disjoint set operations (`MAKE-SET`, `FIND-SET`, and `UNION-SET`). The algorithm is as follows:
+
+....
+KRUSKAL-MST(G, w)
+  T := O
+  for each vertex u in V
+    MAKE-SET(DS, u)
+  end for
+  for each edge (u,v) in E in order of nondecreasing weight
+    if FIND-SET(DS, u) != FIND-SET(DS, v)
+      UNION-SET(DS, u, v)
+      T := T U {(u,v)}
+  end for
+  return T
+....
+
+== Example
+
+The file link:../example/kruskal-example.cpp[`examples/kruskal-example.cpp`] contains an example of using Kruskal's algorithm.

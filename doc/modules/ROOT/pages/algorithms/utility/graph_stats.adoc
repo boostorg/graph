@@ -1,0 +1,69 @@
+= Graph Statistics
+
+Utility functions for computing basic structural statistics of a graph.
+
+*Defined in:* `<boost/graph/graph_stats.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/utility/graph_stats.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/utility/graph_stats.txt[]
+----
+
+== Functions
+
+[cols="1,3"]
+|===
+| Function | What it computes
+
+| `graph::num_dup_edges(g)`
+| Number of duplicate (parallel) edges in the graph.
+
+| `graph::degree_dist(g)`
+| Degree distribution: a `std::map<unsigned long, unsigned long>` mapping
+  each degree value to the number of vertices with that degree.
+
+| `graph::dup_edge_dist(g)`
+| Distribution of duplicate edges per vertex.
+
+| `graph::weight_degree_dist(g)`
+| Average edge weight by vertex degree. Requires an internal `edge_weight`
+  property.
+|===
+
+== Synopsis
+
+[source,cpp]
+----
+namespace boost { namespace graph {
+
+template <typename Graph>
+unsigned long num_dup_edges(Graph& g);
+
+template <typename Graph>
+std::map<unsigned long, unsigned long> degree_dist(Graph& g);
+
+template <typename Graph>
+std::map<unsigned long, unsigned long> dup_edge_dist(Graph& g);
+
+template <typename Graph>
+std::map<unsigned long, double> weight_degree_dist(Graph& g);
+
+}}
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `Graph& g`
+| Must model VertexListGraph and IncidenceGraph. `weight_degree_dist`
+  additionally requires an internal `edge_weight_t` property.
+|===

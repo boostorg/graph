@@ -1,0 +1,94 @@
+= property_put
+
+Writes a fixed value to a property map when a vertex or edge is visited at an
+event point. Useful as an alternative to an explicit loop for initializing a
+property map, or to mark a subset of vertices or edges (for example, only back
+edges) during a search.
+
+*Defined in:* `<boost/graph/visitors.hpp>` +
+*Models:* xref:visitors/EventVisitor.adoc[EventVisitor] +
+*Typical event:* any (vertex or edge)
+
+To use it, wrap it in an algorithm adaptor and optionally combine it with other
+event visitors; see the xref:visitors/overview.adoc[visitors overview].
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename PropertyMap, typename EventTag>
+struct property_put {
+  typedef EventTag event_filter;
+  property_put(PropertyMap pa,
+               typename property_traits<PropertyMap>::value_type value);
+
+  template <class VertexOrEdge, class Graph>
+  void operator()(VertexOrEdge x, const Graph& g);
+};
+
+template <typename PropertyMap, typename EventTag>
+property_put<PropertyMap, EventTag>
+put_property(PropertyMap pa,
+             typename property_traits<PropertyMap>::value_type value,
+             EventTag);
+----
+
+== Template Parameters
+
+[cols="1,3",options="header"]
+|===
+| Parameter | Description
+
+| `PropertyMap`
+| A WritablePropertyMap whose key type is the graph's vertex or edge descriptor
+  (depending on the event tag).
+
+| `EventTag`
+| The event at which to write. May be any event, vertex or edge.
+|===
+
+== Associated Types
+
+[cols="1,3",options="header"]
+|===
+| Type | Description
+
+| `event_filter`
+| The event tag the visitor responds to. Same type as `EventTag`.
+|===
+
+== Member Functions
+
+[cols="1,3",options="header"]
+|===
+| Member | Description
+
+| `property_put(PropertyMap pa, value_type value)`
+| Constructs a visitor that writes the fixed `value` into the property map `pa`.
+
+| `void operator()(VertexOrEdge x, const Graph& g)`
+| Writes the fixed value into the property map for `x` (a vertex or edge):
+  `put(pa, x, value)`.
+|===
+
+== Non-Member Functions
+
+[cols="1,3",options="header"]
+|===
+| Function | Description
+
+| `put_property(PropertyMap pa, value_type value, EventTag)`
+| Convenience factory that creates a `property_put`.
+|===
+
+== Example
+
+[source,cpp]
+----
+include::example$visitors/property_put.cpp[]
+----
+
+[,text]
+----
+include::example$visitors/property_put.txt[]
+----

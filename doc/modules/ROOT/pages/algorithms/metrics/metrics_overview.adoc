@@ -1,0 +1,74 @@
+= Graph Metrics
+
+Quantitative measures that describe the structure of a graph or the role of
+individual vertices and edges within it.
+
+== Centrality
+
+How important is a vertex?
+
+[cols="1,1,3"]
+|===
+| Metric | Complexity | What it measures
+
+| xref:algorithms/metrics/betweenness_centrality.adoc[Betweenness Centrality]
+| _O(VE)_ unweighted; _O(VE + V(V+E) log V)_ weighted
+| How often a vertex lies on shortest paths between other vertices.
+  High betweenness = bridge or bottleneck.
+
+| xref:algorithms/metrics/closeness_centrality.adoc[Closeness Centrality]
+| _O(V)_ per vertex given a pre-computed distance map
+| Reciprocal of the sum of shortest distances to all other vertices.
+  High closeness = can reach everyone quickly.
+
+| xref:algorithms/metrics/degree_centrality.adoc[Degree Centrality]
+| _O(1)_ per vertex
+| Number of connections (in, out, or total). Simple but effective for many
+  networks.
+
+| xref:algorithms/metrics/page_rank.adoc[PageRank]
+| _O(V + E)_ per iteration
+| Importance based on incoming links (recursive: a link from an
+  important page counts more). Used by web search engines.
+|===
+
+== Distance and structure
+
+[cols="1,3"]
+|===
+| Metric | What it measures
+
+| xref:algorithms/metrics/eccentricity.adoc[Eccentricity]
+| Maximum distance from a vertex to any other. The minimum eccentricity
+  across all vertices is the graph's _radius_; the maximum is the _diameter_.
+
+| xref:algorithms/metrics/geodesic_distance.adoc[Geodesic Distance]
+| Mean shortest-path distance from a vertex. Low mean = centrally located.
+
+| xref:algorithms/metrics/clustering_coefficient.adoc[Clustering Coefficient]
+| Fraction of a vertex's neighbor pairs that are also connected to each other.
+  High clustering = tight-knit local community.
+
+| xref:algorithms/metrics/profile.adoc[Profile] / xref:algorithms/metrics/wavefront.adoc[Wavefront] / xref:algorithms/metrics/bandwidth.adoc[Bandwidth]
+| Sparse-matrix metrics used to evaluate vertex orderings for numerical solvers.
+|===
+
+== Graph-level statistics
+
+[cols="1,3"]
+|===
+| Metric | What it measures
+
+| xref:algorithms/metrics/core_numbers.adoc[Core Numbers]
+| k-core decomposition: assigns each vertex the largest _k_ such that it
+  belongs to a subgraph where every vertex has degree _&gt;= k_. Useful for
+  identifying dense substructures. A weighted variant is available.
+|===
+
+NOTE: Most distance-based metrics (`eccentricity`, `geodesic_distance`,
+`closeness_centrality`) consume a pre-computed distance map and therefore
+don't fit a single complexity figure — the cost is dominated by the
+shortest-paths run (xref:algorithms/shortest_paths/dijkstra_shortest_paths.adoc[Dijkstra]
+per vertex, xref:algorithms/shortest_paths/floyd_warshall_shortest.adoc[Floyd-Warshall],
+or xref:algorithms/shortest_paths/johnson_all_pairs_shortest.adoc[Johnson]) that
+you run first.

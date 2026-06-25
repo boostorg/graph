@@ -1,0 +1,111 @@
+= Planar Embedding Concept
+
+A planar embedding is an important intermediate representation of a
+drawing of a planar graph. Instead of specifying the absolute positions
+of the vertices and edges in the plane, a planar embedding specifies
+their positions relative to one another. A planar embedding consists of
+a sequence, for each vertex in the graph, of all of the edges incident
+on that vertex in the order in which they are to be drawn around that
+vertex.
+
+A planar embedding is a refinement of
+LValuePropertyMap
+that places additional restrictions the `value_type` used in the
+property map.
+
+== Notation
+
+[cols=",",]
+|===
+|`Embedding` |is a type that models the Planar Embedding concept.
+
+|`embedding` |is an object of type `Embedding`.
+
+|`Graph` |is the type of the underlying graph.
+
+|`e` |is an object of type
+`graph_traits<Graph>::edge_descriptor`.
+
+|`v` |is an object of type
+`graph_traits<Graph>::vertex_descriptor `.
+
+| |
+|===
+
+== Associated Types
+
+[cols=",,",]
+|===
+|Const Iterator
+|`boost::property_traits<Embedding>::value_type::const_iterator `
+|The iterator type used to iterate over the ordering of the edges in the
+planar embedding of a particular vertex
+|===
+
+== Valid Expressions
+
+[cols=",,",]
+|===
+|Expression |Return Type |Description
+
+|`embedding[v].begin()`
+|`boost::property_traits<Embedding>::value_type::const_iterator `
+|Returns an iterator to the beginning of the range of edges in the
+embedding around vertex v
+
+|`embedding[v].end()`
+|`boost::property_traits<Embedding>::value_type::const_iterator `
+|Returns an iterator to the end of the range of edges in the embedding
+around vertex v
+
+|`embedding[v].clear()` |`void` |Clears all edges in the
+embedding around a vertex `v`
+
+|`embedding[v].push_back(e)` |`void` |Adds an edge `e` to
+the end of the sequence of embedded edges around the vertex `v`
+|===
+
+== Complexity Guarantees
+
+Starting with an empty embedding, any mixed sequence of _n_ calls to a
+particular vertex's `push_back` and `clear` should take _O(n)_ time.
+
+== Models
+
+Any LValue property map that maps vertices to a `std::vector`,
+`std::list`, or `std::deque` models this concept. Below is an example of
+using this approach to create a model of PlanarEmbedding:
+
+[source,cpp]
+----
+
+#include <boost/property_map/property_map.hpp>
+#include <vector>
+
+...
+
+// Assume a graph type "Graph" defined somewhere above and
+// an instance of Graph in a variable g.
+
+// A typedef for the storage - a vector of vectors of edge descriptors
+typedef
+    std::vector< std::vector< graph_traits<Graph>::edge_descriptor > >
+    planar_embedding_storage_t;
+
+// A typedef for the iterator property map, assuming the graph has
+// an interior vertex index map
+typedef
+    boost::iterator_property_map< planar_embedding_storage_t::iterator,
+                                  property_map<Graph, vertex_index_t>::type
+                                >
+    planar_embedding_t;
+
+// Create an instance of the storage and the property map
+planar_embedding_storage_t planar_embedding_storage(num_vertices(g));
+planar_embedding_t planar_embedding(planar_embedding_storage.begin(),
+                                    get(vertex_index, g)
+                                    );
+
+// planar_embedding can now be passed to any function expecting a model
+// of PlanarEmbedding.
+----

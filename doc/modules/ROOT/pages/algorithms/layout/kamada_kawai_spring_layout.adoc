@@ -1,0 +1,218 @@
+= `kamada_kawai_spring_layout`
+
+Kamada-Kawai spring layout for connected, undirected graphs.
+
+*Defined in:* `<boost/graph/kamada_kawai_spring_layout.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/layout/kamada_kawai.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/layout/kamada_kawai.txt[]
+----
+
+'''
+
+=== (1) Full version
+
+[source,cpp]
+----
+template<typename Topology, typename Graph, typename PositionMap,
+         typename WeightMap, typename T, bool EdgeOrSideLength,
+         typename Done, typename VertexIndexMap,
+         typename DistanceMatrix, typename SpringStrengthMatrix,
+         typename PartialDerivativeMap>
+bool kamada_kawai_spring_layout(
+    const Graph& g,
+    PositionMap position,
+    WeightMap weight,
+    const Topology& space,
+    unspecified edge_or_side_length,
+    Done done,
+    typename property_traits<WeightMap>::value_type spring_constant,
+    VertexIndexMap index,
+    DistanceMatrix distance,
+    SpringStrengthMatrix spring_strength,
+    PartialDerivativeMap partial_derivatives);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| The graph, whose type `Graph` must model the
+  xref:concepts/VertexListGraph.adoc[VertexListGraph],
+  xref:concepts/EdgeListGraph.adoc[EdgeListGraph], and
+  xref:concepts/IncidenceGraph.adoc[IncidenceGraph] concepts. The graph must be
+  undirected and connected.
+
+| OUT
+| `PositionMap position`
+| This property map is used to store the position of each vertex. The type
+  `PositionMap` must be a model of
+  link:../../property_map/doc/WritablePropertyMap.html[Writable Property Map],
+  with the graph's vertex descriptor type as its key type and
+  `Topology::point_type` as its value type.
+
+| IN
+| `WeightMap weight`
+| The weight or "length" of each edge in the graph. The weights must all be
+  non-negative, and the algorithm will throw a
+  xref:exception.adoc#negative_edge[`negative_edge`] exception if one
+  of the edges is negative. The type `WeightMap` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The edge descriptor type of the graph needs to be usable as the key type
+  for the weight map. The value type for this map must be the same as the
+  value type of the distance map. +
+  *Default:* `get(edge_weight, g)`
+
+| IN
+| `const Topology& space`
+| The topology used to lay out the vertices. This parameter describes both
+  the size and shape of the layout area, as well as its dimensionality; up
+  to three dimensions are supported by the current implementation.
+  Topologies are described in more detail (with a list of BGL-provided
+  topologies) xref:algorithms/layout/topology.adoc[in separate documentation].
+
+| IN
+| `unspecified edge_or_side_length`
+| Provides either the unit length `e` of an edge in the layout or the
+  length of a side `s` of the display area, and must be either
+  `boost::edge_length(e)` or `boost::side_length(s)`, respectively.
+
+| IN
+| `Done done`
+| A 4-argument function object that is passed the current value of delta_p
+  (i.e., the energy of vertex `p`), the vertex `p`, the graph `g`, and a
+  boolean flag indicating whether `delta_p` is the maximum energy in the
+  system (when `true`) or the energy of the vertex being moved. +
+  *Default:*
+  xref:algorithms/layout/layout_tolerance.adoc[`layout_tolerance`] instantiated over
+  the value type of the weight map.
+
+| IN
+| `typename property_traits<WeightMap>::value_type spring_constant`
+| The constant multiplied by each spring's strength. Larger values create
+  systems with more energy that can take longer to stabilize; smaller values
+  create systems with less energy that stabilize quickly but do not
+  necessarily result in pleasing layouts. +
+  *Default:* 1.
+
+| IN
+| `VertexIndexMap index`
+| A mapping from vertices to index values between 0 and
+  `num_vertices(g)`. +
+  *Default:* `get(vertex_index,g)`. Note: if you use this default, make
+  sure your graph has an internal `vertex_index` property. For example,
+  `adjacency_list` with `VertexList=listS` does not have an internal
+  `vertex_index` property.
+
+| UTIL/OUT
+| `DistanceMatrix distance`
+| This parameter will be used to store the distance from every vertex to
+  every other vertex, which is computed in the first stages of the
+  algorithm. This value's type must be a model of
+  xref:concepts/property_types/BasicMatrix.adoc[`BasicMatrix`] with value type equal to the
+  value type of the weight map. +
+  *Default:* A vector of vectors.
+
+| UTIL/OUT
+| `SpringStrengthMatrix spring_strength`
+| This matrix will be used to store the strength of the spring between
+  every pair of vertices. This value's type must be a model of
+  xref:concepts/property_types/BasicMatrix.adoc[BasicMatrix] with value type equal to the
+  value type of the weight map. +
+  *Default:* A vector of vectors of the value type of the weight map.
+
+| UTIL
+| `PartialDerivativeMap partial_derivatives`
+| A property map that will be used to store the partial derivatives of each
+  vertex with respect to the vertex's current coordinates. This must be a
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]
+  whose value type is `Topology::point_difference_type`. The default is an
+  iterator property map built using the graph's vertex index map. +
+  *Default:* An `iterator_property_map` created from an `std::vector` of
+  `Topology::point_difference_type`.
+
+|===
+
+'''
+
+=== (2) Without utility maps
+
+[source,cpp]
+----
+template<typename Topology, typename Graph, typename PositionMap,
+         typename WeightMap, typename T, bool EdgeOrSideLength,
+         typename Done, typename VertexIndexMap>
+bool kamada_kawai_spring_layout(
+    const Graph& g,
+    PositionMap position,
+    WeightMap weight,
+    const Topology& space,
+    unspecified edge_or_side_length,
+    Done done,
+    typename property_traits<WeightMap>::value_type spring_constant,
+    VertexIndexMap index);
+----
+
+Same parameters as (1), but without the `distance`, `spring_strength`, and `partial_derivatives` utility maps, which will be created internally.
+
+'''
+
+=== (3) With default spring constant
+
+[source,cpp]
+----
+template<typename Topology, typename Graph, typename PositionMap,
+         typename WeightMap, typename T, bool EdgeOrSideLength,
+         typename Done>
+bool kamada_kawai_spring_layout(
+    const Graph& g,
+    PositionMap position,
+    WeightMap weight,
+    const Topology& space,
+    unspecified edge_or_side_length,
+    Done done,
+    typename property_traits<WeightMap>::value_type spring_constant =
+        typename property_traits<WeightMap>::value_type(1));
+----
+
+Same parameters as (2), but uses a default vertex index map of `get(vertex_index, g)`.
+
+'''
+
+=== (4) Minimal version
+
+[source,cpp]
+----
+template<typename Topology, typename Graph, typename PositionMap,
+         typename WeightMap, typename T, bool EdgeOrSideLength>
+bool kamada_kawai_spring_layout(
+    const Graph& g,
+    PositionMap position,
+    WeightMap weight,
+    const Topology& space,
+    unspecified edge_or_side_length);
+----
+
+Same parameters as (3), but uses a default `done` function of `layout_tolerance` instantiated over the value type of the weight map and a default spring constant of 1.
+
+== Description
+
+This https://en.wikipedia.org/wiki/Force-directed_graph_drawing[algorithm]
+[xref:about/bibliography.adoc#kamada89[52]] performs graph layout (in two dimensions) for connected, undirected graphs. It operates by relating the layout of graphs to a dynamic spring system and minimizing the energy within that system. The strength of a spring between two vertices is inversely proportional to the square of the shortest distance (in graph terms) between those two vertices. Essentially, vertices that are closer in the graph-theoretic sense (i.e., by following edges) will have stronger springs and will therefore be placed closer together.
+
+Prior to invoking this algorithm, it is recommended that the vertices be placed along the vertices of a regular n-sided polygon via xref:algorithms/layout/circle_layout.adoc[`circle_graph_layout`].
+
+== Returns
+
+`true` if layout was successful or `false` if a negative weight cycle was detected or the graph is disconnected.
+

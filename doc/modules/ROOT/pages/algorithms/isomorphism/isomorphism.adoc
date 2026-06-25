@@ -1,0 +1,219 @@
+[#sec:isomorphism]
+= Isomorphism
+
+Determines whether an isomorphism exists between two graphs.
+
+*Complexity:* _O(++|++V++|++!)_ +
+*Defined in:* `<boost/graph/isomorphism.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/isomorphism/isomorphism.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/isomorphism/isomorphism.txt[]
+----
+
+'''
+
+=== (1) Positional version
+
+[source,cpp]
+----
+template <typename Graph1, typename Graph2, typename IsoMap,
+          typename VertexInvariant1, typename VertexInvariant2,
+          typename V1Map, typename V2Map>
+bool isomorphism(
+    const Graph1& g1, const Graph2& g2,
+    IsoMap f, VertexInvariant1 invariant1, VertexInvariant2 invariant2,
+    std::size_t max_invariant, VertexIndex1Map i1_map, VertexIndex2Map i2_map);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph1& g1`
+| A directed or undirected graph. The graph type must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph] and
+  xref:concepts/EdgeListGraph.adoc[Edge List Graph].
+
+| IN
+| `const Graph2& g2`
+| A directed or undirected graph. The graph type must be a model of
+  xref:concepts/BidirectionalGraph.adoc[Bidirectional Graph] and
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph].
+
+| OUT
+| `IsoMap f`
+| The mapping from vertices in graph 1 to vertices in graph 2. `IsoMap`
+  must be a
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map].
+
+| IN
+| `VertexInvariant1 invariant1`
+| Mapping from vertices of graph 1 to integers which restricts which vertices
+  may be considered isomorphic. See the named parameter version for details.
+
+| IN
+| `VertexInvariant2 invariant2`
+| Mapping from vertices of graph 2 to integers which restricts which vertices
+  may be considered isomorphic. See the named parameter version for details.
+
+| IN
+| `std::size_t max_invariant`
+| This parameter is ignored as it is no longer necessary, but kept for
+  backwards compatibility.
+
+| IN
+| `VertexIndex1Map i1_map`
+| This maps each vertex of graph 1 to an integer in the range
+  `[0, num_vertices(g1))`. The type `VertexIndex1Map` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The vertex descriptor
+  type of graph 1 needs to be usable as the key type of the map.
+
+| IN
+| `VertexIndex2Map i2_map`
+| This maps each vertex of graph 2 to an integer in the range
+  `[0, num_vertices(g2))`. The type `VertexIndex2Map` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The vertex descriptor
+  type of graph 2 needs to be usable as the key type of the map.
+
+|===
+
+'''
+
+=== (2) Named parameter version
+
+[source,cpp]
+----
+template <class Graph1, class Graph2, class P, class T, class R>
+bool isomorphism(
+    const Graph1& g1, const Graph2& g2,
+    const bgl_named_params<P,T,R>& params = all defaults);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph1& g1`
+| A directed or undirected graph. The graph type must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph] and
+  xref:concepts/EdgeListGraph.adoc[Edge List Graph].
+
+| IN
+| `const Graph2& g2`
+| A directed or undirected graph. The graph type must be a model of
+  xref:concepts/BidirectionalGraph.adoc[Bidirectional Graph] and
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph].
+
+| IN
+| `params`
+| Named parameters passed via `bgl_named_params`. The following are accepted:
+|===
+
+[cols="1,2,5"]
+|===
+| Direction | Named Parameter | Description / Default
+
+| OUT
+| `isomorphism_map(IsoMap f)`
+| The mapping from vertices in graph 1 to vertices in graph 2. `IsoMap`
+  must be a
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]. +
+  *Default:* an
+  link:../../property_map/doc/iterator_property_map.html[`iterator_property_map`]
+  constructed from a `std::vector` of graph 2's vertex descriptor type and
+  the vertex index map for graph 1.
+
+| IN
+| `vertex_invariant1(VertexInvariant1 i1)` / `vertex_invariant2(VertexInvariant2 i2)`
+| Mappings from vertices to integers which restrict which vertices may be
+  considered isomorphic. If a candidate isomorphism maps _v1_ to _v2_ but
+  _i1_(_v1_) != _i2_(_v2_), that candidate is rejected. This mapping can
+  be used either to speed up the search (as is done by the default value,
+  which requires that the degrees of _v1_ and _v2_ are equal) or to impose
+  extra conditions on the result. The `VertexInvariant1` and
+  `VertexInvariant2` types must model
+  http://www.boost.org/sgi/stl/AdaptableUnaryFunction.html[AdaptableUnaryFunction],
+  with the argument type of `vertex_invariant1` being `Graph1`'s vertex
+  descriptor type, the argument type of `vertex_invariant2` being
+  `Graph2`'s vertex descriptor type, and both functions sharing a result
+  type that is totally ordered and hashable, such as an integer. +
+  *Default:* `degree_vertex_invariant` for both arguments
+
+| IN
+| `vertex_max_invariant(std::size_t max_invariant)`
+| This parameter is ignored as it is no longer necessary, but kept for
+  backwards compatibility.
+
+| IN
+| `vertex_index1_map(VertexIndex1Map i1_map)`
+| This maps each vertex to an integer in the range
+  `[0, num_vertices(g))`. This is necessary for efficient updates of the
+  heap data structure when an edge is relaxed. The type `VertexIndex1Map`
+  must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The vertex descriptor
+  type of graph 1 needs to be usable as the key type of the map. +
+  *Default:* `get(vertex_index, g1)`.
+  Note: if you use this default, make sure your graph has an internal
+  `vertex_index` property. For example, `adjacency_list` with
+  `VertexList=listS` does not have an internal `vertex_index` property.
+
+| IN
+| `vertex_index2_map(VertexIndex2Map i2_map)`
+| This maps each vertex to an integer in the range
+  `[0, num_vertices(g))`. This is necessary for efficient updates of the
+  heap data structure when an edge is relaxed. The type `VertexIndex2Map`
+  must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The vertex descriptor
+  type of graph 2 needs to be usable as the key type of the map. +
+  *Default:* `get(vertex_index, g2)`.
+  Note: if you use this default, make sure your graph has an internal
+  `vertex_index` property. For example, `adjacency_list` with
+  `VertexList=listS` does not have an internal `vertex_index` property.
+
+|===
+
+== Description
+
+An https://en.wikipedia.org/wiki/Graph_isomorphism[*_isomorphism_*]
+is a 1-to-1 mapping of the vertices in one graph to
+the vertices of another graph such that adjacency is preserved. In other
+words, given graphs _G~1~ = (V~1~,E~1~)_ and _G~2~ = (V~2~,E~2~)_ an
+isomorphism is a function _f_ such that for all pairs of vertices _a,b_
+in _V~1~_, edge _(a,b)_ is in _E~1~_ if and only if edge _(f(a),f(b))_
+is in _E~2~_.
+
+This function returns `true` if there exists an isomorphism between
+graph 1 and graph 2 and `false` otherwise. Also, if an isomorphism map
+named parameter is provided then an isomorphism is recorded in the map.
+
+The current implementation is based on descriptions of a backtracking
+algorithm in
+[xref:about/bibliography.adoc#fortin96:_graph_iso_prob[41],xref:about/bibliography.adoc#reingold77:_combin_algo[43]].
+The algorithm used is simple but slow. A more efficient (and much more
+complex) algorithm is described in
+[xref:about/bibliography.adoc#mckay81:_pract_graph_iso[42]]. When (and
+if) a version of this algorithm is ported to the BGL interface it should
+replace the current algorithm.
+
+== Returns
+
+Returns `true` if there exists an isomorphism between graph 1 and graph 2, `false` otherwise.
+
+== Example
+
+See link:../example/isomorphism.cpp[`libs/graph/example/isomorphism.cpp`].
+

@@ -1,0 +1,7 @@
+Biconnected components: 2
+  0-1 component 1
+  1-2 component 1
+  2-0 component 1
+  2-3 component 0
+  3-4 component 0
+  4-2 component 0

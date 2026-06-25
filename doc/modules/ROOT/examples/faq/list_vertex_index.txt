@@ -1,0 +1,1 @@
+bfs ok on listS using bundled vertex_index_map

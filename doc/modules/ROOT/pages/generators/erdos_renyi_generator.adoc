@@ -1,0 +1,95 @@
+[#sec:erdos-renyi-generator]
+= Erdos-Renyi (Uniform Random)
+
+Generates random graphs following the Erdos-Renyi model _G(n, p)_ or _G(n, m)_.
+
+*Defined in:* `<boost/graph/erdos_renyi_generator.hpp>`
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename RandomGenerator, typename Graph>
+class erdos_renyi_iterator;
+
+erdos_renyi_iterator();
+erdos_renyi_iterator(RandomGenerator& gen, vertices_size_type n, double fraction = 0.0, bool allow_self_loops = false);
+erdos_renyi_iterator(RandomGenerator& gen, vertices_size_type n, edges_size_type m, bool allow_self_loops = false);
+----
+
+`erdos_renyi_iterator` produces edges by selecting source and target vertices
+uniformly at random. It generates exactly _m_ edges (or `fraction * n * n`
+edges, halved for undirected graphs). Edges are not sorted and parallel edges
+are possible. A default-constructed iterator serves as the past-the-end
+sentinel.
+
+== Parameters
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `RandomGenerator& gen` | A random number generator (e.g. `boost::minstd_rand`).
+| IN | `vertices_size_type n` | Number of vertices in the generated graph.
+| IN | `double fraction` | Fraction of the maximum possible edges to generate. Defaults to `0.0`.
+| IN | `edges_size_type m` | Exact number of edges to generate (alternative to `fraction`).
+| IN | `bool allow_self_loops` | When `true`, edges from a vertex to itself are permitted. Defaults to `false`.
+|===
+
+WARNING: The `fraction` and `m` constructors are ambiguous when passing an
+integer literal: `erdos_renyi_iterator(gen, 100, 50)` silently calls the
+`fraction` overload (converting 50 to `double`), not the edge count overload.
+Always cast explicitly when using the edge count constructor:
+`erdos_renyi_iterator(gen, 100, edges_size_type(50))`.
+
+== Example
+
+[source,cpp]
+----
+include::example$generators/erdos_renyi.cpp[]
+----
+
+[,text]
+----
+include::example$generators/erdos_renyi.txt[]
+----
+
+== Variants
+
+=== sorted_erdos_renyi_iterator
+
+[source,cpp]
+----
+template <typename RandomGenerator, typename Graph>
+class sorted_erdos_renyi_iterator;
+
+sorted_erdos_renyi_iterator();
+sorted_erdos_renyi_iterator(RandomGenerator& gen, vertices_size_type n, double prob = 0.5, bool loops = false);
+----
+
+`sorted_erdos_renyi_iterator` produces edges in sorted order using a geometric
+distribution to skip non-present edges efficiently. Each possible edge is
+independently included with probability `prob`. This makes the output suitable
+for constructing a
+xref:graph_classes/compressed_sparse_row.adoc[`compressed_sparse_row_graph`],
+which requires sorted edge input. No parallel edges are produced.
+
+Parameter differences from `erdos_renyi_iterator`:
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `double prob` | Independent probability that any given edge exists. Defaults to `0.5` (not `0.0`). A value of `0.0` produces an empty graph.
+| IN | `bool loops` | When `true`, self-loops are permitted. Defaults to `false`.
+|===
+
+[source,cpp]
+----
+include::example$generators/sorted_erdos_renyi.cpp[]
+----
+
+[,text]
+----
+include::example$generators/sorted_erdos_renyi.txt[]
+----

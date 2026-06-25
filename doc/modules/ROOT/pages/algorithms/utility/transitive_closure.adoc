@@ -1,0 +1,224 @@
+= Transitive Closure
+
+Computes the https://en.wikipedia.org/wiki/Transitive_closure[transitive closure]
+of a directed graph, adding an edge _(u,v)_ whenever there is a path from _u_ to _v_.
+
+*Complexity:* _O(|V||E|)_ +
+*Defined in:* `<boost/graph/transitive_closure.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/utility/transitive_closure.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/utility/transitive_closure.txt[]
+----
+
+'''
+
+=== (1) Positional version
+
+[source,cpp]
+----
+template <typename Graph, typename GraphTC,
+          typename G_to_TC_VertexMap, typename VertexIndexMap>
+void transitive_closure(
+    const Graph& g, GraphTC& tc,
+    G_to_TC_VertexMap g_to_tc_map, VertexIndexMap index_map);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| A directed graph. The type `Graph` must model the
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph],
+  xref:concepts/AdjacencyGraph.adoc[Adjacency Graph], and
+  xref:concepts/AdjacencyMatrix.adoc[Adjacency Matrix] concepts.
+
+| OUT
+| `GraphTC& tc`
+| A directed graph into which the transitive closure is written.
+  The type `GraphTC` must model the
+  xref:concepts/VertexMutableGraph.adoc[Vertex Mutable Graph] and
+  xref:concepts/EdgeMutableGraph.adoc[Edge Mutable Graph] concepts.
+
+| UTIL/OUT
+| `G_to_TC_VertexMap g_to_tc_map`
+| This maps each vertex in the input graph to the new matching
+  vertices in the output transitive closure graph.
+
+| IN
+| `VertexIndexMap index_map`
+| This maps each vertex to an integer in the range
+  `[0, num_vertices(g))`. This parameter is only necessary when
+  the default color property map is used. The type `VertexIndexMap` must
+  be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The vertex
+  descriptor type of the graph needs to be usable as the key type of the map.
+
+|===
+
+'''
+
+=== (2) Named parameter version
+
+[source,cpp]
+----
+template <typename Graph, typename GraphTC,
+          typename P, typename T, typename R>
+void transitive_closure(
+    const Graph& g, GraphTC& tc,
+    const bgl_named_params<P, T, R>& params = all defaults);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| A directed graph. The type `Graph` must model the
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph],
+  xref:concepts/AdjacencyGraph.adoc[Adjacency Graph], and
+  xref:concepts/AdjacencyMatrix.adoc[Adjacency Matrix] concepts.
+
+| OUT
+| `GraphTC& tc`
+| A directed graph into which the transitive closure is written.
+  The type `GraphTC` must model the
+  xref:concepts/VertexMutableGraph.adoc[Vertex Mutable Graph] and
+  xref:concepts/EdgeMutableGraph.adoc[Edge Mutable Graph] concepts.
+
+| IN
+| `params`
+| Named parameters passed via `bgl_named_params`. The following are accepted:
+|===
+
+[cols="1,2,5"]
+|===
+| Direction | Named Parameter | Description / Default
+
+| UTIL/OUT
+| `orig_to_copy(G_to_TC_VertexMap g_to_tc_map)`
+| This maps each vertex in the input graph to the new matching
+  vertices in the output transitive closure graph.
+
+| IN
+| `vertex_index_map(VertexIndexMap& index_map)`
+| This maps each vertex to an integer in the range
+  `[0, num_vertices(g))`. This parameter is only necessary when
+  the default color property map is used. The type `VertexIndexMap` must
+  be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The vertex
+  descriptor type of the graph needs to be usable as the key type of the map. +
+  *Default:* `get(vertex_index, g)`.
+  Note: if you use this default, make sure your graph has an internal
+  `vertex_index` property. For example, `adjacency_list` with
+  `VertexList=listS` does not have an internal `vertex_index` property.
+
+|===
+
+== Description
+
+The transitive closure of a graph _G = (V,E)_ is a graph _G* = (V,E*)_
+such that _E*_ contains an edge _(u,v)_ if and only if _G_ contains a
+xref:about/graph_theory_review.adoc#def:path[path] (of at least one edge)
+from _u_ to _v_. The `transitive_closure()` function transforms the input
+graph `g` into the transitive closure graph `tc`.
+
+Thanks to Vladimir Prus for the implementation of this algorithm!
+
+== Example
+
+The following is the graph from the example
+link:../example/transitive_closure.cpp[`example/transitive_closure.cpp`]
+and the transitive closure computed by the algorithm.
+
+[cols=",",]
+|===
+|image:tc.gif[tc,width=173,height=264]
+|image:tc-out.gif[tc-out,width=200,height=360]
+|===
+
+== Notes
+
+The algorithm used to implement the `transitive_closure()` function
+is based on the detection of strong
+components[xref:about/bibliography.adoc#nuutila95[45],
+xref:about/bibliography.adoc#purdom70[48]]. The following discussion
+describes the algorithm (and some relevant background theory).
+
+A [#def:successor-set]#*_successor set_*# of a vertex _v_, denoted by
+_Succ(v)_, is the set of vertices that are
+xref:about/graph_theory_review.adoc#def:reachable[reachable] from vertex _v_.
+The set of vertices adjacent to _v_ in the transitive closure _G*_
+is the same as the successor set of _v_ in the original graph _G_.
+Computing the transitive closure is equivalent to computing the
+successor set for every vertex in _G_.
+
+All vertices in the same strong component have the same successor set
+(because every vertex is reachable from all the other vertices in the
+component). Therefore, it is redundant to compute the successor set for
+every vertex in a strong component; it suffices to compute it for just
+one vertex per component.
+
+The following is the outline of the algorithm:
+
+. Compute
+xref:algorithms/connected_components/strong_components.adoc#def:strongly-connected-component[strongly
+connected components] of the graph.
+. Construct the condensation graph. A
+[#def:condensation-graph]#*_condensation graph_*# is a a graph
+_G'=(V',E')_ based on the graph _G=(V,E)_ where each vertex in _V'_
+corresponds to a strongly connected component in _G_ and edge _(u,v)_ is
+in _E'_ if and only if there exists an edge in _E_ connecting any of the
+vertices in the component of _u_ to any of the vertices in the component
+of _v_.
+. Compute transitive closure on the condensation graph. This is done
+using the following algorithm:
++
+....
+ for each vertex u in G' in reverse topological order
+   for each vertex v in Adj[u]
+     if (v not in Succ(u))
+       Succ(u) = Succ(u) U { v } U Succ(v)   // "U" means set union
+....
++
+The vertices are considered in reverse topological order to ensure that
+the when computing the successor set for a vertex _u_, the successor set
+for each vertex in _Adj[u]_ has already been computed.
++
+An optimized implementation of the set union operation improves the
+performance of the algorithm. Therefore this implementation uses
+[#def:chain-decomposition]#*_chain decomposition_*#
+[xref:about/bibliography.adoc#goral79[46],xref:about/bibliography.adoc#simon86[47]].
+The vertices of _G_ are partitioned into chains _Z~1~, ..., Z~k~_, where
+each chain _Z~i~_ is a path in _G_ and the vertices in a chain have
+increasing topological number. A successor set _S_ is then represented
+by a collection of intersections with the chains, i.e., _S = U~i=1...k~
+(Z~i~ & S)_. Each intersection can be represented by the first vertex in
+the path _Z~i~_ that is also in _S_, since the rest of the path is
+guaranteed to also be in _S_. The collection of intersections is
+therefore represented by a vector of length _k_ where the ith element of
+the vector stores the first vertex in the intersection of _S_ with
+_Z~i~_.
++
+Computing the union of two successor sets, _S~3~ = S~1~ U S~2~_, can
+then be computed in _O(k)_ time with the following operation:
++
+....
+  for i = 0...k
+    S3[i] = min(S1[i], S2[i]) // where min compares the topological number of the vertices
+....
+. Create the graph _G*_ based on the transitive closure of the
+condensation graph _G'*_.
+

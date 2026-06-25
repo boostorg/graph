@@ -1,0 +1,130 @@
+[#sec:topological-sort]
+= topological_sort
+
+Creates a linear ordering of the vertices such that if edge _(u,v)_ appears in the graph, then _v_ comes before _u_ in the ordering.
+
+*Complexity:* _O(V {plus} E)_ +
+*Defined in:* `<boost/graph/topological_sort.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/topological_sort/topological_sort.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/topological_sort/topological_sort.txt[]
+----
+
+'''
+
+=== (1) Named parameter version
+
+[source,cpp]
+----
+template <typename VertexListGraph, typename OutputIterator,
+          typename P, typename T, typename R>
+void topological_sort(
+    VertexListGraph& g, OutputIterator result,
+    const bgl_named_params<P, T, R>& params = all defaults)
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `VertexListGraph& g`
+| A directed acyclic graph (DAG). The graph type must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+  If the graph is not a DAG then a
+  xref:exception.adoc#not_a_dag[`not_a_dag`] exception will be
+  thrown and the user should discard the contents of `result` range.
+
+| OUT | `OutputIterator result`
+| The vertex descriptors of the graph will be output to the `result`
+  output iterator in *reverse* topological order. The iterator type must
+  model http://www.boost.org/sgi/stl/OutputIterator.html[Output Iterator].
+
+| UTIL/OUT | `color_map(ColorMap color)`
+| This is used by the algorithm to keep track of its progress through the
+  graph. The type `ColorMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map]
+  and its key type must be the graph's vertex descriptor type and the value
+  type of the color map must model
+  xref:concepts/property_types/ColorValue.adoc[ColorValue]. +
+  *Default:* an
+  link:../../property_map/doc/iterator_property_map.html[`iterator_property_map`]
+  created from a `std::vector` of `default_color_type` of size
+  `num_vertices(g)` and using the `i_map` for the index map.
+
+| IN | `vertex_index_map(VertexIndexMap i_map)`
+| This maps each vertex to an integer in the range
+  `[0, num_vertices(g))`. This parameter is only necessary when the
+  default color property map is used. The type `VertexIndexMap` must be a
+  model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The vertex descriptor
+  type of the graph needs to be usable as the key type of the map. +
+  *Default:* `get(vertex_index, g)`.
+  Note: if you use this default, make sure your graph has an internal
+  `vertex_index` property. For example, `adjacency_list` with
+  `VertexList=listS` does not have an internal `vertex_index` property.
+|===
+
+'''
+
+=== (2) Positional version
+
+[source,cpp]
+----
+template <typename VertexListGraph, typename OutputIterator>
+void topological_sort(VertexListGraph& g, OutputIterator result);
+----
+
+Equivalent to (1) with every named parameter left at its default. Uses `get(vertex_index, g)` for the index map and an internally allocated `default_color_type` color map; requires the graph to have an interior `vertex_index_t` property.
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `VertexListGraph& g` | Same requirements as (1). Must be a DAG.
+| OUT | `OutputIterator result` | Same as (1). Output is in reverse topological order.
+|===
+
+== Description
+
+The https://en.wikipedia.org/wiki/Topological_sorting[topological sort]
+algorithm creates a linear ordering of the vertices such that if edge _(u,v)_ appears in the graph, then _v_ comes before _u_ in the ordering. The graph must be a directed acyclic graph (DAG). The implementation consists mainly of a call to xref:algorithms/traversal/depth_first_search.adoc[`depth_first_search()`].
+
+== Example
+
+Calculate a topological ordering of the vertices.
+
+[source,cpp]
+----
+typedef adjacency_list< vecS, vecS, directedS, color_property<> > Graph;
+typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
+Pair edges[6] = { Pair(0,1), Pair(2,4),
+                  Pair(2,5),
+                  Pair(0,3), Pair(1,4),
+                  Pair(4,3) };
+Graph G(6, edges, edges + 6);
+
+typedef std::vector< Vertex > container;
+container c;
+topological_sort(G, std::back_inserter(c));
+
+cout << "A topological ordering: ";
+for ( container::reverse_iterator ii=c.rbegin(); ii!=c.rend(); ++ii)
+  cout << index(*ii) << " ";
+cout << endl;
+----
+
+The output is:
+
+....
+A topological ordering: 2 5 0 1 4 3
+....

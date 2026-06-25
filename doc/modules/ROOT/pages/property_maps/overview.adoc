@@ -1,0 +1,261 @@
+= Property Maps
+
+Algorithms need data on vertices and edges: weights, distances, colors,
+predecessors, communities. A _property map_ is a lightweight accessor that
+reads and writes this data. You own the storage; the property map just knows
+how to index into it.
+
+This separation lets you choose the allocation strategy (stack array, heap
+vector, `std::map`, even a lambda) while algorithms access the data through a
+uniform `get(map, key)` / `put(map, key, value)` interface.
+
+The trade-off is that the complexity shifts to the point where you wrap your
+storage into this uniform interface: creating the property map.
+
+== How to attach data to a graph
+
+There are three approaches. **Start with bundled properties** unless you have
+a specific reason not to.
+
+=== 1. Bundled properties (recommended)
+
+Define a struct for your vertex/edge data. Access members with
+`get(&Struct::member, g)`.
+
+[source,cpp]
+----
+struct City { std::string name; int population; };
+struct Road { double distance; int lanes; };
+
+using Graph = adjacency_list<vecS, vecS, directedS, City, Road>;
+
+Graph g(3);
+g[0].name = "Paris";
+auto dist_map = get(&Road::distance, g);  // property map for all edge distances
+----
+
+TIP: **Use when:** you own the graph type and know the properties at compile
+time. This is the simplest and most readable approach.
+
+=== 2. External properties
+
+Store data in your own container, then wrap it as a property map. The graph
+object knows nothing about this data.
+
+[source,cpp]
+----
+std::vector<int> dist(num_vertices(g));
+auto dist_map = make_iterator_property_map(dist.begin(), get(vertex_index, g));
+----
+
+TIP: **Use when:** the data is temporary (algorithm output), you cannot modify
+the graph type, or you need to control allocation (custom allocator,
+memory-mapped storage, reuse across calls).
+
+=== 3. Internal property tags (legacy)
+
+Attach properties via `property<>` tags at graph definition time. Access with
+`get(tag, g)`.
+
+[source,cpp]
+----
+using Graph = adjacency_list<vecS, vecS, directedS,
+    no_property,
+    property<edge_weight_t, int>>;
+
+auto weight = get(edge_weight, g);
+----
+
+WARNING: **Use only** with existing code that already uses this style.
+**Prefer bundled properties for new code.** Tags are harder to read and
+do not compose well when you need multiple properties.
+
+NOTE: Most algorithms accept all three approaches interchangeably. The
+algorithm does not know or care where the data lives.
+
+NOTE: When an algorithm parameter like `color_map` is not explicitly provided,
+most algorithms allocate a temporary `std::vector` internally and wrap it with
+the graph's `vertex_index` map. This is why many algorithms work out of the box
+with no property map arguments — but it requires `VertexList=vecS` (which
+provides the built-in vertex index).
+
+NOTE: Property maps are not iterable. There is no `begin()`/`end()`. To
+read all values, iterate over the graph's vertices or edges and look up each
+one: `for (auto v : make_iterator_range(vertices(g))) std::cout << get(pm, v);`
+
+== Creation reference
+
+[cols="2,3,5"]
+|===
+| Storage | Create with | Example
+
+| Bundled struct member
+| `get(&Struct::member, g)`
+| `auto w = get(&Road::cost, g);`
+
+| Internal property tag
+| `get(tag, g)`
+| `auto idx = get(vertex_index, g);`
+
+| `std::vector` + index map
+| `make_iterator_property_map(iter, index)`
+| `auto pm = make_iterator_property_map(vec.begin(), get(vertex_index, g));`
+
+| Raw C array
+| Use directly
+| `int dist[N]; /* pass as property map argument */`
+
+| `std::map` (non-integer keys)
+| `make_assoc_property_map(map)`
+| `std::map<Vertex,int> m; auto pm = make_assoc_property_map(m);`
+
+| Auto-growing vector
+| `vector_property_map<T>(n, index)`
+| `vector_property_map<double> pm(num_vertices(g), get(vertex_index, g));`
+
+| Computed from a callable
+| `make_function_property_map<Key>(f)`
+| `auto pm = make_function_property_map<Vertex>([&](Vertex v){ return degree(v,g); });`
+
+| Transformed view of another map
+| `make_transform_value_property_map(f, pm)`
+| `auto pm2 = make_transform_value_property_map([](double d){ return d*2; }, pm);`
+
+| Vertex degree (read-only)
+| `make_degree_map(g)`
+| `auto deg = make_degree_map(g);`
+
+| Constant value for all keys
+| `static_property_map<T>(value)`
+| `static_property_map<double> pm(1.0);`
+
+| Discard output (placeholder)
+| `dummy_property_map()`
+| `dummy_property_map pm;`
+
+| Memory-efficient 2-color map
+| `make_one_bit_color_map(n, index)`
+| `auto cm = make_one_bit_color_map(num_vertices(g), get(vertex_index, g));`
+
+| Memory-efficient 4-color map
+| `make_two_bit_color_map(n, index)`
+| `auto cm = make_two_bit_color_map(num_vertices(g), get(vertex_index, g));`
+
+|===
+
+== The interface
+
+Every property map supports at most three operations:
+
+[source,cpp]
+----
+value = get(pm, key);          // read (Readable)
+put(pm, key, value);           // write (Writable)
+reference = pm[key];           // reference access (Lvalue only)
+----
+
+`get()` returns a _copy_ of the value. For Lvalue property maps, `pm[key]`
+returns a reference (const or mutable depending on the map).
+
+To deduce types from a property map at compile time, use `property_traits`:
+
+[source,cpp]
+----
+using Value = typename property_traits<Map>::value_type;
+using Key   = typename property_traits<Map>::key_type;
+using Cat   = typename property_traits<Map>::category;
+----
+
+This is the property map equivalent of `std::iterator_traits`.
+
+== Property map categories
+
+When reading algorithm documentation, each parameter is tagged with a
+direction: IN, OUT, or UTIL/OUT. These correspond to property map categories
+that determine what operations the algorithm will perform on the map.
+
+[cols="1,1,3"]
+|===
+| Category | Algorithm tag | What it means
+
+| Readable
+| IN
+| The algorithm only reads: `value = get(pm, key)`
+
+| Writable
+| OUT
+| The algorithm only writes: `put(pm, key, value)`
+
+| ReadWrite
+| UTIL/OUT
+| The algorithm reads and writes: both `get` and `put`
+
+| Lvalue
+| (rare)
+| `pm[key]` returns a reference to the stored value
+|===
+
+For example, in `dijkstra_shortest_paths`, the `weight_map` parameter is
+tagged IN (the algorithm reads edge weights but never modifies them), while
+`distance_map` is tagged UTIL/OUT (the algorithm both reads and writes
+distances during relaxation).
+
+WARNING: Passing a read-only map (like `make_function_property_map`) where
+the algorithm expects `ReadWrite` will fail to compile. The error message will
+mention `put()` not being found, which can be confusing if you do not know
+about these categories.
+
+== Headers
+
+[cols="1,2"]
+|===
+| Header | Contents
+
+| `<boost/graph/properties.hpp>`
+| Internal property tags (`vertex_index`, `edge_weight`, ...), `get(tag, g)`
+
+| `<boost/property_map/property_map.hpp>`
+| `iterator_property_map`, `static_property_map`, `associative_property_map`, `dummy_property_map`
+
+| `<boost/property_map/vector_property_map.hpp>`
+| `vector_property_map`
+
+| `<boost/property_map/function_property_map.hpp>`
+| `make_function_property_map`
+
+| `<boost/property_map/transform_value_property_map.hpp>`
+| `make_transform_value_property_map`
+
+| `<boost/graph/property_maps/constant_property_map.hpp>`
+| `constant_property_map`, `make_constant_property`
+
+| `<boost/graph/property_maps/null_property_map.hpp>`
+| `null_property_map`, `make_null_property`
+
+| `<boost/graph/one_bit_color_map.hpp>`
+| `one_bit_color_map`, `make_one_bit_color_map`
+
+| `<boost/graph/two_bit_color_map.hpp>`
+| `two_bit_color_map`, `make_two_bit_color_map`
+
+|===
+
+WARNING: Most algorithm headers pull in `<boost/graph/properties.hpp>`
+automatically, but external property map adaptors (`iterator_property_map`,
+`vector_property_map`, etc.) require explicit includes from
+`<boost/property_map/>`. Forgetting this is a common source of confusing
+template errors.
+
+== Complete example
+
+All property map types in one file:
+
+[source,cpp]
+----
+include::example$property_maps/property_maps.cpp[]
+----
+
+[,text]
+----
+include::example$property_maps/property_maps.txt[]
+----

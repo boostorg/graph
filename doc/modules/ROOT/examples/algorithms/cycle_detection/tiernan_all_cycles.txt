@@ -1,0 +1,3 @@
+Finding all elementary cycles:
+Cycle: 0 -> 1 -> 2 -> 0
+Cycle: 1 -> 3 -> 1

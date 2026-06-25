@@ -1,0 +1,80 @@
+= MutablePropertyGraph
+
+A MutablePropertyGraph is a xref:concepts/MutableGraph.adoc[MutableGraph] with
+properties attached internally to the vertices and edges. When adding
+vertices and edges the value of the properties can be given.
+
+== Refinement of
+
+xref:concepts/MutableGraph.adoc[MutableGraph] and
+xref:concepts/PropertyGraph.adoc[PropertyGraph]
+
+== Notation
+
+[cols=",",]
+|===
+|`G` |A type that is a model of Graph.
+
+|`g` |An object of type `G`.
+
+|`e` |An object of type
+`boost::graph_traits<G>::edge_descriptor`.
+
+|`u,v` |are objects of type
+`boost::graph_traits<G>::vertex_descriptor`.
+
+|`ep` |is an object of type `G::edge_property_type`
+
+|`vp` |is an object of type `G::vertex_property_type`
+|===
+
+== Associated Types
+
+[cols=",",]
+|===
+|Edge Property Type
+|`graph_traits<G>::edge_property_type`
+
+|Vertex Property Type
+|`graph_traits<G>::vertex_property_type`
+|===
+
+== Valid Expressions
+
+[width="100%",cols="50%,50%",]
+|===
+|`add_edge(u, v, ep, g)` |Inserts the edge _(u,v)_ into the graph,
+and copies object `ep` into the property for that edge. +
+Return type: `std::pair<edge_descriptor, bool>`
+
+|`add_vertex(vp, g)` |Add a new vertex to the graph and copy `vp`
+into the property for the new vertex. The `vertex_descriptor` for
+the new vertex is returned. +
+Return type: `vertex_descriptor`
+|===
+
+== Models
+
+* `adjacency_list`
+
+== Concept Checking Class
+
+[source,cpp]
+----
+
+  template <class G>
+  struct MutablePropertyGraphConcept
+  {
+    typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
+    void constraints() {
+      BOOST_CONCEPT_ASSERT(( MutableGraphConcept<G> ));
+      v = add_vertex(vp, g);
+      p = add_edge(u, v, ep, g);
+    }
+    G g;
+    std::pair<edge_descriptor, bool> p;
+    typename boost::graph_traits<G>::vertex_descriptor u, v;
+    typename boost::graph_traits<G>::vertex_property_type vp;
+    typename boost::graph_traits<G>::edge_property_type ep;
+  };
+----

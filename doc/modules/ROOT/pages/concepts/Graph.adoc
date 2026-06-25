@@ -1,0 +1,115 @@
+= Graph
+
+The Graph concept contains a few requirements that are common to all the
+graph concepts. These include some associated types for
+`vertex_descriptor`, `edge_descriptor`, etc. One should note
+that a model of Graph is *not* required to be a model of
+Assignable, so algorithms should pass graph objects by reference.
+
+== Notation
+
+[cols=",",]
+|===
+|`G` |A type that is a model of Graph.
+|`g` |An object of type `G`.
+|===
+
+== Associated Types
+
+[width="100%",cols="100%",]
+|===
+a|
+[source,cpp]
+----
+boost::graph_traits<G>::vertex_descriptor
+----
+
+A vertex descriptor corresponds to a unique vertex in an abstract graph
+instance. A vertex descriptor must be
+Default Constructible,
+Assignable, and
+Equality Comparable.
+
+a|
+[source,cpp]
+----
+boost::graph_traits<G>::edge_descriptor
+----
+
+An edge descriptor corresponds to a unique edge _(u,v)_ in a graph. An
+edge descriptor must be
+Default Constructible,
+Assignable, and
+Equality Comparable.
+
+a|
+[source,cpp]
+----
+boost::graph_traits<G>::directed_category
+----
+
+This type shall be convertible to `directed_tag` or
+`undirected_tag`.
+
+a|
+[source,cpp]
+----
+boost::graph_traits<G>::edge_parallel_category
+----
+
+This describes whether the graph class allows the insertion of parallel
+edges (edges with the same source and target). The two tags are
+`allow_parallel_edge_tag` and
+`disallow_parallel_edge_tag`.
+
+a|
+[source,cpp]
+----
+boost::graph_traits<G>::traversal_category
+----
+
+This describes the ways in which the vertices and edges of the graph can
+be visited. The choices are `incidence_graph_tag`,
+`adjacency_graph_tag`, `bidirectional_graph_tag`,
+`vertex_list_graph_tag`, `edge_list_graph_tag`,
+and `adjacency_matrix_tag`. You can also create your own tag
+which should inherit from one or more of the above.
+
+|===
+
+== Valid Expressions
+
+[source,cpp]
+----
+boost::graph_traits<G>::null_vertex()
+----
+
+Returns a special
+`boost::graph_traits<G>::vertex_descriptor` object which
+does not refer to any vertex of graph object which type is `G`.
+
+== Concept Checking Class
+
+[source,cpp]
+----
+
+  template <class G>
+  struct GraphConcept
+  {
+    typedef typename boost::graph_traits<G>::vertex_descriptor vertex_descriptor;
+    typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
+    typedef typename boost::graph_traits<G>::directed_category directed_category;
+    typedef typename boost::graph_traits<G>::edge_parallel_category edge_parallel_category;
+    typedef typename boost::graph_traits<G>::traversal_category traversal_category;
+
+    void constraints() {
+      BOOST_CONCEPT_ASSERT(( DefaultConstructibleConcept<vertex_descriptor> ));
+      BOOST_CONCEPT_ASSERT(( EqualityComparableConcept<vertex_descriptor> ));
+      BOOST_CONCEPT_ASSERT(( AssignableConcept<vertex_descriptor> ));
+      BOOST_CONCEPT_ASSERT(( DefaultConstructibleConcept<edge_descriptor> ));
+      BOOST_CONCEPT_ASSERT(( EqualityComparableConcept<edge_descriptor> ));
+      BOOST_CONCEPT_ASSERT(( AssignableConcept<edge_descriptor> ));
+    }
+    G g;
+  };
+----

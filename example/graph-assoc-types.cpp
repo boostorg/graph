@@ -7,6 +7,7 @@
 //=======================================================================
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/core/ignore_unused.hpp>
 
 using namespace boost;
 
@@ -21,6 +22,7 @@ template < typename Graph > void generic_foo(Graph& g)
     // Access iterator types...
     // Access size types...
     // Now do something useful...
+    boost::ignore_unused< Vertex, Edge, Dir, Par >();
 }
 
 template < typename Graph > void generic_bar(Graph& g)

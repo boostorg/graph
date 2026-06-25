@@ -1,0 +1,53 @@
+[#sec:ssca-generator]
+= SSCA Generator (Input Iterator)
+
+Generate graphs following the Scalable Synthetic Compact Applications (SSCA#2) benchmark model.
+
+*Defined in:* `<boost/graph/ssca_graph_generator.hpp>`
+
+== Synopsis
+
+[source,cpp]
+----
+template <typename RandomGenerator, typename Graph>
+class ssca_iterator;
+
+ssca_iterator();
+ssca_iterator(RandomGenerator& gen, vertices_size_type totVertices, vertices_size_type maxCliqueSize, double probUnidirectional, int maxParallelEdges, double probIntercliqueEdges);
+----
+
+The SSCA#2 benchmark generates graphs with a clustered structure: dense
+cliques connected by sparse inter-clique edges. This models certain
+real-world networks such as social graphs.
+
+The generator first creates random cliques of varying sizes (up to
+`maxCliqueSize`), assigning every vertex to exactly one clique. Within each
+clique, edges between all pairs of vertices are created, with direction
+controlled by `probUnidirectional`. After all cliques are formed,
+inter-clique edges are added with geometrically decreasing probability.
+
+== Parameters
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `RandomGenerator& gen` | A random number generator.
+| IN | `vertices_size_type totVertices` | Total number of vertices.
+| IN | `vertices_size_type maxCliqueSize` | Maximum size of generated cliques.
+| IN | `double probUnidirectional` | Probability that an intra-clique edge is unidirectional (one direction only). Otherwise both directions are created.
+| IN | `int maxParallelEdges` | Maximum number of parallel edges between two vertices (chosen uniformly in [1, maxParallelEdges]).
+| IN | `double probIntercliqueEdges` | Base probability of generating inter-clique edges. Halved for each doubling of distance.
+|===
+
+== Example
+
+[source,cpp]
+----
+include::example$generators/ssca.cpp[]
+----
+
+[,text]
+----
+include::example$generators/ssca.txt[]
+----

@@ -1,0 +1,133 @@
+= Core Numbers
+
+Computes the https://en.wikipedia.org/wiki/Degeneracy_(graph_theory)[k-core decomposition]
+of a graph. Each vertex is assigned a core
+number: the largest k such that the vertex belongs to a subgraph where every
+vertex has degree >= k. Higher core numbers indicate denser, more tightly
+connected substructures.
+
+*Complexity:* O(V + E) +
+*Defined in:* `<boost/graph/core_numbers.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/metrics/core_numbers.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/metrics/core_numbers.txt[]
+----
+
+Vertices a-d form a 4-clique (K4), so each has core number 3 (every vertex
+in the clique has degree 3 within it). Vertices e-f-g form a chain attached
+to the clique, so they have core number 1.
+
+'''
+
+=== (1) core_numbers (unweighted, default visitor)
+
+[source,cpp]
+----
+template <typename Graph, typename CoreMap>
+typename property_traits<CoreMap>::value_type
+core_numbers(Graph& g, CoreMap c);
+----
+
+'''
+
+=== (2) core_numbers (unweighted, custom visitor)
+
+[source,cpp]
+----
+template <typename Graph, typename CoreMap, typename CoreNumVisitor>
+typename property_traits<CoreMap>::value_type
+core_numbers(Graph& g, CoreMap c, CoreNumVisitor vis);
+----
+
+'''
+
+=== (3) core_numbers (weighted)
+
+[source,cpp]
+----
+template <typename Graph, typename CoreMap, typename EdgeWeightMap,
+          typename VertexIndexMap, typename CoreNumVisitor>
+typename property_traits<CoreMap>::value_type
+core_numbers(Graph& g, CoreMap c,
+             EdgeWeightMap wm, VertexIndexMap vim, CoreNumVisitor vis);
+----
+
+When edge weights are provided, the core number of a vertex is based on the weighted degree (sum of incident edge weights) rather than the unweighted degree.
+
+'''
+
+=== (4) weighted_core_numbers (default visitor)
+
+[source,cpp]
+----
+template <typename Graph, typename CoreMap>
+typename property_traits<CoreMap>::value_type
+weighted_core_numbers(Graph& g, CoreMap c);
+----
+
+Convenience wrapper over (3) that uses `get(edge_weight, g)` as the weight map, `get(vertex_index, g)` as the index map, and a `null_visitor`.
+
+'''
+
+=== (5) weighted_core_numbers (custom visitor)
+
+[source,cpp]
+----
+template <typename Graph, typename CoreMap, typename CoreNumVisitor>
+typename property_traits<CoreMap>::value_type
+weighted_core_numbers(Graph& g, CoreMap c, CoreNumVisitor vis);
+----
+
+Same as (4) with an explicit visitor.
+
+'''
+
+=== (6) core_numbers_visitor
+
+[source,cpp]
+----
+template <class Visitors = null_visitor>
+class core_numbers_visitor : public bfs_visitor<Visitors>;
+
+template <class Visitors>
+core_numbers_visitor<Visitors> make_core_numbers_visitor(Visitors vis);
+----
+
+The visitor type used internally. Model of `CoreNumbersVisitorConcept`. Derives from `bfs_visitor`, adding the `examine_vertex(v, g)` event each time a vertex is removed during k-core stripping. Use `make_core_numbers_visitor(...)` to construct one from an adapted visitor.
+
+== Parameters
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `Graph& g`
+| Must model xref:concepts/IncidenceGraph.adoc[Incidence Graph] and xref:concepts/VertexListGraph.adoc[Vertex List Graph]. For the weighted overloads, must also model xref:concepts/EdgeListGraph.adoc[Edge List Graph].
+
+| OUT
+| `CoreMap c`
+| ReadWritePropertyMap. Vertex descriptor -> core number.
+
+| IN
+| `EdgeWeightMap wm`
+| (weighted) ReadablePropertyMap from edge descriptor to weight.
+
+| IN
+| `VertexIndexMap vim`
+| (weighted) ReadablePropertyMap from vertex to integer in `[0, num_vertices(g))`.
+
+| IN
+| `CoreNumVisitor vis`
+| Model of `CoreNumbersVisitorConcept`. Typically constructed via `make_core_numbers_visitor`.
+|===
+
+The function returns the largest core number assigned.

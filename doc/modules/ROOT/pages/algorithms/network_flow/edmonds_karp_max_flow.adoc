@@ -1,0 +1,254 @@
+[#sec:edmonds_karp_max_flow]
+= Edmonds-Karp Maximum Flow
+
+Calculates the maximum flow of a network using the Edmonds-Karp variant of the Ford-Fulkerson algorithm.
+
+*Complexity:* _O(V E^2^)_, or _O(V E U)_ for integer capacities bounded by _U_ +
+*Defined in:* `<boost/graph/edmonds_karp_max_flow.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/network_flow/edmonds_karp.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/network_flow/edmonds_karp.txt[]
+----
+
+'''
+
+=== (1) Positional version
+
+[source,cpp]
+----
+template <class Graph,
+          class CapacityEdgeMap, class ResidualCapacityEdgeMap,
+          class ReverseEdgeMap, class ColorMap, class PredEdgeMap>
+typename property_traits<CapacityEdgeMap>::value_type
+edmonds_karp_max_flow(
+    Graph& g,
+    typename graph_traits<Graph>::vertex_descriptor src,
+    typename graph_traits<Graph>::vertex_descriptor sink,
+    CapacityEdgeMap cap, ResidualCapacityEdgeMap res,
+    ReverseEdgeMap rev, ColorMap color, PredEdgeMap pred);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `Graph& g`
+| A directed graph. The graph's type must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph]. For each edge
+  _(u,v)_ in the graph, the reverse edge _(v,u)_ must also be in the graph.
+
+| IN
+| `vertex_descriptor src`
+| The source vertex for the flow network graph.
+
+| IN
+| `vertex_descriptor sink`
+| The sink vertex for the flow network graph.
+
+| IN
+| `CapacityEdgeMap cap`
+| The edge capacity property map. The type must be a model of a constant
+  link:../../property_map/doc/LvaluePropertyMap.html[Lvalue Property Map].
+  The key type of the map must be the graph's edge descriptor type.
+
+| OUT
+| `ResidualCapacityEdgeMap res`
+| This maps edges to their residual capacity. The type must be a model of
+  a mutable link:../../property_map/doc/LvaluePropertyMap.html[Lvalue
+  Property Map]. The key type of the map must be the graph's edge
+  descriptor type.
+
+| IN
+| `ReverseEdgeMap rev`
+| An edge property map that maps every edge _(u,v)_ in the graph to the
+  reverse edge _(v,u)_. The map must be a model of constant
+  link:../../property_map/doc/LvaluePropertyMap.html[Lvalue Property Map].
+  The key type of the map must be the graph's edge descriptor type.
+
+| UTIL
+| `ColorMap color`
+| Used by the algorithm to keep track of progress during the breadth-first
+  search stage. At the end of the algorithm, the white vertices define the
+  minimum cut set. The map must be a model of mutable
+  link:../../property_map/doc/LvaluePropertyMap.html[Lvalue Property Map].
+  The key type of the map should be the graph's vertex descriptor type,
+  and the value type must be a model of
+  xref:concepts/property_types/ColorValue.adoc[Color Value].
+
+| UTIL
+| `PredEdgeMap pred`
+| Used by the algorithm to store augmenting paths. The map must be a model
+  of mutable link:../../property_map/doc/LvaluePropertyMap.html[Lvalue
+  Property Map]. The key type must be the graph's vertex descriptor type
+  and the value type must be the graph's edge descriptor type.
+
+|===
+
+'''
+
+=== (2) Named parameter version
+
+[source,cpp]
+----
+template <class Graph, class P, class T, class R>
+typename detail::edge_capacity_value<Graph, P, T, R>::value_type
+edmonds_karp_max_flow(
+    Graph& g,
+    typename graph_traits<Graph>::vertex_descriptor src,
+    typename graph_traits<Graph>::vertex_descriptor sink,
+    const bgl_named_params<P, T, R>& params = all defaults);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `Graph& g`
+| A directed graph. Must model xref:concepts/VertexListGraph.adoc[Vertex List Graph]
+  and xref:concepts/IncidenceGraph.adoc[Incidence Graph]. For each edge
+  _(u,v)_ in the graph, the reverse edge _(v,u)_ must also be in the graph.
+
+| IN
+| `vertex_descriptor src`
+| The source vertex for the flow network graph.
+
+| IN
+| `vertex_descriptor sink`
+| The sink vertex for the flow network graph.
+
+| IN
+| `params`
+| Named parameters passed via `bgl_named_params`. The following are accepted:
+|===
+
+[cols="1,2,5"]
+|===
+| Direction | Named Parameter | Description / Default
+
+| IN
+| `capacity_map(CapacityEdgeMap cap)`
+| The edge capacity property map. The type must be a model of a constant
+  link:../../property_map/doc/LvaluePropertyMap.html[Lvalue Property Map].
+  The key type of the map must be the graph's edge descriptor type. +
+  *Default:* `get(edge_capacity, g)`
+
+| OUT
+| `residual_capacity_map(ResidualCapacityEdgeMap res)`
+| This maps edges to their residual capacity. The type must be a model of
+  a mutable link:../../property_map/doc/LvaluePropertyMap.html[Lvalue
+  Property Map]. The key type of the map must be the graph's edge
+  descriptor type. +
+  *Default:* `get(edge_residual_capacity, g)`
+
+| IN
+| `reverse_edge_map(ReverseEdgeMap rev)`
+| An edge property map that maps every edge _(u,v)_ in the graph to the
+  reverse edge _(v,u)_. The map must be a model of constant
+  link:../../property_map/doc/LvaluePropertyMap.html[Lvalue Property Map].
+  The key type of the map must be the graph's edge descriptor type. +
+  *Default:* `get(edge_reverse, g)`
+
+| UTIL
+| `color_map(ColorMap color)`
+| Used by the algorithm to keep track of progress during the breadth-first
+  search stage. At the end of the algorithm, the white vertices define the
+  minimum cut set. The map must be a model of mutable
+  link:../../property_map/doc/LvaluePropertyMap.html[Lvalue Property Map].
+  The key type of the map should be the graph's vertex descriptor type,
+  and the value type must be a model of
+  xref:concepts/property_types/ColorValue.adoc[Color Value]. +
+  *Default:* an
+  link:../../property_map/doc/iterator_property_map.html[`iterator_property_map`]
+  created from a `std::vector` of `default_color_type` of size
+  `num_vertices(g)` and using the `i_map` for the index map.
+
+| UTIL
+| `predecessor_map(PredEdgeMap pred)`
+| Used by the algorithm to store augmenting paths. The map must be a model
+  of mutable link:../../property_map/doc/LvaluePropertyMap.html[Lvalue
+  Property Map]. The key type must be the graph's vertex descriptor type
+  and the value type must be the graph's edge descriptor type. +
+  *Default:* an
+  link:../../property_map/doc/iterator_property_map.html[`iterator_property_map`]
+  created from a `std::vector` of edge descriptors of size
+  `num_vertices(g)` and using the `i_map` for the index map.
+
+| IN
+| `vertex_index_map(VertexIndexMap i_map)`
+| Maps each vertex of the graph to a unique integer in the range
+  `[0, num_vertices(g))`. This property map is only needed if the
+  default for the color or predecessor map is used. The vertex index map
+  must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property
+  Map]. The key type of the map must be the graph's vertex descriptor
+  type. +
+  *Default:* `get(vertex_index, g)`.
+  Note: if you use this default, make sure your graph has an internal
+  `vertex_index` property. For example, `adjacency_list` with
+  `VertexList=listS` does not have an internal `vertex_index` property.
+
+|===
+
+== Description
+
+The `edmonds_karp_max_flow()` function implements the
+https://en.wikipedia.org/wiki/Edmonds%E2%80%93Karp_algorithm[Edmonds-Karp algorithm]
+to calculate the maximum flow of a network. See Section
+xref:about/graph_theory_review.adoc#sec:network-flow-algorithms[Network Flow
+Algorithms] for a description of maximum flow. The calculated maximum
+flow will be the return value of the function. The function also
+calculates the flow values _f(u,v)_ for all _(u,v)_ in _E_, which are
+returned in the form of the residual capacity _r(u,v) = c(u,v) -
+f(u,v)_.
+
+There are several special requirements on the input graph and property
+map parameters for this algorithm. First, the directed graph _G=(V,E)_
+that represents the network must be augmented to include the reverse
+edge for every edge in _E_. That is, the input graph should be _G~in~ =
+(V,{E U E^T^})_. The `ReverseEdgeMap` argument `rev` must map each
+edge in the original graph to its reverse edge, that is _(u,v) ->
+(v,u)_ for all _(u,v)_ in _E_. The `CapacityEdgeMap` argument `cap` must
+map each edge in _E_ to a positive number, and each edge in _E^T^_ to 0.
+
+The algorithm is due to
+xref:about/bibliography.adoc#edmonds72:_improvements_netflow[Edmonds and
+Karp], though we are using the variation called the ++``++labeling
+algorithm'' described in
+xref:about/bibliography.adoc#ahuja93:_network_flows[Network Flows].
+
+This algorithm provides a very simple and easy to implement solution to
+the maximum flow problem. However, there are several reasons why this
+algorithm is not as good as the
+xref:algorithms/network_flow/push_relabel_max_flow.adoc[`push_relabel_max_flow()`]
+or the
+xref:algorithms/network_flow/boykov_kolmogorov_max_flow.adoc[`boykov_kolmogorov_max_flow()`]
+algorithm.
+
+* In the non-integer capacity case, the time complexity is _O(V E^2^)_
+  which is worse than the time complexity of the push-relabel algorithm
+  _O(V^2^E^1/2^)_ for all but the sparsest of graphs.
+* In the integer capacity case, if the capacity bound _U_ is very large
+  then the algorithm will take a long time.
+
+== Returns
+
+The maximum flow value of the network.
+
+== Example
+
+The program in
+link:../example/edmonds-karp-eg.cpp[`example/edmonds-karp-eg.cpp`] reads
+an example maximum flow problem (a graph with edge capacities) from a
+file in the DIMACS format and computes the maximum flow.
+

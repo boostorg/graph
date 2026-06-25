@@ -1,0 +1,483 @@
+= Brandes' Betweenness Centrality
+
+Computes the betweenness centrality of each vertex or each edge in the graph.
+
+*Complexity:* _O(VE)_ for unweighted graphs; _O(VE {plus} V(V{plus}E) log V)_ for weighted graphs. Space: _O(VE)_ +
+*Defined in:* `<boost/graph/betweenness_centrality.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/metrics/betweenness.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/metrics/betweenness.txt[]
+----
+
+'''
+
+=== (1) Named parameter version
+
+[source,cpp]
+----
+template <typename Graph, typename Param, typename Tag, typename Rest>
+void brandes_betweenness_centrality(
+    const Graph& g,
+    const bgl_named_params<Param, Tag, Rest>& params);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| The graph object on which the algorithm will be applied.
+  The type `Graph` must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph]
+  and xref:concepts/IncidenceGraph.adoc[Incidence Graph]. When an edge
+  centrality map is supplied, it must also model
+  xref:concepts/EdgeListGraph.adoc[Edge List Graph].
+
+| IN
+| `params`
+| Named parameters passed via `bgl_named_params`. See overload (6) for accepted named parameters.
+
+|===
+
+'''
+
+=== (2) Named parameter version (vertex centrality only)
+
+[source,cpp]
+----
+template <typename Graph, typename CentralityMap>
+void brandes_betweenness_centrality(
+    const Graph& g,
+    CentralityMap centrality_map);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| The graph object on which the algorithm will be applied.
+  The type `Graph` must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph]
+  and xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| OUT/UTIL
+| `CentralityMap centrality_map`
+| This property map is used to accumulate the betweenness centrality
+  of each vertex, and is the primary output of the algorithm. The type
+  `CentralityMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map],
+  with the graph's vertex descriptor type as its key type. The value type of
+  this property map should be a floating-point or rational type.
+
+|===
+
+'''
+
+=== (3) Named parameter version (vertex and edge centrality)
+
+[source,cpp]
+----
+template <typename Graph, typename CentralityMap, typename EdgeCentralityMap>
+void brandes_betweenness_centrality(
+    const Graph& g,
+    CentralityMap centrality_map,
+    EdgeCentralityMap edge_centrality);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| The graph object on which the algorithm will be applied.
+  The type `Graph` must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph]
+  and xref:concepts/IncidenceGraph.adoc[Incidence Graph]. When an edge
+  centrality map is supplied, it must also model
+  xref:concepts/EdgeListGraph.adoc[Edge List Graph].
+
+| OUT/UTIL
+| `CentralityMap centrality_map`
+| This property map is used to accumulate the betweenness centrality
+  of each vertex. The type `CentralityMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map],
+  with the graph's vertex descriptor type as its key type. The value type of
+  this property map should be a floating-point or rational type.
+
+| OUT/UTIL
+| `EdgeCentralityMap edge_centrality`
+| This property map is used to accumulate the betweenness centrality
+  of each edge. The type `EdgeCentralityMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map],
+  with the graph's edge descriptor type as its key type. The value type of
+  this property map should be the same as the value type of the
+  `CentralityMap` property map.
+
+|===
+
+'''
+
+=== (4) Positional version (unweighted)
+
+[source,cpp]
+----
+template <typename Graph, typename CentralityMap, typename EdgeCentralityMap,
+          typename IncomingMap, typename DistanceMap, typename DependencyMap,
+          typename PathCountMap, typename VertexIndexMap>
+void brandes_betweenness_centrality(
+    const Graph& g,
+    CentralityMap centrality_map,
+    EdgeCentralityMap edge_centrality,
+    IncomingMap incoming,
+    DistanceMap distance, DependencyMap dependency,
+    PathCountMap path_count,
+    VertexIndexMap vertex_index);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| The graph object on which the algorithm will be applied.
+  The type `Graph` must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph]
+  and xref:concepts/IncidenceGraph.adoc[Incidence Graph]. When an edge
+  centrality map is supplied, it must also model
+  xref:concepts/EdgeListGraph.adoc[Edge List Graph].
+
+| OUT/UTIL
+| `CentralityMap centrality_map`
+| This property map is used to accumulate the betweenness centrality
+  of each vertex, and is the primary output of the algorithm. The type
+  `CentralityMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map],
+  with the graph's vertex descriptor type as its key type. The value type of
+  this property map should be a floating-point or rational type.
+
+| OUT/UTIL
+| `EdgeCentralityMap edge_centrality`
+| This property map is used to accumulate the betweenness centrality
+  of each edge, and is a secondary form of output for the algorithm. The type
+  `EdgeCentralityMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map],
+  with the graph's edge descriptor type as its key type. The value type of
+  this property map should be the same as the value type of the
+  `CentralityMap` property map.
+
+| UTIL
+| `IncomingMap incoming`
+| This property map records the set of edges incoming to each vertex that
+  comprise a shortest path from a particular source vertex through this
+  vertex, and is used internally by the algorithm. The `IncomingMap` type
+  must be a
+  link:../../property_map/doc/LvaluePropertyMap.html[Lvalue Property Map]
+  whose key type is the same as the vertex descriptor type of the graph and
+  whose value type is a Sequence (e.g., an `std::vector`) containing edge
+  descriptors.
+
+| UTIL
+| `DistanceMap distance`
+| The shortest path weight from each source vertex `s` to each vertex in
+  the graph `g` is recorded in this property map, but the result is only
+  used internally. The type `DistanceMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map].
+  The vertex descriptor type of the graph needs to be usable as the key type
+  of the distance map. The value type of the distance map is the element type
+  of a xref:concepts/property_types/Monoid.adoc[Monoid].
+
+| UTIL
+| `DependencyMap dependency`
+| Property map used internally to accumulate partial betweenness
+  centrality results. The type `DependencyMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map].
+  The vertex descriptor type of the graph needs to be usable as the key type
+  of the dependency map. The value type of the dependency map must be
+  compatible with the value type of the centrality map.
+
+| UTIL
+| `PathCountMap path_count`
+| Property map used internally to accumulate the number of paths that pass
+  through each particular vertex. The type `PathCountMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map].
+  The vertex descriptor type of the graph needs to be usable as the key type
+  of the path count map. The value type of the path count map must be an
+  integral type large enough to store the number of paths in the graph.
+
+| IN
+| `VertexIndexMap vertex_index`
+| This maps each vertex to an integer in the range `[0, num_vertices(g))`.
+  This is necessary for efficient updates of the heap data structure when an
+  edge is relaxed. The type `VertexIndexMap` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The vertex descriptor
+  type of the graph needs to be usable as the key type of the map.
+
+|===
+
+'''
+
+=== (5) Positional version (weighted)
+
+[source,cpp]
+----
+template <typename Graph, typename CentralityMap, typename EdgeCentralityMap,
+          typename IncomingMap, typename DistanceMap, typename DependencyMap,
+          typename PathCountMap, typename VertexIndexMap, typename WeightMap>
+void brandes_betweenness_centrality(
+    const Graph& g,
+    CentralityMap centrality_map,
+    EdgeCentralityMap edge_centrality,
+    IncomingMap incoming,
+    DistanceMap distance, DependencyMap dependency,
+    PathCountMap path_count,
+    VertexIndexMap vertex_index,
+    WeightMap weight_map);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| The graph object on which the algorithm will be applied.
+  The type `Graph` must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph]
+  and xref:concepts/IncidenceGraph.adoc[Incidence Graph]. When an edge
+  centrality map is supplied, it must also model
+  xref:concepts/EdgeListGraph.adoc[Edge List Graph].
+
+| OUT/UTIL
+| `CentralityMap centrality_map`
+| This property map is used to accumulate the betweenness centrality
+  of each vertex. See overload (4) for details.
+
+| OUT/UTIL
+| `EdgeCentralityMap edge_centrality`
+| This property map is used to accumulate the betweenness centrality
+  of each edge. See overload (4) for details.
+
+| UTIL
+| `IncomingMap incoming`
+| See overload (4) for details.
+
+| UTIL
+| `DistanceMap distance`
+| See overload (4) for details.
+
+| UTIL
+| `DependencyMap dependency`
+| See overload (4) for details.
+
+| UTIL
+| `PathCountMap path_count`
+| See overload (4) for details.
+
+| IN
+| `VertexIndexMap vertex_index`
+| See overload (4) for details.
+
+| IN
+| `WeightMap weight_map`
+| The weight or "length" of each edge in the graph. The weights must all be
+  non-negative, and the algorithm will throw a
+  xref:exception.adoc#negative_edge[`negative_edge`] exception if
+  one of the edges is negative. The type `WeightMap` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The edge descriptor type of the graph needs to be usable as the key type
+  for the weight map. The value type for this map must be the same as the
+  value type of the distance map.
+
+|===
+
+'''
+
+=== (6) Named parameters (for overload 1)
+
+[cols="1,2,5"]
+|===
+| Direction | Named Parameter | Description / Default
+
+| OUT/UTIL
+| `centrality_map(CentralityMap centrality)`
+| This property map is used to accumulate the betweenness centrality
+  of each vertex, and is the primary output of the algorithm. The type
+  `CentralityMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map],
+  with the graph's vertex descriptor type as its key type. The value type of
+  this property map should be a floating-point or rational type. +
+  *Default:* a `dummy_property_map`, which requires no work to compute and
+  returns no answer.
+
+| OUT/UTIL
+| `edge_centrality_map(EdgeCentralityMap edge_centrality)`
+| This property map is used to accumulate the betweenness centrality
+  of each edge, and is a secondary form of output for the algorithm. The type
+  `EdgeCentralityMap` must be a model of
+  link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map],
+  with the graph's edge descriptor type as its key type. The value type of
+  this property map should be the same as the value type of the
+  `CentralityMap` property map. +
+  *Default:* a `dummy_property_map`, which requires no work to compute and
+  returns no answer.
+
+| IN
+| `vertex_index_map(VertexIndexMap vertex_index)`
+| This maps each vertex to an integer in the range `[0, num_vertices(g))`.
+  This is necessary for efficient updates of the heap data structure when an
+  edge is relaxed. The type `VertexIndexMap` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The value type of the map must be an integer type. The vertex descriptor
+  type of the graph needs to be usable as the key type of the map. +
+  *Default:* `get(vertex_index, g)`.
+  Note: if you use this default, make sure your graph has an internal
+  `vertex_index` property. For example, `adjacency_list` with
+  `VertexList=listS` does not have an internal `vertex_index` property.
+
+| IN
+| `weight_map(WeightMap w_map)`
+| The weight or "length" of each edge in the graph. The weights must all be
+  non-negative, and the algorithm will throw a
+  xref:exception.adoc#negative_edge[`negative_edge`] exception if
+  one of the edges is negative. The type `WeightMap` must be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map].
+  The edge descriptor type of the graph needs to be usable as the key type
+  for the weight map. The value type for this map must be the same as the
+  value type of the distance map. +
+  *Default:* All edge weights are assumed to be equivalent.
+
+|===
+
+'''
+
+=== (7) Helper: relative_betweenness_centrality
+
+[source,cpp]
+----
+template <typename Graph, typename CentralityMap>
+void relative_betweenness_centrality(
+    const Graph& g,
+    CentralityMap centrality_map);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| The graph object. Must model xref:concepts/VertexListGraph.adoc[Vertex List Graph].
+
+| IN/OUT
+| `CentralityMap centrality_map`
+| The centrality map that was previously computed by
+  `brandes_betweenness_centrality`. Each absolute centrality value is scaled
+  by image:figs/rel_betweenness_centrality.gif[] (where _n_ is the number of
+  vertices in the graph) to produce the relative betweenness centrality.
+
+|===
+
+'''
+
+=== (8) Helper: central_point_dominance
+
+[source,cpp]
+----
+template <typename Graph, typename CentralityMap>
+typename property_traits<CentralityMap>::value_type
+central_point_dominance(
+    const Graph& g,
+    CentralityMap centrality_map);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const Graph& g`
+| The graph object. Must model xref:concepts/VertexListGraph.adoc[Vertex List Graph].
+
+| IN
+| `CentralityMap centrality_map`
+| The _relative_ betweenness centrality map (i.e., the centrality map after
+  calling `relative_betweenness_centrality`). The type `CentralityMap` must
+  be a model of
+  link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map],
+  with the graph's vertex descriptor type as its key type.
+
+|===
+
+== Description
+
+This algorithm [xref:about/bibliography.adoc#brandes01[49]] computes the
+https://en.wikipedia.org/wiki/Betweenness_centrality[_betweenness centrality_]
+[xref:about/bibliography.adoc#freeman77[50],xref:about/bibliography.adoc#anthonisse71[51]]
+of each vertex or each edge in the graph. The betweenness centrality of a
+vertex _v_ is defined by
+
+image::figs/betweenness_centrality.gif[]
+
+where image:figs/sigma_st.gif[] is the number of shortest paths from vertex
+_s_ to vertex _t_ and image:figs/sigma_stv.gif[] is the number of shortest
+paths from vertex _s_ to vertex _t_ that pass through vertex _v_.
+
+The edge betweenness centrality indicates for each edge the betweenness
+centrality that was contributed to the target(s) of the edge (plural for
+undirected graphs). Similar to (vertex) betweenness centrality, edge
+betweenness centrality can be used to determine the edges through which most
+shortest paths must pass. A single invocation of this algorithm can compute
+either the vertex or edge centrality (or both).
+
+This algorithm can operate either on weighted graphs (if a suitable edge weight
+map is supplied) or unweighted graphs (if no edge weight map is supplied). The
+result is the absolute betweenness centrality; to convert to the relative
+betweenness centrality, which scales each absolute centrality by
+image:figs/rel_betweenness_centrality.gif[] (where _n_ is the number of
+vertices in the graph), use `relative_betweenness_centrality`. Given the
+relative betweenness centrality, one can compute the _central point
+dominance_ [xref:about/bibliography.adoc#freeman77[50]], which is a measure of
+the maximum "betweenness" of any point in the graph: it will be 0 for complete
+graphs and 1 for "wheel" graphs (in which there is a central vertex that all
+paths include; see <<Fig1,Fig. 1>>). Let image:figs/v_star.gif[] be the vertex
+with the largest relative betweenness centrality; then, the central point
+dominance is defined as:
+
+image::figs/central_point_dominance.gif[]
+
+[#Fig1]
+[width="100%",cols="^100%",options="header"]
+|===
+|Fig. 1: A wheel graph, where every path travels through the central node. +
+The central point dominance of this graph is 1.
+^|image:figs/wheel_graph.gif[]
+|===
+
+== Returns
+
+The `brandes_betweenness_centrality` function outputs its results through the
+`centrality_map` and/or `edge_centrality_map` property maps. The
+`relative_betweenness_centrality` function modifies the centrality map in
+place. The `central_point_dominance` function returns a value of type
+`property_traits<CentralityMap>::value_type` representing the central point
+dominance of the graph.
+
+== Example
+
+See xref:algorithms/utility/bc_clustering.adoc[`bc_clustering`] for an example that
+uses betweenness centrality as part of a graph clustering algorithm.
+

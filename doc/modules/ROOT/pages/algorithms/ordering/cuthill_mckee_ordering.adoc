@@ -1,0 +1,237 @@
+= cuthill_mckee_ordering
+
+Reduces the bandwidth of a graph by reordering the indices assigned to each vertex using the Cuthill-McKee algorithm.
+
+*Complexity:* _O(m log(m)|V|)_ where _m = max { degree(v) | v in V }_ +
+*Defined in:* `<boost/graph/cuthill_mckee_ordering.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/ordering/cuthill_mckee.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/ordering/cuthill_mckee.txt[]
+----
+
+'''
+
+=== (1) Single starting vertex
+
+[source,cpp]
+----
+template <class IncidenceGraph, class OutputIterator,
+          class ColorMap, class DegreeMap>
+OutputIterator cuthill_mckee_ordering(const IncidenceGraph& g,
+    typename graph_traits<IncidenceGraph>::vertex_descriptor s,
+    OutputIterator inverse_permutation,
+    ColorMap color, DegreeMap degree)
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `const IncidenceGraph& g`
+| An undirected graph. The graph type must be a model of
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| IN | `vertex_descriptor s`
+| The starting vertex.
+
+| OUT | `OutputIterator inverse_permutation`
+| The new vertex ordering. The vertices are written to the output iterator
+  in their new order.
+
+| UTIL | `ColorMap color`
+| Used internally to keep track of the progress of the algorithm
+  (to avoid visiting the same vertex twice).
+
+| IN | `DegreeMap degree`
+| This must map vertices to their degree.
+|===
+
+'''
+
+=== (2) Automatic starting vertex selection
+
+[source,cpp]
+----
+template <class VertexListGraph, class OutputIterator>
+OutputIterator cuthill_mckee_ordering(const VertexListGraph& g,
+    OutputIterator inverse_permutation);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `const VertexListGraph& g`
+| An undirected graph. The graph type must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| OUT | `OutputIterator inverse_permutation`
+| The new vertex ordering. The vertices are written to the output iterator
+  in their new order.
+|===
+
+'''
+
+[source,cpp]
+----
+template <class VertexListGraph, class OutputIterator,
+          class VertexIndexMap>
+OutputIterator cuthill_mckee_ordering(const VertexListGraph& g,
+    OutputIterator inverse_permutation,
+    VertexIndexMap index_map);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `const VertexListGraph& g`
+| An undirected graph. The graph type must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| OUT | `OutputIterator inverse_permutation`
+| The new vertex ordering. The vertices are written to the output iterator
+  in their new order.
+
+| IN | `VertexIndexMap index_map`
+| Maps each vertex to an integer in the range `[0, num_vertices(g))`.
+|===
+
+'''
+
+[source,cpp]
+----
+template <class VertexListGraph, class OutputIterator,
+          class ColorMap, class DegreeMap>
+OutputIterator cuthill_mckee_ordering(const VertexListGraph& g,
+    OutputIterator inverse_permutation,
+    ColorMap color, DegreeMap degree)
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `const VertexListGraph& g`
+| An undirected graph. The graph type must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph] and
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| OUT | `OutputIterator inverse_permutation`
+| The new vertex ordering. The vertices are written to the output iterator
+  in their new order.
+
+| UTIL | `ColorMap color`
+| Used internally to keep track of the progress of the algorithm
+  (to avoid visiting the same vertex twice).
+
+| IN | `DegreeMap degree`
+| This must map vertices to their degree.
+|===
+
+'''
+
+=== (3) Explicit starting vertices via deque
+
+[source,cpp]
+----
+template <class IncidenceGraph, class OutputIterator,
+          class ColorMap, class DegreeMap>
+OutputIterator cuthill_mckee_ordering(const IncidenceGraph& g,
+    std::deque<typename graph_traits<IncidenceGraph>::vertex_descriptor> vertex_queue,
+    OutputIterator inverse_permutation,
+    ColorMap color, DegreeMap degree)
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `const IncidenceGraph& g`
+| An undirected graph. The graph type must be a model of
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+
+| IN | `std::deque<typename graph_traits<IncidenceGraph>::vertex_descriptor> vertex_queue`
+| The deque containing the starting vertices for each component.
+
+| OUT | `OutputIterator inverse_permutation`
+| The new vertex ordering. The vertices are written to the output iterator
+  in their new order.
+
+| UTIL | `ColorMap color`
+| Used internally to keep track of the progress of the algorithm
+  (to avoid visiting the same vertex twice).
+
+| IN | `DegreeMap degree`
+| This must map vertices to their degree.
+|===
+
+== Description
+
+The goal of the https://en.wikipedia.org/wiki/Cuthill%E2%80%93McKee_algorithm[Cuthill-McKee] (and reverse Cuthill-McKee) ordering
+algorithm [xref:about/bibliography.adoc#george81:__sparse_pos_def[11],
+xref:about/bibliography.adoc#cuthill69:reducing_bandwith[38],
+xref:about/bibliography.adoc#liu75:anal_cm_rcm[39],
+xref:about/bibliography.adoc#george71:fem[40]] is to reduce the
+xref:algorithms/metrics/bandwidth.adoc[bandwidth] of a graph by reordering the indices
+assigned to each vertex. The Cuthill-McKee ordering algorithm works by a
+local minimization of the i-th bandwidths. The vertices are basically
+assigned a breadth-first search order, except that at each step, the
+adjacent vertices are placed in the queue in order of increasing degree.
+
+Version 1 of the algorithm lets the user choose the "starting vertex",
+version 2 finds a good starting vertex using the pseudo-peripheral pair
+heuristic (among each component), while version 3 contains the starting
+nodes for each vertex in the deque. The choice of the "starting vertex"
+can have a significant effect on the quality of the ordering. For
+versions 2 and 3, `find_starting_vertex` will be called for each
+component in the graph, increasing run time significantly.
+
+The output of the algorithm are the vertices in the new ordering.
+Depending on what kind of output iterator you use, you can get either
+the Cuthill-McKee ordering or the reverse Cuthill-McKee ordering. For
+example, if you store the output into a vector using the vector's
+reverse iterator, then you get the reverse Cuthill-McKee ordering.
+
+[source,cpp]
+----
+std::vector<vertex_descriptor> inv_perm(num_vertices(G));
+cuthill_mckee_ordering(G, inv_perm.rbegin(), ...);
+----
+
+Either way, storing the output into a vector gives you the permutation
+from the new ordering to the old ordering.
+
+[source,cpp]
+----
+inv_perm[new_index[u]] == u
+----
+
+Often times, it is the opposite permutation that you want, the
+permutation from the old index to the new index. This can easily be
+computed in the following way.
+
+[source,cpp]
+----
+for (size_type i = 0; i != inv_perm.size(); ++i)
+  perm[old_index[inv_perm[i]]] = i;
+----
+
+== Returns
+
+An `OutputIterator` pointing past the end of the permutation output range.
+
+== Example
+
+See link:../example/cuthill_mckee_ordering.cpp[`example/cuthill_mckee_ordering.cpp`].
+

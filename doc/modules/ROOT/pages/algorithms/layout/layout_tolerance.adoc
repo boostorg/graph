@@ -1,0 +1,49 @@
+= layout_tolerance
+
+Determines when to terminate layout algorithms based on a relative tolerance.
+
+*Defined in:* `<boost/graph/fruchterman_reingold.hpp>`
+
+== Synopsis
+
+[source,cpp]
+----
+template<typename T = double>
+struct layout_tolerance {
+  // construct/copy/destruct
+  layout_tolerance(const T & = T(0.001));
+
+  // public member functions
+  template<typename Graph>
+    bool operator()(T,
+                    typename boost::graph_traits< Graph >::vertex_descriptor,
+                    const Graph &, bool) ;
+};
+----
+
+== Where Defined
+
+`boost/graph/kamada_kawai_spring_layout.hpp`
+
+== `layout_tolerance` construct/copy/destruct
+
+[arabic]
+. {blank}
++
+[source,literallayout]
+----
+layout_tolerance(const T & tolerance = T(0.001));
+----
+
+== `layout_tolerance` public member functions
+
+[arabic]
+. {blank}
++
+[source,literallayout]
+----
+template<typename Graph>
+  bool operator()(T delta_p,
+                  typename boost::graph_traits< Graph >::vertex_descriptor p,
+                  const Graph & g, bool global) ;
+----

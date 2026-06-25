@@ -1,0 +1,4 @@
+Maximum matching (3 edges):
+  0 - 3
+  1 - 2
+  4 - 5

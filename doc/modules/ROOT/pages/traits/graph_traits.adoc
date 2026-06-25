@@ -1,0 +1,165 @@
+= `graph_traits<Graph>`
+
+The graph equivalent of `std::iterator_traits`. Pulls the associated types
+(descriptors, iterators, categories, sizes) out of a graph type, and
+provides the portable `null_vertex()` sentinel and directed/undirected
+queries.
+
+*Defined in:* `<boost/graph/graph_traits.hpp>`
+
+== When to use it
+
+Always reach for `graph_traits<Graph>` when `Graph` is a template
+parameter. When `Graph` is a concrete type you can use the nested typedef
+(`Graph::vertex_descriptor`) directly, but going through the traits
+indirection keeps your code compatible with third-party graph types that
+specialize `graph_traits` externally.
+
+WARNING: Do not subclass a BGL graph type. `graph_traits` is specialized
+for specific types; a derived class will not inherit the specialization.
+
+== Example — plain usage
+
+[source,cpp]
+----
+include::example$traits/graph_traits_basic.cpp[]
+----
+
+[,text]
+----
+include::example$traits/graph_traits_basic.txt[]
+----
+
+The `null_vertex` value above is `std::numeric_limits<std::size_t>::max()`
+because this graph uses `vecS` vertex storage. For `listS` it is a
+null pointer; never compare descriptors to `0`, `-1`, or any other
+literal — always use `graph_traits<Graph>::null_vertex()`.
+
+== Example — generic template function
+
+[source,cpp]
+----
+include::example$traits/graph_traits_generic.cpp[]
+----
+
+[,text]
+----
+include::example$traits/graph_traits_generic.txt[]
+----
+
+Inside a function template, every nested name through `graph_traits` must
+be disambiguated with `typename` because the compiler does not yet know
+that `graph_traits<Graph>::degree_size_type` names a type.
+
+== Synopsis
+
+[source,cpp]
+----
+namespace boost {
+
+template <typename Graph>
+struct graph_traits {
+    typedef /* from Graph */ vertex_descriptor;
+    typedef /* from Graph */ edge_descriptor;
+
+    typedef /* from Graph */ adjacency_iterator;
+    typedef /* from Graph */ out_edge_iterator;
+    typedef /* from Graph */ in_edge_iterator;
+    typedef /* from Graph */ vertex_iterator;
+    typedef /* from Graph */ edge_iterator;
+
+    typedef /* from Graph */ directed_category;
+    typedef /* from Graph */ edge_parallel_category;
+    typedef /* from Graph */ traversal_category;
+
+    typedef /* from Graph */ vertices_size_type;
+    typedef /* from Graph */ edges_size_type;
+    typedef /* from Graph */ degree_size_type;
+
+    static vertex_descriptor null_vertex();
+};
+
+// Free functions / type traits:
+template <typename Graph> bool is_directed  (const Graph& g);
+template <typename Graph> bool is_undirected(const Graph& g);
+
+template <typename Graph> struct is_directed_graph;    // inherits mpl::bool_
+template <typename Graph> struct is_undirected_graph;  // inherits mpl::bool_
+
+} // namespace boost
+----
+
+== Members
+
+[cols="1,4"]
+|===
+| Member | Description
+
+| `vertex_descriptor`
+| Handle type for vertices. Concrete type depends on the graph storage
+  selector (see xref:traits/overview.adoc[the overview table]).
+
+| `edge_descriptor`
+| Handle type for edges. Contains source/target endpoint information.
+
+| `adjacency_iterator`
+| Iterator over vertices adjacent to a given vertex. Dereferences to a
+  `vertex_descriptor`.
+
+| `out_edge_iterator`
+| Iterator over the out-edges of a vertex. Dereferences to `edge_descriptor`.
+
+| `in_edge_iterator`
+| Iterator over the in-edges of a vertex (requires
+  xref:concepts/BidirectionalGraph.adoc[Bidirectional Graph]).
+
+| `vertex_iterator`
+| Iterator over the whole vertex set.
+
+| `edge_iterator`
+| Iterator over the whole edge set.
+
+| `directed_category`
+| `directed_tag`, `undirected_tag`, or `bidirectional_tag`.
+
+| `edge_parallel_category`
+| `allow_parallel_edge_tag` or `disallow_parallel_edge_tag`.
+
+| `traversal_category`
+| Tag composed (via inheritance) of
+  `incidence_graph_tag`, `adjacency_graph_tag`, `bidirectional_graph_tag`,
+  `vertex_list_graph_tag`, `edge_list_graph_tag`, `adjacency_matrix_tag`.
+  Controls tag-dispatch inside generic algorithms.
+
+| `vertices_size_type` / `edges_size_type` / `degree_size_type`
+| Unsigned integer types for vertex count, edge count, and per-vertex degree.
+
+| `static vertex_descriptor null_vertex()`
+| Portable sentinel meaning "no vertex". Use it instead of integer literals
+  when clearing predecessor maps or testing for "unset".
+|===
+
+== Free helpers
+
+[cols="2,3"]
+|===
+| Expression | Returns
+
+| `boost::is_directed(g)`
+| `true` if `directed_category` is `directed_tag` or `bidirectional_tag`.
+
+| `boost::is_undirected(g)`
+| `!is_directed(g)`.
+
+| `boost::is_directed_graph<Graph>::value`
+| Compile-time version of the above.
+
+| `boost::is_undirected_graph<Graph>::value`
+| Compile-time negation.
+|===
+
+== See also
+
+* xref:traits/overview.adoc[Traits and Iterators overview]
+* xref:concepts/graph_concepts.adoc[Graph Concepts]
+* xref:traits/property_map.adoc[`property_map`]

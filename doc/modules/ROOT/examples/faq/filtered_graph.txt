@@ -1,0 +1,2 @@
+filtered vertices: 0 2 4
+filtered edges: 3

@@ -1,0 +1,98 @@
+[#sec:transpose_graph]
+= transpose_graph
+
+Computes the transpose of a directed graph, reversing the direction of every edge.
+
+*Complexity:* _O(V + E)_ +
+*Defined in:* `<boost/graph/transpose_graph.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/utility/transpose_graph.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/utility/transpose_graph.txt[]
+----
+
+'''
+
+=== (1) Named parameter version
+
+[source,cpp]
+----
+template <class VertexListGraph, class MutableGraph,
+          class P, class T, class R>
+void transpose_graph(
+    const VertexListGraph& G, MutableGraph& G_T,
+    const bgl_named_params<P, T, R>& params);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `const VertexListGraph& G`
+| A directed graph.
+  The graph type must be a model of xref:concepts/VertexListGraph.adoc[Vertex List Graph].
+
+| OUT | `MutableGraph& G_T`
+| The transposed graph.
+  The graph type must be a model of xref:concepts/MutableGraph.adoc[Mutable Graph].
+|===
+
+*Named Parameters*
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `vertex_copy(VertexCopier vc)`
+| This is a link:http://www.boost.org/sgi/stl/BinaryFunction.html[Binary Function] that copies the properties of a vertex in the original graph into the corresponding vertex in the copy. +
+  *Default:* `vertex_copier<VertexListGraph, MutableGraph>` which uses the property tag `vertex_all` to access a property map from the graph.
+
+| IN | `edge_copy(EdgeCopier ec)`
+| This is a link:http://www.boost.org/sgi/stl/BinaryFunction.html[Binary Function] that copies the properties of an edge in the original graph into the corresponding edge in the copy. +
+  *Default:* `edge_copier<VertexListGraph, MutableGraph>` which uses the property tag `edge_all` to access a property map from the graph.
+
+| IN | `vertex_index_map(VertexIndexMap i_map)`
+| The vertex index map type must be a model of link:https://www.boost.org/libs/property_map/doc/ReadablePropertyMap.html[Readable Property Map] and must map the vertex descriptors of `G` to the integers from 0 to `num_vertices(G)`. +
+  *Default:* `get(vertex_index, G)`.
+  Note: if you use this default, make sure your graph has an internal `vertex_index` property.
+  For example, `adjacency_list` with `VertexList=listS` does not have an internal `vertex_index` property.
+
+| UTIL/OUT | `orig_to_copy(Orig2CopyMap c)`
+| This maps vertices in the original graph to vertices in the copy. +
+  *Default:* an link:https://www.boost.org/libs/property_map/doc/iterator_property_map.html[iterator_property_map] created from a `std::vector` of the output graph's vertex descriptor type of size `num_vertices(g)` and using the `i_map` for the index map.
+|===
+
+'''
+
+=== (2) Positional version
+
+[source,cpp]
+----
+template <class VertexListGraph, class MutableGraph>
+void transpose_graph(const VertexListGraph& G, MutableGraph& G_T);
+----
+
+Equivalent to (1) with every named parameter left at its default. Uses the default vertex/edge copiers (via `vertex_all` / `edge_all` property tags) and `get(vertex_index, G)`.
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `const VertexListGraph& G` | Same as (1).
+| OUT | `MutableGraph& G_T` | Same as (1).
+|===
+
+== Description
+
+This function computes the transpose of a directed graph. The transpose of a directed graph _G = (V, E)_ is the graph _G^T^ = (V, E^T^)_, where _E^T^ = {(v, u) in V x V: (u, v) in E}_. That is, _G^T^_ is _G_ with all its edges reversed. Graph `G_T` passed into the algorithm must have no vertices and no edges. The vertices and edges will be added by `transpose_graph()` by calling `add_vertex` and `add_edge` for each edge _(u,v)_ in `G`.
+
+== Example
+
+Here's an example of transposing a graph: link:../example/transpose-example.cpp[`example/transpose-example.cpp`].

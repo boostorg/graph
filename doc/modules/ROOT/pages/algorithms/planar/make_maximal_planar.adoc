@@ -1,0 +1,90 @@
+= `make_maximal_planar`
+
+Adds edges to a biconnected planar graph to make it maximal planar.
+
+*Complexity:* _O(n + m)_ +
+*Defined in:* `<boost/graph/make_maximal_planar.hpp>`
+
+== Example
+
+[source,cpp]
+----
+include::example$algorithms/planar/make_maximal.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/planar/make_maximal.txt[]
+----
+
+'''
+
+=== Positional version
+
+[source,cpp]
+----
+template<typename Graph, typename PlanarEmbedding,
+         typename VertexIndexMap, typename EdgeIndexMap,
+         typename AddEdgeVisitor>
+void make_maximal_planar(
+    Graph& g,
+    PlanarEmbedding embedding,
+    VertexIndexMap vm,
+    EdgeIndexMap em,
+    AddEdgeVisitor vis);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN/OUT
+| `Graph& g`
+| An undirected graph. The graph type must be a model of
+  xref:concepts/VertexListGraph.adoc[Vertex List Graph],
+  xref:concepts/IncidenceGraph.adoc[Incidence Graph], and a
+  xref:concepts/MutableGraph.adoc[Mutable Graph].
+
+| IN
+| `PlanarEmbedding embedding`
+| A link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map]
+  that models the xref:concepts/property_types/PlanarEmbedding.adoc[PlanarEmbedding] concept.
+
+| IN
+| `VertexIndexMap vm`
+| A link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map]
+  that maps vertices from `g` to distinct integers in the range
+  `[0, num_vertices(g))`. +
+  *Default:* `get(vertex_index,g)`
+
+| IN
+| `EdgeIndexMap em`
+| A link:../../property_map/doc/ReadablePropertyMap.html[Readable Property Map]
+  that maps edges from `g` to distinct integers in the range
+  `[0, num_edges(g))`. +
+  *Default:* `get(edge_index,g)`
+
+| IN
+| `AddEdgeVisitor vis`
+| A model of xref:visitors/AddEdgeVisitor.adoc[AddEdgeVisitor]. +
+  *Default:* `default_add_edge_visitor`, a class that defines
+  `visit_vertex_pair` to dispatch its calls to `add_edge`.
+
+|===
+
+== Description
+
+A xref:algorithms/planar/planar_graphs.adoc[planar graph] _G_ is _maximal planar_ if no additional edges (except parallel edges and self-loops) can be added to _G_ without creating a non-planar graph. By xref:algorithms/planar/planar_graphs.adoc#EulersFormula[Euler's formula], a maximal planar graph on _n_ vertices (_n > 2_) always has _3n - 6_ edges and _2n - 4_ faces. The input graph to `make_maximal_planar` must be a xref:algorithms/planar/make_biconnected_planar.adoc[biconnected] planar graph with at least 3 vertices.
+
+The default behavior of `make_maximal_planar` is to modify the graph `g` by calling `add_edge(u,v,g)` for every pair of vertices _(u,v)_ where an edge needs to be added to make `g` maximal planar. This behavior can be overridden by providing a visitor as the `AddEdgeVisitor` parameter. The only requirement for an `AddEdgeVisitor` is that it define a member function with the following signature:
+
+[source,cpp]
+----
+template<typename Graph, typename Vertex>
+void visit_vertex_pair(Vertex u, Vertex v, Graph& g);
+----
+
+This event point can also be used as a hook to update the underlying edge index map automatically as edges are added. See the documentation for the xref:visitors/AddEdgeVisitor.adoc[AddEdgeVisitor] concept for more information.
+
+See also link:../example/make_maximal_planar.cpp[examples/make_maximal_planar.cpp].
+

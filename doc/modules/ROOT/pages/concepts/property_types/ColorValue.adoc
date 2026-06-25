@@ -1,0 +1,41 @@
+= ColorValue Concept
+
+
+This concept describes the requirements for the type used for color
+values, as in for coloring a graph during a breath-first search to mark
+which vertices have been visited.
+
+== Refinement of
+
+EqualityComparable
+and
+DefaultConstructible
+
+== Notation
+
+[cols=",",]
+|===
+|`T` |A type that is a model of ColorValue.
+|`cv` |An object of type `T`.
+|===
+
+== Valid Expressions
+
+[cols=",,,",options="header",]
+|===
+|Name |Expression |Return Type |Description
+|Get Color White |`color_traits<T>::white()` |`T` |Returns
+an object that represents the color white.
+
+|Get Color Gray |`color_traits<T>::gray()` |`T` |Returns an
+object that represents the color gray.
+
+|Get Color Black |`color_traits<T>::black()` |`T` |Returns
+an object that represents the color black.
+|===
+
+== Models
+
+* `default_color_type` (in
++
+`boost/graph/properties.hpp`)

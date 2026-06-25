@@ -1,0 +1,101 @@
+= `property_map<Graph, PropertyTag>`
+
+Maps a (graph type, property tag) pair to the concrete property-map type
+the graph hands you when you call `get(tag, g)`. Every BGL graph class
+specializes `property_map` for the property tags it supports.
+
+*Defined in:* `<boost/graph/properties.hpp>`
+
+== When to use it
+
+In a function signature. If the graph is passed by mutable reference, you
+want `property_map<G, Tag>::type`; if it is passed by const reference, you
+want `property_map<G, Tag>::const_type`. Inside function bodies `auto` is
+usually fine.
+
+[source,cpp]
+----
+// Mutable graph: ::type works.
+auto w = get(edge_weight, g);                                // g is Graph&
+property_map<Graph, edge_weight_t>::type same = get(edge_weight, g);
+
+// Const graph: must use ::const_type.
+auto w = get(edge_weight, g);                                // g is const Graph&
+property_map<Graph, edge_weight_t>::const_type same = get(edge_weight, g);
+----
+
+WARNING: `const_type` is not interchangeable with `const type`. Declare
+the *type* as const if you want; do not declare a *variable* of type
+`const property_map<…>::type` — that produces a readable-only wrapper
+whose template errors are famously cryptic.
+
+== Example
+
+[source,cpp]
+----
+include::example$traits/property_map.cpp[]
+----
+
+[,text]
+----
+include::example$traits/property_map.txt[]
+----
+
+== Synopsis
+
+[source,cpp]
+----
+namespace boost {
+
+template <class Graph, class PropertyTag>
+struct property_map {
+    typedef /* specialized per graph */ type;
+    typedef /* specialized per graph */ const_type;
+};
+
+} // namespace boost
+----
+
+[cols="1,4"]
+|===
+| Nested type | Description
+
+| `type`
+| The mutable property-map type returned by `get(tag, g)` when `g` is a
+  non-const graph. Models a
+  link:../../property_map/doc/ReadWritePropertyMap.html[ReadWritePropertyMap]
+  (or LvaluePropertyMap, depending on the graph).
+
+| `const_type`
+| The read-only property-map type returned by `get(tag, g)` when `g` is a
+  const graph. Models a
+  link:../../property_map/doc/ReadablePropertyMap.html[ReadablePropertyMap].
+|===
+
+== How specializations are written
+
+A graph type opts into a property tag by specializing `property_map`:
+
+[source,cpp]
+----
+namespace boost {
+template <class Config>
+struct property_map<my_graph<Config>, edge_weight_t> {
+    typedef /* some concrete map */       type;
+    typedef /* some concrete map */ const_type;
+};
+}
+----
+
+If you are adapting an existing graph library so that BGL algorithms can
+use it, this is the extension point.
+
+== See also
+
+* xref:traits/overview.adoc[Traits and Iterators overview]
+* xref:property_maps/overview.adoc[Property Maps] — the user-facing guide
+  to choosing, constructing, and passing property maps.
+* xref:property_maps/external.adoc[External Properties] — when you want
+  to keep the data outside the graph.
+* xref:traits/property.adoc[`property<Tag, T, Next>`] — the legacy interior
+  property declaration.

@@ -1,0 +1,105 @@
+= Random Graph Utilities
+
+*Defined in:* `<boost/graph/random.hpp>`
+
+Routines to create random graphs, select random vertices and edges, and
+randomize properties.
+
+== Example
+
+[source,cpp]
+----
+include::example$generators/random_utilities.cpp[]
+----
+
+[,text]
+----
+include::example$generators/random_utilities.txt[]
+----
+
+== generate_random_graph
+
+[source,cpp]
+----
+template <typename MutableGraph, typename RandNumGen>
+void generate_random_graph(MutableGraph& g, vertices_size_type V, vertices_size_type E, RandNumGen& gen, bool allow_parallel = true, bool self_edges = false);
+----
+
+Adds `V` vertices and `E` random edges to `g`. If `allow_parallel` is `false`, duplicate edges are rejected. If `self_edges` is `false`, no edge will connect a vertex to itself.
+
+*Precondition:* `num_vertices(g) == 0` +
+*Complexity:* _O(V * E)_
+
+'''
+
+Overload that outputs created vertices and edges through iterators:
+
+[source,cpp]
+----
+template <typename MutableGraph, typename RandNumGen, typename VertexOutputIterator, typename EdgeOutputIterator>
+void generate_random_graph(MutableGraph& g, vertices_size_type V, vertices_size_type E, RandNumGen& gen, VertexOutputIterator vertex_out, EdgeOutputIterator edge_out, bool self_edges = false);
+----
+
+== random_vertex
+
+[source,cpp]
+----
+template <typename Graph, typename RandomNumGen>
+vertex_descriptor random_vertex(Graph& g, RandomNumGen& gen);
+----
+
+Returns a uniformly random vertex from `g`.
+
+*Precondition:* `num_vertices(g) > 0` +
+*Complexity:* _O(num_vertices(g))_
+
+== random_edge
+
+[source,cpp]
+----
+template <typename Graph, typename RandomNumGen>
+edge_descriptor random_edge(Graph& g, RandomNumGen& gen);
+----
+
+Returns a uniformly random edge from `g`.
+
+*Precondition:* `num_edges(g) > 0` +
+*Complexity:* _O(num_edges(g))_
+
+== random_out_edge
+
+[source,cpp]
+----
+template <typename Graph, typename RandomNumGen>
+edge_descriptor random_out_edge(Graph& g, vertex_descriptor src, RandomNumGen& gen);
+----
+
+Returns a uniformly random out-edge of vertex `src`.
+
+*Precondition:* `out_degree(src, g) > 0` +
+*Complexity:* _O(out_degree(src, g))_
+
+== weighted_random_out_edge
+
+[source,cpp]
+----
+template <typename Graph, typename WeightMap, typename RandomNumGen>
+edge_descriptor weighted_random_out_edge(Graph& g, vertex_descriptor src, WeightMap weight, RandomNumGen& gen);
+----
+
+Returns a random out-edge of vertex `src`, where each edge is selected with probability proportional to its weight. `WeightMap` must be a Readable Property Map with key type `edge_descriptor`.
+
+*Precondition:* `out_degree(src, g) > 0` and total weight > 0 +
+*Complexity:* _O(out_degree(src, g))_
+
+== randomize_property
+
+[source,cpp]
+----
+template <typename Property, typename G, typename RandomGenerator>
+void randomize_property(G& g, RandomGenerator& rg);
+----
+
+Assigns a random value to `Property` on every vertex or every edge, depending on whether `Property` has `vertex_property_tag` or `edge_property_tag` kind.
+
+*Complexity:* _O(V)_ or _O(E)_ depending on property kind.

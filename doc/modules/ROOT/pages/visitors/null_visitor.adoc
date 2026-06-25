@@ -1,0 +1,40 @@
+= null_visitor
+
+A no-op event visitor that does nothing. Useful as a placeholder or default when
+an algorithm requires a visitor but no action is needed, or to fill an unused slot
+when combining event visitors.
+
+*Defined in:* `<boost/graph/visitors.hpp>` +
+*Models:* xref:visitors/EventVisitor.adoc[EventVisitor]
+
+== Synopsis
+
+[source,cpp]
+----
+struct null_visitor {
+  typedef on_no_event event_filter;
+
+  template <class T, class Graph>
+  void operator()(T x, Graph& g);
+};
+----
+
+== Associated Types
+
+[cols="1,3",options="header"]
+|===
+| Type | Description
+
+| `event_filter`
+| `on_no_event`. The visitor is not associated with any algorithm event.
+|===
+
+== Member Functions
+
+[cols="1,3",options="header"]
+|===
+| Member | Description
+
+| `void operator()(T x, Graph& g)`
+| Does nothing.
+|===
