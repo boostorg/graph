@@ -2199,7 +2199,7 @@ public:
             edge_descriptor e;
             bool inserted;
             boost::tie(e, inserted)
-                = add_edge(source(*ei, x), target(*ei, x), *this);
+                = boost::add_edge(source(*ei, x), target(*ei, x), *this);
             *((edge_property_type*)e.m_eproperty)
                 = *((edge_property_type*)(*ei).m_eproperty);
         }
