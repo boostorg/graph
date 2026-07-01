@@ -6,5 +6,8 @@ asciidoc:
   attributes:
     source-language: cpp@
     table-caption: false
+    # Right-rail floating TOC. Set here (not in the playbook) so it travels
+    # with the component under any deploy playbook, not just the local build.
+    page-toc: ''
 nav:
   - modules/ROOT/nav.adoc
