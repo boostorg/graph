@@ -71,6 +71,7 @@ run edge_property.cpp ;
 run edge-function.cpp : $(TEST_DIR)/makefile-dependencies.dat $(TEST_DIR)/makefile-target-names.dat ;
 run edge-iter-constructor.cpp : $(TEST_DIR)/makefile-dependencies.dat ;
 exe edmonds-karp-eg : edmonds-karp-eg.cpp ;
+run geometric_graph_generator_example.cpp ;
 run exterior_properties.cpp ;
 run exterior_property_map.cpp ;
 run family_tree.cpp ;
