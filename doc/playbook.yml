@@ -20,11 +20,8 @@ content:
 asciidoc:
   attributes:
     source-highlighter: highlight.js
-    # Enable the cppalliance theme's right-rail floating TOC on every page.
-    page-toc: ''
 
 ui:
   bundle:
-    url: https://github.com/boostorg/website-v2-docs/releases/download/ui-master/ui-bundle.zip
+    url: https://github.com/boostorg/unordered-ui-bundle/raw/c80db72a7ba804256beb36e3a46d9c7df265d8d7/ui-bundle.zip
     snapshot: true
-  supplemental_files: ./supplemental-ui
