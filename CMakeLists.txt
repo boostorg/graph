@@ -3,68 +3,70 @@
 # https://www.boost.org/LICENSE_1_0.txt
 
 if (NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-    # When we're part of the Boost super project.
-    cmake_minimum_required(VERSION 3.8...3.16)
-    
-    project(boost_graph VERSION "${BOOST_SUPERPROJECT_VERSION}" LANGUAGES CXX)
-    
-    add_library(boost_graph
-      src/graphml.cpp
-      src/read_graphviz_new.cpp
-    )
-    
-    target_include_directories(boost_graph PUBLIC include)
-    
-    target_link_libraries(boost_graph
-      PUBLIC
-        Boost::algorithm
-        Boost::any
-        Boost::array
-        Boost::assert
-        Boost::bimap
-        Boost::concept_check
-        Boost::config
-        Boost::container_hash
-        Boost::conversion
-        Boost::core
-        Boost::detail
-        Boost::foreach
-        Boost::function
-        Boost::integer
-        Boost::iterator
-        Boost::lexical_cast
-        Boost::math
-        Boost::move
-        Boost::mpl
-        Boost::multi_index
-        Boost::multiprecision
-        Boost::optional
-        Boost::parameter
-        Boost::preprocessor
-        Boost::property_map
-        Boost::property_tree
-        Boost::random
-        Boost::range
-        Boost::serialization
-        Boost::smart_ptr
-        Boost::spirit
-        Boost::throw_exception
-        Boost::tti
-        Boost::tuple
-        Boost::type_traits
-        Boost::typeof
-        Boost::unordered
-        Boost::utility
-        Boost::xpressive
-      PRIVATE
-        Boost::regex
-    )
-    
-    target_compile_definitions(boost_graph
-      PUBLIC BOOST_GRAPH_NO_LIB
-      # Source files already define BOOST_GRAPH_SOURCE
-      # PRIVATE BOOST_GRAPH_SOURCE
-    )
+
+# When we're part of the Boost super project.
+cmake_minimum_required(VERSION 3.8...3.16)
+
+project(boost_graph VERSION "${BOOST_SUPERPROJECT_VERSION}" LANGUAGES CXX)
+
+add_library(boost_graph
+  src/graphml.cpp
+  src/read_graphviz_new.cpp
+)
+
+target_include_directories(boost_graph PUBLIC include)
+
+target_link_libraries(boost_graph
+  PUBLIC
+    Boost::algorithm
+    Boost::any
+    Boost::array
+    Boost::assert
+    Boost::bimap
+    Boost::concept_check
+    Boost::config
+    Boost::container_hash
+    Boost::conversion
+    Boost::core
+    Boost::detail
+    Boost::foreach
+    Boost::function
+    Boost::integer
+    Boost::iterator
+    Boost::lexical_cast
+    Boost::math
+    Boost::move
+    Boost::mpl
+    Boost::multi_index
+    Boost::multiprecision
+    Boost::optional
+    Boost::parameter
+    Boost::preprocessor
+    Boost::property_map
+    Boost::property_tree
+    Boost::random
+    Boost::range
+    Boost::serialization
+    Boost::smart_ptr
+    Boost::spirit
+    Boost::throw_exception
+    Boost::tti
+    Boost::tuple
+    Boost::type_traits
+    Boost::typeof
+    Boost::unordered
+    Boost::utility
+    Boost::xpressive
+  PRIVATE
+    Boost::regex
+)
+
+target_compile_definitions(boost_graph
+  PUBLIC BOOST_GRAPH_NO_LIB
+  # Source files already define BOOST_GRAPH_SOURCE
+  # PRIVATE BOOST_GRAPH_SOURCE
+)
+
 else()
     # When we're worked on by Boost.Graph developers.
     # Using 3.29 for now until I figure out the differences with the new Boost
@@ -245,5 +247,7 @@ else()
 endif()
 
 if(BUILD_TESTING AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/test/CMakeLists.txt")
+
   add_subdirectory(test)
+
 endif()
