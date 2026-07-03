@@ -68,17 +68,14 @@ target_compile_definitions(boost_graph
 )
 
 else()
-    # When we're worked on by Boost.Graph developers.
-    # Using 3.29 for now until I figure out the differences with the new Boost
-    # config cmake introduced in 3.30.
-    cmake_minimum_required(VERSION 3.29)
+    cmake_minimum_required(VERSION 3.30)
     project(boost_graph VERSION 1.0.0 LANGUAGES CXX)
     
     set(CMAKE_CXX_STANDARD 14)
     
     # TODO: The super-project version is set explicitly just like this, but we 
     # should parse it from boost/version.hpp.
-    find_package(Boost 1.90.0 REQUIRED COMPONENTS regex)
+    find_package(Boost 1.90.0 CONFIG REQUIRED COMPONENTS regex)
 
     add_library(boost_graph)
     target_sources(boost_graph PUBLIC
