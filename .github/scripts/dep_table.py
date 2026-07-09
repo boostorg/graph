@@ -3,16 +3,18 @@
 
 Usage: dep_table.py BASELINE.zip AFTER.zip
 
-Each archive is a GitHub Actions run-log zip. The `deps` CI job prints two
-marker-delimited boostdep reports into its log:
+Each archive is a GitHub Actions run-log zip. The `deps` job of the
+dependency-report workflow prints two marker-delimited boostdep reports into
+its log:
 
   ===DEP-BRIEF-START===    boostdep --brief graph      ===DEP-BRIEF-END===
   ===DEP-PRIMARY-START===  boostdep graph (primary)    ===DEP-PRIMARY-END===
 
 From those it derives two metrics and prints their delta vs the baseline:
-  - the set of transitive Boost modules graph depends on (from --brief), and
+  - the set of transitive Boost modules graph depends on (from --brief:
+    Primary + Secondary sections = the full transitive closure), and
   - the header-inclusion weight of each direct dependency (from the primary
-    report: how many distinct boost/graph/* headers pull that dependency in).
+    report: how many distinct boost/graph files pull that dependency in).
 Weights are the live signal, they drop toward zero as coupling is removed;
 the module count is the coarse target that only moves when a dep hits zero.
 """
@@ -22,61 +24,80 @@ import zipfile
 
 BRIEF = ("===DEP-BRIEF-START===", "===DEP-BRIEF-END===")
 PRIMARY = ("===DEP-PRIMARY-START===", "===DEP-PRIMARY-END===")
+# Module names as boostdep prints them, e.g. "numeric~conversion".
+MODULE = re.compile(r"[A-Za-z0-9_.~-]+")
+TIMESTAMP = re.compile(r"^\d{4}-\d\d-\d\dT[\d:.]+Z\s?")  # GitHub log line prefix
+ANSI = re.compile(r"\x1b\[[0-9;]*m")
 
 
-def read_logs(zip_path):
-    """Concatenate the top-level per-job .txt logs from a run-log archive."""
-    out = []
+def read_clean_lines(zip_path):
+    """Top-level per-job logs, with GitHub timestamp and ANSI prefixes stripped."""
+    lines = []
     with zipfile.ZipFile(zip_path) as z:
         for entry in z.namelist():
             if "/" in entry or not entry.endswith(".txt"):
                 continue
-            out.append(z.read(entry).decode("utf-8", "replace"))
-    return "\n".join(out)
+            for ln in z.read(entry).decode("utf-8", "replace").splitlines():
+                lines.append(TIMESTAMP.sub("", ANSI.sub("", ln)))
+    return lines
 
 
-def block(text, markers):
-    m = re.search(re.escape(markers[0]) + r"(.*?)" + re.escape(markers[1]), text, re.S)
-    return m.group(1) if m else ""
+def block(lines, markers):
+    """Lines strictly between the marker lines, matched exactly.
+
+    Exact matching is what skips the echoed `echo "<marker>"` command lines
+    GitHub prepends to a run step, so we capture boostdep's real stdout.
+    """
+    start, end = markers
+    out, capturing = [], False
+    for ln in lines:
+        s = ln.strip()
+        if s == start:
+            capturing = True
+            continue
+        if s == end and capturing:
+            break
+        if capturing:
+            out.append(ln)
+    return out
 
 
-def parse_brief(text):
+def parse_brief(lines):
     """--brief output -> set of module names (one bare name per line)."""
     mods = set()
-    for line in text.splitlines():
-        s = line.strip()
+    for ln in lines:
+        s = ln.strip()
         if not s or s.startswith("#") or s.lower().startswith("brief dependency"):
             continue
-        if re.fullmatch(r"[A-Za-z0-9_.-]+", s):
+        if MODULE.fullmatch(s):
             mods.add(s)
     return mods
 
 
-def parse_weights(text):
-    """Primary report -> {dependency: number of distinct boost/graph headers that pull it in}."""
+def parse_weights(lines):
+    """Primary report -> {dependency: number of distinct graph files that pull it in}."""
     weights, cur = {}, None
-    for line in text.splitlines():
-        head = re.match(r"^([A-Za-z0-9_.-]+):\s*$", line)  # "module:" at column 0
+    for ln in lines:
+        head = re.match(r"^([A-Za-z0-9_.~-]+):\s*$", ln)  # "module:" at column 0
         if head:
             cur = head.group(1)
             weights.setdefault(cur, set())
             continue
-        frm = re.match(r"^\s+from\s+(.+?)\s*$", line)
+        frm = re.match(r"^\s+from\s+(.+?)\s*$", ln)
         if frm and cur is not None:
             weights[cur].add(frm.group(1))
     return {k: len(v) for k, v in weights.items()}
 
 
 def main(base_zip, pr_zip):
-    base, pr = read_logs(base_zip), read_logs(pr_zip)
-    base_mods = parse_brief(block(base, BRIEF))
-    pr_mods = parse_brief(block(pr, BRIEF))
-    base_w = parse_weights(block(base, PRIMARY))
-    pr_w = parse_weights(block(pr, PRIMARY))
+    bl, pl = read_clean_lines(base_zip), read_clean_lines(pr_zip)
+    base_mods = parse_brief(block(bl, BRIEF))
+    pr_mods = parse_brief(block(pl, BRIEF))
+    base_w = parse_weights(block(bl, PRIMARY))
+    pr_w = parse_weights(block(pl, PRIMARY))
 
-    # Header-inclusion weights: the live signal. Show only rows that changed,
-    # most-reduced first.
-    print("**Header-inclusion weights** (graph headers pulling each direct dependency in):")
+    # Header-inclusion weights: the live signal. Only rows that changed, most-reduced first.
+    print("**Header-inclusion weights** (graph files pulling each direct dependency in):")
     print()
     changed = []
     for dep in base_w.keys() | pr_w.keys():
