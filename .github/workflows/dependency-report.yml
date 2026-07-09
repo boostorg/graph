@@ -19,14 +19,24 @@ jobs:
           cd ../boost-root
           cp -r $GITHUB_WORKSPACE/* libs/graph
           git submodule update --init tools/boostdep
+          # depinst pulls graph's deps; also ensure boostdep's own dep
+          # (Boost.Filesystem) is present since boostdep links against it.
           python tools/boostdep/depinst/depinst.py --git_args "--jobs 3" graph
-          c++ -std=c++14 -O2 tools/boostdep/src/boostdep.cpp -o boostdep
+          python tools/boostdep/depinst/depinst.py --git_args "--jobs 3" filesystem
+          ./bootstrap.sh
+          ./b2 headers
+          # boostdep #includes <boost/filesystem.hpp> and links the compiled
+          # library, so build it with b2 (a bare c++ compile can't resolve that).
+          ./b2 tools/boostdep/build
       - name: Boostdep dependency report
         working-directory: ../boost-root
         run: |
+          BOOSTDEP=$(find "$PWD" -type f -name boostdep -perm -u+x 2>/dev/null | grep -v '/src/' | head -1)
+          if [ -z "$BOOSTDEP" ]; then echo "boostdep executable not found after build" >&2; exit 1; fi
+          echo "using boostdep: $BOOSTDEP"
           echo "===DEP-BRIEF-START==="
-          ./boostdep --boost-root . --track-sources --no-track-tests --brief graph
+          "$BOOSTDEP" --boost-root . --track-sources --no-track-tests --brief graph
           echo "===DEP-BRIEF-END==="
           echo "===DEP-PRIMARY-START==="
-          ./boostdep --boost-root . --track-sources --no-track-tests graph
+          "$BOOSTDEP" --boost-root . --track-sources --no-track-tests graph
           echo "===DEP-PRIMARY-END==="
