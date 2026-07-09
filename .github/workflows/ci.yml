@@ -56,7 +56,7 @@ jobs:
         run: ../../../b2 toolset=$TOOLSET cxxstd=${{ matrix.cxxstd }}
         working-directory: ../boost-root/libs/graph/test
   macos:
-    runs-on: macos-latest
+    runs-on: macos-15
     strategy:
       fail-fast: false
       matrix:
@@ -71,6 +71,8 @@ jobs:
           commit-filter: '[skip ci];[ci skip];[CI SKIP];[SKIP CI];***CI SKIP***;***SKIP CI***;[windows];[Windows];[WINDOWS];[linux];[Linux];[LINUX]'
           commit-filter-separator: ';'
           fail-fast: true
+      - name: Print pinned AppleClang version
+        run: clang++ --version
       - name: Checkout main boost
         run: git clone -b develop --depth 1 https://github.com/boostorg/boost.git ../boost-root
       - name: Update tools/boostdep
