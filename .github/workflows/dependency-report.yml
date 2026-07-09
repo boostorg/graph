@@ -1,0 +1,32 @@
+name: dependency-report
+
+# Computes graph's Boost dependency footprint with boostdep and prints a
+# marker-delimited report into the job log, on every push and PR. The
+# dependency-count-comment workflow reads these logs (this PR's run and the
+# latest develop run) and posts the diff as a PR comment. Kept separate from
+# CI so ci.yml is untouched.
+
+on: [ push, pull_request ]
+
+jobs:
+  deps:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Boost tree and build boostdep
+        run: |
+          git clone -b develop --depth 1 https://github.com/boostorg/boost.git ../boost-root
+          cd ../boost-root
+          cp -r $GITHUB_WORKSPACE/* libs/graph
+          git submodule update --init tools/boostdep
+          python tools/boostdep/depinst/depinst.py --git_args "--jobs 3" graph
+          c++ -std=c++14 -O2 tools/boostdep/src/boostdep.cpp -o boostdep
+      - name: Boostdep dependency report
+        working-directory: ../boost-root
+        run: |
+          echo "===DEP-BRIEF-START==="
+          ./boostdep --boost-root . --track-sources --no-track-tests --brief graph
+          echo "===DEP-BRIEF-END==="
+          echo "===DEP-PRIMARY-START==="
+          ./boostdep --boost-root . --track-sources --no-track-tests graph
+          echo "===DEP-PRIMARY-END==="
