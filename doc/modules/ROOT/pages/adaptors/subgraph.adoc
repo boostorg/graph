@@ -131,12 +131,22 @@ edge_descriptor global_to_local(edge_descriptor e_global) const;
 
 Convert between local (subgraph-relative) and global (root) descriptors.
 
-WARNING: These conversions have a precondition. The element must belong to this
-subgraph. Passing a vertex or edge that is not in the subgraph is a precondition
-violation (checked with `BOOST_ASSERT` in debug builds, undefined behaviour
-otherwise). On the root subgraph the conversion is the identity, so any element
-is accepted. To convert an element that might not be present, test membership
-first with `find_vertex()` or `find_edge()`.
+[WARNING]
+====
+These conversions have preconditions, and the two directions differ.
+
+* `global_to_local` requires that the element is in this subgraph. In debug
+builds a violation trips `BOOST_ASSERT`; with assertions disabled it returns a
+default-constructed descriptor (`null_vertex()` for vertices). When the element
+might not be present, query membership first with `find_vertex()` or
+`find_edge()`.
+* `local_to_global` requires a valid local descriptor of this subgraph. A
+violation is undefined behaviour (an unchecked lookup) in all build
+configurations.
+
+On the root subgraph every conversion is the identity, so any element is
+accepted.
+====
 
 '''
 
