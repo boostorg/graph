@@ -97,6 +97,7 @@ alias graph_test_regular :
     [ run subgraph_bundled.cpp ]
     [ run subgraph_add.cpp : $(TEST_DIR) ]
     [ run subgraph_props.cpp ]
+    [ run subgraph_global_local.cpp ]
 
     [ run isomorphism.cpp ]
     [ run adjacency_matrix_test.cpp ]
