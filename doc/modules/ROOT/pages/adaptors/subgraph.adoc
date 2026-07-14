@@ -30,18 +30,47 @@ template <typename Graph>
 class subgraph;
 ----
 
-The `subgraph` class wraps an `adjacency_list` and maintains a tree of
-subgraphs. The root graph owns all vertices and edges. Child subgraphs hold
-subsets of the root's vertices, and their edge sets are _induced_: any edge in
-the root whose both endpoints are in the child automatically appears in the
-child.
+`subgraph` represents parts of a single graph as independent graphs, without
+copying the data and without the parts drifting out of sync with the whole. All
+vertices and edges are stored once, in the root graph. Each subgraph is a
+lightweight view onto a subset of that storage which still behaves like a full
+graph, so it can be passed to any BGL algorithm.
 
-Each subgraph uses _local_ descriptors (0-based within that subgraph). Use
-`local_to_global()` and `global_to_local()` to convert between local and root
-descriptors.
+[TIP]
+====
+Consider a national road network: intersections are vertices and roads are
+edges. An analysis might focus on one city, then one district within that city,
+then compare against the whole country. Rather than three separate copies kept
+consistent by hand, `subgraph` keeps one dataset and offers lightweight views
+onto its parts. The country is the root, a city is a child subgraph, and a
+district is a child of that city. Each view behaves like a normal graph and can
+be handed to an algorithm such as `dijkstra_shortest_paths` exactly like any
+other BGL graph.
+====
 
-Adding an edge to a child subgraph also adds it to all ancestor subgraphs.
-Adding a vertex to a child subgraph also adds it to all ancestors.
+These views nest into a tree. The _root_ subgraph holds the entire graph and
+owns all of its vertices and edges. Each _child_ is a subset of its parent's
+vertices, and a child may in turn have children of its own. A child's edges are
+_induced_: an edge belongs to a child exactly when both of its endpoints do, so
+only vertices are ever added to a child, never edges directly.
+
+Because the storage is shared rather than copied, the levels stay linked in both
+directions. A property set at one level, such as an edge weight or a vertex
+color, is visible from every level. Adding a vertex or edge to a child also adds
+it to every ancestor up to the root, so an edit made while working on one part
+keeps the whole hierarchy consistent.
+
+Each subgraph numbers its own vertices and edges 0-based, as required by the
+many algorithms that assume a contiguous index space. A descriptor is therefore
+meaningful only within one subgraph. `local_to_global()` and `global_to_local()`
+translate a descriptor between a subgraph's local numbering and the root's.
+
+Choosing among the graph views:
+
+* `filtered_graph` for a read-only view that hides some vertices or edges.
+* `copy_graph` for an independent copy that does not stay linked to the original.
+* `subgraph` when mutability, per-region local numbering, and a parent/child
+  hierarchy over shared storage are all needed.
 
 == Template Parameters
 
@@ -102,16 +131,39 @@ edge_descriptor global_to_local(edge_descriptor e_global) const;
 
 Convert between local (subgraph-relative) and global (root) descriptors.
 
+WARNING: These conversions have a precondition. The element must belong to this
+subgraph. Passing a vertex or edge that is not in the subgraph is a precondition
+violation (checked with `BOOST_ASSERT` in debug builds, undefined behaviour
+otherwise). On the root subgraph the conversion is the identity, so any element
+is accepted. To convert an element that might not be present, test membership
+first with `find_vertex()` or `find_edge()`.
+
 '''
 
 [source,cpp]
 ----
 std::pair<vertex_descriptor, bool>
 find_vertex(vertex_descriptor u_global) const;
+
+std::pair<edge_descriptor, bool>
+find_edge(edge_descriptor e_global) const;
 ----
 
-Returns `(local_descriptor, true)` if the global vertex is in this subgraph,
-`(_, false)` otherwise.
+Membership queries that never assert. `find_vertex` returns
+`(local_descriptor, true)` if the global vertex is in this subgraph, and
+`(null_vertex(), false)` otherwise. `find_edge` behaves the same way for edges,
+returning a default-constructed `edge_descriptor` in the not-found case. These
+are the safe form of `global_to_local`, for the case where the element is not
+known in advance to be in the subgraph.
+
+[NOTE]
+====
+*Descriptor identity and stability.* For an element that is present, the
+conversions round-trip: `global_to_local(local_to_global(x)) == x`, and the
+edge index is preserved. Properties live in the root's storage and are shared
+across the whole tree, so the same logical element carries the same property
+value no matter which subgraph's descriptor reaches it.
+====
 
 === Hierarchy Navigation
 
