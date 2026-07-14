@@ -102,10 +102,10 @@ void test_descriptor_conversion()
     BOOST_TEST(!g1a.find_edge(e12).second);
 }
 
-// invariant: global_to_local on an edge that is not in the subgraph must return
-// a default-constructed descriptor rather than dereferencing a missing map entry.
+// idiom: find_edge is the membership query; global_to_local is the transform to
+// run once membership is confirmed.
 template < typename Directedness >
-void test_absent_edge_returns_default()
+void test_membership_query_then_convert()
 {
     using graph_t = subgraph_of< Directedness >;
     using edge_t = typename graph_traits< graph_t >::edge_descriptor;
@@ -119,15 +119,23 @@ void test_absent_edge_returns_default()
     add_vertex(1, sg);
     add_vertex(2, sg);
 
-    edge_t e01 = edge(0, 1, root).first; // in root, absent from sg
-    BOOST_TEST(sg.global_to_local(e01) == edge_t());
+    // Present edge: the query confirms membership, then the transform agrees
+    // with the local descriptor the query returned.
+    edge_t e12 = edge(1, 2, root).first;
+    std::pair< edge_t, bool > found = sg.find_edge(e12);
+    BOOST_TEST(found.second);
+    BOOST_TEST(sg.global_to_local(e12) == found.first);
+
+    // Absent edge: the query reports it, so the transform is not run.
+    edge_t e01 = edge(0, 1, root).first;
+    BOOST_TEST(!sg.find_edge(e01).second);
 }
 
 int main()
 {
     test_descriptor_conversion< directedS >();
     test_descriptor_conversion< bidirectionalS >();
-    test_absent_edge_returns_default< directedS >();
-    test_absent_edge_returns_default< bidirectionalS >();
+    test_membership_query_then_convert< directedS >();
+    test_membership_query_then_convert< bidirectionalS >();
     return boost::report_errors();
 }
