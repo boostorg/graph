@@ -40,7 +40,6 @@ constant boost_dependencies :
     /boost/tti//boost_tti
     /boost/tuple//boost_tuple
     /boost/type_traits//boost_type_traits
-    /boost/typeof//boost_typeof
     /boost/unordered//boost_unordered
     /boost/utility//boost_utility
     /boost/xpressive//boost_xpressive ;
