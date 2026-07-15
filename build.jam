@@ -15,7 +15,6 @@ constant boost_dependencies :
     /boost/concept_check//boost_concept_check
     /boost/config//boost_config
     /boost/container_hash//boost_container_hash
-    /boost/conversion//boost_conversion
     /boost/core//boost_core
     /boost/detail//boost_detail
     /boost/foreach//boost_foreach

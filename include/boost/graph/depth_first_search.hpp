@@ -21,7 +21,6 @@
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/detail/mpi_include.hpp>
 #include <boost/ref.hpp>
-#include <boost/implicit_cast.hpp>
 #include <boost/optional.hpp>
 #include <boost/parameter.hpp>
 #include <boost/concept/assert.hpp>
@@ -275,7 +274,7 @@ void depth_first_search(const VertexListGraph& g, DFSVisitor vis,
     typename graph_traits< VertexListGraph >::vertex_iterator ui, ui_end;
     for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
     {
-        Vertex u = implicit_cast< Vertex >(*ui);
+        Vertex u = *ui;
         put(color, u, Color::white());
         vis.initialize_vertex(u, g);
     }
@@ -289,7 +288,7 @@ void depth_first_search(const VertexListGraph& g, DFSVisitor vis,
 
     for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
     {
-        Vertex u = implicit_cast< Vertex >(*ui);
+        Vertex u = *ui;
         ColorValue u_color = get(color, u);
         if (u_color == Color::white())
         {
