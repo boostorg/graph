@@ -16,7 +16,6 @@ constant boost_dependencies :
     /boost/container_hash//boost_container_hash
     /boost/core//boost_core
     /boost/detail//boost_detail
-    /boost/foreach//boost_foreach
     /boost/function//boost_function
     /boost/integer//boost_integer
     /boost/iterator//boost_iterator

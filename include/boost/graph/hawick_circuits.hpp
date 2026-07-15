@@ -9,7 +9,6 @@
 
 #include <algorithm>
 #include <boost/assert.hpp>
-#include <boost/foreach.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/one_bit_color_map.hpp>
 #include <boost/graph/properties.hpp>
@@ -17,6 +16,7 @@
 #include <boost/range/begin.hpp>
 #include <boost/range/end.hpp>
 #include <boost/range/iterator.hpp>
+#include <boost/range/iterator_range.hpp>
 #include <boost/tuple/tuple.hpp> // for boost::tie
 #include <boost/type_traits/remove_reference.hpp>
 #include <boost/utility/result_of.hpp>
@@ -133,7 +133,7 @@ namespace hawick_circuits_detail
         // documented above.
         bool blocked_map_starts_all_unblocked() const
         {
-            BOOST_FOREACH (Vertex v, vertices(graph_))
+            for (Vertex v : boost::make_iterator_range(vertices(graph_)))
                 if (is_blocked(v))
                     return false;
             return true;
@@ -143,7 +143,7 @@ namespace hawick_circuits_detail
         // sharing data structures between iterations does not break the code.
         bool all_closed_rows_are_empty() const
         {
-            BOOST_FOREACH (typename ClosedMatrix::reference row, closed_)
+            for (typename ClosedMatrix::reference row : closed_)
                 if (!row.empty())
                     return false;
             return true;
