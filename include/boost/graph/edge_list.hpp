@@ -13,8 +13,7 @@
 
 #include <iterator>
 #include <boost/config.hpp>
-#include <boost/mpl/if.hpp>
-#include <boost/mpl/bool.hpp>
+#include <type_traits>
 #include <boost/range/irange.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
@@ -264,7 +263,7 @@ template < class Cat > struct is_random
     {
         RET = false
     };
-    typedef mpl::false_ type;
+    typedef std::false_type type;
 };
 template <> struct is_random< std::random_access_iterator_tag >
 {
@@ -272,7 +271,7 @@ template <> struct is_random< std::random_access_iterator_tag >
     {
         RET = true
     };
-    typedef mpl::true_ type;
+    typedef std::true_type type;
 };
 
 // The edge_list class conditionally inherits from one of the
@@ -287,7 +286,7 @@ template < class EdgeIter,
     class T, class D, class Cat >
 #endif
 class edge_list
-: public mpl::if_< typename is_random< Cat >::type,
+: public std::conditional< is_random< Cat >::type::value,
       edge_list_impl_ra< edge_list< EdgeIter, T, D, Cat >, EdgeIter, T, D >,
       edge_list_impl< edge_list< EdgeIter, T, D, Cat >, EdgeIter, T, D > >::type
 {

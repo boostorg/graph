@@ -19,7 +19,7 @@
 #include <boost/tuple/tuple.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/type_traits/is_same.hpp>
-#include <boost/mpl/if.hpp>
+#include <type_traits>
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/named_function_params.hpp>
 #include <algorithm>
@@ -451,7 +451,7 @@ namespace detail
                 degree_size_type;
             typedef
                 typename graph_traits< Graph >::edge_descriptor edge_descriptor;
-            typedef typename mpl::if_c<
+            typedef typename std::conditional<
                 (is_same< CentralityMap, dummy_property_map >::value),
                 EdgeCentralityMap, CentralityMap >::type a_centrality_map;
             typedef typename property_traits< a_centrality_map >::value_type
@@ -483,7 +483,7 @@ namespace detail
                 degree_size_type;
             typedef
                 typename graph_traits< Graph >::edge_descriptor edge_descriptor;
-            typedef typename mpl::if_c<
+            typedef typename std::conditional<
                 (is_same< CentralityMap, dummy_property_map >::value),
                 EdgeCentralityMap, CentralityMap >::type a_centrality_map;
             typedef typename property_traits< a_centrality_map >::value_type
