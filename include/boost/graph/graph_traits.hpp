@@ -14,15 +14,12 @@
 #include <iterator>
 #include <utility> /* Primarily for std::pair */
 #include <boost/tuple/tuple.hpp>
-#include <boost/mpl/if.hpp>
-#include <boost/mpl/eval_if.hpp>
 #include <boost/mpl/bool.hpp>
 #include <boost/mpl/not.hpp>
-#include <boost/mpl/has_xxx.hpp>
-#include <boost/mpl/void.hpp>
-#include <boost/mpl/identity.hpp>
 #include <boost/mpl/and.hpp>
 #include <boost/type_traits/is_same.hpp>
+#include <boost/type_traits/make_void.hpp>
+#include <type_traits>
 #include <boost/iterator/iterator_categories.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
 #include <boost/pending/property.hpp>
@@ -33,16 +30,18 @@ namespace boost
 
 namespace detail
 {
-#define BOOST_GRAPH_MEMBER_OR_VOID(name)                                                                                            \
-    BOOST_MPL_HAS_XXX_TRAIT_DEF(name)                                                                                               \
-    template < typename T > struct BOOST_JOIN(get_member_, name)                                                                    \
-    {                                                                                                                               \
-        typedef typename T::name type;                                                                                              \
-    };                                                                                                                              \
-    template < typename T >                                                                                                         \
-    struct BOOST_JOIN(get_opt_member_, name)                                                                                        \
-    : boost::mpl::eval_if_c< BOOST_JOIN(has_, name) < T >::value, BOOST_JOIN(get_member_, name)< T >, boost::mpl::identity< void > >\
-    {                                                                                                                               \
+// get_opt_member_##name<T>::type is T::name when that member type exists, void otherwise.
+#define BOOST_GRAPH_MEMBER_OR_VOID(name)                                       \
+    template < typename T, typename = void >                                   \
+    struct BOOST_JOIN(get_opt_member_, name)                                   \
+    {                                                                          \
+        using type = void;                                                     \
+    };                                                                         \
+    template < typename T >                                                    \
+    struct BOOST_JOIN(get_opt_member_, name)< T,                               \
+        boost::void_t< typename T::name > >                                    \
+    {                                                                          \
+        using type = typename T::name;                                         \
     };
     BOOST_GRAPH_MEMBER_OR_VOID(adjacency_iterator)
     BOOST_GRAPH_MEMBER_OR_VOID(out_edge_iterator)
@@ -282,40 +281,47 @@ typedef boost::forward_traversal_tag multi_pass_input_iterator_tag;
 
 namespace detail
 {
-    BOOST_MPL_HAS_XXX_TRAIT_DEF(graph_property_type)
-    BOOST_MPL_HAS_XXX_TRAIT_DEF(edge_property_type)
-    BOOST_MPL_HAS_XXX_TRAIT_DEF(vertex_property_type)
-
-    template < typename G > struct get_graph_property_type
+    // When the member type is present these expose it as ::type
+    //  when absent they inherit no_property and expose no nested ::type.
+    template < typename G, typename = void >
+    struct get_graph_property_type : no_property
     {
-        typedef typename G::graph_property_type type;
     };
-    template < typename G > struct get_edge_property_type
+    template < typename G >
+    struct get_graph_property_type< G, boost::void_t< typename G::graph_property_type > >
     {
-        typedef typename G::edge_property_type type;
+        using type = typename G::graph_property_type;
     };
-    template < typename G > struct get_vertex_property_type
+    template < typename G, typename = void >
+    struct get_edge_property_type : no_property
     {
-        typedef typename G::vertex_property_type type;
+    };
+    template < typename G >
+    struct get_edge_property_type< G, boost::void_t< typename G::edge_property_type > >
+    {
+        using type = typename G::edge_property_type;
+    };
+    template < typename G, typename = void >
+    struct get_vertex_property_type : no_property
+    {
+    };
+    template < typename G >
+    struct get_vertex_property_type< G, boost::void_t< typename G::vertex_property_type > >
+    {
+        using type = typename G::vertex_property_type;
     };
 }
 
 template < typename G >
-struct graph_property_type
-: boost::mpl::eval_if< detail::has_graph_property_type< G >,
-      detail::get_graph_property_type< G >, no_property >
+struct graph_property_type : detail::get_graph_property_type< G >
 {
 };
 template < typename G >
-struct edge_property_type
-: boost::mpl::eval_if< detail::has_edge_property_type< G >,
-      detail::get_edge_property_type< G >, no_property >
+struct edge_property_type : detail::get_edge_property_type< G >
 {
 };
 template < typename G >
-struct vertex_property_type
-: boost::mpl::eval_if< detail::has_vertex_property_type< G >,
-      detail::get_vertex_property_type< G >, no_property >
+struct vertex_property_type : detail::get_vertex_property_type< G >
 {
 };
 
@@ -341,7 +347,8 @@ namespace graph
         template < typename Graph, typename Descriptor > class bundled_result
         {
             typedef typename graph_traits< Graph >::vertex_descriptor Vertex;
-            typedef typename mpl::if_c< (is_same< Descriptor, Vertex >::value),
+            typedef typename std::conditional<
+                (is_same< Descriptor, Vertex >::value),
                 vertex_bundle_type< Graph >, edge_bundle_type< Graph > >::type
                 bundler;
 
