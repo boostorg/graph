@@ -21,7 +21,6 @@
 #include <boost/graph/exception.hpp>
 #include <boost/graph/graph_traits.hpp>
 
-#include <boost/mpl/bool.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/mpl/find.hpp>
 #include <boost/mpl/for_each.hpp>
