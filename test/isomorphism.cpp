@@ -30,7 +30,6 @@
 #include <boost/random/uniform_int.hpp>
 #include <boost/random/mersenne_twister.hpp>
 
-#define BOOST_GRAPH_USE_SPIRIT_PARSER
 #include <boost/property_map/dynamic_property_map.hpp>
 #include <boost/graph/graphviz.hpp>
 
