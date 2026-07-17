@@ -28,9 +28,9 @@
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/not.hpp>
-#include <boost/mpl/bool.hpp>
 #include <boost/graph/detail/edge.hpp>
 #include <boost/type_traits/is_same.hpp>
+#include <type_traits>
 #include <boost/detail/workaround.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/named_graph.hpp>
@@ -187,7 +187,7 @@ namespace detail
         {
             value = false
         };
-        typedef mpl::false_ type;
+        typedef std::false_type type;
     };
     template <> struct is_random_access< vecS >
     {
@@ -195,12 +195,12 @@ namespace detail
         {
             value = true
         };
-        typedef mpl::true_ type;
+        typedef std::true_type type;
     };
 
 } // namespace detail
 
-template < typename Selector > struct is_distributed_selector : mpl::false_
+template < typename Selector > struct is_distributed_selector : std::false_type
 {
 };
 
