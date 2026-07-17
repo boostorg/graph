@@ -35,7 +35,6 @@ constant boost_dependencies :
     /boost/smart_ptr//boost_smart_ptr
     /boost/spirit//boost_spirit
     /boost/throw_exception//boost_throw_exception
-    /boost/tti//boost_tti
     /boost/tuple//boost_tuple
     /boost/type_traits//boost_type_traits
     /boost/unordered//boost_unordered
