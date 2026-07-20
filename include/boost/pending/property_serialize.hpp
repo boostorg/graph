@@ -7,9 +7,13 @@
 #define BOOST_PROPERTY_SERIALIZE_HPP
 
 #include <boost/pending/property.hpp>
+#include <boost/core/nvp.hpp>
+
+// Only the Parallel BGL (MPI) specializations below need Boost.Serialization,
+// so keep its header out of the default build.
+#ifdef BOOST_GRAPH_USE_MPI
 #include <boost/serialization/is_bitwise_serializable.hpp>
-#include <boost/serialization/base_object.hpp>
-#include <boost/serialization/nvp.hpp>
+#endif
 
 namespace boost
 {
@@ -22,8 +26,8 @@ template < class Archive, class Tag, class T, class Base >
 void serialize(
     Archive& ar, property< Tag, T, Base >& prop, const unsigned int /*version*/)
 {
-    ar& serialization::make_nvp("property_value", prop.m_value);
-    ar& serialization::make_nvp("property_base", prop.m_base);
+    ar& boost::make_nvp("property_value", prop.m_value);
+    ar& boost::make_nvp("property_base", prop.m_base);
 }
 
 #ifdef BOOST_GRAPH_USE_MPI
