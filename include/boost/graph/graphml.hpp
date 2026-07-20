@@ -15,6 +15,8 @@
 #include <boost/config.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/any.hpp>
+#include <boost/mp11/algorithm.hpp>
+#include <boost/mp11/list.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dll_import_export.hpp>
@@ -30,49 +32,6 @@
 
 namespace boost
 {
-
-namespace graphml_detail
-{
-    // The fixed list of value types GraphML understands
-    template < typename... Ts > struct value_type_list {};
-
-    template < typename List > struct for_each_value_type_impl;
-
-    template < typename... Ts >
-    struct for_each_value_type_impl< value_type_list< Ts... > >
-    {
-        // f can accumulate state (type_found)
-        template < typename F > static void apply(F& f)
-        {
-            // an array of 0 but with the side effect of calling the functor on each type
-            const int expand[] = { 0, (f(Ts()), 0)... };
-            (void)expand;
-        }
-    };
-
-    // Calls f once for each type in List, in order
-    template < typename List, typename F > 
-    void for_each_value_type(F f)
-    {
-        for_each_value_type_impl< List >::apply(f);
-    }
-
-    // ::value is the position of T in List.
-    template < typename List, typename T > 
-    struct index_of_value_type;
-    
-    template < typename T, typename... Rest >
-    struct index_of_value_type< value_type_list< T, Rest... >, T >
-    {
-        static const int value = 0;
-    };
-    
-    template < typename T, typename Head, typename... Rest >
-    struct index_of_value_type< value_type_list< Head, Rest... >, T >
-    {
-        static const int value = 1 + index_of_value_type< value_type_list< Rest... >, T >::value;
-    };
-} // namespace graphml_detail
 
 /////////////////////////////////////////////////////////////////////////////
 // Graph reader exceptions
@@ -150,7 +109,7 @@ public:
         bool type_found = false;
         try
         {
-            graphml_detail::for_each_value_type< value_types >(
+            mp11::mp_for_each< value_types >(
                 put_property< MutableGraph*, value_types >(name, m_dp, &m_g,
                     value, value_type, m_type_names, type_found));
         }
@@ -172,7 +131,7 @@ public:
         bool type_found = false;
         try
         {
-            graphml_detail::for_each_value_type< value_types >(
+            mp11::mp_for_each< value_types >(
                 put_property< vertex_descriptor, value_types >(name, m_dp,
                     any_cast< vertex_descriptor >(vertex), value, value_type,
                     m_type_names, type_found));
@@ -195,7 +154,7 @@ public:
         bool type_found = false;
         try
         {
-            graphml_detail::for_each_value_type< value_types >(
+            mp11::mp_for_each< value_types >(
                 put_property< edge_descriptor, value_types >(name, m_dp,
                     any_cast< edge_descriptor >(edge), value, value_type,
                     m_type_names, type_found));
@@ -231,8 +190,7 @@ public:
         template < class Value > void operator()(Value)
         {
             if (m_value_type
-                == m_type_names[graphml_detail::index_of_value_type<
-                    ValueVector, Value >::value])
+                == m_type_names[mp11::mp_find< ValueVector, Value >::value])
             {
                 put(m_name, m_dp, m_key, lexical_cast< Value >(m_value));
                 m_type_found = true;
@@ -252,7 +210,7 @@ public:
 protected:
     MutableGraph& m_g;
     dynamic_properties& m_dp;
-    using value_types = graphml_detail::value_type_list< bool, int, long, float, double, std::string >;
+    using value_types = mp11::mp_list< bool, int, long, float, double, std::string >;
     static const char* m_type_names[];
 };
 
@@ -282,8 +240,7 @@ public:
     template < typename Type > void operator()(Type)
     {
         if (typeid(Type) == m_type)
-            m_type_name = m_type_names[graphml_detail::index_of_value_type<
-                Types, Type >::value];
+            m_type_name = m_type_names[mp11::mp_find< Types, Type >::value];
     }
 
 private:
@@ -313,7 +270,7 @@ void write_graphml(std::ostream& out, const Graph& g,
            "xsi:schemaLocation=\"http://graphml.graphdrawing.org/xmlns "
            "http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd\">\n";
 
-    using value_types = graphml_detail::value_type_list< bool, short,
+    using value_types = mp11::mp_list< bool, short,
         unsigned short, int, unsigned int, long, unsigned long, long long,
         unsigned long long, float, double, long double, std::string >;
     const char* type_names[] = { "boolean", "int", "int", "int", "int", "long",
@@ -336,7 +293,7 @@ void write_graphml(std::ostream& out, const Graph& g,
         else
             continue;
         std::string type_name = "string";
-        graphml_detail::for_each_value_type< value_types >(
+        mp11::mp_for_each< value_types >(
             get_type_name< value_types >(
                 i->second->value(), type_names, type_name));
         out << "  <key id=\"" << encode_char_entities(key_id) << "\" for=\""

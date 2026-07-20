@@ -31,6 +31,7 @@ target_link_libraries(boost_graph
     Boost::integer
     Boost::iterator
     Boost::lexical_cast
+    Boost::mp11
     Boost::mpl
     Boost::multi_index
     Boost::multiprecision

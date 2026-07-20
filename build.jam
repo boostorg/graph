@@ -20,6 +20,7 @@ constant boost_dependencies :
     /boost/integer//boost_integer
     /boost/iterator//boost_iterator
     /boost/lexical_cast//boost_lexical_cast
+    /boost/mp11//boost_mp11
     /boost/mpl//boost_mpl
     /boost/multi_index//boost_multi_index
     /boost/multiprecision//boost_multiprecision
