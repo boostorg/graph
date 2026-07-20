@@ -46,7 +46,6 @@ target_link_libraries(boost_graph
     Boost::smart_ptr
     Boost::spirit
     Boost::throw_exception
-    Boost::tti
     Boost::tuple
     Boost::type_traits
     Boost::unordered
