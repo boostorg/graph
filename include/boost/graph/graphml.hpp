@@ -22,7 +22,6 @@
 #include <boost/graph/dll_import_export.hpp>
 #include <boost/graph/exception.hpp>
 #include <boost/graph/graph_traits.hpp>
-
 #include <boost/property_map/dynamic_property_map.hpp>
 #include <boost/property_tree/detail/xml_parser_utils.hpp>
 #include <boost/throw_exception.hpp>

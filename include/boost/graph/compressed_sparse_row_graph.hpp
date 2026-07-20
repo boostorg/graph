@@ -36,7 +36,6 @@
 #include <boost/property_map/property_map.hpp>
 #include <boost/integer.hpp>
 #include <boost/iterator/iterator_facade.hpp>
-#include <boost/mpl/if.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <boost/graph/graph_selectors.hpp>
 #include <boost/graph/detail/is_distributed_selector.hpp>
@@ -45,7 +44,6 @@
 #include <boost/functional/hash.hpp>
 #include <boost/next_prior.hpp>
 #include <boost/property_map/transform_value_property_map.hpp>
-#include <boost/mpl/print.hpp>
 
 namespace boost
 {

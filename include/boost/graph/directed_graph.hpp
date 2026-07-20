@@ -12,7 +12,6 @@
 #include <boost/pending/property.hpp>
 #include <boost/property_map/transform_value_property_map.hpp>
 #include <boost/type_traits.hpp>
-#include <boost/mpl/if.hpp>
 
 namespace boost
 {
