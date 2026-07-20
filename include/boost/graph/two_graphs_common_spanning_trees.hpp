@@ -13,7 +13,6 @@
 
 #include <boost/config.hpp>
 
-#include <boost/bimap.hpp>
 #include <boost/type_traits.hpp>
 #include <boost/concept/requires.hpp>
 #include <boost/graph/graph_traits.hpp>
@@ -23,6 +22,8 @@
 #include <vector>
 #include <stack>
 #include <map>
+#include <utility>
+#include <cstddef>
 
 namespace boost
 {
@@ -123,14 +124,44 @@ namespace detail
         InLMap mMap;
     };
 
+    // Position/edge lookup used by the algorithm below. left maps a position
+    // index to its edge, right maps an edge back to its position.
+    template < typename Edge > struct index_bimap
+    {
+        using value_type = std::pair< std::size_t, Edge >;
+
+        struct left_type
+        {
+            std::vector< Edge > store;
+            // i is a dense position in [0, n), so unchecked access is safe.
+            const Edge& at(std::size_t i) const { return store[i]; }
+        } left;
+
+        struct right_type
+        {
+            using map_type = std::map< Edge, std::size_t >;
+            using const_iterator = typename map_type::const_iterator;
+            map_type store;
+            std::size_t at(const Edge& e) const { return store.at(e); }
+            const_iterator find(const Edge& e) const { return store.find(e); }
+            const_iterator end() const { return store.end(); }
+        } right;
+
+        void insert(const value_type& v)
+        {
+            if (left.store.size() <= v.first)
+                left.store.resize(v.first + 1);
+            left.store[v.first] = v.second;
+            right.store[v.second] = v.first;
+        }
+    };
+
     template < typename Graph, typename Func, typename Seq, typename Map >
     void rec_two_graphs_common_spanning_trees(const Graph& iG,
-        bimap< bimaps::set_of< int >,
-            bimaps::set_of< typename graph_traits< Graph >::edge_descriptor > >
+        index_bimap< typename graph_traits< Graph >::edge_descriptor >
             iG_bimap,
         Map aiG_inL, Map diG, const Graph& vG,
-        bimap< bimaps::set_of< int >,
-            bimaps::set_of< typename graph_traits< Graph >::edge_descriptor > >
+        index_bimap< typename graph_traits< Graph >::edge_descriptor >
             vG_bimap,
         Map avG_inL, Map dvG, Func func, Seq inL)
     {
@@ -612,10 +643,8 @@ two_graphs_common_spanning_trees(const Graph& iG, Order iG_map, const Graph& vG,
     if (iG_map.size() != num_edges(iG) || vG_map.size() != num_edges(vG))
         return;
 
-    typedef bimaps::bimap< bimaps::set_of< int >,
-        bimaps::set_of< order_value_type > >
-        bimap_type;
-    typedef typename bimap_type::value_type bimap_value;
+    using bimap_type = detail::index_bimap< order_value_type >;
+    using bimap_value = typename bimap_type::value_type;
 
     bimap_type iG_bimap, vG_bimap;
     for (order_size_type i = 0; i < iG_map.size(); ++i)
