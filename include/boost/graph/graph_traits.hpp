@@ -14,9 +14,6 @@
 #include <iterator>
 #include <utility> /* Primarily for std::pair */
 #include <boost/tuple/tuple.hpp>
-#include <boost/mpl/bool.hpp>
-#include <boost/mpl/not.hpp>
-#include <boost/mpl/and.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/make_void.hpp>
 #include <type_traits>
@@ -121,7 +118,7 @@ namespace graph_detail
 {
     template < typename Tag >
     struct is_directed_tag
-    : mpl::bool_< is_convertible< Tag, directed_tag >::value >
+    : std::integral_constant< bool, is_convertible< Tag, directed_tag >::value >
     {
     };
 } // namespace graph_detail
@@ -134,7 +131,8 @@ struct is_directed_graph
 };
 
 template < typename Graph >
-struct is_undirected_graph : mpl::not_< is_directed_graph< Graph > >
+struct is_undirected_graph
+: std::integral_constant< bool, !is_directed_graph< Graph >::value >
 {
 };
 //@}
@@ -169,8 +167,9 @@ template < typename Graph > bool allows_parallel_edges(const Graph&)
  */
 template < typename Graph >
 struct is_multigraph
-: mpl::bool_< is_same< typename graph_traits< Graph >::edge_parallel_category,
-      allow_parallel_edge_tag >::value >
+: std::integral_constant< bool,
+      is_same< typename graph_traits< Graph >::edge_parallel_category,
+          allow_parallel_edge_tag >::value >
 {
 };
 //@}
@@ -217,7 +216,7 @@ struct distributed_edge_list_graph_tag
 //@{
 template < typename Graph >
 struct is_incidence_graph
-: mpl::bool_<
+: std::integral_constant< bool,
       is_convertible< typename graph_traits< Graph >::traversal_category,
           incidence_graph_tag >::value >
 {
@@ -225,7 +224,7 @@ struct is_incidence_graph
 
 template < typename Graph >
 struct is_bidirectional_graph
-: mpl::bool_<
+: std::integral_constant< bool,
       is_convertible< typename graph_traits< Graph >::traversal_category,
           bidirectional_graph_tag >::value >
 {
@@ -233,7 +232,7 @@ struct is_bidirectional_graph
 
 template < typename Graph >
 struct is_vertex_list_graph
-: mpl::bool_<
+: std::integral_constant< bool,
       is_convertible< typename graph_traits< Graph >::traversal_category,
           vertex_list_graph_tag >::value >
 {
@@ -241,7 +240,7 @@ struct is_vertex_list_graph
 
 template < typename Graph >
 struct is_edge_list_graph
-: mpl::bool_<
+: std::integral_constant< bool,
       is_convertible< typename graph_traits< Graph >::traversal_category,
           edge_list_graph_tag >::value >
 {
@@ -249,7 +248,7 @@ struct is_edge_list_graph
 
 template < typename Graph >
 struct is_adjacency_matrix
-: mpl::bool_<
+: std::integral_constant< bool,
       is_convertible< typename graph_traits< Graph >::traversal_category,
           adjacency_matrix_tag >::value >
 {
@@ -264,14 +263,17 @@ struct is_adjacency_matrix
 //@{
 template < typename Graph >
 struct is_directed_unidirectional_graph
-: mpl::and_< is_directed_graph< Graph >,
-      mpl::not_< is_bidirectional_graph< Graph > > >
+: std::integral_constant< bool,
+      is_directed_graph< Graph >::value
+          && !is_bidirectional_graph< Graph >::value >
 {
 };
 
 template < typename Graph >
 struct is_directed_bidirectional_graph
-: mpl::and_< is_directed_graph< Graph >, is_bidirectional_graph< Graph > >
+: std::integral_constant< bool,
+      is_directed_graph< Graph >::value
+          && is_bidirectional_graph< Graph >::value >
 {
 };
 //@}
@@ -374,7 +376,8 @@ namespace graph_detail
     // A helper metafunction for determining whether or not a type is
     // bundled.
     template < typename T >
-    struct is_no_bundle : mpl::bool_< is_same< T, no_property >::value >
+    struct is_no_bundle
+    : std::integral_constant< bool, is_same< T, no_property >::value >
     {
     };
 } // namespace graph_detail
@@ -387,43 +390,49 @@ namespace graph_detail
 //@{
 template < typename Graph >
 struct has_graph_property
-: mpl::not_< typename detail::is_no_property<
-      typename graph_property_type< Graph >::type >::type >::type
+: std::integral_constant< bool,
+      !detail::is_no_property<
+          typename graph_property_type< Graph >::type >::value >
 {
 };
 
 template < typename Graph >
 struct has_bundled_graph_property
-: mpl::not_<
-      graph_detail::is_no_bundle< typename graph_bundle_type< Graph >::type > >
+: std::integral_constant< bool,
+      !graph_detail::is_no_bundle<
+          typename graph_bundle_type< Graph >::type >::value >
 {
 };
 
 template < typename Graph >
 struct has_vertex_property
-: mpl::not_< typename detail::is_no_property<
-      typename vertex_property_type< Graph >::type > >::type
+: std::integral_constant< bool,
+      !detail::is_no_property<
+          typename vertex_property_type< Graph >::type >::value >
 {
 };
 
 template < typename Graph >
 struct has_bundled_vertex_property
-: mpl::not_<
-      graph_detail::is_no_bundle< typename vertex_bundle_type< Graph >::type > >
+: std::integral_constant< bool,
+      !graph_detail::is_no_bundle<
+          typename vertex_bundle_type< Graph >::type >::value >
 {
 };
 
 template < typename Graph >
 struct has_edge_property
-: mpl::not_< typename detail::is_no_property<
-      typename edge_property_type< Graph >::type > >::type
+: std::integral_constant< bool,
+      !detail::is_no_property<
+          typename edge_property_type< Graph >::type >::value >
 {
 };
 
 template < typename Graph >
 struct has_bundled_edge_property
-: mpl::not_<
-      graph_detail::is_no_bundle< typename edge_bundle_type< Graph >::type > >
+: std::integral_constant< bool,
+      !graph_detail::is_no_bundle<
+          typename edge_bundle_type< Graph >::type >::value >
 {
 };
 //@}
