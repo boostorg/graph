@@ -12,7 +12,7 @@
 #include <iterator>
 #include <utility>
 #include <boost/random/uniform_int.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/graph/graph_traits.hpp>
 #include <vector>
 #include <map>
@@ -240,7 +240,7 @@ private:
 
     RandomGenerator* gen;
     std::size_t n;
-    shared_ptr< out_degrees_t > out_degrees;
+    std::shared_ptr< out_degrees_t > out_degrees;
     std::size_t degrees_left;
     bool allow_self_loops;
     value_type current;

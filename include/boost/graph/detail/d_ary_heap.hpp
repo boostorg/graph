@@ -17,7 +17,7 @@
 #include <utility>
 #include <boost/assert.hpp>
 #include <boost/static_assert.hpp>
-#include <boost/shared_array.hpp>
+#include <memory>
 #include <boost/property_map/property_map.hpp>
 
 // WARNING: it is not safe to copy a d_ary_heap_indirect and then modify one of
@@ -45,23 +45,25 @@ namespace detail
 {
     template < typename Value > class fixed_max_size_vector
     {
-        boost::shared_array< Value > m_data;
+        // todo : C++17: replace with std::shared_ptr<T[]>
+        std::shared_ptr< Value > m_data;
         std::size_t m_size;
 
     public:
         typedef std::size_t size_type;
         fixed_max_size_vector(std::size_t max_size)
-        : m_data(new Value[max_size]), m_size(0)
+        : m_data(new Value[max_size], std::default_delete< Value[] >())
+        , m_size(0)
         {
         }
         std::size_t size() const { return m_size; }
         bool empty() const { return m_size == 0; }
-        Value& operator[](std::size_t i) { return m_data[i]; }
-        const Value& operator[](std::size_t i) const { return m_data[i]; }
-        void push_back(Value v) { m_data[m_size++] = v; }
+        Value& operator[](std::size_t i) { return m_data.get()[i]; }
+        const Value& operator[](std::size_t i) const { return m_data.get()[i]; }
+        void push_back(Value v) { m_data.get()[m_size++] = v; }
         void pop_back() { --m_size; }
-        Value& back() { return m_data[m_size - 1]; }
-        const Value& back() const { return m_data[m_size - 1]; }
+        Value& back() { return m_data.get()[m_size - 1]; }
+        const Value& back() const { return m_data.get()[m_size - 1]; }
     };
 }
 
