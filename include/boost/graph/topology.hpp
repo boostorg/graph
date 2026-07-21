@@ -16,7 +16,7 @@
 #include <cmath>
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/linear_congruential.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <cmath>
 
@@ -302,8 +302,8 @@ public:
     }
 
 private:
-    shared_ptr< RandomNumberGenerator > gen_ptr;
-    shared_ptr< rand_t > rand;
+    std::shared_ptr< RandomNumberGenerator > gen_ptr;
+    std::shared_ptr< rand_t > rand;
     double scaling;
 };
 
@@ -411,8 +411,8 @@ public:
     }
 
 private:
-    shared_ptr< RandomNumberGenerator > gen_ptr;
-    shared_ptr< rand_t > rand;
+    std::shared_ptr< RandomNumberGenerator > gen_ptr;
+    std::shared_ptr< rand_t > rand;
     double left, top, right, bottom;
 };
 
@@ -518,8 +518,8 @@ public:
     }
 
 private:
-    shared_ptr< RandomNumberGenerator > gen_ptr;
-    shared_ptr< rand_t > rand;
+    std::shared_ptr< RandomNumberGenerator > gen_ptr;
+    std::shared_ptr< rand_t > rand;
     double radius;
 };
 
@@ -694,8 +694,8 @@ public:
     }
 
 private:
-    shared_ptr< RandomNumberGenerator > gen_ptr;
-    shared_ptr< rand_t > rand;
+    std::shared_ptr< RandomNumberGenerator > gen_ptr;
+    std::shared_ptr< rand_t > rand;
 };
 
 } // namespace boost

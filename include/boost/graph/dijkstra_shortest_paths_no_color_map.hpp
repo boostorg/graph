@@ -16,6 +16,7 @@
 #include <boost/graph/detail/d_ary_heap.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/iteration_macros.hpp>
+#include <memory>
 
 namespace boost
 {
@@ -51,7 +52,7 @@ void dijkstra_shortest_paths_no_color_map_no_init(const Graph& graph,
         DistanceCompare >
         VertexQueue;
 
-    boost::scoped_array< std::size_t > index_in_heap_map_holder;
+    std::unique_ptr< std::size_t[] > index_in_heap_map_holder;
     IndexInHeapMap index_in_heap = IndexInHeapMapHelper::build(
         graph, index_map, index_in_heap_map_holder);
     VertexQueue vertex_queue(distance_map, index_in_heap, distance_compare);

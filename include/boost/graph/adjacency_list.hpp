@@ -19,7 +19,7 @@
 
 #include <boost/unordered_set.hpp>
 
-#include <boost/scoped_ptr.hpp>
+#include <memory>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_mutability_traits.hpp>
@@ -405,7 +405,7 @@ public:
 #endif
 
     //  protected:  (would be protected if friends were more portable)
-    typedef scoped_ptr< graph_property_type > property_ptr;
+    using property_ptr = std::unique_ptr< graph_property_type >;
     property_ptr m_property;
 };
 

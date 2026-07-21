@@ -32,7 +32,6 @@ constant boost_dependencies :
     /boost/random//boost_random
     /boost/range//boost_range
     /boost/serialization//boost_serialization
-    /boost/smart_ptr//boost_smart_ptr
     /boost/spirit//boost_spirit
     /boost/throw_exception//boost_throw_exception
     /boost/tuple//boost_tuple
