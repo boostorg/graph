@@ -6,6 +6,8 @@
 
 #include "cycle_test.hpp"
 #include <boost/graph/hawick_circuits.hpp>
+#include <cstddef>
+#include <functional>
 #include <iostream>
 
 struct call_hawick_circuits
@@ -29,6 +31,18 @@ struct call_hawick_unique_circuits
     void operator()(Graph const& g, Visitor const& v) const
     {
         boost::hawick_unique_circuits(g, v, max_length);
+    }
+};
+
+struct not_copyable
+{
+    not_copyable() { }
+    not_copyable(not_copyable const&) = delete;
+
+    template < typename Path, typename Graph >
+    void cycle(Path const&, Graph const&)
+    {
+
     }
 };
 
@@ -60,6 +74,24 @@ int main()
         std::cout << "\n\n---------hawick_unique_circuits(max_length = " << ml;
         std::cout << ")---------\n";
         cycle_test(call_hawick_unique_circuits(ml), nc3[ml], nc4[ml]);
+    }
+
+    // Make sure we can pass a reference_wrapper to the algorithm.
+    {
+        typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::directedS> Graph;
+        typedef std::pair<std::size_t, std::size_t> Pair;
+        Pair edges[3] = {
+            Pair(0, 1), // a->b
+            Pair(1, 2), // b->c
+            Pair(2, 0), // c->a
+        };
+
+        Graph G(3);
+        for (int i = 0; i < 3; ++i)
+            add_edge(edges[i].first, edges[i].second, G);
+
+        not_copyable visitor;
+        boost::hawick_circuits(G, std::ref(visitor));
     }
 
     std::cout << "\n\n";
