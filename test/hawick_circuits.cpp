@@ -37,15 +37,13 @@ struct call_hawick_unique_circuits
 struct not_copyable
 {
     not_copyable() { }
+    not_copyable(not_copyable const&) = delete;
 
     template < typename Path, typename Graph >
     void cycle(Path const&, Graph const&)
     {
 
     }
-
-private:
-    not_copyable(not_copyable const&);
 };
 
 int main()
