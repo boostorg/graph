@@ -94,12 +94,10 @@ namespace hawick_circuits_detail
         typedef T type;
     };
 
-#if __cplusplus >= 201103L
     template < typename T >
     struct unwrap_reference_wrapper<std::reference_wrapper<T> > {
         typedef T& type;
     };
-#endif
 
     /*!
      * @internal

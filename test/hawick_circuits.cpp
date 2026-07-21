@@ -79,7 +79,6 @@ int main()
     }
 
     // Make sure we can pass a reference_wrapper to the algorithm.
-#if __cplusplus >= 201103L
     {
         typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::directedS> Graph;
         typedef std::pair<std::size_t, std::size_t> Pair;
@@ -96,7 +95,6 @@ int main()
         not_copyable visitor;
         boost::hawick_circuits(G, std::ref(visitor));
     }
-#endif // >= C++11
 
     std::cout << "\n\n";
     return boost::report_errors();
