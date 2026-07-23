@@ -113,7 +113,8 @@ int main()
     OptPath op;
     ParetoOpt ol;
 
-    r_c_shortest_paths(g, get(&VertexProperty::id, g), v1, v2, op, ol, ResourceCont(5), LabelExt(),
+    r_c_shortest_paths(g, get(&VertexProperty::id, g),
+         v1, v2, op, ol, ResourceCont(5), LabelExt(),
         LabelDom(),
         allocator< r_c_shortest_paths_label< Graph, ResourceCont > >(),
         default_r_c_shortest_paths_visitor());
