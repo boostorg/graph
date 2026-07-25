@@ -1,5 +1,5 @@
 output:
-  dir: ./build/site
+  dir: html
 
 site:
   title: Boost.Graph Documentation
@@ -7,21 +7,15 @@ site:
 
 antora:
   extensions:
-    - require: '@antora/lunr-extension'
-      index_latest_only: true
+    - require: '@cppalliance/antora-downloads-extension'
 
 content:
   sources:
     - url: ..
       start_path: doc
       branches: HEAD
-      edit_url: 'https://github.com/boostorg/graph/edit/develop/{path}'
-
-asciidoc:
-  attributes:
-    source-highlighter: highlight.js
 
 ui:
   bundle:
     url: https://github.com/boostorg/graph-ui-bundle/raw/c80db72a7ba804256beb36e3a46d9c7df265d8d7/ui-bundle.zip
-    snapshot: true
+  output_dir: graph/_

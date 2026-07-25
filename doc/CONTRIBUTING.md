@@ -11,7 +11,7 @@ sources under `doc/modules/ROOT/`.
 | `doc/modules/ROOT/examples/`  | One `.cpp` per page; the build script captures stdout into a sibling `.txt` |
 | `doc/modules/ROOT/nav.adoc`   | Left-side navigation tree |
 | `doc/templates/`              | Starter templates: `algorithm.adoc`, `generator.adoc`, `graph_class.adoc` — copy and fill in |
-| `doc/playbook.yml`            | Antora playbook (UI bundle, content sources) |
+| `doc/graph-playbook.yml`      | Antora playbook (UI bundle, content sources) |
 | `doc/modules/ROOT/examples/Jamfile` | b2 rules that compile every example and snapshot its stdout into a sibling `.txt` |
 | `doc/build_example_outputs.sh`| g++-only fallback that does the same thing as the Jamfile, for contributors without a `boost-root` checkout |
 
@@ -37,11 +37,11 @@ b2 libs/graph/doc/modules/ROOT/examples
 
 # 2) Build the static site.
 cd libs/graph
-npx antora doc/playbook.yml
+npx antora doc/graph-playbook.yml
 
 # 3) Open the result.
-open doc/build/site/index.html       # macOS
-xdg-open doc/build/site/index.html   # Linux
+open doc/html/index.html       # macOS
+xdg-open doc/html/index.html   # Linux
 ```
 
 CI runs the same commands on every push.
