@@ -663,6 +663,7 @@ void r_c_shortest_paths(const Graph& g, const VertexIndexMap& vertex_index_map,
 template < class Graph, class VertexIndexMap, class EdgeIndexMap,
     class Resource_Container, class Resource_Extension_Function,
     class Dominance_Function, class Label_Allocator, class Visitor >
+BOOST_DEPRECATED("edge_index_map is unused; drop it and call the 5-argument r_c_shortest_paths overload. Removal planned for Boost 1.95.")
 void r_c_shortest_paths(const Graph& g, const VertexIndexMap& vertex_index_map,
     const EdgeIndexMap& edge_index_map,
     typename graph_traits< Graph >::vertex_descriptor s,
@@ -690,6 +691,7 @@ void r_c_shortest_paths(const Graph& g, const VertexIndexMap& vertex_index_map,
 template < class Graph, class VertexIndexMap, class EdgeIndexMap,
     class Resource_Container, class Resource_Extension_Function,
     class Dominance_Function, class Label_Allocator, class Visitor >
+BOOST_DEPRECATED("edge_index_map is unused; drop it and call the 5-argument r_c_shortest_paths overload. Removal planned for Boost 1.95.")
 void r_c_shortest_paths(const Graph& g, const VertexIndexMap& vertex_index_map,
     const EdgeIndexMap& edge_index_map,
     typename graph_traits< Graph >::vertex_descriptor s,
@@ -713,6 +715,7 @@ void r_c_shortest_paths(const Graph& g, const VertexIndexMap& vertex_index_map,
 template < class Graph, class VertexIndexMap, class EdgeIndexMap,
     class Resource_Container, class Resource_Extension_Function,
     class Dominance_Function >
+BOOST_DEPRECATED("edge_index_map is unused; drop it and call the 5-argument r_c_shortest_paths overload. Removal planned for Boost 1.95.")
 void r_c_shortest_paths(const Graph& g, const VertexIndexMap& vertex_index_map,
     const EdgeIndexMap& edge_index_map,
     typename graph_traits< Graph >::vertex_descriptor s,
@@ -739,6 +742,7 @@ void r_c_shortest_paths(const Graph& g, const VertexIndexMap& vertex_index_map,
 template < class Graph, class VertexIndexMap, class EdgeIndexMap,
     class Resource_Container, class Resource_Extension_Function,
     class Dominance_Function >
+BOOST_DEPRECATED("edge_index_map is unused; drop it and call the 5-argument r_c_shortest_paths overload. Removal planned for Boost 1.95.")
 void r_c_shortest_paths(const Graph& g, const VertexIndexMap& vertex_index_map,
     const EdgeIndexMap& edge_index_map,
     typename graph_traits< Graph >::vertex_descriptor s,
