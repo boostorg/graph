@@ -11,13 +11,14 @@
 ** xref:property_maps/pitfalls.adoc[Common Mistakes]
 * xref:visitors/overview.adoc[Visitors]
 ** Pre-built Event Visitors
-*** xref:visitors/predecessor_recorder.adoc[Predecessor Recorder]
+*** xref:visitors/predecessor_recorder.adoc[Vertex Predecessor Recorder]
+*** xref:visitors/edge_predecessor_recorder.adoc[Edge Predecessor Recorder]
 *** xref:visitors/distance_recorder.adoc[Distance Recorder]
-*** xref:visitors/time_stamper.adoc[Time Stamper]
 *** xref:visitors/property_put.adoc[Property Put]
 *** xref:visitors/property_writer.adoc[Property Writer]
-*** xref:visitors/edge_predecessor_recorder.adoc[Edge Predecessor Recorder]
+*** xref:visitors/time_stamper.adoc[Time Stamper]
 *** xref:visitors/null_visitor.adoc[Null Visitor]
+** Algorithm-specific visitors
 *** xref:visitors/tsp_tour_visitor.adoc[TSP Tour Visitor]
 *** xref:visitors/tsp_tour_len_visitor.adoc[TSP Tour Len Visitor]
 *** xref:visitors/astar_heuristic.adoc[A* Heuristic (Zero)]

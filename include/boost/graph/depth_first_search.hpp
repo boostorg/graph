@@ -21,11 +21,11 @@
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/detail/mpi_include.hpp>
 #include <boost/ref.hpp>
-#include <boost/implicit_cast.hpp>
 #include <boost/optional.hpp>
 #include <boost/parameter.hpp>
 #include <boost/concept/assert.hpp>
-#include <boost/tti/has_member_function.hpp>
+#include <boost/type_traits/make_void.hpp>
+#include <type_traits>
 
 #include <vector>
 #include <utility>
@@ -69,7 +69,19 @@ namespace detail
         }
     };
 
-    BOOST_TTI_HAS_MEMBER_FUNCTION(finish_edge)
+    // has_finish_edge<Vis, E, G>::value is true when vis.finish_edge(e, g) is
+    // a valid call for e of type E and g of type const G&.
+    template < typename Vis, typename E, typename G, typename = void >
+    struct has_finish_edge : std::false_type
+    {
+    };
+    template < typename Vis, typename E, typename G >
+    struct has_finish_edge< Vis, E, G,
+        boost::void_t< decltype(std::declval< Vis& >().finish_edge(
+            std::declval< E& >(), std::declval< const G& >())) > >
+    : std::true_type
+    {
+    };
 
     template < bool IsCallable > struct do_call_finish_edge
     {
@@ -90,18 +102,9 @@ namespace detail
 
     template < typename E, typename G, typename Vis >
     void call_finish_edge(Vis& vis, E e, const G& g)
-    { // Only call if method exists
-#if ((defined(__GNUC__) && (__GNUC__ > 4)               \
-         || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9))) \
-    || defined(__clang__)                               \
-    || (defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 1200)))
-        do_call_finish_edge< has_member_function_finish_edge< Vis, void,
-            boost::mpl::vector< E, const G& > >::value >::call_finish_edge(vis,
-            e, g);
-#else
-        do_call_finish_edge< has_member_function_finish_edge< Vis,
-            void >::value >::call_finish_edge(vis, e, g);
-#endif
+    { // Only call if the visitor has a callable finish_edge(e, g)
+        do_call_finish_edge< has_finish_edge< Vis, E, G >::value >::
+            call_finish_edge(vis, e, g);
     }
 
 // Define BOOST_RECURSIVE_DFS to use older, recursive version.
@@ -275,7 +278,7 @@ void depth_first_search(const VertexListGraph& g, DFSVisitor vis,
     typename graph_traits< VertexListGraph >::vertex_iterator ui, ui_end;
     for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
     {
-        Vertex u = implicit_cast< Vertex >(*ui);
+        Vertex u = *ui;
         put(color, u, Color::white());
         vis.initialize_vertex(u, g);
     }
@@ -289,7 +292,7 @@ void depth_first_search(const VertexListGraph& g, DFSVisitor vis,
 
     for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
     {
-        Vertex u = implicit_cast< Vertex >(*ui);
+        Vertex u = *ui;
         ColorValue u_color = get(color, u);
         if (u_color == Color::white())
         {

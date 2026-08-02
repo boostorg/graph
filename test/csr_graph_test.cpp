@@ -321,18 +321,6 @@ template < typename OrigGraph > void graph_test(const OrigGraph& g)
         {
             BOOST_TEST(source(*oei, g2) == *vi);
         }
-
-        // Find a vertex for testing
-        CSRGraphT::vertex_descriptor test_vertex
-            = vertex(num_vertices(g2) / 2, g2);
-        int edge_count = 0;
-        CSRGraphT::out_edge_iterator oei2, oei2_end;
-        for (boost::tie(oei2, oei_end) = out_edges(*vi, g2); oei2 != oei_end;
-             ++oei2)
-        {
-            if (target(*oei2, g2) == test_vertex)
-                ++edge_count;
-        }
     }
 
     // Run brandes_betweenness_centrality, which touches on a whole lot

@@ -23,7 +23,7 @@
 #include <boost/pending/indirect_cmp.hpp>
 #include <boost/graph/exception.hpp>
 #include <boost/graph/overloading.hpp>
-#include <boost/smart_ptr.hpp>
+#include <memory>
 #include <boost/graph/detail/d_ary_heap.hpp>
 #include <boost/graph/two_bit_color_map.hpp>
 #include <boost/graph/detail/mpi_include.hpp>
@@ -237,7 +237,7 @@ namespace detail
     {
         typedef boost::iterator_property_map< Value*, IndexMap > type;
         static type build(const Graph& g, const IndexMap& index,
-            boost::scoped_array< Value >& array_holder)
+            std::unique_ptr< Value[] >& array_holder)
         {
             array_holder.reset(new Value[num_vertices(g)]);
             std::fill(array_holder.get(), array_holder.get() + num_vertices(g),
@@ -251,7 +251,7 @@ namespace detail
     {
         typedef boost::vector_property_map< Value, IndexMap > type;
         static type build(const Graph& g, const IndexMap& index,
-            boost::scoped_array< Value >& array_holder)
+            std::unique_ptr< Value[] >& array_holder)
         {
             return boost::make_vector_property_map< Value >(index);
         }
@@ -268,7 +268,7 @@ namespace detail
             helper;
         typedef typename helper::type type;
         static type build(const Graph& g, const IndexMap& index,
-            boost::scoped_array< Value >& array_holder)
+            std::unique_ptr< Value[] >& array_holder)
         {
             return helper::build(g, index, array_holder);
         }
@@ -368,7 +368,7 @@ inline void dijkstra_shortest_paths_no_init(const Graph& g,
     typedef typename graph_traits< Graph >::vertex_descriptor Vertex;
 
     // Now the default: use a d-ary heap
-    boost::scoped_array< std::size_t > index_in_heap_map_holder;
+    std::unique_ptr< std::size_t[] > index_in_heap_map_holder;
     typedef detail::vertex_property_map_generator< Graph, IndexMap,
         std::size_t >
         IndexInHeapMapHelper;

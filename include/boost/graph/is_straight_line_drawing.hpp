@@ -16,7 +16,6 @@
 #include <boost/graph/properties.hpp>
 #include <boost/graph/planar_detail/bucket_sort.hpp>
 #include <boost/multiprecision/cpp_int.hpp>
-#include <boost/numeric/conversion/cast.hpp>
 
 #include <algorithm>
 #include <vector>

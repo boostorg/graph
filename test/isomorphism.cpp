@@ -77,19 +77,11 @@ randomly_permute_graph(const Graph1& g1, Graph2& g2)
 
     random_generator_type gen;
 
-#ifndef BOOST_NO_CXX98_RANDOM_SHUFFLE
-    random_functor< random_generator_type > rand_fun(gen);
-#endif
-
     // Decide new order
     std::vector< vertex1 > orig_vertices;
     std::copy(vertices(g1).first, vertices(g1).second,
         std::back_inserter(orig_vertices));
-#ifndef BOOST_NO_CXX98_RANDOM_SHUFFLE
-    std::random_shuffle(orig_vertices.begin(), orig_vertices.end(), rand_fun);
-#else
     std::shuffle(orig_vertices.begin(), orig_vertices.end(), gen);
-#endif
     std::map< vertex1, vertex2 > vertex_map;
 
     for (std::size_t i = 0; i < num_vertices(g1); ++i)
@@ -303,12 +295,7 @@ void test_colored_isomorphism(int n, double edge_probability)
 
     random_generator_type gen;
 
-#ifndef BOOST_NO_CXX98_RANDOM_SHUFFLE
-    random_functor< random_generator_type > rand_fun(gen);
-    std::random_shuffle(colors.begin(), colors.end(), rand_fun);
-#else
     std::shuffle(colors.begin(), colors.end(), gen);
-#endif
 
     int v_idx = 0;
     for (graph1::vertex_iterator v = vertices(g1).first;

@@ -7,9 +7,8 @@
 #define BOOST_PROPERTY_HPP
 
 #include <boost/config.hpp>
-#include <boost/mpl/bool.hpp>
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/has_xxx.hpp>
+#include <type_traits>
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits.hpp>
 #include <boost/static_assert.hpp>
@@ -256,10 +255,10 @@ template < typename T, typename Tag > struct lookup_one_property< const T, Tag >
 // instead with a nested kind type and num.  Also, we may want to
 // switch BGL back to using class types for properties at some point.
 
-template < class P > struct has_property : boost::mpl::true_
+template < class P > struct has_property : std::true_type
 {
 };
-template <> struct has_property< no_property > : boost::mpl::false_
+template <> struct has_property< no_property > : std::false_type
 {
 };
 
@@ -294,7 +293,8 @@ namespace detail
 
     /** This trait returns true if T is no_property. */
     template < typename T >
-    struct is_no_property : mpl::bool_< is_same< T, no_property >::value >
+    struct is_no_property
+    : std::integral_constant< bool, is_same< T, no_property >::value >
     {
     };
 
@@ -358,7 +358,7 @@ namespace detail
             typedef typename boost::function_traits< F >::arg1_type a1;
             typedef typename boost::remove_reference< a1 >::type non_ref;
             typedef typename non_ref::next_type nx;
-            typedef typename boost::mpl::if_< boost::is_const< non_ref >,
+            typedef typename std::conditional< boost::is_const< non_ref >::value,
                 boost::add_const< nx >, nx >::type with_const;
             typedef typename boost::add_reference< with_const >::type type;
         };

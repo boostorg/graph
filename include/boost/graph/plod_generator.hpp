@@ -12,12 +12,12 @@
 #include <iterator>
 #include <utility>
 #include <boost/random/uniform_int.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/graph/graph_traits.hpp>
 #include <vector>
 #include <map>
 #include <boost/config/no_tr1/cmath.hpp>
-#include <boost/mpl/if.hpp>
+#include <type_traits>
 
 namespace boost
 {
@@ -240,7 +240,7 @@ private:
 
     RandomGenerator* gen;
     std::size_t n;
-    shared_ptr< out_degrees_t > out_degrees;
+    std::shared_ptr< out_degrees_t > out_degrees;
     std::size_t degrees_left;
     bool allow_self_loops;
     value_type current;
@@ -248,15 +248,15 @@ private:
 
 template < typename RandomGenerator, typename Graph >
 class plod_iterator
-: public mpl::if_<
+: public std::conditional<
       is_convertible< typename graph_traits< Graph >::directed_category,
-          directed_tag >,
+          directed_tag >::value,
       out_directed_plod_iterator< RandomGenerator >,
       undirected_plod_iterator< RandomGenerator > >::type
 {
-    typedef typename mpl::if_<
+    typedef typename std::conditional<
         is_convertible< typename graph_traits< Graph >::directed_category,
-            directed_tag >,
+            directed_tag >::value,
         out_directed_plod_iterator< RandomGenerator >,
         undirected_plod_iterator< RandomGenerator > >::type inherited;
 

@@ -1,0 +1,21 @@
+output:
+  dir: html
+
+site:
+  title: Boost.Graph Documentation
+  start_page: graph::index.adoc
+
+antora:
+  extensions:
+    - require: '@cppalliance/antora-downloads-extension'
+
+content:
+  sources:
+    - url: ..
+      start_path: doc
+      branches: HEAD
+
+ui:
+  bundle:
+    url: https://github.com/boostorg/graph-ui-bundle/raw/c80db72a7ba804256beb36e3a46d9c7df265d8d7/ui-bundle.zip
+  output_dir: graph/_

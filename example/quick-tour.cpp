@@ -31,7 +31,6 @@ template < typename Graph, typename VertexNameMap >
 void print_vertex_names(const Graph& g, VertexNameMap name_map)
 {
     std::cout << "vertices(g) = { ";
-    using iter_t = typename graph_traits< Graph >::vertex_iterator;
     for (auto p = vertices(g); p.first != p.second; ++p.first)
     {
         print_vertex_name(*p.first, name_map);

@@ -8,6 +8,13 @@ A C++ library of graph algorithms and data structures, generic enough to work on
 * Generic algorithms that work across any graph representation, with fine control on allocations
 * Extensible algorithms: inject your own logic at key points during traversal using visitor hooks
 
+== Example
+
+The example below brings together the three ideas that run through the library.
+You choose how the graph is stored: this one uses an `adjacency_list`, but `adjacency_matrix` or `compressed_sparse_row_graph` would run the same algorithm.
+The results stay in your own containers, which the algorithm reaches through property maps that separate where data lives from how it is read.
+And you hook into the traversal with a visitor that reacts to events as the breadth-first search expands, recording each vertex's distance and predecessor along the way.
+Following the predecessor map back from the target then gives the shortest path.
 
 [subs=attributes+]
 ++++
@@ -17,10 +24,8 @@ A C++ library of graph algorithms and data structures, generic enough to work on
 </video>
 ++++
 
-== Example
-
 ++++
-<p style="padding-left: 2em;"><a href="https://godbolt.org/z/TnnMzW7da">Try it on Compiler Explorer</a></p>
+<p style="padding-left: 2em;"><a href="https://godbolt.org/z/M9GzodW1f">Try it on Compiler Explorer</a></p>
 ++++
 
 [source,cpp]
@@ -79,3 +84,29 @@ existing one at specific event points (vertex discovered, edge relaxed, etc.).
 | https://cppalliance.org/slack[CppLang Slack]
 | Real-time chat. Request an invite, then join the `#boost` channel.
 |===
+
+== Authors
+
+The Boost Graph Library was originally created by Jeremy Siek, Lie-Quan Lee, and Andrew Lumsdaine, who also wrote its reference text, _The Boost Graph Library: User Guide and Reference Manual_.
+Many other contributors have extended the library since.
+
+== How to cite
+
+If you use the Boost Graph Library in academic work, please cite the reference book:
+
+[,text]
+----
+Jeremy G. Siek, Lie-Quan Lee, and Andrew Lumsdaine.
+The Boost Graph Library: User Guide and Reference Manual.
+Addison-Wesley Professional, 2002.
+----
+
+[source,bibtex]
+----
+@book{siek2002boost,
+  title     = {The Boost Graph Library: User Guide and Reference Manual},
+  author    = {Siek, Jeremy G. and Lee, Lie-Quan and Lumsdaine, Andrew},
+  publisher = {Addison-Wesley Professional},
+  year      = {2002}
+}
+----

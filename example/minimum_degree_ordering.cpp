@@ -42,7 +42,6 @@ struct harwell_boeing
 {
     harwell_boeing(char* filename)
     {
-        int Nrhs;
         char* Type;
         Type = new char[4];
         isComplex = false;

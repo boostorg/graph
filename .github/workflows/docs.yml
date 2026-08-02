@@ -7,7 +7,7 @@ name: docs-check
 #     includes, broken xrefs)
 #
 # No deployment. The real publishing path is boostorg/release-tools,
-# which auto-detects doc/build_antora.sh and ships to
+# which builds via doc/Jamfile.v2 (boostrelease target) and ships to
 # www.boost.org/doc/libs/<version>/libs/graph/.
 
 on:
@@ -59,4 +59,4 @@ jobs:
       # against the committed package-lock.json.
       - name: Build the site (release-tools entry point)
         working-directory: doc
-        run: ./build_antora.sh playbook.yml
+        run: ./build_antora.sh

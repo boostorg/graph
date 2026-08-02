@@ -25,16 +25,13 @@ target_link_libraries(boost_graph
     Boost::concept_check
     Boost::config
     Boost::container_hash
-    Boost::conversion
     Boost::core
     Boost::detail
-    Boost::foreach
     Boost::function
     Boost::integer
     Boost::iterator
     Boost::lexical_cast
-    Boost::math
-    Boost::move
+    Boost::mp11
     Boost::mpl
     Boost::multi_index
     Boost::multiprecision
@@ -46,13 +43,10 @@ target_link_libraries(boost_graph
     Boost::random
     Boost::range
     Boost::serialization
-    Boost::smart_ptr
     Boost::spirit
     Boost::throw_exception
-    Boost::tti
     Boost::tuple
     Boost::type_traits
-    Boost::typeof
     Boost::unordered
     Boost::utility
     Boost::xpressive

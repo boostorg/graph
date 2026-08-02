@@ -15,16 +15,13 @@
 #include <boost/config.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/any.hpp>
+#include <boost/mp11/algorithm.hpp>
+#include <boost/mp11/list.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dll_import_export.hpp>
 #include <boost/graph/exception.hpp>
 #include <boost/graph/graph_traits.hpp>
-
-#include <boost/mpl/bool.hpp>
-#include <boost/mpl/vector.hpp>
-#include <boost/mpl/find.hpp>
-#include <boost/mpl/for_each.hpp>
 #include <boost/property_map/dynamic_property_map.hpp>
 #include <boost/property_tree/detail/xml_parser_utils.hpp>
 #include <boost/throw_exception.hpp>
@@ -111,7 +108,7 @@ public:
         bool type_found = false;
         try
         {
-            mpl::for_each< value_types >(
+            mp11::mp_for_each< value_types >(
                 put_property< MutableGraph*, value_types >(name, m_dp, &m_g,
                     value, value_type, m_type_names, type_found));
         }
@@ -133,7 +130,7 @@ public:
         bool type_found = false;
         try
         {
-            mpl::for_each< value_types >(
+            mp11::mp_for_each< value_types >(
                 put_property< vertex_descriptor, value_types >(name, m_dp,
                     any_cast< vertex_descriptor >(vertex), value, value_type,
                     m_type_names, type_found));
@@ -156,7 +153,7 @@ public:
         bool type_found = false;
         try
         {
-            mpl::for_each< value_types >(
+            mp11::mp_for_each< value_types >(
                 put_property< edge_descriptor, value_types >(name, m_dp,
                     any_cast< edge_descriptor >(edge), value, value_type,
                     m_type_names, type_found));
@@ -192,8 +189,7 @@ public:
         template < class Value > void operator()(Value)
         {
             if (m_value_type
-                == m_type_names[mpl::find< ValueVector,
-                    Value >::type::pos::value])
+                == m_type_names[mp11::mp_find< ValueVector, Value >::value])
             {
                 put(m_name, m_dp, m_key, lexical_cast< Value >(m_value));
                 m_type_found = true;
@@ -213,8 +209,7 @@ public:
 protected:
     MutableGraph& m_g;
     dynamic_properties& m_dp;
-    typedef mpl::vector< bool, int, long, float, double, std::string >
-        value_types;
+    using value_types = mp11::mp_list< bool, int, long, float, double, std::string >;
     static const char* m_type_names[];
 };
 
@@ -244,8 +239,7 @@ public:
     template < typename Type > void operator()(Type)
     {
         if (typeid(Type) == m_type)
-            m_type_name
-                = m_type_names[mpl::find< Types, Type >::type::pos::value];
+            m_type_name = m_type_names[mp11::mp_find< Types, Type >::value];
     }
 
 private:
@@ -275,10 +269,9 @@ void write_graphml(std::ostream& out, const Graph& g,
            "xsi:schemaLocation=\"http://graphml.graphdrawing.org/xmlns "
            "http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd\">\n";
 
-    typedef mpl::vector< bool, short, unsigned short, int, unsigned int, long,
-        unsigned long, long long, unsigned long long, float, double,
-        long double, std::string >
-        value_types;
+    using value_types = mp11::mp_list< bool, short,
+        unsigned short, int, unsigned int, long, unsigned long, long long,
+        unsigned long long, float, double, long double, std::string >;
     const char* type_names[] = { "boolean", "int", "int", "int", "int", "long",
         "long", "long", "long", "float", "double", "double", "string" };
     std::map< std::string, std::string > graph_key_ids;
@@ -299,8 +292,9 @@ void write_graphml(std::ostream& out, const Graph& g,
         else
             continue;
         std::string type_name = "string";
-        mpl::for_each< value_types >(get_type_name< value_types >(
-            i->second->value(), type_names, type_name));
+        mp11::mp_for_each< value_types >(
+            get_type_name< value_types >(
+                i->second->value(), type_names, type_name));
         out << "  <key id=\"" << encode_char_entities(key_id) << "\" for=\""
             << (i->second->key() == typeid(Graph*)
                        ? "graph"

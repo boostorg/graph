@@ -1,0 +1,28 @@
+# Copyright 2026 Arnaud Becheler
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+import path ;
+
+make html_ : build_antora.sh : @run-script ;
+
+actions run-script
+{
+    bash $(>)
+}
+
+path-constant DOC_DIR : . ;
+.node_modules = [ path.join $(DOC_DIR) node_modules ] ;
+
+make cleanup_node_modules_ : html_ : @cleanup-node-modules ;
+
+actions cleanup-node-modules
+{
+    rm -rf $(.node_modules)
+}
+
+###############################################################################
+alias boostdoc ;
+explicit boostdoc ;
+alias boostrelease : html_ cleanup_node_modules_ ;
+explicit boostrelease ;

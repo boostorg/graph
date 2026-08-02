@@ -13,8 +13,7 @@
 #include <vector>
 #include <list>
 
-#include <boost/make_shared.hpp>
-#include <boost/enable_shared_from_this.hpp>
+#include <memory>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/property_map/property_map.hpp>
@@ -25,15 +24,13 @@ namespace boost
 // r_c_shortest_paths_label struct
 template < class Graph, class Resource_Container >
 struct r_c_shortest_paths_label
-: public boost::enable_shared_from_this<
-      r_c_shortest_paths_label< Graph, Resource_Container > >
 {
     r_c_shortest_paths_label(const unsigned long n,
         const Resource_Container& rc = Resource_Container(),
-        const boost::shared_ptr<
+        const std::shared_ptr<
             r_c_shortest_paths_label< Graph, Resource_Container > >
             pl
-        = boost::shared_ptr<
+        = std::shared_ptr<
             r_c_shortest_paths_label< Graph, Resource_Container > >(),
         const typename graph_traits< Graph >::edge_descriptor& ed
         = graph_traits< Graph >::edge_descriptor(),
@@ -59,7 +56,7 @@ struct r_c_shortest_paths_label
     }
     const unsigned long num;
     Resource_Container cumulated_resource_consumption;
-    const boost::shared_ptr<
+    const std::shared_ptr<
         r_c_shortest_paths_label< Graph, Resource_Container > >
         p_pred_label;
     const typename graph_traits< Graph >::edge_descriptor pred_edge;
@@ -119,48 +116,18 @@ inline bool operator>=(
     return l2 < l1 || l1 == l2;
 }
 
-template < typename Graph, typename Resource_Container >
-inline bool operator<(
-    const boost::shared_ptr<
-        r_c_shortest_paths_label< Graph, Resource_Container > >& t,
-    const boost::shared_ptr<
-        r_c_shortest_paths_label< Graph, Resource_Container > >& u)
-{
-    return *t < *u;
-}
-
-template < typename Graph, typename Resource_Container >
-inline bool operator<=(
-    const boost::shared_ptr<
-        r_c_shortest_paths_label< Graph, Resource_Container > >& t,
-    const boost::shared_ptr<
-        r_c_shortest_paths_label< Graph, Resource_Container > >& u)
-{
-    return *t <= *u;
-}
-
-template < typename Graph, typename Resource_Container >
-inline bool operator>(
-    const boost::shared_ptr<
-        r_c_shortest_paths_label< Graph, Resource_Container > >& t,
-    const boost::shared_ptr<
-        r_c_shortest_paths_label< Graph, Resource_Container > >& u)
-{
-    return *t > *u;
-}
-
-template < typename Graph, typename Resource_Container >
-inline bool operator>=(
-    const boost::shared_ptr<
-        r_c_shortest_paths_label< Graph, Resource_Container > >& t,
-    const boost::shared_ptr<
-        r_c_shortest_paths_label< Graph, Resource_Container > >& u)
-{
-    return *t >= *u;
-}
-
 namespace detail
 {
+
+    // Order by the pointed-to value, not by pointer identity. Works on any
+    // dereferenceable type.
+    template < class Pointer > struct deref_greater
+    {
+        bool operator()(const Pointer& a, const Pointer& b) const
+        {
+            return *a > *b;
+        }
+    };
 
     // r_c_shortest_paths_dispatch function (body/implementation)
     template < class Graph, class VertexIndexMap,
@@ -199,18 +166,18 @@ namespace detail
         typedef std::allocator_traits< LAlloc > LTraits;
 #endif
         LAlloc l_alloc;
-        typedef boost::shared_ptr<
+        typedef std::shared_ptr<
             r_c_shortest_paths_label< Graph, Resource_Container > >
             Splabel;
         std::priority_queue< Splabel, std::vector< Splabel >,
-            std::greater< Splabel > >
+            deref_greater< Splabel > >
             unprocessed_labels;
 
         bool b_feasible = true;
-        Splabel splabel_first_label = boost::allocate_shared<
+        Splabel splabel_first_label = std::allocate_shared<
             r_c_shortest_paths_label< Graph, Resource_Container > >(l_alloc,
             i_label_num++, rc,
-            boost::shared_ptr<
+            std::shared_ptr<
                 r_c_shortest_paths_label< Graph, Resource_Container > >(),
             typename graph_traits< Graph >::edge_descriptor(), s);
 
@@ -399,7 +366,7 @@ namespace detail
                      oei != oei_end; ++oei)
                 {
                     b_feasible = true;
-                    Splabel new_label = boost::allocate_shared<
+                    Splabel new_label = std::allocate_shared<
                         r_c_shortest_paths_label< Graph, Resource_Container > >(
                         l_alloc, i_label_num++,
                         cur_label->cumulated_resource_consumption, cur_label,
@@ -432,7 +399,8 @@ namespace detail
         std::list< Splabel > dsplabels = get(vec_vertex_labels, t);
         if(!b_all_pareto_optimal_solutions)
         {
-            dsplabels.sort();
+            dsplabels.sort([](const Splabel& a, const Splabel& b)
+                { return *a < *b; });
         }
         typename std::list< Splabel >::const_iterator csi = dsplabels.begin();
         typename std::list< Splabel >::const_iterator csi_end = dsplabels.end();
@@ -443,7 +411,7 @@ namespace detail
             {
                 std::vector< typename graph_traits< Graph >::edge_descriptor >
                     cur_pareto_optimal_path;
-                boost::shared_ptr<
+                std::shared_ptr<
                     r_c_shortest_paths_label< Graph, Resource_Container > >
                     p_cur_label = *csi;
                 pareto_optimal_resource_containers.push_back(
