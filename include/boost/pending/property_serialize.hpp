@@ -12,7 +12,9 @@
 // Only the Parallel BGL (MPI) specializations below need Boost.Serialization,
 // so keep its header out of the default build.
 #ifdef BOOST_GRAPH_USE_MPI
-#include <boost/serialization/is_bitwise_serializable.hpp>
+#define BOOST_GRAPH_BLOCK_BOOSTDEP_HEADER <boost/serialization/is_bitwise_serializable.hpp>
+#include BOOST_GRAPH_BLOCK_BOOSTDEP_HEADER
+#undef BOOST_GRAPH_BLOCK_BOOSTDEP_HEADER
 #endif
 
 namespace boost
