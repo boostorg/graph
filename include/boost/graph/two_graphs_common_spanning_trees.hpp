@@ -134,7 +134,7 @@ namespace detail
         {
             std::vector< Edge > store;
             // i is a dense position in [0, n), so unchecked access is safe.
-            const Edge& at(std::size_t i) const { return store[i]; }
+            const Edge& operator[](std::size_t i) const { return store[i]; }
         } left;
 
         struct right_type
@@ -210,11 +210,11 @@ namespace detail
             seq_size_type m;
             for (seq_size_type j = 0; j < inL.size() && !found; ++j)
             {
-                if (!inL[j] && !get(diG, iG_bimap.left.at(j))
-                    && !get(dvG, vG_bimap.left.at(j)))
+                if (!inL[j] && !get(diG, iG_bimap.left[j])
+                    && !get(dvG, vG_bimap.left[j]))
                 {
-                    put(aiG_inL, iG_bimap.left.at(j), true);
-                    put(avG_inL, vG_bimap.left.at(j), true);
+                    put(aiG_inL, iG_bimap.left[j], true);
+                    put(avG_inL, vG_bimap.left[j], true);
 
                     undirected_dfs(
                         make_filtered_graph(iG,
@@ -253,8 +253,8 @@ namespace detail
                             iG_buf.pop();
                         while (!vG_buf.empty())
                             vG_buf.pop();
-                        put(aiG_inL, iG_bimap.left.at(j), false);
-                        put(avG_inL, vG_bimap.left.at(j), false);
+                        put(aiG_inL, iG_bimap.left[j], false);
+                        put(avG_inL, vG_bimap.left[j], false);
                     }
                 }
             }
@@ -265,12 +265,12 @@ namespace detail
                 std::stack< edge_descriptor > iG_buf_copy, vG_buf_copy;
                 for (seq_size_type j = 0; j < inL.size(); ++j)
                 {
-                    if (!inL[j] && !get(diG, iG_bimap.left.at(j))
-                        && !get(dvG, vG_bimap.left.at(j)))
+                    if (!inL[j] && !get(diG, iG_bimap.left[j])
+                        && !get(dvG, vG_bimap.left[j]))
                     {
 
-                        put(aiG_inL, iG_bimap.left.at(j), true);
-                        put(avG_inL, vG_bimap.left.at(j), true);
+                        put(aiG_inL, iG_bimap.left[j], true);
+                        put(avG_inL, vG_bimap.left[j], true);
 
                         undirected_dfs(
                             make_filtered_graph(iG,
@@ -305,14 +305,14 @@ namespace detail
                                 iG_buf.pop();
                             while (!vG_buf.empty())
                                 vG_buf.pop();
-                            put(diG, iG_bimap.left.at(j), true);
-                            put(dvG, vG_bimap.left.at(j), true);
-                            iG_buf_copy.push(iG_bimap.left.at(j));
-                            vG_buf_copy.push(vG_bimap.left.at(j));
+                            put(diG, iG_bimap.left[j], true);
+                            put(dvG, vG_bimap.left[j], true);
+                            iG_buf_copy.push(iG_bimap.left[j]);
+                            vG_buf_copy.push(vG_bimap.left[j]);
                         }
 
-                        put(aiG_inL, iG_bimap.left.at(j), false);
-                        put(avG_inL, vG_bimap.left.at(j), false);
+                        put(aiG_inL, iG_bimap.left[j], false);
+                        put(avG_inL, vG_bimap.left[j], false);
                     }
                 }
 
@@ -325,7 +325,7 @@ namespace detail
                 {
                     put(diG, iG_buf_copy.top(), false);
                     put(dvG,
-                        vG_bimap.left.at(iG_bimap.right.at(iG_buf_copy.top())),
+                        vG_bimap.left[iG_bimap.right.at(iG_buf_copy.top())],
                         false);
                     iG_buf_copy.pop();
                 }
@@ -333,17 +333,17 @@ namespace detail
                 {
                     put(dvG, vG_buf_copy.top(), false);
                     put(diG,
-                        iG_bimap.left.at(vG_bimap.right.at(vG_buf_copy.top())),
+                        iG_bimap.left[vG_bimap.right.at(vG_buf_copy.top())],
                         false);
                     vG_buf_copy.pop();
                 }
 
                 inL[m] = false;
-                put(aiG_inL, iG_bimap.left.at(m), false);
-                put(avG_inL, vG_bimap.left.at(m), false);
+                put(aiG_inL, iG_bimap.left[m], false);
+                put(avG_inL, vG_bimap.left[m], false);
 
-                put(diG, iG_bimap.left.at(m), true);
-                put(dvG, vG_bimap.left.at(m), true);
+                put(diG, iG_bimap.left[m], true);
+                put(dvG, vG_bimap.left[m], true);
 
                 std::map< vertex_descriptor, edge_descriptor > tree_map;
                 std::map< vertex_descriptor, vertex_descriptor > pred_map;
@@ -413,7 +413,7 @@ namespace detail
                     {
                         put(aiG_inL, iG_buf.top(), true);
                         put(avG_inL,
-                            vG_bimap.left.at(iG_bimap.right.at(iG_buf.top())),
+                            vG_bimap.left[iG_bimap.right.at(iG_buf.top())],
                             true);
 
                         undirected_dfs(
@@ -458,7 +458,7 @@ namespace detail
 
                         put(aiG_inL, iG_buf.top(), false);
                         put(avG_inL,
-                            vG_bimap.left.at(iG_bimap.right.at(iG_buf.top())),
+                            vG_bimap.left[iG_bimap.right.at(iG_buf.top())],
                             false);
                     }
                     iG_buf.pop();
@@ -469,7 +469,7 @@ namespace detail
                     {
                         put(avG_inL, vG_buf.top(), true);
                         put(aiG_inL,
-                            iG_bimap.left.at(vG_bimap.right.at(vG_buf.top())),
+                            iG_bimap.left[vG_bimap.right.at(vG_buf.top())],
                             true);
 
                         undirected_dfs(
@@ -514,7 +514,7 @@ namespace detail
 
                         put(avG_inL, vG_buf.top(), false);
                         put(aiG_inL,
-                            iG_bimap.left.at(vG_bimap.right.at(vG_buf.top())),
+                            iG_bimap.left[vG_bimap.right.at(vG_buf.top())],
                             false);
                     }
                     vG_buf.pop();
@@ -527,10 +527,7 @@ namespace detail
                     {
                         inL[iG_bimap.right.at(iG_buf_copy.top())] = true;
                         put(aiG_inL, iG_buf_copy.top(), true);
-                        put(avG_inL,
-                            vG_bimap.left.at(
-                                iG_bimap.right.at(iG_buf_copy.top())),
-                            true);
+                        put(avG_inL, vG_bimap.left[ iG_bimap.right.at(iG_buf_copy.top())], true);
                         iG_buf.push(iG_buf_copy.top());
                         iG_buf_copy.pop();
                     }
@@ -538,10 +535,7 @@ namespace detail
                     {
                         inL[vG_bimap.right.at(vG_buf_copy.top())] = true;
                         put(avG_inL, vG_buf_copy.top(), true);
-                        put(aiG_inL,
-                            iG_bimap.left.at(
-                                vG_bimap.right.at(vG_buf_copy.top())),
-                            true);
+                        put(aiG_inL, iG_bimap.left[ vG_bimap.right.at(vG_buf_copy.top())], true);
                         vG_buf.push(vG_buf_copy.top());
                         vG_buf_copy.pop();
                     }
@@ -555,24 +549,20 @@ namespace detail
                     {
                         inL[iG_bimap.right.at(iG_buf.top())] = false;
                         put(aiG_inL, iG_buf.top(), false);
-                        put(avG_inL,
-                            vG_bimap.left.at(iG_bimap.right.at(iG_buf.top())),
-                            false);
+                        put(avG_inL, vG_bimap.left[iG_bimap.right.at(iG_buf.top())], false);
                         iG_buf.pop();
                     }
                     while (!vG_buf.empty())
                     {
                         inL[vG_bimap.right.at(vG_buf.top())] = false;
                         put(avG_inL, vG_buf.top(), false);
-                        put(aiG_inL,
-                            iG_bimap.left.at(vG_bimap.right.at(vG_buf.top())),
-                            false);
+                        put(aiG_inL, iG_bimap.left[vG_bimap.right.at(vG_buf.top())], false);
                         vG_buf.pop();
                     }
                 }
 
-                put(diG, iG_bimap.left.at(m), false);
-                put(dvG, vG_bimap.left.at(m), false);
+                put(diG, iG_bimap.left[m], false);
+                put(dvG, vG_bimap.left[m], false);
             }
         }
     }
@@ -727,13 +717,13 @@ two_graphs_common_spanning_trees(const Graph& iG, Order iG_map, const Graph& vG,
     {
         if (inL[i])
         {
-            put(aiG_inL, iG_bimap.left.at(i), true);
-            put(avG_inL, vG_bimap.left.at(i), true);
+            put(aiG_inL, iG_bimap.left[i], true);
+            put(avG_inL, vG_bimap.left[i], true);
         }
         else
         {
-            put(aiG_inL, iG_bimap.left.at(i), false);
-            put(avG_inL, vG_bimap.left.at(i), false);
+            put(aiG_inL, iG_bimap.left[i], false);
+            put(avG_inL, vG_bimap.left[i], false);
         }
     }
 
@@ -780,8 +770,8 @@ two_graphs_common_spanning_trees(const Graph& iG, Order iG_map, const Graph& vG,
         {
             if (!inL[j])
             {
-                put(aiG_inL, iG_bimap.left.at(j), true);
-                put(avG_inL, vG_bimap.left.at(j), true);
+                put(aiG_inL, iG_bimap.left[j], true);
+                put(avG_inL, vG_bimap.left[j], true);
 
                 undirected_dfs(
                     make_filtered_graph(iG,
@@ -816,12 +806,12 @@ two_graphs_common_spanning_trees(const Graph& iG, Order iG_map, const Graph& vG,
                         iG_buf.pop();
                     while (!vG_buf.empty())
                         vG_buf.pop();
-                    put(diG, iG_bimap.left.at(j), true);
-                    put(dvG, vG_bimap.left.at(j), true);
+                    put(diG, iG_bimap.left[j], true);
+                    put(dvG, vG_bimap.left[j], true);
                 }
 
-                put(aiG_inL, iG_bimap.left.at(j), false);
-                put(avG_inL, vG_bimap.left.at(j), false);
+                put(aiG_inL, iG_bimap.left[j], false);
+                put(avG_inL, vG_bimap.left[j], false);
             }
         }
 
