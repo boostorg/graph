@@ -23,7 +23,6 @@
 #include <boost/graph/exception.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/property_map/dynamic_property_map.hpp>
-#include <boost/property_tree/detail/xml_parser_utils.hpp>
 #include <boost/throw_exception.hpp>
 #include <exception>
 #include <sstream>
@@ -248,6 +247,42 @@ private:
     std::string& m_type_name;
 };
 
+namespace detail
+{
+    namespace graphml
+    {
+        // Replace <, >, &, ", ' with their XML character entities when writing
+        // element text. This reproduces the behaviour of the encode_char_entities
+        // helper Boost.PropertyTree used to provide, so that write_graphml output
+        // is unchanged. A string made up entirely of spaces has its first space
+        // written as &#32; so the value survives whitespace trimming on read-back.
+        inline std::string encode_char_entities(const std::string& s)
+        {
+            if (s.empty())
+                return s;
+
+            if (s.find_first_not_of(' ') == std::string::npos)
+                return "&#32;" + std::string(s.size() - 1, ' ');
+
+            std::string r;
+            r.reserve(s.size());
+            for (char c : s)
+            {
+                switch (c)
+                {
+                case '<': r += "&lt;"; break;
+                case '>': r += "&gt;"; break;
+                case '&': r += "&amp;"; break;
+                case '"': r += "&quot;"; break;
+                case '\'': r += "&apos;"; break;
+                default: r += c; break;
+                }
+            }
+            return r;
+        }
+    }
+}
+
 template < typename Graph, typename VertexIndexMap >
 void write_graphml(std::ostream& out, const Graph& g,
     VertexIndexMap vertex_index, const dynamic_properties& dp,
@@ -257,7 +292,7 @@ void write_graphml(std::ostream& out, const Graph& g,
     typedef typename graph_traits< Graph >::edge_descriptor edge_descriptor;
     typedef typename graph_traits< Graph >::vertex_descriptor vertex_descriptor;
 
-    using boost::property_tree::xml_parser::encode_char_entities;
+    using boost::detail::graphml::encode_char_entities;
 
     BOOST_STATIC_CONSTANT(bool,
         graph_is_directed

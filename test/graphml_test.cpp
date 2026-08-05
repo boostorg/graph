@@ -1,3 +1,4 @@
+// Copyright (c) 2026 Arnaud Becheler
 // Copyright (C) 2006  Tiago de Paula Peixoto <tiago@forked.de>
 //
 // Boost Software License - Version 1.0 - August 17th, 2003
@@ -31,74 +32,170 @@
 #include <boost/core/lightweight_test.hpp>
 #include <cmath>
 #include <fstream>
+#include <sstream>
 #include <string>
 
-using namespace std;
-using namespace boost;
+// Direct check of the entity escaping applied on the write path.
+void test_encode_char_entities()
+{
+    using boost::detail::graphml::encode_char_entities;
+    // Empty stays empty.
+    BOOST_TEST_EQ(encode_char_entities(""), std::string(""));
+    // Ordinary text passes through untouched.
+    BOOST_TEST_EQ(encode_char_entities("plain text"), std::string("plain text"));
+    // An all-spaces value keeps its length via a leading numeric entity.
+    BOOST_TEST_EQ(encode_char_entities("   "), std::string("&#32;  "));
+    // Each reserved character maps to its named entity.
+    BOOST_TEST_EQ(encode_char_entities("<>&\"'"), std::string("&lt;&gt;&amp;&quot;&apos;"));
+    // Reserved characters are escaped in place among ordinary ones.
+    BOOST_TEST_EQ(encode_char_entities("a<b>c&d\"e'f"), std::string("a&lt;b&gt;c&amp;d&quot;e&apos;f"));
+}
+
+// A value carrying all five reserved characters survives a write then read.
+void test_special_chars_round_trip()
+{
+    using graph_t = boost::adjacency_list< boost::vecS, boost::vecS, boost::directedS, boost::property< boost::vertex_name_t, std::string > >;
+
+    const std::string special = "a<b>c&d\"e'f";
+
+    graph_t g;
+    auto v = boost::add_vertex(g);
+    boost::put(boost::vertex_name_t(), g, v, special);
+
+    boost::dynamic_properties dp;
+    dp.property("name", boost::get(boost::vertex_name_t(), g));
+
+    std::ostringstream out;
+    boost::write_graphml(out, g, dp);
+
+    graph_t g2;
+    boost::dynamic_properties dp2;
+    dp2.property("name", boost::get(boost::vertex_name_t(), g2));
+    std::istringstream in(out.str());
+    boost::read_graphml(in, g2, dp2);
+
+    auto round_tripped = boost::get(boost::vertex_name_t(), g2, boost::vertex(0, g2));
+    BOOST_TEST_EQ(boost::num_vertices(g2), std::size_t(1));
+    BOOST_TEST_EQ(round_tripped, special);
+}
+
+// A required XML attribute that is absent raises parse_error.
+void test_missing_required_attribute()
+{
+    using graph_t = boost::adjacency_list< boost::vecS, boost::vecS, boost::directedS >;
+
+    // The lone edge omits its mandatory source attribute.
+    const std::string malformed =
+        "<?xml version=\"1.0\"?>\n"
+        "<graphml>\n"
+        "  <graph id=\"G\" edgedefault=\"directed\">\n"
+        "    <node id=\"n0\"/>\n"
+        "    <node id=\"n1\"/>\n"
+        "    <edge target=\"n1\"/>\n"
+        "  </graph>\n"
+        "</graphml>\n";
+
+    graph_t g;
+    boost::dynamic_properties dp;
+    std::istringstream in(malformed);
+    BOOST_TEST_THROWS(boost::read_graphml(in, g, dp), boost::parse_error);
+}
+
+// Ill-formed XML and a missing graphml root both raise parse_error.
+void test_malformed_documents()
+{
+    using graph_t = boost::adjacency_list< boost::vecS, boost::vecS, boost::directedS >;
+
+    // Mismatched tags make the underlying XML parser fail.
+    const std::string ill_formed = "<graphml><graph></graphml>";
+    {
+        graph_t g;
+        boost::dynamic_properties dp;
+        std::istringstream in(ill_formed);
+        BOOST_TEST_THROWS(boost::read_graphml(in, g, dp), boost::parse_error);
+    }
+
+    // Well-formed XML whose root is not graphml has no graph to read.
+    const std::string no_graphml = "<?xml version=\"1.0\"?>\n<root/>\n";
+    {
+        graph_t g;
+        boost::dynamic_properties dp;
+        std::istringstream in(no_graphml);
+        BOOST_TEST_THROWS(boost::read_graphml(in, g, dp), boost::parse_error);
+    }
+}
 
 int main(int, char** argv)
 {
-    typedef adjacency_list< vecS, vecS, directedS,
-        property< vertex_color_t, int, property< vertex_name_t, string > >,
-        property< edge_weight_t, double >, property< graph_name_t, string > >
-        graph_t;
+    test_encode_char_entities();
+    test_special_chars_round_trip();
+    test_missing_required_attribute();
+    test_malformed_documents();
+
+    using graph_t = boost::adjacency_list< boost::vecS, boost::vecS, boost::directedS,
+        boost::property< boost::vertex_color_t, int, boost::property< boost::vertex_name_t, std::string > >,
+        boost::property< boost::edge_weight_t, double >, boost::property< boost::graph_name_t, std::string > >;
     graph_t g;
-    dynamic_properties dp;
-    dp.property("foo", get(vertex_color_t(), g));
-    dp.property("weight", get(edge_weight_t(), g));
-    dp.property("name", get(vertex_name_t(), g));
-    boost::ref_property_map< graph_t*, std::string > gname(
-        get_property(g, graph_name));
+    boost::dynamic_properties dp;
+    dp.property("foo", boost::get(boost::vertex_color_t(), g));
+    dp.property("weight", boost::get(boost::edge_weight_t(), g));
+    dp.property("name", boost::get(boost::vertex_name_t(), g));
+    boost::ref_property_map< graph_t*, std::string > gname(boost::get_property(g, boost::graph_name));
     dp.property("description", gname);
 
-    ifstream ifile(argv[1]);
-    read_graphml(ifile, g, dp);
+    std::ifstream ifile(argv[1]);
+    boost::read_graphml(ifile, g, dp);
     ifile.close();
 
-    BOOST_TEST(num_vertices(g) == 9);
-    BOOST_TEST(num_edges(g) == 9);
-    BOOST_TEST(get(vertex_color_t(), g, vertex(2, g)) == 100);
-    BOOST_TEST(get(vertex_color_t(), g, vertex(3, g)) == 42);
-    BOOST_TEST(std::abs(get(edge_weight_t(), g,
-                             edge(vertex(0, g), vertex(1, g), g).first)
-                    - 0.0)
-        < 0.00001);
-    BOOST_TEST(std::abs(get(edge_weight_t(), g,
-                             edge(vertex(1, g), vertex(2, g), g).first)
-                    - 0.8)
-        < 0.00001);
-    BOOST_TEST(get("description", dp, &g) == "Root graph.");
+    BOOST_TEST(boost::num_vertices(g) == 9);
+    BOOST_TEST(boost::num_edges(g) == 9);
+    BOOST_TEST(boost::get(boost::vertex_color_t(), g, boost::vertex(2, g)) == 100);
+    BOOST_TEST(boost::get(boost::vertex_color_t(), g, boost::vertex(3, g)) == 42);
 
-    ofstream ofile("graphml_test_out.xml");
-    write_graphml(ofile, g, dp);
+    auto edge_01 = boost::edge(boost::vertex(0, g), boost::vertex(1, g), g).first;
+    auto weight_01 = boost::get(boost::edge_weight_t(), g, edge_01);
+    BOOST_TEST(std::abs(weight_01 - 0.0) < 0.00001);
+
+    auto edge_12 = boost::edge(boost::vertex(1, g), boost::vertex(2, g), g).first;
+    auto weight_12 = boost::get(boost::edge_weight_t(), g, edge_12);
+    BOOST_TEST(std::abs(weight_12 - 0.8) < 0.00001);
+
+    BOOST_TEST(boost::get("description", dp, &g) == "Root graph.");
+
+    std::ofstream ofile("graphml_test_out.xml");
+    boost::write_graphml(ofile, g, dp);
     ofile.close();
 
     graph_t g2;
-    dynamic_properties dp2;
-    dp2.property("foo", get(vertex_color_t(), g2));
-    dp2.property("weight", get(edge_weight_t(), g2));
-    dp2.property("name", get(vertex_name_t(), g2));
-    boost::ref_property_map< graph_t*, std::string > gname2(
-        get_property(g2, graph_name));
+    boost::dynamic_properties dp2;
+    dp2.property("foo", boost::get(boost::vertex_color_t(), g2));
+    dp2.property("weight", boost::get(boost::edge_weight_t(), g2));
+    dp2.property("name", boost::get(boost::vertex_name_t(), g2));
+    boost::ref_property_map< graph_t*, std::string > gname2(boost::get_property(g2, boost::graph_name));
     dp2.property("description", gname2);
     ifile.open("graphml_test_out.xml");
-    read_graphml(ifile, g2, dp2);
+    boost::read_graphml(ifile, g2, dp2);
     ifile.close();
 
-    BOOST_TEST(num_vertices(g) == num_vertices(g2));
-    BOOST_TEST(num_edges(g) == num_edges(g2));
-    BOOST_TEST(get("description", dp, &g) == get("description", dp2, &g2));
+    BOOST_TEST(boost::num_vertices(g) == boost::num_vertices(g2));
+    BOOST_TEST(boost::num_edges(g) == boost::num_edges(g2));
+    BOOST_TEST(boost::get("description", dp, &g) == boost::get("description", dp2, &g2));
 
-    graph_traits< graph_t >::vertex_iterator v, v_end;
-    for (boost::tie(v, v_end) = vertices(g); v != v_end; ++v)
-        BOOST_TEST(
-            get(vertex_color_t(), g, *v) == get(vertex_color_t(), g2, *v));
+    boost::graph_traits< graph_t >::vertex_iterator v, v_end;
+    for (boost::tie(v, v_end) = boost::vertices(g); v != v_end; ++v)
+    {
+        auto color_1 = boost::get(boost::vertex_color_t(), g, *v);
+        auto color_2 = boost::get(boost::vertex_color_t(), g2, *v);
+        BOOST_TEST(color_1 == color_2);
+    }
 
-    graph_traits< graph_t >::edge_iterator e, e_end;
-    for (boost::tie(e, e_end) = edges(g); e != e_end; ++e)
-        BOOST_TEST(
-            std::abs(get(edge_weight_t(), g, *e) - get(edge_weight_t(), g2, *e))
-            < 0.00001);
+    boost::graph_traits< graph_t >::edge_iterator e, e_end;
+    for (boost::tie(e, e_end) = boost::edges(g); e != e_end; ++e)
+    {
+        auto weight_1 = boost::get(boost::edge_weight_t(), g, *e);
+        auto weight_2 = boost::get(boost::edge_weight_t(), g2, *e);
+        BOOST_TEST(std::abs(weight_1 - weight_2) < 0.00001);
+    }
 
     return boost::report_errors();
 }
