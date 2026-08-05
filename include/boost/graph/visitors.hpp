@@ -395,9 +395,11 @@ private:
  * Creates a property_put functor which just sets a given value to a vertex or
  * edge.
  *
+ * The third argument is an unnamed event filter tag, used only to select the
+ * event the returned functor responds to.
+ *
  * @param property_map Given writeable property map
  * @param value Fixed value of the map
- * @param tag Event Filter
  * @return The functor.
  */
 
