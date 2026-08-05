@@ -39,7 +39,6 @@ target_link_libraries(boost_graph
     Boost::parameter
     Boost::preprocessor
     Boost::property_map
-    Boost::property_tree
     Boost::random
     Boost::range
     Boost::serialization
