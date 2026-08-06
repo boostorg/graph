@@ -38,6 +38,7 @@ namespace graph
                 sum_abs += std::abs(get(current, v) - get(previous, v));
             return sum_abs*num_vertices(g)<tol;
         }
+    protected:
         std::size_t iters;
         double tol;
     };
@@ -140,6 +141,17 @@ namespace graph
         RankMap2 rank_map2
         BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph, vertex_list_graph_tag))
     {
+        using Vertex = typename graph_traits<Graph>::vertex_descriptor;
+        using Edge = typename graph_traits<Graph>::edge_descriptor;
+        BOOST_CONCEPT_ASSERT(( boost::IncidenceGraphConcept<Graph> ));
+        BOOST_CONCEPT_ASSERT(( boost::VertexListGraphConcept<Graph> ));
+        BOOST_CONCEPT_ASSERT(( boost::ReadablePropertyMapConcept<WeightMap, Edge> ));
+        BOOST_CONCEPT_ASSERT(( boost::ReadablePropertyMapConcept<PersonalizationMap, Vertex>));
+        BOOST_CONCEPT_ASSERT(( boost::ReadWritePropertyMapConcept<RankMap,  Vertex> ));
+
+
+        assert (damping>=-1.0 && damping<1.0 && "Damping outside the closed-open range [-1.0,1.0) could induce numerical instability."); // non-inclussive upper limit is deliberate
+
         using rank_type = typename property_traits< PersonalizationMap >::value_type;
         rank_type personalization_norm(0);
         for (auto v : boost::make_iterator_range(vertices(g))) 
