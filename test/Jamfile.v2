@@ -99,7 +99,7 @@ alias graph_test_regular :
     [ run subgraph_props.cpp ]
     [ run subgraph_global_local.cpp ]
 
-    [ run isomorphism.cpp ]
+    [ run isomorphism.cpp : $(TEST_DIR) ]
     [ run adjacency_matrix_test.cpp ]
     [ compile vector_graph_cc.cpp ]
     [ compile copy.cpp ]
