@@ -34,9 +34,9 @@ template < class T > struct closed_plus
         if (b == inf)
             return inf;
         // saturate to avoid signed overflow (e.g. negative cycles)
-        if (b > 0 && a > (std::numeric_limits< T >::max)() - b)
+        if (b > T(0) && a > (std::numeric_limits< T >::max)() - b)
             return inf;
-        if (b < 0 && a < (std::numeric_limits< T >::lowest)() - b)
+        if (b < T(0) && a < (std::numeric_limits< T >::lowest)() - b)
             return (std::numeric_limits< T >::lowest)();
         return a + b;
     }
