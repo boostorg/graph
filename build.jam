@@ -10,7 +10,6 @@ constant boost_dependencies :
     /boost/any//boost_any
     /boost/array//boost_array
     /boost/assert//boost_assert
-    /boost/bimap//boost_bimap
     /boost/concept_check//boost_concept_check
     /boost/config//boost_config
     /boost/container_hash//boost_container_hash
