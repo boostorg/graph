@@ -22,11 +22,7 @@ env:
 
 jobs:
   ubsan:
-    # Non-blocking for now: UBSan runs with norecover (halts on the first finding),
-    # so the job reports undefined behaviour without failing the PR check. Remove
-    # continue-on-error to make it blocking once the tree is clean.
-    continue-on-error: true
-
+    # Blocking: UBSan fails the check on the first UB found
     defaults:
       run:
         shell: bash
