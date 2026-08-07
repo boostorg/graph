@@ -141,11 +141,9 @@ namespace detail
          * Constructor
          * \param g = (V, E) - a directed multigraph.
          * \param vim  Vertex Index Map. Read property Map: V -> [0,
-         * num_vertices(g)). \param ewm  edge weight map. Read property map: E
-         * -> R \param ew2m  edge weight map. Read property map: E -> R+ \param
-         * infty A big enough value to guaranty that there exist a cycle with
-         *  better ratio.
-         * \param cmp The compare operator for float_ts.
+         *  num_vertices(g)).
+         * \param ewm  edge weight map. Read property map: E -> R
+         * \param ew2m  edge weight map. Read property map: E -> R+
          */
         mcr_howard(const Graph& g, VertexIndexMap vim, EdgeWeight1 ewm,
             EdgeWeight2 ew2m)
