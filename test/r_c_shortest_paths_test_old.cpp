@@ -2,7 +2,7 @@
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://boost.org/LICENSE_1_0.txt)
-
+#define BOOST_ALLOW_DEPRECATED_SYMBOLS
 #include <boost/config.hpp>
 
 #ifdef BOOST_MSVC
@@ -363,7 +363,8 @@ int main(int, char*[])
     {
         for (int t = 0; t < 10; ++t)
         {
-            r_c_shortest_paths(g, get(&SPPRC_Example_Graph_Vert_Prop::num, g), s, t, opt_solutions,
+            r_c_shortest_paths(g, get(&SPPRC_Example_Graph_Vert_Prop::num, g),
+                get(&SPPRC_Example_Graph_Arc_Prop::num, g), s, t, opt_solutions,
                 pareto_opt_rcs_no_rc, spp_no_rc_res_cont(0), ref_no_res_cont(),
                 dominance_no_res_cont(),
                 std::allocator< r_c_shortest_paths_label< SPPRC_Example_Graph,
@@ -522,7 +523,7 @@ int main(int, char*[])
         for (int t = 0; t < 10; ++t)
         {
             r_c_shortest_paths(g, get(&SPPRC_Example_Graph_Vert_Prop::num, g),
-                 s, t,
+                get(&SPPRC_Example_Graph_Arc_Prop::num, g), s, t,
                 opt_solutions_spptw, pareto_opt_rcs_spptw,
                 // be careful, do not simply take 0 as initial value for time
                 spp_spptw_res_cont(0, g[s].eat), ref_spptw(), dominance_spptw(),
@@ -684,7 +685,7 @@ int main(int, char*[])
         opt_solution;
     spp_spptw_res_cont pareto_opt_rc;
     r_c_shortest_paths(g2, get(&SPPRC_Example_Graph_Vert_Prop::num, g2),
-         0, 3, opt_solution,
+        get(&SPPRC_Example_Graph_Arc_Prop::num, g2), 0, 3, opt_solution,
         pareto_opt_rc, spp_spptw_res_cont(0, 0), ref_spptw(), dominance_spptw(),
         std::allocator< r_c_shortest_paths_label< SPPRC_Example_Graph,
             spp_spptw_res_cont > >(),
@@ -729,7 +730,7 @@ int main(int, char*[])
     graph_traits< SPPRC_Example_Graph >::vertex_descriptor g3_source = 0,
                                                            g3_target = 1;
     r_c_shortest_paths(g3, get(&SPPRC_Example_Graph_Vert_Prop::num, g3),
-         g3_source, g3_target,
+        get(&SPPRC_Example_Graph_Arc_Prop::num, g3), g3_source, g3_target,
         pareto_opt_marked_solutions, pareto_opt_marked_resource_containers,
         spp_spptw_marked_res_cont(0, 0, 0), ref_spptw_marked(),
         dominance_spptw_marked(),
