@@ -74,7 +74,7 @@ template < typename Graph > void print_bipartite(const Graph& g)
     }
 }
 
-int main(int argc, char** argv)
+int main()
 {
     using vector_graph_t = adjacency_list< vecS, vecS, undirectedS >;
     using E = std::pair< int, int >;

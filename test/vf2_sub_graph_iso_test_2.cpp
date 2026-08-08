@@ -201,7 +201,7 @@ BOOST_TEST(!got_hit);
 }
 }
 
-int main(int argc, char* argv[])
+int main()
 {
     test_empty_graph_cases();
     test_return_value();

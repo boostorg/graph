@@ -32,7 +32,7 @@ using vertex_iterator = boost::graph_traits< Graph >::vertex_iterator;
 
 using edge_iterator = boost::graph_traits< Graph >::edge_iterator;
 
-int main(int argc, char** argv)
+int main()
 {
     Graph iG, vG;
     vector< edge_descriptor > iG_o = { boost::add_edge(0, 1, iG).first,
