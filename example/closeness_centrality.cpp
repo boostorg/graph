@@ -49,7 +49,7 @@ using ClosenessProperty = boost::exterior_vertex_property< Graph, float >;
 using ClosenessContainer = ClosenessProperty::container_type;
 using ClosenessMap = ClosenessProperty::map_type;
 
-int main(int argc, char* argv[])
+int main()
 {
     // Create the graph and a property map that provides access to[
     // tha actor names.

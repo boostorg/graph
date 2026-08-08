@@ -11,7 +11,7 @@ using namespace std;
 using namespace boost;
 typedef adjacency_list<> graph_t;
 
-int main(int argc, char* argv[])
+int main()
 {
     graph_t g(5), g_TC;
 

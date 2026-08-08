@@ -20,7 +20,7 @@
 
 using namespace boost;
 
-int main(int argc, char** argv)
+int main()
 {
 
     typedef rand48 RandomGenerator;

@@ -38,7 +38,7 @@ template < typename TG > void gen_rand_graph(TG& g, size_t nV, size_t nE)
     randomize_property< edge_weight2_t >(g, ew2rg);
 }
 
-int main(int argc, char* argv[])
+int main()
 {
     using std::cout;
     using std::endl;
