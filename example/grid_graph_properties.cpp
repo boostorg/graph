@@ -11,7 +11,7 @@
 #include <boost/array.hpp>
 #include <boost/graph/grid_graph.hpp>
 
-int main(int argc, char* argv[])
+int main()
 {
     // A 2D grid graph
     using GraphType = boost::grid_graph< 2 >;
