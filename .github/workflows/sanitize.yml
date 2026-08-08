@@ -1,0 +1,94 @@
+# Copyright 2020-2021 Peter Dimov
+# Copyright 2021 Andrey Semashev
+# Copyright 2021 Alexander Grund
+# Copyright 2022 James E. King III
+# Copyright 2023 Matt Borland
+# Copyright 2026 Arnaud Becheler
+#
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE or copy at http://boost.org/LICENSE_1_0.txt)
+---
+name: sanitize
+
+on: [push, pull_request]
+
+env:
+  GIT_FETCH_JOBS: 8
+  NET_RETRY_COUNT: 5
+  B2_CI_VERSION: 1
+  B2_LINK: static
+  # UBSan gives better stack traces in a debug build; also faster than debug,release.
+  B2_VARIANT: debug
+
+jobs:
+  ubsan:
+    # Blocking: UBSan fails the check on the first UB found
+    defaults:
+      run:
+        shell: bash
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: UBSan, ubsan: 1,
+              compiler: gcc-14, cxxstd: '17,20', os: ubuntu-24.04, install: 'g++-14', address-model: '64' }
+
+    timeout-minutes: 120
+    runs-on: ${{matrix.os}}
+    container: ${{matrix.container}}
+
+    steps:
+      - name: Setup environment
+        run: |
+          if [ -f "/etc/debian_version" ]; then
+              echo "DEBIAN_FRONTEND=noninteractive" >> $GITHUB_ENV
+              export DEBIAN_FRONTEND=noninteractive
+          fi
+          git config --global pack.threads 0
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Fetch Boost.CI
+        uses: actions/checkout@v4
+        with:
+          repository: boostorg/boost-ci
+          ref: master
+          path: boost-ci-cloned
+
+      - name: Get CI scripts folder
+        run: |
+          # Copy ci folder if not testing Boost.CI
+          [[ "$GITHUB_REPOSITORY" =~ "boost-ci" ]] || cp -r boost-ci-cloned/ci .
+          rm -rf boost-ci-cloned
+
+      - name: Install packages
+        if: startsWith(matrix.os, 'ubuntu')
+        run: |
+          SOURCES=(ppa:ubuntu-toolchain-r/test)
+          for source in "${SOURCES[@]}"; do
+              for i in {1..$NET_RETRY_COUNT}; do
+                  sudo add-apt-repository $source && break || sleep 10
+              done
+          done
+          sudo apt-get -o Acquire::Retries=$NET_RETRY_COUNT update
+          if [[ -z "${{matrix.install}}" ]]; then
+              pkgs="${{matrix.compiler}}"
+              pkgs="${pkgs/gcc-/g++-}"
+          else
+              pkgs="${{matrix.install}}"
+          fi
+          sudo apt-get -o Acquire::Retries=$NET_RETRY_COUNT install -y $pkgs
+
+      - name: Setup Boost
+        env:
+          B2_ADDRESS_MODEL: ${{matrix.address-model}}
+          B2_COMPILER: ${{matrix.compiler}}
+          B2_CXXSTD: ${{matrix.cxxstd}}
+          B2_UBSAN: ${{matrix.ubsan}}
+        run: source ci/github/install.sh
+
+      - name: Run tests
+        run: ci/build.sh
