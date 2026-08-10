@@ -49,7 +49,7 @@ template < typename Graph > void test()
     // of edge connection.
     static const size_t N = 20;
     static const double P = 0.1;
-    boost::minstd_rand rng;
+    boost::minstd_rand rng(42);
 
     Graph g(er(rng, N, P), er(), N);
     renumber_indices(g);

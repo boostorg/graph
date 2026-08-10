@@ -74,7 +74,7 @@ randomly_permute_graph(const Graph1& g1, Graph2& g2)
     typedef typename graph_traits< Graph2 >::vertex_descriptor vertex2;
     typedef typename graph_traits< Graph1 >::edge_iterator edge_iterator;
 
-    random_generator_type gen;
+    random_generator_type gen(42);
 
     // Decide new order
     std::vector< vertex1 > orig_vertices;
@@ -100,7 +100,7 @@ template < typename Graph >
 void generate_random_digraph(Graph& g, double edge_probability)
 {
     typedef typename graph_traits< Graph >::vertex_iterator vertex_iterator;
-    random_generator_type random_gen;
+    random_generator_type random_gen(42);
     boost::uniform_real< double > distrib(0.0, 1.0);
     boost::variate_generator< random_generator_type&,
         boost::uniform_real< double > >
@@ -292,7 +292,7 @@ void test_colored_isomorphism(int n, double edge_probability)
     std::fill(colors.begin(), midpoint, 0);
     std::fill(midpoint, colors.end(), 1);
 
-    random_generator_type gen;
+    random_generator_type gen(42);
 
     std::shuffle(colors.begin(), colors.end(), gen);
 

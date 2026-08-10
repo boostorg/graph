@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
 {
     unsigned n = (argc > 1 ? lexical_cast< unsigned >(argv[1]) : 10000u);
     unsigned m = (argc > 2 ? lexical_cast< unsigned >(argv[2]) : 10 * n);
-    int seed = (argc > 3 ? lexical_cast< int >(argv[3]) : 1);
+    int seed = 42;
 
     // Build random graph
     typedef adjacency_list< vecS, vecS, directedS, no_property,

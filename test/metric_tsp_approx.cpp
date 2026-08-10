@@ -7,14 +7,12 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 
+#include <cmath>
 #include <iostream>
 #include <vector>
-#include <fstream>
 #include <set>
-#include <ctime>
 
-#include <boost/assert.hpp>
-#include <boost/lexical_cast.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <boost/random.hpp>
 #include <boost/timer/timer.hpp>
 #include <boost/integer_traits.hpp>
@@ -23,9 +21,6 @@
 #include <boost/graph/simple_point.hpp>
 #include <boost/graph/metric_tsp_approx.hpp>
 #include <boost/graph/graphviz.hpp>
-
-// TODO: Integrate this into the test system a little better. We need to run
-// the test with some kind of input file.
 
 template < typename PointType > struct cmpPnt
 {
@@ -90,7 +85,7 @@ void testScalability(unsigned numpts)
     typedef set< simple_point< double >, cmpPnt< double > > PointSet;
     typedef vector< Vertex > Container;
 
-    boost::mt19937 rng(std::time(0));
+    boost::mt19937 rng(42);
     uniform_real<> range(0.01, (numpts * 2));
     variate_generator< boost::mt19937&, uniform_real<> > pnt_gen(rng, range);
 
@@ -174,23 +169,7 @@ template < typename PositionVec > void checkAdjList(PositionVec v)
     c.clear();
 }
 
-static void usage()
-{
-    using namespace std;
-    cerr << "To run this program properly please place a "
-         << "file called graph.txt" << endl
-         << "into the current working directory." << endl
-         << "Each line of this file should be a coordinate specifying the"
-         << endl
-         << "location of a vertex" << endl
-         << "For example: " << endl
-         << "1,2" << endl
-         << "20,4" << endl
-         << "15,7" << endl
-         << endl;
-}
-
-int main(int argc, char* argv[])
+int main()
 {
     using namespace boost;
     using namespace std;
@@ -204,43 +183,18 @@ int main(int argc, char* argv[])
     typedef property_map< Graph, edge_weight_t >::type WeightMap;
     typedef property_map< Graph, vertex_index_t >::type VertexMap;
 
-    // Make sure that the the we can parse the given file.
-    if (argc < 2)
-    {
-        usage();
-        // return -1;
-        return 0;
-    }
+    static const double coords[][2] = { { 2, 5 }, { 2, 3 }, { 1, 2 },
+        { 4, 5 }, { 5, 4 }, { 4, 3 }, { 6, 3 }, { 3, 1 } };
 
-    // Open the graph file, failing if one isn't given on the command line.
-    ifstream fin(argv[1]);
-    if (!fin)
-    {
-        usage();
-        // return -1;
-        return 0;
-    }
-
-    string line;
     PositionVec position_vec;
-
-    int n(0);
-    while (getline(fin, line))
+    for (size_t i = 0; i < sizeof(coords) / sizeof(coords[0]); ++i)
     {
         simple_point< double > vertex;
-
-        size_t idx(line.find(","));
-        string xStr(line.substr(0, idx));
-        string yStr(line.substr(idx + 1, line.size() - idx));
-
-        vertex.x = lexical_cast< double >(xStr);
-        vertex.y = lexical_cast< double >(yStr);
-
+        vertex.x = coords[i][0];
+        vertex.y = coords[i][1];
         position_vec.push_back(vertex);
-        n++;
     }
-
-    fin.close();
+    int n(static_cast< int >(position_vec.size()));
 
     Container c;
     Graph g(position_vec.size());
@@ -286,9 +240,11 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    cout << "Number of points: " << num_vertices(g) << endl;
-    cout << "Number of edges: " << num_edges(g) << endl;
     cout << "Length of Tour: " << len << endl;
+
+    BOOST_TEST_EQ(num_vertices(g), size_t(8));
+    BOOST_TEST_EQ(c.size(), num_vertices(g) + 1);
+    BOOST_TEST(std::abs(len - 19.073950245236318) < 1e-9);
 
     int cnt(0);
     pair< Vertex, Vertex > triangleEdge;
@@ -327,7 +283,7 @@ int main(int argc, char* argv[])
     {
         caught = true;
     }
-    BOOST_ASSERT(caught);
+    BOOST_TEST(caught);
 
-    return 0;
+    return boost::report_errors();
 }
