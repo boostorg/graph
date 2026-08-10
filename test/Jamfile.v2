@@ -34,8 +34,7 @@ alias graph_test_regular :
     [ run labeled_graph.cpp ]
     [ run finish_edge_bug.cpp ]
 
-    [ run transitive_closure_test.cpp /boost/timer//boost_timer ]
-    [ run transitive_closure_test2.cpp ]
+    [ run transitive_closure_test.cpp ]
     [ compile adj_list_cc.cpp ]
 
     #[ run adj_list_invalidation.cpp ]
