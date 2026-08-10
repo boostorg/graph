@@ -158,7 +158,7 @@ alias graph_test_regular :
     [ run incremental_components_test.cpp ]
     [ run two_graphs_common_spanning_trees_test.cpp ]
     [ run random_spanning_tree_test.cpp /boost/graph//boost_graph ]
-    [ run random_matching_test.cpp : 1000 1020 ]
+    [ run random_matching_test.cpp ]
     [ run graphml_test.cpp /boost/graph//boost_graph : : "graphml_test.xml" ]
     [ run mas_test.cpp : $(TEST_DIR) ]
     [ run stoer_wagner_test.cpp : $(TEST_DIR) ]
