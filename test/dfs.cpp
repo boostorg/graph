@@ -184,6 +184,34 @@ template < typename Graph > struct dfs_test
     }
 };
 
+// regression guard: finish_edge must fire once per edge (it once never did)
+struct finish_edge_counter : boost::dfs_visitor<>
+{
+    explicit finish_edge_counter(std::size_t& count) : m_count(&count) {}
+    template < class Edge, class Graph > void finish_edge(Edge, Graph&) const
+    {
+        ++*m_count;
+    }
+    std::size_t* m_count;
+};
+
+void test_finish_edge_is_called()
+{
+    using graph_t = boost::adjacency_list< boost::vecS, boost::vecS, boost::directedS >;
+    graph_t g;
+    graph_t::vertex_descriptor a = boost::add_vertex(g);
+    graph_t::vertex_descriptor b = boost::add_vertex(g);
+    graph_t::vertex_descriptor c = boost::add_vertex(g);
+    boost::add_edge(a, b, g);
+    boost::add_edge(b, c, g);
+    boost::add_edge(c, a, g);
+    boost::add_edge(a, c, g);
+
+    std::size_t finish_edge_calls = 0;
+    boost::depth_first_search(g, boost::visitor(finish_edge_counter(finish_edge_calls)));
+    BOOST_TEST_EQ(finish_edge_calls, boost::num_edges(g));
+}
+
 // usage: dfs.exe [max-vertices=15]
 
 int main(int argc, char* argv[])
@@ -201,6 +229,8 @@ int main(int argc, char* argv[])
         boost::adjacency_list< boost::vecS, boost::vecS, boost::undirectedS,
             boost::property< boost::vertex_color_t,
                 boost::default_color_type > > >::go(max_V);
+
+    test_finish_edge_is_called();
 
     return boost::report_errors();
 }
