@@ -2,6 +2,7 @@
 // Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
 // Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek
 //          Doug Gregor, D. Kevin McGrath
+// Copyright (c) 2026 Arnaud Becheler
 //
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
@@ -10,38 +11,23 @@
 
 #include <boost/config.hpp>
 #include <vector>
-#include <iostream>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/cuthill_mckee_ordering.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/bandwidth.hpp>
+#include <boost/core/lightweight_test.hpp>
 
-/*
-  Sample Output
-  original bandwidth: 8
-  Reverse Cuthill-McKee ordering starting at: 6
-    8 3 0 9 2 5 1 4 7 6
-    bandwidth: 4
-  Reverse Cuthill-McKee ordering starting at: 0
-    9 1 4 6 7 2 8 5 3 0
-    bandwidth: 4
-  Reverse Cuthill-McKee ordering:
-    0 8 5 7 3 6 4 2 1 9
-    bandwidth: 4
- */
-int main(int, char*[])
+int main()
 {
     using namespace boost;
-    using namespace std;
-    typedef adjacency_list< vecS, vecS, undirectedS,
+    using Graph = adjacency_list< vecS, vecS, undirectedS,
         property< vertex_color_t, default_color_type,
-            property< vertex_degree_t, int > > >
-        Graph;
-    typedef graph_traits< Graph >::vertex_descriptor Vertex;
-    typedef graph_traits< Graph >::vertices_size_type size_type;
+            property< vertex_degree_t, int > > >;
+    using Vertex = graph_traits< Graph >::vertex_descriptor;
+    using size_type = graph_traits< Graph >::vertices_size_type;
 
-    typedef std::pair< std::size_t, std::size_t > Pair;
-    Pair edges[14] = { Pair(0, 3), // a-d
+    using Pair = std::pair< std::size_t, std::size_t >;
+    constexpr Pair edges[14] = { Pair(0, 3), // a-d
         Pair(0, 5), // a-f
         Pair(1, 2), // b-c
         Pair(1, 4), // b-e
@@ -66,72 +52,61 @@ int main(int, char*[])
     for (boost::tie(ui, ui_end) = vertices(G); ui != ui_end; ++ui)
         deg[*ui] = degree(*ui, G);
 
-    property_map< Graph, vertex_index_t >::type index_map
-        = get(vertex_index, G);
+    property_map< Graph, vertex_index_t >::type index_map = get(vertex_index, G);
 
-    std::cout << "original bandwidth: " << bandwidth(G) << std::endl;
+    const size_type n = num_vertices(G);
+    auto assert_valid_permutation
+        = [&index_map, n](const std::vector< Vertex >& order) {
+              BOOST_TEST(order.size() == n);
+              std::vector< bool > seen(n, false);
+              for (std::size_t k = 0; k < order.size(); ++k)
+              {
+                  size_type idx = index_map[order[k]];
+                  BOOST_TEST(idx < n);
+                  if (idx < n)
+                  {
+                      BOOST_TEST(!seen[idx]);
+                      seen[idx] = true;
+                  }
+              }
+              for (size_type k = 0; k < n; ++k)
+                  BOOST_TEST(seen[k]);
+          };
 
+    const size_type original_bw = bandwidth(G);
     std::vector< Vertex > inv_perm(num_vertices(G));
     std::vector< size_type > perm(num_vertices(G));
+
     {
+        // reverse cuthill_mckee_ordering
         Vertex s = vertex(6, G);
-        // reverse cuthill_mckee_ordering
-        cuthill_mckee_ordering(G, s, inv_perm.rbegin(), get(vertex_color, G),
-            get(vertex_degree, G));
-        cout << "Reverse Cuthill-McKee ordering starting at: " << s << endl;
-        cout << "  ";
-        for (std::vector< Vertex >::const_iterator i = inv_perm.begin();
-             i != inv_perm.end(); ++i)
-            cout << index_map[*i] << " ";
-        cout << endl;
-
+        cuthill_mckee_ordering(G, s, inv_perm.rbegin(), get(vertex_color, G), get(vertex_degree, G));
         for (size_type c = 0; c != inv_perm.size(); ++c)
             perm[index_map[inv_perm[c]]] = c;
-        std::cout << "  bandwidth: "
-                  << bandwidth(G,
-                         make_iterator_property_map(
-                             &perm[0], index_map, perm[0]))
-                  << std::endl;
+        size_type bw = bandwidth(G, make_iterator_property_map(&perm[0], index_map, perm[0]));
+        assert_valid_permutation(inv_perm);
+        BOOST_TEST(bw <= original_bw);
     }
-    {
-        Vertex s = vertex(0, G);
-        // reverse cuthill_mckee_ordering
-        cuthill_mckee_ordering(G, s, inv_perm.rbegin(), get(vertex_color, G),
-            get(vertex_degree, G));
-        cout << "Reverse Cuthill-McKee ordering starting at: " << s << endl;
-        cout << "  ";
-        for (std::vector< Vertex >::const_iterator i = inv_perm.begin();
-             i != inv_perm.end(); ++i)
-            cout << index_map[*i] << " ";
-        cout << endl;
 
+    {
+        // reverse cuthill_mckee_ordering
+        Vertex s = vertex(0, G);
+        cuthill_mckee_ordering(G, s, inv_perm.rbegin(), get(vertex_color, G), get(vertex_degree, G));
         for (size_type c = 0; c != inv_perm.size(); ++c)
             perm[index_map[inv_perm[c]]] = c;
-        std::cout << "  bandwidth: "
-                  << bandwidth(G,
-                         make_iterator_property_map(
-                             &perm[0], index_map, perm[0]))
-                  << std::endl;
+        size_type bw = bandwidth(G, make_iterator_property_map(&perm[0], index_map, perm[0]));
+        assert_valid_permutation(inv_perm);
+        BOOST_TEST(bw <= original_bw);
     }
 
     {
         // reverse cuthill_mckee_ordering
         cuthill_mckee_ordering(G, inv_perm.rbegin());
-
-        cout << "Reverse Cuthill-McKee ordering:" << endl;
-        cout << "  ";
-        for (std::vector< Vertex >::const_iterator i = inv_perm.begin();
-             i != inv_perm.end(); ++i)
-            cout << index_map[*i] << " ";
-        cout << endl;
-
         for (size_type c = 0; c != inv_perm.size(); ++c)
             perm[index_map[inv_perm[c]]] = c;
-        std::cout << "  bandwidth: "
-                  << bandwidth(G,
-                         make_iterator_property_map(
-                             &perm[0], index_map, perm[0]))
-                  << std::endl;
+        size_type bw = bandwidth(G, make_iterator_property_map(&perm[0], index_map, perm[0]));
+        assert_valid_permutation(inv_perm);
+        BOOST_TEST(bw <= original_bw);
     }
-    return 0;
+    return boost::report_errors();
 }
