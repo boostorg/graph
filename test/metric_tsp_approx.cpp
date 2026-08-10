@@ -11,7 +11,6 @@
 #include <vector>
 #include <fstream>
 #include <set>
-#include <ctime>
 
 #include <boost/assert.hpp>
 #include <boost/lexical_cast.hpp>
@@ -90,7 +89,7 @@ void testScalability(unsigned numpts)
     typedef set< simple_point< double >, cmpPnt< double > > PointSet;
     typedef vector< Vertex > Container;
 
-    boost::mt19937 rng(std::time(0));
+    boost::mt19937 rng(42);
     uniform_real<> range(0.01, (numpts * 2));
     variate_generator< boost::mt19937&, uniform_real<> > pnt_gen(rng, range);
 
