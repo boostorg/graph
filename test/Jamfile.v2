@@ -33,8 +33,7 @@ alias graph_test_regular :
     [ run index_graph.cpp ]     # TODO: Make this part of the test_graphs framework
     [ run labeled_graph.cpp ]
 
-    [ run transitive_closure_test.cpp /boost/timer//boost_timer ]
-    [ run transitive_closure_test2.cpp ]
+    [ run transitive_closure_test.cpp ]
     [ compile adj_list_cc.cpp ]
 
     [ run adj_list_edge_list_set.cpp ]
