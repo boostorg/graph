@@ -3,6 +3,7 @@
 //
 //=======================================================================
 // Copyright (c) 2004 Kristopher Beevers
+// Copyright (c) 2026 Arnaud Becheler
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -12,84 +13,36 @@
 
 #include <boost/graph/astar_search.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/random.hpp>
-#include <boost/random.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <utility>
 #include <vector>
 #include <list>
-#include <iostream>
+#include <limits>
 #include <math.h> // for sqrt
-
-using namespace boost;
-using namespace std;
 
 // auxiliary types
 struct location
 {
     float y, x; // lat, long
 };
+
 struct my_float
 {
     float v;
     explicit my_float(float v = float()) : v(v) {}
 };
-typedef my_float cost;
-ostream& operator<<(ostream& o, my_float f) { return o << f.v; }
+
+using cost = my_float;
 my_float operator+(my_float a, my_float b) { return my_float(a.v + b.v); }
 bool operator==(my_float a, my_float b) { return a.v == b.v; }
 bool operator<(my_float a, my_float b) { return a.v < b.v; }
 
-template < class Name, class LocMap > class city_writer
-{
-public:
-    city_writer(Name n, LocMap l, float _minx, float _maxx, float _miny,
-        float _maxy, unsigned int _ptx, unsigned int _pty)
-    : name(n)
-    , loc(l)
-    , minx(_minx)
-    , maxx(_maxx)
-    , miny(_miny)
-    , maxy(_maxy)
-    , ptx(_ptx)
-    , pty(_pty)
-    {
-    }
-    template < class Vertex >
-    void operator()(ostream& out, const Vertex& v) const
-    {
-        float px = 1 - (loc[v].x - minx) / (maxx - minx);
-        float py = (loc[v].y - miny) / (maxy - miny);
-        out << "[label=\"" << name[v] << "\", pos=\""
-            << static_cast< unsigned int >(ptx * px) << ","
-            << static_cast< unsigned int >(pty * py) << "\", fontsize=\"11\"]";
-    }
-
-private:
-    Name name;
-    LocMap loc;
-    float minx, maxx, miny, maxy;
-    unsigned int ptx, pty;
-};
-
-template < class WeightMap > class time_writer
-{
-public:
-    time_writer(WeightMap w) : wm(w) {}
-    template < class Edge > void operator()(ostream& out, const Edge& e) const
-    {
-        out << "[label=\"" << wm[e] << "\", fontsize=\"11\"]";
-    }
-
-private:
-    WeightMap wm;
-};
-
 // euclidean distance heuristic
 template < class Graph, class CostType, class LocMap >
-class distance_heuristic : public astar_heuristic< Graph, CostType >
+class distance_heuristic : public boost::astar_heuristic< Graph, CostType >
 {
 public:
-    typedef typename graph_traits< Graph >::vertex_descriptor Vertex;
+    using Vertex = typename boost::graph_traits< Graph >::vertex_descriptor;
     distance_heuristic(LocMap l, Vertex goal) : m_location(l), m_goal(goal) {}
     CostType operator()(Vertex u)
     {
@@ -123,17 +76,16 @@ private:
     Vertex m_goal;
 };
 
-int main(int, char**)
+int main()
 {
-
     // specify some types
-    typedef adjacency_list< listS, vecS, undirectedS, no_property,
-        property< edge_weight_t, cost > >
-        mygraph_t;
-    typedef property_map< mygraph_t, edge_weight_t >::type WeightMap;
-    typedef mygraph_t::vertex_descriptor vertex;
-    typedef mygraph_t::edge_descriptor edge_descriptor;
-    typedef std::pair< int, int > edge;
+    using mygraph_t = boost::adjacency_list< boost::listS, boost::vecS,
+        boost::undirectedS, boost::no_property,
+        boost::property< boost::edge_weight_t, cost > >;
+    using WeightMap = boost::property_map< mygraph_t, boost::edge_weight_t >::type;
+    using vertex = mygraph_t::vertex_descriptor;
+    using edge_descriptor = mygraph_t::edge_descriptor;
+    using edge = std::pair< int, int >;
 
     // specify data
     enum nodes
@@ -153,9 +105,6 @@ int main(int, char**)
         NewYork,
         N
     };
-    const char* name[] = { "Troy", "Lake Placid", "Plattsburgh", "Massena",
-        "Watertown", "Utica", "Syracuse", "Rochester", "Buffalo", "Ithaca",
-        "Binghamton", "Woodstock", "New York" };
     location locations[] = { // lat/long
         { 42.73, 73.68 }, { 44.28, 73.99 }, { 44.70, 73.46 }, { 44.93, 74.89 },
         { 43.97, 75.91 }, { 43.10, 75.23 }, { 43.04, 76.14 }, { 43.17, 77.61 },
@@ -184,60 +133,75 @@ int main(int, char**)
 
     // create graph
     mygraph_t g(N);
-    WeightMap weightmap = get(edge_weight, g);
+    WeightMap weightmap = boost::get(boost::edge_weight, g);
     for (std::size_t j = 0; j < num_edges; ++j)
     {
         edge_descriptor e;
         bool inserted;
         boost::tie(e, inserted)
-            = add_edge(edge_array[j].first, edge_array[j].second, g);
+            = boost::add_edge(edge_array[j].first, edge_array[j].second, g);
         weightmap[e] = weights[j];
     }
 
-    // pick random start/goal
-    boost::minstd_rand gen(42);
-    vertex start = gen() % num_vertices(g);
-    vertex goal = gen() % num_vertices(g);
+    // Troy to Buffalo has a unique shortest path of 309 minutes
+    vertex start = Troy;
+    vertex goal = Buffalo;
+    constexpr float expected_time = 309.0f;
 
-    cout << "Start vertex: " << name[start] << endl;
-    cout << "Goal vertex: " << name[goal] << endl;
-
-    vector< mygraph_t::vertex_descriptor > p(num_vertices(g));
-    vector< cost > d(num_vertices(g));
+    std::vector< mygraph_t::vertex_descriptor > p(boost::num_vertices(g));
+    std::vector< cost > d(boost::num_vertices(g));
 
     boost::property_map< mygraph_t, boost::vertex_index_t >::const_type idx
-        = get(boost::vertex_index, g);
+        = boost::get(boost::vertex_index, g);
 
+    bool found = false;
     try
     {
         // call astar named parameter interface
-        astar_search(g, start,
+        boost::astar_search(g, start,
             distance_heuristic< mygraph_t, cost, location* >(locations, goal),
-            predecessor_map(make_iterator_property_map(p.begin(), idx))
-                .distance_map(make_iterator_property_map(d.begin(), idx))
+            boost::predecessor_map(
+                boost::make_iterator_property_map(p.begin(), idx))
+                .distance_map(boost::make_iterator_property_map(d.begin(), idx))
                 .visitor(astar_goal_visitor< vertex >(goal))
                 .distance_inf(my_float((std::numeric_limits< float >::max)())));
     }
-    catch (found_goal fg)
-    { // found a path to the goal
-        list< vertex > shortest_path;
-        for (vertex v = goal;; v = p[v])
-        {
-            shortest_path.push_front(v);
-            if (p[v] == v)
-                break;
-        }
-        cout << "Shortest path from " << name[start] << " to " << name[goal]
-             << ": ";
-        list< vertex >::iterator spi = shortest_path.begin();
-        cout << name[start];
-        for (++spi; spi != shortest_path.end(); ++spi)
-            cout << " -> " << name[*spi];
-        cout << endl << "Total travel time: " << d[goal] << endl;
-        return 0;
+    catch (found_goal const&)
+    {
+        found = true;
     }
 
-    cout << "Didn't find a path from " << name[start] << "to" << name[goal]
-         << "!" << endl;
-    return 0;
+    // the goal is reachable and the reported cost is optimal
+    BOOST_TEST(found);
+    BOOST_TEST_EQ(d[goal].v, expected_time);
+
+    // the predecessor path is connected and its weights sum to the distance
+    std::list< vertex > shortest_path;
+    for (vertex v = goal;; v = p[v])
+    {
+        shortest_path.push_front(v);
+        if (p[v] == v)
+            break;
+    }
+    BOOST_TEST(shortest_path.front() == start);
+    BOOST_TEST(shortest_path.back() == goal);
+
+    cost path_weight;
+    bool first = true;
+    vertex prev = start;
+    for (vertex v : shortest_path)
+    {
+        if (!first)
+        {
+            std::pair< edge_descriptor, bool > e = boost::edge(prev, v, g);
+            BOOST_TEST(e.second);
+            if (e.second)
+                path_weight = path_weight + weightmap[e.first];
+        }
+        prev = v;
+        first = false;
+    }
+    BOOST_TEST_EQ(path_weight.v, d[goal].v);
+
+    return boost::report_errors();
 }
