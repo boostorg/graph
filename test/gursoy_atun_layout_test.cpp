@@ -1,4 +1,5 @@
 // Copyright 2004 The Trustees of Indiana University.
+// Copyright (c) 2026 Arnaud Becheler
 
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -7,146 +8,102 @@
 //  Authors: Jeremiah Willcock
 //           Douglas Gregor
 //           Andrew Lumsdaine
+
 #include <boost/graph/gursoy_atun_layout.hpp>
-#include "boost/graph/adjacency_list.hpp"
-#include "boost/graph/random.hpp"
-#include "boost/graph/graphviz.hpp"
-#include "boost/random/mersenne_twister.hpp"
-#include "boost/random/linear_congruential.hpp"
-#include "boost/random/uniform_01.hpp"
-#include <iostream>
-#include <fstream>
-#include <sstream>
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/core/lightweight_test.hpp>
 
-#if 0
-#include <boost/graph/plod_generator.hpp>
-#include <boost/graph/small_world_generator.hpp>
-#endif
-using namespace boost;
+#include <algorithm>
+#include <cmath>
+#include <map>
+#include <random>
+#include <vector>
 
-template < class Property, class Vertex > struct position_writer
+using graph_type = boost::adjacency_list< boost::vecS, boost::vecS, boost::undirectedS, boost::no_property, boost::property< boost::edge_weight_t, double > >;
+using vertex_index_map = boost::property_map< graph_type, boost::vertex_index_t >::type;
+using topology = boost::heart_topology<>;
+using point = topology::point_type;
+using position_map = boost::iterator_property_map< std::vector< point >::iterator, vertex_index_map, point, point& >;
+
+// Builds the 20x20 weighted grid Gursoy and Atun used
+void build_grid(graph_type& g)
 {
-    const Property& property;
-
-    position_writer(const Property& property) : property(property) {}
-
-    void operator()(std::ostream& os, const Vertex& v) const
-    {
-        os << "[pos=\"" << int(property[v][0]) << "," << int(property[v][1])
-           << "\"]";
-    }
-};
-
-struct graph_writer
-{
-    void operator()(std::ostream& os) const
-    {
-        os << "node [shape=point, width=\".01\", height=\".01\", "
-              "fixedsize=\"true\"]"
-           << std::endl;
-    }
-};
-
-int main(int, char*[])
-{
-    // Generate a graph structured like a grid, cylinder, or torus; lay it out
-    // in a square grid; and output it in dot format
-
-    typedef boost::adjacency_list< boost::vecS, boost::vecS, boost::undirectedS,
-        boost::no_property, boost::property< boost::edge_weight_t, double > >
-        graph_type;
-    typedef boost::graph_traits< graph_type >::vertex_descriptor
-        vertex_descriptor;
-    // boost::mt19937 rng;
-    // boost::generate_random_graph(graph, 100, 600, rng, false, false);
-
-#if 1
-    graph_type graph;
-
-    // Make grid, like Gursoy and Atun used
+    using vertex_descriptor = boost::graph_traits< graph_type >::vertex_descriptor;
+    constexpr int grid_size = 20;
     std::map< int, std::map< int, vertex_descriptor > > verts;
-    const int grid_size = 20;
-    boost::minstd_rand edge_weight_gen(42);
-    boost::uniform_01< boost::minstd_rand > random_edge_weight(edge_weight_gen);
+    std::mt19937 engine(42);
+    std::uniform_real_distribution< double > dist(0.0, 1.0);
+    auto random_edge_weight = [&] { return dist(engine); };
+
     for (int i = 0; i < grid_size; ++i)
         for (int j = 0; j < grid_size; ++j)
-            verts[i][j] = add_vertex(graph);
+            verts[i][j] = boost::add_vertex(g);
+
     for (int i = 0; i < grid_size; ++i)
     {
         for (int j = 0; j < grid_size; ++j)
         {
             if (i != 0)
-                add_edge(
-                    verts[i][j], verts[i - 1][j], random_edge_weight(), graph);
+                boost::add_edge(verts[i][j], verts[i - 1][j], random_edge_weight(), g);
             if (j != 0)
-                add_edge(
-                    verts[i][j], verts[i][j - 1], random_edge_weight(), graph);
-#if 0
-      // Uncomment parts of this to get a cylinder or torus
-      if (i == 0)
-        add_edge(verts[0][j], verts[grid_size-1][j], random_edge_weight(),
-                 graph);
-      if (j == 0)
-        add_edge(verts[i][0], verts[i][grid_size-1], random_edge_weight(),
-                 graph);
-#endif
+                boost::add_edge(verts[i][j], verts[i][j - 1], random_edge_weight(), g);
         }
     }
-#else
-    using namespace boost;
+}
 
-#if 0
-  int n = 10000;
-  double alpha = 0.4;
-  double beta = 50;
-  minstd_rand gen(42);
-  graph_type graph(plod_iterator<minstd_rand, graph_type>(gen, n, alpha, beta),
-                   plod_iterator<minstd_rand, graph_type>(),
-                   n);
-#else
-    int n = 1000;
-    int k = 6;
-    double p = 0.001;
-    minstd_rand gen(42);
-    graph_type graph(small_world_iterator< minstd_rand >(gen, n, k, p),
-        small_world_iterator< minstd_rand >(n, k), n);
-#endif
-#endif
-    // boost::read_graphviz(stdin, graph);
+// Positions are heuristic, so we assert invariants instead of exact coordinates
+// every point finite, inside the bounds, not all collapsed in one spot.
+bool layout_is_valid(const std::vector< point >& pos)
+{
+    constexpr double eps = 1e-6;
+    constexpr double y_min = -2000.0;
+    // The heart's two circles bulge past the square to x = +-500(1 + sqrt2)
+    // and up to y = 500(sqrt2 - 1) and the square's tip reaches y = -2000.
+    const double x_max = 500.0 * (1.0 + std::sqrt(2.0));
+    const double x_min = -x_max;
+    const double y_max = 500.0 * (std::sqrt(2.0) - 1.0);
+    double min_x = pos[0][0], max_x = pos[0][0], min_y = pos[0][1], max_y = pos[0][1];
 
-    typedef boost::property_map< graph_type, boost::vertex_index_t >::type
-        VertexIndexMap;
-    VertexIndexMap vertex_index = get(boost::vertex_index_t(), graph);
+    for (const point& p : pos)
+    {
+        if (!std::isfinite(p[0]) || !std::isfinite(p[1]))
+            return false;
+        if (p[0] < x_min - eps || p[0] > x_max + eps)
+            return false;
+        if (p[1] < y_min - eps || p[1] > y_max + eps)
+            return false;
+        min_x = std::min(min_x, p[0]);
+        max_x = std::max(max_x, p[0]);
+        min_y = std::min(min_y, p[1]);
+        max_y = std::max(max_y, p[1]);
+    }
+    constexpr double spread_threshold = 1.0;
+    return (max_x - min_x) > spread_threshold || (max_y - min_y) > spread_threshold;
+}
 
-    typedef boost::heart_topology<> topology;
+int main()
+{
+    graph_type g;
+    build_grid(g);
+
+    auto index_map = boost::get(boost::vertex_index, g);
+    std::vector< point > positions(boost::num_vertices(g));
+    position_map position(positions.begin(), index_map);
     topology space;
 
-    typedef topology::point_type point;
-    std::vector< point > position_vector(num_vertices(graph));
-    typedef boost::iterator_property_map< std::vector< point >::iterator,
-        VertexIndexMap, point, point& >
-        Position;
-    Position position(position_vector.begin(), vertex_index);
+    // unweighted layout uses BFS hop distances
+    boost::gursoy_atun_layout(g, space, position);
+    BOOST_TEST(layout_is_valid(positions));
 
-    boost::gursoy_atun_layout(graph, space, position);
+    // weighted layout uses Dijkstra distances over the edge weights
+    auto edge_weights = boost::get(boost::edge_weight, g);
+    const int nsteps = static_cast< int >(boost::num_vertices(g));
+    const double diameter_initial = std::sqrt(static_cast< double >(boost::num_vertices(g)));
+    const double diameter_final = 1.0;
+    const double learning_initial = 0.8;
+    const double learning_final = 0.2;
+    boost::gursoy_atun_layout(g, space, position, nsteps, diameter_initial, diameter_final, learning_initial, learning_final, index_map, edge_weights);
+    BOOST_TEST(layout_is_valid(positions));
 
-#if 0
-  std::cerr << "--------Unweighted layout--------\n";
-  boost::write_graphviz(std::cout, graph,
-                        position_writer<Position, vertex_descriptor>(position),
-                        boost::default_writer(),
-                        graph_writer());
-#endif
-
-    boost::gursoy_atun_layout(
-        graph, space, position, weight_map(get(boost::edge_weight, graph)));
-
-#if 0
-  std::cerr << "--------Weighted layout--------\n";
-  boost::write_graphviz(std::cout, graph,
-                        position_writer<Position, vertex_descriptor>(position),
-                        boost::default_writer(),
-                        graph_writer());
-#endif
-    return 0;
+    return boost::report_errors();
 }
