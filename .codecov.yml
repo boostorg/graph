@@ -12,6 +12,17 @@ codecov:
     after_n_builds: 2
     wait_for_ci: no
 
+# project = whole-codebase %; report it but never let it gate a merge.
+# patch = coverage of the lines this PR changed; that stays the real gate.
+coverage:
+  status:
+    project:
+      default:
+        informational: true
+    patch:
+      default:
+        target: 100%
+
 # Change how pull request comments look
 comment:
   layout: "condensed_header, condensed_files, condensed_footer"
