@@ -6,15 +6,16 @@
 
 codecov:
   max_report_age: off
-  require_ci_to_pass: yes
+  require_ci_to_pass: no
   notify:
-    # Increase this if you have multiple coverage collection jobs
-    after_n_builds: 1
-    wait_for_ci: yes
+    # posix + windows coverage jobs both upload, so wait for both
+    after_n_builds: 2
+    wait_for_ci: no
 
 # Change how pull request comments look
 comment:
-  layout: "reach,diff,flags,files,footer"
+  layout: "condensed_header, condensed_files, condensed_footer"
+  hide_project_coverage: true
 
 # Ignore specific files or folders. Glob patterns are supported.
 # See https://docs.codecov.com/docs/ignoring-paths
