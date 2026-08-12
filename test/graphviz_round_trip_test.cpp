@@ -36,11 +36,12 @@ using graph_t = boost::adjacency_list< boost::vecS, boost::vecS,
     boost::directedS, vertex_props, edge_props >;
 
 // First four are valid unquoted DOT ids/numerals
-// the rest force quoting or escaping (space, embedded quote, digit-led identifier, multi-dot numeral).
+// the rest force quoting or escaping: space, embedded quote, digit-led
+// identifier, multi-dot numeral, a lone dash, and a leading non-id character.
 const std::vector< std::string >& boundary_labels()
 {
     static const std::vector< std::string > labels = { "plain", "id_123", "42",
-        "-3.14", "has space", "has\"quote", "9lives", "1.2.3" };
+        "-3.14", "has space", "has\"quote", "9lives", "1.2.3", "-", "@home" };
     return labels;
 }
 
