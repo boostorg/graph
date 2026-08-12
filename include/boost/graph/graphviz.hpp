@@ -33,7 +33,6 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/algorithm/string/replace.hpp>
-#include <boost/xpressive/xpressive_static.hpp>
 
 namespace boost
 {
@@ -56,13 +55,60 @@ struct default_writer
     template < class VorE > void operator()(std::ostream&, const VorE&) const {}
 };
 
+namespace detail
+{
+
+    inline bool dot_id_is_alpha(char c)
+    {
+        return c == '_' || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+    }
+
+    inline bool dot_id_is_digit(char c) { return c >= '0' && c <= '9'; }
+
+    inline bool dot_id_is_word(char c)
+    {
+        return dot_id_is_alpha(c) || dot_id_is_digit(c);
+    }
+
+    // True when s matches the DOT grammar for an ID that needs no quoting:
+    //   identifier  [A-Za-z_][A-Za-z0-9_]*
+    //   numeral     -?( .[0-9]* | [0-9]+(.[0-9]*)? )
+    inline bool is_dot_unquoted_id(const std::string& s)
+    {
+        using size_type = std::string::size_type;
+        if (s.empty())
+            return false;
+        if (dot_id_is_alpha(s[0]))
+        {
+            for (size_type i = 1; i < s.size(); ++i)
+                if (!dot_id_is_word(s[i]))
+                    return false;
+            return true;
+        }
+        size_type i = 0;
+        if (s[i] == '-')
+            ++i;
+        if (i >= s.size())
+            return false;
+        if (s[i] != '.' && !dot_id_is_digit(s[i]))
+            return false;
+        if (dot_id_is_digit(s[i]))
+            while (i < s.size() && dot_id_is_digit(s[i]))
+                ++i;
+        if (i < s.size() && s[i] == '.')
+            ++i;
+        for (; i < s.size(); ++i)
+            if (!dot_id_is_digit(s[i]))
+                return false;
+        return true;
+    }
+
+} // namespace detail
+
 template < typename T > inline std::string escape_dot_string(const T& obj)
 {
-    using namespace boost::xpressive;
-    static sregex valid_unquoted_id = (((alpha | '_') >> *_w)
-        | (!as_xpr('-') >> (('.' >> *_d) | (+_d >> !('.' >> *_d)))));
     std::string s(boost::lexical_cast< std::string >(obj));
-    if (regex_match(s, valid_unquoted_id))
+    if (detail::is_dot_unquoted_id(s))
     {
         return s;
     }

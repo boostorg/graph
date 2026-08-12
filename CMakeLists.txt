@@ -49,7 +49,6 @@ target_link_libraries(boost_graph
     Boost::type_traits
     Boost::unordered
     Boost::utility
-    Boost::xpressive
   PRIVATE
     Boost::regex
 )
