@@ -12,10 +12,14 @@
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
-#include <boost/graph/iteration_macros.hpp>
-#include <boost/graph/overloading.hpp>
-#include <boost/graph/detail/mpi_include.hpp>
 #include <boost/property_map/function_property_map.hpp>
+#include <boost/range/iterator_range.hpp>
+#include <boost/concept/assert.hpp>
+#include <boost/graph/graph_concepts.hpp>
+#include <boost/assert.hpp>
+
+#include <cmath>
+#include <cstddef>
 #include <vector>
 
 namespace boost
@@ -138,19 +142,19 @@ namespace graph
         RankMap rank_map,
         Done done,
         typename property_traits< RankMap >::value_type damping,
-        RankMap2 rank_map2
-        BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph, vertex_list_graph_tag))
+        RankMap2 rank_map2)
     {
         using Vertex = typename graph_traits<Graph>::vertex_descriptor;
         using Edge = typename graph_traits<Graph>::edge_descriptor;
         BOOST_CONCEPT_ASSERT(( boost::IncidenceGraphConcept<Graph> ));
         BOOST_CONCEPT_ASSERT(( boost::VertexListGraphConcept<Graph> ));
         BOOST_CONCEPT_ASSERT(( boost::ReadablePropertyMapConcept<WeightMap, Edge> ));
-        BOOST_CONCEPT_ASSERT(( boost::ReadablePropertyMapConcept<PersonalizationMap, Vertex>));
+        BOOST_CONCEPT_ASSERT(( boost::ReadWritePropertyMapConcept<PersonalizationMap, Vertex>));
         BOOST_CONCEPT_ASSERT(( boost::ReadWritePropertyMapConcept<RankMap,  Vertex> ));
+        BOOST_CONCEPT_ASSERT(( boost::ReadWritePropertyMapConcept<RankMap2,  Vertex> ));
 
 
-        assert (damping>=-1.0 && damping<1.0 && "Damping outside the closed-open range [-1.0,1.0) could induce numerical instability."); // non-inclussive upper limit is deliberate
+        BOOST_ASSERT_MSG (damping>=-1.0 && damping<1.0, "Damping outside the closed-open range [-1.0,1.0) could induce numerical instability."); // non-inclussive upper limit is deliberate
 
         using rank_type = typename property_traits< PersonalizationMap >::value_type;
         rank_type personalization_norm(0);
@@ -170,7 +174,7 @@ namespace graph
         bool to_map_2 = true;
         do
         {
-            typedef typename graph_traits< Graph >::traversal_category category;
+            using category = typename graph_traits< Graph >::traversal_category;
             if (to_map_2)
                 personalized_page_rank_detail::personalized_page_rank_step(g, weight_map, personalization_map, rank_map, rank_map2, damping, category());
             else
