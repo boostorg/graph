@@ -155,7 +155,7 @@ public:
         spp_spptw_res_cont& new_cont, const spp_spptw_res_cont& old_cont,
         graph_traits< SPPRC_Example_Graph >::edge_descriptor ed) const
     {
-        const SPPRC_Example_Graph_Arc_Prop& arc_prop = get(edge_bundle, g)[ed];
+        const SPPRC_Example_Graph_Arc_Prop arc_prop = get(edge_bundle, g)[ed];
         const SPPRC_Example_Graph_Vert_Prop& vert_prop
             = get(vertex_bundle, g)[target(ed, g)];
         new_cont.cost = old_cont.cost + arc_prop.cost;
