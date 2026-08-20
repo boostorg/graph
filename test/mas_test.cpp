@@ -4,9 +4,11 @@
 //   (See accompanying file LICENSE_1_0.txt or the copy at
 //         http://www.boost.org/LICENSE_1_0.txt)
 
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <stdexcept>
 #include <vector>
 #include <string>
 #include <boost/array.hpp>
@@ -27,12 +29,13 @@
 
 #include <boost/graph/iteration_macros.hpp>
 
-typedef boost::adjacency_list< boost::vecS, boost::vecS, boost::undirectedS,
-    boost::no_property, boost::property< boost::edge_weight_t, int > >
-    undirected_graph;
-typedef boost::property_map< undirected_graph, boost::edge_weight_t >::type
-    weight_map_type;
-typedef boost::property_traits< weight_map_type >::value_type weight_type;
+#include "mas_sw_maxflow_oracle.hpp"
+
+using mas_sw_oracle::undirected_graph;
+using mas_sw_oracle::weight_map_type;
+using mas_sw_oracle::weight_type;
+using mas_sw_oracle::vertex_descriptor;
+using mas_sw_oracle::edge_descriptor;
 
 typedef boost::adjacency_list< boost::vecS, boost::vecS, boost::undirectedS >
     undirected_unweighted_graph;
@@ -65,7 +68,7 @@ public:
         vertex_weights_when_visited_->clear();
     }
 
-    void start_vertex(vertex_descriptor u, const Graph& g)
+    void start_vertex(vertex_descriptor u, const Graph&)
     {
         vertex_visit_order_->push_back(u);
 
@@ -316,7 +319,7 @@ void test1()
 
     boost::maximum_adjacency_search(
         g, boost::weight_map(ws_map).visitor(test_vis).max_priority_queue(pq));
-    
+
     const boost::array< vertex_descriptor, vertices_count > expected_vertex_order2 = { 0, 4, 1, 5, 2, 3, 6, 7 };
     const boost::array< weight_type, vertices_count > expected_weights_when_visited2 = { 9, 3, 4, 5, 3, 4, 5, 5 };
 
@@ -416,7 +419,7 @@ void test_unweighted(
     for (std::size_t i = 0; i < edge_count; i++) {
         weights_list[i] = 1;
     }
-    
+
     test_weighted(
         edge_list,
         weights_list,
@@ -570,6 +573,160 @@ void test9_weights_start_vertex() {
     );
 }
 
+using cv_distances_map_type = boost::shared_array_property_map< weight_type,
+    boost::property_map< undirected_graph, boost::vertex_index_t >::const_type >;
+using cv_index_in_heap_type = std::vector< vertex_descriptor >::size_type;
+using cv_indices_map_type = boost::shared_array_property_map< cv_index_in_heap_type,
+    boost::property_map< undirected_graph, boost::vertex_index_t >::const_type >;
+using cv_maxheap_type = boost::d_ary_heap_indirect< vertex_descriptor, 4, cv_indices_map_type,
+    cv_distances_map_type, std::greater< weight_type > >;
+
+// Build the keyed max priority queue MAS runs on: reach counts plus heap positions.
+cv_maxheap_type make_weighted_maxheap(const undirected_graph& g)
+{
+    auto distances_map = boost::make_shared_array_property_map(num_vertices(g), weight_type(0), get(boost::vertex_index, g));
+    auto indices_map = boost::make_shared_array_property_map(num_vertices(g), cv_index_in_heap_type(-1), get(boost::vertex_index, g));
+    return cv_maxheap_type(distances_map, indices_map);
+}
+
+// Check invariants on a MAS run
+void check_visit_order_invariants(
+    const undirected_graph& g,
+    const std::vector< vertex_descriptor >& order,
+    const std::vector< weight_type >& reach)
+{
+    const std::size_t n = num_vertices(g);
+
+    // 1) the order is a permutation of all vertices
+    std::vector< vertex_descriptor > sorted = order;
+    std::sort(sorted.begin(), sorted.end());
+    for (std::size_t i = 0; i < sorted.size(); ++i)
+        BOOST_TEST_EQ(sorted[i], static_cast< vertex_descriptor >(i));
+
+    // 2) MAS adds n+1 to the start vertex key to force it first, so its recorded reach is n+1
+    BOOST_TEST_EQ(reach[0], static_cast< weight_type >(n + 1));
+
+    // only the start vertex is visited before the loop
+    std::vector< bool > visited(n, false);
+    visited[order[0]] = true;
+    auto weight_map = get(boost::edge_weight, g);
+
+    // 3) recompute each later vertex reach independently and check MAS agrees
+    for (std::size_t i = 1; i < order.size(); ++i)
+    {
+        const vertex_descriptor u = order[i];
+        // sum the weights of u's edges that lead back into the visited set
+        weight_type expected = 0;
+        boost::graph_traits< undirected_graph >::out_edge_iterator oi, oi_end;
+        for (boost::tie(oi, oi_end) = out_edges(u, g); oi != oi_end; ++oi)
+            if (visited[target(*oi, g)])
+                expected += get(weight_map, *oi);
+
+        BOOST_TEST_EQ(reach[i], expected);
+        visited[u] = true;
+    }
+}
+
+// Records every visitor event.
+class recording_visitor : public boost::default_mas_visitor
+{
+public:
+    recording_visitor(
+        std::size_t& initialize_count,
+        std::size_t& examine_count,
+        std::vector< vertex_descriptor >& start_order,
+        std::vector< vertex_descriptor >& finish_order
+    )
+    :
+    initialize_count_(initialize_count),
+    examine_count_(examine_count),
+    start_order_(start_order),
+    finish_order_(finish_order)
+    {}
+
+    void initialize_vertex(vertex_descriptor, const undirected_graph&) { ++initialize_count_; }
+    void start_vertex(vertex_descriptor u, const undirected_graph&) { start_order_.push_back(u); }
+    void examine_edge(edge_descriptor, const undirected_graph&) { ++examine_count_; }
+    void finish_vertex(vertex_descriptor u, const undirected_graph&) { finish_order_.push_back(u); }
+
+private:
+    std::size_t& initialize_count_;
+    std::size_t& examine_count_;
+    std::vector< vertex_descriptor >& start_order_;
+    std::vector< vertex_descriptor >& finish_order_;
+};
+
+// Cross-validation against the max-flow oracle
+// for the last two visited vertices s (second-last) and t (last),
+// the reach count of t equals its weighted degree and equals the min s-t cut.
+void test_maxflow_crossvalidation()
+{
+    // check every curated graph
+    for (const mas_sw_oracle::curated_graph& cg : mas_sw_oracle::curated_graphs())
+    {
+        const undirected_graph& g = cg.graph;
+        BOOST_TEST(mas_sw_oracle::is_connected(g));
+
+        // run MAS, recording visit order and reach counts
+        cv_maxheap_type pq = make_weighted_maxheap(g);
+        mas_test_visitor< undirected_graph, cv_maxheap_type > vis(pq);
+        boost::maximum_adjacency_search(g, boost::weight_map(get(boost::edge_weight, g)).visitor(vis).max_priority_queue(pq));
+
+        const std::vector< vertex_descriptor >& order = vis.vertex_visit_order();
+        const std::vector< weight_type >& reach = vis.vertex_weights_when_visited();
+        BOOST_TEST_EQ(order.size(), num_vertices(g));
+
+        // take the last two visited vertices s and t
+        const std::size_t last = order.size() - 1;
+        const vertex_descriptor s = order[last - 1];
+        const vertex_descriptor t = order[last];
+        const weight_type reach_of_t = reach[last];
+
+        // t's reach must equal its weighted degree and the min s-t cut
+        BOOST_TEST_EQ(reach_of_t, mas_sw_oracle::weighted_degree(g, t));
+        BOOST_TEST_EQ(reach_of_t, mas_sw_oracle::undirected_min_cut(g, s, t));
+
+        // and the whole order must be a valid maximum adjacency ordering
+        check_visit_order_invariants(g, order, reach);
+    }
+}
+
+// Every visitor event fires the expected number of times
+void test_visitor_events()
+{
+    const undirected_graph g = mas_sw_oracle::make_weighted_graph(6, { { 0, 1, 2 }, { 1, 2, 3 }, { 2, 0, 1 }, { 2, 3, 4 }, { 3, 4, 2 }, { 4, 5, 1 }, { 5, 3, 3 } });
+
+    cv_maxheap_type pq = make_weighted_maxheap(g);
+    std::size_t initialize_count = 0;
+    std::size_t examine_count = 0;
+    std::vector< vertex_descriptor > start_order;
+    std::vector< vertex_descriptor > finish_order;
+    recording_visitor vis(initialize_count, examine_count, start_order, finish_order);
+
+    boost::maximum_adjacency_search(g, boost::weight_map(get(boost::edge_weight, g)).visitor(vis).max_priority_queue(pq));
+
+    BOOST_TEST_EQ(initialize_count, static_cast< std::size_t >(num_vertices(g)));
+    BOOST_TEST_EQ(examine_count, static_cast< std::size_t >(2 * num_edges(g)));
+    BOOST_TEST_EQ(start_order.size(), static_cast< std::size_t >(num_vertices(g)));
+    BOOST_TEST_EQ(finish_order.size(), static_cast< std::size_t >(num_vertices(g)));
+    BOOST_TEST_ALL_EQ(start_order.begin(), start_order.end(), finish_order.begin(), finish_order.end());
+}
+
+// Precondition violations throw.
+void test_exceptions()
+{
+    // a graph with fewer than two vertices is rejected
+    undirected_graph too_small;
+    add_vertex(too_small);
+    BOOST_TEST_THROWS(boost::maximum_adjacency_search(too_small, boost::weight_map(get(boost::edge_weight, too_small))), boost::bad_graph);
+
+    // a non-empty priority queue is rejected
+    const undirected_graph g = mas_sw_oracle::make_weighted_graph(4, { { 0, 1, 1 }, { 1, 2, 1 }, { 2, 3, 1 } });
+    cv_maxheap_type pq = make_weighted_maxheap(g);
+    pq.push(0);
+    BOOST_TEST_THROWS(boost::maximum_adjacency_search(g, boost::weight_map(get(boost::edge_weight, g)).max_priority_queue(pq)), std::invalid_argument);
+}
+
 #include <boost/graph/iteration_macros_undef.hpp>
 
 int main(int argc, char* argv[])
@@ -586,6 +743,9 @@ int main(int argc, char* argv[])
         test7_weights();
         test8_weights();
         test9_weights_start_vertex();
+        test_maxflow_crossvalidation();
+        test_visitor_events();
+        test_exceptions();
     }
     return boost::report_errors();
 }

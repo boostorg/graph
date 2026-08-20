@@ -23,12 +23,11 @@
 #include <boost/core/lightweight_test.hpp>
 #include <boost/tuple/tuple.hpp>
 
-typedef boost::adjacency_list< boost::vecS, boost::vecS, boost::undirectedS,
-    boost::no_property, boost::property< boost::edge_weight_t, int > >
-    undirected_graph;
-typedef boost::property_map< undirected_graph, boost::edge_weight_t >::type
-    weight_map_type;
-typedef boost::property_traits< weight_map_type >::value_type weight_type;
+#include "mas_sw_maxflow_oracle.hpp"
+
+using mas_sw_oracle::undirected_graph;
+using mas_sw_oracle::weight_map_type;
+using mas_sw_oracle::weight_type;
 
 typedef boost::adjacency_list< boost::vecS, boost::vecS, boost::undirectedS >
     undirected_unweighted_graph;
@@ -40,6 +39,17 @@ struct edge_t
     unsigned long first;
     unsigned long second;
 };
+
+// Stoer Wagner global min cut on a curated set, checked against the known value.
+void test_curated_min_cuts()
+{
+    for (const mas_sw_oracle::curated_graph& cg : mas_sw_oracle::curated_graphs())
+    {
+        const undirected_graph& g = cg.graph;
+        BOOST_TEST(mas_sw_oracle::is_connected(g));
+        BOOST_TEST_EQ(boost::stoer_wagner_min_cut(g, get(boost::edge_weight, g)), cg.min_cut);
+    }
+}
 
 // the example from Stoer & Wagner (1997)
 void test0()
@@ -321,7 +331,9 @@ int main(int argc, char* argv[])
         test4();
         test5();
         test_prgen_20_70_2();
+        test_prgen_50_40_2();
         test_prgen_50_70_2();
+        test_curated_min_cuts();
     }
     return boost::report_errors();
 }
