@@ -16,6 +16,7 @@
 #include <boost/graph/adj_list_serialize.hpp>
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
+#include <boost/serialization/tracking.hpp>
 
 struct vertex_properties
 {
@@ -46,6 +47,10 @@ typedef adjacency_list< vecS, vecS, undirectedS, vertex_properties,
     Graph;
 
 typedef graph_traits< Graph >::vertex_descriptor vd_type;
+
+static_assert(boost::serialization::tracking_level< Graph >::value
+        == boost::serialization::track_never,
+    "adjacency_list tracking_level must be track_never");
 
 typedef adjacency_list< vecS, vecS, undirectedS, vertex_properties >
     Graph_no_edge_property;
