@@ -6,7 +6,6 @@
 
 #include <iostream>
 #include <cstdlib>
-#include <ctime>
 
 #include <boost/graph/vector_as_graph.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -158,7 +157,7 @@ bool test(int n, double p)
 
 int main()
 {
-    srand(time(0));
+    srand(42);
     static class
     {
     public:

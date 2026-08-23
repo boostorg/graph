@@ -10,7 +10,6 @@
 #include <fstream>
 #include <iostream>
 #include <set>
-#include <ctime>
 
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
@@ -222,15 +221,9 @@ template < unsigned int Dims > void do_test(minstd_rand& generator)
     BOOST_TEST(edge_count == num_edges(graph));
 }
 
-int main(int argc, char* argv[])
+int main()
 {
-
-    std::size_t random_seed = std::time(0);
-
-    if (argc > 1)
-    {
-        random_seed = lexical_cast< std::size_t >(argv[1]);
-    }
+    std::size_t random_seed = 42;
 
     minstd_rand generator(random_seed);
 

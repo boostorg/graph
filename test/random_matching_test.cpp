@@ -11,7 +11,6 @@
 #include <boost/property_map/vector_property_map.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/random.hpp>
-#include <ctime>
 #include <boost/random.hpp>
 
 #include <boost/graph/max_cardinality_matching.hpp>
@@ -48,7 +47,7 @@ int main(int argc, char** argv)
     undirected_graph g(n);
 
     typedef boost::mt19937 base_generator_type;
-    base_generator_type generator(static_cast< unsigned int >(std::time(0)));
+    base_generator_type generator(42);
     boost::uniform_int<> distribution(0, n - 1);
     boost::variate_generator< base_generator_type&, boost::uniform_int<> >
         rand_num(generator, distribution);

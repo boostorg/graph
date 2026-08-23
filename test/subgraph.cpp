@@ -54,7 +54,7 @@ int main(int, char*[])
     typedef subgraph< graph_t > subgraph_t;
     typedef graph_traits< subgraph_t >::vertex_descriptor vertex_t;
 
-    mt19937 gen;
+    mt19937 gen(42);
     for (int t = 0; t < 100; t += 5)
     {
         subgraph_t g;

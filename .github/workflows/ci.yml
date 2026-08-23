@@ -53,7 +53,7 @@ jobs:
         run: ../../../b2 print_config_info toolset=$TOOLSET cxxstd=${{ matrix.cxxstd }}
         working-directory: ../boost-root/libs/config/test
       - name: Test
-        run: ../../../b2 toolset=$TOOLSET cxxstd=${{ matrix.cxxstd }}
+        run: ../../../b2 toolset=$TOOLSET cxxstd=${{ matrix.cxxstd }} cxxflags="-Wall -Wextra"
         working-directory: ../boost-root/libs/graph/test
   macos:
     runs-on: macos-15
@@ -94,7 +94,7 @@ jobs:
         run: ../../../b2 print_config_info toolset=${{ matrix.toolset }} cxxstd=${{ matrix.cxxstd }}
         working-directory: ../boost-root/libs/config/test
       - name: Test
-        run: ../../../b2 toolset=${{ matrix.toolset }} cxxstd=${{ matrix.cxxstd }} define=CI_SUPPRESS_KNOWN_ISSUES
+        run: ../../../b2 toolset=${{ matrix.toolset }} cxxstd=${{ matrix.cxxstd }} define=CI_SUPPRESS_KNOWN_ISSUES cxxflags="-Wall -Wextra"
         working-directory: ../boost-root/libs/graph/test
   windows_msvc_14_3:
     runs-on: windows-2022

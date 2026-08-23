@@ -1,0 +1,35 @@
+# Copyright 2019 - 2021 Alexander Grund
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at http://boost.org/LICENSE_1_0.txt)
+#
+# Sample codecov configuration file. Edit as required
+
+codecov:
+  max_report_age: off
+  require_ci_to_pass: no
+  notify:
+    # posix + windows coverage jobs both upload, so wait for both
+    after_n_builds: 2
+    wait_for_ci: no
+
+# project = whole-codebase %; report it but never let it gate a merge.
+# patch = coverage of the lines this PR changed; that stays the real gate.
+coverage:
+  status:
+    project:
+      default:
+        informational: true
+    patch:
+      default:
+        target: 100%
+
+# Change how pull request comments look
+comment:
+  layout: "condensed_header, condensed_files, condensed_footer"
+  hide_project_coverage: true
+
+# Ignore specific files or folders. Glob patterns are supported.
+# See https://docs.codecov.com/docs/ignoring-paths
+ignore:
+  - example/**
+  - test/**

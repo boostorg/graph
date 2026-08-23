@@ -38,7 +38,6 @@ alias graph_test_regular :
     [ run transitive_closure_test2.cpp ]
     [ compile adj_list_cc.cpp ]
 
-    #[ run adj_list_invalidation.cpp ]
     [ run adj_list_edge_list_set.cpp ]
     [ run adj_list_loops.cpp ]
     [ compile adj_matrix_cc.cpp ]
@@ -79,8 +78,8 @@ alias graph_test_regular :
     [ run graph.cpp : : : <define>TEST=8 : graph_8 ]
     [ run graph.cpp : : : <define>TEST=9 : graph_9 ]
     [ compile graph_concepts.cpp ]
-    [ run graphviz_test.cpp
-            /boost/graph//boost_graph : --log_level=all ]
+    [ run graphviz_test.cpp /boost/graph//boost_graph : --log_level=all ]
+    [ run graphviz_round_trip_test.cpp /boost/graph//boost_graph ]
     [ run metis_test.cpp : $(METIS_INPUT_FILE) ]
     [ run gursoy_atun_layout_test.cpp  : : : [ requires cxx11_noexcept cxx11_rvalue_references sfinae_expr cxx11_auto_declarations cxx11_lambdas cxx11_unified_initialization_syntax cxx11_hdr_tuple cxx11_hdr_initializer_list cxx11_hdr_chrono cxx11_thread_local cxx11_constexpr cxx11_nullptr cxx11_numeric_limits cxx11_decltype cxx11_hdr_array cxx11_hdr_atomic cxx11_hdr_type_traits cxx11_allocator cxx11_explicit_conversion_operators ] ]
     [ run layout_test.cpp : : : <test-info>always_show_run_output <toolset>intel:<debug-symbols>off [ requires cxx11_noexcept cxx11_rvalue_references sfinae_expr cxx11_auto_declarations cxx11_lambdas cxx11_unified_initialization_syntax cxx11_hdr_tuple cxx11_hdr_initializer_list cxx11_hdr_chrono cxx11_thread_local cxx11_constexpr cxx11_nullptr cxx11_numeric_limits cxx11_decltype cxx11_hdr_array cxx11_hdr_atomic cxx11_hdr_type_traits cxx11_allocator cxx11_explicit_conversion_operators ] ]
@@ -99,7 +98,7 @@ alias graph_test_regular :
     [ run subgraph_props.cpp ]
     [ run subgraph_global_local.cpp ]
 
-    [ run isomorphism.cpp ]
+    [ run isomorphism.cpp : $(TEST_DIR) ]
     [ run adjacency_matrix_test.cpp ]
     [ compile vector_graph_cc.cpp ]
     [ compile copy.cpp ]
@@ -138,7 +137,7 @@ alias graph_test_regular :
     [ run rcsp_single_solution.cpp ]
     [ run rcsp_single_solution_old.cpp ]
     [ run is_straight_line_draw_test.cpp ]
-    [ run metric_tsp_approx.cpp /boost/timer//boost_timer : metric_tsp_approx.graph : : ]
+    [ run metric_tsp_approx.cpp /boost/timer//boost_timer ]
     [ compile dimacs.cpp ]
     [ run bron_kerbosch_all_cliques.cpp ]
     [ run tiernan_all_cycles.cpp ]

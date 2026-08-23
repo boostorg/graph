@@ -27,7 +27,7 @@ int main(int argc, char** argv)
 
     typedef adjacency_list< vecS, vecS, directedS > Graph;
 
-    RandomGenerator gen;
+    RandomGenerator gen(42);
 
     size_t N = 100;
     size_t M = 1000;

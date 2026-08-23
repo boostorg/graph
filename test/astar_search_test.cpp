@@ -19,7 +19,6 @@
 #include <list>
 #include <iostream>
 #include <math.h> // for sqrt
-#include <time.h>
 
 using namespace boost;
 using namespace std;
@@ -196,7 +195,7 @@ int main(int, char**)
     }
 
     // pick random start/goal
-    boost::minstd_rand gen(time(0));
+    boost::minstd_rand gen(42);
     vertex start = gen() % num_vertices(g);
     vertex goal = gen() % num_vertices(g);
 

@@ -12,7 +12,6 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
-#include <ctime>
 
 #include <boost/lexical_cast.hpp>
 #include <boost/random.hpp>
@@ -312,7 +311,7 @@ int main(int argc, char* argv[])
 {
     int vertices_to_create = 10;
     int max_edges_per_vertex = 2;
-    std::size_t random_seed = std::time(0);
+    std::size_t random_seed = 42;
 
     if (argc > 1)
     {
@@ -327,11 +326,6 @@ int main(int argc, char* argv[])
     if (argc > 3)
     {
         output_graphs = boost::lexical_cast< bool >(argv[3]);
-    }
-
-    if (argc > 4)
-    {
-        random_seed = boost::lexical_cast< std::size_t >(argv[4]);
     }
 
     boost::minstd_rand generator(random_seed);

@@ -10,7 +10,6 @@
 #include <iostream>
 #include <map>
 #include <set>
-#include <ctime>
 
 #include <boost/foreach.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -128,7 +127,7 @@ template < typename Graph > void test_graph(const Graph& graph)
 int main(int argc, char* argv[])
 {
     std::size_t vertices_to_generate = 100, edges_to_generate = 50,
-                random_seed = std::time(0);
+                random_seed = 42;
 
     // Parse command-line arguments
 
@@ -140,11 +139,6 @@ int main(int argc, char* argv[])
     if (argc > 2)
     {
         edges_to_generate = lexical_cast< std::size_t >(argv[2]);
-    }
-
-    if (argc > 3)
-    {
-        random_seed = lexical_cast< std::size_t >(argv[3]);
     }
 
     minstd_rand generator(random_seed);

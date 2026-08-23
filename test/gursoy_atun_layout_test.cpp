@@ -66,7 +66,7 @@ int main(int, char*[])
     // Make grid, like Gursoy and Atun used
     std::map< int, std::map< int, vertex_descriptor > > verts;
     const int grid_size = 20;
-    boost::minstd_rand edge_weight_gen;
+    boost::minstd_rand edge_weight_gen(42);
     boost::uniform_01< boost::minstd_rand > random_edge_weight(edge_weight_gen);
     for (int i = 0; i < grid_size; ++i)
         for (int j = 0; j < grid_size; ++j)
@@ -99,7 +99,7 @@ int main(int, char*[])
   int n = 10000;
   double alpha = 0.4;
   double beta = 50;
-  minstd_rand gen;
+  minstd_rand gen(42);
   graph_type graph(plod_iterator<minstd_rand, graph_type>(gen, n, alpha, beta),
                    plod_iterator<minstd_rand, graph_type>(),
                    n);
@@ -107,7 +107,7 @@ int main(int, char*[])
     int n = 1000;
     int k = 6;
     double p = 0.001;
-    minstd_rand gen;
+    minstd_rand gen(42);
     graph_type graph(small_world_iterator< minstd_rand >(gen, n, k, p),
         small_world_iterator< minstd_rand >(n, k), n);
 #endif
