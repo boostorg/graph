@@ -43,7 +43,7 @@ void r_c_shortest_paths(
     const Dominance_Function& dominance,
     Label_Allocator la,
     Visitor vis)
----
+----
 
 Old interface, to be deprecated in future releases.
 
@@ -201,6 +201,7 @@ void r_c_shortest_paths(
     Label_Allocator la,
     Visitor vis)
 ----
+
 [cols="1,2,5"]
 |===
 | Direction | Parameter | Description
@@ -425,6 +426,7 @@ void r_c_shortest_paths(
     const Resource_Extension_Function& ref,
     const Dominance_Function& dominance)
 ----
+
 [cols="1,2,5"]
 |===
 | Direction | Parameter | Description
