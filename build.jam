@@ -22,7 +22,7 @@ constant boost_dependencies :
     /boost/mp11//boost_mp11
     /boost/mpl//boost_mpl
     /boost/multi_index//boost_multi_index
-    /boost/multiprecision//boost_multiprecision
+    /boost/int128//boost_int128
     /boost/optional//boost_optional
     /boost/parameter//boost_parameter
     /boost/preprocessor//boost_preprocessor

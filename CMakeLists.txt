@@ -33,7 +33,7 @@ target_link_libraries(boost_graph
     Boost::mp11
     Boost::mpl
     Boost::multi_index
-    Boost::multiprecision
+    Boost::int128
     Boost::optional
     Boost::parameter
     Boost::preprocessor
