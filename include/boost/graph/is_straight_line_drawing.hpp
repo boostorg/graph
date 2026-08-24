@@ -15,7 +15,7 @@
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/planar_detail/bucket_sort.hpp>
-#include <boost/multiprecision/cpp_int.hpp>
+#include <boost/int128.hpp>
 
 #include <algorithm>
 #include <vector>
@@ -54,7 +54,7 @@ bool crosses(typename graph_traits<Graph>::edge_descriptor e,
     const auto& q1 = drawing[source(f, g)];
     const auto& q2 = drawing[target(f, g)];
 
-    using boost::multiprecision::int128_t;
+    using int128_t = boost::int128::int128;
     int o1 = orientation2d<int128_t>(p1.x, p1.y, p2.x, p2.y, q1.x, q1.y);
     int o2 = orientation2d<int128_t>(p1.x, p1.y, p2.x, p2.y, q2.x, q2.y);
     int o3 = orientation2d<int128_t>(q1.x, q1.y, q2.x, q2.y, p1.x, p1.y);
