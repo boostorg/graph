@@ -6,28 +6,40 @@ Traverses vertices of an undirected graph, always visiting next the vertex with 
 *Complexity:* _O(E + V)_ +
 *Defined in:* `<boost/graph/maximum_adjacency_search.hpp>`
 
-== Example
+== Description
+
+The `maximum_adjacency_search()` function performs a traversal of the
+vertices in an undirected graph. The next vertex visited is the vertex
+that has the most visited neighbors at any time. In the case of an
+unweighted, undirected graph, the number of visited neighbors of the very
+last vertex visited in the graph is also the number of edge-disjoint
+paths between that vertex and the next-to-last vertex visited. These can
+be retrieved from a visitor, an example of which is in the test harness
+mas_test.cpp.
+
+The `maximum_adjacency_search()` function invokes user-defined actions at
+certain event-points within the algorithm. This provides a mechanism for
+adapting the generic MAS algorithm to the many situations in which it can
+be used. In the pseudo-code below, the event points for MAS are the
+labels on the right. The user-defined actions must be provided in the
+form of a visitor object, that is, an object whose type meets the
+requirements for a MAS Visitor.
+
+== Overloads
+
+=== (1) Fully Positional
 
 [source,cpp]
 ----
-include::example$algorithms/utility/maximum_adjacency_search.cpp[]
-----
-
-[,text]
-----
-include::example$algorithms/utility/maximum_adjacency_search.txt[]
-----
-
-'''
-
-=== (1) Positional version
-
-[source,cpp]
-----
-template <class Graph, class WeightMap, class MASVisitor>
+namespace boost::graph {
+template <class Graph, class WeightMap, class MASVisitor, class KeyedUpdatablePriorityQueue>
 void maximum_adjacency_search(
-    const Graph& g, WeightMap weights, MASVisitor vis,
-    const typename graph_traits<Graph>::vertex_descriptor start);
+    const Graph& g,
+    WeightMap weights,
+    MASVisitor vis,
+    typename graph_traits<Graph>::vertex_descriptor start,
+    KeyedUpdatablePriorityQueue pq);
+}
 ----
 
 [cols="1,2,5"]
@@ -36,7 +48,7 @@ void maximum_adjacency_search(
 
 | IN
 | `const Graph& g`
-| A connected, directed graph. The graph type must be a model of
+| A connected, undirected graph. The graph type must be a model of
   xref:concepts/IncidenceGraph.adoc[Incidence Graph] and
   xref:concepts/VertexListGraph.adoc[Vertex List Graph].
 
@@ -61,11 +73,110 @@ void maximum_adjacency_search(
 | This specifies the vertex that the search should originate from. The type
   is the type of a vertex descriptor for the given graph.
 
+| IN
+| `KeyedUpdatablePriorityQueue pq`
+| A max priority queue keyed on the reach counts. It must be a model of
+  xref:concepts/property_types/KeyedUpdatableQueue.adoc[Keyed Updatable Queue] and a
+  max link:./UpdatableQueue.html#concept%3AUpdatablePriorityQueue[Updatable
+  Priority Queue]. The value type must be the graph's vertex descriptor and
+  the key type must be the weight type. It must be empty when passed in.
+
 |===
+
+==== Example
+
+[source,cpp]
+----
+include::example$algorithms/utility/maximum_adjacency_search.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/utility/maximum_adjacency_search.txt[]
+----
 
 '''
 
-=== (2) Named parameter version
+=== (2) Four arguments overload
+
+Building the priority queue is the cumbersome part, so this form defaults it to a
+max `d_ary_heap_indirect` keyed on the reach counts.
+
+[source,cpp]
+----
+namespace boost::graph {
+template <class Graph, class WeightMap, class MASVisitor>
+void maximum_adjacency_search(
+  const Graph& g, 
+  WeightMap weights, 
+  MASVisitor vis,
+  typename graph_traits<Graph>::vertex_descriptor start);
+}
+----
+
+==== Example
+
+[source,cpp]
+----
+include::example$algorithms/utility/maximum_adjacency_search_default_queue.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/utility/maximum_adjacency_search_default_queue.txt[]
+----
+
+'''
+
+=== (3) Three arguments overload
+
+The start vertex rarely matters, this form defaults it to `*vertices(g).first`.
+
+[source,cpp]
+----
+namespace boost::graph {
+template <class Graph, class WeightMap, class MASVisitor>
+void maximum_adjacency_search(const Graph& g, WeightMap weights, MASVisitor vis);
+}
+----
+
+'''
+
+=== (4) Six arguments overload (deprecated)
+
+[WARNING]
+====
+Deprecated: the `assignments` map is unused. Use the fully positional or
+convenience `boost::graph::maximum_adjacency_search` overloads instead. Removal
+planned for Boost 1.95.
+====
+
+[source,cpp]
+----
+namespace boost {
+template <class Graph, class WeightMap, class MASVisitor,
+          class VertexAssignmentMap, class KeyedUpdatablePriorityQueue>
+void maximum_adjacency_search(
+    const Graph& g, WeightMap weights, MASVisitor vis,
+    typename graph_traits<Graph>::vertex_descriptor start,
+    VertexAssignmentMap assignments, KeyedUpdatablePriorityQueue pq);
+}
+----
+
+Identical to the fully positional overload except for the extra
+`VertexAssignmentMap assignments` parameter, which is accepted for backward
+compatibility but never read.
+
+'''
+
+=== (5) Named parameter version (deprecated)
+
+[WARNING]
+====
+Deprecated: the named parameter interface is deprecated. Use the fully
+positional or convenience `boost::graph::maximum_adjacency_search` overloads
+instead. Removal planned for Boost 1.95.
+====
 
 [source,cpp]
 ----
@@ -81,7 +192,7 @@ void maximum_adjacency_search(
 
 | IN
 | `const Graph& g`
-| A connected, directed graph. The graph type must be a model of
+| A connected, undirected graph. The graph type must be a model of
   xref:concepts/IncidenceGraph.adoc[Incidence Graph] and
   xref:concepts/VertexListGraph.adoc[Vertex List Graph].
 
@@ -143,7 +254,7 @@ void maximum_adjacency_search(
 | `max_priority_queue(MaxPriorityQueue& pq)`
 | `MaxPriorityQueue` must be a model of
   xref:concepts/property_types/KeyedUpdatableQueue.adoc[Keyed Updatable Queue] and a
-  max-link:./UpdatableQueue.html#concept%3AUpdatablePriorityQueue[Updatable
+  max link:./UpdatableQueue.html#concept%3AUpdatablePriorityQueue[Updatable
   Priority Queue]. The value type must be the graph's vertex descriptor and
   the key type must be the weight type. +
   *Default:* A `boost::d_ary_heap_indirect` using a default index-in-heap
@@ -175,26 +286,7 @@ void maximum_adjacency_search(
 
 |===
 
-== Description
-
-The `maximum_adjacency_search()` function performs a traversal of the
-vertices in an undirected graph. The next vertex visited is the vertex
-that has the most visited neighbors at any time. In the case of an
-unweighted, undirected graph, the number of visited neighbors of the very
-last vertex visited in the graph is also the number of edge-disjoint
-paths between that vertex and the next-to-last vertex visited. These can
-be retrieved from a visitor, an example of which is in the test harness
-mas_test.cpp.
-
-The `maximum_adjacency_search()` function invokes user-defined actions at
-certain event-points within the algorithm. This provides a mechanism for
-adapting the generic MAS algorithm to the many situations in which it can
-be used. In the pseudo-code below, the event points for MAS are the
-labels on the right. The user-defined actions must be provided in the
-form of a visitor object, that is, an object whose type meets the
-requirements for a MAS Visitor.
-
-=== Pseudo-Code
+== Pseudo-Code
 
 [cols="1a,1a"]
 |===
@@ -208,10 +300,10 @@ MAS(G)
   reach_count[s] := 1
   for each unvisited vertex u in V
     call MAS-VISIT(G, u)
-    remove u from the list on unvisited vertices
+    remove u from unvisited
     for each out edge from u to t
        if t has not yet been visited
-         increment reach_count[t]
+         reach_count[t] += weight(u, t)
        end if
     end for each out edge
     call MAS-VISIT(G, u)
@@ -226,7 +318,7 @@ initialize vertex u
 .
 .
 .
-examine vertex u
+start vertex u
 .
 examine edge (u,t)
 .
@@ -237,15 +329,6 @@ finish vertex u
 .
 ----
 |===
-
-== Returns
-
-`void`
-
-== Throws
-
-`bad_graph`:: If `num_vertices(g)` is less than 2.
-`std::invalid_argument`:: If a max-priority queue is given as an argument and it is not empty.
 
 == Visitor Event Points
 
@@ -258,6 +341,11 @@ finish vertex u
 * *`vis.finish_vertex(u, g)`* is invoked on a vertex after all of its
   out edges have been examined and the reach counts of the unvisited
   targets have been updated.
+
+== Throws
+
+`bad_graph`:: If `num_vertices(g)` is less than 2.
+`std::invalid_argument`:: If a max-priority queue is given as an argument and it is not empty.
 
 == Notes
 

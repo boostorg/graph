@@ -1,8 +1,5 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/maximum_adjacency_search.hpp>
-#include <boost/graph/detail/d_ary_heap.hpp>
-#include <boost/property_map/shared_array_property_map.hpp>
-#include <functional>
 #include <iostream>
 #include <vector>
 
@@ -10,7 +7,6 @@ struct Edge { int weight; };
 
 using Graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, boost::no_property, Edge>;
 using vertex_descriptor = boost::graph_traits<Graph>::vertex_descriptor;
-using weight_type = int;
 
 // records the vertices in the order the search visits them
 struct order_recorder : boost::default_mas_visitor {
@@ -30,22 +26,10 @@ int main() {
 
     auto weight_map = boost::get(&Edge::weight, g);
 
-    // keyed max priority queue the search runs on: reach counts plus heap positions
-    using index_map_type = boost::property_map<Graph, boost::vertex_index_t>::const_type;
-    using distances_map_type = boost::shared_array_property_map<weight_type, index_map_type>;
-    using index_in_heap_type = std::vector<vertex_descriptor>::size_type;
-    using indices_map_type = boost::shared_array_property_map<index_in_heap_type, index_map_type>;
-    using max_priority_queue_type = boost::d_ary_heap_indirect<vertex_descriptor, 4, indices_map_type, distances_map_type, std::greater<weight_type>>;
-
-    auto distances_map = boost::make_shared_array_property_map(boost::num_vertices(g), weight_type(0), boost::get(boost::vertex_index, g));
-    auto indices_map = boost::make_shared_array_property_map(boost::num_vertices(g), index_in_heap_type(-1), boost::get(boost::vertex_index, g));
-    max_priority_queue_type pq(distances_map, indices_map);
-
     std::vector<vertex_descriptor> order;
     order_recorder visitor(order);
-    vertex_descriptor start = *boost::vertices(g).first;
 
-    boost::graph::maximum_adjacency_search(g, weight_map, visitor, start, pq);
+    boost::graph::maximum_adjacency_search(g, weight_map, visitor, *vertices(g).first);
 
     std::cout << "Visit order:";
     for (vertex_descriptor v : order) std::cout << ' ' << v;

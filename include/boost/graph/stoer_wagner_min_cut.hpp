@@ -29,6 +29,31 @@ namespace boost
 
 namespace detail
 {
+    // Captures the cut of the phase from a maximum adjacency sweep: the last
+    // two vertices visited and the reach count of the last one. mas_sweep fires
+    // start_vertex before popping each vertex, so its key at that moment is the
+    // reach count.
+    template < class UndirectedGraph, class KeyMap, class WeightType >
+    struct mas_phase_recorder : public default_mas_visitor
+    {
+        using vertex_descriptor = typename boost::graph_traits< UndirectedGraph >::vertex_descriptor;
+
+        mas_phase_recorder(vertex_descriptor& s, vertex_descriptor& t, WeightType& w, KeyMap keys)
+        : s_(s), t_(t), w_(w), keys_(keys) {}
+
+        void start_vertex(vertex_descriptor u, const UndirectedGraph&)
+        {
+            s_ = t_;
+            t_ = u;
+            w_ = get(keys_, u);
+        }
+
+        vertex_descriptor& s_;
+        vertex_descriptor& t_;
+        WeightType& w_;
+        KeyMap keys_;
+    };
+
     /**
      * \brief Performs a phase of the Stoer-Wagner min-cut algorithm
      *
@@ -95,61 +120,16 @@ namespace detail
 
         BOOST_ASSERT(pq.size() >= 2);
 
-        vertex_descriptor s
-            = boost::graph_traits< UndirectedGraph >::null_vertex();
-        vertex_descriptor t
-            = boost::graph_traits< UndirectedGraph >::null_vertex();
-        weight_type w;
-        while (!pq.empty())
-        { // while PQ \neq {} do
-            const vertex_descriptor u = pq.top(); // u = extractmax(PQ)
-            w = get(keys, u);
-            pq.pop();
+        // the cut of the phase is the last two vertices the maximum adjacency
+        // sweep visits and the reach count of the last one
+        vertex_descriptor s = boost::graph_traits< UndirectedGraph >::null_vertex();
+        vertex_descriptor t = boost::graph_traits< UndirectedGraph >::null_vertex();
+        weight_type w = weight_type(0);
 
-            s = t;
-            t = u;
+        using vis_t = mas_phase_recorder< UndirectedGraph, typename KeyedUpdatablePriorityQueue::key_map, weight_type >;
+        vis_t recorder(s, t, w, keys);
 
-            BGL_FORALL_OUTEDGES_T(u, e, g, UndirectedGraph)
-            { // foreach (u, v) \in E do
-                const vertex_descriptor v = get(assignments, target(e, g));
-
-                if (pq.contains(v))
-                { // if v \in PQ then
-                    put(keys, v,
-                        get(keys, v)
-                            + get(weights,
-                                e)); // increasekey(PQ, v, wA(v) + w(u, v))
-                    pq.update(v);
-                }
-            }
-
-            typename std::set< vertex_descriptor >::const_iterator
-                assignedVertexIt,
-                assignedVertexEnd = assignedVertices.end();
-            for (assignedVertexIt = assignedVertices.begin();
-                 assignedVertexIt != assignedVertexEnd; ++assignedVertexIt)
-            {
-                const vertex_descriptor uPrime = *assignedVertexIt;
-
-                if (get(assignments, uPrime) == u)
-                {
-                    BGL_FORALL_OUTEDGES_T(uPrime, e, g, UndirectedGraph)
-                    { // foreach (u, v) \in E do
-                        const vertex_descriptor v
-                            = get(assignments, target(e, g));
-
-                        if (pq.contains(v))
-                        { // if v \in PQ then
-                            put(keys, v,
-                                get(keys, v)
-                                    + get(weights, e)); // increasekey(PQ, v,
-                                                        // wA(v) + w(u, v))
-                            pq.update(v);
-                        }
-                    }
-                }
-            }
-        }
+        boost::graph::detail::mas_sweep(g, weights, recorder, assignments, assignedVertices, pq);
 
         return boost::make_tuple(s, t, w);
     }
