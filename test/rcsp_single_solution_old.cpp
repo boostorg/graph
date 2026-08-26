@@ -6,6 +6,7 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
+#define BOOST_ALLOW_DEPRECATED_SYMBOLS
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/r_c_shortest_paths.hpp>
@@ -75,12 +76,13 @@ struct extension_function {
 
 resource_container run_rcsp(const graph_type& graph, vertex_type source, vertex_type target) {
   const auto vertex_index_map = boost::get(boost::vertex_index, graph);
+  const auto edge_index_map = boost::get(boost::edge_all, graph);
   boost::default_r_c_shortest_paths_allocator label_allocator{};
 
   path_type single_solution;
   resource_container single_resource(0, 0);
   const resource_container start_resource(0, 0);
-  boost::r_c_shortest_paths(graph, vertex_index_map, source, target, single_solution, single_resource,
+  boost::r_c_shortest_paths(graph, vertex_index_map, edge_index_map, source, target, single_solution, single_resource,
                             start_resource, extension_function{}, dominance{}, label_allocator,
                             boost::default_r_c_shortest_paths_visitor());
 

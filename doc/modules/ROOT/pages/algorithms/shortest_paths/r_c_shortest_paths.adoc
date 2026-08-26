@@ -26,12 +26,37 @@ include::example$algorithms/shortest_paths/r_c_shortest.txt[]
 ----
 template <class Graph,
           class VertexIndexMap,
-          class EdgeIndexMap,
           class Resource_Container,
           class Resource_Extension_Function,
           class Dominance_Function,
           class Label_Allocator,
           class Visitor>
+void r_c_shortest_paths(
+    const Graph& g,
+    const VertexIndexMap& vertex_index_map,
+    typename graph_traits<Graph>::vertex_descriptor s,
+    typename graph_traits<Graph>::vertex_descriptor t,
+    std::vector<std::vector<typename graph_traits<Graph>::edge_descriptor>>& pareto_optimal_solutions,
+    std::vector<Resource_Container>& pareto_optimal_resource_containers,
+    const Resource_Container& rc,
+    const Resource_Extension_Function& ref,
+    const Dominance_Function& dominance,
+    Label_Allocator la,
+    Visitor vis)
+----
+
+Old interface, to be deprecated in future releases.
+
+[source,cpp]
+----
+template <class Graph,
+      class VertexIndexMap,
+      class EdgeIndexMap,
+      class Resource_Container,
+      class Resource_Extension_Function,
+      class Dominance_Function,
+      class Label_Allocator,
+      class Visitor>
 void r_c_shortest_paths(
     const Graph& g,
     const VertexIndexMap& vertex_index_map,
@@ -126,6 +151,31 @@ void r_c_shortest_paths(
 '''
 
 === (2) One Pareto-optimal solution, with allocator and visitor
+
+[source,cpp]
+----
+template <class Graph,
+          class VertexIndexMap,
+          class Resource_Container,
+          class Resource_Extension_Function,
+          class Dominance_Function,
+          class Label_Allocator,
+          class Visitor>
+void r_c_shortest_paths(
+    const Graph& g,
+    const VertexIndexMap& vertex_index_map,
+    typename graph_traits<Graph>::vertex_descriptor s,
+    typename graph_traits<Graph>::vertex_descriptor t,
+    std::vector<typename graph_traits<Graph>::edge_descriptor>& pareto_optimal_solution,
+    Resource_Container& pareto_optimal_resource_container,
+    const Resource_Container& rc,
+    const Resource_Extension_Function& ref,
+    const Dominance_Function& dominance,
+    Label_Allocator la,
+    Visitor vis)
+----
+
+Old interface, to be deprecated in future releases.
 
 [source,cpp]
 ----
@@ -235,6 +285,27 @@ void r_c_shortest_paths(
 ----
 template <class Graph,
           class VertexIndexMap,
+          class Resource_Container,
+          class Resource_Extension_Function,
+          class Dominance_Function>
+void r_c_shortest_paths(
+    const Graph& g,
+    const VertexIndexMap& vertex_index_map,
+    typename graph_traits<Graph>::vertex_descriptor s,
+    typename graph_traits<Graph>::vertex_descriptor t,
+    std::vector<std::vector<typename graph_traits<Graph>::edge_descriptor>>& pareto_optimal_solutions,
+    std::vector<Resource_Container>& pareto_optimal_resource_containers,
+    const Resource_Container& rc,
+    const Resource_Extension_Function& ref,
+    const Dominance_Function& dominance)
+----
+
+Old interface, to be deprecated in future releases.
+
+[source,cpp]
+----
+template <class Graph,
+          class VertexIndexMap,
           class EdgeIndexMap,
           class Resource_Container,
           class Resource_Extension_Function,
@@ -252,7 +323,7 @@ void r_c_shortest_paths(
     const Dominance_Function& dominance)
 ----
 
-[cols="1,2,5"]
+[%autowrap, cols="1,2,5"]
 |===
 | Direction | Parameter | Description
 
@@ -326,6 +397,27 @@ void r_c_shortest_paths(
     const Graph& g,
     const VertexIndexMap& vertex_index_map,
     const EdgeIndexMap& edge_index_map,
+    typename graph_traits<Graph>::vertex_descriptor s,
+    typename graph_traits<Graph>::vertex_descriptor t,
+    std::vector<typename graph_traits<Graph>::edge_descriptor>& pareto_optimal_solution,
+    Resource_Container& pareto_optimal_resource_container,
+    const Resource_Container& rc,
+    const Resource_Extension_Function& ref,
+    const Dominance_Function& dominance)
+----
+
+Old interface, to be deprecated in future releases.
+
+[source,cpp]
+----
+template <class Graph,
+          class VertexIndexMap,
+          class Resource_Container,
+          class Resource_Extension_Function,
+          class Dominance_Function>
+void r_c_shortest_paths(
+    const Graph& g,
+    const VertexIndexMap& vertex_index_map,
     typename graph_traits<Graph>::vertex_descriptor s,
     typename graph_traits<Graph>::vertex_descriptor t,
     std::vector<typename graph_traits<Graph>::edge_descriptor>& pareto_optimal_solution,

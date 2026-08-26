@@ -133,6 +133,7 @@ exe push-relable : push-relabel-eg.cpp ;
 run put-get-helper-eg.cpp ;
 run quick_tour.cpp ;
 run quick-tour.cpp ;
+run r_c_shortest_paths_example_old.cpp ;
 run r_c_shortest_paths_example.cpp ;
 run read_graphviz.cpp /boost/graph//boost_graph ;
 exe read_write_dimacs : read_write_dimacs-eg.cpp ;

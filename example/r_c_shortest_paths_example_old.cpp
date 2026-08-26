@@ -2,6 +2,7 @@
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://boost.org/LICENSE_1_0.txt)
+#define BOOST_ALLOW_DEPRECATED_SYMBOLS
 
 // Example use of the resource-constrained shortest paths algorithm.
 #include <boost/config.hpp>
@@ -155,7 +156,7 @@ public:
         spp_spptw_res_cont& new_cont, const spp_spptw_res_cont& old_cont,
         graph_traits< SPPRC_Example_Graph >::edge_descriptor ed) const
     {
-        const SPPRC_Example_Graph_Arc_Prop arc_prop = get(edge_bundle, g)[ed];
+        const SPPRC_Example_Graph_Arc_Prop& arc_prop = get(edge_bundle, g)[ed];
         const SPPRC_Example_Graph_Vert_Prop& vert_prop
             = get(vertex_bundle, g)[target(ed, g)];
         new_cont.cost = old_cont.cost + arc_prop.cost;
@@ -249,7 +250,7 @@ int main()
     std::vector< spp_no_rc_res_cont > pareto_opt_rcs_no_rc;
 
     r_c_shortest_paths(g, get(&SPPRC_Example_Graph_Vert_Prop::num, g),
-        s, t, opt_solutions,
+        get(&SPPRC_Example_Graph_Arc_Prop::num, g), s, t, opt_solutions,
         pareto_opt_rcs_no_rc, spp_no_rc_res_cont(0), ref_no_res_cont(),
         dominance_no_res_cont(),
         std::allocator< r_c_shortest_paths_label< SPPRC_Example_Graph,
@@ -278,7 +279,7 @@ int main()
     std::vector< spp_spptw_res_cont > pareto_opt_rcs_spptw;
 
     r_c_shortest_paths(g, get(&SPPRC_Example_Graph_Vert_Prop::num, g),
-         s, t, opt_solutions_spptw,
+        get(&SPPRC_Example_Graph_Arc_Prop::num, g), s, t, opt_solutions_spptw,
         pareto_opt_rcs_spptw, spp_spptw_res_cont(0, 0), ref_spptw(),
         dominance_spptw(),
         std::allocator< r_c_shortest_paths_label< SPPRC_Example_Graph,
