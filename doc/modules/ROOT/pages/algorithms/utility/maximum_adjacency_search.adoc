@@ -23,7 +23,7 @@ adapting the generic MAS algorithm to the many situations in which it can
 be used. In the pseudo-code below, the event points for MAS are the
 labels on the right. The user-defined actions must be provided in the
 form of a visitor object, that is, an object whose type meets the
-requirements for a MAS Visitor.
+requirements for the <<mas-visitor-concept,MAS Visitor concept>>.
 
 == Overloads
 
@@ -65,8 +65,8 @@ void maximum_adjacency_search(
 | IN
 | `MASVisitor vis`
 | A visitor object that is invoked inside the algorithm at the event-points
-  specified by the MAS Visitor concept. The visitor object is passed by
-  value <<1,[1]>>.
+  specified by the <<mas-visitor-concept,MAS Visitor concept>>. The visitor object is passed by
+  value.
 
 | IN
 | `vertex_descriptor start`
@@ -219,8 +219,8 @@ void maximum_adjacency_search(
 | IN
 | `visitor(MASVisitor vis)`
 | A visitor object that is invoked inside the algorithm at the event-points
-  specified by the MAS Visitor concept. The visitor object is passed by
-  value <<1,[1]>>. +
+  specified by the <<mas-visitor-concept,MAS Visitor concept>>. The visitor object is passed by
+  value. +
   *Default:* `mas_visitor<null_visitor>`
 
 | IN
@@ -286,7 +286,30 @@ void maximum_adjacency_search(
 
 |===
 
-== Pseudo-Code
+== Visitor
+
+The `maximum_adjacency_search()` function invokes user-defined actions at four
+event points during the traversal. You supply these actions through a visitor
+object whose type models the <<mas-visitor-concept,MAS Visitor concept>>.
+
+Since the visitor parameter is passed by value, if the
+visitor contains state then any changes to the state during the algorithm
+will be made to a copy of the visitor object, not the visitor object
+passed in. Therefore you may want the visitor to hold this state by
+pointer or reference.
+
+[WARNING]
+====
+These symbols moved to `namespace boost::graph`. The `boost::` aliases are kept
+for backward compatibility but are deprecated. Removal planned for Boost 1.95.
+
+* `boost::mas_visitor` -> `boost::graph::mas_visitor`
+* `boost::make_mas_visitor` -> `boost::graph::make_mas_visitor`
+* `boost::default_mas_visitor` -> `boost::graph::default_mas_visitor`
+* `boost::MASVisitorConcept` -> `boost::graph::MASVisitorConcept`
+====
+
+=== Pseudo-Code
 
 [cols="1a,1a"]
 |===
@@ -330,30 +353,101 @@ finish vertex u
 ----
 |===
 
-== Visitor Event Points
 
-* *`vis.initialize_vertex(s, g)`* is invoked on every vertex of the
-  graph before the start of the graph search.
-* *`vis.start_vertex(s, g)`* is invoked on the source vertex once
-  before processing its out edges.
-* *`vis.examine_edge(e, g)`* is invoked on every out-edge of each
-  vertex after it is started.
-* *`vis.finish_vertex(u, g)`* is invoked on a vertex after all of its
-  out edges have been examined and the reach counts of the unvisited
-  targets have been updated.
+[#mas-visitor-concept]
+=== Visitor Concept
+
+The `MASVisitor` template parameter must be a model of the MAS Visitor
+concept, which defines the event points at which the algorithm invokes
+user-defined actions.
+
+==== Refinement of
+
+Copy Constructible (copying a visitor should be a lightweight operation).
+
+==== Notation
+
+[cols=",",]
+|===
+| `V`   | A type that is a model of MAS Visitor.
+| `vis` | An object of type `V`.
+| `G`   | A type that is a model of Graph.
+| `g`   | An object of type `G`.
+| `e`   | An object of type `boost::graph_traits<G>::edge_descriptor`.
+| `s,u` | An object of type `boost::graph_traits<G>::vertex_descriptor`.
+|===
+
+==== Valid Expressions
+
+[cols=",,,",options="header",]
+|===
+| Name | Expression | Return Type | Description
+
+| Initialize Vertex
+| `vis.initialize_vertex(s, g)`
+| `void`
+| Invoked on every vertex of the graph before the start of the search.
+
+| Start Vertex
+| `vis.start_vertex(s, g)`
+| `void`
+| Invoked on the source vertex once before processing its out-edges.
+
+| Examine Edge
+| `vis.examine_edge(e, g)`
+| `void`
+| Invoked on every out-edge of each vertex after it is started.
+
+| Finish Vertex
+| `vis.finish_vertex(u, g)`
+| `void`
+| Invoked on a vertex after all of its out-edges have been examined and the
+  reach counts of the unvisited targets have been updated.
+|===
+
+=== Minimal Implementation
+
+Two ways to write a visitor.
+
+Inherit from `default_mas_visitor` and shadow only the relevant handlers. The
+base supplies a no-op for every other event.
+
+[source,cpp]
+----
+struct my_mas_visitor : boost::graph::default_mas_visitor
+{
+    template <class Edge, class Graph>
+    void examine_edge(Edge e, const Graph& g)
+    {
+        // logic here
+    }
+};
+----
+
+Or copy the full struct and fill in each handler. All four must be declared.
+
+[source,cpp]
+----
+struct my_mas_visitor
+{
+    template <class Vertex, class Graph>
+    void initialize_vertex(Vertex u, const Graph& g) {}
+
+    template <class Vertex, class Graph>
+    void start_vertex(Vertex u, const Graph& g) {}
+
+    template <class Edge, class Graph>
+    void examine_edge(Edge e, const Graph& g) {}
+
+    template <class Vertex, class Graph>
+    void finish_vertex(Vertex u, const Graph& g) {}
+};
+----
 
 == Throws
 
 `bad_graph`:: If `num_vertices(g)` is less than 2.
 `std::invalid_argument`:: If a max-priority queue is given as an argument and it is not empty.
-
-== Notes
-
-[#1]#[1]# Since the visitor parameter is passed by value, if your
-visitor contains state then any changes to the state during the algorithm
-will be made to a copy of the visitor object, not the visitor object
-passed in. Therefore you may want the visitor to hold this state by
-pointer or reference.
 
 == References
 

@@ -41,7 +41,7 @@ struct edge_t
 };
 
 template < typename Graph, typename KeyedUpdatablePriorityQueue >
-class mas_test_visitor : public boost::default_mas_visitor
+class mas_test_visitor : public boost::graph::default_mas_visitor
 {
 public:
     using vertex_descriptor = typename boost::graph_traits< Graph >::vertex_descriptor;
@@ -120,8 +120,8 @@ void test0()
                       expected_weights_when_visited1.cend());
 
     // convenience overload: start vertex and priority queue are defaulted
-    boost::graph::maximum_adjacency_search(g, weight_map, boost::make_mas_visitor(boost::null_visitor()));
-    boost::graph::maximum_adjacency_search(g, weight_map, boost::default_mas_visitor());
+    boost::graph::maximum_adjacency_search(g, weight_map, boost::graph::make_mas_visitor(boost::null_visitor()));
+    boost::graph::maximum_adjacency_search(g, weight_map, boost::graph::default_mas_visitor());
 
     test_vis.clear();
 
@@ -418,7 +418,7 @@ void check_visit_order_invariants(const undirected_graph& g, const std::vector< 
 }
 
 // Records every visitor event.
-class recording_visitor : public boost::default_mas_visitor
+class recording_visitor : public boost::graph::default_mas_visitor
 {
 public:
     recording_visitor(std::size_t& initialize_count, std::size_t& examine_count, std::vector< vertex_descriptor >& start_order, std::vector< vertex_descriptor >& finish_order)
@@ -507,7 +507,7 @@ void test_exceptions()
         undirected_graph too_small;
         add_vertex(too_small);
         auto weight_map = get(boost::edge_weight, too_small);
-        boost::default_mas_visitor visitor;
+        boost::graph::default_mas_visitor visitor;
         BOOST_TEST_THROWS(boost::graph::maximum_adjacency_search(too_small, weight_map, visitor), boost::bad_graph);
     }
 
@@ -517,7 +517,7 @@ void test_exceptions()
         cv_maxheap_type pq = make_weighted_maxheap(g);
         pq.push(0);
         auto weight_map = get(boost::edge_weight, g);
-        boost::default_mas_visitor visitor;
+        boost::graph::default_mas_visitor visitor;
         const vertex_descriptor start = *vertices(g).first;
         BOOST_TEST_THROWS(boost::graph::maximum_adjacency_search(g, weight_map, visitor, start, pq), std::invalid_argument);
     }

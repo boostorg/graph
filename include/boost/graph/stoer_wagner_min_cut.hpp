@@ -34,7 +34,7 @@ namespace detail
     // start_vertex before popping each vertex, so its key at that moment is the
     // reach count.
     template < class UndirectedGraph, class KeyMap, class WeightType >
-    struct mas_phase_recorder : public default_mas_visitor
+    struct mas_phase_recorder : public boost::graph::default_mas_visitor
     {
         using vertex_descriptor = typename boost::graph_traits< UndirectedGraph >::vertex_descriptor;
 
@@ -129,7 +129,7 @@ namespace detail
         using vis_t = mas_phase_recorder< UndirectedGraph, typename KeyedUpdatablePriorityQueue::key_map, weight_type >;
         vis_t recorder(s, t, w, keys);
 
-        boost::graph::detail::mas_sweep(g, weights, recorder, assignments, assignedVertices, pq);
+        boost::graph::mas_detail::mas_sweep(g, weights, recorder, assignments, assignedVertices, pq);
 
         return boost::make_tuple(s, t, w);
     }

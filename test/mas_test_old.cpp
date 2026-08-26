@@ -4,8 +4,10 @@
 //   (See accompanying file LICENSE_1_0.txt or the copy at
 //         http://www.boost.org/LICENSE_1_0.txt)
 
-// This test exercises the deprecated named parameter and assignment-map
-// interfaces on purpose, so silence the deprecation warnings.
+// This test exercises the deprecated interfaces on purpose (the named
+// parameter and assignment-map overloads, and the boost:: visitor aliases
+// mas_visitor / make_mas_visitor / default_mas_visitor that now live in
+// boost::graph), so silence the deprecation warnings.
 #define BOOST_ALLOW_DEPRECATED_SYMBOLS
 
 #include <algorithm>

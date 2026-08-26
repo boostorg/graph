@@ -56,7 +56,10 @@
 namespace boost
 {
 
-template < class Visitor, class Graph > 
+namespace graph
+{
+
+template < class Visitor, class Graph >
 struct MASVisitorConcept
 {
     void constraints()
@@ -114,14 +117,12 @@ mas_visitor< Visitors > make_mas_visitor(Visitors vis)
     return mas_visitor< Visitors >(vis);
 }
 
-typedef mas_visitor<> default_mas_visitor;
+using default_mas_visitor = mas_visitor<>;
 
-namespace graph
-{
-namespace detail
+namespace mas_detail
 {
 
-// Maximum adjacency sweep over an already populated queue. 
+// Maximum adjacency sweep over an already populated queue.
 // Shared engine behind both maximum_adjacency_search and stoer_wagner_min_cut.
 // The graph may be contracted through assignments (each vertex maps to its representative)
 // with assigned_vertices listing the contracted vertices. 
@@ -185,7 +186,7 @@ void mas_sweep(
         vis.finish_vertex(u, g);
     }
 }
-} // namespace detail
+} // namespace mas_detail
 
 // Public maximum adjacency search. 
 // Seeds the queue, gives the start vertex the
@@ -234,7 +235,7 @@ void maximum_adjacency_search(
     // no contraction: identity assignment map and empty contracted set
     const boost::typed_identity_property_map< vertex_descriptor > identity_map;
     const std::set< vertex_descriptor > no_assigned_vertices;
-    detail::mas_sweep(g, weight_map, vis, identity_map, no_assigned_vertices, pq);
+    mas_detail::mas_sweep(g, weight_map, vis, identity_map, no_assigned_vertices, pq);
 }
 
 // Convenience overload that defaults only the priority queue. Building the
@@ -289,7 +290,7 @@ void maximum_adjacency_search(
 
 namespace graph
 {
-    namespace detail
+    namespace mas_detail
     {
         template < typename WeightMap > struct mas_dispatch
         {
@@ -320,7 +321,7 @@ namespace graph
                     = pq_gen(g, params);
 
                 boost::null_visitor null_vis;
-                boost::mas_visitor< boost::null_visitor > default_visitor(
+                boost::graph::mas_visitor< boost::null_visitor > default_visitor(
                     null_vis);
                 vertex_descriptor v = vertex_descriptor();
                 boost::detail::make_property_map_from_arg_pack_gen<
@@ -371,7 +372,7 @@ namespace graph
                     = pq_gen(g, params);
 
                 boost::null_visitor null_vis;
-                boost::mas_visitor< boost::null_visitor > default_visitor(
+                boost::graph::mas_visitor< boost::null_visitor > default_visitor(
                     null_vis);
                 vertex_descriptor v = vertex_descriptor();
                 boost::detail::make_property_map_from_arg_pack_gen<
@@ -388,7 +389,7 @@ namespace graph
                     params[_vertex_assignment_map | default_map], pq);
             }
         };
-    } // end namespace detail
+    } // end namespace mas_detail
 } // end namespace graph
 
 // Named parameter interface
@@ -405,7 +406,7 @@ void maximum_adjacency_search(
     // do the dispatch based on WeightMap
     typedef typename get_param_type< edge_weight_t,
         bgl_named_params< P, T, R > >::type W;
-    graph::detail::mas_dispatch< W >::apply(
+    graph::mas_detail::mas_dispatch< W >::apply(
         g, arg_pack, get_param(params, edge_weight));
 }
 
@@ -423,7 +424,7 @@ namespace graph
                 // call the function that does the dispatching
                 typedef
                     typename get_param_type< edge_weight_t, ArgPack >::type W;
-                graph::detail::mas_dispatch< W >::apply(
+                graph::mas_detail::mas_dispatch< W >::apply(
                     g, arg_pack, get_param(arg_pack, edge_weight));
             }
         };
@@ -432,6 +433,37 @@ namespace graph
     BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(maximum_adjacency_search, 1, 5)
 
 } // end namespace graph
+
+// -- deprecated aliases: the MAS visitor types moved into boost::graph. --
+// Kept in boost:: for backward compatibility. Removal planned for Boost 1.95.
+//
+// BOOST_DEPRECATED (__declspec on MSVC) does not parse inside an
+// alias-declaration, so follow the Boost.URL pattern: delegate to
+// BOOST_DEPRECATED on gcc/clang and drop the attribute on MSVC. This keeps the
+// BOOST_ALLOW_DEPRECATED_SYMBOLS opt-out working on gcc/clang.
+#if defined(BOOST_MSVC)
+#define BOOST_GRAPH_MAS_DEPRECATED_ALIAS(msg)
+#else
+#define BOOST_GRAPH_MAS_DEPRECATED_ALIAS(msg) BOOST_DEPRECATED(msg)
+#endif
+
+template < class Visitor, class Graph >
+using MASVisitorConcept BOOST_GRAPH_MAS_DEPRECATED_ALIAS("use boost::graph::MASVisitorConcept") = graph::MASVisitorConcept< Visitor, Graph >;
+
+template < class Visitors = null_visitor >
+using mas_visitor BOOST_GRAPH_MAS_DEPRECATED_ALIAS("use boost::graph::mas_visitor") = graph::mas_visitor< Visitors >;
+
+using default_mas_visitor BOOST_GRAPH_MAS_DEPRECATED_ALIAS("use boost::graph::default_mas_visitor") = graph::default_mas_visitor;
+
+#undef BOOST_GRAPH_MAS_DEPRECATED_ALIAS
+
+template < class Visitors >
+BOOST_DEPRECATED("use boost::graph::make_mas_visitor")
+graph::mas_visitor< Visitors > make_mas_visitor(Visitors vis)
+{
+    return graph::make_mas_visitor(vis);
+}
+
 } // end namespace boost
 
 #endif // BOOST_GRAPH_MAXIMUM_ADJACENCY_SEARCH_H
