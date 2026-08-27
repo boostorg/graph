@@ -59,13 +59,6 @@ namespace detail
         on_edge_not_minimized_num
     };
 
-    template < typename Event, typename Visitor >
-    struct functor_to_visitor : Visitor
-    {
-        typedef Event event_filter;
-        functor_to_visitor(const Visitor& visitor) : Visitor(visitor) {}
-    };
-
 } // namespace detail
 
 struct on_no_event
@@ -408,20 +401,6 @@ inline property_put< PropertyMap, EventTag > put_property(
 {
     return property_put< PropertyMap, EventTag >(property_map, value);
 }
-
-#define BOOST_GRAPH_EVENT_STUB(Event, Kind)                                 \
-    typedef ::boost::Event Event##_type;                                    \
-    template < typename Visitor >                                           \
-    Kind##_visitor< std::pair<                                              \
-        detail::functor_to_visitor< Event##_type, Visitor >, Visitors > >   \
-        do_##Event(Visitor visitor)                                         \
-    {                                                                       \
-        typedef std::pair<                                                  \
-            detail::functor_to_visitor< Event##_type, Visitor >, Visitors > \
-            visitor_list;                                                   \
-        typedef Kind##_visitor< visitor_list > result_type;                 \
-        return result_type(visitor_list(visitor, m_vis));                   \
-    }
 
 } /* namespace boost */
 

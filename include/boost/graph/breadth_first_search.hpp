@@ -224,16 +224,6 @@ public:
         return graph::bfs_visitor_event_not_overridden();
     }
 
-    BOOST_GRAPH_EVENT_STUB(on_initialize_vertex, bfs)
-    BOOST_GRAPH_EVENT_STUB(on_discover_vertex, bfs)
-    BOOST_GRAPH_EVENT_STUB(on_examine_vertex, bfs)
-    BOOST_GRAPH_EVENT_STUB(on_examine_edge, bfs)
-    BOOST_GRAPH_EVENT_STUB(on_tree_edge, bfs)
-    BOOST_GRAPH_EVENT_STUB(on_non_tree_edge, bfs)
-    BOOST_GRAPH_EVENT_STUB(on_gray_target, bfs)
-    BOOST_GRAPH_EVENT_STUB(on_black_target, bfs)
-    BOOST_GRAPH_EVENT_STUB(on_finish_vertex, bfs)
-
 protected:
     Visitors m_vis;
 };
