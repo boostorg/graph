@@ -286,17 +286,21 @@ void maximum_adjacency_search(
 
 |===
 
+== Throws
+
+`bad_graph`:: If `num_vertices(g)` is less than 2.
+`std::invalid_argument`:: If a max-priority queue is given as an argument and it is not empty.
+
 == Visitor
 
 The `maximum_adjacency_search()` function invokes user-defined actions at four
 event points during the traversal. You supply these actions through a visitor
 object whose type models the <<mas-visitor-concept,MAS Visitor concept>>.
 
-Since the visitor parameter is passed by value, if the
-visitor contains state then any changes to the state during the algorithm
-will be made to a copy of the visitor object, not the visitor object
-passed in. Therefore you may want the visitor to hold this state by
-pointer or reference.
+The visitor is taken by value, so the algorithm works on a copy. To keep state,
+give the visitor ordinary data members and pass it with `std::ref`. 
+The algorithm then operates on the referenced object and its
+state survives the call.
 
 [WARNING]
 ====
@@ -443,11 +447,6 @@ struct my_mas_visitor
     void finish_vertex(Vertex u, const Graph& g) {}
 };
 ----
-
-== Throws
-
-`bad_graph`:: If `num_vertices(g)` is less than 2.
-`std::invalid_argument`:: If a max-priority queue is given as an argument and it is not empty.
 
 == References
 

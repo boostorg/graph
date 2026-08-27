@@ -523,6 +523,37 @@ void test_exceptions()
     }
 }
 
+// A stateful visitor that owns its state as a plain data member.
+class counting_visitor : public boost::graph::default_mas_visitor
+{
+public:
+    std::size_t finish_count = 0;
+    void finish_vertex(vertex_descriptor, const undirected_graph&) { ++finish_count; }
+};
+
+// A visitor passed with std::ref keeps its state across the algorithm
+void test_stateful_visitor_with_ref()
+{
+    const undirected_graph g = mas_sw_oracle::make_weighted_graph(4, { { 0, 1, 1 }, { 1, 2, 1 }, { 2, 3, 1 } });
+    auto weight_map = get(boost::edge_weight, g);
+
+    // std::ref makes the algorithm operate on the caller's visitor
+    {
+        cv_maxheap_type pq = make_weighted_maxheap(g);
+        counting_visitor vis;
+        boost::graph::maximum_adjacency_search(g, weight_map, std::ref(vis), *vertices(g).first, pq);
+        BOOST_TEST_EQ(vis.finish_count, static_cast< std::size_t >(num_vertices(g)));
+    }
+
+    // by value the caller's visitor is left unchanged
+    {
+        cv_maxheap_type pq = make_weighted_maxheap(g);
+        counting_visitor vis;
+        boost::graph::maximum_adjacency_search(g, weight_map, vis, *vertices(g).first, pq);
+        BOOST_TEST_EQ(vis.finish_count, static_cast< std::size_t >(0));
+    }
+}
+
 int main()
 {
     test0();
@@ -537,6 +568,7 @@ int main()
     test9_weights_start_vertex();
     test_maxflow_crossvalidation();
     test_visitor_events();
+    test_stateful_visitor_with_ref();
     test_exceptions();
     return boost::report_errors();
 }
