@@ -365,16 +365,6 @@ public:
         invoke_visitors(m_vis, u, g, ::boost::on_finish_vertex());
     }
 
-    BOOST_GRAPH_EVENT_STUB(on_initialize_vertex, dfs)
-    BOOST_GRAPH_EVENT_STUB(on_start_vertex, dfs)
-    BOOST_GRAPH_EVENT_STUB(on_discover_vertex, dfs)
-    BOOST_GRAPH_EVENT_STUB(on_examine_edge, dfs)
-    BOOST_GRAPH_EVENT_STUB(on_tree_edge, dfs)
-    BOOST_GRAPH_EVENT_STUB(on_back_edge, dfs)
-    BOOST_GRAPH_EVENT_STUB(on_forward_or_cross_edge, dfs)
-    BOOST_GRAPH_EVENT_STUB(on_finish_edge, dfs)
-    BOOST_GRAPH_EVENT_STUB(on_finish_vertex, dfs)
-
 protected:
     Visitors m_vis;
 };

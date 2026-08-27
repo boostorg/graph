@@ -104,11 +104,6 @@ public:
         invoke_visitors(m_vis, u, g, ::boost::on_finish_vertex());
     }
 
-    BOOST_GRAPH_EVENT_STUB(on_initialize_vertex, mas)
-    BOOST_GRAPH_EVENT_STUB(on_start_vertex, mas)
-    BOOST_GRAPH_EVENT_STUB(on_examine_edge, mas)
-    BOOST_GRAPH_EVENT_STUB(on_finish_vertex, mas)
-
 protected:
     Visitors m_vis;
 };
