@@ -1,5 +1,6 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/maximum_adjacency_search.hpp>
+#include <functional>
 #include <iostream>
 #include <vector>
 
@@ -9,9 +10,8 @@ using Graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS
 using vertex_descriptor = boost::graph_traits<Graph>::vertex_descriptor;
 
 // records the vertices in the order the search visits them
-struct order_recorder : boost::default_mas_visitor {
-    std::vector<vertex_descriptor>& order;
-    explicit order_recorder(std::vector<vertex_descriptor>& o) : order(o) {}
+struct order_recorder : boost::graph::default_mas_visitor {
+    std::vector<vertex_descriptor> order;
     void finish_vertex(vertex_descriptor u, const Graph&) { order.push_back(u); }
 };
 
@@ -26,12 +26,12 @@ int main() {
 
     auto weight_map = boost::get(&Edge::weight, g);
 
-    std::vector<vertex_descriptor> order;
-    order_recorder visitor(order);
+    order_recorder visitor;
 
-    boost::graph::maximum_adjacency_search(g, weight_map, visitor, *vertices(g).first);
+    // std::ref lets the visitor keep its state across the copy the algorithm makes
+    boost::graph::maximum_adjacency_search(g, weight_map, std::ref(visitor), *vertices(g).first);
 
     std::cout << "Visit order:";
-    for (vertex_descriptor v : order) std::cout << ' ' << v;
-    std::cout << "\nLast visited vertex (highest connectivity): " << order.back() << '\n';
+    for (vertex_descriptor v : visitor.order) std::cout << ' ' << v;
+    std::cout << "\nLast visited vertex (highest connectivity): " << visitor.order.back() << '\n';
 }

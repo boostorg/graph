@@ -13,9 +13,8 @@ using vertex_descriptor = boost::graph_traits<Graph>::vertex_descriptor;
 using weight_type = int;
 
 // records the vertices in the order the search visits them
-struct order_recorder : boost::default_mas_visitor {
-    std::vector<vertex_descriptor>& order;
-    explicit order_recorder(std::vector<vertex_descriptor>& o) : order(o) {}
+struct order_recorder : boost::graph::default_mas_visitor {
+    std::vector<vertex_descriptor> order;
     void finish_vertex(vertex_descriptor u, const Graph&) { order.push_back(u); }
 };
 
@@ -41,13 +40,13 @@ int main() {
     auto indices_map = boost::make_shared_array_property_map(boost::num_vertices(g), index_in_heap_type(-1), boost::get(boost::vertex_index, g));
     max_priority_queue_type pq(distances_map, indices_map);
 
-    std::vector<vertex_descriptor> order;
-    order_recorder visitor(order);
+    order_recorder visitor;
     vertex_descriptor start = *boost::vertices(g).first;
 
-    boost::graph::maximum_adjacency_search(g, weight_map, visitor, start, pq);
+    // std::ref lets the visitor keep its state across the copy the algorithm makes
+    boost::graph::maximum_adjacency_search(g, weight_map, std::ref(visitor), start, pq);
 
     std::cout << "Visit order:";
-    for (vertex_descriptor v : order) std::cout << ' ' << v;
-    std::cout << "\nLast visited vertex (highest connectivity): " << order.back() << '\n';
+    for (vertex_descriptor v : visitor.order) std::cout << ' ' << v;
+    std::cout << "\nLast visited vertex (highest connectivity): " << visitor.order.back() << '\n';
 }

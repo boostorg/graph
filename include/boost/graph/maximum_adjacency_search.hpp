@@ -2,6 +2,7 @@
 //=======================================================================
 // Copyright 2012 Fernando Vilas
 //           2010 Daniel Trebbien
+//           2026 Arnaud Becheler
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -122,6 +123,12 @@ using default_mas_visitor = mas_visitor<>;
 namespace mas_detail
 {
 
+// Unwrap a visitor that may be passed with std::ref.
+template < class Visitor > struct unwrap_visitor { using type = Visitor; };
+template < class Visitor > struct unwrap_visitor< std::reference_wrapper< Visitor > > { using type = Visitor; };
+template < class Visitor > Visitor& deref_visitor(Visitor& vis) { return vis; }
+template < class Visitor > Visitor& deref_visitor(std::reference_wrapper< Visitor > vis) { return vis.get(); }
+
 // Maximum adjacency sweep over an already populated queue.
 // Shared engine behind both maximum_adjacency_search and stoer_wagner_min_cut.
 // The graph may be contracted through assignments (each vertex maps to its representative)
@@ -143,16 +150,19 @@ void mas_sweep(
     // reach counts are the queue keys.
     auto key_map = pq.keys();
 
+    // resolve a std::ref-wrapped visitor to the referenced object
+    auto& vis_ref = deref_visitor(vis);
+
     while (!pq.empty())
     {
         // extract max: top then pop
         const auto u = pq.top();
-        vis.start_vertex(u, g);
+        vis_ref.start_vertex(u, g);
         pq.pop();
 
         for (const auto& e : make_iterator_range(out_edges(u, g)))
         {
-            vis.examine_edge(e, g);
+            vis_ref.examine_edge(e, g);
             // map the target to itself or its super node
             const auto v = get(assignment_map, target(e, g));
             // in the queue means still unvisited
@@ -173,7 +183,7 @@ void mas_sweep(
 
             for (const auto& e : make_iterator_range(out_edges(member, g)))
             {
-                vis.examine_edge(e, g);
+                vis_ref.examine_edge(e, g);
                 // map the target to itself or its super node
                 const auto v = get(assignment_map, target(e, g));
                 if (pq.contains(v))
@@ -183,7 +193,7 @@ void mas_sweep(
                 }
             }
         }
-        vis.finish_vertex(u, g);
+        vis_ref.finish_vertex(u, g);
     }
 }
 } // namespace mas_detail
@@ -208,7 +218,8 @@ void maximum_adjacency_search(
     BOOST_CONCEPT_ASSERT((boost::VertexListGraphConcept< Graph >));
     BOOST_CONCEPT_ASSERT((boost::Convertible< directed_category, boost::undirected_tag >));
     BOOST_CONCEPT_ASSERT((boost::ReadablePropertyMapConcept< WeightMap, edge_descriptor >));
-    boost::function_requires< MASVisitorConcept< MASVisitor, Graph > >();
+    using visitor_type = typename mas_detail::unwrap_visitor< MASVisitor >::type;
+    boost::function_requires< MASVisitorConcept< visitor_type, Graph > >();
     BOOST_CONCEPT_ASSERT((boost::KeyedUpdatableQueueConcept< KeyedUpdatablePriorityQueue >));
 
     if (num_vertices(g) < 2)
@@ -219,11 +230,14 @@ void maximum_adjacency_search(
     // reach counts are the queue keys
     auto key_map = pq.keys();
 
+    // resolve a std::ref-wrapped visitor to the referenced object
+    auto& vis_ref = mas_detail::deref_visitor(vis);
+
     // seed every vertex with reach count 0
     for (const auto& v : make_iterator_range(vertices(g)))
     {
         put(key_map, v, static_cast< weight_type >(0));
-        vis.initialize_vertex(v, g);
+        vis_ref.initialize_vertex(v, g);
         pq.push(v);
     }
     BOOST_ASSERT(pq.size() >= 2);
