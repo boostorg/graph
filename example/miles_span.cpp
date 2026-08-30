@@ -105,7 +105,7 @@ int main(int argc, char* argv[])
         auto d = get(z_property< long >(), g);
         // Use the "w" property for parent
         auto p = get(w_property< Vertex* >(), g);
-        typedef property_map< Graph*, z_property< long > >::type Distance;
+        using Distance = property_map< Graph*, z_property< long > >::type;
         total_length_visitor< Distance > length_vis(sp_length, d);
 
         prim_minimum_spanning_tree(g, p,
