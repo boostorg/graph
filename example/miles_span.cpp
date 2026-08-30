@@ -31,7 +31,7 @@ struct total_length_visitor : public boost::dijkstra_visitor<>
     }
     template < class Vertex, class Graph >
     inline void finish_vertex(Vertex s, Graph& g)
-    {
+    { (void)g;
         _total_length += boost::get(_distance, s);
     }
     D& _total_length;
