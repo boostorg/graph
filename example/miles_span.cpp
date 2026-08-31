@@ -31,7 +31,7 @@ struct total_length_visitor : public boost::dijkstra_visitor<>
     }
     template < class Vertex, class Graph >
     inline void finish_vertex(Vertex s, Graph& g)
-    {
+    { (void)g;
         _total_length += boost::get(_distance, s);
     }
     D& _total_length;
@@ -105,6 +105,7 @@ int main(int argc, char* argv[])
         auto d = get(z_property< long >(), g);
         // Use the "w" property for parent
         auto p = get(w_property< Vertex* >(), g);
+        using Distance = property_map< Graph*, z_property< long > >::type;
         total_length_visitor< Distance > length_vis(sp_length, d);
 
         prim_minimum_spanning_tree(g, p,
