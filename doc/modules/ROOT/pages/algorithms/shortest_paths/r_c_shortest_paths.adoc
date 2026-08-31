@@ -27,9 +27,9 @@ include::example$algorithms/shortest_paths/r_c_shortest.txt[]
 template <class Graph,
           class VertexIndexMap,
           class EdgeIndexMap,
-          class Resource_Container,
-          class Resource_Extension_Function,
-          class Dominance_Function,
+          class ResourceContainer,
+          class ResourceExtensionFunction,
+          class DominanceFunction,
           class Label_Allocator,
           class Visitor>
 void r_c_shortest_paths(
@@ -39,10 +39,10 @@ void r_c_shortest_paths(
     typename graph_traits<Graph>::vertex_descriptor s,
     typename graph_traits<Graph>::vertex_descriptor t,
     std::vector<std::vector<typename graph_traits<Graph>::edge_descriptor>>& pareto_optimal_solutions,
-    std::vector<Resource_Container>& pareto_optimal_resource_containers,
-    const Resource_Container& rc,
-    const Resource_Extension_Function& ref,
-    const Dominance_Function& dominance,
+    std::vector<ResourceContainer>& pareto_optimal_resource_containers,
+    const ResourceContainer& rc,
+    const ResourceExtensionFunction& ref,
+    const DominanceFunction& dominance,
     Label_Allocator la,
     Visitor vis)
 ----
@@ -83,32 +83,32 @@ void r_c_shortest_paths(
   (from `t` to `s`).
 
 | OUT
-| `std::vector<Resource_Container>& pareto_optimal_resource_containers`
+| `std::vector<ResourceContainer>& pareto_optimal_resource_containers`
 | A container for storing the Pareto-optimal resource containers
   corresponding to all Pareto-optimal solutions.
 
 | IN
-| `const Resource_Container& rc`
+| `const ResourceContainer& rc`
 | An object specifying the initial resource consumptions at vertex `s`.
-  The type `Resource_Container` must be a model of the ResourceContainer concept.
+  The type `ResourceContainer` must be a model of the ResourceContainer concept.
 
 | IN
-| `const Resource_Extension_Function& ref`
+| `const ResourceExtensionFunction& ref`
 | A function object, function pointer, or function specifying how a label is to
-  be extended along an arc. The type `Resource_Extension_Function` must be a model
+  be extended along an arc. The type `ResourceExtensionFunction` must be a model
   of the ResourceExtensionFunction concept.
 
 | IN
-| `const Dominance_Function& dominance`
+| `const DominanceFunction& dominance`
 | A function object, function pointer, or function specifying a dominance
-  relation between two labels. The type `Dominance_Function` must be a model of
+  relation between two labels. The type `DominanceFunction` must be a model of
   the DominanceFunction concept.
 
 | IN
 | `Label_Allocator la`
 | An object specifying a strategy for the memory management of the labels.
   It must offer the same interface as
-  `std::allocator<r_c_shortest_paths_label<Graph, Resource_Container>>`.
+  `std::allocator<r_c_shortest_paths_label<Graph, ResourceContainer>>`.
   There is a default type `default_r_c_shortest_paths_allocator` for this
   parameter using the STL standard allocator. If one wants to use a specialized
   allocator, one can specify an arbitrary type as template parameter for
@@ -132,9 +132,9 @@ void r_c_shortest_paths(
 template <class Graph,
           class VertexIndexMap,
           class EdgeIndexMap,
-          class Resource_Container,
-          class Resource_Extension_Function,
-          class Dominance_Function,
+          class ResourceContainer,
+          class ResourceExtensionFunction,
+          class DominanceFunction,
           class Label_Allocator,
           class Visitor>
 void r_c_shortest_paths(
@@ -144,10 +144,10 @@ void r_c_shortest_paths(
     typename graph_traits<Graph>::vertex_descriptor s,
     typename graph_traits<Graph>::vertex_descriptor t,
     std::vector<typename graph_traits<Graph>::edge_descriptor>& pareto_optimal_solution,
-    Resource_Container& pareto_optimal_resource_container,
-    const Resource_Container& rc,
-    const Resource_Extension_Function& ref,
-    const Dominance_Function& dominance,
+    ResourceContainer& pareto_optimal_resource_container,
+    const ResourceContainer& rc,
+    const ResourceExtensionFunction& ref,
+    const DominanceFunction& dominance,
     Label_Allocator la,
     Visitor vis)
 ----
@@ -188,33 +188,33 @@ void r_c_shortest_paths(
   (from `t` to `s`). This argument is not modified if there are no solutions.
 
 | OUT
-| `Resource_Container& pareto_optimal_resource_container`
-| A `Resource_Container` object for storing the Pareto-optimal resource
+| `ResourceContainer& pareto_optimal_resource_container`
+| A `ResourceContainer` object for storing the Pareto-optimal resource
   container corresponding to the first Pareto-optimal path. This argument
   is not modified if there are no solutions.
 
 | IN
-| `const Resource_Container& rc`
+| `const ResourceContainer& rc`
 | An object specifying the initial resource consumptions at vertex `s`.
-  The type `Resource_Container` must be a model of the ResourceContainer concept.
+  The type `ResourceContainer` must be a model of the ResourceContainer concept.
 
 | IN
-| `const Resource_Extension_Function& ref`
+| `const ResourceExtensionFunction& ref`
 | A function object, function pointer, or function specifying how a label is to
-  be extended along an arc. The type `Resource_Extension_Function` must be a model
+  be extended along an arc. The type `ResourceExtensionFunction` must be a model
   of the ResourceExtensionFunction concept.
 
 | IN
-| `const Dominance_Function& dominance`
+| `const DominanceFunction& dominance`
 | A function object, function pointer, or function specifying a dominance
-  relation between two labels. The type `Dominance_Function` must be a model of
+  relation between two labels. The type `DominanceFunction` must be a model of
   the DominanceFunction concept.
 
 | IN
 | `Label_Allocator la`
 | An object specifying a strategy for the memory management of the labels.
   It must offer the same interface as
-  `std::allocator<r_c_shortest_paths_label<Graph, Resource_Container>>`.
+  `std::allocator<r_c_shortest_paths_label<Graph, ResourceContainer>>`.
   There is a default type `default_r_c_shortest_paths_allocator` for this
   parameter using the STL standard allocator.
 
@@ -236,9 +236,9 @@ void r_c_shortest_paths(
 template <class Graph,
           class VertexIndexMap,
           class EdgeIndexMap,
-          class Resource_Container,
-          class Resource_Extension_Function,
-          class Dominance_Function>
+          class ResourceContainer,
+          class ResourceExtensionFunction,
+          class DominanceFunction>
 void r_c_shortest_paths(
     const Graph& g,
     const VertexIndexMap& vertex_index_map,
@@ -246,10 +246,10 @@ void r_c_shortest_paths(
     typename graph_traits<Graph>::vertex_descriptor s,
     typename graph_traits<Graph>::vertex_descriptor t,
     std::vector<std::vector<typename graph_traits<Graph>::edge_descriptor>>& pareto_optimal_solutions,
-    std::vector<Resource_Container>& pareto_optimal_resource_containers,
-    const Resource_Container& rc,
-    const Resource_Extension_Function& ref,
-    const Dominance_Function& dominance)
+    std::vector<ResourceContainer>& pareto_optimal_resource_containers,
+    const ResourceContainer& rc,
+    const ResourceExtensionFunction& ref,
+    const DominanceFunction& dominance)
 ----
 
 [cols="1,2,5"]
@@ -288,25 +288,25 @@ void r_c_shortest_paths(
   (from `t` to `s`).
 
 | OUT
-| `std::vector<Resource_Container>& pareto_optimal_resource_containers`
+| `std::vector<ResourceContainer>& pareto_optimal_resource_containers`
 | A container for storing the Pareto-optimal resource containers
   corresponding to all Pareto-optimal solutions.
 
 | IN
-| `const Resource_Container& rc`
+| `const ResourceContainer& rc`
 | An object specifying the initial resource consumptions at vertex `s`.
-  The type `Resource_Container` must be a model of the ResourceContainer concept.
+  The type `ResourceContainer` must be a model of the ResourceContainer concept.
 
 | IN
-| `const Resource_Extension_Function& ref`
+| `const ResourceExtensionFunction& ref`
 | A function object, function pointer, or function specifying how a label is to
-  be extended along an arc. The type `Resource_Extension_Function` must be a model
+  be extended along an arc. The type `ResourceExtensionFunction` must be a model
   of the ResourceExtensionFunction concept.
 
 | IN
-| `const Dominance_Function& dominance`
+| `const DominanceFunction& dominance`
 | A function object, function pointer, or function specifying a dominance
-  relation between two labels. The type `Dominance_Function` must be a model of
+  relation between two labels. The type `DominanceFunction` must be a model of
   the DominanceFunction concept.
 |===
 
@@ -319,9 +319,9 @@ void r_c_shortest_paths(
 template <class Graph,
           class VertexIndexMap,
           class EdgeIndexMap,
-          class Resource_Container,
-          class Resource_Extension_Function,
-          class Dominance_Function>
+          class ResourceContainer,
+          class ResourceExtensionFunction,
+          class DominanceFunction>
 void r_c_shortest_paths(
     const Graph& g,
     const VertexIndexMap& vertex_index_map,
@@ -329,10 +329,10 @@ void r_c_shortest_paths(
     typename graph_traits<Graph>::vertex_descriptor s,
     typename graph_traits<Graph>::vertex_descriptor t,
     std::vector<typename graph_traits<Graph>::edge_descriptor>& pareto_optimal_solution,
-    Resource_Container& pareto_optimal_resource_container,
-    const Resource_Container& rc,
-    const Resource_Extension_Function& ref,
-    const Dominance_Function& dominance)
+    ResourceContainer& pareto_optimal_resource_container,
+    const ResourceContainer& rc,
+    const ResourceExtensionFunction& ref,
+    const DominanceFunction& dominance)
 ----
 
 [cols="1,2,5"]
@@ -371,26 +371,26 @@ void r_c_shortest_paths(
   (from `t` to `s`). This argument is not modified if there are no solutions.
 
 | OUT
-| `Resource_Container& pareto_optimal_resource_container`
-| A `Resource_Container` object for storing the Pareto-optimal resource
+| `ResourceContainer& pareto_optimal_resource_container`
+| A `ResourceContainer` object for storing the Pareto-optimal resource
   container corresponding to the first Pareto-optimal path. This argument
   is not modified if there are no solutions.
 
 | IN
-| `const Resource_Container& rc`
+| `const ResourceContainer& rc`
 | An object specifying the initial resource consumptions at vertex `s`.
-  The type `Resource_Container` must be a model of the ResourceContainer concept.
+  The type `ResourceContainer` must be a model of the ResourceContainer concept.
 
 | IN
-| `const Resource_Extension_Function& ref`
+| `const ResourceExtensionFunction& ref`
 | A function object, function pointer, or function specifying how a label is to
-  be extended along an arc. The type `Resource_Extension_Function` must be a model
+  be extended along an arc. The type `ResourceExtensionFunction` must be a model
   of the ResourceExtensionFunction concept.
 
 | IN
-| `const Dominance_Function& dominance`
+| `const DominanceFunction& dominance`
 | A function object, function pointer, or function specifying a dominance
-  relation between two labels. The type `Dominance_Function` must be a model of
+  relation between two labels. The type `DominanceFunction` must be a model of
   the DominanceFunction concept.
 |===
 
@@ -448,7 +448,7 @@ See <<ResourceExtensionFunction,ResourceExtensionFunction>> concept.
 [#Label]
 == Label
 
-This concept defines the interface for a label in the `r_c_shortest_paths` functions. It is a design decision not to parameterize the functions on the type of label. The type `template<class Graph, class Resource_Container> struct r_c_shortest_paths_label` is used to model this concept.
+This concept defines the interface for a label in the `r_c_shortest_paths` functions. It is a design decision not to parameterize the functions on the type of label. The type `template<class Graph, class ResourceContainer> struct r_c_shortest_paths_label` is used to model this concept.
 
 *Valid Expressions* +
 If `label` is an object of type `r_c_shortest_paths_label`, the following expressions are valid:
@@ -485,7 +485,7 @@ Every `r_c_shortest_paths_label` object, except for the first label, has a valid
 A model of the ResourceExtensionFunction concept is used to specify how a label is to be extended along an arc.
 
 *Valid Expressions* +
-If `ref` models the ResourceExtensionFunction concept, and if the type `Resource_Container` models the ResourceContainer concept, the following expression is valid:
+If `ref` models the ResourceExtensionFunction concept, and if the type `ResourceContainer` models the ResourceContainer concept, the following expression is valid:
 
 [cols="1,1"]
 |===
@@ -493,8 +493,8 @@ a|
 [source,cpp]
 ----
 bool b = ref( const Graph& g,
-              Resource_Container& new_cont,
-              const Resource_Container& old_cont,
+              ResourceContainer& new_cont,
+              const ResourceContainer& old_cont,
               graph_traits<Graph>::edge_descriptor ed )
 ----
 
@@ -506,13 +506,13 @@ Moreover, a reference to a type modelling the ResourceExtensionFunction concept 
 Hence, a type modelling the ResourceExtensionFunction concept is likely to be a function or a http://www.boost.org/sgi/stl/functors.html[function object].
 
 *Invariants* +
-If `ref` models the ResourceExtensionFunction concept, and if the type `Resource_Container` models the ResourceContainer concept, after the call
+If `ref` models the ResourceExtensionFunction concept, and if the type `ResourceContainer` models the ResourceContainer concept, after the call
 
 [source,cpp]
 ----
 ref( const Graph& g,
-     Resource_Container& new_cont,
-     const Resource_Container& old_cont,
+     ResourceContainer& new_cont,
+     const ResourceContainer& old_cont,
      graph_traits<Graph>::edge_descriptor )
 ----
 
@@ -527,13 +527,13 @@ A model of DominanceFunction is used to specify a dominance relation between two
 http://www.boost.org/sgi/stl/BinaryPredicate.html[BinaryPredicate]
 
 *Valid Expressions* +
-If `dominance` models the DominanceFunction concept, and if the type `Resource_Container` models the ResourceContainer concept, the following expression is valid:
+If `dominance` models the DominanceFunction concept, and if the type `ResourceContainer` models the ResourceContainer concept, the following expression is valid:
 
 [cols="1,1"]
 |===
 a|
 ....
-bool b = dominance(const Resource_Container& rc1, const Resource_Container& rc2)
+bool b = dominance(const ResourceContainer& rc1, const ResourceContainer& rc2)
 ....
 
 | `dominance` must return `true` if and only if `rc1` dominates `rc2`.
@@ -623,7 +623,7 @@ r_c_shortest_paths( g,
 === Preconditions
 
 * `s` and `t` are valid vertex descriptors for `g`.
-* `rc` is within the resource windows at `s`, i.e., it constitutes a feasible `Resource_Container` object at `s` (see <<Discussion,discussion>>).
+* `rc` is within the resource windows at `s`, i.e., it constitutes a feasible `ResourceContainer` object at `s` (see <<Discussion,discussion>>).
 
 == Throws
 
@@ -654,16 +654,16 @@ There is a utility function called `check_r_c_path` that can be used for debuggi
 [source,cpp]
 ----
 template <class Graph,
-          class Resource_Container,
-          class Resource_Extension_Function>
+          class ResourceContainer,
+          class ResourceExtensionFunction>
 void check_r_c_path(
     const Graph& g,
     const std::vector<typename graph_traits<Graph>::edge_descriptor>& ed_vec_path,
-    const Resource_Container& initial_resource_levels,
+    const ResourceContainer& initial_resource_levels,
     bool b_result_must_be_equal_to_desired_final_resource_levels,
-    const Resource_Container& desired_final_resource_levels,
-    Resource_Container& actual_final_resource_levels,
-    const Resource_Extension_Function& ref,
+    const ResourceContainer& desired_final_resource_levels,
+    ResourceContainer& actual_final_resource_levels,
+    const ResourceExtensionFunction& ref,
     bool& b_is_a_path_at_all,
     bool& b_feasible,
     bool& b_correctly_extended,
