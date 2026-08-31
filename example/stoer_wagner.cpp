@@ -56,8 +56,8 @@ int main()
 
     // run the Stoer-Wagner algorithm to obtain the min-cut weight. `parities`
     // is also filled in.
-    int w = boost::stoer_wagner_min_cut(
-        g, get(boost::edge_weight, g), boost::parity_map(parities));
+    int w = boost::graph::stoer_wagner_min_cut(
+        g, get(boost::edge_weight, g), parities);
 
     cout << "The min-cut weight of G is " << w << ".\n" << endl;
     assert(w == 7);

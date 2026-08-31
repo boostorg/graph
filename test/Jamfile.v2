@@ -164,6 +164,7 @@ alias graph_test_regular :
     [ run mas_test.cpp ]
     [ run mas_test_old.cpp : $(TEST_DIR) ]
     [ run stoer_wagner_test.cpp : $(TEST_DIR) ]
+    [ run stoer_wagner_test_old.cpp : $(TEST_DIR) ]
     [ compile filtered_graph_properties_dijkstra.cpp ]
     [ run vf2_sub_graph_iso_test.cpp ]
     [ run vf2_sub_graph_iso_test_2.cpp ]
