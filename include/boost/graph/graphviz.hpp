@@ -29,7 +29,7 @@
 #include <boost/graph/compressed_sparse_row_graph.hpp>
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/graph/detail/mpi_include.hpp>
-#include <boost/spirit/include/classic_multi_pass.hpp>
+#include <boost/config/pragma_message.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/algorithm/string/replace.hpp>
@@ -925,13 +925,12 @@ namespace detail
 } // end namespace boost::detail::graph
 
 #ifdef BOOST_GRAPH_USE_SPIRIT_PARSER
-#ifndef BOOST_GRAPH_READ_GRAPHVIZ_ITERATORS
-#define BOOST_GRAPH_READ_GRAPHVIZ_ITERATORS
+BOOST_PRAGMA_MESSAGE(
+    "BOOST_GRAPH_USE_SPIRIT_PARSER is deprecated and no longer has any effect: "
+    "the Boost.Spirit read_graphviz parser has been removed"
+    "read_graphviz now always uses the default parser.")
 #endif
-#include <boost/graph/detail/read_graphviz_spirit.hpp>
-#else // New default parser
 #include <boost/graph/detail/read_graphviz_new.hpp>
-#endif // BOOST_GRAPH_USE_SPIRIT_PARSER
 
 namespace boost
 {
@@ -941,11 +940,7 @@ template < typename MutableGraph >
 bool read_graphviz(const std::string& data, MutableGraph& graph,
     dynamic_properties& dp, std::string const& node_id = "node_id")
 {
-#ifdef BOOST_GRAPH_USE_SPIRIT_PARSER
-    return read_graphviz_spirit(data.begin(), data.end(), graph, dp, node_id);
-#else // Non-Spirit parser
     return read_graphviz_new(data, graph, dp, node_id);
-#endif
 }
 
 // Parse the passed iterator range as a GraphViz dot file.
@@ -954,18 +949,8 @@ bool read_graphviz(InputIterator user_first, InputIterator user_last,
     MutableGraph& graph, dynamic_properties& dp,
     std::string const& node_id = "node_id")
 {
-#ifdef BOOST_GRAPH_USE_SPIRIT_PARSER
-    typedef InputIterator is_t;
-    typedef boost::spirit::classic::multi_pass< is_t > iterator_t;
-
-    iterator_t first(boost::spirit::classic::make_multi_pass(user_first));
-    iterator_t last(boost::spirit::classic::make_multi_pass(user_last));
-
-    return read_graphviz_spirit(first, last, graph, dp, node_id);
-#else // Non-Spirit parser
     return read_graphviz_new(
         std::string(user_first, user_last), graph, dp, node_id);
-#endif
 }
 
 // Parse the passed stream as a GraphViz dot file.
