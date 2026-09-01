@@ -26,7 +26,6 @@
 #include <memory>
 #include <boost/graph/detail/d_ary_heap.hpp>
 #include <boost/graph/two_bit_color_map.hpp>
-#include <boost/graph/detail/mpi_include.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/property_map/vector_property_map.hpp>
 #include <boost/type_traits.hpp>
@@ -574,7 +573,5 @@ inline void dijkstra_shortest_paths(const VertexListGraph& g,
 }
 
 } // namespace boost
-
-#include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/dijkstra_shortest_paths.hpp>)
 
 #endif // BOOST_GRAPH_DIJKSTRA_HPP
