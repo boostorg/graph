@@ -924,9 +924,10 @@ namespace detail
 }
 } // end namespace boost::detail::graph
 
+// BOOST_GRAPH_USE_SPIRIT_PARSER deprecated and will be removed in 1.95 
 #ifdef BOOST_GRAPH_USE_SPIRIT_PARSER
 BOOST_PRAGMA_MESSAGE(
-    "BOOST_GRAPH_USE_SPIRIT_PARSER is deprecated and no longer has any effect: "
+    "BOOST_GRAPH_USE_SPIRIT_PARSER has no longer any effect and will be removed in 1.95. "
     "the Boost.Spirit read_graphviz parser has been removed"
     "read_graphviz now always uses the default parser.")
 #endif
