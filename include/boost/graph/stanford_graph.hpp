@@ -50,6 +50,7 @@ extern "C"
 #include <gb_games.h> /* graphs based on football scores */
 #undef ap /* avoid name clash with BGL parameter */
     // ap ==> Vertex::u.I
+#undef MAX_N /* redefinition in gb_miles.h below; unused */
 #include <gb_gates.h> /* graphs based on logic circuits */
 #undef val /* avoid name clash with g++ headerfile stl_tempbuf.h */
     // val ==> Vertex::x.I
@@ -401,26 +402,26 @@ public:
 
 template < class Tag >
 inline sgb_vertex_util_map< Tag, const typename Tag::type& > get_property_map(
-    Tag, const sgb_graph_ptr& g, vertex_property_tag)
+    Tag, const sgb_graph_ptr&, vertex_property_tag)
 {
     return sgb_vertex_util_map< Tag, const typename Tag::type& >();
 }
 template < class Tag >
 inline sgb_vertex_util_map< Tag, typename Tag::type& > get_property_map(
-    Tag, sgb_graph_ptr& g, vertex_property_tag)
+    Tag, sgb_graph_ptr&, vertex_property_tag)
 {
     return sgb_vertex_util_map< Tag, typename Tag::type& >();
 }
 
 template < class Tag >
 inline sgb_edge_util_map< Tag, const typename Tag::type& > get_property_map(
-    Tag, const sgb_graph_ptr& g, edge_property_tag)
+    Tag, const sgb_graph_ptr&, edge_property_tag)
 {
     return sgb_edge_util_map< Tag, const typename Tag::type& >();
 }
 template < class Tag >
 inline sgb_edge_util_map< Tag, typename Tag::type& > get_property_map(
-    Tag, sgb_graph_ptr& g, edge_property_tag)
+    Tag, sgb_graph_ptr&, edge_property_tag)
 {
     return sgb_edge_util_map< Tag, typename Tag::type& >();
 }
