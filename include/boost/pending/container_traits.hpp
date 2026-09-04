@@ -22,22 +22,8 @@
 #include <set>
 #include <boost/unordered_set.hpp>
 #include <boost/unordered_map.hpp>
-
-#ifndef BOOST_NO_CXX11_HDR_UNORDERED_SET
 #include <unordered_set>
-#endif
-
-#ifndef BOOST_NO_CXX11_HDR_UNORDERED_MAP
 #include <unordered_map>
-#endif
-
-#ifdef BOOST_NO_CXX11_RVALUE_REFERENCES
-#define BOOST_PENDING_FWD_TYPE(type) const type&
-#define BOOST_PENDING_FWD_VALUE(type, var) (var)
-#else
-#define BOOST_PENDING_FWD_TYPE(type) type&&
-#define BOOST_PENDING_FWD_VALUE(type, var) (std::forward< type >((var)))
-#endif
 
 // The content of this file is in 'graph_detail' because otherwise
 // there will be name clashes with
@@ -366,6 +352,7 @@ namespace graph_detail
     {
         return unstable_tag();
     }
+
     template < class Key, class Eq, class Hash, class Alloc >
     unordered_multiset_tag container_category(
         const boost::unordered_multiset< Key, Eq, Hash, Alloc >&)
@@ -394,31 +381,27 @@ namespace graph_detail
         return unstable_tag();
     }
 
-#ifndef BOOST_NO_CXX11_HDR_UNORDERED_SET
     template < class Key, class Eq, class Hash, class Alloc >
     struct container_traits< std::unordered_set< Key, Eq, Hash, Alloc > >
     {
         typedef unordered_set_tag category;
         typedef unstable_tag iterator_stability;
     };
-#endif
-#ifndef BOOST_NO_CXX11_HDR_UNORDERED_MAP
+
     template < class Key, class T, class Eq, class Hash, class Alloc >
     struct container_traits< std::unordered_map< Key, T, Eq, Hash, Alloc > >
     {
         typedef unordered_map_tag category;
         typedef unstable_tag iterator_stability;
     };
-#endif
-#ifndef BOOST_NO_CXX11_HDR_UNORDERED_SET
+
     template < class Key, class Eq, class Hash, class Alloc >
     struct container_traits< std::unordered_multiset< Key, Eq, Hash, Alloc > >
     {
         typedef unordered_multiset_tag category;
         typedef unstable_tag iterator_stability;
     };
-#endif
-#ifndef BOOST_NO_CXX11_HDR_UNORDERED_MAP
+
     template < class Key, class T, class Eq, class Hash, class Alloc >
     struct container_traits<
         std::unordered_multimap< Key, T, Eq, Hash, Alloc > >
@@ -426,77 +409,62 @@ namespace graph_detail
         typedef unordered_multimap_tag category;
         typedef unstable_tag iterator_stability;
     };
-#endif
-#ifndef BOOST_NO_CXX11_HDR_UNORDERED_SET
+
     template < class Key, class Eq, class Hash, class Alloc >
     unordered_set_tag container_category(
         const std::unordered_set< Key, Eq, Hash, Alloc >&)
     {
         return unordered_set_tag();
     }
-#endif
 
-#ifndef BOOST_NO_CXX11_HDR_UNORDERED_MAP
     template < class Key, class T, class Eq, class Hash, class Alloc >
     unordered_map_tag container_category(
         const std::unordered_map< Key, T, Eq, Hash, Alloc >&)
     {
         return unordered_map_tag();
     }
-#endif
 
-#ifndef BOOST_NO_CXX11_HDR_UNORDERED_SET
     template < class Key, class Eq, class Hash, class Alloc >
     unstable_tag iterator_stability(
         const std::unordered_set< Key, Eq, Hash, Alloc >&)
     {
         return unstable_tag();
     }
-#endif
 
-#ifndef BOOST_NO_CXX11_HDR_UNORDERED_MAP
     template < class Key, class T, class Eq, class Hash, class Alloc >
     unstable_tag iterator_stability(
         const std::unordered_map< Key, T, Eq, Hash, Alloc >&)
     {
         return unstable_tag();
     }
-#endif
-#ifndef BOOST_NO_CXX11_HDR_UNORDERED_SET
+
     template < class Key, class Eq, class Hash, class Alloc >
     unordered_multiset_tag container_category(
         const std::unordered_multiset< Key, Eq, Hash, Alloc >&)
     {
         return unordered_multiset_tag();
     }
-#endif
 
-#ifndef BOOST_NO_CXX11_HDR_UNORDERED_MAP
     template < class Key, class T, class Eq, class Hash, class Alloc >
     unordered_multimap_tag container_category(
         const std::unordered_multimap< Key, T, Eq, Hash, Alloc >&)
     {
         return unordered_multimap_tag();
     }
-#endif
 
-#ifndef BOOST_NO_CXX11_HDR_UNORDERED_SET
     template < class Key, class Eq, class Hash, class Alloc >
     unstable_tag iterator_stability(
         const std::unordered_multiset< Key, Eq, Hash, Alloc >&)
     {
         return unstable_tag();
     }
-#endif
 
-#ifndef BOOST_NO_CXX11_HDR_UNORDERED_MAP
     template < class Key, class T, class Eq, class Hash, class Alloc >
     unstable_tag iterator_stability(
         const std::unordered_multimap< Key, T, Eq, Hash, Alloc >&)
     {
         return unstable_tag();
     }
-#endif
 
     //===========================================================================
     // Generalized Container Functions
@@ -569,42 +537,42 @@ namespace graph_detail
     // Push
     template < class Container, class T >
     std::pair< typename Container::iterator, bool > push_dispatch(
-        Container& c, BOOST_PENDING_FWD_TYPE(T) v, back_insertion_sequence_tag)
+        Container& c, T&& v, back_insertion_sequence_tag)
     {
-        c.push_back(BOOST_PENDING_FWD_VALUE(T, v));
+        c.push_back(std::forward< T >(v));
         return std::make_pair(boost::prior(c.end()), true);
     }
 
     template < class Container, class T >
     std::pair< typename Container::iterator, bool > push_dispatch(
-        Container& c, BOOST_PENDING_FWD_TYPE(T) v, front_insertion_sequence_tag)
+        Container& c, T&& v, front_insertion_sequence_tag)
     {
-        c.push_front(BOOST_PENDING_FWD_VALUE(T, v));
+        c.push_front(std::forward< T >(v));
         return std::make_pair(c.begin(), true);
     }
 
     template < class AssociativeContainer, class T >
     std::pair< typename AssociativeContainer::iterator, bool > push_dispatch(
-        AssociativeContainer& c, BOOST_PENDING_FWD_TYPE(T) v,
+        AssociativeContainer& c, T&& v,
         unique_associative_container_tag)
     {
-        return c.insert(BOOST_PENDING_FWD_VALUE(T, v));
+        return c.insert(std::forward< T >(v));
     }
 
     template < class AssociativeContainer, class T >
     std::pair< typename AssociativeContainer::iterator, bool > push_dispatch(
-        AssociativeContainer& c, BOOST_PENDING_FWD_TYPE(T) v,
+        AssociativeContainer& c, T&& v,
         multiple_associative_container_tag)
     {
-        return std::make_pair(c.insert(BOOST_PENDING_FWD_VALUE(T, v)), true);
+        return std::make_pair(c.insert(std::forward< T >(v)), true);
     }
 
     template < class Container, class T >
     std::pair< typename Container::iterator, bool > push(
-        Container& c, BOOST_PENDING_FWD_TYPE(T) v)
+        Container& c, T&& v)
     {
         return push_dispatch(
-            c, BOOST_PENDING_FWD_VALUE(T, v), container_category(c));
+            c, std::forward< T >(v), container_category(c));
     }
 
     // Find
@@ -688,7 +656,5 @@ namespace graph_detail
 }
 } // namespace boost::graph_detail
 
-#undef BOOST_PENDING_FWD_TYPE
-#undef BOOST_PENDING_FWD_VALUE
 
 #endif // BOOST_GRAPH_DETAIL_CONTAINER_TRAITS_H
