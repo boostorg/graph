@@ -15,6 +15,7 @@
 #include <boost/graph/adjacency_iterator.hpp>
 #include <boost/graph/detail/set_adaptor.hpp>
 #include <boost/iterator/filter_iterator.hpp>
+#include <type_traits>
 
 namespace boost
 {
@@ -139,7 +140,7 @@ struct filtered_graph_tag
 // pairs in graph_traits.hpp. I feel dirty. -JGS
 template < class G > struct filtered_graph_base
 {
-    typedef graph_traits< G > Traits;
+    typedef graph_traits< typename std::remove_const< G >::type > Traits;
     typedef typename Traits::vertex_descriptor vertex_descriptor;
     typedef typename Traits::edge_descriptor edge_descriptor;
     filtered_graph_base(const G& g) : m_g(g) {}
@@ -152,7 +153,7 @@ template < typename Graph, typename EdgePredicate,
 class filtered_graph : public filtered_graph_base< Graph >
 {
     typedef filtered_graph_base< Graph > Base;
-    typedef graph_traits< Graph > Traits;
+    typedef graph_traits< typename std::remove_const< Graph >::type > Traits;
     typedef filtered_graph self;
 
 public:
@@ -309,7 +310,7 @@ std::pair< typename filtered_graph< G, EP, VP >::vertex_iterator,
 vertices(const filtered_graph< G, EP, VP >& g)
 {
     typedef filtered_graph< G, EP, VP > Graph;
-    typename graph_traits< G >::vertex_iterator f, l;
+    typename graph_traits< typename std::remove_const< G >::type >::vertex_iterator f, l;
     boost::tie(f, l) = vertices(g.m_g);
     typedef typename Graph::vertex_iterator iter;
     return std::make_pair(
@@ -323,7 +324,7 @@ edges(const filtered_graph< G, EP, VP >& g)
 {
     typedef filtered_graph< G, EP, VP > Graph;
     typename Graph::EdgePred pred(g.m_edge_pred, g.m_vertex_pred, g);
-    typename graph_traits< G >::edge_iterator f, l;
+    typename graph_traits< typename std::remove_const< G >::type >::edge_iterator f, l;
     boost::tie(f, l) = edges(g.m_g);
     typedef typename Graph::edge_iterator iter;
     return std::make_pair(iter(pred, f, l), iter(pred, l, l));
@@ -381,7 +382,7 @@ out_edges(typename filtered_graph< G, EP, VP >::vertex_descriptor u,
     typedef filtered_graph< G, EP, VP > Graph;
     typename Graph::OutEdgePred pred(g.m_edge_pred, g.m_vertex_pred, g);
     typedef typename Graph::out_edge_iterator iter;
-    typename graph_traits< G >::out_edge_iterator f, l;
+    typename graph_traits< typename std::remove_const< G >::type >::out_edge_iterator f, l;
     boost::tie(f, l) = out_edges(u, g.m_g);
     return std::make_pair(iter(pred, f, l), iter(pred, l, l));
 }
@@ -421,7 +422,7 @@ in_edges(typename filtered_graph< G, EP, VP >::vertex_descriptor u,
     typedef filtered_graph< G, EP, VP > Graph;
     typename Graph::InEdgePred pred(g.m_edge_pred, g.m_vertex_pred, g);
     typedef typename Graph::in_edge_iterator iter;
-    typename graph_traits< G >::in_edge_iterator f, l;
+    typename graph_traits< typename std::remove_const< G >::type >::in_edge_iterator f, l;
     boost::tie(f, l) = in_edges(u, g.m_g);
     return std::make_pair(iter(pred, f, l), iter(pred, l, l));
 }
@@ -462,7 +463,7 @@ std::pair< typename filtered_graph< G, EP, VP >::edge_descriptor, bool > edge(
     typename filtered_graph< G, EP, VP >::vertex_descriptor v,
     const filtered_graph< G, EP, VP >& g)
 {
-    typename graph_traits< G >::edge_descriptor e;
+    typename graph_traits< typename std::remove_const< G >::type >::edge_descriptor e;
     bool exists;
     boost::tie(e, exists) = edge(u, v, g.m_g);
     return std::make_pair(e, exists && g.m_edge_pred(e));
@@ -478,7 +479,7 @@ edge_range(typename filtered_graph< G, EP, VP >::vertex_descriptor u,
     typedef filtered_graph< G, EP, VP > Graph;
     typename Graph::OutEdgePred pred(g.m_edge_pred, g.m_vertex_pred, g);
     typedef typename Graph::out_edge_iterator iter;
-    typename graph_traits< G >::out_edge_iterator f, l;
+    typename graph_traits< typename std::remove_const< G >::type >::out_edge_iterator f, l;
     boost::tie(f, l) = edge_range(u, v, g.m_g);
     return std::make_pair(iter(pred, f, l), iter(pred, l, l));
 }
