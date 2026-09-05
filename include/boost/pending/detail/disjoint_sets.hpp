@@ -7,12 +7,14 @@
 #define BOOST_DETAIL_DISJOINT_SETS_HPP
 
 #include <cassert>
+#include <boost/property_map/property_map.hpp>
 
 namespace boost
 {
 
 namespace detail
 {
+    using boost::get;
 
     template < class ParentPA, class Vertex >
     Vertex find_representative_with_path_halving(ParentPA p, Vertex v)

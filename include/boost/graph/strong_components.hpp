@@ -260,6 +260,17 @@ void build_component_lists(const Graph& g,
         components[component_number[*vi]].push_back(*vi);
 }
 
+template < typename Graph, typename ComponentMap, typename ComponentLists, typename VertexIndexMap >
+void build_component_lists(const Graph& g,
+    typename graph_traits< Graph >::vertices_size_type num_scc,
+    ComponentMap component_number, ComponentLists& components, VertexIndexMap vertex_index)
+{
+    components.resize(num_scc);
+    typename graph_traits< Graph >::vertex_iterator vi, vi_end;
+    for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
+        components[component_number[get(vertex_index, *vi)]].push_back(*vi);
+}
+
 } // namespace boost
 
 #include <queue>
