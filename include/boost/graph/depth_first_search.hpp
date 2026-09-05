@@ -19,7 +19,6 @@
 #include <boost/graph/properties.hpp>
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/named_function_params.hpp>
-#include <boost/graph/detail/mpi_include.hpp>
 #include <boost/ref.hpp>
 #include <boost/optional.hpp>
 #include <boost/parameter.hpp>
@@ -420,7 +419,5 @@ void depth_first_visit(const IncidenceGraph& g,
     detail::depth_first_visit_impl(g, u, vis, color, func);
 }
 } // namespace boost
-
-#include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/depth_first_search.hpp>)
 
 #endif
