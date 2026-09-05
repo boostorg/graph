@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=iso-8859-1">
+	<TITLE>Boost Graph Library: Karps Minimum Cycle Mean</TITLE>
+	<META NAME="CREATED BY" CONTENT="G YUVAN SHANKAR">
+
+
+    <!--Use, modification and distribution is subject to the Boost Software
+    License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
+    http://www.boost.org/LICENSE_1_0.txt)
+
+     Authors: G Yuvan Shankar
+ -->
+	<!--
+	<STYLE>
+		@page { size: 3.5cm 2.5cm }
+		TD P { color: #000000 }
+		H1 { color: #000000 }
+		P { color: #000000 }
+		PRE { color: #000000 }
+		H3 { color: #000000 }
+		BLOCKQUOTE { color: #000000 }
+		A:link { color: #0000ee }
+		A:visited { color: #551a8b }
+	</STYLE>
+	-->
+</HEAD>
+<BODY  TEXT="#000000" LINK="#0000ee" VLINK="#551a8b" BGCOLOR="#ffffff" DIR="LTR">
+<P><IMG SRC="../../..//boost.png" NAME="graphics1" ALT="C++ Boost" ALIGN=BOTTOM WIDTH=277 HEIGHT=86 BORDER=0>
+</P>
+<H1><TT>karp_minimum_cycle_mean</TT></H1>
+<P>
+<PRE>
+template &lt;typename Graph&gt;
+double karp_minimum_cycle_mean(Graph g);
+</PRE>
+</P>
+
+
+The <tt>karp_minimum_cycle_mean()</tt> function calculates minimum cycle mean of a
+weighted directed graph <I>G=(V,E,W)</I>, where <i>V</i> is a vertex set,
+<i>E</i> is an edge set, <I>W: E -> R</I> is an edge weight function .
+</P>
+
+<P>We define the mean weight of a cycle <I>C=&lte<sub>1</sub>,e<sub>1</sub>,e<sub>2</sub>..,e<sub>k</sub>&gt</I> of edges in E to be</P>
+<P>
+<IMG SRC="figs/mcm.jpg" ALT="mean weight of cycle" BORDER=0>
+</P>
+
+The <I>minimum cycle mean</I> is the minimum cycle mean
+of all cycles of the graph. The <tt>karp_minimum_cycle_mean()</tt> returns the 
+calculated minimum cycle mean. Returns -1 if the graph has no cycles.
+
+</P>
+<P>
+This algorithm was described by Richard M. Karp in his paper
+<A HREF="./dasdan-dac99.pdf">A characterization of the minimum cycle mean in a digraph</A></P>
+
+
+<H3>Where Defined</H3>
+<P STYLE="background: transparent"><TT><A HREF="../../../boost/graph/karp_minimum_cycle_mean.hpp">boost/graph/karp_minimum_cycle_mean.hpp</A></TT>
+</P>
+<H3>Parameters</H3>
+
+<P>IN: <tt>const Graph g </tt>
+</P>
+<BLOCKQUOTE>A weighted directed graph.
+</BLOCKQUOTE>
+
+<P>
+OUT: double <tt>minimum_mean_weight</tt>
+</P>
+
+<H3>Complexity</H3>
+<P>The implemented algorithm runs in O(|V||E|) time. Where V and E are vertex set and edge set respectively.
+</P>
+
+<H3>Example</H3>
+<P>The program in <A HREF="../example/minimum_cycle_mean_example.cpp">libs/graph/example/minimum_cycle_mean_example.cpp</A>
+finds the minimum cycle mean of the defined graph.
+</P>
+
