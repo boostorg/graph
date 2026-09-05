@@ -34,7 +34,7 @@
 ////////////////////////////////////////////////////////////
 //
 // Sloan-Algorithm for graph reordering
-//(optimzes profile and wavefront, not primiraly bandwidth
+//(optimizes profile and wavefront, not primarily bandwidth)
 //
 ////////////////////////////////////////////////////////////
 
@@ -43,7 +43,7 @@ namespace boost
 
 /////////////////////////////////////////////////////////////////////////
 // Function that returns the maximum depth of
-// a rooted level strucutre (RLS)
+// a rooted level structure (RLS)
 //
 /////////////////////////////////////////////////////////////////////////
 template < class Distance > typename Distance::value_type RLS_depth(Distance& d)
@@ -64,7 +64,7 @@ template < class Distance > typename Distance::value_type RLS_depth(Distance& d)
 
 /////////////////////////////////////////////////////////////////////////
 // Function that returns the width of the largest level of
-// a rooted level strucutre (RLS)
+// a rooted level structure (RLS)
 //
 /////////////////////////////////////////////////////////////////////////
 template < class Distance, class my_int >
@@ -112,7 +112,9 @@ typename graph_traits< Graph >::vertex_descriptor sloan_start_end_vertices(
 
     typedef typename property_map< Graph, vertex_index_t >::const_type VertexID;
 
-    s = *(vertices(G).first);
+    typedef typename property_traits< ColorMap >::value_type ColorValue;
+    typedef color_traits< ColorValue > Color;
+
     Vertex e = s;
     Vertex i;
     Degree my_degree = get(degree, s);
@@ -146,7 +148,10 @@ typename graph_traits< Graph >::vertex_descriptor sloan_start_end_vertices(
     {
         dummy = get(degree, *ui);
 
-        if (dummy < my_degree)
+        // Only consider white nodes, i.e. nodes that are not yet partitioned
+        // into a connected component. This allows the algorithm to find the
+        // optimal start node amongst all the remaining (white) nodes.
+        if (dummy < my_degree && get(color, *ui) == Color::white())
         {
             my_degree = dummy;
             s = *ui;
@@ -159,12 +164,16 @@ typename graph_traits< Graph >::vertex_descriptor sloan_start_end_vertices(
     }
     // end 1
 
+    // Mark all nodes in the current connected component black. The current
+    // connected component is the connected component where s is a part of.
+    depth_first_visit(G, s, dfs_visitor<>(), color);
+
     do
     {
         new_start = false; // Setting the loop repetition status to false
 
         // step 2
-        // initialize the the disance std-vector with 0
+        // initialize the the distance std-vector with 0
         for (typename std::vector< typename graph_traits<
                  Graph >::vertices_size_type >::iterator iter
              = dist.begin();
@@ -210,7 +219,7 @@ typename graph_traits< Graph >::vertex_descriptor sloan_start_end_vertices(
         {
             i = degree_queue.top(); // getting the node with the lowest degree
                                     // from the degree queue
-            degree_queue.pop(); // ereasing the node with the lowest degree from
+            degree_queue.pop(); // erasing the node with the lowest degree from
                                 // the degree queue
 
             // generating a RLS
@@ -224,23 +233,31 @@ typename graph_traits< Graph >::vertex_descriptor sloan_start_end_vertices(
                 boost::visitor(make_bfs_visitor(
                     record_distances(dist_pmap, on_tree_edge()))));
 
-            // Calculating depth and width of the rooted level
-            h_i = RLS_depth(dist);
-            w_i = RLS_max_width(dist, h_i);
+            // Only consider nodes that are a part of the current connected
+            // component. These nodes will be black due to the DFS performed
+            // earlier. Other nodes are green or white. Green is for a connected
+            // component that has already been visited and white for nodes that
+            // are yet to be visited.
+            if (get(color, i) == Color::black())
+            {
+                // Calculating depth and width of the rooted level
+                h_i = RLS_depth(dist);
+                w_i = RLS_max_width(dist, h_i);
 
-            // Testing for termination
-            if ((h_i > h_s) && (w_i < w_e))
-            {
-                h_s = h_i;
-                s = i;
-                while (!degree_queue.empty())
-                    degree_queue.pop();
-                new_start = true;
-            }
-            else if (w_i < w_e)
-            {
-                w_e = w_i;
-                e = i;
+                // Testing for termination
+                if ((h_i > h_s) && (w_i < w_e))
+                {
+                    h_s = h_i;
+                    s = i;
+                    while (!degree_queue.empty())
+                        degree_queue.pop();
+                    new_start = true;
+                }
+                else if (w_i < w_e)
+                {
+                    w_e = w_i;
+                    e = i;
+                }
             }
         }
         // end 6
@@ -361,7 +378,7 @@ OutputIterator sloan_ordering(Graph& g,
                     Color::red()); // giving the vertex an active status
                 put(priority, v, get(priority, v) + W2); // updates the priority
 
-                // for loop over alll adjacent vertices of v
+                // for loop over all adjacent vertices of v
                 for (boost::tie(ei2, ei2_end) = out_edges(v, g); ei2 != ei2_end;
                      ++ei2)
                 {
@@ -425,11 +442,71 @@ inline OutputIterator sloan_ordering(Graph& G, OutputIterator permutation,
 {
     typedef typename boost::graph_traits< Graph >::vertex_descriptor Vertex;
 
-    Vertex s, e;
-    e = sloan_start_end_vertices(G, s, color, degree);
+    std::deque< Vertex > vertex_queue;
+    typedef typename property_traits< Color >::value_type ColorValue;
+    typedef color_traits< ColorValue > ColorForStart;
 
-    return sloan_ordering(
-        G, s, e, permutation, color, degree, priority, W1, W2);
+    // Mark all nodes white
+    BGL_FORALL_VERTICES_T(v, G, Graph) put(color, v, ColorForStart::white());
+
+    // Find the start and end nodes for the sloan algorithm for each connected
+    // component.
+    // The outer loop is needed because sloan_start_end_vertices() can
+    // change the start node and thus the component. This may cause a component
+    // to be unpermutated. This happens for example in a graph with 4 nodes and
+    // a single edge between node 0 and 1: the start node will change twice,
+    // from 0 to 2 and from 1 to 3, thus the nodes 0 and 1 will not be
+    // considered again, if not for this outer loop.
+    bool foundComponent;
+    do
+    {
+        foundComponent = false;
+        BGL_FORALL_VERTICES_T(v, G, Graph)
+        {
+            if (get(color, v) == ColorForStart::white())
+            {
+                Vertex s, e;
+                s = v;
+
+                foundComponent = true;
+
+                // Find the start and end edge for the current connected
+                // component. The current connected component is the connected
+                // where s is a part of. Note that this call could change s when
+                // a better start node was determined from all remaining nodes
+                // (the white nodes). The node s is only used when there is no
+                // better start node. Due to the DFS within this call, after the
+                // call all nodes in the connected component are marked black.
+                e = sloan_start_end_vertices(G, s, color, degree);
+
+                // To make the nodes unavailable for subsequent calls to
+                // sloan_start_end_vertices(), change all black nodes to green.
+                for (int n = 0; n < num_vertices(G); ++n)
+                {
+                    if (get(color, n) == ColorForStart::black())
+                    {
+                        put(color, n, ColorForStart::green());
+                    }
+                }
+
+                // Remember the start and end nodes
+                vertex_queue.push_back(s);
+                vertex_queue.push_back(e);
+            }
+        }
+    } while (foundComponent);
+
+    // Perform the sloan ordering per connected component
+    for (typename std::deque< Vertex >::iterator i = vertex_queue.begin();
+         i != vertex_queue.end();)
+    {
+        Vertex s = *i++;
+        Vertex e = *i++;
+        permutation = sloan_ordering(
+            G, s, e, permutation, color, degree, priority, W1, W2);
+    }
+
+    return permutation;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
