@@ -8,7 +8,6 @@
 #ifndef BOOST_GRAPH_R_C_SHORTEST_PATHS_HPP
 #define BOOST_GRAPH_R_C_SHORTEST_PATHS_HPP
 
-#include <map>
 #include <queue>
 #include <vector>
 #include <list>
@@ -154,33 +153,24 @@ namespace detail
         pareto_optimal_solutions.clear();
 
         size_t i_label_num = 0;
-#if defined(BOOST_NO_CXX11_ALLOCATOR)
-        typedef typename LabelAllocator::template rebind<
-            r_c_shortest_paths_label< Graph, ResourceContainer > >::other
-            LAlloc;
-#else
-        typedef typename std::allocator_traits< LabelAllocator >::
-            template rebind_alloc<
-                r_c_shortest_paths_label< Graph, ResourceContainer > >
-                label_allocator_type;
-#endif
+
+        using label_type = r_c_shortest_paths_label< Graph, ResourceContainer >;
+        using label_allocator_type = typename std::allocator_traits< LabelAllocator >::
+            template rebind_alloc< label_type >;
+
         label_allocator_type l_alloc;
-        typedef std::shared_ptr<
-            r_c_shortest_paths_label< Graph, ResourceContainer > >
-            sp_label_type;
+        
+        using sp_label_type = std::shared_ptr< label_type >;
         std::priority_queue< sp_label_type, std::vector< sp_label_type >,
             deref_greater< sp_label_type > >
             unprocessed_labels;
 
-        bool b_feasible = true;
-        sp_label_type splabel_first_label = std::allocate_shared<
-            r_c_shortest_paths_label< Graph, ResourceContainer > >(l_alloc,
-            i_label_num++, rc,
-            std::shared_ptr<
-                r_c_shortest_paths_label< Graph, ResourceContainer > >(),
+        sp_label_type splabel_first_label = std::allocate_shared< label_type >(l_alloc,
+            i_label_num++, rc, sp_label_type(),
             typename graph_traits< Graph >::edge_descriptor(), s);
 
         unprocessed_labels.push(splabel_first_label);
+
         std::vector< std::list< sp_label_type > > vec_vertex_labels_data(
             num_vertices(g));
         iterator_property_map<
@@ -188,8 +178,8 @@ namespace detail
             VertexIndexMap >
             vec_vertex_labels(vec_vertex_labels_data.begin(), vertex_index_map);
         vec_vertex_labels[s].push_back(splabel_first_label);
-        typedef std::vector< typename std::list< sp_label_type >::iterator >
-            vec_last_valid_positions_for_dominance_data_type;
+
+        using vec_last_valid_positions_for_dominance_data_type = std::vector< typename std::list< sp_label_type >::iterator >;
         vec_last_valid_positions_for_dominance_data_type
             vec_last_valid_positions_for_dominance_data(num_vertices(g));
         iterator_property_map<
@@ -203,6 +193,7 @@ namespace detail
             put(vec_last_valid_positions_for_dominance, v,
                 vec_vertex_labels[v].begin());
         }
+
         std::vector< size_t > vec_last_valid_index_for_dominance_data(
             num_vertices(g), 0);
         iterator_property_map< std::vector< size_t >::iterator, VertexIndexMap >
@@ -215,6 +206,9 @@ namespace detail
             b_vec_vertex_already_checked_for_dominance(
                 b_vec_vertex_already_checked_for_dominance_data.begin(),
                 vertex_index_map);
+
+
+        auto b_feasible = true;
 
         while (!unprocessed_labels.empty()
             && vis.on_enter_loop(unprocessed_labels, g))
@@ -247,7 +241,7 @@ namespace detail
                 {
                     typename std::list< sp_label_type >::iterator outer_iter
                         = list_labels_cur_vertex.begin();
-                    bool b_outer_iter_at_or_beyond_last_valid_pos_for_dominance
+                    auto b_outer_iter_at_or_beyond_last_valid_pos_for_dominance
                         = false;
                     while (outer_iter != list_labels_cur_vertex.end())
                     {
@@ -273,7 +267,7 @@ namespace detail
                                     i_cur_resident_vertex);
                             ++inner_iter;
                         }
-                        bool b_outer_iter_erased = false;
+                        auto b_outer_iter_erased = false;
                         while (inner_iter != list_labels_cur_vertex.end())
                         {
                             sp_label_type cur_inner_splabel = *inner_iter;
@@ -401,11 +395,12 @@ namespace detail
             dsplabels.sort([](const sp_label_type& a, const sp_label_type& b)
                 { return *a < *b; });
         }
-        typename std::list< sp_label_type >::const_iterator csi = dsplabels.begin();
-        typename std::list< sp_label_type >::const_iterator csi_end = dsplabels.end();
+
         // if d could be reached from o
         if (!dsplabels.empty())
         {
+            auto csi = dsplabels.cbegin();
+            auto csi_end = dsplabels.cend();
             for (; csi != csi_end; ++csi)
             {
                 std::vector< typename graph_traits< Graph >::edge_descriptor >
@@ -446,11 +441,11 @@ namespace detail
 
         BGL_FORALL_VERTICES_T(i, g, Graph)
         {
-            std::list< sp_label_type >& list_labels_cur_vertex = vec_vertex_labels[i];
-            typename std::list< sp_label_type >::iterator si
+            auto& list_labels_cur_vertex = vec_vertex_labels[i];
+            auto si
                 = list_labels_cur_vertex.begin();
-            const typename std::list< sp_label_type >::iterator si_end
-                = list_labels_cur_vertex.end();
+            const auto si_end
+                = list_labels_cur_vertex.cend();
             for (; si != si_end; ++si)
             {
                 (*si).reset();
@@ -491,7 +486,7 @@ struct default_r_c_shortest_paths_visitor
 }; // default_r_c_shortest_paths_visitor
 
 // default_r_c_shortest_paths_allocator
-typedef std::allocator< int > default_r_c_shortest_paths_allocator;
+using default_r_c_shortest_paths_allocator = std::allocator< int >;
 // default_r_c_shortest_paths_allocator
 // ---------------------------- New set of overloads
 
