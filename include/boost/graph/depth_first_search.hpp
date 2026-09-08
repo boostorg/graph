@@ -22,7 +22,6 @@
 #include <boost/graph/detail/mpi_include.hpp>
 #include <boost/ref.hpp>
 #include <boost/optional.hpp>
-#include <boost/parameter.hpp>
 #include <boost/concept/assert.hpp>
 #include <boost/type_traits/make_void.hpp>
 #include <type_traits>
