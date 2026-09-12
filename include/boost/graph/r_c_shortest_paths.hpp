@@ -171,16 +171,16 @@ namespace detail
 
         unprocessed_labels.push(splabel_first_label);
 
-        std::vector< std::list< sp_label_type > > vec_vertex_labels_data(
-            num_vertices(g));
-        iterator_property_map<
-            typename std::vector< std::list< sp_label_type > >::iterator,
+        using sp_label_list = std::list< sp_label_type >;
+
+        std::vector< sp_label_list > vec_vertex_labels_data(num_vertices(g));
+        iterator_property_map< typename std::vector< sp_label_list >::iterator,
             VertexIndexMap >
             vec_vertex_labels(vec_vertex_labels_data.begin(), vertex_index_map);
         vec_vertex_labels[s].push_back(splabel_first_label);
 
         using vec_last_valid_positions_for_dominance_data_type
-            = std::vector< typename std::list< sp_label_type >::iterator >;
+            = std::vector< typename sp_label_list::iterator >;
         vec_last_valid_positions_for_dominance_data_type
             vec_last_valid_positions_for_dominance_data(num_vertices(g));
         iterator_property_map<
@@ -239,15 +239,13 @@ namespace detail
                     && vec_last_valid_index_for_dominance[i_cur_resident_vertex]
                         < list_labels_cur_vertex.size())
                 {
-                    typename std::list< sp_label_type >::iterator outer_iter
-                        = list_labels_cur_vertex.begin();
+                    auto outer_iter = list_labels_cur_vertex.begin();
                     auto b_outer_iter_at_or_beyond_last_valid_pos_for_dominance
                         = false;
                     while (outer_iter != list_labels_cur_vertex.end())
                     {
-                        sp_label_type cur_outer_splabel = *outer_iter;
-                        typename std::list< sp_label_type >::iterator inner_iter
-                            = outer_iter;
+                        auto cur_outer_splabel = *outer_iter;
+                        auto inner_iter = outer_iter;
                         if (!b_outer_iter_at_or_beyond_last_valid_pos_for_dominance
                             && outer_iter
                                 == get(vec_last_valid_positions_for_dominance,
@@ -276,9 +274,7 @@ namespace detail
                                     cur_inner_splabel
                                         ->cumulated_resource_consumption))
                             {
-                                typename std::list< sp_label_type >::iterator
-                                    buf
-                                    = inner_iter;
+                                auto buf = inner_iter;
                                 ++inner_iter;
                                 list_labels_cur_vertex.erase(buf);
                                 if (cur_inner_splabel->b_is_processed)
@@ -296,9 +292,7 @@ namespace detail
                                     cur_outer_splabel
                                         ->cumulated_resource_consumption))
                             {
-                                typename std::list< sp_label_type >::iterator
-                                    buf
-                                    = outer_iter;
+                                auto buf = outer_iter;
                                 ++outer_iter;
                                 list_labels_cur_vertex.erase(buf);
                                 b_outer_iter_erased = true;
@@ -354,8 +348,7 @@ namespace detail
             {
                 cur_label->b_is_processed = true;
                 vis.on_label_not_dominated(*cur_label, g);
-                typename graph_traits< Graph >::vertex_descriptor cur_vertex
-                    = cur_label->resident_vertex;
+                auto cur_vertex = cur_label->resident_vertex;
                 typename graph_traits< Graph >::out_edge_iterator oei, oei_end;
                 for (boost::tie(oei, oei_end) = out_edges(cur_vertex, g);
                      oei != oei_end; ++oei)
@@ -390,7 +383,7 @@ namespace detail
                 cur_label.reset();
             }
         }
-        std::list< sp_label_type > dsplabels = get(vec_vertex_labels, t);
+        sp_label_list dsplabels = get(vec_vertex_labels, t);
         if (!b_all_pareto_optimal_solutions)
         {
             dsplabels.sort([](const sp_label_type& a, const sp_label_type& b)
@@ -406,9 +399,8 @@ namespace detail
             {
                 std::vector< typename graph_traits< Graph >::edge_descriptor >
                     cur_pareto_optimal_path;
-                std::shared_ptr<
-                    r_c_shortest_paths_label< Graph, ResourceContainer > >
-                    p_cur_label = *csi;
+
+                auto p_cur_label = *csi;
                 pareto_optimal_resource_containers.push_back(
                     p_cur_label->cumulated_resource_consumption);
                 while (p_cur_label->num != 0)
