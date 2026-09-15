@@ -149,6 +149,8 @@ namespace detail
         // to specify the memory management strategy for the labels
         LabelAllocator /*la*/, Visitor vis)
     {
+        using edge_descriptor = typename graph_traits< Graph >::edge_descriptor;
+
         pareto_optimal_resource_containers.clear();
         pareto_optimal_solutions.clear();
 
@@ -166,8 +168,7 @@ namespace detail
             unprocessed_labels;
 
         sp_label_type splabel_first_label = std::allocate_shared< label_type >(
-            l_alloc, i_label_num++, rc, sp_label_type(),
-            typename graph_traits< Graph >::edge_descriptor(), s);
+            l_alloc, i_label_num++, rc, sp_label_type(), edge_descriptor(), s);
 
         unprocessed_labels.push(splabel_first_label);
 
@@ -230,10 +231,8 @@ namespace detail
             // extended is undominated
             if (!cur_label->b_is_dominated)
             {
-                typename boost::graph_traits< Graph >::vertex_descriptor
-                    i_cur_resident_vertex
-                    = cur_label->resident_vertex;
-                std::list< sp_label_type >& list_labels_cur_vertex
+                auto i_cur_resident_vertex = cur_label->resident_vertex;
+                auto& list_labels_cur_vertex
                     = get(vec_vertex_labels, i_cur_resident_vertex);
                 if (list_labels_cur_vertex.size() >= 2
                     && vec_last_valid_index_for_dominance[i_cur_resident_vertex]
@@ -268,7 +267,7 @@ namespace detail
                         auto b_outer_iter_erased = false;
                         while (inner_iter != list_labels_cur_vertex.end())
                         {
-                            sp_label_type cur_inner_splabel = *inner_iter;
+                            auto cur_inner_splabel = *inner_iter;
                             if (dominance(cur_outer_splabel
                                               ->cumulated_resource_consumption,
                                     cur_inner_splabel
@@ -354,7 +353,7 @@ namespace detail
                      oei != oei_end; ++oei)
                 {
                     b_feasible = true;
-                    sp_label_type new_label = std::allocate_shared<
+                    auto new_label = std::allocate_shared<
                         r_c_shortest_paths_label< Graph, ResourceContainer > >(
                         l_alloc, i_label_num++,
                         cur_label->cumulated_resource_consumption, cur_label,
@@ -364,13 +363,14 @@ namespace detail
                         new_label->p_pred_label->cumulated_resource_consumption,
                         new_label->pred_edge);
 
-                    vis.on_label_not_feasible(*new_label, g);
                     if (!b_feasible)
                     {
+                        vis.on_label_not_feasible(*new_label, g);
                         new_label.reset();
                     }
                     else
                     {
+                        vis.on_label_feasible(*new_label, g);
                         vec_vertex_labels[new_label->resident_vertex].push_back(
                             new_label);
                         unprocessed_labels.push(new_label);
@@ -383,11 +383,12 @@ namespace detail
                 cur_label.reset();
             }
         }
-        sp_label_list dsplabels = get(vec_vertex_labels, t);
+        auto& dsplabels = get(vec_vertex_labels, t);
+
         if (!b_all_pareto_optimal_solutions)
         {
-            dsplabels.sort([](const sp_label_type& a, const sp_label_type& b)
-                { return *a < *b; });
+            dsplabels.sort(
+                [](const auto& a, const auto& b) { return *a < *b; });
         }
 
         // if d could be reached from o
@@ -397,8 +398,7 @@ namespace detail
             auto csi_end = dsplabels.cend();
             for (; csi != csi_end; ++csi)
             {
-                std::vector< typename graph_traits< Graph >::edge_descriptor >
-                    cur_pareto_optimal_path;
+                std::vector< edge_descriptor > cur_pareto_optimal_path;
 
                 auto p_cur_label = *csi;
                 pareto_optimal_resource_containers.push_back(
@@ -435,11 +435,9 @@ namespace detail
         BGL_FORALL_VERTICES_T(i, g, Graph)
         {
             auto& list_labels_cur_vertex = vec_vertex_labels[i];
-            auto si = list_labels_cur_vertex.begin();
-            const auto si_end = list_labels_cur_vertex.cend();
-            for (; si != si_end; ++si)
+            for (auto& label : list_labels_cur_vertex)
             {
-                (*si).reset();
+                label.reset();
             }
         }
     } // r_c_shortest_paths_dispatch
