@@ -5,6 +5,7 @@ AlignEscapedNewlinesLeft: true
 AlwaysBreakAfterDefinitionReturnType: None
 BreakBeforeBraces: Allman
 BreakConstructorInitializersBeforeComma: false
+BreakTemplateDeclarations: Yes
 ColumnLimit: 80
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
 ConstructorInitializerIndentWidth: 0
