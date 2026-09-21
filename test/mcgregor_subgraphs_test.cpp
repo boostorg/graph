@@ -15,6 +15,7 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/random.hpp>
+#include <boost/range/iterator_range.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/graphviz.hpp>
@@ -102,8 +103,7 @@ template < typename Graph > struct test_callback
         EdgeNameMap ename_map2 = get(boost::edge_name, subgraph2);
 
         // Verify that subgraph1 matches the supplied common subgraph
-        BGL_FORALL_VERTICES_T(vertex1, subgraph1, MembershipFilteredGraph)
-        {
+        for (auto vertex1 : boost::make_iterator_range(vertices(subgraph1))) {
 
             Vertex vertex_common
                 = vertex(get(vindex_map1, vertex1), m_common_subgraph);
@@ -116,16 +116,13 @@ template < typename Graph > struct test_callback
                 // Keep looking
                 return (true);
             }
-
-            BGL_FORALL_VERTICES_T(vertex1_2, subgraph1, MembershipFilteredGraph)
-            {
-
+            
+            for (auto vertex1_2 : boost::make_iterator_range(vertices(subgraph1))) {
                 Vertex vertex_common2
                     = vertex(get(vindex_map1, vertex1_2), m_common_subgraph);
                 EdgeInfo edge_common
                     = edge(vertex_common, vertex_common2, m_common_subgraph);
                 EdgeInfo edge1 = edge(vertex1, vertex1_2, subgraph1);
-
                 if ((edge_common.second != edge1.second)
                     || ((edge_common.second && edge1.second)
                         && (get(ename_map_common, edge_common.first)
@@ -136,13 +133,10 @@ template < typename Graph > struct test_callback
                     return (true);
                 }
             }
-
-        } // BGL_FORALL_VERTICES_T (subgraph1)
+        }
 
         // Verify that subgraph2 matches the supplied common subgraph
-        BGL_FORALL_VERTICES_T(vertex2, subgraph2, MembershipFilteredGraph)
-        {
-
+        for (auto vertex2 : boost::make_iterator_range(vertices(subgraph2))) {
             Vertex vertex_common
                 = vertex(get(vindex_map2, vertex2), m_common_subgraph);
 
@@ -154,11 +148,9 @@ template < typename Graph > struct test_callback
                 // Keep looking
                 return (true);
             }
-
-            BGL_FORALL_VERTICES_T(vertex2_2, subgraph2, MembershipFilteredGraph)
-            {
-
-                Vertex vertex_common2
+            
+            for (auto vertex2_2 : boost::make_iterator_range(vertices(subgraph2))) {
+                 Vertex vertex_common2
                     = vertex(get(vindex_map2, vertex2_2), m_common_subgraph);
                 EdgeInfo edge_common
                     = edge(vertex_common, vertex_common2, m_common_subgraph);
@@ -169,13 +161,11 @@ template < typename Graph > struct test_callback
                         && (get(ename_map_common, edge_common.first)
                             != get(ename_map2, edge2.first))))
                 {
-
                     // Keep looking
                     return (true);
                 }
             }
-
-        } // BGL_FORALL_VERTICES_T (subgraph2)
+        }
 
         // Check isomorphism just to be thorough
         if (verify_isomorphism(subgraph1, subgraph2, correspondence_map_1_to_2))
@@ -223,9 +213,7 @@ template < typename Graph > struct simple_callback
 
         std::stringstream subgraph_string;
 
-        BGL_FORALL_VERTICES_T(vertex1, m_graph1, Graph)
-        {
-
+        for (auto vertex1 : boost::make_iterator_range(vertices(m_graph1))) {
             Vertex vertex2 = get(correspondence_map_1_to_2, vertex1);
 
             if (vertex2 != boost::graph_traits< Graph >::null_vertex())
@@ -283,15 +271,14 @@ void add_random_vertices(Graph& graph, RandomNumberGenerator& generator,
             {
                 continue;
             }
-
-            BGL_FORALL_OUTEDGES_T(source_vertex, edge, graph, Graph)
-            {
+            
+            for (auto edge : boost::make_iterator_range(out_edges(source_vertex, graph))) {
                 if (target(edge, graph) == target_vertex)
                 {
                     continue;
                 }
             }
-
+            
             put(ename_map, add_edge(source_vertex, target_vertex, graph).first,
                 generator());
 
@@ -359,12 +346,8 @@ int main(int argc, char* argv[])
         put(vname_map_common, add_vertex(common_subgraph), generator());
     }
 
-    BGL_FORALL_VERTICES(source_vertex, common_subgraph, Graph)
-    {
-
-        BGL_FORALL_VERTICES(target_vertex, common_subgraph, Graph)
-        {
-
+    for (auto source_vertex : boost::make_iterator_range(vertices(common_subgraph))) {
+        for (auto target_vertex : boost::make_iterator_range(vertices(common_subgraph))) {
             if (source_vertex != target_vertex)
             {
                 put(ename_map_common,
@@ -374,7 +357,7 @@ int main(int argc, char* argv[])
             }
         }
     }
-
+    
     boost::randomize_property< boost::vertex_name_t >(
         common_subgraph, generator);
     boost::randomize_property< boost::edge_name_t >(common_subgraph, generator);
