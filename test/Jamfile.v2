@@ -49,6 +49,7 @@ alias graph_test_regular :
     [ run dag_longest_paths.cpp ]
     [ run dfs.cpp ]
     [ run undirected_dfs.cpp ]
+    [ run undirected_dfs_visitor.cpp ]
     [ compile dfs_cc.cpp ]
     [ compile dijkstra_cc.cpp ]
 
