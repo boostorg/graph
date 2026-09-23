@@ -44,6 +44,7 @@ alias graph_test_regular :
     [ run bellman-test.cpp ]
     [ run betweenness_centrality_test.cpp : 100 ]
     [ run bidir_remove_edge.cpp ]
+    [ compile-fail bidir_vec_remove_edge.cpp ]
     [ run bipartite_test.cpp ]
     [ run csr_graph_test.cpp : : : : : <variant>release ]
     [ run dag_longest_paths.cpp ]
