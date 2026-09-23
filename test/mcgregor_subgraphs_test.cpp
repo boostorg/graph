@@ -20,7 +20,6 @@
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/graphviz.hpp>
 #include <boost/graph/isomorphism.hpp>
-#include <boost/graph/iteration_macros.hpp>
 #include <boost/graph/random.hpp>
 #include <boost/graph/mcgregor_common_subgraphs.hpp>
 #include <boost/property_map/shared_array_property_map.hpp>
