@@ -17,8 +17,8 @@
 #include <utility>
 #include <algorithm>
 #include <climits>
-#include <boost/assert.hpp>
 #include <iterator>
+#include <type_traits>
 #if 0
 #include <iostream> // For some debugging code below
 #endif
@@ -40,7 +40,6 @@
 #include <boost/graph/graph_selectors.hpp>
 #include <boost/graph/detail/is_distributed_selector.hpp>
 #include <boost/graph/properties.hpp>
-#include <boost/static_assert.hpp>
 #include <boost/functional/hash.hpp>
 #include <boost/next_prior.hpp>
 #include <boost/property_map/transform_value_property_map.hpp>
@@ -168,9 +167,9 @@ namespace detail
         T saved_value;
         const T& dereference() const { return saved_value; }
         bool equal(default_construct_iterator /*i*/) const { return true; }
-        void increment() {}
-        void decrement() {}
-        void advance(typename base_type::difference_type) {}
+        void increment() { }
+        void decrement() { }
+        void advance(typename base_type::difference_type) { }
         typename base_type::difference_type distance_to(
             default_construct_iterator) const
         {
@@ -181,7 +180,7 @@ namespace detail
     template < typename Less > struct compare_first
     {
         Less less;
-        compare_first(Less less = Less()) : less(less) {}
+        compare_first(Less less = Less()) : less(less) { }
         template < typename Tuple >
         bool operator()(const Tuple& a, const Tuple& b) const
         {
@@ -222,11 +221,14 @@ public:
         VertexProperty, Vertex, typed_identity_property_map< Vertex > >
         inherited_vertex_properties;
 
-    // Some tests to prevent use of "void" is a property type (as was done in
+    // Some tests to prevent use of "void" as a property type (as was done in
     // some test cases):
-    BOOST_STATIC_ASSERT((!is_same< VertexProperty, void >::value));
-    BOOST_STATIC_ASSERT((!is_same< EdgeProperty, void >::value));
-    BOOST_STATIC_ASSERT((!is_same< GraphProperty, void >::value));
+    static_assert(!std::is_void< VertexProperty>::value,
+        "Vertex property type cannot be of type void");
+    static_assert(!std::is_void< EdgeProperty >::value,
+        "Edge property type cannot be of type void");
+    static_assert(!std::is_void< GraphProperty >::value,
+        "Graph property type cannot be of type void");
 
 public:
     // For Property Graph
@@ -297,7 +299,7 @@ public:
     // Constructors
 
     // Default constructor: an empty graph.
-    compressed_sparse_row_graph() : m_property() {}
+    compressed_sparse_row_graph() : m_property() { }
 
     //  With numverts vertices
     compressed_sparse_row_graph(vertices_size_type numverts)
@@ -896,7 +898,7 @@ public:
     // Constructors
 
     // Default constructor: an empty graph.
-    compressed_sparse_row_graph() : m_property() {}
+    compressed_sparse_row_graph() : m_property() { }
 
     //  With numverts vertices
     compressed_sparse_row_graph(vertices_size_type numverts)
