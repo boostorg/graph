@@ -24,10 +24,7 @@
 #include <boost/graph/overloading.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/two_bit_color_map.hpp>
-#include <boost/graph/detail/mpi_include.hpp>
 #include <boost/concept/assert.hpp>
-
-#include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/concepts.hpp>)
 
 namespace boost
 {
@@ -255,15 +252,6 @@ namespace detail
             vis, color);
     }
 
-#ifdef BOOST_GRAPH_USE_MPI
-    template < class DistributedGraph, class ColorMap, class BFSVisitor,
-        class P, class T, class R >
-    void bfs_helper(DistributedGraph& g,
-        typename graph_traits< DistributedGraph >::vertex_descriptor s,
-        ColorMap color, BFSVisitor vis,
-        const bgl_named_params< P, T, R >& params, boost::mpl::true_);
-#endif // BOOST_GRAPH_USE_MPI
-
     //-------------------------------------------------------------------------
     // Choose between default color and color parameters. Using
     // function dispatching so that we don't require vertex index if
@@ -392,7 +380,5 @@ namespace graph
 #endif
 
 } // namespace boost
-
-#include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/breadth_first_search.hpp>)
 
 #endif // BOOST_GRAPH_BREADTH_FIRST_SEARCH_HPP
