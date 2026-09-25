@@ -11,10 +11,10 @@
 #include <iostream>
 #include <vector>
 
-#include <boost/foreach.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/incremental_components.hpp>
 #include <boost/pending/disjoint_sets.hpp>
+#include <boost/range/iterator_range.hpp>
 
 using namespace boost;
 
@@ -53,7 +53,7 @@ int main()
     ds.union_set(4, 0);
     ds.union_set(2, 5);
 
-    BOOST_FOREACH (Vertex current_vertex, vertices(graph))
+    for (Vertex current_vertex : boost::make_iterator_range(vertices(graph)))
     {
         std::cout << "representative[" << current_vertex
                   << "] = " << ds.find_set(current_vertex) << std::endl;
@@ -69,12 +69,13 @@ int main()
     Components components(parent.begin(), parent.end());
 
     // Iterate through the component indices
-    BOOST_FOREACH (VertexIndex component_index, components)
+    for (VertexIndex component_index : components)
     {
         std::cout << "component " << component_index << " contains: ";
 
         // Iterate through the child vertex indices for [component_index]
-        BOOST_FOREACH (VertexIndex child_index, components[component_index])
+        for (VertexIndex child_index :
+            boost::make_iterator_range(components[component_index]))
         {
             std::cout << child_index << " ";
         }
