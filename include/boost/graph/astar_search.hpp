@@ -120,13 +120,11 @@ namespace detail
         typedef typename property_traits< CostMap >::value_type C;
         typedef typename property_traits< ColorMap >::value_type ColorValue;
         typedef color_traits< ColorValue > Color;
-        typedef
-            typename property_traits< DistanceMap >::value_type distance_type;
 
         astar_bfs_visitor(AStarHeuristic h, UniformCostVisitor vis,
             UpdatableQueue& Q, PredecessorMap p, CostMap c, DistanceMap d,
             WeightMap w, ColorMap col, BinaryFunction combine,
-            BinaryPredicate compare, C zero)
+            BinaryPredicate compare, C inf, C zero)
         : m_h(h)
         , m_vis(vis)
         , m_Q(Q)
@@ -137,6 +135,7 @@ namespace detail
         , m_color(col)
         , m_combine(combine)
         , m_compare(compare)
+        , m_inf(inf)
         , m_zero(zero)
         {
         }
@@ -144,6 +143,11 @@ namespace detail
         template < class Vertex, class Graph >
         void initialize_vertex(Vertex u, const Graph& g)
         {
+            put(m_color, u, Color::white());
+            put(m_distance, u, m_inf);
+            put(m_cost, u, m_inf);
+            put(m_predecessor, u, u);
+
             m_vis.initialize_vertex(u, g);
         }
         template < class Vertex, class Graph >
@@ -176,6 +180,8 @@ namespace detail
         template < class Edge, class Graph >
         void tree_edge(Edge e, const Graph& g)
         {
+            initialize_vertex(target(e, g), g);
+
             using boost::get;
             bool m_decreased = relax(e, g, m_weight, m_predecessor, m_distance,
                 m_combine, m_compare);
@@ -241,6 +247,7 @@ namespace detail
         ColorMap m_color;
         BinaryFunction m_combine;
         BinaryPredicate m_compare;
+        C m_inf;
         C m_zero;
     };
 
@@ -256,7 +263,7 @@ inline void astar_search_no_init(const VertexListGraph& g,
     AStarHeuristic h, AStarVisitor vis, PredecessorMap predecessor,
     CostMap cost, DistanceMap distance, WeightMap weight, ColorMap color,
     VertexIndexMap index_map, CompareFunction compare, CombineFunction combine,
-    CostInf /*inf*/, CostZero zero)
+    CostInf inf, CostZero zero)
 {
     typedef typename graph_traits< VertexListGraph >::vertex_descriptor Vertex;
     typedef boost::vector_property_map< std::size_t, VertexIndexMap >
@@ -271,7 +278,11 @@ inline void astar_search_no_init(const VertexListGraph& g,
         PredecessorMap, CostMap, DistanceMap, WeightMap, ColorMap,
         CombineFunction, CompareFunction >
         bfs_vis(h, vis, Q, predecessor, cost, distance, weight, color, combine,
-            compare, zero);
+            compare, inf, zero);
+
+    bfs_vis.initialize_vertex(s, g);
+    put(distance, s, zero);
+    put(cost, s, h(s));
 
     breadth_first_visit(g, s, Q, bfs_vis, color);
 }
@@ -358,20 +369,6 @@ inline void astar_search(const VertexListGraph& g,
     VertexIndexMap index_map, ColorMap color, CompareFunction compare,
     CombineFunction combine, CostInf inf, CostZero zero)
 {
-
-    typedef typename property_traits< ColorMap >::value_type ColorValue;
-    typedef color_traits< ColorValue > Color;
-    typename graph_traits< VertexListGraph >::vertex_iterator ui, ui_end;
-    for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
-    {
-        put(color, *ui, Color::white());
-        put(distance, *ui, inf);
-        put(cost, *ui, inf);
-        put(predecessor, *ui, *ui);
-        vis.initialize_vertex(*ui, g);
-    }
-    put(distance, s, zero);
-    put(cost, s, h(s));
 
     astar_search_no_init(g, s, h, vis, predecessor, cost, distance, weight,
         color, index_map, compare, combine, inf, zero);
