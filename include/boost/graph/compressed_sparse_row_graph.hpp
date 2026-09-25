@@ -224,11 +224,11 @@ public:
     // Some tests to prevent use of "void" as a property type (as was done in
     // some test cases):
     static_assert(!std::is_void< VertexProperty>::value,
-        "Vertex property type cannot be of type void");
+        "Vertex property type cannot be of type void: use boost::no_property instead.");
     static_assert(!std::is_void< EdgeProperty >::value,
-        "Edge property type cannot be of type void");
+        "Edge property type cannot be of type void: use boost::no_property instead.");
     static_assert(!std::is_void< GraphProperty >::value,
-        "Graph property type cannot be of type void");
+        "Graph property type cannot be of type void: use boost::no_property instead.");
 
 public:
     // For Property Graph
