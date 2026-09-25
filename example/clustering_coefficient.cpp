@@ -37,7 +37,7 @@ using ClusteringProperty = exterior_vertex_property< Graph, float >;
 using ClusteringContainer = ClusteringProperty::container_type;
 using ClusteringMap = ClusteringProperty::map_type;
 
-int main(int argc, char* argv[])
+int main()
 {
     // Create the graph and a name map that provides access to
     // then actor names.

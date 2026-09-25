@@ -33,3 +33,4 @@ course at DataSim]
 Intelligence framework]
 * https://www.pgRouting.org/[pgRouting extends the PostGIS/PostgreSQL
 geospatial database to provide geospatial routing functionality.]
+* https://doc.cgal.org/latest/Manual/packages.html#PkgBGL[CGAL, the Computational Geometry Algorithms Library, provides models for the Graph concept, and introduces the concept FaceGraph]

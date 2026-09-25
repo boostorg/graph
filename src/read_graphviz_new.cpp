@@ -32,8 +32,8 @@
 #include <boost/property_map/dynamic_property_map.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/detail/workaround.hpp>
-#include <boost/algorithm/string/case_conv.hpp>
 #include <cstdlib>
+#include <cctype>
 #include <algorithm>
 #include <exception> // for std::exception
 #include <iostream>
@@ -260,7 +260,13 @@ namespace read_graphviz_detail
             if (found)
             {
                 std::string str = results[1].str();
-                std::string str_lower = boost::algorithm::to_lower_copy(str);
+                std::string str_lower = str;
+                std::transform(
+                    str_lower.begin(), 
+                    str_lower.end(),
+                    str_lower.begin(), 
+                    [](unsigned char c) { return static_cast< char >(std::tolower(c)); }
+                );
                 begin = results.suffix().first;
                 if (str_lower == "strict")
                 {

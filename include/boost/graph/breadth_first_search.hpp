@@ -24,10 +24,7 @@
 #include <boost/graph/overloading.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/two_bit_color_map.hpp>
-#include <boost/graph/detail/mpi_include.hpp>
 #include <boost/concept/assert.hpp>
-
-#include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/concepts.hpp>)
 
 namespace boost
 {
@@ -224,16 +221,6 @@ public:
         return graph::bfs_visitor_event_not_overridden();
     }
 
-    BOOST_GRAPH_EVENT_STUB(on_initialize_vertex, bfs)
-    BOOST_GRAPH_EVENT_STUB(on_discover_vertex, bfs)
-    BOOST_GRAPH_EVENT_STUB(on_examine_vertex, bfs)
-    BOOST_GRAPH_EVENT_STUB(on_examine_edge, bfs)
-    BOOST_GRAPH_EVENT_STUB(on_tree_edge, bfs)
-    BOOST_GRAPH_EVENT_STUB(on_non_tree_edge, bfs)
-    BOOST_GRAPH_EVENT_STUB(on_gray_target, bfs)
-    BOOST_GRAPH_EVENT_STUB(on_black_target, bfs)
-    BOOST_GRAPH_EVENT_STUB(on_finish_vertex, bfs)
-
 protected:
     Visitors m_vis;
 };
@@ -264,15 +251,6 @@ namespace detail
                 .get(),
             vis, color);
     }
-
-#ifdef BOOST_GRAPH_USE_MPI
-    template < class DistributedGraph, class ColorMap, class BFSVisitor,
-        class P, class T, class R >
-    void bfs_helper(DistributedGraph& g,
-        typename graph_traits< DistributedGraph >::vertex_descriptor s,
-        ColorMap color, BFSVisitor vis,
-        const bgl_named_params< P, T, R >& params, boost::mpl::true_);
-#endif // BOOST_GRAPH_USE_MPI
 
     //-------------------------------------------------------------------------
     // Choose between default color and color parameters. Using
@@ -402,7 +380,5 @@ namespace graph
 #endif
 
 } // namespace boost
-
-#include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/breadth_first_search.hpp>)
 
 #endif // BOOST_GRAPH_BREADTH_FIRST_SEARCH_HPP

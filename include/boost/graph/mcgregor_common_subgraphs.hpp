@@ -14,7 +14,7 @@
 #include <vector>
 #include <stack>
 
-#include <boost/make_shared.hpp>
+#include <memory>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/graph_utility.hpp>
@@ -559,7 +559,7 @@ namespace detail
         , m_graph2(graph2)
         , m_vindex_map1(vindex_map1)
         , m_vindex_map2(vindex_map2)
-        , m_subgraphs(make_shared< SubGraphList >())
+        , m_subgraphs(std::make_shared< SubGraphList >())
         , m_user_callback(user_callback)
         {
         }
@@ -627,7 +627,7 @@ namespace detail
         const GraphFirst& m_graph2;
         const VertexIndexMapFirst m_vindex_map1;
         const VertexIndexMapSecond m_vindex_map2;
-        shared_ptr< SubGraphList > m_subgraphs;
+        std::shared_ptr< SubGraphList > m_subgraphs;
         SubGraphCallback m_user_callback;
     };
 
@@ -732,8 +732,8 @@ namespace detail
         , m_graph2(graph2)
         , m_vindex_map1(vindex_map1)
         , m_vindex_map2(vindex_map2)
-        , m_subgraphs(make_shared< SubGraphList >())
-        , m_largest_size_so_far(make_shared< VertexSizeFirst >(0))
+        , m_subgraphs(std::make_shared< SubGraphList >())
+        , m_largest_size_so_far(std::make_shared< VertexSizeFirst >(0))
         , m_user_callback(user_callback)
         {
         }
@@ -801,8 +801,8 @@ namespace detail
         const GraphFirst& m_graph2;
         const VertexIndexMapFirst m_vindex_map1;
         const VertexIndexMapSecond m_vindex_map2;
-        shared_ptr< SubGraphList > m_subgraphs;
-        shared_ptr< VertexSizeFirst > m_largest_size_so_far;
+        std::shared_ptr< SubGraphList > m_subgraphs;
+        std::shared_ptr< VertexSizeFirst > m_largest_size_so_far;
         SubGraphCallback m_user_callback;
     };
 
@@ -910,8 +910,8 @@ namespace detail
         , m_graph2(graph2)
         , m_vindex_map1(vindex_map1)
         , m_vindex_map2(vindex_map2)
-        , m_subgraphs(make_shared< SubGraphList >())
-        , m_largest_size_so_far(make_shared< VertexSizeFirst >(0))
+        , m_subgraphs(std::make_shared< SubGraphList >())
+        , m_largest_size_so_far(std::make_shared< VertexSizeFirst >(0))
         , m_user_callback(user_callback)
         {
         }
@@ -996,8 +996,8 @@ namespace detail
         const GraphFirst& m_graph2;
         const VertexIndexMapFirst m_vindex_map1;
         const VertexIndexMapSecond m_vindex_map2;
-        shared_ptr< SubGraphList > m_subgraphs;
-        shared_ptr< VertexSizeFirst > m_largest_size_so_far;
+        std::shared_ptr< SubGraphList > m_subgraphs;
+        std::shared_ptr< VertexSizeFirst > m_largest_size_so_far;
         SubGraphCallback m_user_callback;
     };
 

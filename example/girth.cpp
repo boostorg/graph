@@ -21,21 +21,21 @@
   Choose a branching factor, p: 2
   Ok, now choose the cube root of graph size, q: 17
   Starting at any given vertex, there are
-  3 vertices at distance 1,
-  6 vertices at distance 2,
-  12 vertices at distance 3,
-  24 vertices at distance 4,
-  46 vertices at distance 5,
-  90 vertices at distance 6,
-  169 vertices at distance 7,
-  290 vertices at distance 8,
-  497 vertices at distance 9,
-  634 vertices at distance 10,
-  521 vertices at distance 11,
-  138 vertices at distance 12,
-  13 vertices at distance 13,
-  3 vertices at distance 14,
-  1 vertices at distance 15.
+         3 vertices at distance 1,
+         6 vertices at distance 2,
+        12 vertices at distance 3,
+        24 vertices at distance 4,
+        46 vertices at distance 5,
+        90 vertices at distance 6,
+       169 vertices at distance 7,
+       290 vertices at distance 8,
+       497 vertices at distance 9,
+       634 vertices at distance 10,
+       521 vertices at distance 11,
+       138 vertices at distance 12,
+        13 vertices at distance 13,
+         3 vertices at distance 14,
+         1 vertices at distance 15.
   So the diameter is 15, and the girth is 9.
 
  */
@@ -44,6 +44,7 @@
 #include <vector>
 #include <list>
 #include <iostream>
+#include <iomanip>
 #include <boost/limits.hpp>
 #include <boost/graph/stanford_graph.hpp>
 #include <boost/graph/breadth_first_search.hpp>
@@ -124,8 +125,18 @@ int main()
         g = raman(p, q, 0L, 0L);
         if (g == 0)
         {
-            std::cerr << " Sorry, I couldn't make that graph (error code "
-                      << panic_code << ")" << std::endl;
+            std::cerr << " Sorry, I couldn't make that graph (" <<
+            (
+                panic_code == very_bad_specs ? "q is out of range" :
+                panic_code == very_bad_specs + 1 ? "p is out of range" :
+                panic_code == bad_specs + 5 ? "q is too big" :
+                panic_code == bad_specs + 6 ? "p is too big" :
+                panic_code == bad_specs + 1 ? "q isn't prime" :
+                panic_code == bad_specs + 7 ? "p isn't prime" :
+                panic_code == bad_specs + 3 ? "p is a multiple of q" :
+                panic_code == bad_specs + 2 ? "q isn't compatible with p=2" :
+                    "not enough memory"
+            ) << ")" << std::endl;
             continue;
         }
         distance_list.clear();
@@ -151,7 +162,7 @@ int main()
         std::cout << "Starting at any given vertex, there are" << std::endl;
 
         for (long d = 1; distance_list[d] != 0; ++d)
-            std::cout << distance_list[d] << " vertices at distance " << d
+            std::cout << std::setw(8) << distance_list[d] << " vertices at distance " << d
                       << (distance_list[d + 1] != 0 ? "," : ".") << std::endl;
 
         std::cout << "So the diameter is " << k - 1 << ", and the girth is "

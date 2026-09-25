@@ -7,6 +7,7 @@
 #ifndef TEST_DESTRUCTION_HPP
 #define TEST_DESTRUCTION_HPP
 
+#include <type_traits>
 #include <boost/concept/assert.hpp>
 #include <utility>
 
@@ -23,7 +24,7 @@ void destroy_graph(Graph&, VertexSet const&, Remove, Label)
 // This matches MutableGraph, so just remove a vertex and then clear.
 template < typename Graph, typename VertexSet >
 void destroy_graph(
-    Graph& g, VertexSet const& verts, boost::mpl::true_, boost::mpl::false_)
+    Graph& g, VertexSet const& verts, std::true_type, std::false_type)
 {
     using namespace boost;
     BOOST_CONCEPT_ASSERT((VertexListGraphConcept< Graph >));
@@ -38,7 +39,7 @@ void destroy_graph(
 // This will match labeled graphs.
 template < typename Graph, typename VertexSet >
 void destroy_graph(
-    Graph& g, VertexSet const&, boost::mpl::false_, boost::mpl::true_)
+    Graph& g, VertexSet const&, std::false_type, std::true_type)
 {
     using namespace boost;
     BOOST_CONCEPT_ASSERT((VertexListGraphConcept< Graph >));
@@ -62,7 +63,7 @@ void destroy_graph(
 //@{
 
 template < typename Graph, typename VertexSet >
-void disconnect_graph(Graph& g, VertexSet const& verts, boost::mpl::false_)
+void disconnect_graph(Graph& g, VertexSet const& verts, std::false_type)
 {
     using namespace boost;
     BOOST_CONCEPT_ASSERT((EdgeListGraphConcept< Graph >));
@@ -90,7 +91,7 @@ void disconnect_graph(Graph& g, VertexSet const& verts, boost::mpl::false_)
 }
 
 template < typename Graph, typename VertexSet >
-void disconnect_graph(Graph& g, VertexSet const&, boost::mpl::true_)
+void disconnect_graph(Graph& g, VertexSet const&, std::true_type)
 {
     using namespace boost;
     BOOST_CONCEPT_ASSERT((EdgeListGraphConcept< Graph >));

@@ -47,7 +47,7 @@
 
 using namespace boost;
 
-int main(int argc, char* argv[])
+int main()
 {
     using Graph = adjacency_list< vecS, vecS, undirectedS >;
     using Vertex = graph_traits< Graph >::vertex_descriptor;

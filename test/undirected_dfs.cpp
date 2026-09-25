@@ -126,7 +126,7 @@ template < typename Graph > struct dfs_test
         typename Traits::vertex_iterator vi, vi_end, ui, ui_end;
         typename Traits::edge_iterator ei, ei_end;
 
-        boost::mt19937 gen;
+        boost::mt19937 gen(42);
 
         for (i = 0; i < max_V; ++i)
             for (j = 0; j < i * i; ++j)

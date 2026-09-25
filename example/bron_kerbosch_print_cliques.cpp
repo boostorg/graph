@@ -50,7 +50,7 @@ using Edge = graph_traits< Graph >::edge_descriptor;
 // each vertex. This is used during graph creation.
 using NameMap = property_map< Graph, string Actor::* >::type;
 
-int main(int argc, char* argv[])
+int main()
 {
     // Create the graph and and its name map accessor.
     Graph g;

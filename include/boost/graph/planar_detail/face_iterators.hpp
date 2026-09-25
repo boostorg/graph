@@ -10,7 +10,6 @@
 #define __FACE_ITERATORS_HPP__
 
 #include <boost/iterator/iterator_facade.hpp>
-#include <boost/mpl/bool.hpp>
 #include <boost/graph/graph_traits.hpp>
 
 namespace boost

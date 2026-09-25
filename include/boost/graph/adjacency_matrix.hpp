@@ -20,8 +20,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_mutability_traits.hpp>
 #include <boost/graph/graph_selectors.hpp>
-#include <boost/mpl/if.hpp>
-#include <boost/mpl/bool.hpp>
+#include <type_traits>
 #include <boost/graph/adjacency_iterator.hpp>
 #include <boost/graph/detail/edge.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
@@ -413,7 +412,7 @@ public:
     // in_degree, etc.).
     BOOST_STATIC_ASSERT(!(is_same< Directed, bidirectionalS >::value));
 
-    typedef typename mpl::if_< is_directed, bidirectional_tag,
+    typedef typename std::conditional< is_directed::value, bidirectional_tag,
         undirected_tag >::type directed_category;
 
     typedef disallow_parallel_edge_tag edge_parallel_category;
@@ -470,7 +469,7 @@ public:
 
 public: // should be private
     typedef
-        typename mpl::if_< typename has_property< edge_property_type >::type,
+        typename std::conditional< has_property< edge_property_type >::type::value,
             std::pair< bool, edge_property_type >, char >::type StoredEdge;
 #if defined(BOOST_NO_STD_ALLOCATOR)
     typedef std::vector< StoredEdge > Matrix;
@@ -510,7 +509,7 @@ public:
         MatrixIter, size_type, edge_descriptor >
         UnDirOutEdgeIter;
 
-    typedef typename mpl::if_< typename Directed::is_directed_t, DirOutEdgeIter,
+    typedef typename std::conditional< Directed::is_directed_t::value, DirOutEdgeIter,
         UnDirOutEdgeIter >::type unfiltered_out_edge_iter;
 
     typedef detail::dir_adj_matrix_in_edge_iter< vertex_descriptor, MatrixIter,
@@ -521,7 +520,7 @@ public:
         MatrixIter, size_type, edge_descriptor >
         UnDirInEdgeIter;
 
-    typedef typename mpl::if_< typename Directed::is_directed_t, DirInEdgeIter,
+    typedef typename std::conditional< Directed::is_directed_t::value, DirInEdgeIter,
         UnDirInEdgeIter >::type unfiltered_in_edge_iter;
 
     typedef detail::adj_matrix_edge_iter< Directed, MatrixIter, size_type,
@@ -1103,7 +1102,7 @@ struct adj_mat_pm_helper< D, VP, EP, GP, A, Tag, edge_property_tag >
     {
         Tag tag;
         lookup_property_from_edge(Tag tag) : tag(tag) {}
-        typedef typename boost::mpl::if_< IsConst, const EP, EP >::type
+        typedef typename std::conditional< IsConst::value, const EP, EP >::type
             ep_type_nonref;
         typedef ep_type_nonref& ep_type;
         typedef typename lookup_one_property< ep_type_nonref, Tag >::type&
@@ -1116,20 +1115,20 @@ struct adj_mat_pm_helper< D, VP, EP, GP, A, Tag, edge_property_tag >
     };
 
     typedef function_property_map<
-        lookup_property_from_edge< boost::mpl::false_ >,
+        lookup_property_from_edge< std::false_type >,
         typename graph_traits<
             adjacency_matrix< D, VP, EP, GP, A > >::edge_descriptor >
         type;
     typedef function_property_map<
-        lookup_property_from_edge< boost::mpl::true_ >,
+        lookup_property_from_edge< std::true_type >,
         typename graph_traits<
             adjacency_matrix< D, VP, EP, GP, A > >::edge_descriptor >
         const_type;
     typedef edge_descriptor arg_type;
     typedef
-        typename lookup_property_from_edge< boost::mpl::false_ >::result_type
+        typename lookup_property_from_edge< std::false_type >::result_type
             single_nonconst_type;
-    typedef typename lookup_property_from_edge< boost::mpl::true_ >::result_type
+    typedef typename lookup_property_from_edge< std::true_type >::result_type
         single_const_type;
 
     static type get_nonconst(adjacency_matrix< D, VP, EP, GP, A >& g, Tag tag)

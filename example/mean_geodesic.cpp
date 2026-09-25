@@ -48,7 +48,7 @@ using GeodesicProperty = exterior_vertex_property< Graph, float >;
 using GeodesicContainer = GeodesicProperty::container_type;
 using GeodesicMap = GeodesicProperty::map_type;
 
-int main(int argc, char* argv[])
+int main()
 {
     // Create the graph and a property map that provides access
     // to the actor names.

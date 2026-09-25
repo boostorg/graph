@@ -20,7 +20,7 @@ using Graph = directed_graph<>;
 using Vertex = graph_traits< Graph >::vertex_descriptor;
 using Edge = graph_traits< Graph >::edge_descriptor;
 
-int main(int argc, char* argv[])
+int main()
 {
     // Create the graph and read it from standard input.
     Graph g;

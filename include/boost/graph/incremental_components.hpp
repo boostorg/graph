@@ -16,7 +16,7 @@
 #include <boost/tuple/tuple.hpp>
 #include <boost/graph/detail/incremental_components.hpp>
 #include <boost/iterator/counting_iterator.hpp>
-#include <boost/smart_ptr/make_shared.hpp>
+#include <memory>
 #include <boost/pending/disjoint_sets.hpp>
 #include <iterator>
 
@@ -126,8 +126,8 @@ public:
     component_index(ParentIterator parent_start, ParentIterator parent_end,
         const ElementIndexMap& index_map)
     : m_num_elements(std::distance(parent_start, parent_end))
-    , m_components(make_shared< IndexContainer >())
-    , m_index_list(make_shared< IndexContainer >(m_num_elements))
+    , m_components(std::make_shared< IndexContainer >())
+    , m_index_list(std::make_shared< IndexContainer >(m_num_elements))
     {
 
         build_index_lists(parent_start, index_map);
@@ -137,8 +137,8 @@ public:
     template < typename ParentIterator >
     component_index(ParentIterator parent_start, ParentIterator parent_end)
     : m_num_elements(std::distance(parent_start, parent_end))
-    , m_components(make_shared< IndexContainer >())
-    , m_index_list(make_shared< IndexContainer >(m_num_elements))
+    , m_components(std::make_shared< IndexContainer >())
+    , m_index_list(std::make_shared< IndexContainer >(m_num_elements))
     {
 
         build_index_lists(parent_start, boost::identity_property_map());
@@ -225,7 +225,7 @@ private:
 
 protected:
     IndexType m_num_elements;
-    shared_ptr< IndexContainer > m_components, m_index_list;
+    std::shared_ptr< IndexContainer > m_components, m_index_list;
 
 }; // class component_index
 

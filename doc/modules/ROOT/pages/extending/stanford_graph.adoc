@@ -1,0 +1,294 @@
+// Copyright (C) 2001 Andreas Scherer, Jeremy Siek, Lie-Quan Lee, Andrew Lumsdaine
+// Copyright (C) 2026 Arnaud Becheler
+//
+// Distributed under the Boost Software License, Version 1.0.
+// (See accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
+
+= Using SGB Graphs in BGL
+
+The SGB ships a set of ready-made graph datasets drawn from real sources, such as road mileage between North American cities, cross-references in Roget's Thesaurus, and character interactions in classic novels. Because the data is fixed and reproducible, these graphs are a convenient basis for benchmarking and testing graph algorithms.
+
+Each dataset is produced by an SGB generator that returns a native `Graph*`. The BGL wrapper adapts that `Graph*` to the BGL graph concepts, so the generic BGL algorithms run on SGB data directly, with no copy into an `adjacency_list`. That adaptation is what this page documents. It is not a substitute for the full SGB documentation.
+
+Under the hood, no graph adaptor *class* is involved. SGB's `Graph*` itself becomes a model of xref:concepts/VertexListGraph.adoc[VertexListGraph], with the concept fulfilled by the appropriate non-member functions defined for `Graph*` in `<boost/graph/stanford_graph.hpp>`.
+
+== Example
+
+The following program applies Prim's algorithm to the `miles` graph of United States cities, a native SGB `Graph*`, without any adapter or copy. It builds against a working SGB installation, described below.
+The `miles` generator reads its data from the SGB installation, so the tree length is fixed.
+
+[source,cpp]
+----
+include::example$extending/sgb_miles_span.cpp[]
+----
+
+[,text]
+----
+include::example$extending/sgb_miles_span.txt[]
+----
+
+== The Stanford GraphBase
+
+"The https://www-cs-faculty.stanford.edu/~knuth/sgb.html[Stanford GraphBase] (SGB) is a collection of datasets and computer programs that generate and examine a wide variety of graphs and networks." The SGB was developed and published by https://www-cs-faculty.stanford.edu/~knuth[Donald E. Knuth] in 1993. The fully documented source code is maintained at the https://github.com/ascherer/sgb[ascherer/sgb] repository on GitHub and is described in the book "The Stanford GraphBase, A Platform for Combinatorial Computing," published jointly by ACM Press and Addison-Wesley Publishing Company in 1993. This book contains several chapters with additional information not available in the electronic distribution.
+
+=== Prerequisites
+
+The source code of SGB is written in accordance with the rules of the https://www-cs-faculty.stanford.edu/~knuth/lp.html[Literate Programming] paradigm, so you need to make sure that your computer supports the https://www-cs-faculty.stanford.edu/~knuth/cweb.html[CWEB] system. The CWEB sources are available from the https://github.com/ascherer/cweb[ascherer/cweb] repository on GitHub. Bootstrapping CWEB on Unix systems is elementary and documented in the CWEB distribution.
+
+=== Installing the SGB
+
+After you have acquired the SGB sources and have installed a working CWEB system (at least the "ctangle" processor is required), you're almost set for compiling the SGB sources. SGB is written in "old-style C," but the Boost Graph Library expects to handle "modern C" and C++. Fortunately, the SGB distribution comes with an appropriate set of patches that convert all the sources from "KR-C" to "ANSI-C," thus allowing for smooth integration of the Stanford GraphBase in the Boost Graph Library.
+
+The recommended way to obtain a current, buildable SGB is the https://github.com/ascherer/sgb/releases/tag/2025-12-28[2025-12-28 release] of the https://github.com/ascherer/sgb[ascherer/sgb] repository. Check out the `local` branch, which carries the latest modifications of the Stanford GraphBase. Those patches modernize the sources so that they compile with current toolchains, up to C++23 compilers.
+
+After extracting the SGB archive, but prior to invoking "`make tests`" and "`make install`," you should say "`ln -s PROTOTYPES/*.ch .`" in the root directory where you extracted the SGB files (or you can simply copy the change files next to the proper source files). The Unix `Makefile` coming with SGB conveniently looks for "change files" matching the SGB source files and automatically applies them with the "ctangle" processor. The resulting C files will smoothly run through the compiler.
+
+=== Using the SGB
+
+After you have run the installation process of the SGB, you can use the BGL graph interface with the SGB `Graph*` through `<boost/graph/stanford_graph.hpp>`, which is described xref:extending/stanford_graph.adoc#sgb-interface[below]. All you have to do is tell the C++ compiler where to look for the SGB header files and the linker where to find the SGB library file (`libgb.so`, or `libgb.a` for a static build, on Unix). Consult the documentation of your particular compiler about how to do that. Distribution packages typically use a multiarch layout, for example headers under `/usr/include/sgb` and the library under `/usr/lib/x86_64-linux-gnu/sgb`, so you would pass `-I/usr/include/sgb -L/usr/lib/x86_64-linux-gnu/sgb -lgb`.
+
+=== Technicalities
+
+*Header file selection*: The two SGB modules `gb_graph` and `gb_io` use the preprocessor switch `SYSV` to select either the header file `<string.h>` (if `SYSV` is `#define`d) or the header file `<strings.h>` (if `SYSV` is _not_ `#define`d). Some compilers, like `gcc`/`g++`, don't care much (`gcc` "knows" about the "string" functions without referring to `<string.h>`), but others do. You should be careful to set (or not) `SYSV` according to the needs of your compiler.
+
+*Preprocessor macros*: The SGB header files make liberal use of the preprocessor _without_ sticking to a particular convention (like all-uppercase names or a particular prefix). At the time of writing, already three of these preprocessor macros collide with the conventions of either C++, g++, or BGL, and are fixed in the BGL wrapper. We can not guarantee that no other preprocessor-induced problems may arise, but we are willing to learn about any such collisions.
+
+[#sgb-interface]
+== The BGL Interface for the SGB
+
+=== Where Defined
+
+`<boost/graph/stanford_graph.hpp>`
+
+The main purpose of this Boost Graph Library (BGL) header file is to `#include` all global definitions for the general stuff of the Stanford GraphBase (SGB) and its various graph generator functions by reading all SGB header files as in section 2 of the "`test_sample`" program.
+
+On top of the SGB stuff, the BGL `stanford_graph.hpp` header adds and defines appropriate types and functions for using the SGB graphs in the BGL framework. Apart from the improved interface, the SGB library is used "as is" in the context of BGL.
+
+=== Model Of
+
+xref:concepts/VertexListGraph.adoc[VertexListGraph] and xref:concepts/PropertyGraph.adoc[PropertyGraph]. The set of property tags that can be used with the SGB graph is described in the <<properties,Vertex and Edge Properties>> section below.
+
+=== Further examples
+
+Additional example programs apply the same generic framework to other SGB graphs.
+
+* https://github.com/boostorg/graph/blob/master/example/roget_components.cpp[`example/roget_components.cpp`^] computes the strongly connected components of the `roget` graph of cross-references in Roget's Thesaurus.
+* https://github.com/boostorg/graph/blob/master/example/girth.cpp[`example/girth.cpp`^] explores the girth and diameter of Ramanujan graphs, ported from the SGB GIRTH program.
+* https://github.com/boostorg/graph/blob/master/example/topo-sort-with-sgb.cpp[`example/topo-sort-with-sgb.cpp`^] runs a topological sort over a small SGB `Graph*` built by hand.
+
+=== Associated Types
+
+`graph_traits<Graph*>::vertex_descriptor`
+
+The type for the vertex descriptors associated with the `Graph*`. We use the type `Vertex*` as the vertex descriptor.
+
+'''
+
+`graph_traits<Graph*>::edge_descriptor`
+
+The type for the edge descriptors associated with the `Graph*`. This is the type `boost::sgb_edge`. In addition to supporting all the required operations of a BGL edge descriptor, the `boost::sgb_edge` class has the following constructor.
+
+[source,cpp]
+----
+sgb_edge::sgb_edge(Arc* arc, Vertex* source)
+----
+
+'''
+
+`graph_traits<Graph*>::vertex_iterator`
+
+The type for the iterators returned by `vertices()`.
+
+'''
+
+`graph_traits<Graph*>::out_edge_iterator`
+
+The type for the iterators returned by `out_edges()`.
+
+'''
+
+`graph_traits<Graph*>::adjacency_iterator`
+
+The type for the iterators returned by `adjacent_vertices()`.
+
+'''
+
+`graph_traits<Graph*>::vertices_size_type`
+
+The type used for dealing with the number of vertices in the graph.
+
+'''
+
+`graph_traits<Graph*>::edge_size_type`
+
+The type used for dealing with the number of edges in the graph.
+
+'''
+
+`graph_traits<Graph*>::degree_size_type`
+
+The type used for dealing with the number of edges incident to a vertex in the graph.
+
+'''
+
+`graph_traits<Graph*>::directed_category`
+
+Provides information about whether the graph is directed or undirected. An SGB `Graph*` is directed so this type is `directed_tag`.
+
+'''
+
+`graph_traits<Graph*>::traversal_category`
+
+An SGB `Graph*` provides traversal of the vertex set, out edges, and adjacent vertices. Therefore the traversal category tag is defined as follows:
+
+[source,cpp]
+----
+struct sgb_traversal_tag :
+  public virtual vertex_list_graph_tag,
+  public virtual incidence_graph_tag,
+  public virtual adjacency_graph_tag { };
+----
+
+'''
+
+`graph_traits<Graph*>::edge_parallel_category`
+
+This describes whether the graph class allows the insertion of parallel edges (edges with the same source and target). The SGB `Graph*` does not prevent addition of parallel edges, so this type is `allow_parallel_edge_tag`.
+
+=== Non-Member Functions
+
+[source,cpp]
+----
+std::pair<vertex_iterator, vertex_iterator>
+vertices(Graph* g)
+----
+
+Returns an iterator-range providing access to the vertex set of graph `g`.
+
+'''
+
+[source,cpp]
+----
+std::pair<out_edge_iterator, out_edge_iterator>
+out_edges(vertex_descriptor v, Graph* g)
+----
+
+Returns an iterator-range providing access to the out-edges of vertex `v` in graph `g`. There is no corresponding `in_edges` function.
+
+'''
+
+[source,cpp]
+----
+std::pair<adjacency_iterator, adjacency_iterator>
+adjacent_vertices(vertex_descriptor v, Graph* g)
+----
+
+Returns an iterator-range providing access to the adjacent vertices of vertex `v` in graph `g`.
+
+'''
+
+[source,cpp]
+----
+vertex_descriptor
+source(edge_descriptor e, Graph* g)
+----
+
+Returns the source vertex of edge `e`.
+
+'''
+
+[source,cpp]
+----
+vertex_descriptor
+target(edge_descriptor e, Graph* g)
+----
+
+Returns the target vertex of edge `e`.
+
+'''
+
+[source,cpp]
+----
+degree_size_type
+out_degree(vertex_descriptor v, Graph* g)
+----
+
+Returns the number of edges leaving vertex `v`. There is no corresponding `in_degree` function.
+
+'''
+
+[source,cpp]
+----
+vertices_size_type
+num_vertices(Graph* g)
+----
+
+Returns the number of vertices in the graph `g`.
+
+'''
+
+[source,cpp]
+----
+edge_size_type
+num_edges(Graph* g)
+----
+
+Returns the number of edges in the graph `g`.
+
+'''
+
+[source,cpp]
+----
+vertex_descriptor
+vertex(vertices_size_type n, Graph* g)
+----
+
+Returns the (0-based) nth vertex in the graph's vertex list.
+
+'''
+
+[source,cpp]
+----
+template <class PropertyTag>
+property_map<Graph*, PropertyTag>::type
+get(PropertyTag, Graph*& g)
+
+template <class PropertyTag>
+property_map<Graph*, Tag>::const_type
+get(PropertyTag, const Graph*& g)
+----
+
+Returns the property map object for the vertex property specified by `PropertyTag`. The `PropertyTag` must be one of those described below.
+
+[#properties]
+=== Vertex and Edge Properties
+
+The SGB `Vertex` and `Arc` structures provide "utility" fields for storing extra information. We provide BGL wrappers that provide access to these fields through property maps. In addition, vertex index and edge length maps are provided. A property map object can be obtained from a SGB `Graph*` using the `get()` function described in the xref:concepts/PropertyGraph.adoc[PropertyGraph] concept.
+
+The following list of property tags can be used to specify which utility field you would like a property map for.
+
+[source,cpp]
+----
+// vertex properties
+template <class T> u_property;
+template <class T> v_property;
+template <class T> w_property;
+template <class T> x_property;
+template <class T> y_property;
+template <class T> z_property;
+
+// edge properties
+template <class T> a_property;
+template <class T> b_property;
+----
+
+The template parameter `T` for these tags is limited to the types in the `util` union declared in the SGB header `gb_graph.h`, which are `Vertex*`, `Arc*`, `Graph*`, `char*`, and `long`. The property maps for the utility fields are models of LvaluePropertyMap.
+
+The property map for vertex indices can be obtained using the `vertex_index_t` tag, and this property map is a ReadablePropertyMap. A property map for edge lengths can be obtained using the `edge_length_t` tag, and this property map is an LvaluePropertyMap whose value type is `long`.
+
+Property map objects can be obtained via the `get()` function of the PropertyGraph concept. The type of the property map is given by the xref:traits/property_map.adoc[property_map] traits class.
+
+'''
+
+_Original documentation (2001) by Andreas Scherer, Aachen, Jeremy Siek and Lie-Quan Lee, Indiana University, and Andrew Lumsdaine._

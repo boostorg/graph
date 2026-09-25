@@ -18,7 +18,6 @@
 #include <boost/type_traits/conversion_traits.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/graph/overloading.hpp>
-#include <boost/graph/detail/mpi_include.hpp>
 #include <boost/concept/assert.hpp>
 
 namespace boost
@@ -341,7 +340,5 @@ kosaraju_strong_components(
 }
 
 } // namespace boost
-
-#include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/strong_components.hpp>)
 
 #endif // BOOST_GRAPH_STRONG_COMPONENTS_HPP

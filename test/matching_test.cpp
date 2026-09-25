@@ -21,7 +21,6 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/adjacency_matrix.hpp>
 #include <boost/graph/random.hpp>
-#include <ctime>
 #include <boost/random.hpp>
 #include <boost/core/lightweight_test.hpp>
 
@@ -309,7 +308,7 @@ void matching_test(std::size_t num_v, const std::string& graph_name)
     vertex_index_installer< Graph >::install(j);
 
     typedef boost::mt19937 base_generator_type;
-    base_generator_type generator(static_cast< unsigned int >(std::time(0)));
+    base_generator_type generator(42);
     boost::uniform_int<> distribution(0, double_num_v - 1);
     boost::variate_generator< base_generator_type&, boost::uniform_int<> >
         rand_num(generator, distribution);

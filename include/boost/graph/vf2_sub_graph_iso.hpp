@@ -32,7 +32,7 @@
 #include <boost/graph/mcgregor_common_subgraphs.hpp> // for always_equivalent
 #include <boost/graph/named_function_params.hpp>
 #include <boost/type_traits/has_less.hpp>
-#include <boost/mpl/int.hpp>
+#include <type_traits>
 #include <boost/range/algorithm/sort.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/utility/enable_if.hpp>
@@ -450,21 +450,21 @@ namespace detail
         // test terminal set counts when testing for:
         // - graph sub-graph monomorphism, or
         inline bool comp_term_sets(graph1_size_type a, graph2_size_type b,
-            boost::mpl::int_< subgraph_mono >) const
+            std::integral_constant< int, subgraph_mono >) const
         {
             return a <= b;
         }
 
         // - graph sub-graph isomorphism, or
         inline bool comp_term_sets(graph1_size_type a, graph2_size_type b,
-            boost::mpl::int_< subgraph_iso >) const
+            std::integral_constant< int, subgraph_iso >) const
         {
             return a <= b;
         }
 
         // - graph isomorphism
         inline bool comp_term_sets(graph1_size_type a, graph2_size_type b,
-            boost::mpl::int_< isomorphism >) const
+            std::integral_constant< int, isomorphism >) const
         {
             return a == b;
         }
@@ -652,22 +652,22 @@ namespace detail
             if (problem_selection != subgraph_mono)
             { // subgraph_iso and isomorphism
                 return comp_term_sets(term_in1_count, term_in2_count,
-                           boost::mpl::int_< problem_selection >())
+                           std::integral_constant< int, problem_selection >())
                     && comp_term_sets(term_out1_count, term_out2_count,
-                        boost::mpl::int_< problem_selection >())
+                        std::integral_constant< int, problem_selection >())
                     && comp_term_sets(rest1_count, rest2_count,
-                        boost::mpl::int_< problem_selection >());
+                        std::integral_constant< int, problem_selection >());
             }
             else
             { // subgraph_mono
                 return comp_term_sets(term_in1_count, term_in2_count,
-                           boost::mpl::int_< problem_selection >())
+                           std::integral_constant< int, problem_selection >())
                     && comp_term_sets(term_out1_count, term_out2_count,
-                        boost::mpl::int_< problem_selection >())
+                        std::integral_constant< int, problem_selection >())
                     && comp_term_sets(
                         term_in1_count + term_out1_count + rest1_count,
                         term_in2_count + term_out2_count + rest2_count,
-                        boost::mpl::int_< problem_selection >());
+                        std::integral_constant< int, problem_selection >());
             }
         }
 
@@ -718,13 +718,13 @@ namespace detail
 
             return comp_term_sets(boost::get< 0 >(term1),
                        boost::get< 0 >(term2),
-                       boost::mpl::int_< problem_selection >())
+                       std::integral_constant< int, problem_selection >())
                 && comp_term_sets(boost::get< 1 >(term1),
                     boost::get< 1 >(term2),
-                    boost::mpl::int_< problem_selection >())
+                    std::integral_constant< int, problem_selection >())
                 && comp_term_sets(boost::get< 2 >(term1),
                     boost::get< 2 >(term2),
-                    boost::mpl::int_< problem_selection >());
+                    std::integral_constant< int, problem_selection >());
         }
 
         // Calls the user_callback with a graph (sub)graph mapping

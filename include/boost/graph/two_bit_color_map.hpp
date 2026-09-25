@@ -15,8 +15,7 @@
 
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/properties.hpp>
-#include <boost/graph/detail/mpi_include.hpp>
-#include <boost/shared_array.hpp>
+#include <memory>
 #include <boost/config.hpp>
 #include <boost/assert.hpp>
 #include <algorithm>
@@ -45,7 +44,8 @@ template < typename IndexMap = identity_property_map > struct two_bit_color_map
 {
     std::size_t n;
     IndexMap index;
-    shared_array< unsigned char > data;
+    // todo : C++17: replace with std::shared_ptr<T[]>
+    std::shared_ptr< unsigned char > data;
 
     BOOST_STATIC_CONSTANT(
         int, bits_per_char = std::numeric_limits< unsigned char >::digits);
@@ -59,7 +59,8 @@ template < typename IndexMap = identity_property_map > struct two_bit_color_map
         std::size_t n, const IndexMap& index = IndexMap())
     : n(n)
     , index(index)
-    , data(new unsigned char[(n + elements_per_char - 1) / elements_per_char]())
+    , data(new unsigned char[(n + elements_per_char - 1) / elements_per_char](),
+          std::default_delete< unsigned char[] >())
     {
     }
 };
@@ -102,7 +103,5 @@ inline two_bit_color_map< IndexMap > make_two_bit_color_map(
 }
 
 } // end namespace boost
-
-#include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/two_bit_color_map.hpp>)
 
 #endif // BOOST_TWO_BIT_COLOR_MAP_HPP

@@ -12,7 +12,7 @@
 #include <list>
 #include <boost/next_prior.hpp>
 #include <boost/config.hpp> //for std::min macros
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/tuple/tuple.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/graph_traits.hpp>
@@ -150,8 +150,8 @@ class boyer_myrvold_impl
     typedef std::vector< edge_t > edge_vector_t;
     typedef std::list< vertex_t > vertex_list_t;
     typedef std::list< face_handle_t > face_handle_list_t;
-    typedef boost::shared_ptr< face_handle_list_t > face_handle_list_ptr_t;
-    typedef boost::shared_ptr< vertex_list_t > vertex_list_ptr_t;
+    using face_handle_list_ptr_t = std::shared_ptr< face_handle_list_t >;
+    using vertex_list_ptr_t = std::shared_ptr< vertex_list_t >;
     typedef boost::tuple< vertex_t, bool, bool > merge_stack_frame_t;
     typedef std::vector< merge_stack_frame_t > merge_stack_t;
 

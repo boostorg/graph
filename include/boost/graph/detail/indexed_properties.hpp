@@ -24,7 +24,6 @@
 #include <boost/integer.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/property_map/property_map.hpp>
-#include <boost/mpl/if.hpp>
 
 namespace boost
 {

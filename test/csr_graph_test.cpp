@@ -23,7 +23,6 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <ctime>
 #include <boost/lexical_cast.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/limits.hpp>
@@ -269,7 +268,7 @@ template < typename OrigGraph > void graph_test(const OrigGraph& g)
             targets[idx] = target(e, g2);
             ++idx;
         }
-        boost::minstd_rand gen(1);
+        boost::minstd_rand gen(42);
         if (num_edges(g) != 0)
         {
             for (std::size_t i = num_edges(g) - 1; i > 0; --i)
@@ -409,12 +408,9 @@ void test_vertex_and_edge_properties()
     BOOST_TEST(g[v].centrality == centrality[v]);
 }
 
-int main(int argc, char* argv[])
+int main()
 {
-    // Optionally accept a seed value
-    int seed = int(std::time(0));
-    if (argc > 1)
-        seed = boost::lexical_cast< int >(argv[1]);
+    int seed = 42;
 
     std::cout << "Seed = " << seed << std::endl;
     {

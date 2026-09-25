@@ -1,0 +1,42 @@
+name: dependency-report
+
+# Computes graph's Boost dependency footprint with boostdep and prints a
+# marker-delimited report into the job log, on every push and PR. The
+# dependency-count-comment workflow reads these logs (this PR's run and the
+# latest develop run) and posts the diff as a PR comment. Kept separate from
+# CI so ci.yml is untouched.
+
+on: [ push, pull_request ]
+
+jobs:
+  deps:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Boost tree and build boostdep
+        run: |
+          git clone -b develop --depth 1 https://github.com/boostorg/boost.git ../boost-root
+          cd ../boost-root
+          cp -r $GITHUB_WORKSPACE/* libs/graph
+          git submodule update --init tools/boostdep
+          # depinst pulls graph's deps; also ensure boostdep's own dep
+          # (Boost.Filesystem) is present since boostdep links against it.
+          python tools/boostdep/depinst/depinst.py --git_args "--jobs 3" graph
+          python tools/boostdep/depinst/depinst.py --git_args "--jobs 3" filesystem
+          ./bootstrap.sh
+          ./b2 headers
+          # boostdep #includes <boost/filesystem.hpp> and links the compiled
+          # library, so build it with b2 (a bare c++ compile can't resolve that).
+          ./b2 tools/boostdep/build
+      - name: Boostdep dependency report
+        working-directory: ../boost-root
+        run: |
+          BOOSTDEP=$(find "$PWD" -type f -name boostdep -perm -u+x 2>/dev/null | grep -v '/src/' | head -1)
+          if [ -z "$BOOSTDEP" ]; then echo "boostdep executable not found after build" >&2; exit 1; fi
+          echo "using boostdep: $BOOSTDEP"
+          echo "===DEP-BRIEF-START==="
+          "$BOOSTDEP" --boost-root . --track-sources --no-track-tests --brief graph
+          echo "===DEP-BRIEF-END==="
+          echo "===DEP-PRIMARY-START==="
+          "$BOOSTDEP" --boost-root . --track-sources --no-track-tests graph
+          echo "===DEP-PRIMARY-END==="

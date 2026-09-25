@@ -28,7 +28,6 @@ This test needs to be linked against Boost.Filesystem.
 #include <boost/lexical_cast.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/filesystem.hpp>
-#include <boost/algorithm/string.hpp>
 #include <boost/core/lightweight_test.hpp>
 
 #include <boost/graph/adjacency_list.hpp>
@@ -90,7 +89,14 @@ void read_dimacs(Graph& g, const std::string& filename)
             continue;
 
         std::vector< std::string > v;
-        split(v, buffer, is_any_of(" \t\n"));
+        for (std::string::size_type start = 0;;)
+        {
+            std::string::size_type pos = s.find_first_of(" \t\n", start);
+            v.push_back(s.substr(start, pos - start));
+            if (pos == std::string::npos)
+                break;
+            start = pos + 1;
+        }
 
         if (v[0] == "p")
         {

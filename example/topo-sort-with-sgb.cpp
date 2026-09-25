@@ -21,7 +21,6 @@ int main()
         = { "pick up kids from school", "buy groceries (and snacks)",
               "get cash at ATM", "drop off kids at soccer practice",
               "cook dinner", "pick up kids from soccer", "eat dinner" };
-    const int n_tasks = sizeof(tasks) / sizeof(char*);
 
     gb_new_arc(sgb_g->vertices + 0, sgb_g->vertices + 3, 0);
     gb_new_arc(sgb_g->vertices + 1, sgb_g->vertices + 3, 0);

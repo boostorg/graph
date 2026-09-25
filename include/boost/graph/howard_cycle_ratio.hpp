@@ -22,7 +22,6 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/concept/assert.hpp>
-#include <boost/algorithm/minmax_element.hpp>
 
 /** @file howard_cycle_ratio.hpp
  * @brief The implementation of the maximum/minimum cycle ratio/mean algorithm.
@@ -141,11 +140,9 @@ namespace detail
          * Constructor
          * \param g = (V, E) - a directed multigraph.
          * \param vim  Vertex Index Map. Read property Map: V -> [0,
-         * num_vertices(g)). \param ewm  edge weight map. Read property map: E
-         * -> R \param ew2m  edge weight map. Read property map: E -> R+ \param
-         * infty A big enough value to guaranty that there exist a cycle with
-         *  better ratio.
-         * \param cmp The compare operator for float_ts.
+         *  num_vertices(g)).
+         * \param ewm  edge weight map. Read property map: E -> R
+         * \param ew2m  edge weight map. Read property map: E -> R+
          */
         mcr_howard(const Graph& g, VertexIndexMap vim, EdgeWeight1 ewm,
             EdgeWeight2 ew2m)
@@ -241,9 +238,10 @@ namespace detail
             for (boost::tie(vi, vie) = vertices(m_g); vi != vie; ++vi)
             {
                 boost::tie(oei, oeie) = out_edges(*vi, m_g);
-                auto mei = boost::first_max_element(oei, oeie,
-                    [this](const auto& first, const auto& second)
-                    { return m_cmp(m_ew1m[first], m_ew1m[second]); });
+                auto mei = oei;
+                for (auto edge_it = oei; edge_it != oeie; ++edge_it)
+                    if (m_cmp(m_ew1m[*mei], m_ew1m[*edge_it]))
+                        mei = edge_it;
                 if (mei == oeie)
                 {
                     if (m_sink == graph_traits< Graph >().null_vertex())

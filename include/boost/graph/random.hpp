@@ -22,7 +22,7 @@
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/copy.hpp>
-#include <boost/mpl/if.hpp>
+#include <type_traits>
 #include <boost/type_traits/is_convertible.hpp>
 
 #include <iostream>
@@ -152,7 +152,7 @@ void generate_random_graph1(MutableGraph& g,
 
         typedef
             typename boost::graph_traits< MutableGraph >::directed_category dir;
-        typedef typename mpl::if_< is_convertible< dir, directed_tag >,
+        typedef typename std::conditional< is_convertible< dir, directed_tag >::value,
             directedS, undirectedS >::type select;
         adjacency_list< setS, vecS, select > g2;
         generate_random_graph1(g2, V, E, gen, true, self_edges);

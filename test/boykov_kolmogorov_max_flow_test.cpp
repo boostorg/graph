@@ -589,14 +589,12 @@ int main(int argc, char* argv[])
 {
     int n_verts = 10;
     int n_edges = 500;
-    std::size_t seed = 1;
+    std::size_t seed = 42;
 
     if (argc > 1)
         n_verts = lexical_cast< int >(argv[1]);
     if (argc > 2)
         n_edges = lexical_cast< int >(argv[2]);
-    if (argc > 3)
-        seed = lexical_cast< std::size_t >(argv[3]);
 
     // we need at least 2 vertices to create src and sink in random graphs
     // this case is also caught in boykov_kolmogorov_max_flow

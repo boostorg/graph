@@ -20,7 +20,7 @@
 
 #include <boost/property_map/property_map_iterator.hpp>
 #include <boost/graph/properties.hpp>
-#include <boost/mpl/if.hpp>
+#include <type_traits>
 #include <boost/type_traits/same_traits.hpp>
 
 namespace boost
@@ -35,7 +35,7 @@ template < class Graph, class PropertyTag > class graph_property_iter_range
     typedef
         typename property_map< Graph, PropertyTag >::const_type const_map_type;
     typedef typename property_kind< PropertyTag >::type Kind;
-    typedef typename mpl::if_c< is_same< Kind, vertex_property_tag >::value,
+    typedef typename std::conditional< is_same< Kind, vertex_property_tag >::value,
         typename graph_traits< Graph >::vertex_iterator,
         typename graph_traits< Graph >::edge_iterator >::type iter;
 

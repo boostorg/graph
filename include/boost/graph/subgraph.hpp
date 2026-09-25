@@ -25,8 +25,7 @@
 #include <boost/static_assert.hpp>
 #include <boost/assert.hpp>
 #include <boost/type_traits.hpp>
-#include <boost/mpl/if.hpp>
-#include <boost/mpl/or.hpp>
+#include <type_traits>
 
 namespace boost
 {
@@ -207,12 +206,14 @@ public:
 
     vertex_descriptor global_to_local(vertex_descriptor u_global) const
     {
-        vertex_descriptor u_local;
-        bool in_subgraph;
         if (is_root())
             return u_global;
+        vertex_descriptor u_local;
+        bool in_subgraph;
         boost::tie(u_local, in_subgraph) = this->find_vertex(u_global);
-        BOOST_ASSERT(in_subgraph == true);
+        BOOST_ASSERT_MSG(in_subgraph,
+            "global_to_local: vertex is not in this subgraph. "
+            "Use find_vertex() to check membership first.");
         return u_local;
     }
 
@@ -225,10 +226,15 @@ public:
 
     edge_descriptor global_to_local(edge_descriptor e_global) const
     {
-        return is_root() ? e_global
-                         : (*m_local_edge.find(
-                                get(get(edge_index, root().m_graph), e_global)))
-                               .second;
+        if (is_root())
+            return e_global;
+        edge_descriptor e_local;
+        bool in_subgraph;
+        boost::tie(e_local, in_subgraph) = this->find_edge(e_global);
+        BOOST_ASSERT_MSG(in_subgraph,
+            "global_to_local: edge is not in this subgraph. "
+            "Use find_edge() to check membership first.");
+        return e_local;
     }
 
     // Is vertex u (of the root graph) contained in this subgraph?
@@ -886,8 +892,8 @@ class subgraph_global_property_map
     typedef property_traits< PropertyMap > Traits;
 
 public:
-    typedef typename mpl::if_<
-        is_const< typename remove_pointer< GraphPtr >::type >,
+    typedef typename std::conditional<
+        is_const< typename remove_pointer< GraphPtr >::type >::value,
         readable_property_map_tag, typename Traits::category >::type category;
     typedef typename Traits::value_type value_type;
     typedef typename Traits::key_type key_type;
@@ -919,8 +925,8 @@ class subgraph_local_property_map
     typedef property_traits< PropertyMap > Traits;
 
 public:
-    typedef typename mpl::if_<
-        is_const< typename remove_pointer< GraphPtr >::type >,
+    typedef typename std::conditional<
+        is_const< typename remove_pointer< GraphPtr >::type >::value,
         readable_property_map_tag, typename Traits::category >::type category;
     typedef typename Traits::value_type value_type;
     typedef typename Traits::key_type key_type;
