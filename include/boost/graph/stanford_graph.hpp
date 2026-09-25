@@ -64,6 +64,7 @@ extern "C"
 #include <gb_words.h> /* five-letter-word graphs */
 #undef weight /* avoid name clash with BGL parameter */
     // weight ==> Vertex::u.I
+#undef loc /* avoid name clash with boost/assert/source_location.hpp */
 }
 
 namespace boost

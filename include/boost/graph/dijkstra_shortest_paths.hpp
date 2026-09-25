@@ -22,6 +22,7 @@
 #include <boost/graph/relax.hpp>
 #include <boost/pending/indirect_cmp.hpp>
 #include <boost/graph/exception.hpp>
+#include <boost/throw_exception.hpp>
 #include <boost/graph/overloading.hpp>
 #include <memory>
 #include <boost/graph/detail/d_ary_heap.hpp>
