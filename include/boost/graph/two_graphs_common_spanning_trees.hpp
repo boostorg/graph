@@ -19,6 +19,7 @@
 #include <boost/graph/undirected_dfs.hpp>
 #include <boost/graph/connected_components.hpp>
 #include <boost/graph/filtered_graph.hpp>
+#include <type_traits>
 #include <vector>
 #include <stack>
 #include <map>
@@ -580,8 +581,8 @@ public:
     typedef typename Coll::value_type coll_value_type;
     typedef typename Seq::value_type seq_value_type;
 
-    BOOST_STATIC_ASSERT((is_same< coll_value_type, Seq >::value));
-    BOOST_STATIC_ASSERT((is_same< seq_value_type, bool >::value));
+    static_assert(std::is_same< coll_value_type, Seq >::value, "Collector value type must match the sequence type");
+    static_assert(std::is_same< seq_value_type, bool >::value, "Sequence value type must bool");
 
     tree_collector(Coll& seqs) : mSeqs(seqs) {}
 
@@ -616,13 +617,13 @@ two_graphs_common_spanning_trees(const Graph& iG, Order iG_map, const Graph& vG,
     typedef typename Order::value_type order_value_type;
     typedef typename Order::size_type order_size_type;
 
-    BOOST_STATIC_ASSERT((is_same< order_value_type, edge_descriptor >::value));
+    static_assert(std::is_same< order_value_type, edge_descriptor >::value, "The order size type must be convertible to the edge size type");
     BOOST_CONCEPT_ASSERT((Convertible< order_size_type, edges_size_type >));
 
     BOOST_CONCEPT_ASSERT((Convertible< seq_size_type, edges_size_type >));
-    BOOST_STATIC_ASSERT((is_same< seq_value_type, bool >::value));
+    static_assert(std::is_same< seq_value_type, bool >::value, "Sequence value type must be bool");
 
-    BOOST_STATIC_ASSERT((is_same< directed_category, undirected_tag >::value));
+    static_assert(std::is_same< directed_category, undirected_tag >::value, "The graph must be unidirected.");
 
     if (num_vertices(iG) != num_vertices(vG))
         return;
