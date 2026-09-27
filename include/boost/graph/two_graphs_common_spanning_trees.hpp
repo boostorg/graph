@@ -582,7 +582,7 @@ public:
     typedef typename Seq::value_type seq_value_type;
 
     static_assert(std::is_same< coll_value_type, Seq >::value, "Collector value type must match the sequence type");
-    static_assert(std::is_same< seq_value_type, bool >::value, "Sequence value type must bool");
+    static_assert(std::is_same< seq_value_type, bool >::value, "Sequence value type must be bool");
 
     tree_collector(Coll& seqs) : mSeqs(seqs) {}
 
