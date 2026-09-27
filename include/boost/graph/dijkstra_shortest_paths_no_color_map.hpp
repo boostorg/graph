@@ -15,6 +15,7 @@
 #include <boost/graph/relax.hpp>
 #include <boost/graph/detail/d_ary_heap.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <boost/throw_exception.hpp>
 #include <boost/graph/iteration_macros.hpp>
 #include <memory>
 

@@ -16,7 +16,6 @@
 
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/properties.hpp>
-#include <boost/graph/detail/mpi_include.hpp>
 #include <memory>
 #include <boost/config.hpp>
 #include <boost/assert.hpp>
@@ -100,7 +99,5 @@ inline one_bit_color_map< IndexMap > make_one_bit_color_map(
 }
 
 } // end namespace boost
-
-#include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/one_bit_color_map.hpp>)
 
 #endif // BOOST_ONE_BIT_COLOR_MAP_HPP
