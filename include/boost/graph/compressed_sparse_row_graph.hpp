@@ -245,7 +245,7 @@ public:
      * create directed and bidirectional graphs. In the future,
      * undirected CSR graphs will also be supported.
      */
-    // BOOST_STATIC_ASSERT((is_same<Directed, directedS>::value));
+    // static_assert(std::is_same<Directed, directedS>::value, "Direction can only be directed, i.e. use directedS.");
 
     // Concept requirements:
     // For Graph
