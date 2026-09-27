@@ -46,7 +46,7 @@ jobs:
           git submodule update --init tools/boostdep
           rm -rf libs/graph
           cp -r "$GITHUB_WORKSPACE" libs/graph
-          python tools/boostdep/depinst/depinst.py --git_args "--jobs 3" graph
+          python tools/boostdep/depinst/depinst.py --git_args "--jobs 3" -I doc/modules/ROOT/examples graph
           git submodule update --init --depth 1 libs/static_assert
           ./bootstrap.sh
           ./b2 headers
