@@ -21,7 +21,7 @@
 #include <boost/graph/buffer_concepts.hpp>
 #include <boost/concept_check.hpp>
 #include <boost/type_traits/is_same.hpp>
-#include <boost/static_assert.hpp>
+//#include <boost/static_assert.hpp>
 #include <boost/detail/workaround.hpp>
 #include <boost/concept/assert.hpp>
 
@@ -77,10 +77,16 @@ BOOST_concept(IncidenceGraph, (G)) : Graph< G >
     typedef typename graph_traits< G >::out_edge_iterator out_edge_iterator;
     typedef typename graph_traits< G >::degree_size_type degree_size_type;
     typedef typename graph_traits< G >::traversal_category traversal_category;
+    
+    static_assert(!boost::is_same< out_edge_iterator, void>::value, 
+                    "IncidenceGraph's out edge iterator must NOT be void");
+    static_assert(!boost::is_same< degree_size_type , void>::value, 
+                    "IncidenceGraph's degree size type must NOT be void");
 
+    /*
     BOOST_STATIC_ASSERT((!boost::is_same< out_edge_iterator, void >::value));
     BOOST_STATIC_ASSERT((!boost::is_same< degree_size_type, void >::value));
-
+    */
     BOOST_CONCEPT_USAGE(IncidenceGraph)
     {
         BOOST_CONCEPT_ASSERT((MultiPassInputIterator< out_edge_iterator >));
@@ -122,8 +128,9 @@ BOOST_concept(BidirectionalGraph, (G)) : IncidenceGraph< G >
         BOOST_CONCEPT_ASSERT((MultiPassInputIterator< in_edge_iterator >));
         BOOST_CONCEPT_ASSERT(
             (Convertible< traversal_category, bidirectional_graph_tag >));
-
-        BOOST_STATIC_ASSERT((!boost::is_same< in_edge_iterator, void >::value));
+        static_assert(!boost::is_same< in_edge_iterator, void>::value, 
+                        "BidirectionalGraph's in edge iterator must NOT be void");
+        //BOOST_STATIC_ASSERT((!boost::is_same< in_edge_iterator, void >::value));
 
         p = in_edges(v, g);
         n = in_degree(v, g);
@@ -155,9 +162,10 @@ BOOST_concept(AdjacencyGraph, (G)) : Graph< G >
         BOOST_CONCEPT_ASSERT((MultiPassInputIterator< adjacency_iterator >));
         BOOST_CONCEPT_ASSERT(
             (Convertible< traversal_category, adjacency_graph_tag >));
-
-        BOOST_STATIC_ASSERT(
-            (!boost::is_same< adjacency_iterator, void >::value));
+        
+        static_assert(!boost::is_same< adjacency_iterator, void>::value , 
+                        "AdjacencyGraph's adjacency iterator must NOT be void");
+        //BOOST_STATIC_ASSERT((!boost::is_same< adjacency_iterator, void >::value));
 
         p = adjacent_vertices(v, g);
         v = *p.first;
@@ -180,10 +188,14 @@ BOOST_concept(VertexListGraph, (G)) : Graph< G >
         BOOST_CONCEPT_ASSERT((MultiPassInputIterator< vertex_iterator >));
         BOOST_CONCEPT_ASSERT(
             (Convertible< traversal_category, vertex_list_graph_tag >));
-
-        BOOST_STATIC_ASSERT((!boost::is_same< vertex_iterator, void >::value));
-        BOOST_STATIC_ASSERT(
-            (!boost::is_same< vertices_size_type, void >::value));
+        
+        static_assert(!boost::is_same< vertex_iterator, void>::value , 
+                        "VertexListGraph's vertex iterator must NOT be void");
+        static_assert(!boost::is_same< vertices_size_type, void>::value, 
+                        "VertexListGraph's vertex size type must NOT be void");
+        
+        //BOOST_STATIC_ASSERT((!boost::is_same< vertex_iterator, void >::value));
+        //BOOST_STATIC_ASSERT((!boost::is_same< vertices_size_type, void >::value));
 
 #ifdef BOOST_VECTOR_AS_GRAPH_GRAPH_ADL_HACK
         // dwa 2003/7/11 -- This clearly shouldn't be necessary, but if
@@ -233,9 +245,13 @@ BOOST_concept(EdgeListGraph, (G)) : Graph< G >
         BOOST_CONCEPT_ASSERT((Assignable< edge_descriptor >));
         BOOST_CONCEPT_ASSERT(
             (Convertible< traversal_category, edge_list_graph_tag >));
-
-        BOOST_STATIC_ASSERT((!boost::is_same< edge_iterator, void >::value));
-        BOOST_STATIC_ASSERT((!boost::is_same< edges_size_type, void >::value));
+        
+        static_assert(!boost::is_same< edge_iterator, void>::value, 
+                        "EdgeListGraph's edge iterator must NOT be void");
+        static_assert(!boost::is_same< edges_size_type , void>::value, 
+                        "EdgeListGraph's edge size type must NOT be void");
+        //BOOST_STATIC_ASSERT((!boost::is_same< edge_iterator, void >::value));
+        //BOOST_STATIC_ASSERT((!boost::is_same< edges_size_type, void >::value));
 
         p = edges(g);
         e = *p.first;
