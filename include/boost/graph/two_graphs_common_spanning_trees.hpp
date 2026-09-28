@@ -617,7 +617,7 @@ two_graphs_common_spanning_trees(const Graph& iG, Order iG_map, const Graph& vG,
     typedef typename Order::value_type order_value_type;
     typedef typename Order::size_type order_size_type;
 
-    static_assert(std::is_same< order_value_type, edge_descriptor >::value, "The order size type must be convertible to the edge size type");
+    static_assert(std::is_same< order_value_type, edge_descriptor >::value, "Order value type must be the graph's edge descriptor type");
     BOOST_CONCEPT_ASSERT((Convertible< order_size_type, edges_size_type >));
 
     BOOST_CONCEPT_ASSERT((Convertible< seq_size_type, edges_size_type >));
