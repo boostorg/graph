@@ -44,6 +44,7 @@
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/graph/detail/d_ary_heap.hpp>
+#include <boost/graph/detail/visitor_wrapper.hpp>
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/visitors.hpp>
 #include <boost/property_map/property_map.hpp>
@@ -123,12 +124,6 @@ using default_mas_visitor = mas_visitor<>;
 namespace mas_detail
 {
 
-// Unwrap a visitor that may be passed with std::ref.
-template < class Visitor > struct unwrap_visitor { using type = Visitor; };
-template < class Visitor > struct unwrap_visitor< std::reference_wrapper< Visitor > > { using type = Visitor; };
-template < class Visitor > Visitor& deref_visitor(Visitor& vis) { return vis; }
-template < class Visitor > Visitor& deref_visitor(std::reference_wrapper< Visitor > vis) { return vis.get(); }
-
 // Maximum adjacency sweep over an already populated queue.
 // Shared engine behind both maximum_adjacency_search and stoer_wagner_min_cut.
 // The graph may be contracted through assignments (each vertex maps to its representative)
@@ -151,7 +146,7 @@ void mas_sweep(
     auto key_map = pq.keys();
 
     // resolve a std::ref-wrapped visitor to the referenced object
-    auto& vis_ref = deref_visitor(vis);
+    auto& vis_ref = ::boost::graph::detail::deref_visitor(vis);
 
     while (!pq.empty())
     {
@@ -218,7 +213,7 @@ void maximum_adjacency_search(
     BOOST_CONCEPT_ASSERT((boost::VertexListGraphConcept< Graph >));
     BOOST_CONCEPT_ASSERT((boost::Convertible< directed_category, boost::undirected_tag >));
     BOOST_CONCEPT_ASSERT((boost::ReadablePropertyMapConcept< WeightMap, edge_descriptor >));
-    using visitor_type = typename mas_detail::unwrap_visitor< MASVisitor >::type;
+    using visitor_type = ::boost::graph::detail::unwrap_visitor_t< MASVisitor >;
     boost::function_requires< MASVisitorConcept< visitor_type, Graph > >();
     BOOST_CONCEPT_ASSERT((boost::KeyedUpdatableQueueConcept< KeyedUpdatablePriorityQueue >));
 
@@ -231,7 +226,7 @@ void maximum_adjacency_search(
     auto key_map = pq.keys();
 
     // resolve a std::ref-wrapped visitor to the referenced object
-    auto& vis_ref = mas_detail::deref_visitor(vis);
+    auto& vis_ref = ::boost::graph::detail::deref_visitor(vis);
 
     // seed every vertex with reach count 0
     for (const auto& v : make_iterator_range(vertices(g)))
