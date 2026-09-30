@@ -361,7 +361,6 @@ template < typename Graph > struct graph_test
                  bgl_first_9 != bgl_last_9 ? (v = *bgl_first_9, true) : false;
                  ++bgl_first_9)
             {
-                // BGL_FORALL_VERTICES_T(v, g, Graph) {
                 typename property_traits< const_Map >::value_type pval1
                     = get(pmap, v),
                     pval2 = get(tag, g, v);
@@ -384,7 +383,6 @@ template < typename Graph > struct graph_test
             for (typename boost::graph_traits< Graph >::vertex_descriptor v;
                  bgl_first_9 != bgl_last_9 ? (v = *bgl_first_9, true) : false;
                  ++bgl_first_9)
-                //      BGL_FORALL_VERTICES_T(v, g, Graph)
                 put(pmap, v, *i++);
 
         test_readable_vertex_property_graph(vertex_prop, tag, g);
