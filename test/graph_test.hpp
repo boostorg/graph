@@ -10,8 +10,6 @@
 #ifndef BOOST_GRAPH_TEST_HPP
 #define BOOST_GRAPH_TEST_HPP
 
-#include <boost/graph/graph_concepts.hpp>
-#include <boost/range/iterator_range_core.hpp>
 #include <vector>
 #include <boost/core/lightweight_test.hpp>
 #include <boost/graph/filtered_graph.hpp>
