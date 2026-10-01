@@ -15,7 +15,7 @@
 #include <stack>
 
 #include <memory>
-#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/adjacency_list.hpp> 
 #include <boost/range/iterator_range.hpp>
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/graph_utility.hpp>
@@ -144,7 +144,7 @@ namespace detail
 
         bool has_one_edge = false;
 
-        for (auto existing_vertex1 : boost::make_iterator_range(vertices(graph1)))
+        for (const auto& existing_vertex1 : boost::make_iterator_range(vertices(graph1)))
         {
 
             VertexSecond existing_vertex2
@@ -165,7 +165,7 @@ namespace detail
             bool edge_to_new_exists2 = false, edge_from_new_exists2 = false;
 
             // Search for edge from existing to new vertex (graph1)
-            for (auto edge1 : boost::make_iterator_range(out_edges(existing_vertex1, graph1))) 
+            for (const auto & edge1 : boost::make_iterator_range(out_edges(existing_vertex1, graph1))) 
             {
                 if (target(edge1, graph1) == new_vertex1)
                 {
@@ -176,7 +176,7 @@ namespace detail
             }
 
             // Search for edge from existing to new vertex (graph2)
-            for (auto edge2 : boost::make_iterator_range(out_edges(existing_vertex2, graph2))) 
+            for (const auto & edge2 : boost::make_iterator_range(out_edges(existing_vertex2, graph2))) 
             {
                 if (target(edge2, graph2) == new_vertex2)
                 {
@@ -216,7 +216,7 @@ namespace detail
                 {
 
                     // Search for edge from new to existing vertex (graph1)
-                    for (auto edge1 : boost::make_iterator_range(out_edges(new_vertex1, graph1)))
+                    for (const auto& edge1 : boost::make_iterator_range(out_edges(new_vertex1, graph1)))
                     {
                         if (target(edge1, graph1) == existing_vertex1)
                         {
@@ -231,7 +231,7 @@ namespace detail
                 {
 
                     // Search for edge from new to existing vertex (graph2)
-                    for (auto edge2 : boost::make_iterator_range(out_edges(new_vertex2, graph2)))
+                    for (const auto& edge2 : boost::make_iterator_range(out_edges(new_vertex2, graph2)))
                     {
                         if (target(edge2, graph2) == existing_vertex2)
                         {
@@ -316,7 +316,7 @@ namespace detail
 
         // Iterate until all vertices have been visited
 
-        for (auto new_vertex1 : boost::make_iterator_range(vertices(graph1)))
+        for (const auto& new_vertex1 : boost::make_iterator_range(vertices(graph1)))
         {
 
             VertexSecond existing_vertex2
@@ -328,7 +328,7 @@ namespace detail
                 continue;
             }
 
-            for (auto new_vertex2 : boost::make_iterator_range(vertices(graph2)))
+            for (const auto& new_vertex2 : boost::make_iterator_range(vertices(graph2)))
             {
 
                 VertexFirst existing_vertex1
@@ -430,7 +430,7 @@ namespace detail
         typename SubGraphTraits::correspondence_map_first_to_second_type
             correspondence_map_1_to_2(num_vertices(graph1), vindex_map1);
 
-        for (auto vertex1 : boost::make_iterator_range(vertices(graph1)))
+        for (const auto& vertex1 : boost::make_iterator_range(vertices(graph1)))
         {
             put(correspondence_map_1_to_2, vertex1,
                 graph_traits< GraphSecond >::null_vertex());
@@ -439,7 +439,7 @@ namespace detail
         typename SubGraphTraits::correspondence_map_second_to_first_type
             correspondence_map_2_to_1(num_vertices(graph2), vindex_map2);
 
-        for (auto vertex2 : boost::make_iterator_range(vertices(graph2)))
+        for (const auto& vertex2 : boost::make_iterator_range(vertices(graph2)))
         {
             put(correspondence_map_2_to_1, vertex2,
                 graph_traits< GraphFirst >::null_vertex());
@@ -602,13 +602,13 @@ namespace detail
                 = CorrespondenceMapSecondToFirst(
                     num_vertices(m_graph2), m_vindex_map2);
             
-            for (auto vertex1 : boost::make_iterator_range(vertices(m_graph1)))
+            for (const auto& vertex1 : boost::make_iterator_range(vertices(m_graph1)))
             {
                 put(new_subgraph_1_to_2, vertex1,
                     get(correspondence_map_1_to_2, vertex1));
             }
 
-            for (auto vertex2 : boost::make_iterator_range(vertices(m_graph2)))
+            for (const auto& vertex2 : boost::make_iterator_range(vertices(m_graph2)))
             {
                 put(new_subgraph_2_to_1, vertex2,
                     get(correspondence_map_2_to_1, vertex2));
@@ -763,13 +763,13 @@ namespace detail
                     = CachedCorrespondenceMapSecondToFirst(
                         num_vertices(m_graph2), m_vindex_map2);
 
-                for (auto vertex1 : boost::make_iterator_range(vertices(m_graph1)))
+                for (const auto& vertex1 : boost::make_iterator_range(vertices(m_graph1)))
                 {
                     put(new_subgraph_1_to_2, vertex1,
                         get(correspondence_map_1_to_2, vertex1));
                 }
 
-                for (auto vertex2 : boost::make_iterator_range(vertices(m_graph2)))
+                for (const auto& vertex2 : boost::make_iterator_range(vertices(m_graph2)))
                 {
                     put(new_subgraph_2_to_1, vertex2,
                         get(correspondence_map_2_to_1, vertex2));
@@ -958,13 +958,13 @@ namespace detail
                     = CachedCorrespondenceMapSecondToFirst(
                         num_vertices(m_graph2), m_vindex_map2);
                 
-                for (auto vertex1 : boost::make_iterator_range(vertices(m_graph1)))
+                for (const auto& vertex1 : boost::make_iterator_range(vertices(m_graph1)))
                 {
                     put(new_subgraph_1_to_2, vertex1,
                         get(correspondence_map_1_to_2, vertex1));
                 }
 
-                for (auto vertex2 : boost::make_iterator_range(vertices(m_graph2)))
+                for (const auto& vertex2 : boost::make_iterator_range(vertices(m_graph2)))
                 {
                     put(new_subgraph_2_to_1, vertex2,
                         get(correspondence_map_2_to_1, vertex2));
@@ -1078,7 +1078,7 @@ void fill_membership_map(const GraphFirst& graph1,
     MembershipMapFirst membership_map1)
 {
 
-    for (auto vertex1 : boost::make_iterator_range(vertices(graph1)))
+    for (const auto& vertex1 : boost::make_iterator_range(vertices(graph1)))
     {
         put(membership_map1, vertex1,
             get(correspondence_map_1_to_2, vertex1)
