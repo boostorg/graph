@@ -294,10 +294,6 @@ void write_graphml(std::ostream& out, const Graph& g,
 
     using boost::detail::graphml::encode_char_entities;
 
-    BOOST_STATIC_CONSTANT(bool,
-        graph_is_directed
-        = (is_convertible< directed_category*, directed_tag* >::value));
-
     out << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         << "<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns\" "
            "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
@@ -340,7 +336,9 @@ void write_graphml(std::ostream& out, const Graph& g,
             << " attr.name=\"" << i->first << "\""
             << " attr.type=\"" << type_name << "\""
             << " />\n";
-    }
+
+        }
+    constexpr auto graph_is_directed = is_convertible< directed_category*, directed_tag* >::value;
 
     out << "  <graph id=\"G\" edgedefault=\""
         << (graph_is_directed ? "directed" : "undirected") << "\""
