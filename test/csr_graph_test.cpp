@@ -19,6 +19,7 @@
 #include <boost/graph/erdos_renyi_generator.hpp>
 #include <boost/graph/graph_utility.hpp>
 #include <boost/random/linear_congruential.hpp>
+#include <boost/range/iterator_range.hpp>
 #include <boost/concept_check.hpp> // for ignore_unused_variable_warning
 #include <iostream>
 #include <vector>
@@ -27,7 +28,6 @@
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/limits.hpp>
 #include <string>
-#include <boost/graph/iteration_macros.hpp>
 #include <boost/core/lightweight_test.hpp>
 
 // Algorithms to test against
@@ -227,7 +227,7 @@ template < typename OrigGraph > void graph_test(const OrigGraph& g)
         std::vector< std::size_t > targets(num_edges(g2));
         std::size_t idx = 0;
         // Edges actually sorted
-        BGL_FORALL_EDGES(e, g2, CSRGraphT)
+        for(const auto& e : boost::make_iterator_range(edges(g2)))
         {
             sources[idx] = source(e, g2);
             targets[idx] = target(e, g2);
@@ -244,7 +244,8 @@ template < typename OrigGraph > void graph_test(const OrigGraph& g)
         std::vector< std::size_t > targets(num_edges(g2));
         std::size_t idx = 0;
         // Edges reverse-sorted
-        BGL_FORALL_EDGES(e, g2, CSRGraphT)
+
+        for(const auto& e : boost::make_iterator_range(edges(g2)))
         {
             sources[num_edges(g2) - 1 - idx] = source(e, g2);
             targets[num_edges(g2) - 1 - idx] = target(e, g2);
@@ -262,7 +263,8 @@ template < typename OrigGraph > void graph_test(const OrigGraph& g)
         std::size_t idx = 0;
         // Edges scrambled using Fisher-Yates shuffle (Durstenfeld variant) from
         // Wikipedia
-        BGL_FORALL_EDGES(e, g2, CSRGraphT)
+
+        for(const auto& e : boost::make_iterator_range(edges(g2)))
         {
             sources[idx] = source(e, g2);
             targets[idx] = target(e, g2);
@@ -404,8 +406,10 @@ void test_vertex_and_edge_properties()
             .weight_map(get(&Edge::weight, g))
             .edge_centrality_map(get(&Edge::centrality, g)));
 
-    BGL_FORALL_VERTICES(v, g, CSRGraphWithPropsT)
-    BOOST_TEST(g[v].centrality == centrality[v]);
+
+    for(const auto& v : boost::make_iterator_range(vertices(g))) {
+        BOOST_TEST(g[v].centrality == centrality[v]);
+    }
 }
 
 int main()

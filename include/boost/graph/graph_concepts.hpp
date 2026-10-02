@@ -301,9 +301,9 @@ BOOST_concept(VertexMutableGraph, (G))
 BOOST_concept(MutableGraph, (G))
 : EdgeMutableGraph< G >, VertexMutableGraph< G > {};
 
-template < class edge_descriptor > struct dummy_edge_predicate
+template < class EdgeDescriptor > struct dummy_edge_predicate
 {
-    bool operator()(const edge_descriptor&) const { return false; }
+    bool operator()(const EdgeDescriptor&) const { return false; }
 };
 
 BOOST_concept(MutableIncidenceGraph, (G)) : MutableGraph< G >
