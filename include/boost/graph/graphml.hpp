@@ -25,7 +25,6 @@
 #include <boost/property_map/dynamic_property_map.hpp>
 #include <boost/throw_exception.hpp>
 #include <exception>
-#include <sstream>
 #include <typeinfo>
 
 namespace boost
