@@ -14,7 +14,6 @@
 #include <boost/config.hpp>
 #include <vector>
 #include <memory>
-#include <iterator>
 #include <boost/assert.hpp>
 #include <boost/limits.hpp>
 #include <boost/graph/graph_traits.hpp>
@@ -471,9 +470,7 @@ public: // should be private
     typedef
         typename std::conditional< has_property< edge_property_type >::type::value,
             std::pair< bool, edge_property_type >, char >::type StoredEdge;
-#if defined(BOOST_NO_STD_ALLOCATOR)
-    typedef std::vector< StoredEdge > Matrix;
-#else
+
 #if defined(BOOST_NO_CXX11_ALLOCATOR)
     typedef typename Allocator::template rebind< StoredEdge >::other Alloc;
 #else
@@ -482,7 +479,6 @@ public: // should be private
         Alloc;
 #endif
     typedef std::vector< StoredEdge, Alloc > Matrix;
-#endif
     typedef typename Matrix::iterator MatrixIter;
     typedef typename Matrix::size_type size_type;
 
