@@ -12,7 +12,6 @@
 #include <algorithm>
 #include <boost/config.hpp>
 #include <boost/assert.hpp>
-#include <boost/smart_ptr.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/detail/algorithm.hpp>
 #include <boost/unordered_map.hpp>

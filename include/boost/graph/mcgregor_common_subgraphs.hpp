@@ -14,11 +14,11 @@
 #include <vector>
 #include <stack>
 
-#include <boost/make_shared.hpp>
-#include <boost/graph/adjacency_list.hpp>
+#include <memory>
+#include <boost/graph/adjacency_list.hpp> 
+#include <boost/range/iterator_range.hpp>
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/graph_utility.hpp>
-#include <boost/graph/iteration_macros.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/property_map/shared_array_property_map.hpp>
 
@@ -144,8 +144,7 @@ namespace detail
 
         bool has_one_edge = false;
 
-        // Verify edges with existing sub-graph
-        BGL_FORALL_VERTICES_T(existing_vertex1, graph1, GraphFirst)
+        for (const auto& existing_vertex1 : boost::make_iterator_range(vertices(graph1)))
         {
 
             VertexSecond existing_vertex2
@@ -166,7 +165,7 @@ namespace detail
             bool edge_to_new_exists2 = false, edge_from_new_exists2 = false;
 
             // Search for edge from existing to new vertex (graph1)
-            BGL_FORALL_OUTEDGES_T(existing_vertex1, edge1, graph1, GraphFirst)
+            for (const auto & edge1 : boost::make_iterator_range(out_edges(existing_vertex1, graph1))) 
             {
                 if (target(edge1, graph1) == new_vertex1)
                 {
@@ -177,7 +176,7 @@ namespace detail
             }
 
             // Search for edge from existing to new vertex (graph2)
-            BGL_FORALL_OUTEDGES_T(existing_vertex2, edge2, graph2, GraphSecond)
+            for (const auto & edge2 : boost::make_iterator_range(out_edges(existing_vertex2, graph2))) 
             {
                 if (target(edge2, graph2) == new_vertex2)
                 {
@@ -217,8 +216,7 @@ namespace detail
                 {
 
                     // Search for edge from new to existing vertex (graph1)
-                    BGL_FORALL_OUTEDGES_T(
-                        new_vertex1, edge1, graph1, GraphFirst)
+                    for (const auto& edge1 : boost::make_iterator_range(out_edges(new_vertex1, graph1)))
                     {
                         if (target(edge1, graph1) == existing_vertex1)
                         {
@@ -233,8 +231,7 @@ namespace detail
                 {
 
                     // Search for edge from new to existing vertex (graph2)
-                    BGL_FORALL_OUTEDGES_T(
-                        new_vertex2, edge2, graph2, GraphSecond)
+                    for (const auto& edge2 : boost::make_iterator_range(out_edges(new_vertex2, graph2)))
                     {
                         if (target(edge2, graph2) == existing_vertex2)
                         {
@@ -262,7 +259,8 @@ namespace detail
 
             } // else
 
-        } // BGL_FORALL_VERTICES_T
+        }
+
 
         // Make sure new vertices are connected to the existing subgraph
         if (only_connected_subgraphs && !has_one_edge)
@@ -317,7 +315,8 @@ namespace detail
         vertex2_iter = vertex2_begin;
 
         // Iterate until all vertices have been visited
-        BGL_FORALL_VERTICES_T(new_vertex1, graph1, GraphFirst)
+
+        for (const auto& new_vertex1 : boost::make_iterator_range(vertices(graph1)))
         {
 
             VertexSecond existing_vertex2
@@ -329,7 +328,7 @@ namespace detail
                 continue;
             }
 
-            BGL_FORALL_VERTICES_T(new_vertex2, graph2, GraphSecond)
+            for (const auto& new_vertex2 : boost::make_iterator_range(vertices(graph2)))
             {
 
                 VertexFirst existing_vertex1
@@ -402,10 +401,10 @@ namespace detail
 
                 } // if can_extend_graph
 
-            } // BGL_FORALL_VERTICES_T (graph2)
+            }
 
-        } // BGL_FORALL_VERTICES_T (graph1)
-
+        }
+        
         return (true);
     }
 
@@ -431,7 +430,7 @@ namespace detail
         typename SubGraphTraits::correspondence_map_first_to_second_type
             correspondence_map_1_to_2(num_vertices(graph1), vindex_map1);
 
-        BGL_FORALL_VERTICES_T(vertex1, graph1, GraphFirst)
+        for (const auto& vertex1 : boost::make_iterator_range(vertices(graph1)))
         {
             put(correspondence_map_1_to_2, vertex1,
                 graph_traits< GraphSecond >::null_vertex());
@@ -440,7 +439,7 @@ namespace detail
         typename SubGraphTraits::correspondence_map_second_to_first_type
             correspondence_map_2_to_1(num_vertices(graph2), vindex_map2);
 
-        BGL_FORALL_VERTICES_T(vertex2, graph2, GraphSecond)
+        for (const auto& vertex2 : boost::make_iterator_range(vertices(graph2)))
         {
             put(correspondence_map_2_to_1, vertex2,
                 graph_traits< GraphFirst >::null_vertex());
@@ -559,7 +558,7 @@ namespace detail
         , m_graph2(graph2)
         , m_vindex_map1(vindex_map1)
         , m_vindex_map2(vindex_map2)
-        , m_subgraphs(make_shared< SubGraphList >())
+        , m_subgraphs(std::make_shared< SubGraphList >())
         , m_user_callback(user_callback)
         {
         }
@@ -602,14 +601,14 @@ namespace detail
             CachedCorrespondenceMapSecondToFirst new_subgraph_2_to_1
                 = CorrespondenceMapSecondToFirst(
                     num_vertices(m_graph2), m_vindex_map2);
-
-            BGL_FORALL_VERTICES_T(vertex1, m_graph1, GraphFirst)
+            
+            for (const auto& vertex1 : boost::make_iterator_range(vertices(m_graph1)))
             {
                 put(new_subgraph_1_to_2, vertex1,
                     get(correspondence_map_1_to_2, vertex1));
             }
 
-            BGL_FORALL_VERTICES_T(vertex2, m_graph2, GraphFirst)
+            for (const auto& vertex2 : boost::make_iterator_range(vertices(m_graph2)))
             {
                 put(new_subgraph_2_to_1, vertex2,
                     get(correspondence_map_2_to_1, vertex2));
@@ -627,7 +626,7 @@ namespace detail
         const GraphFirst& m_graph2;
         const VertexIndexMapFirst m_vindex_map1;
         const VertexIndexMapSecond m_vindex_map2;
-        shared_ptr< SubGraphList > m_subgraphs;
+        std::shared_ptr< SubGraphList > m_subgraphs;
         SubGraphCallback m_user_callback;
     };
 
@@ -732,8 +731,8 @@ namespace detail
         , m_graph2(graph2)
         , m_vindex_map1(vindex_map1)
         , m_vindex_map2(vindex_map2)
-        , m_subgraphs(make_shared< SubGraphList >())
-        , m_largest_size_so_far(make_shared< VertexSizeFirst >(0))
+        , m_subgraphs(std::make_shared< SubGraphList >())
+        , m_largest_size_so_far(std::make_shared< VertexSizeFirst >(0))
         , m_user_callback(user_callback)
         {
         }
@@ -764,13 +763,13 @@ namespace detail
                     = CachedCorrespondenceMapSecondToFirst(
                         num_vertices(m_graph2), m_vindex_map2);
 
-                BGL_FORALL_VERTICES_T(vertex1, m_graph1, GraphFirst)
+                for (const auto& vertex1 : boost::make_iterator_range(vertices(m_graph1)))
                 {
                     put(new_subgraph_1_to_2, vertex1,
                         get(correspondence_map_1_to_2, vertex1));
                 }
 
-                BGL_FORALL_VERTICES_T(vertex2, m_graph2, GraphFirst)
+                for (const auto& vertex2 : boost::make_iterator_range(vertices(m_graph2)))
                 {
                     put(new_subgraph_2_to_1, vertex2,
                         get(correspondence_map_2_to_1, vertex2));
@@ -801,8 +800,8 @@ namespace detail
         const GraphFirst& m_graph2;
         const VertexIndexMapFirst m_vindex_map1;
         const VertexIndexMapSecond m_vindex_map2;
-        shared_ptr< SubGraphList > m_subgraphs;
-        shared_ptr< VertexSizeFirst > m_largest_size_so_far;
+        std::shared_ptr< SubGraphList > m_subgraphs;
+        std::shared_ptr< VertexSizeFirst > m_largest_size_so_far;
         SubGraphCallback m_user_callback;
     };
 
@@ -910,8 +909,8 @@ namespace detail
         , m_graph2(graph2)
         , m_vindex_map1(vindex_map1)
         , m_vindex_map2(vindex_map2)
-        , m_subgraphs(make_shared< SubGraphList >())
-        , m_largest_size_so_far(make_shared< VertexSizeFirst >(0))
+        , m_subgraphs(std::make_shared< SubGraphList >())
+        , m_largest_size_so_far(std::make_shared< VertexSizeFirst >(0))
         , m_user_callback(user_callback)
         {
         }
@@ -958,14 +957,14 @@ namespace detail
                 CachedCorrespondenceMapSecondToFirst new_subgraph_2_to_1
                     = CachedCorrespondenceMapSecondToFirst(
                         num_vertices(m_graph2), m_vindex_map2);
-
-                BGL_FORALL_VERTICES_T(vertex1, m_graph1, GraphFirst)
+                
+                for (const auto& vertex1 : boost::make_iterator_range(vertices(m_graph1)))
                 {
                     put(new_subgraph_1_to_2, vertex1,
                         get(correspondence_map_1_to_2, vertex1));
                 }
 
-                BGL_FORALL_VERTICES_T(vertex2, m_graph2, GraphFirst)
+                for (const auto& vertex2 : boost::make_iterator_range(vertices(m_graph2)))
                 {
                     put(new_subgraph_2_to_1, vertex2,
                         get(correspondence_map_2_to_1, vertex2));
@@ -996,8 +995,8 @@ namespace detail
         const GraphFirst& m_graph2;
         const VertexIndexMapFirst m_vindex_map1;
         const VertexIndexMapSecond m_vindex_map2;
-        shared_ptr< SubGraphList > m_subgraphs;
-        shared_ptr< VertexSizeFirst > m_largest_size_so_far;
+        std::shared_ptr< SubGraphList > m_subgraphs;
+        std::shared_ptr< VertexSizeFirst > m_largest_size_so_far;
         SubGraphCallback m_user_callback;
     };
 
@@ -1079,7 +1078,7 @@ void fill_membership_map(const GraphFirst& graph1,
     MembershipMapFirst membership_map1)
 {
 
-    BGL_FORALL_VERTICES_T(vertex1, graph1, GraphFirst)
+    for (const auto& vertex1 : boost::make_iterator_range(vertices(graph1)))
     {
         put(membership_map1, vertex1,
             get(correspondence_map_1_to_2, vertex1)

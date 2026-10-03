@@ -37,7 +37,7 @@ typedef graph_traits< Subgraph >::edge_iterator EdgeIter;
 
 int main(int, char*[])
 {
-    mt19937 gen;
+    mt19937 gen(42);
     for (int t = 0; t < 100; t += 5)
     {
         Subgraph g;

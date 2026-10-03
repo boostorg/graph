@@ -38,7 +38,7 @@ jobs:
         run: cp -r $GITHUB_WORKSPACE/* libs/graph
         working-directory: ../boost-root
       - name: Install deps
-        run: python tools/boostdep/depinst/depinst.py graph
+        run: python tools/boostdep/depinst/depinst.py -I example graph
         working-directory: ../boost-root
       - name: Bootstrap
         run: ./bootstrap.sh
@@ -53,10 +53,10 @@ jobs:
         run: ../../../b2 print_config_info toolset=$TOOLSET cxxstd=${{ matrix.cxxstd }}
         working-directory: ../boost-root/libs/config/test
       - name: Test
-        run: ../../../b2 toolset=$TOOLSET cxxstd=${{ matrix.cxxstd }}
+        run: ../../../b2 toolset=$TOOLSET cxxstd=${{ matrix.cxxstd }} cxxflags="-Wall -Wextra"
         working-directory: ../boost-root/libs/graph/test
   macos:
-    runs-on: macos-latest
+    runs-on: macos-15
     strategy:
       fail-fast: false
       matrix:
@@ -71,6 +71,8 @@ jobs:
           commit-filter: '[skip ci];[ci skip];[CI SKIP];[SKIP CI];***CI SKIP***;***SKIP CI***;[windows];[Windows];[WINDOWS];[linux];[Linux];[LINUX]'
           commit-filter-separator: ';'
           fail-fast: true
+      - name: Print pinned AppleClang version
+        run: clang++ --version
       - name: Checkout main boost
         run: git clone -b develop --depth 1 https://github.com/boostorg/boost.git ../boost-root
       - name: Update tools/boostdep
@@ -80,7 +82,7 @@ jobs:
         run: cp -r $GITHUB_WORKSPACE/* libs/graph
         working-directory: ../boost-root
       - name: Install deps
-        run: python tools/boostdep/depinst/depinst.py graph
+        run: python tools/boostdep/depinst/depinst.py -I example graph
         working-directory: ../boost-root
       - name: Bootstrap
         run: ./bootstrap.sh
@@ -92,7 +94,7 @@ jobs:
         run: ../../../b2 print_config_info toolset=${{ matrix.toolset }} cxxstd=${{ matrix.cxxstd }}
         working-directory: ../boost-root/libs/config/test
       - name: Test
-        run: ../../../b2 toolset=${{ matrix.toolset }} cxxstd=${{ matrix.cxxstd }} define=CI_SUPPRESS_KNOWN_ISSUES
+        run: ../../../b2 toolset=${{ matrix.toolset }} cxxstd=${{ matrix.cxxstd }} define=CI_SUPPRESS_KNOWN_ISSUES cxxflags="-Wall -Wextra"
         working-directory: ../boost-root/libs/graph/test
   windows_msvc_14_3:
     runs-on: windows-2022
@@ -121,7 +123,7 @@ jobs:
         run: xcopy /s /e /q %GITHUB_WORKSPACE% libs\graph
         working-directory: ../boost-root
       - name: Install deps
-        run: python tools/boostdep/depinst/depinst.py graph
+        run: python tools/boostdep/depinst/depinst.py -I example graph
         working-directory: ../boost-root
       - name: Bootstrap
         run: bootstrap

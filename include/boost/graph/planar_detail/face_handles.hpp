@@ -11,7 +11,7 @@
 
 #include <list>
 #include <boost/graph/graph_traits.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 // A "face handle" is an optimization meant to serve two purposes in
 // the implementation of the Boyer-Myrvold planarity test: (1) it holds
@@ -74,7 +74,7 @@ namespace graph
 
         template < typename DataType > struct lazy_list_node
         {
-            typedef shared_ptr< lazy_list_node< DataType > > ptr_t;
+            using ptr_t = std::shared_ptr< lazy_list_node< DataType > >;
 
             lazy_list_node(const DataType& data)
             : m_reversed(false), m_data(data), m_has_data(true)
@@ -92,8 +92,8 @@ namespace graph
             bool m_reversed;
             DataType m_data;
             bool m_has_data;
-            shared_ptr< lazy_list_node > m_left_child;
-            shared_ptr< lazy_list_node > m_right_child;
+            std::shared_ptr< lazy_list_node > m_left_child;
+            std::shared_ptr< lazy_list_node > m_right_child;
         };
 
         template < typename StoreOldHandlesPolicy, typename Vertex,
@@ -136,7 +136,7 @@ namespace graph
         struct edge_list_storage< recursive_lazy_list, Edge >
         {
             typedef lazy_list_node< Edge > node_type;
-            typedef shared_ptr< node_type > type;
+            using type = std::shared_ptr< node_type >;
             type value;
 
             void push_back(Edge e)
@@ -443,7 +443,7 @@ namespace graph
 
             void store_old_face_handles_dispatch(no_old_handles) {}
 
-            boost::shared_ptr< impl_t > pimpl;
+            std::shared_ptr< impl_t > pimpl;
         };
 
     } /* namespace detail */

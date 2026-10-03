@@ -10,7 +10,11 @@
 #define __BOYER_MYRVOLD_PLANAR_TEST_HPP__
 
 #include <boost/graph/planar_detail/boyer_myrvold_impl.hpp>
-#include <boost/parameter.hpp>
+#include <boost/parameter/binding.hpp>
+#include <boost/parameter/keyword.hpp>
+#include <boost/parameter/parameters.hpp>
+#include <boost/parameter/required.hpp>
+#include <boost/parameter/value_type.hpp>
 #include <boost/type_traits.hpp>
 #include <boost/mpl/bool.hpp>
 

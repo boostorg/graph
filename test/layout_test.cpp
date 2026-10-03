@@ -230,7 +230,7 @@ template < typename Graph > void test_cube(Graph*)
 
     dump_graph_layout("cube", g, get(vertex_position, g));
 
-    minstd_rand gen;
+    minstd_rand gen(42);
     typedef square_topology<> Topology;
     Topology topology(gen, 50.0);
     std::vector< Topology::point_difference_type > displacements(
@@ -291,7 +291,7 @@ template < typename Graph > void test_triangular(Graph*)
     std::cerr << std::endl;
 
     typedef square_topology<> Topology;
-    minstd_rand gen;
+    minstd_rand gen(42);
     Topology topology(gen, 50.0);
     Topology::point_type origin;
     origin[0] = origin[1] = 50.0;
@@ -371,7 +371,7 @@ template < typename Graph > void test_disconnected(Graph*)
         kamada_kawai_done());
     BOOST_TEST(!ok);
 
-    minstd_rand gen;
+    minstd_rand gen(42);
     rectangle_topology<> rect_top(gen, -25, -25, 25, 25);
     random_graph_layout(g, get(vertex_position, g), rect_top);
 

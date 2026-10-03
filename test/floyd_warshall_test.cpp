@@ -28,7 +28,7 @@ template < typename T > inline const T& my_min(const T& x, const T& y)
 
 template < typename Graph > bool acceptance_test(Graph& g, int vec, int e)
 {
-    boost::minstd_rand ran(vec);
+    boost::minstd_rand ran(42);
 
     {
         typename boost::property_map< Graph, boost::vertex_name_t >::type index
@@ -226,7 +226,7 @@ template < typename Graph > bool acceptance_test(Graph& g, int vec, int e)
 
 template < typename Graph > bool acceptance_test2(Graph& g, int vec, int e)
 {
-    boost::minstd_rand ran(vec);
+    boost::minstd_rand ran(42);
 
     {
 

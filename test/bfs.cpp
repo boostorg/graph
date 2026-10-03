@@ -134,7 +134,7 @@ template < class Graph > struct bfs_test
         typename Traits::edges_size_type j;
         typename Traits::vertex_iterator ui, ui_end;
 
-        boost::mt19937 gen;
+        boost::mt19937 gen(42);
 
         for (i = 0; i < max_V; ++i)
             for (j = 0; j < i * i; ++j)

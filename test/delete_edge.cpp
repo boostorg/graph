@@ -14,7 +14,7 @@
 
 #include <boost/core/lightweight_test.hpp>
 
-int main(int argc, char* argv[])
+int main()
 {
     typedef int Vertex;
     typedef int Edge;

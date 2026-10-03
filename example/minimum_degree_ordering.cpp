@@ -48,17 +48,17 @@ struct harwell_boeing
         // Never called:
         // readHB_info(filename, &M, &N, &nonzeros, &Type, &Nrhs);
         colptr = (int*)malloc((N + 1) * sizeof(int));
-        if (colptr == NULL)
+        if (colptr == nullptr)
             terminate("Insufficient memory for colptr.\n");
         rowind = (int*)malloc(nonzeros * sizeof(int));
-        if (rowind == NULL)
+        if (rowind == nullptr)
             terminate("Insufficient memory for rowind.\n");
 
         if (Type[0] == 'C')
         {
             isComplex = true;
             val = (double*)malloc(nonzeros * sizeof(double) * 2);
-            if (val == NULL)
+            if (val == nullptr)
                 terminate("Insufficient memory for val.\n");
         }
         else
@@ -66,7 +66,7 @@ struct harwell_boeing
             if (Type[0] != 'P')
             {
                 val = (double*)malloc(nonzeros * sizeof(double));
-                if (val == NULL)
+                if (val == nullptr)
                     terminate("Insufficient memory for val.\n");
             }
         }
