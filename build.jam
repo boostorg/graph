@@ -6,7 +6,6 @@
 require-b2 5.2 ;
 
 constant boost_dependencies :
-    /boost/algorithm//boost_algorithm
     /boost/any//boost_any
     /boost/array//boost_array
     /boost/assert//boost_assert
