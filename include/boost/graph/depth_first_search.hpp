@@ -19,6 +19,7 @@
 #include <boost/graph/properties.hpp>
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/named_function_params.hpp>
+#include <boost/graph/detail/visitor_wrapper.hpp>
 #include <boost/ref.hpp>
 #include <boost/optional.hpp>
 #include <boost/concept/assert.hpp>
@@ -101,6 +102,9 @@ namespace detail
     template < typename E, typename G, typename Vis >
     void call_finish_edge(Vis& vis, E e, const G& g)
     { // Only call if the visitor has a callable finish_edge(e, g)
+        static_assert(
+            !::boost::graph::detail::is_reference_wrapper< Vis >::value,
+            "unwrap the visitor before probing finish_edge");
         do_call_finish_edge< has_finish_edge< Vis, E, G >::value >::
             call_finish_edge(vis, e, g);
     }
@@ -269,23 +273,27 @@ void depth_first_search(const VertexListGraph& g, DFSVisitor vis,
     typename graph_traits< VertexListGraph >::vertex_descriptor start_vertex)
 {
     typedef typename graph_traits< VertexListGraph >::vertex_descriptor Vertex;
-    BOOST_CONCEPT_ASSERT((DFSVisitorConcept< DFSVisitor, VertexListGraph >));
+    using visitor_type
+        = typename ::boost::graph::detail::unwrap_visitor< DFSVisitor >::type;
+    BOOST_CONCEPT_ASSERT((DFSVisitorConcept< visitor_type, VertexListGraph >));
     typedef typename property_traits< ColorMap >::value_type ColorValue;
     typedef color_traits< ColorValue > Color;
+
+    auto& vis_ref = ::boost::graph::detail::deref_visitor(vis);
 
     typename graph_traits< VertexListGraph >::vertex_iterator ui, ui_end;
     for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
     {
         Vertex u = *ui;
         put(color, u, Color::white());
-        vis.initialize_vertex(u, g);
+        vis_ref.initialize_vertex(u, g);
     }
 
     if (start_vertex != detail::get_default_starting_vertex(g))
     {
-        vis.start_vertex(start_vertex, g);
+        vis_ref.start_vertex(start_vertex, g);
         detail::depth_first_visit_impl(
-            g, start_vertex, vis, color, detail::nontruth2());
+            g, start_vertex, vis_ref, color, detail::nontruth2());
     }
 
     for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
@@ -294,9 +302,9 @@ void depth_first_search(const VertexListGraph& g, DFSVisitor vis,
         ColorValue u_color = get(color, u);
         if (u_color == Color::white())
         {
-            vis.start_vertex(u, g);
+            vis_ref.start_vertex(u, g);
             detail::depth_first_visit_impl(
-                g, u, vis, color, detail::nontruth2());
+                g, u, vis_ref, color, detail::nontruth2());
         }
     }
 }
@@ -404,8 +412,9 @@ void depth_first_visit(const IncidenceGraph& g,
     typename graph_traits< IncidenceGraph >::vertex_descriptor u,
     DFSVisitor vis, ColorMap color)
 {
-    vis.start_vertex(u, g);
-    detail::depth_first_visit_impl(g, u, vis, color, detail::nontruth2());
+    auto& vis_ref = ::boost::graph::detail::deref_visitor(vis);
+    vis_ref.start_vertex(u, g);
+    detail::depth_first_visit_impl(g, u, vis_ref, color, detail::nontruth2());
 }
 
 template < class IncidenceGraph, class DFSVisitor, class ColorMap,
@@ -414,8 +423,9 @@ void depth_first_visit(const IncidenceGraph& g,
     typename graph_traits< IncidenceGraph >::vertex_descriptor u,
     DFSVisitor vis, ColorMap color, TerminatorFunc func = TerminatorFunc())
 {
-    vis.start_vertex(u, g);
-    detail::depth_first_visit_impl(g, u, vis, color, func);
+    auto& vis_ref = ::boost::graph::detail::deref_visitor(vis);
+    vis_ref.start_vertex(u, g);
+    detail::depth_first_visit_impl(g, u, vis_ref, color, func);
 }
 } // namespace boost
 
