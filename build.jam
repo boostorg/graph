@@ -28,7 +28,6 @@ constant boost_dependencies :
     /boost/property_map//boost_property_map
     /boost/random//boost_random
     /boost/range//boost_range
-    /boost/serialization//boost_serialization
     /boost/throw_exception//boost_throw_exception
     /boost/tuple//boost_tuple
     /boost/type_traits//boost_type_traits
