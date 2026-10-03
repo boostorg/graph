@@ -17,7 +17,6 @@ target_include_directories(boost_graph PUBLIC include)
 
 target_link_libraries(boost_graph
   PUBLIC
-    Boost::algorithm
     Boost::any
     Boost::array
     Boost::assert
