@@ -38,6 +38,11 @@ include::example$algorithms/traversal/bfs_shortest_path.cpp[]
 include::example$algorithms/traversal/bfs_shortest_path.txt[]
 ----
 
+== Who uses it
+
+CGAL, RDKit, FreeCAD, Krita, pgRouting, SageMath, OMPL and the CMS experiment software at CERN all build on the BGL.
+See xref:users.adoc[who uses the BGL] for the full list and what the graph part does in each.
+
 == Get started
 
 **xref:graph_classes/overview.adoc[Representing your Graph.]** 
