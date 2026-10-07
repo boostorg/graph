@@ -25,7 +25,6 @@
 #include <type_traits>
 #include <boost/type_traits/is_convertible.hpp>
 
-#include <iostream>
 #include <boost/assert.hpp>
 
 namespace boost
