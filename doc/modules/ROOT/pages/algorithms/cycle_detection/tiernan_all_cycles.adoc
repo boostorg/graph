@@ -42,6 +42,10 @@ void tiernan_all_cycles(const Graph& g, Visitor vis,
 | `Visitor vis`
 | Called with `vis.cycle(path, g)` for each cycle found.
   `path` is a `const std::vector<vertex_descriptor>&`.
+  The visitor is taken by value, so the algorithm works on a copy. To keep
+  state, give the visitor ordinary data members and pass it with `std::ref`.
+  The algorithm then operates on the referenced object and its state survives
+  the call.
 
 | IN
 | `std::size_t minlen`
