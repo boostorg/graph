@@ -639,7 +639,7 @@ A type modelling the DominanceFunction concept must return `true` if and only if
 [#ResourceConstrainedShortestPathsVisitor]
 == ResourceConstrainedShortestPathsVisitor
 
-This concept defines the visitor interface for `r_c_shortest_paths`. A user can define a type with this interface and pass an object of this type to `r_c_shortest_paths` to perform user-defined actions at the event points of the algorithm. Note that the object is passed by value.
+This concept defines the visitor interface for `r_c_shortest_paths`. A user can define a type with this interface and pass an object of this type to `r_c_shortest_paths` to perform user-defined actions at the event points of the algorithm. The visitor is taken by value, so the algorithm works on a copy. To keep state, give the visitor ordinary data members and pass it with `std::ref`. The algorithm then operates on the referenced object and its state survives the call.
 
 *Refinement of* +
 http://www.boost.org/sgi/stl/DefaultConstructible.html[DefaultConstructible],

@@ -18,6 +18,11 @@
 
 #include <boost/random/linear_congruential.hpp>
 
+#include <boost/core/lightweight_test.hpp>
+
+#include <cstddef>
+#include <functional>
+
 using namespace std;
 using namespace boost;
 
@@ -64,6 +69,43 @@ template < typename Graph > void test()
     bron_kerbosch_all_cliques(g, clique_validator());
 }
 
+// state in a plain data member, so it survives only through std::ref
+struct clique_tally
+{
+    template < typename Clique, typename Graph >
+    void clique(const Clique&, const Graph&)
+    {
+        ++count;
+    }
+    std::size_t count = 0;
+};
+
+void test_stateful_visitor_with_ref()
+{
+    using graph_t = boost::undirected_graph<>;
+    graph_t g;
+    graph_t::vertex_descriptor v0 = g.add_vertex();
+    graph_t::vertex_descriptor v1 = g.add_vertex();
+    graph_t::vertex_descriptor v2 = g.add_vertex();
+    graph_t::vertex_descriptor v3 = g.add_vertex();
+
+    // two triangles sharing an edge, so two maximal cliques
+    g.add_edge(v0, v1);
+    g.add_edge(v0, v2);
+    g.add_edge(v1, v2);
+    g.add_edge(v1, v3);
+    g.add_edge(v2, v3);
+
+    clique_tally tracked;
+    boost::bron_kerbosch_all_cliques(g, std::ref(tracked));
+    BOOST_TEST_EQ(tracked.count, static_cast< std::size_t >(2));
+
+    // by value the caller's visitor is left untouched
+    clique_tally copied;
+    boost::bron_kerbosch_all_cliques(g, copied);
+    BOOST_TEST_EQ(copied.count, static_cast< std::size_t >(0));
+}
+
 int main(int, char*[])
 {
     typedef undirected_graph<> Graph;
@@ -74,4 +116,8 @@ int main(int, char*[])
 
     std::cout << "*** directed ***\n";
     test< DiGraph >();
+
+    test_stateful_visitor_with_ref();
+
+    return boost::report_errors();
 }

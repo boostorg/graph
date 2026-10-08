@@ -13,6 +13,7 @@
 #include <list>
 
 #include <memory>
+#include <boost/graph/detail/visitor_wrapper.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/property_map/property_map.hpp>
@@ -149,6 +150,8 @@ namespace detail
         // to specify the memory management strategy for the labels
         LabelAllocator /*la*/, Visitor vis)
     {
+        auto& vis_ref = ::boost::graph::detail::deref_visitor(vis);
+
         using edge_descriptor = typename graph_traits< Graph >::edge_descriptor;
 
         pareto_optimal_resource_containers.clear();
@@ -212,11 +215,11 @@ namespace detail
         auto b_feasible = true;
 
         while (!unprocessed_labels.empty()
-            && vis.on_enter_loop(unprocessed_labels, g))
+            && vis_ref.on_enter_loop(unprocessed_labels, g))
         {
             sp_label_type cur_label = unprocessed_labels.top();
             unprocessed_labels.pop();
-            vis.on_label_popped(*cur_label, g);
+            vis_ref.on_label_popped(*cur_label, g);
             // an Splabel object in unprocessed_labels and the respective
             // Splabel object in the respective list<Splabel> of
             // vec_vertex_labels share their embedded r_c_shortest_paths_label
@@ -346,7 +349,7 @@ namespace detail
             if (!cur_label->b_is_dominated)
             {
                 cur_label->b_is_processed = true;
-                vis.on_label_not_dominated(*cur_label, g);
+                vis_ref.on_label_not_dominated(*cur_label, g);
                 auto cur_vertex = cur_label->resident_vertex;
                 typename graph_traits< Graph >::out_edge_iterator oei, oei_end;
                 for (boost::tie(oei, oei_end) = out_edges(cur_vertex, g);
@@ -365,12 +368,12 @@ namespace detail
 
                     if (!b_feasible)
                     {
-                        vis.on_label_not_feasible(*new_label, g);
+                        vis_ref.on_label_not_feasible(*new_label, g);
                         new_label.reset();
                     }
                     else
                     {
-                        vis.on_label_feasible(*new_label, g);
+                        vis_ref.on_label_feasible(*new_label, g);
                         vec_vertex_labels[new_label->resident_vertex].push_back(
                             new_label);
                         unprocessed_labels.push(new_label);
@@ -379,7 +382,7 @@ namespace detail
             }
             else
             {
-                vis.on_label_dominated(*cur_label, g);
+                vis_ref.on_label_dominated(*cur_label, g);
                 cur_label.reset();
             }
         }

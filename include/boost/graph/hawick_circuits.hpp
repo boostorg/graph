@@ -9,6 +9,7 @@
 
 #include <algorithm>
 #include <boost/assert.hpp>
+#include <boost/graph/detail/visitor_wrapper.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/one_bit_color_map.hpp>
 #include <boost/graph/properties.hpp>
@@ -88,16 +89,6 @@ namespace hawick_circuits_detail
     {
         return std::find(boost::begin(c), boost::end(c), v) != boost::end(c);
     }
-
-    template < typename T >
-    struct unwrap_reference_wrapper {
-        typedef T type;
-    };
-
-    template < typename T >
-    struct unwrap_reference_wrapper<std::reference_wrapper<T> > {
-        typedef T& type;
-    };
 
     /*!
      * @internal
@@ -324,7 +315,7 @@ namespace hawick_circuits_detail
 
         typedef std::vector< Vertex > Stack;
         typedef std::vector< std::vector< Vertex > > ClosedMatrix;
-        typedef typename unwrap_reference_wrapper<Visitor>::type VisitorNoRef;
+        using VisitorNoRef = ::boost::graph::detail::unwrap_visitor_t< Visitor >;
 
         typedef hawick_circuits_from< Graph, VisitorNoRef, VertexIndexMap, Stack,
             ClosedMatrix, GetAdjacentVertices >
