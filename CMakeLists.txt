@@ -39,7 +39,6 @@ target_link_libraries(boost_graph
     Boost::property_map
     Boost::random
     Boost::range
-    Boost::serialization
     Boost::throw_exception
     Boost::tuple
     Boost::type_traits

@@ -99,6 +99,6 @@ target_link_libraries(my_app PRIVATE Boost::graph)
 
 Most of BGL is header-only. Linking `Boost::graph` is only required for the GraphViz and GraphML parsers.
 
-## Building from source
+## Contributing
 
-For working on BGL itself (building Boost from source, running the test suite), see [CONTRIBUTING.md](CONTRIBUTING.md).
+Bug fixes, new algorithms, documentation and performance work are all welcome. [CONTRIBUTING.md](CONTRIBUTING.md) covers building Boost from source, running the test suite, and the pull request process.
