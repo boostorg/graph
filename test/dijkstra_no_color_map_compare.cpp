@@ -27,6 +27,11 @@
 #include <boost/core/lightweight_test.hpp>
 #include <boost/graph/iteration_macros.hpp>
 
+#include <cstddef>
+#include <functional>
+#include <limits>
+#include <vector>
+
 #define INITIALIZE_VERTEX 0
 #define DISCOVER_VERTEX 1
 #define EXAMINE_VERTEX 2
@@ -72,6 +77,51 @@ template < typename Graph > void run_dijkstra_test(const Graph& graph)
     BOOST_TEST(std::equal(default_vertex_double_map.begin(),
         default_vertex_double_map.end(),
         no_color_map_vertex_double_map.begin()));
+}
+
+// state in a plain data member, so it survives only through std::ref
+struct discover_tally : boost::dijkstra_visitor<>
+{
+    template < class Vertex, class Graph > void discover_vertex(Vertex, Graph&)
+    {
+        ++count;
+    }
+    std::size_t count = 0;
+};
+
+void test_stateful_visitor_with_ref()
+{
+    using graph_t = boost::adjacency_list< boost::vecS, boost::vecS,
+        boost::directedS, boost::no_property,
+        boost::property< boost::edge_weight_t, int > >;
+    graph_t g(3);
+    boost::add_edge(0, 1, 1, g);
+    boost::add_edge(1, 2, 1, g);
+
+    std::vector< int > distance(boost::num_vertices(g));
+    std::vector< std::size_t > parent(boost::num_vertices(g));
+
+    auto index_map = boost::get(boost::vertex_index, g);
+    auto distance_map
+        = boost::make_iterator_property_map(distance.begin(), index_map);
+    auto parent_map
+        = boost::make_iterator_property_map(parent.begin(), index_map);
+
+    discover_tally tracked;
+    boost::dijkstra_shortest_paths_no_color_map(g, boost::vertex(0, g),
+        parent_map, distance_map, boost::get(boost::edge_weight, g), index_map,
+        std::less< int >(), boost::closed_plus< int >(),
+        (std::numeric_limits< int >::max)(), 0, std::ref(tracked));
+    BOOST_TEST(tracked.count > 0u);
+    BOOST_TEST_EQ(distance[2], 2);
+
+    // by value the caller's visitor is left untouched
+    discover_tally copied;
+    boost::dijkstra_shortest_paths_no_color_map(g, boost::vertex(0, g),
+        parent_map, distance_map, boost::get(boost::edge_weight, g), index_map,
+        std::less< int >(), boost::closed_plus< int >(),
+        (std::numeric_limits< int >::max)(), 0, copied);
+    BOOST_TEST_EQ(copied.count, static_cast< std::size_t >(0));
 }
 
 int main(int argc, char* argv[])
@@ -121,6 +171,8 @@ int main(int argc, char* argv[])
               << " edges " << std::endl;
 
     run_dijkstra_test(graph);
+
+    test_stateful_visitor_with_ref();
 
     return boost::report_errors();
 }

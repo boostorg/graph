@@ -23,6 +23,7 @@
 
 #include <boost/config.hpp>
 #include <boost/graph/graph_traits.hpp>
+#include <boost/graph/detail/visitor_wrapper.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/relax.hpp>
@@ -101,6 +102,8 @@ bool bellman_ford_shortest_paths(EdgeListGraph& g, Size N, WeightMap weight,
     BOOST_CONCEPT_ASSERT((ReadWritePropertyMapConcept< DistanceMap, Vertex >));
     BOOST_CONCEPT_ASSERT((ReadablePropertyMapConcept< WeightMap, Edge >));
 
+    auto& v_ref = ::boost::graph::detail::deref_visitor(v);
+
     typename GTraits::edge_iterator i, end;
 
     for (Size k = 0; k < N; ++k)
@@ -108,14 +111,14 @@ bool bellman_ford_shortest_paths(EdgeListGraph& g, Size N, WeightMap weight,
         bool at_least_one_edge_relaxed = false;
         for (boost::tie(i, end) = edges(g); i != end; ++i)
         {
-            v.examine_edge(*i, g);
+            v_ref.examine_edge(*i, g);
             if (relax(*i, g, weight, pred, distance, combine, compare))
             {
                 at_least_one_edge_relaxed = true;
-                v.edge_relaxed(*i, g);
+                v_ref.edge_relaxed(*i, g);
             }
             else
-                v.edge_not_relaxed(*i, g);
+                v_ref.edge_not_relaxed(*i, g);
         }
         if (!at_least_one_edge_relaxed)
             break;
@@ -125,11 +128,11 @@ bool bellman_ford_shortest_paths(EdgeListGraph& g, Size N, WeightMap weight,
         if (compare(combine(get(distance, source(*i, g)), get(weight, *i)),
                 get(distance, target(*i, g))))
         {
-            v.edge_not_minimized(*i, g);
+            v_ref.edge_not_minimized(*i, g);
             return false;
         }
         else
-            v.edge_minimized(*i, g);
+            v_ref.edge_minimized(*i, g);
 
     return true;
 }

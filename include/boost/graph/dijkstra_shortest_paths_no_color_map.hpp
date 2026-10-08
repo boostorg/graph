@@ -14,6 +14,7 @@
 #include <boost/pending/indirect_cmp.hpp>
 #include <boost/graph/relax.hpp>
 #include <boost/graph/detail/d_ary_heap.hpp>
+#include <boost/graph/detail/visitor_wrapper.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/throw_exception.hpp>
 #include <boost/graph/iteration_macros.hpp>
@@ -58,18 +59,20 @@ void dijkstra_shortest_paths_no_color_map_no_init(const Graph& graph,
         graph, index_map, index_in_heap_map_holder);
     VertexQueue vertex_queue(distance_map, index_in_heap, distance_compare);
 
+    auto& visitor_ref = ::boost::graph::detail::deref_visitor(visitor);
+
     // Add vertex to the queue
     vertex_queue.push(start_vertex);
 
     // Starting vertex will always be the first discovered vertex
-    visitor.discover_vertex(start_vertex, graph);
+    visitor_ref.discover_vertex(start_vertex, graph);
 
     while (!vertex_queue.empty())
     {
         Vertex min_vertex = vertex_queue.top();
         vertex_queue.pop();
 
-        visitor.examine_vertex(min_vertex, graph);
+        visitor_ref.examine_vertex(min_vertex, graph);
 
         // Check if any other vertices can be reached
         Distance min_vertex_distance = get(distance_map, min_vertex);
@@ -83,7 +86,7 @@ void dijkstra_shortest_paths_no_color_map_no_init(const Graph& graph,
         // Examine neighbors of min_vertex
         BGL_FORALL_OUTEDGES_T(min_vertex, current_edge, graph, Graph)
         {
-            visitor.examine_edge(current_edge, graph);
+            visitor_ref.examine_edge(current_edge, graph);
 
             // Check if the edge has a negative weight
             if (distance_compare(get(weight_map, current_edge), distance_zero))
@@ -105,10 +108,10 @@ void dijkstra_shortest_paths_no_color_map_no_init(const Graph& graph,
 
             if (was_edge_relaxed)
             {
-                visitor.edge_relaxed(current_edge, graph);
+                visitor_ref.edge_relaxed(current_edge, graph);
                 if (is_neighbor_undiscovered)
                 {
-                    visitor.discover_vertex(neighbor_vertex, graph);
+                    visitor_ref.discover_vertex(neighbor_vertex, graph);
                     vertex_queue.push(neighbor_vertex);
                 }
                 else
@@ -118,12 +121,12 @@ void dijkstra_shortest_paths_no_color_map_no_init(const Graph& graph,
             }
             else
             {
-                visitor.edge_not_relaxed(current_edge, graph);
+                visitor_ref.edge_not_relaxed(current_edge, graph);
             }
 
         } // end out edge iteration
 
-        visitor.finish_vertex(min_vertex, graph);
+        visitor_ref.finish_vertex(min_vertex, graph);
     } // end while queue not empty
 }
 
@@ -141,10 +144,12 @@ void dijkstra_shortest_paths_no_color_map(const Graph& graph,
     DistanceInfinity distance_infinity, DistanceZero distance_zero,
     DijkstraVisitor visitor)
 {
+    auto& visitor_ref = ::boost::graph::detail::deref_visitor(visitor);
+
     // Initialize vertices
     BGL_FORALL_VERTICES_T(current_vertex, graph, Graph)
     {
-        visitor.initialize_vertex(current_vertex, graph);
+        visitor_ref.initialize_vertex(current_vertex, graph);
 
         // Default all distances to infinity
         put(distance_map, current_vertex, distance_infinity);
