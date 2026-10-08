@@ -26,6 +26,7 @@
 #include <boost/graph/overloading.hpp>
 #include <memory>
 #include <boost/graph/detail/d_ary_heap.hpp>
+#include <boost/graph/detail/visitor_wrapper.hpp>
 #include <boost/graph/two_bit_color_map.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/property_map/vector_property_map.hpp>
@@ -97,7 +98,7 @@ public:
     }
 
 private:
-    template < class Edge, class Graph > void tree_edge(Edge u, Graph& g) {}
+    template < class Edge, class Graph > void tree_edge(Edge /*u*/, Graph& /*g*/) {}
 };
 template < class Visitors >
 dijkstra_visitor< Visitors > make_dijkstra_visitor(Visitors vis)
@@ -136,9 +137,9 @@ namespace detail
             bool decreased = relax_target(e, g, m_weight, m_predecessor,
                 m_distance, m_combine, m_compare);
             if (decreased)
-                m_vis.edge_relaxed(e, g);
+                user_vis().edge_relaxed(e, g);
             else
-                m_vis.edge_not_relaxed(e, g);
+                user_vis().edge_not_relaxed(e, g);
         }
         template < class Edge, class Graph > void gray_target(Edge e, Graph& g)
         {
@@ -149,27 +150,27 @@ namespace detail
             if (decreased)
             {
                 dijkstra_queue_update(m_Q, target(e, g), old_distance);
-                m_vis.edge_relaxed(e, g);
+                user_vis().edge_relaxed(e, g);
             }
             else
-                m_vis.edge_not_relaxed(e, g);
+                user_vis().edge_not_relaxed(e, g);
         }
 
         template < class Vertex, class Graph >
         void initialize_vertex(Vertex u, Graph& g)
         {
-            m_vis.initialize_vertex(u, g);
+            user_vis().initialize_vertex(u, g);
         }
         template < class Edge, class Graph > void non_tree_edge(Edge, Graph&) {}
         template < class Vertex, class Graph >
         void discover_vertex(Vertex u, Graph& g)
         {
-            m_vis.discover_vertex(u, g);
+            user_vis().discover_vertex(u, g);
         }
         template < class Vertex, class Graph >
         void examine_vertex(Vertex u, Graph& g)
         {
-            m_vis.examine_vertex(u, g);
+            user_vis().examine_vertex(u, g);
         }
         template < class Edge, class Graph > void examine_edge(Edge e, Graph& g)
         {
@@ -204,13 +205,18 @@ namespace detail
                 boost::throw_exception(negative_edge());
             // End of test for negative-weight edges.
 
-            m_vis.examine_edge(e, g);
+            user_vis().examine_edge(e, g);
         }
         template < class Edge, class Graph > void black_target(Edge, Graph&) {}
         template < class Vertex, class Graph >
         void finish_vertex(Vertex u, Graph& g)
         {
-            m_vis.finish_vertex(u, g);
+            user_vis().finish_vertex(u, g);
+        }
+
+        auto& user_vis()
+        {
+            return ::boost::graph::detail::deref_visitor(m_vis);
         }
 
         UniformCostVisitor m_vis;
@@ -250,8 +256,8 @@ namespace detail
     struct vertex_property_map_generator_helper< Graph, IndexMap, Value, false >
     {
         typedef boost::vector_property_map< Value, IndexMap > type;
-        static type build(const Graph& g, const IndexMap& index,
-            std::unique_ptr< Value[] >& array_holder)
+        static type build(const Graph& /*g*/, const IndexMap& index,
+            std::unique_ptr< Value[] >& /*array_holder*/)
         {
             return boost::make_vector_property_map< Value >(index);
         }
@@ -299,7 +305,7 @@ namespace detail
         typedef boost::vector_property_map< boost::two_bit_color_type,
             IndexMap >
             type;
-        static type build(const Graph& g, const IndexMap& index)
+        static type build(const Graph& /*g*/, const IndexMap& index)
         {
             return boost::make_vector_property_map< boost::two_bit_color_type >(
                 index);
@@ -448,10 +454,12 @@ inline void dijkstra_shortest_paths(const VertexListGraph& g,
 {
     typedef typename property_traits< ColorMap >::value_type ColorValue;
     typedef color_traits< ColorValue > Color;
+    auto& vis_ref = ::boost::graph::detail::deref_visitor(vis);
+
     typename graph_traits< VertexListGraph >::vertex_iterator ui, ui_end;
     for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
     {
-        vis.initialize_vertex(*ui, g);
+        vis_ref.initialize_vertex(*ui, g);
         put(distance, *ui, inf);
         put(predecessor, *ui, *ui);
         put(color, *ui, Color::white());
