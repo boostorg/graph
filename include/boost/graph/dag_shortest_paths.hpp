@@ -10,6 +10,7 @@
 #ifndef BOOST_GRAPH_DAG_SHORTEST_PATHS_HPP
 #define BOOST_GRAPH_DAG_SHORTEST_PATHS_HPP
 
+#include <boost/graph/detail/visitor_wrapper.hpp>
 #include <boost/graph/topological_sort.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 
@@ -48,25 +49,27 @@ inline void dag_shortest_paths(const VertexListGraph& g,
         put(pred, *ui, *ui);
     }
 
+    auto& vis_ref = ::boost::graph::detail::deref_visitor(vis);
+
     put(distance, s, zero);
-    vis.discover_vertex(s, g);
+    vis_ref.discover_vertex(s, g);
     typename std::vector< Vertex >::reverse_iterator i;
     for (i = rev_topo_order.rbegin(); i != rev_topo_order.rend(); ++i)
     {
         Vertex u = *i;
-        vis.examine_vertex(u, g);
+        vis_ref.examine_vertex(u, g);
         typename graph_traits< VertexListGraph >::out_edge_iterator e, e_end;
         for (boost::tie(e, e_end) = out_edges(u, g); e != e_end; ++e)
         {
-            vis.discover_vertex(target(*e, g), g);
+            vis_ref.discover_vertex(target(*e, g), g);
             bool decreased
                 = relax(*e, g, weight, pred, distance, combine, compare);
             if (decreased)
-                vis.edge_relaxed(*e, g);
+                vis_ref.edge_relaxed(*e, g);
             else
-                vis.edge_not_relaxed(*e, g);
+                vis_ref.edge_not_relaxed(*e, g);
         }
-        vis.finish_vertex(u, g);
+        vis_ref.finish_vertex(u, g);
     }
 }
 
