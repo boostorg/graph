@@ -89,6 +89,23 @@ struct discover_tally : boost::dijkstra_visitor<>
     std::size_t count = 0;
 };
 
+// the events the dijkstra_shortest_paths tests below count
+struct event_tally : boost::dijkstra_visitor<>
+{
+    template < class Vertex, class Graph > void examine_vertex(Vertex, Graph&)
+    {
+        ++examined;
+    }
+
+    template < class Edge, class Graph > void edge_not_relaxed(Edge, Graph&)
+    {
+        ++not_relaxed;
+    }
+
+    std::size_t examined = 0;
+    std::size_t not_relaxed = 0;
+};
+
 void test_stateful_visitor_with_ref()
 {
     using graph_t = boost::adjacency_list< boost::vecS, boost::vecS,
@@ -122,6 +139,82 @@ void test_stateful_visitor_with_ref()
         std::less< int >(), boost::closed_plus< int >(),
         (std::numeric_limits< int >::max)(), 0, copied);
     BOOST_TEST_EQ(copied.count, static_cast< std::size_t >(0));
+}
+
+void test_dijkstra_stateful_visitor_with_ref()
+{
+    using graph_t = boost::adjacency_list< boost::vecS, boost::vecS,
+        boost::undirectedS, boost::no_property,
+        boost::property< boost::edge_weight_t, int > >;
+    graph_t g(3);
+    boost::add_edge(0, 1, 1, g);
+    boost::add_edge(1, 2, 1, g);
+
+    std::vector< std::size_t > parent(boost::num_vertices(g));
+    std::vector< int > distance(boost::num_vertices(g));
+    std::vector< boost::default_color_type > color(boost::num_vertices(g));
+
+    auto index_map = boost::get(boost::vertex_index, g);
+    auto parent_map
+        = boost::make_iterator_property_map(parent.begin(), index_map);
+    auto distance_map
+        = boost::make_iterator_property_map(distance.begin(), index_map);
+    auto color_map
+        = boost::make_iterator_property_map(color.begin(), index_map);
+
+    // the algorithm examines every reachable vertex once
+    event_tally tracked;
+    boost::dijkstra_shortest_paths(g, 0, parent_map, distance_map,
+        boost::get(boost::edge_weight, g), index_map, std::less< int >(),
+        boost::closed_plus< int >(), (std::numeric_limits< int >::max)(), 0,
+        std::ref(tracked), color_map);
+    BOOST_TEST_EQ(tracked.examined, boost::num_vertices(g));
+    BOOST_TEST_EQ(distance[2], 2);
+
+    // by value the caller's visitor is left untouched
+    event_tally copied;
+    boost::dijkstra_shortest_paths(g, 0, parent_map, distance_map,
+        boost::get(boost::edge_weight, g), index_map, std::less< int >(),
+        boost::closed_plus< int >(), (std::numeric_limits< int >::max)(), 0,
+        copied, color_map);
+    BOOST_TEST_EQ(copied.examined, static_cast< std::size_t >(0));
+}
+
+void test_edge_not_relaxed_on_tree_edge()
+{
+    using graph_t = boost::adjacency_list< boost::vecS, boost::vecS,
+        boost::directedS, boost::no_property,
+        boost::property< boost::edge_weight_t, int > >;
+
+    // two hops of 60 overshoot the infinity below, so the second hop never
+    // improves on it and vertex 2 stays unreached
+    graph_t g(3);
+    boost::add_edge(0, 1, 60, g);
+    boost::add_edge(1, 2, 60, g);
+
+    const int infinity = 100;
+
+    std::vector< std::size_t > parent(boost::num_vertices(g));
+    std::vector< int > distance(boost::num_vertices(g));
+    std::vector< boost::default_color_type > color(boost::num_vertices(g));
+
+    auto index_map = boost::get(boost::vertex_index, g);
+    auto parent_map
+        = boost::make_iterator_property_map(parent.begin(), index_map);
+    auto distance_map
+        = boost::make_iterator_property_map(distance.begin(), index_map);
+    auto color_map
+        = boost::make_iterator_property_map(color.begin(), index_map);
+
+    event_tally tracked;
+    boost::dijkstra_shortest_paths(g, 0, parent_map, distance_map,
+        boost::get(boost::edge_weight, g), index_map, std::less< int >(),
+        boost::closed_plus< int >(infinity), infinity, 0, std::ref(tracked),
+        color_map);
+
+    BOOST_TEST_EQ(distance[1], 60);
+    BOOST_TEST_EQ(distance[2], infinity);
+    BOOST_TEST_EQ(tracked.not_relaxed, static_cast< std::size_t >(1));
 }
 
 int main(int argc, char* argv[])
@@ -173,6 +266,8 @@ int main(int argc, char* argv[])
     run_dijkstra_test(graph);
 
     test_stateful_visitor_with_ref();
+    test_dijkstra_stateful_visitor_with_ref();
+    test_edge_not_relaxed_on_tree_edge();
 
     return boost::report_errors();
 }

@@ -14,6 +14,9 @@
 #include <boost/graph/astar_search.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/core/lightweight_test.hpp>
+
+#include <cstddef>
+#include <functional>
 #include <utility>
 #include <vector>
 #include <list>
@@ -75,6 +78,209 @@ public:
 private:
     Vertex m_goal;
 };
+
+// state in a plain data member, so it survives only through std::ref
+struct examine_tally : boost::default_astar_visitor
+{
+    template < class Vertex, class Graph > void examine_vertex(Vertex, Graph&)
+    {
+        ++count;
+    }
+    std::size_t count = 0;
+};
+
+// a zero heuristic keeps the search deterministic, A* then behaves like
+// dijkstra and examines every reachable vertex once
+template < class Graph >
+struct zero_heuristic : boost::astar_heuristic< Graph, int >
+{
+    using Vertex = typename boost::graph_traits< Graph >::vertex_descriptor;
+    int operator()(Vertex) { return 0; }
+};
+
+void test_stateful_visitor_with_ref()
+{
+    using graph_t = boost::adjacency_list< boost::vecS, boost::vecS,
+        boost::undirectedS, boost::no_property,
+        boost::property< boost::edge_weight_t, int > >;
+    graph_t g(3);
+    boost::add_edge(0, 1, 1, g);
+    boost::add_edge(1, 2, 1, g);
+
+    std::vector< std::size_t > parent(boost::num_vertices(g));
+    std::vector< int > rank(boost::num_vertices(g));
+    std::vector< int > distance(boost::num_vertices(g));
+    std::vector< boost::default_color_type > color(boost::num_vertices(g));
+
+    auto index_map = boost::get(boost::vertex_index, g);
+    auto parent_map
+        = boost::make_iterator_property_map(parent.begin(), index_map);
+    auto rank_map = boost::make_iterator_property_map(rank.begin(), index_map);
+    auto distance_map
+        = boost::make_iterator_property_map(distance.begin(), index_map);
+    auto color_map
+        = boost::make_iterator_property_map(color.begin(), index_map);
+
+    examine_tally tracked;
+    boost::astar_search(g, 0, zero_heuristic< graph_t >(), std::ref(tracked),
+        parent_map, rank_map, distance_map, boost::get(boost::edge_weight, g),
+        index_map, color_map, std::less< int >(), boost::closed_plus< int >(),
+        (std::numeric_limits< int >::max)(), 0);
+    BOOST_TEST_EQ(tracked.count, boost::num_vertices(g));
+    BOOST_TEST_EQ(distance[2], 2);
+
+    // by value the caller's visitor is left untouched
+    examine_tally copied;
+    boost::astar_search(g, 0, zero_heuristic< graph_t >(), copied, parent_map,
+        rank_map, distance_map, boost::get(boost::edge_weight, g), index_map,
+        color_map, std::less< int >(), boost::closed_plus< int >(),
+        (std::numeric_limits< int >::max)(), 0);
+    BOOST_TEST_EQ(copied.count, static_cast< std::size_t >(0));
+}
+
+// counts the two relaxation outcomes the search can reach on an edge whose
+// target has already been discovered or finished
+struct branch_tally : boost::default_astar_visitor
+{
+    template < class Edge, class Graph > void edge_not_relaxed(Edge, Graph&)
+    {
+        ++not_relaxed;
+    }
+
+    template < class Edge, class Graph > void black_target(Edge, Graph&)
+    {
+        ++reopened;
+    }
+
+    std::size_t not_relaxed = 0;
+    std::size_t reopened = 0;
+};
+
+// an overestimating heuristic, which is what makes A* reopen a vertex it has
+// already finished
+template < class Graph >
+struct inconsistent_heuristic : boost::astar_heuristic< Graph, int >
+{
+    using Vertex = typename boost::graph_traits< Graph >::vertex_descriptor;
+    int operator()(Vertex u) { return u == static_cast< Vertex >(2) ? 100 : 0; }
+};
+
+void test_edge_not_relaxed_on_discovered_target()
+{
+    using graph_t = boost::adjacency_list< boost::vecS, boost::vecS,
+        boost::undirectedS, boost::no_property,
+        boost::property< boost::edge_weight_t, int > >;
+
+    // the long 1 to 2 edge never improves either endpoint
+    graph_t g(3);
+    boost::add_edge(0, 1, 1, g);
+    boost::add_edge(0, 2, 1, g);
+    boost::add_edge(1, 2, 5, g);
+
+    std::vector< std::size_t > parent(boost::num_vertices(g));
+    std::vector< int > rank(boost::num_vertices(g));
+    std::vector< int > distance(boost::num_vertices(g));
+    std::vector< boost::default_color_type > color(boost::num_vertices(g));
+
+    auto index_map = boost::get(boost::vertex_index, g);
+    auto parent_map
+        = boost::make_iterator_property_map(parent.begin(), index_map);
+    auto rank_map = boost::make_iterator_property_map(rank.begin(), index_map);
+    auto distance_map
+        = boost::make_iterator_property_map(distance.begin(), index_map);
+    auto color_map
+        = boost::make_iterator_property_map(color.begin(), index_map);
+
+    branch_tally tracked;
+    boost::astar_search(g, 0, zero_heuristic< graph_t >(), std::ref(tracked),
+        parent_map, rank_map, distance_map, boost::get(boost::edge_weight, g),
+        index_map, color_map, std::less< int >(), boost::closed_plus< int >(),
+        (std::numeric_limits< int >::max)(), 0);
+
+    BOOST_TEST_EQ(distance[1], 1);
+    BOOST_TEST_EQ(distance[2], 1);
+    BOOST_TEST(tracked.not_relaxed > 0u);
+    BOOST_TEST_EQ(tracked.reopened, static_cast< std::size_t >(0));
+}
+
+void test_black_target_reopens_finished_vertex()
+{
+    using graph_t = boost::adjacency_list< boost::vecS, boost::vecS,
+        boost::directedS, boost::no_property,
+        boost::property< boost::edge_weight_t, int > >;
+
+    // vertex 3 is finished through 1 at distance 11, then the detour through
+    // the penalised vertex 2 offers it at distance 3
+    graph_t g(4);
+    boost::add_edge(0, 1, 1, g);
+    boost::add_edge(1, 3, 10, g);
+    boost::add_edge(0, 2, 2, g);
+    boost::add_edge(2, 3, 1, g);
+
+    std::vector< std::size_t > parent(boost::num_vertices(g));
+    std::vector< int > rank(boost::num_vertices(g));
+    std::vector< int > distance(boost::num_vertices(g));
+    std::vector< boost::default_color_type > color(boost::num_vertices(g));
+
+    auto index_map = boost::get(boost::vertex_index, g);
+    auto parent_map
+        = boost::make_iterator_property_map(parent.begin(), index_map);
+    auto rank_map = boost::make_iterator_property_map(rank.begin(), index_map);
+    auto distance_map
+        = boost::make_iterator_property_map(distance.begin(), index_map);
+    auto color_map
+        = boost::make_iterator_property_map(color.begin(), index_map);
+
+    branch_tally tracked;
+    boost::astar_search(g, 0, inconsistent_heuristic< graph_t >(),
+        std::ref(tracked), parent_map, rank_map, distance_map,
+        boost::get(boost::edge_weight, g), index_map, color_map,
+        std::less< int >(), boost::closed_plus< int >(),
+        (std::numeric_limits< int >::max)(), 0);
+
+    BOOST_TEST_EQ(tracked.reopened, static_cast< std::size_t >(1));
+    BOOST_TEST_EQ(distance[3], 3);
+}
+
+void test_edge_not_relaxed_on_tree_edge()
+{
+    using graph_t = boost::adjacency_list< boost::vecS, boost::vecS,
+        boost::directedS, boost::no_property,
+        boost::property< boost::edge_weight_t, int > >;
+
+    // two hops of 60 overshoot the infinity below, so the second hop never
+    // improves on it and vertex 2 stays unreached
+    graph_t g(3);
+    boost::add_edge(0, 1, 60, g);
+    boost::add_edge(1, 2, 60, g);
+
+    const int infinity = 100;
+
+    std::vector< std::size_t > parent(boost::num_vertices(g));
+    std::vector< int > rank(boost::num_vertices(g));
+    std::vector< int > distance(boost::num_vertices(g));
+    std::vector< boost::default_color_type > color(boost::num_vertices(g));
+
+    auto index_map = boost::get(boost::vertex_index, g);
+    auto parent_map
+        = boost::make_iterator_property_map(parent.begin(), index_map);
+    auto rank_map = boost::make_iterator_property_map(rank.begin(), index_map);
+    auto distance_map
+        = boost::make_iterator_property_map(distance.begin(), index_map);
+    auto color_map
+        = boost::make_iterator_property_map(color.begin(), index_map);
+
+    branch_tally tracked;
+    boost::astar_search(g, 0, zero_heuristic< graph_t >(), std::ref(tracked),
+        parent_map, rank_map, distance_map, boost::get(boost::edge_weight, g),
+        index_map, color_map, std::less< int >(),
+        boost::closed_plus< int >(infinity), infinity, 0);
+
+    BOOST_TEST_EQ(distance[1], 60);
+    BOOST_TEST_EQ(distance[2], infinity);
+    BOOST_TEST_EQ(tracked.not_relaxed, static_cast< std::size_t >(1));
+    BOOST_TEST_EQ(tracked.reopened, static_cast< std::size_t >(0));
+}
 
 int main()
 {
@@ -202,6 +408,11 @@ int main()
         first = false;
     }
     BOOST_TEST_EQ(path_weight.v, d[goal].v);
+
+    test_stateful_visitor_with_ref();
+    test_edge_not_relaxed_on_discovered_target();
+    test_edge_not_relaxed_on_tree_edge();
+    test_black_target_reopens_finished_vertex();
 
     return boost::report_errors();
 }
