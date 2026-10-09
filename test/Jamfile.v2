@@ -40,6 +40,7 @@ alias graph_test_regular :
     [ run adj_list_loops.cpp ]
     [ compile adj_matrix_cc.cpp ]
     [ run bfs.cpp ]
+    [ run neighbor_bfs.cpp ]
     [ compile bfs_cc.cpp ]
     [ run bellman-test.cpp ]
     [ run betweenness_centrality_test.cpp : 100 ]

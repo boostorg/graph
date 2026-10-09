@@ -20,6 +20,7 @@
 #include <boost/ref.hpp>
 #include <vector>
 #include <boost/pending/queue.hpp>
+#include <boost/graph/detail/visitor_wrapper.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/visitors.hpp>
@@ -146,42 +147,46 @@ namespace detail
         typedef graph_traits< BidirectionalGraph > GTraits;
         typedef typename GTraits::vertex_descriptor Vertex;
         typedef typename GTraits::edge_descriptor Edge;
+        using visitor_type
+            = ::boost::graph::detail::unwrap_visitor_t< BFSVisitor >;
         BOOST_CONCEPT_ASSERT(
-            (NeighborBFSVisitorConcept< BFSVisitor, BidirectionalGraph >));
+            (NeighborBFSVisitorConcept< visitor_type, BidirectionalGraph >));
         BOOST_CONCEPT_ASSERT((ReadWritePropertyMapConcept< ColorMap, Vertex >));
         typedef typename property_traits< ColorMap >::value_type ColorValue;
         typedef color_traits< ColorValue > Color;
 
+        auto& vis_ref = ::boost::graph::detail::deref_visitor(vis);
+
         put(color, s, Color::gray());
-        vis.discover_vertex(s, g);
+        vis_ref.discover_vertex(s, g);
         Q.push(s);
         while (!Q.empty())
         {
             Vertex u = Q.top();
             Q.pop(); // pop before push to avoid problem if Q is priority_queue.
-            vis.examine_vertex(u, g);
+            vis_ref.examine_vertex(u, g);
 
             typename GTraits::out_edge_iterator ei, ei_end;
             for (boost::tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei)
             {
                 Edge e = *ei;
-                vis.examine_out_edge(e, g);
+                vis_ref.examine_out_edge(e, g);
                 Vertex v = target(e, g);
                 ColorValue v_color = get(color, v);
                 if (v_color == Color::white())
                 {
-                    vis.tree_out_edge(e, g);
+                    vis_ref.tree_out_edge(e, g);
                     put(color, v, Color::gray());
-                    vis.discover_vertex(v, g);
+                    vis_ref.discover_vertex(v, g);
                     Q.push(v);
                 }
                 else
                 {
-                    vis.non_tree_out_edge(e, g);
+                    vis_ref.non_tree_out_edge(e, g);
                     if (v_color == Color::gray())
-                        vis.gray_target(e, g);
+                        vis_ref.gray_target(e, g);
                     else
-                        vis.black_target(e, g);
+                        vis_ref.black_target(e, g);
                 }
             } // for out-edges
 
@@ -190,28 +195,28 @@ namespace detail
                  in_ei != in_ei_end; ++in_ei)
             {
                 Edge e = *in_ei;
-                vis.examine_in_edge(e, g);
+                vis_ref.examine_in_edge(e, g);
                 Vertex v = source(e, g);
                 ColorValue v_color = get(color, v);
                 if (v_color == Color::white())
                 {
-                    vis.tree_in_edge(e, g);
+                    vis_ref.tree_in_edge(e, g);
                     put(color, v, Color::gray());
-                    vis.discover_vertex(v, g);
+                    vis_ref.discover_vertex(v, g);
                     Q.push(v);
                 }
                 else
                 {
-                    vis.non_tree_in_edge(e, g);
+                    vis_ref.non_tree_in_edge(e, g);
                     if (v_color == Color::gray())
-                        vis.gray_source(e, g);
+                        vis_ref.gray_source(e, g);
                     else
-                        vis.black_source(e, g);
+                        vis_ref.black_source(e, g);
                 }
             } // for in-edges
 
             put(color, u, Color::black());
-            vis.finish_vertex(u, g);
+            vis_ref.finish_vertex(u, g);
         } // while
     }
 
@@ -230,12 +235,13 @@ namespace detail
         // Initialization
         typedef typename property_traits< ColorMap >::value_type ColorValue;
         typedef color_traits< ColorValue > Color;
+        auto& vis_ref = ::boost::graph::detail::deref_visitor(vis);
         typename boost::graph_traits< VertexListGraph >::vertex_iterator i,
             i_end;
         for (boost::tie(i, i_end) = vertices(g); i != i_end; ++i)
         {
             put(color, *i, Color::white());
-            vis.initialize_vertex(*i, g);
+            vis_ref.initialize_vertex(*i, g);
         }
         neighbor_bfs_impl(g, s,
             choose_param(get_param(params, buffer_param_t()), boost::ref(Q))
@@ -284,6 +290,37 @@ namespace detail
     };
 
 } // namespace detail
+
+// This version does not initialize colors, user has to.
+
+template < class BidirectionalGraph, class Buffer, class NeighborBFSVisitor,
+    class ColorMap >
+void neighbor_breadth_first_visit(const BidirectionalGraph& g,
+    typename graph_traits< BidirectionalGraph >::vertex_descriptor s, Buffer& Q,
+    NeighborBFSVisitor vis, ColorMap color)
+{
+    detail::neighbor_bfs_impl(g, s, Q, vis, color);
+}
+
+template < class VertexListGraph, class Buffer, class NeighborBFSVisitor,
+    class ColorMap >
+void neighbor_breadth_first_search(const VertexListGraph& g,
+    typename graph_traits< VertexListGraph >::vertex_descriptor s, Buffer& Q,
+    NeighborBFSVisitor vis, ColorMap color)
+{
+    typedef typename property_traits< ColorMap >::value_type ColorValue;
+    typedef color_traits< ColorValue > Color;
+    auto& vis_ref = ::boost::graph::detail::deref_visitor(vis);
+
+    typename graph_traits< VertexListGraph >::vertex_iterator i, i_end;
+    for (boost::tie(i, i_end) = vertices(g); i != i_end; ++i)
+    {
+        put(color, *i, Color::white());
+        vis_ref.initialize_vertex(*i, g);
+    }
+    // vis, not vis_ref, neighbor_breadth_first_visit takes the visitor by value
+    neighbor_breadth_first_visit(g, s, Q, vis, color);
+}
 
 // Named Parameter Variant
 template < class VertexListGraph, class P, class T, class R >
