@@ -7,7 +7,6 @@
 #define BOOST_GRAPH_BUFFER_CONCEPTS_HPP 1
 #include <boost/concept_check.hpp>
 #include <boost/property_map/property_map.hpp>
-#include <boost/typeof/typeof.hpp>
 #include <boost/type_traits/add_const.hpp>
 #include <boost/type_traits/add_reference.hpp>
 #include <boost/type_traits/remove_reference.hpp>

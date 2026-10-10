@@ -120,4 +120,4 @@ The algorithm is described in detail in https://www.researchgate.net/publication
 == Notes
 
 * `hawick_circuits` enumerates all elementary circuits including redundant ones caused by parallel edges. Use `hawick_unique_circuits` to suppress those duplicates.
-* The visitor is passed by value. If your visitor contains state, consider holding it by pointer or reference so that changes made during the algorithm are visible to the caller.
+* The visitor is passed by value. If your visitor contains state, consider holding it by pointer or reference so that changes made during the algorithm are visible to the caller. If `visitor` is a `std::reference_wrapper`, it will be unwrapped before the `.cycle` method is called on it, which allows passing a visitor that shouldn't be copied.

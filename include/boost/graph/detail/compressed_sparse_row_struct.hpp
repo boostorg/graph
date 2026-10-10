@@ -40,7 +40,6 @@
 #include <boost/property_map/property_map.hpp>
 #include <boost/integer.hpp>
 #include <boost/iterator/iterator_facade.hpp>
-#include <boost/mpl/if.hpp>
 #include <boost/graph/graph_selectors.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/functional/hash.hpp>

@@ -19,6 +19,9 @@
 #include <boost/random/linear_congruential.hpp>
 #include <fstream>
 
+#include <cstddef>
+#include <functional>
+
 using namespace boost;
 
 struct EdgeProperty
@@ -119,18 +122,62 @@ bool test_graph(Graph& g)
     return any_errors;
 }
 
+// state in a plain data member, so it survives only through std::ref
+struct discover_tally : boost::dfs_visitor<>
+{
+    template < class Vertex, class G > void discover_vertex(Vertex, G&)
+    {
+        ++count;
+    }
+    std::size_t count = 0;
+};
+
+void test_stateful_visitor_with_ref()
+{
+    // a triangle with a pendant edge, so two biconnected components
+    Graph g(4);
+    boost::add_edge(0, 1, g);
+    boost::add_edge(1, 2, g);
+    boost::add_edge(2, 0, g);
+    boost::add_edge(0, 3, g);
+
+    std::vector< Vertex > art_points;
+    std::vector< std::size_t > dtm(boost::num_vertices(g));
+    std::vector< std::size_t > lowpt(boost::num_vertices(g));
+
+    auto index_map = boost::get(boost::vertex_index, g);
+    auto dtm_map = boost::make_iterator_property_map(dtm.begin(), index_map);
+    auto lowpt_map
+        = boost::make_iterator_property_map(lowpt.begin(), index_map);
+
+    discover_tally tracked;
+    std::size_t num_comps
+        = boost::biconnected_components(g, get(&EdgeProperty::component, g),
+            std::back_inserter(art_points), dtm_map, lowpt_map,
+            std::ref(tracked))
+              .first;
+
+    BOOST_TEST_EQ(num_comps, static_cast< std::size_t >(2));
+    BOOST_TEST_EQ(tracked.count, boost::num_vertices(g));
+
+    // by value the caller's visitor is left untouched
+    art_points.clear();
+    discover_tally copied;
+    boost::biconnected_components(g, get(&EdgeProperty::component, g),
+        std::back_inserter(art_points), dtm_map, lowpt_map, copied);
+    BOOST_TEST_EQ(copied.count, static_cast< std::size_t >(0));
+}
+
 int main(int argc, char* argv[])
 {
     std::size_t n = 100;
     std::size_t m = 500;
-    std::size_t seed = 1;
+    std::size_t seed = 42;
 
     if (argc > 1)
         n = lexical_cast< std::size_t >(argv[1]);
     if (argc > 2)
         m = lexical_cast< std::size_t >(argv[2]);
-    if (argc > 3)
-        seed = lexical_cast< std::size_t >(argv[3]);
 
     {
         Graph g(n);
@@ -149,6 +196,8 @@ int main(int argc, char* argv[])
         if (test_graph(g))
             return 1;
     }
+
+    test_stateful_visitor_with_ref();
 
     return boost::report_errors();
 }

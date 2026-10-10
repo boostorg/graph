@@ -12,6 +12,7 @@
 #define BOOST_GRAPH_UNDIRECTED_DFS_HPP
 
 #include <boost/graph/depth_first_search.hpp>
+#include <boost/graph/detail/visitor_wrapper.hpp>
 #include <vector>
 #include <boost/concept/assert.hpp>
 
@@ -165,17 +166,20 @@ template < typename Graph, typename DFSVisitor, typename VertexColorMap,
 void undirected_dfs(const Graph& g, DFSVisitor vis, VertexColorMap vertex_color,
     EdgeColorMap edge_color, Vertex start_vertex)
 {
-    BOOST_CONCEPT_ASSERT((DFSVisitorConcept< DFSVisitor, Graph >));
+    using visitor_type = ::boost::graph::detail::unwrap_visitor_t< DFSVisitor >;
+    BOOST_CONCEPT_ASSERT((DFSVisitorConcept< visitor_type, Graph >));
     BOOST_CONCEPT_ASSERT((EdgeListGraphConcept< Graph >));
 
     typedef typename property_traits< VertexColorMap >::value_type ColorValue;
     typedef color_traits< ColorValue > Color;
 
+    auto& vis_ref = ::boost::graph::detail::deref_visitor(vis);
+
     typename graph_traits< Graph >::vertex_iterator ui, ui_end;
     for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
     {
         put(vertex_color, *ui, Color::white());
-        vis.initialize_vertex(*ui, g);
+        vis_ref.initialize_vertex(*ui, g);
     }
     typename graph_traits< Graph >::edge_iterator ei, ei_end;
     for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
@@ -183,8 +187,9 @@ void undirected_dfs(const Graph& g, DFSVisitor vis, VertexColorMap vertex_color,
 
     if (start_vertex != *vertices(g).first)
     {
-        vis.start_vertex(start_vertex, g);
-        detail::undir_dfv_impl(g, start_vertex, vis, vertex_color, edge_color);
+        vis_ref.start_vertex(start_vertex, g);
+        detail::undir_dfv_impl(
+            g, start_vertex, vis_ref, vertex_color, edge_color);
     }
 
     for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
@@ -192,8 +197,8 @@ void undirected_dfs(const Graph& g, DFSVisitor vis, VertexColorMap vertex_color,
         ColorValue u_color = get(vertex_color, *ui);
         if (u_color == Color::white())
         {
-            vis.start_vertex(*ui, g);
-            detail::undir_dfv_impl(g, *ui, vis, vertex_color, edge_color);
+            vis_ref.start_vertex(*ui, g);
+            detail::undir_dfv_impl(g, *ui, vis_ref, vertex_color, edge_color);
         }
     }
 }
@@ -261,7 +266,8 @@ void undirected_depth_first_visit(const IncidenceGraph& g,
     typename graph_traits< IncidenceGraph >::vertex_descriptor u,
     DFSVisitor vis, VertexColorMap vertex_color, EdgeColorMap edge_color)
 {
-    detail::undir_dfv_impl(g, u, vis, vertex_color, edge_color);
+    auto& vis_ref = ::boost::graph::detail::deref_visitor(vis);
+    detail::undir_dfv_impl(g, u, vis_ref, vertex_color, edge_color);
 }
 
 } // namespace boost

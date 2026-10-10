@@ -92,6 +92,34 @@ std::size_t biconnected_components(
 [source,cpp]
 ----
 template <typename Graph, typename ComponentMap, typename OutputIterator,
+          typename DiscoverTimeMap, typename LowPointMap, typename DFSVisitor>
+std::pair<std::size_t, OutputIterator>
+biconnected_components(
+    const Graph& g, ComponentMap comp, OutputIterator out,
+    DiscoverTimeMap dtm, LowPointMap lowpt, DFSVisitor dfs_vis);
+----
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN | `const Graph& g` | An undirected graph. The graph type must be a model of xref:concepts/VertexListGraph.adoc[Vertex List Graph] and xref:concepts/IncidenceGraph.adoc[Incidence Graph].
+| OUT | `ComponentMap comp` | Records which biconnected component each edge belongs to. Must model link:../../property_map/doc/WritablePropertyMap.html[Writable Property Map] with the graph's edge descriptor as key and an integer value type.
+| OUT | `OutputIterator out` | The algorithm writes articulation points via this output iterator and returns the resulting iterator.
+| UTIL/OUT | `DiscoverTimeMap dtm` | The discovery time of each vertex in the depth-first search. Must model link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map] with an integer value type.
+| UTIL/OUT | `LowPointMap lowpt` | The low point of each vertex in the depth-first search. Must model link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map] with an integer value type.
+| IN | `DFSVisitor dfs_vis` | A visitor object invoked at the event-points specified by the xref:visitors/DFSVisitor.adoc[DFS Visitor] concept. The visitor object is passed by value <<1,[1]>>.
+|===
+
+The predecessor map is allocated internally by this overload. Pass the named parameter version if you need to supply your own.
+
+'''
+
+=== biconnected_components (5)
+
+[source,cpp]
+----
+template <typename Graph, typename ComponentMap, typename OutputIterator,
           typename P, typename T, typename R>
 std::pair<std::size_t, OutputIterator>
 biconnected_components(
@@ -130,7 +158,7 @@ Named Parameters::
 
 '''
 
-=== biconnected_components (5)
+=== biconnected_components (6)
 
 [source,cpp]
 ----
@@ -252,4 +280,4 @@ Depending on the overload:
 
 == Notes
 
-[#1]#[1]# Since the visitor parameter is passed by value, if your visitor contains state then any changes to the state during the algorithm will be made to a copy of the visitor object, not the visitor object passed in. Therefore you may want the visitor to hold this state by pointer or reference.
+[#1]#[1]# The visitor is taken by value, so the algorithm works on a copy. To keep state, give the visitor ordinary data members and pass it with `std::ref`. The algorithm then operates on the referenced object and its state survives the call.

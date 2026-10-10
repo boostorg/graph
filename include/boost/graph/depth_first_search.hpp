@@ -19,13 +19,12 @@
 #include <boost/graph/properties.hpp>
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/named_function_params.hpp>
-#include <boost/graph/detail/mpi_include.hpp>
+#include <boost/graph/detail/visitor_wrapper.hpp>
 #include <boost/ref.hpp>
-#include <boost/implicit_cast.hpp>
 #include <boost/optional.hpp>
-#include <boost/parameter.hpp>
 #include <boost/concept/assert.hpp>
-#include <boost/tti/has_member_function.hpp>
+#include <boost/type_traits/make_void.hpp>
+#include <type_traits>
 
 #include <vector>
 #include <utility>
@@ -69,7 +68,19 @@ namespace detail
         }
     };
 
-    BOOST_TTI_HAS_MEMBER_FUNCTION(finish_edge)
+    // has_finish_edge<Vis, E, G>::value is true when vis.finish_edge(e, g) is
+    // a valid call for e of type E and g of type const G&.
+    template < typename Vis, typename E, typename G, typename = void >
+    struct has_finish_edge : std::false_type
+    {
+    };
+    template < typename Vis, typename E, typename G >
+    struct has_finish_edge< Vis, E, G,
+        boost::void_t< decltype(std::declval< Vis& >().finish_edge(
+            std::declval< E& >(), std::declval< const G& >())) > >
+    : std::true_type
+    {
+    };
 
     template < bool IsCallable > struct do_call_finish_edge
     {
@@ -90,18 +101,11 @@ namespace detail
 
     template < typename E, typename G, typename Vis >
     void call_finish_edge(Vis& vis, E e, const G& g)
-    { // Only call if method exists
-#if ((defined(__GNUC__) && (__GNUC__ > 4)               \
-         || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9))) \
-    || defined(__clang__)                               \
-    || (defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 1200)))
-        do_call_finish_edge< has_member_function_finish_edge< Vis, void,
-            boost::mpl::vector< E, const G& > >::value >::call_finish_edge(vis,
-            e, g);
-#else
-        do_call_finish_edge< has_member_function_finish_edge< Vis,
-            void >::value >::call_finish_edge(vis, e, g);
-#endif
+    { // Only call if the visitor has a callable finish_edge(e, g)
+        static_assert(!::boost::graph::detail::is_reference_wrapper_v< Vis >,
+            "unwrap the visitor before probing finish_edge");
+        do_call_finish_edge< has_finish_edge< Vis, E, G >::value >::
+            call_finish_edge(vis, e, g);
     }
 
 // Define BOOST_RECURSIVE_DFS to use older, recursive version.
@@ -268,34 +272,37 @@ void depth_first_search(const VertexListGraph& g, DFSVisitor vis,
     typename graph_traits< VertexListGraph >::vertex_descriptor start_vertex)
 {
     typedef typename graph_traits< VertexListGraph >::vertex_descriptor Vertex;
-    BOOST_CONCEPT_ASSERT((DFSVisitorConcept< DFSVisitor, VertexListGraph >));
+    using visitor_type = ::boost::graph::detail::unwrap_visitor_t< DFSVisitor >;
+    BOOST_CONCEPT_ASSERT((DFSVisitorConcept< visitor_type, VertexListGraph >));
     typedef typename property_traits< ColorMap >::value_type ColorValue;
     typedef color_traits< ColorValue > Color;
+
+    auto& vis_ref = ::boost::graph::detail::deref_visitor(vis);
 
     typename graph_traits< VertexListGraph >::vertex_iterator ui, ui_end;
     for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
     {
-        Vertex u = implicit_cast< Vertex >(*ui);
+        Vertex u = *ui;
         put(color, u, Color::white());
-        vis.initialize_vertex(u, g);
+        vis_ref.initialize_vertex(u, g);
     }
 
     if (start_vertex != detail::get_default_starting_vertex(g))
     {
-        vis.start_vertex(start_vertex, g);
+        vis_ref.start_vertex(start_vertex, g);
         detail::depth_first_visit_impl(
-            g, start_vertex, vis, color, detail::nontruth2());
+            g, start_vertex, vis_ref, color, detail::nontruth2());
     }
 
     for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
     {
-        Vertex u = implicit_cast< Vertex >(*ui);
+        Vertex u = *ui;
         ColorValue u_color = get(color, u);
         if (u_color == Color::white())
         {
-            vis.start_vertex(u, g);
+            vis_ref.start_vertex(u, g);
             detail::depth_first_visit_impl(
-                g, u, vis, color, detail::nontruth2());
+                g, u, vis_ref, color, detail::nontruth2());
         }
     }
 }
@@ -362,16 +369,6 @@ public:
         invoke_visitors(m_vis, u, g, ::boost::on_finish_vertex());
     }
 
-    BOOST_GRAPH_EVENT_STUB(on_initialize_vertex, dfs)
-    BOOST_GRAPH_EVENT_STUB(on_start_vertex, dfs)
-    BOOST_GRAPH_EVENT_STUB(on_discover_vertex, dfs)
-    BOOST_GRAPH_EVENT_STUB(on_examine_edge, dfs)
-    BOOST_GRAPH_EVENT_STUB(on_tree_edge, dfs)
-    BOOST_GRAPH_EVENT_STUB(on_back_edge, dfs)
-    BOOST_GRAPH_EVENT_STUB(on_forward_or_cross_edge, dfs)
-    BOOST_GRAPH_EVENT_STUB(on_finish_edge, dfs)
-    BOOST_GRAPH_EVENT_STUB(on_finish_vertex, dfs)
-
 protected:
     Visitors m_vis;
 };
@@ -413,8 +410,9 @@ void depth_first_visit(const IncidenceGraph& g,
     typename graph_traits< IncidenceGraph >::vertex_descriptor u,
     DFSVisitor vis, ColorMap color)
 {
-    vis.start_vertex(u, g);
-    detail::depth_first_visit_impl(g, u, vis, color, detail::nontruth2());
+    auto& vis_ref = ::boost::graph::detail::deref_visitor(vis);
+    vis_ref.start_vertex(u, g);
+    detail::depth_first_visit_impl(g, u, vis_ref, color, detail::nontruth2());
 }
 
 template < class IncidenceGraph, class DFSVisitor, class ColorMap,
@@ -423,11 +421,10 @@ void depth_first_visit(const IncidenceGraph& g,
     typename graph_traits< IncidenceGraph >::vertex_descriptor u,
     DFSVisitor vis, ColorMap color, TerminatorFunc func = TerminatorFunc())
 {
-    vis.start_vertex(u, g);
-    detail::depth_first_visit_impl(g, u, vis, color, func);
+    auto& vis_ref = ::boost::graph::detail::deref_visitor(vis);
+    vis_ref.start_vertex(u, g);
+    detail::depth_first_visit_impl(g, u, vis_ref, color, func);
 }
 } // namespace boost
-
-#include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/depth_first_search.hpp>)
 
 #endif

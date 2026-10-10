@@ -5,31 +5,37 @@
 
 #include <boost/graph/directed_graph.hpp>
 #include <boost/graph/tiernan_all_cycles.hpp>
+#include <functional>
 #include <iostream>
+#include <sstream>
+#include <string>
 #include <vector>
 
 // Directed graph with no bundled properties
 using Graph = boost::directed_graph<>;
 using Vertex = boost::graph_traits<Graph>::vertex_descriptor;
 
-// Custom visitor that prints each cycle found.
+// Custom visitor that records each cycle found.
 // The cycle is passed as a const vector of vertex descriptors.
-struct PrintCyclesVisitor
+struct RecordCyclesVisitor
 {
+    std::vector<std::string> cycles;
+
     template <typename Path, typename G>
     void cycle(const Path& p, const G& g)
     {
-        std::cout << "Cycle: ";
+        std::ostringstream out;
+        out << "Cycle: ";
         for (std::size_t i = 0; i < p.size(); ++i)
         {
             if (i > 0)
             {
-                std::cout << " -> ";
+                out << " -> ";
             }
-            std::cout << boost::get(boost::vertex_index, g, p[i]);
+            out << boost::get(boost::vertex_index, g, p[i]);
         }
-        std::cout << " -> " << boost::get(boost::vertex_index, g, p.front())
-                  << std::endl;
+        out << " -> " << boost::get(boost::vertex_index, g, p.front());
+        cycles.push_back(out.str());
     }
 };
 
@@ -61,8 +67,16 @@ int main()
     g.add_edge(v1, v3);
     g.add_edge(v3, v1);
 
+    RecordCyclesVisitor visitor;
+
+    // std::ref lets the visitor keep its state across the copy the algorithm makes
+    boost::tiernan_all_cycles(g, std::ref(visitor));
+
     std::cout << "Finding all elementary cycles:" << std::endl;
-    boost::tiernan_all_cycles(g, PrintCyclesVisitor{});
+    for (const std::string& cycle : visitor.cycles)
+    {
+        std::cout << cycle << std::endl;
+    }
 
     return 0;
 }

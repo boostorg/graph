@@ -10,7 +10,7 @@
 #ifndef BOOST_GRAPH_SELECTORS_HPP
 #define BOOST_GRAPH_SELECTORS_HPP
 
-#include <boost/mpl/bool.hpp>
+#include <type_traits>
 
 namespace boost
 {
@@ -26,8 +26,8 @@ struct directedS
         is_directed = true,
         is_bidir = false
     };
-    typedef mpl::true_ is_directed_t;
-    typedef mpl::false_ is_bidir_t;
+    using is_directed_t = std::true_type;
+    using is_bidir_t = std::false_type;
 };
 struct undirectedS
 {
@@ -36,8 +36,8 @@ struct undirectedS
         is_directed = false,
         is_bidir = false
     };
-    typedef mpl::false_ is_directed_t;
-    typedef mpl::false_ is_bidir_t;
+    using is_directed_t = std::false_type;
+    using is_bidir_t = std::false_type;
 };
 struct bidirectionalS
 {
@@ -46,8 +46,8 @@ struct bidirectionalS
         is_directed = true,
         is_bidir = true
     };
-    typedef mpl::true_ is_directed_t;
-    typedef mpl::true_ is_bidir_t;
+    using is_directed_t = std::true_type;
+    using is_bidir_t = std::true_type;
 };
 
 } // namespace boost

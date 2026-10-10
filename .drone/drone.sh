@@ -23,7 +23,7 @@ git submodule update --init tools/boost_install
 git submodule update --init libs/headers
 git submodule update --init tools/boostdep
 cp -r $TRAVIS_BUILD_DIR/* libs/graph
-python tools/boostdep/depinst/depinst.py graph
+python tools/boostdep/depinst/depinst.py -I example graph
 ./bootstrap.sh
 ./b2 headers
 

@@ -13,7 +13,7 @@
 #include <boost/assert.hpp>
 #include <iterator>
 #include <utility>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/random/uniform_int.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/random/geometric_distribution.hpp>
@@ -207,7 +207,7 @@ private:
             src = (std::numeric_limits< vertices_size_type >::max)();
     }
 
-    shared_ptr< uniform_01< RandomGenerator* > > gen;
+    std::shared_ptr< uniform_01< RandomGenerator* > > gen;
     geometric_distribution< vertices_size_type > rand_vertex;
     vertices_size_type n;
     bool allow_self_loops;

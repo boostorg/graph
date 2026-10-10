@@ -14,6 +14,11 @@
 
 #include <boost/random/linear_congruential.hpp>
 
+#include <boost/core/lightweight_test.hpp>
+
+#include <cstddef>
+#include <functional>
+
 using namespace std;
 using namespace boost;
 
@@ -49,7 +54,7 @@ template < typename Graph > void test()
     // of edge connection.
     static const size_t N = 20;
     static const double P = 0.1;
-    boost::minstd_rand rng;
+    boost::minstd_rand rng(42);
 
     Graph g(er(rng, N, P), er(), N);
     renumber_indices(g);
@@ -59,6 +64,43 @@ template < typename Graph > void test()
     cycle_validator vis(cycles);
     tiernan_all_cycles(g, vis);
     cout << "# cycles: " << vis.cycles << "\n";
+}
+
+// state in a plain data member, so it survives only through std::ref
+struct cycle_tally
+{
+    template < typename Path, typename Graph >
+    void cycle(const Path&, const Graph&)
+    {
+        ++count;
+    }
+    std::size_t count = 0;
+};
+
+void test_stateful_visitor_with_ref()
+{
+    using graph_t = boost::directed_graph<>;
+    graph_t g;
+    graph_t::vertex_descriptor v0 = g.add_vertex();
+    graph_t::vertex_descriptor v1 = g.add_vertex();
+    graph_t::vertex_descriptor v2 = g.add_vertex();
+    graph_t::vertex_descriptor v3 = g.add_vertex();
+
+    // a triangle and a two cycle, so two elementary cycles
+    g.add_edge(v0, v1);
+    g.add_edge(v1, v2);
+    g.add_edge(v2, v0);
+    g.add_edge(v1, v3);
+    g.add_edge(v3, v1);
+
+    cycle_tally tracked;
+    boost::tiernan_all_cycles(g, std::ref(tracked));
+    BOOST_TEST_EQ(tracked.count, static_cast< std::size_t >(2));
+
+    // by value the caller's visitor is left untouched
+    cycle_tally copied;
+    boost::tiernan_all_cycles(g, copied);
+    BOOST_TEST_EQ(copied.count, static_cast< std::size_t >(0));
 }
 
 int main(int, char*[])
@@ -71,4 +113,8 @@ int main(int, char*[])
 
     std::cout << "*** directed ***\n";
     test< DiGraph >();
+
+    test_stateful_visitor_with_ref();
+
+    return boost::report_errors();
 }

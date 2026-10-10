@@ -17,7 +17,7 @@
 
 using namespace boost;
 
-int main(int argc, char** argv)
+int main()
 {
 
     using graph = adjacency_list< vecS, vecS, undirectedS,

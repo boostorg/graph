@@ -38,7 +38,7 @@ using CentralityProperty = exterior_vertex_property< Graph, unsigned >;
 using CentralityContainer = CentralityProperty::container_type;
 using CentralityMap = CentralityProperty::map_type;
 
-int main(int argc, char* argv[])
+int main()
 {
     // Create the graph and a property map that provides access
     // to the actor names.

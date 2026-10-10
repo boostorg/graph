@@ -13,6 +13,7 @@
 
 #include <boost/concept/assert.hpp>
 
+#include <boost/graph/detail/visitor_wrapper.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/lookup_edge.hpp>
 
@@ -168,8 +169,11 @@ namespace detail
         Container& nots, Visitor vis, std::size_t min)
     {
         BOOST_CONCEPT_ASSERT((GraphConcept< Graph >));
-        BOOST_CONCEPT_ASSERT((CliqueVisitorConcept< Visitor, Clique, Graph >));
+        using visitor_type = ::boost::graph::detail::unwrap_visitor_t< Visitor >;
+        BOOST_CONCEPT_ASSERT((CliqueVisitorConcept< visitor_type, Clique, Graph >));
         typedef typename graph_traits< Graph >::vertex_descriptor Vertex;
+
+        auto& vis_ref = ::boost::graph::detail::deref_visitor(vis);
 
         // Is there vertex in nots that is connected to all vertices
         // in the candidate set? If so, no clique can ever be found.
@@ -248,7 +252,7 @@ namespace detail
                 // the clique is below our radar, then we won't visit it.
                 if (clique.size() >= min)
                 {
-                    vis.clique(clique, g);
+                    vis_ref.clique(clique, g);
                 }
             }
             else
@@ -277,7 +281,8 @@ inline void bron_kerbosch_all_cliques(
     typedef typename graph_traits< Graph >::vertex_iterator VertexIterator;
     typedef std::vector< Vertex > VertexSet;
     typedef std::deque< Vertex > Clique;
-    BOOST_CONCEPT_ASSERT((CliqueVisitorConcept< Visitor, Clique, Graph >));
+    using visitor_type = ::boost::graph::detail::unwrap_visitor_t< Visitor >;
+    BOOST_CONCEPT_ASSERT((CliqueVisitorConcept< visitor_type, Clique, Graph >));
 
     // NOTE: We're using a deque to implement the clique, because it provides
     // constant inserts and removals at the end and also a constant size.
