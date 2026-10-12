@@ -69,6 +69,7 @@ alias graph_test_regular :
     [ compile filtered_graph_cc.cpp ]
     [ run filter_graph_vp_test.cpp ]
     [ run generator_test.cpp ]
+    [ run geometric_graph_generator_test.cpp ]
     [ run graph.cpp : : : <define>TEST=1 : graph_1 ]
     [ run graph.cpp : : : <define>TEST=2 : graph_2 ]
     [ run graph.cpp : : : <define>TEST=3 : graph_3 ]
