@@ -35,6 +35,7 @@ constant boost_dependencies :
     /boost/utility//boost_utility ;
 
 project /boost/graph
+    : requirements <define>BOOST_GRAPH_DISABLE_DEPRECATED_14_WARNING
     ;
 
 explicit

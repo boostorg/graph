@@ -21,6 +21,7 @@
 #include <boost/iterator/iterator_adaptor.hpp>
 #include <boost/pending/property.hpp>
 #include <boost/detail/workaround.hpp>
+#include <boost/graph/detail/deprecate_cxx14.hpp>
 
 namespace boost
 {

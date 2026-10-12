@@ -65,6 +65,8 @@ existing one at specific event points (vertex discovered, edge relaxed, etc.).
 
 == Requirements
 
+CAUTION: Boost.Graph in Boost 1.93 deprecates support for C++14 and will require C++17 from Boost 1.95 onwards (see https://github.com/boostorg/graph/discussions/613[discussion #613]).
+
 * C++14 or later
 * Boost headers: BGL is part of the Boost distribution and requires no separate install.
   It is header-only, so no build step is needed. The only exceptions are the
