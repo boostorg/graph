@@ -10,6 +10,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/louvain_clustering.hpp>
 #include <boost/graph/louvain_quality_functions.hpp>
+#include <boost/range/iterator_range.hpp>
 #include <boost/core/lightweight_test.hpp>
 #include <boost/unordered/unordered_flat_map.hpp>
 #include <cmath>

@@ -27,9 +27,7 @@
 
 #include <boost/iterator/iterator_adaptor.hpp>
 
-#include <boost/mpl/if.hpp>
-#include <boost/mpl/not.hpp>
-#include <boost/mpl/and.hpp>
+#include <type_traits>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/pending/container_traits.hpp>
 #include <boost/graph/detail/adj_list_edge_iterator.hpp>
@@ -2343,8 +2341,8 @@ namespace detail
             typedef typename container_gen< VertexListS, vertex_ptr >::type
                 SeqVertexList;
             typedef boost::integer_range< vertex_descriptor > RandVertexList;
-            typedef typename mpl::if_< is_rand_access, RandVertexList,
-                SeqVertexList >::type VertexList;
+            typedef typename std::conditional< is_rand_access::value,
+                RandVertexList, SeqVertexList >::type VertexList;
 
             typedef typename VertexList::iterator vertex_iterator;
 
@@ -2354,21 +2352,22 @@ namespace detail
                 list_edge< vertex_descriptor, EdgeProperty > >::type
                 EdgeContainer;
 
-            typedef typename mpl::and_< DirectedT,
-                typename mpl::not_< BidirectionalT >::type >::type
+            typedef std::integral_constant< bool,
+                DirectedT::value && !BidirectionalT::value >
                 on_edge_storage;
 
-            typedef typename mpl::if_< on_edge_storage, std::size_t,
-                typename EdgeContainer::size_type >::type edges_size_type;
+            typedef typename std::conditional< on_edge_storage::value,
+                std::size_t, typename EdgeContainer::size_type >::type
+                edges_size_type;
 
             typedef typename EdgeContainer::iterator EdgeIter;
 
             typedef
                 typename detail::is_random_access< EdgeListS >::type is_edge_ra;
 
-            typedef typename mpl::if_< on_edge_storage,
+            typedef typename std::conditional< on_edge_storage::value,
                 stored_edge_property< vertex_descriptor, EdgeProperty >,
-                typename mpl::if_< is_edge_ra,
+                typename std::conditional< is_edge_ra::value,
                     stored_ra_edge_iter< vertex_descriptor, EdgeContainer,
                         EdgeProperty >,
                     stored_edge_iter< vertex_descriptor, EdgeIter,
@@ -2421,8 +2420,8 @@ namespace detail
                 graph_type >
                 DirectedEdgeIter;
 
-            typedef typename mpl::if_< on_edge_storage, DirectedEdgeIter,
-                UndirectedEdgeIter >::type edge_iterator;
+            typedef typename std::conditional< on_edge_storage::value,
+                DirectedEdgeIter, UndirectedEdgeIter >::type edge_iterator;
 
             // stored_vertex and StoredVertexList
             typedef typename container_gen< VertexListS, vertex_ptr >::type
@@ -2464,11 +2463,12 @@ namespace detail
                 InEdgeList m_in_edges;
                 VertexProperty m_property;
             };
-            typedef typename mpl::if_< is_rand_access,
-                typename mpl::if_< BidirectionalT, bidir_rand_stored_vertex,
-                    rand_stored_vertex >::type,
-                typename mpl::if_< BidirectionalT, bidir_seq_stored_vertex,
-                    seq_stored_vertex >::type >::type StoredVertex;
+            typedef typename std::conditional< is_rand_access::value,
+                typename std::conditional< BidirectionalT::value,
+                    bidir_rand_stored_vertex, rand_stored_vertex >::type,
+                typename std::conditional< BidirectionalT::value,
+                    bidir_seq_stored_vertex, seq_stored_vertex >::type >::type
+                StoredVertex;
             struct stored_vertex : public StoredVertex
             {
                 stored_vertex() {}
@@ -2477,17 +2477,19 @@ namespace detail
 
             typedef typename container_gen< VertexListS, stored_vertex >::type
                 RandStoredVertexList;
-            typedef typename mpl::if_< is_rand_access, RandStoredVertexList,
-                SeqStoredVertexList >::type StoredVertexList;
+            typedef typename std::conditional< is_rand_access::value,
+                RandStoredVertexList, SeqStoredVertexList >::type
+                StoredVertexList;
         }; // end of config
 
-        typedef typename mpl::if_< BidirectionalT,
+        typedef typename std::conditional< BidirectionalT::value,
             bidirectional_graph_helper_with_property< config >,
-            typename mpl::if_< DirectedT, directed_graph_helper< config >,
+            typename std::conditional< DirectedT::value,
+                directed_graph_helper< config >,
                 undirected_graph_helper< config > >::type >::type
             DirectedHelper;
 
-        typedef typename mpl::if_< is_rand_access,
+        typedef typename std::conditional< is_rand_access::value,
             vec_adj_list_impl< Graph, config, DirectedHelper >,
             adj_list_impl< Graph, config, DirectedHelper > >::type type;
     };
@@ -2687,7 +2689,7 @@ namespace detail
 {
     template < class Tag, class Graph, class Property >
     struct adj_list_choose_vertex_pa
-    : boost::mpl::if_< boost::is_same< Tag, vertex_all_t >,
+    : std::conditional< boost::is_same< Tag, vertex_all_t >::value,
           adj_list_all_vertex_pa, adj_list_any_vertex_pa >::type ::
           template bind_< Tag, Graph, Property >
     {

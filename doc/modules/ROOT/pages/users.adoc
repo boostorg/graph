@@ -1,0 +1,305 @@
+= Who Uses the Boost Graph Library
+
+The BGL sits underneath a fair amount of widely used software.
+Below is a selection of projects that depend on it, what they are,
+and what the graph part actually does for them.
+
+If you use the BGL and want to be listed here,
+open a https://github.com/boostorg/graph/discussions[discussion] or send mail to
+the Boost users mailing list.
+
+== Projects
+
+Entries were checked against each project's source code in September 2026.
+
+[cols="1,1,2,3", options="header"]
+|===
+| Domain | Project | What it is | Why it needs graphs
+
+| Geometry
+| https://www.cgal.org[CGAL]
+| Standard computational-geometry library
+| A 3D mesh _is_ a graph. BGL algorithms run on meshes directly, and min cut segments them. (https://github.com/CGAL/cgal/blob/f70aaa122281f03f58e39df8a5306cd409601b90/BGL/include/CGAL/boost/graph/alpha_expansion_graphcut.h#L28[source])
+
+| Geometry
+| https://sfcgal.gitlab.io[SFCGAL]
+| 3D geometry library behind PostGIS's 3D functions
+| Validity checks build a graph of geometry parts and test whether they are connected. (https://github.com/Oslandia/SFCGAL/blob/20a4e88c1616024f48251b280ccde7383e40d063/src/algorithm/isValid.cpp#L50[source])
+
+| Geometry
+| https://ifcopenshell.org[IfcOpenShell]
+| Open toolkit for BIM (IFC building models)
+| Converts solids to half-space trees in its CGAL geometry kernel. (https://github.com/IfcOpenShell/IfcOpenShell/blob/7ab6fca86733a5cda959114e56244eee0a4ec822/src/ifcgeom/kernels/cgal/nef_to_halfspace_tree.h#L41[source])
+
+| Geometry
+| https://github.com/aewallin/opencamlib[OpenCamLib]
+| CNC toolpath library used by FreeCAD's CAM workbench
+| Half-edge diagram for toolpath geometry, and metric TSP to order cuts. (https://github.com/aewallin/opencamlib/blob/95b036fe28ce6d77c97b98e5fbc337904ae49560/src/common/halfedgediagram.hpp#L27[source])
+
+| Robotics
+| https://ompl.kavrakilab.org[OMPL]
+| Motion-planning library behind MoveIt
+| Roadmap of collision-free poses, with A* finding a path through it. (https://github.com/ompl/ompl/blob/5b209a03fe48c41f7a2f364382c2e425bf1c7c1c/src/ompl/geometric/planners/prm/PRM.h#L42[source])
+
+| Robotics
+| https://gtsam.org[GTSAM]
+| Robot localization and mapping (SLAM)
+| Spanning tree over pose measurements gives the optimizer its initial guess. (https://github.com/borglab/gtsam/blob/71a25ca36c084cbad1f872e812d6d97fbadfdb05/gtsam/inference/graph.h#L25[source])
+
+| Robotics
+| https://github.com/fzi-forschungszentrum-informatik/Lanelet2[Lanelet2]
+| HD-map framework for automated driving (used by Autoware)
+| Lanes form a routing graph, with filtered views for drivable-only routes. (https://github.com/fzi-forschungszentrum-informatik/Lanelet2/blob/ae39c8d673264afac2339c4f0252df53a7ba82dd/lanelet2_routing/include/lanelet2_routing/internal/Graph.h#L5[source])
+
+| Robotics
+| https://github.com/tesseract-robotics/tesseract[Tesseract]
+| Industrial robot motion-planning framework
+| Robot links and joints form a scene graph, checked for trees and cycles. (https://github.com/tesseract-robotics/tesseract/blob/f4cc0807bbe5d975f25cb2aadae313404d4a8b11/scene_graph/src/graph.cpp#L27[source])
+
+| Vision and 3D
+| https://pointclouds.org[PCL]
+| Point Cloud Library (lidar, depth cameras)
+| Separates objects from background by cutting a graph of neighboring points. (https://github.com/PointCloudLibrary/pcl/blob/2841d826fed1f8ddee4052f18e2d4363c0fd2e46/segmentation/include/pcl/segmentation/min_cut_segmentation.h#L49[source])
+
+| Vision and 3D
+| https://colmap.github.io[COLMAP]
+| Reference photo-to-3D reconstruction tool
+| Surface meshing labels space as inside or outside the object with a min s-t cut (BK max flow). (https://github.com/colmap/colmap/blob/f264be893f865d07b28687a1df3b5bdb6ade60c2/src/colmap/math/graph_cut.h#L15[source])
+
+| Vision and 3D
+| https://alicevision.org[AliceVision]
+| Photogrammetry framework behind Meshroom
+| Max flow extracts surfaces, and graph cuts find panorama seams. (https://github.com/alicevision/AliceVision/blob/928bac2689461ffb6f0174609f983a16bdbd2b30/src/aliceVision/fuseCut/MaxFlow_AdjList.hpp#L11[source])
+
+| Desktop
+| https://www.freecad.org[FreeCAD]
+| Parametric 3D CAD
+| Topological sort gives the recompute order, and strong components detect cycles. (https://github.com/FreeCAD/FreeCAD/blob/1c26e0d005994e1e5041afbc8607c709eded76ee/src/App/Document.cpp#L44[source])
+
+| Desktop
+| https://krita.org[Krita]
+| Digital painting
+| Colorize mask fill via graph cut on the pixel grid. (https://github.com/KDE/krita/blob/4216dd347f843d59ca51c1e097a0dc8af7c753aa/libs/image/lazybrush/kis_lazy_fill_tools.cpp#L14[source])
+
+| Desktop
+| https://www.digikam.org[digiKam]
+| Photo management
+| Image version-history graph. (https://github.com/KDE/digikam/blob/33d0457e20adda97c003f3dee652a1749406ff9f/core/libs/database/history/itemhistorygraph_boost.h#L56[source])
+
+| Desktop
+| https://fritzing.org[Fritzing]
+| Electronics prototyping and PCB design
+| Wire and part connectivity: max flow, spanning tree, transitive closure. (https://github.com/fritzing/fritzing-app/blob/40d23c29b0463d5c968c3c4b34ed5ffc05c5a258/src/utils/graphutils.cpp#L30[source])
+
+| Desktop
+| https://ossia.io[ossia score / libossia]
+| Interactive media sequencer for shows and installations
+| Real-time audio/video dataflow graph: topological order, transitive closure. (https://github.com/ossia/libossia/blob/285293ad10540d9b2071782b09ec82a744453486/src/ossia/dataflow/graph/transitive_closure.hpp#L14[source])
+
+| Desktop
+| https://apps.kde.org/rocs/[Rocs] (KDE)
+| Graph-theory teaching IDE from KDE Education
+| Automatic graph layouts (force-directed, circle, random) and random graph generation. (https://github.com/KDE/rocs/blob/7bbf1b1c95e8db03357701186c13fa13b023f36e/libgraphtheory/modifiers/topology.cpp#L24[source])
+
+| GIS
+| https://pgrouting.org[pgRouting]
+| Routing extension for PostGIS
+| Road networks as graphs: shortest routes, travel-time areas. (https://github.com/pgRouting/pgrouting/blob/b3fd9ef1d81661af0b1084a2646fb87fda12b8c4/include/cpp_common/base_graph.hpp#L41[source])
+
+| Databases
+| https://mariadb.com/kb/en/oqgraph-storage-engine/[MariaDB OQGRAPH]
+| SQL database, via an optional plugin
+| SQL queries over hierarchies and networks. (https://github.com/MariaDB/server/blob/d45cf75cf8d7483e8070950a3b6f4e500cdda05e/storage/oqgraph/graphcore.cc#L33[source])
+
+| Chemistry
+| https://www.rdkit.org[RDKit]
+| Leading cheminformatics toolkit
+| Every molecule, atoms and bonds, is stored as a BGL `adjacency_list`. (https://github.com/rdkit/rdkit/blob/cbfb37abddcd5b5feeac97d53530ae6be83cac0d/Code/GraphMol/ROMol.h#L31[source])
+
+| Mathematics
+| https://www.sagemath.org[SageMath]
+| Open-source mathematics system
+| Its graph module delegates about 20 algorithms to BGL. (https://github.com/sagemath/sage/blob/cb359e4c6e3b52e1bfc7f4f152e7db3ebd5f5d03/src/sage/graphs/base/boost_interface.cpp#L3[source])
+
+| Graph analysis
+| https://graph-tool.skewed.de[graph-tool]
+| Python network-analysis library
+| BGL is its C++ engine and the programming model for its C++ extensions. It also ships 15 patched BGL headers. (https://graph-tool.skewed.de/static/docs/stable/demos/cppextensions/cppextensions.html[source])
+
+| Simulation
+| https://www.dealii.org[deal.II]
+| Finite-element library
+| Renumbers mesh unknowns so sparse matrices become banded and solvers run faster. (https://github.com/dealii/dealii/blob/5764de007417e8ef8bd81319c0a4da6757ccf058/source/dofs/dof_renumbering.cc#L47[source])
+
+| Simulation
+| https://trilinos.github.io[Trilinos]
+| Sandia's numerical-solver suite
+| GraphViz export of multigrid aggregation graphs. (https://github.com/trilinos/Trilinos/blob/884e832a427cbb1451650115ff6b1cd1d88a0326/packages/muelu/src/Utils/MueLu_BoostGraphviz.hpp#L27[source])
+
+| Simulation
+| https://gudhi.inria.fr[GUDHI]
+| INRIA topological data analysis library
+| Builds simplicial complexes from neighborhood graphs of data points. (https://github.com/GUDHI/gudhi-devel/blob/18d968fbcb035b0cae9a412799d43fe4230a4607/src/Nerve_GIC/include/gudhi/GIC.h#L47[source])
+
+| Simulation
+| https://github.com/siconos/siconos[Siconos]
+| Nonsmooth dynamics simulator (contact, friction, switching circuits)
+| Interacting bodies and constraints are stored as a graph. (https://github.com/siconos/siconos/blob/676626a2ef07c238ef2fbfaaa52f6eb04b5b78ee/kernel/src/utils/SiconosTools/SiconosGraph.hpp#L44[source])
+
+| Genomics
+| https://github.com/Gaius-Augustus/Augustus[AUGUSTUS]
+| Standard gene-prediction tool
+| Comparative mode aligns genomes as a graph to predict genes jointly. (https://github.com/Gaius-Augustus/Augustus/blob/220e5a63c0fd546563472ec6d1f9271faddaf569/src/genomicMSA.cc#L17[source])
+
+| Genomics
+| https://github.com/bcgsc/abyss[ABySS]
+| Short-read genome assembler
+| Assembly-graph algorithms written against BGL graph concepts. (https://github.com/bcgsc/abyss/blob/82ab61922c3c2fdd32372de2c470f8217c109284/Graph/ExtendPath.h#L9[source])
+
+| Genomics
+| https://github.com/dellytools/delly[Delly]
+| Structural-variant caller
+| Clusters reads supporting the same variant via connected components. (https://github.com/dellytools/delly/blob/c6474a25a125982a85829749ab7c14c63eaf17a2/src/shortpe.h#L8[source])
+
+| Genomics
+| https://github.com/paoloshasta/shasta[Shasta]
+| Long-read (nanopore) genome assembler
+| Read graph and assembly graphs, simplified with dominator trees. (https://github.com/paoloshasta/shasta/blob/c500bb5bd5ff29274c51d9f4c9804ee927d10c4f/src/AssemblerReadGraph4.cpp#L38[source])
+
+| Genomics
+| https://bitbucket.org/berkeleylab/metabat[MetaBAT]
+| Metagenome binning tool
+| Its legacy MetaBAT 1 binner, still shipped, stores the contig graph in BGL. (https://bitbucket.org/berkeleylab/metabat/src/master/src/metabat1.h[source])
+
+| Genomics
+| https://github.com/bredelings/BAli-Phy[BAli-Phy]
+| Leading Bayesian tool for joint alignment and phylogeny estimation
+| Orders its model computations and alignment columns with topological sort and strong components. (https://github.com/bredelings/BAli-Phy/blob/7789b2c46a850525fa44ff10c965c788f1785e20/src/util/include/util/graph.hh#L4[source])
+
+| Genomics
+| https://darlinglab.org/mauve/[progressiveMauve]
+| Whole-genome multiple aligner
+| Orders aligned segments with topological sort and shortest paths. (https://sourceforge.net/p/mauve/code/HEAD/tree/libMems/trunk/libMems/Backbone.cpp[source])
+
+| Proteomics
+| https://openms.de[OpenMS]
+| Mass-spectrometry data analysis platform
+| Protein inference splits the protein-peptide graph into independent components. (https://github.com/OpenMS/OpenMS/blob/b74552d19724d0bbf3c1111043ded84253ba983c/src/openms/source/ANALYSIS/ID/IDBoostGraph.cpp#L18[source])
+
+| Proteomics
+| https://github.com/toppic-suite/toppic-suite[TopPIC]
+| Widely used top-down proteomics suite
+| TopMG represents proteoforms as "mass graphs" and aligns spectra against them. (https://github.com/toppic-suite/toppic-suite/blob/8fcc41236c72857985ac966da2c7b4b1fe43d1d8/src/search/graph/graph.hpp#L19[source])
+
+| Particle physics
+| https://github.com/cms-sw/cmssw[CMSSW] (CERN)
+| CMS experiment software
+| Module dependency graph analysis and drawing. (https://github.com/cms-sw/cmssw/blob/cfc33e9b2e957b4e19afe00cf9c2cbf47dbf9721/FWCore/Services/plugins/DependencyGraph.cc#L26[source])
+
+| Particle physics
+| https://gaudi.web.cern.ch[Gaudi] (CERN)
+| LHCb/ATLAS framework
+| Scheduler reads a precedence graph to parallelize algorithms. (https://gaudi.web.cern.ch/doxygen/v40r3/d3/dee/_precedence_rules_graph_8h.html[source])
+
+| Security
+| https://github.com/VectorCamp/vectorscan[Vectorscan] (Hyperscan fork)
+| High-speed regex engine for IDS (Snort, Suricata)
+| Regexes compile to automata, which are graphs, optimized with graph algorithms. (https://github.com/VectorCamp/vectorscan/blob/acd7363aadea43da9c5246542d9969db843dd132/src/nfagraph/ng_depth.cpp#L42[source])
+
+| Compilers
+| https://sdcc.sourceforge.net[SDCC]
+| C compiler for 8-bit microcontrollers
+| Register allocation over a tree decomposition of the control-flow graph. (https://sourceforge.net/p/sdcc/code/HEAD/tree/trunk/sdcc/src/SDCCtree_dec.hpp[source])
+
+| Compilers
+| https://github.com/rose-compiler/rose[ROSE]
+| LLNL source-to-source compiler framework
+| Control-flow graphs, dominators and program-dependence graphs. (https://github.com/rose-compiler/rose/blob/95cf0342c6494671d85652695e52b63c90668f9c/src/Rose/BinaryAnalysis/ControlFlow.h#L14[source])
+
+| Compilers
+| https://github.com/Xilinx/Vitis-AI[XIR] (AMD Vitis AI)
+| Graph IR for AI accelerators
+| Neural networks as graphs: topological order and subgraph matching (VF2). (https://github.com/Xilinx/Vitis-AI/blob/77cb9e6ad6749de55cf6de8d4959b1cb4b27020e/src/vai_runtime/xir/src/xir/graph/graph_imp.hpp#L20[source])
+
+| Optimization
+| https://www.minizinc.org[MiniZinc]
+| Constraint-modelling language and toolchain
+| Minimum cut of the constraint graph (Stoer-Wagner). (https://github.com/MiniZinc/libminizinc/blob/c3448c48e7f05f13805616cfd1b9e94972eef58c/lib/algorithms/min_cut.cpp#L7[source])
+
+| Optimization
+| https://esa.github.io/pagmo2/[pagmo]
+| ESA's parallel global-optimization library
+| Islands exchange solutions along a migration-topology graph. (https://github.com/esa/pagmo2/blob/9cc585b55c8b59e4177632a5fb3539f0ca2553c7/src/topologies/free_form.cpp#L34[source])
+
+| Optimization
+| https://toulbar2.github.io/toulbar2/[toulbar2]
+| INRAE solver for cost-function networks
+| Decomposes the constraint graph (orderings, spanning trees, components) to split problems. (https://github.com/toulbar2/toulbar2/blob/4df0328b4cb0c8d44b3500a82f93fcd5016000ca/src/utils/tb2boostgraph.cpp#L15[source])
+
+| Logistics
+| https://github.com/boostorg/graph/discussions/466[Maersk] (internal)
+| Container shipping
+| Routing and cargo allocation as shortest-path and max-flow problems. (https://github.com/boostorg/graph/discussions/466[source])
+
+| Economics
+| https://www.dynare.org[Dynare]
+| Macroeconomic modelling tool used by central banks
+| Matching and strong components split models into blocks solved in sequence. (https://git.dynare.org/Dynare/preprocessor/-/blob/master/src/ModelTree.cc[source])
+
+| Crystallography
+| https://cctbx.github.io[cctbx]
+| Crystallography toolbox behind Phenix
+| Python bindings to BGL: min cut, and max clique for structure matching. (https://github.com/cctbx/cctbx_project/blob/d5a07979e6cd80d1b74718a0e353ce62904d7e44/boost_adaptbx/graph/min_cut_max_flow_ext.cpp#L15[source])
+
+| Crystallography
+| https://dials.github.io[DIALS]
+| X-ray diffraction data processing
+| Connected components group diffraction-spot pixels. (https://github.com/dials/dials/blob/451bf021a2d08da4d1d627c989dbc72ab42dede4/src/dials/algorithms/image/connected_components/connected_components.h#L16[source])
+
+| Hardware
+| https://github.com/EttusResearch/uhd[UHD] (Ettus)
+| Driver for USRP software-defined radios
+| FPGA processing blocks form a graph traversed to set up streaming. (https://github.com/EttusResearch/uhd/blob/0d7ed3b1a4e301032b0c6b04799d7631c5098528/host/lib/rfnoc/topo_graph.cpp#L11[source])
+
+| Games
+| https://www.wesnoth.org[Battle for Wesnoth]
+| Open-source strategy game
+| Detects cycles in its config-schema inheritance (DFS back edges). (https://github.com/wesnoth/wesnoth/blob/8b2727c833f0de048a1564198ceb3b586ea818f7/src/utils/back_edge_detector.hpp#L17[source])
+
+| Games
+| https://www.freeorion.org[FreeOrion]
+| Open-source space strategy game
+| Starlane pathfinding and supply-network propagation. (https://github.com/freeorion/freeorion/blob/4c64c666c88cc43a872cc4a9b3431d7b4b8191d0/universe/Pathfinder.cpp#L10[source])
+
+| Games
+| https://github.com/scummvm/scummvm-tools[scummvm-tools]
+| Official tool suite of the ScummVM game-engine project
+| Its script decompiler builds a control-flow graph and exports it to GraphViz. (https://github.com/scummvm/scummvm-tools/blob/8665aa1d3221a6cc884026f5ed7144fac512e0e9/decompiler/graph.h#L35[source])
+
+| Other
+| https://ledger-cli.org[Ledger]
+| Plain-text double-entry accounting
+| Commodity price graph, with Dijkstra finding conversion chains between currencies. (https://github.com/ledger/ledger/blob/faecd27cec670e128018dd92c8490a5b23f55660/src/history.cc#L34[source])
+
+| Other
+| https://invent.kde.org/pim/libkleo[libkleo] (KDE)
+| KDE PIM crypto-key library
+| Topological sort to display key and certificate hierarchies. (https://github.com/KDE/libkleo/blob/29aa23883d201146fbdc48cdecded6dab7f255f9/src/models/keylistmodel.cpp#L38[source])
+|===
+
+== Bindings and ports to other languages
+
+* https://bioconductor.org/packages/RBGL/[RBGL], the BGL interface for R
+* https://github.com/dgleich/matlab-bgl[MatlabBGL], BGL algorithms for MATLAB sparse matrices (no longer maintained)
+* http://www.rubydoc.info/github/monora/rgl[RGL], a BGL-inspired Ruby graph library
+* https://github.com/KeRNeLith/QuikGraph[QuikGraph], a BGL-inspired .NET graph library
+
+== Earlier entries
+
+These predate the projects above and are kept for the record.
+
+* http://alps.comp-phys.org/[ALPS], algorithms and libraries for physics simulations
+* http://lgl.sourceforge.net[Large Graph Layout] at the University of Texas
+* https://github.com/opencog/opencog[OpenCog], an open source artificial general intelligence framework, used BGL for agent pathfinding. Its MOSES program learner (https://github.com/opencog/asmoses[AS-MOSES]) still uses it to order learned procedures and detect recursion.
+* http://www.vrjuggler.org/[VR Juggler], a virtual reality application framework
+* http://www.cs.rpi.edu/~musser/gsd/[Generic Software Design] course at RPI

@@ -34,7 +34,7 @@ struct face_counter : public planar_face_traversal_visitor
     int count;
 };
 
-int main(int argc, char** argv)
+int main()
 {
 
     using graph = adjacency_list< vecS, vecS, undirectedS,

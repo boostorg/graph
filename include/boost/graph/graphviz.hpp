@@ -19,6 +19,7 @@
 #include <boost/property_map/property_map.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/graph/exception.hpp>
+#include <boost/throw_exception.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/subgraph.hpp>
@@ -28,13 +29,9 @@
 #include <boost/graph/dll_import_export.hpp>
 #include <boost/graph/compressed_sparse_row_graph.hpp>
 #include <boost/graph/iteration_macros.hpp>
-#include <boost/graph/detail/mpi_include.hpp>
-#include <boost/spirit/include/classic_multi_pass.hpp>
+#include <boost/config/pragma_message.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/static_assert.hpp>
-#include <boost/algorithm/string/replace.hpp>
-#include <boost/xpressive/xpressive_static.hpp>
-#include <boost/foreach.hpp>
 
 namespace boost
 {
@@ -57,19 +54,69 @@ struct default_writer
     template < class VorE > void operator()(std::ostream&, const VorE&) const {}
 };
 
+namespace detail
+{
+
+    inline bool dot_id_is_alpha(char c)
+    {
+        return c == '_' || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+    }
+
+    inline bool dot_id_is_digit(char c) { return c >= '0' && c <= '9'; }
+
+    inline bool dot_id_is_word(char c)
+    {
+        return dot_id_is_alpha(c) || dot_id_is_digit(c);
+    }
+
+    // True when s matches the DOT grammar for an ID that needs no quoting:
+    //   identifier  [A-Za-z_][A-Za-z0-9_]*
+    //   numeral     -?( .[0-9]* | [0-9]+(.[0-9]*)? )
+    inline bool is_dot_unquoted_id(const std::string& s)
+    {
+        using size_type = std::string::size_type;
+        if (s.empty())
+            return false;
+        if (dot_id_is_alpha(s[0]))
+        {
+            for (size_type i = 1; i < s.size(); ++i)
+                if (!dot_id_is_word(s[i]))
+                    return false;
+            return true;
+        }
+        size_type i = 0;
+        if (s[i] == '-')
+            ++i;
+        if (i >= s.size())
+            return false;
+        if (s[i] != '.' && !dot_id_is_digit(s[i]))
+            return false;
+        if (dot_id_is_digit(s[i]))
+            while (i < s.size() && dot_id_is_digit(s[i]))
+                ++i;
+        if (i < s.size() && s[i] == '.')
+            ++i;
+        for (; i < s.size(); ++i)
+            if (!dot_id_is_digit(s[i]))
+                return false;
+        return true;
+    }
+
+} // namespace detail
+
 template < typename T > inline std::string escape_dot_string(const T& obj)
 {
-    using namespace boost::xpressive;
-    static sregex valid_unquoted_id = (((alpha | '_') >> *_w)
-        | (!as_xpr('-') >> (('.' >> *_d) | (+_d >> !('.' >> *_d)))));
     std::string s(boost::lexical_cast< std::string >(obj));
-    if (regex_match(s, valid_unquoted_id))
+    if (detail::is_dot_unquoted_id(s))
     {
         return s;
     }
     else
     {
-        boost::algorithm::replace_all(s, "\"", "\\\"");
+        for (auto pos = s.find('"'); pos != std::string::npos; pos = s.find('"', pos + 2))
+        {
+            s.insert(pos, 1, '\\');
+        }
         return "\"" + s + "\"";
     }
 }
@@ -843,13 +890,13 @@ namespace detail
                     edge_permutation_from_sorting[temp[e]] = e;
                 }
                 typedef boost::tuple< id_t, bgl_vertex_t, id_t > v_prop;
-                BOOST_FOREACH (const v_prop& t, vertex_props)
+                for (const v_prop& t : vertex_props)
                 {
                     put(boost::get< 0 >(t), dp_, boost::get< 1 >(t),
                         boost::get< 2 >(t));
                 }
                 typedef boost::tuple< id_t, bgl_edge_t, id_t > e_prop;
-                BOOST_FOREACH (const e_prop& t, edge_props)
+                for (const e_prop& t : edge_props)
                 {
                     put(boost::get< 0 >(t), dp_,
                         edge_permutation_from_sorting[boost::get< 1 >(t)],
@@ -925,14 +972,14 @@ namespace detail
 }
 } // end namespace boost::detail::graph
 
+// BOOST_GRAPH_USE_SPIRIT_PARSER deprecated and will be removed in 1.95 
 #ifdef BOOST_GRAPH_USE_SPIRIT_PARSER
-#ifndef BOOST_GRAPH_READ_GRAPHVIZ_ITERATORS
-#define BOOST_GRAPH_READ_GRAPHVIZ_ITERATORS
+BOOST_PRAGMA_MESSAGE(
+    "BOOST_GRAPH_USE_SPIRIT_PARSER has no longer any effect and will be removed in 1.95. "
+    "the Boost.Spirit read_graphviz parser has been removed"
+    "read_graphviz now always uses the default parser.")
 #endif
-#include <boost/graph/detail/read_graphviz_spirit.hpp>
-#else // New default parser
 #include <boost/graph/detail/read_graphviz_new.hpp>
-#endif // BOOST_GRAPH_USE_SPIRIT_PARSER
 
 namespace boost
 {
@@ -942,11 +989,7 @@ template < typename MutableGraph >
 bool read_graphviz(const std::string& data, MutableGraph& graph,
     dynamic_properties& dp, std::string const& node_id = "node_id")
 {
-#ifdef BOOST_GRAPH_USE_SPIRIT_PARSER
-    return read_graphviz_spirit(data.begin(), data.end(), graph, dp, node_id);
-#else // Non-Spirit parser
     return read_graphviz_new(data, graph, dp, node_id);
-#endif
 }
 
 // Parse the passed iterator range as a GraphViz dot file.
@@ -955,18 +998,8 @@ bool read_graphviz(InputIterator user_first, InputIterator user_last,
     MutableGraph& graph, dynamic_properties& dp,
     std::string const& node_id = "node_id")
 {
-#ifdef BOOST_GRAPH_USE_SPIRIT_PARSER
-    typedef InputIterator is_t;
-    typedef boost::spirit::classic::multi_pass< is_t > iterator_t;
-
-    iterator_t first(boost::spirit::classic::make_multi_pass(user_first));
-    iterator_t last(boost::spirit::classic::make_multi_pass(user_last));
-
-    return read_graphviz_spirit(first, last, graph, dp, node_id);
-#else // Non-Spirit parser
     return read_graphviz_new(
         std::string(user_first, user_last), graph, dp, node_id);
-#endif
 }
 
 // Parse the passed stream as a GraphViz dot file.
@@ -980,7 +1013,5 @@ bool read_graphviz(std::istream& in, MutableGraph& graph,
 }
 
 } // namespace boost
-
-#include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/graphviz.hpp>)
 
 #endif // BOOST_GRAPHVIZ_HPP

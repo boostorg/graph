@@ -40,7 +40,7 @@ struct edge_output_visitor : public output_visitor
     template < typename Edge > void next_edge(Edge e) { std::cout << e << " "; }
 };
 
-int main(int argc, char** argv)
+int main()
 {
 
     using graph = adjacency_list< vecS, vecS, undirectedS,

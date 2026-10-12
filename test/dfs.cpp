@@ -19,6 +19,8 @@
 
 #include <boost/random/mersenne_twister.hpp>
 
+#include <functional>
+
 template < typename ColorMap, typename ParentMap, typename DiscoverTimeMap,
     typename FinishTimeMap >
 class dfs_test_visitor
@@ -120,7 +122,7 @@ template < typename Graph > struct dfs_test
         typename Traits::edges_size_type j;
         typename Traits::vertex_iterator vi, vi_end, ui, ui_end;
 
-        boost::mt19937 gen;
+        boost::mt19937 gen(42);
 
         for (i = 0; i < max_V; ++i)
             for (j = 0; j < i * i; ++j)
@@ -184,6 +186,83 @@ template < typename Graph > struct dfs_test
     }
 };
 
+// regression guard: finish_edge must fire once per edge (it once never did)
+struct finish_edge_counter : boost::dfs_visitor<>
+{
+    explicit finish_edge_counter(std::size_t& count) : m_count(&count) {}
+    template < class Edge, class Graph > void finish_edge(Edge, Graph&) const
+    {
+        ++*m_count;
+    }
+    std::size_t* m_count;
+};
+
+void test_finish_edge_is_called()
+{
+    using graph_t = boost::adjacency_list< boost::vecS, boost::vecS, boost::directedS >;
+    graph_t g;
+    graph_t::vertex_descriptor a = boost::add_vertex(g);
+    graph_t::vertex_descriptor b = boost::add_vertex(g);
+    graph_t::vertex_descriptor c = boost::add_vertex(g);
+    boost::add_edge(a, b, g);
+    boost::add_edge(b, c, g);
+    boost::add_edge(c, a, g);
+    boost::add_edge(a, c, g);
+
+    std::size_t finish_edge_calls = 0;
+    boost::depth_first_search(g, boost::visitor(finish_edge_counter(finish_edge_calls)));
+    BOOST_TEST_EQ(finish_edge_calls, boost::num_edges(g));
+}
+
+// state in a plain data member, so it survives only through std::ref
+struct finish_edge_tally : boost::dfs_visitor<>
+{
+    template < class Edge, class Graph > void finish_edge(Edge, Graph&)
+    {
+        ++count;
+    }
+    std::size_t count = 0;
+};
+
+void test_stateful_visitor_with_ref()
+{
+    using graph_t = boost::adjacency_list< boost::vecS, boost::vecS,
+        boost::directedS,
+        boost::property< boost::vertex_color_t, boost::default_color_type > >;
+    graph_t g;
+    graph_t::vertex_descriptor a = boost::add_vertex(g);
+    graph_t::vertex_descriptor b = boost::add_vertex(g);
+    graph_t::vertex_descriptor c = boost::add_vertex(g);
+    boost::add_edge(a, b, g);
+    boost::add_edge(b, c, g);
+    boost::add_edge(c, a, g);
+    boost::add_edge(a, c, g);
+
+    // an isolated vertex keeps the root sweep reachable from any start vertex
+    boost::add_vertex(g);
+
+    auto color_map = get(boost::vertex_color, g);
+
+    // depth_first_visit runs first, it never initialises the colour map
+    finish_edge_tally visit_vis;
+    boost::depth_first_visit(g, a, std::ref(visit_vis), color_map);
+    BOOST_TEST_EQ(visit_vis.count, boost::num_edges(g));
+
+    finish_edge_tally search_vis;
+    boost::depth_first_search(g, std::ref(search_vis), color_map, a);
+    BOOST_TEST_EQ(search_vis.count, boost::num_edges(g));
+
+    // a start vertex other than the first takes the explicit start branch
+    finish_edge_tally start_vis;
+    boost::depth_first_search(g, std::ref(start_vis), color_map, b);
+    BOOST_TEST_EQ(start_vis.count, boost::num_edges(g));
+
+    // by value the caller's visitor is left untouched
+    finish_edge_tally copied_vis;
+    boost::depth_first_search(g, copied_vis, color_map, a);
+    BOOST_TEST_EQ(copied_vis.count, static_cast< std::size_t >(0));
+}
+
 // usage: dfs.exe [max-vertices=15]
 
 int main(int argc, char* argv[])
@@ -201,6 +280,9 @@ int main(int argc, char* argv[])
         boost::adjacency_list< boost::vecS, boost::vecS, boost::undirectedS,
             boost::property< boost::vertex_color_t,
                 boost::default_color_type > > >::go(max_V);
+
+    test_finish_edge_is_called();
+    test_stateful_visitor_with_ref();
 
     return boost::report_errors();
 }

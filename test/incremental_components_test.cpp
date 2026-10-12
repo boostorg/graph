@@ -10,15 +10,14 @@
 #include <iostream>
 #include <map>
 #include <set>
-#include <ctime>
 
-#include <boost/foreach.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/incremental_components.hpp>
 #include <boost/graph/random.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/random.hpp>
+#include <boost/range/iterator_range.hpp>
 #include <boost/core/lightweight_test.hpp>
 
 using namespace boost;
@@ -69,20 +68,21 @@ template < typename Graph > void test_graph(const Graph& graph)
     // Create a reverse-lookup map for vertex indices
     std::vector< vertex_descriptor > reverse_index_map(num_vertices(graph));
 
-    BOOST_FOREACH (vertex_descriptor vertex, vertices(graph))
+    for (vertex_descriptor vertex :
+        boost::make_iterator_range(vertices(graph)))
     {
         reverse_index_map[get(get(boost::vertex_index, graph), vertex)]
             = vertex;
     }
 
     // Verify that components are really connected
-    BOOST_FOREACH (vertices_size_type component_index, vertex_components)
+    for (vertices_size_type component_index : vertex_components)
     {
 
         std::set< vertex_descriptor > component_vertices;
 
-        BOOST_FOREACH (
-            vertices_size_type child_index, vertex_components[component_index])
+        for (vertices_size_type child_index :
+            boost::make_iterator_range(vertex_components[component_index]))
         {
 
             vertex_descriptor child_vertex = reverse_index_map[child_index];
@@ -92,7 +92,7 @@ template < typename Graph > void test_graph(const Graph& graph)
 
         // Verify that children are connected to each other in some
         // manner, but not to vertices outside their component.
-        BOOST_FOREACH (vertex_descriptor child_vertex, component_vertices)
+        for (vertex_descriptor child_vertex : component_vertices)
         {
 
             // Skip orphan vertices
@@ -105,8 +105,8 @@ template < typename Graph > void test_graph(const Graph& graph)
             // another vertex in the component.
             bool edge_exists = false;
 
-            BOOST_FOREACH (
-                edge_descriptor child_edge, out_edges(child_vertex, graph))
+            for (edge_descriptor child_edge :
+                boost::make_iterator_range(out_edges(child_vertex, graph)))
             {
 
                 if (component_vertices.count(target(child_edge, graph)) > 0)
@@ -128,7 +128,7 @@ template < typename Graph > void test_graph(const Graph& graph)
 int main(int argc, char* argv[])
 {
     std::size_t vertices_to_generate = 100, edges_to_generate = 50,
-                random_seed = std::time(0);
+                random_seed = 42;
 
     // Parse command-line arguments
 
@@ -140,11 +140,6 @@ int main(int argc, char* argv[])
     if (argc > 2)
     {
         edges_to_generate = lexical_cast< std::size_t >(argv[2]);
-    }
-
-    if (argc > 3)
-    {
-        random_seed = lexical_cast< std::size_t >(argv[3]);
     }
 
     minstd_rand generator(random_seed);
@@ -162,8 +157,8 @@ int main(int argc, char* argv[])
 
     // Assign indices to list_graph's vertices
     graph_traits< ListGraph >::vertices_size_type index = 0;
-    BOOST_FOREACH (graph_traits< ListGraph >::vertex_descriptor vertex,
-        vertices(list_graph))
+    for (graph_traits< ListGraph >::vertex_descriptor vertex :
+        boost::make_iterator_range(vertices(list_graph)))
     {
         put(get(boost::vertex_index, list_graph), vertex, index++);
     }

@@ -6,17 +6,22 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/bron_kerbosch_all_cliques.hpp>
 #include <algorithm>
+#include <functional>
 #include <iostream>
+#include <sstream>
+#include <string>
 #include <vector>
 
 // Undirected graph with no properties
 using Graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS>;
 using Vertex = boost::graph_traits<Graph>::vertex_descriptor;
 
-// Custom visitor that prints each maximal clique found.
+// Custom visitor that records each maximal clique found.
 // The clique is passed as a deque of vertex descriptors.
-struct PrintCliquesVisitor
+struct RecordCliquesVisitor
 {
+    std::vector<std::string> cliques;
+
     template <typename Clique, typename G>
     void clique(const Clique& c, const G& /*g*/)
     {
@@ -24,16 +29,18 @@ struct PrintCliquesVisitor
         std::vector<Vertex> sorted(c.begin(), c.end());
         std::sort(sorted.begin(), sorted.end());
 
-        std::cout << "Clique: {";
+        std::ostringstream out;
+        out << "Clique: {";
         for (std::size_t i = 0; i < sorted.size(); ++i)
         {
             if (i > 0)
             {
-                std::cout << ", ";
+                out << ", ";
             }
-            std::cout << sorted[i];
+            out << sorted[i];
         }
-        std::cout << "}" << std::endl;
+        out << "}";
+        cliques.push_back(out.str());
     }
 };
 
@@ -58,8 +65,16 @@ int main()
     boost::add_edge(1, 3, g);
     boost::add_edge(2, 3, g);
 
+    RecordCliquesVisitor visitor;
+
+    // std::ref lets the visitor keep its state across the copy the algorithm makes
+    boost::bron_kerbosch_all_cliques(g, std::ref(visitor));
+
     std::cout << "Finding all maximal cliques:" << std::endl;
-    boost::bron_kerbosch_all_cliques(g, PrintCliquesVisitor{});
+    for (const std::string& clique : visitor.cliques)
+    {
+        std::cout << clique << std::endl;
+    }
 
     return 0;
 }
