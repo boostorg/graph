@@ -15,7 +15,9 @@
 #include <vector>
 #include <iterator>
 #include <algorithm>
+#include <functional>
 
+#include <boost/graph/detail/visitor_wrapper.hpp>
 #include <boost/graph/planar_face_traversal.hpp>
 #include <boost/graph/planar_detail/add_edge_visitors.hpp>
 
@@ -155,12 +157,15 @@ struct triangulation_visitor : public planar_face_traversal_visitor
     }
 
 private:
+    // resolves a std::ref wrapped visitor so the caller's object is updated
+    auto& user_vis() { return ::boost::graph::detail::deref_visitor(add_edge_visitor); }
+
     void add_edge_range(vertex_t anchor, face_iterator fi, face_iterator fi_end)
     {
         for (; fi != fi_end; ++fi)
         {
             vertex_t v(*fi);
-            add_edge_visitor.visit_vertex_pair(anchor, v, g);
+            user_vis().visit_vertex_pair(anchor, v, g);
             put(degree, anchor, get(degree, anchor) + 1);
             put(degree, v, get(degree, v) + 1);
         }
@@ -177,14 +182,26 @@ private:
     vertex_to_degree_size_map_t degree;
 };
 
+// Copies the visitor. Wrap it in std::ref to have the caller's own
+// visitor updated in place.
 template < typename Graph, typename PlanarEmbedding, typename VertexIndexMap,
     typename EdgeIndexMap, typename AddEdgeVisitor >
-void make_maximal_planar(Graph& g, PlanarEmbedding embedding, VertexIndexMap vm,
-    EdgeIndexMap em, AddEdgeVisitor& vis)
+void make_maximal_planar(Graph& g, PlanarEmbedding embedding,
+    VertexIndexMap vm, EdgeIndexMap em, const AddEdgeVisitor& vis)
 {
-    triangulation_visitor< Graph, VertexIndexMap, AddEdgeVisitor > visitor(
-        g, vm, vis);
-    planar_face_traversal(g, embedding, visitor, em);
+    AddEdgeVisitor local(vis);
+    auto& vis_ref = ::boost::graph::detail::deref_visitor(local);
+    auto wrapped_vis = std::ref(vis_ref);
+    triangulation_visitor< Graph, VertexIndexMap, decltype(wrapped_vis) > visitor(g, vm, wrapped_vis);
+    planar_face_traversal(g, embedding, std::ref(visitor), em);
+}
+
+template < typename Graph, typename PlanarEmbedding, typename VertexIndexMap,
+    typename EdgeIndexMap, typename AddEdgeVisitor >
+BOOST_DEPRECATED("pass the visitor by value, wrapped in std::ref when its state is needed. Removal planned for Boost 1.95.")
+::std::enable_if_t< !::boost::graph::detail::is_reference_wrapper_v< AddEdgeVisitor > > make_maximal_planar(Graph& g, PlanarEmbedding embedding, VertexIndexMap vm, EdgeIndexMap em, AddEdgeVisitor& vis)
+{
+    make_maximal_planar(g, embedding, vm, em, std::ref(vis));
 }
 
 template < typename Graph, typename PlanarEmbedding, typename VertexIndexMap,
@@ -192,8 +209,7 @@ template < typename Graph, typename PlanarEmbedding, typename VertexIndexMap,
 void make_maximal_planar(
     Graph& g, PlanarEmbedding embedding, VertexIndexMap vm, EdgeIndexMap em)
 {
-    default_add_edge_visitor vis;
-    make_maximal_planar(g, embedding, vm, em, vis);
+    make_maximal_planar(g, embedding, vm, em, default_add_edge_visitor());
 }
 
 template < typename Graph, typename PlanarEmbedding, typename VertexIndexMap >

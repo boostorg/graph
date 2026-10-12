@@ -195,7 +195,15 @@ alias graph_test_with_filesystem :
         /boost/filesystem//boost_filesystem
         /boost/system//boost_system
         : $(PLANAR_INPUT_FILES) ]
+    [ run all_planar_input_files_test_old.cpp
+        /boost/filesystem//boost_filesystem
+        /boost/system//boost_system
+        : $(PLANAR_INPUT_FILES) ]
     [ run parallel_edges_loops_test.cpp
+        /boost/filesystem//boost_filesystem
+        /boost/system//boost_system
+        : $(PLANAR_INPUT_FILES) ]
+    [ run parallel_edges_loops_test_old.cpp
         /boost/filesystem//boost_filesystem
         /boost/system//boost_system
         : $(PLANAR_INPUT_FILES) ]

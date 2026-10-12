@@ -15,17 +15,24 @@
 #include <vector>
 #include <iterator>
 #include <algorithm>
+#include <functional>
 
+#include <boost/graph/detail/visitor_wrapper.hpp>
 #include <boost/graph/planar_detail/add_edge_visitors.hpp>
 
 namespace boost
 {
 
+// Copies the visitor. Wrap it in std::ref to have the caller's own
+// visitor updated in place.
 template < typename Graph, typename PlanarEmbedding, typename EdgeIndexMap,
     typename AddEdgeVisitor >
-void make_biconnected_planar(
-    Graph& g, PlanarEmbedding embedding, EdgeIndexMap em, AddEdgeVisitor& vis)
+void make_biconnected_planar(Graph& g, PlanarEmbedding embedding,
+    EdgeIndexMap em, const AddEdgeVisitor& vis)
 {
+    AddEdgeVisitor local(vis);
+    auto& vis_ref = ::boost::graph::detail::deref_visitor(local);
+
     typedef typename graph_traits< Graph >::vertex_descriptor vertex_t;
     typedef typename graph_traits< Graph >::edge_descriptor edge_t;
     typedef typename graph_traits< Graph >::edges_size_type edge_size_t;
@@ -69,7 +76,7 @@ void make_biconnected_planar(
             if (previous_vertex != graph_traits< Graph >::null_vertex()
                 && current_component != previous_component)
             {
-                vis.visit_vertex_pair(current_vertex, previous_vertex, g);
+                vis_ref.visit_vertex_pair(current_vertex, previous_vertex, g);
             }
             previous_vertex = current_vertex;
             previous_component = current_component;
@@ -77,12 +84,19 @@ void make_biconnected_planar(
     }
 }
 
+template < typename Graph, typename PlanarEmbedding, typename EdgeIndexMap,
+    typename AddEdgeVisitor >
+BOOST_DEPRECATED("pass the visitor by value, wrapped in std::ref when its state is needed. Removal planned for Boost 1.95.")
+::std::enable_if_t< !::boost::graph::detail::is_reference_wrapper_v< AddEdgeVisitor > > make_biconnected_planar(Graph& g, PlanarEmbedding embedding, EdgeIndexMap em, AddEdgeVisitor& vis)
+{
+    make_biconnected_planar(g, embedding, em, std::ref(vis));
+}
+
 template < typename Graph, typename PlanarEmbedding, typename EdgeIndexMap >
 inline void make_biconnected_planar(
     Graph& g, PlanarEmbedding embedding, EdgeIndexMap em)
 {
-    default_add_edge_visitor vis;
-    make_biconnected_planar(g, embedding, em, vis);
+    make_biconnected_planar(g, embedding, em, default_add_edge_visitor());
 }
 
 template < typename Graph, typename PlanarEmbedding >

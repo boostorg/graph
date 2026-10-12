@@ -15,6 +15,9 @@
 #include <boost/property_map/vector_property_map.hpp>
 #include <boost/core/lightweight_test.hpp>
 
+#include <cstddef>
+#include <functional>
+
 using namespace boost;
 
 template < typename Graph > void reset_edge_index(Graph& g)
@@ -95,6 +98,51 @@ void test_line_graph(VertexIndexUpdater vertex_index_updater, int size)
     BOOST_TEST(boyer_myrvold_planarity_test(g));
 }
 
+// records the joins and still adds the edges the algorithm expects
+struct pair_tally
+{
+    template < typename Vertex, typename Graph >
+    void visit_vertex_pair(Vertex u, Vertex v, Graph& g)
+    {
+        ::boost::add_edge(u, v, g);
+        ++count;
+    }
+    std::size_t count = 0;
+};
+
+// a std::ref wrapped visitor keeps its count, a temporary just compiles
+template < typename Graph > void test_visitor_overloads()
+{
+    Graph g;
+    make_line_graph(g, 10);
+    reset_edge_index(g);
+
+    using edge_vector_t = std::vector< typename ::boost::graph_traits< Graph >::edge_descriptor >;
+    using embedding_storage_t = std::vector< edge_vector_t >;
+
+    auto vertex_index_map = ::boost::get(::boost::vertex_index, g);
+    auto edge_index_map = ::boost::get(::boost::edge_index, g);
+
+    embedding_storage_t embedding_storage(::boost::num_vertices(g));
+    auto embedding_map = ::boost::make_iterator_property_map(embedding_storage.begin(), vertex_index_map);
+
+    auto vertex_range = ::boost::vertices(g);
+    for (auto vi = vertex_range.first; vi != vertex_range.second; ++vi)
+    {
+        auto out_edge_range = ::boost::out_edges(*vi, g);
+        std::copy(out_edge_range.first, out_edge_range.second, std::back_inserter(embedding_map[*vi]));
+    }
+
+    pair_tally tally;
+    ::boost::make_biconnected_planar(g, embedding_map, edge_index_map, std::ref(tally));
+    reset_edge_index(g);
+
+    auto component_map = ::boost::make_vector_property_map< int >(edge_index_map);
+    BOOST_TEST(tally.count > 0u);
+    BOOST_TEST_EQ(::boost::biconnected_components(g, component_map), 1u);
+    BOOST_TEST(::boost::boyer_myrvold_planarity_test(g));
+}
+
 int main(int, char*[])
 {
     typedef adjacency_list< vecS, vecS, undirectedS,
@@ -131,6 +179,8 @@ int main(int, char*[])
 
     test_line_graph< SSgraph_t >(UpdateVertexIndex(), 13);
     test_line_graph< SSgraph_t >(UpdateVertexIndex(), 20);
+
+    test_visitor_overloads< VVgraph_t >();
 
     return boost::report_errors();
 }

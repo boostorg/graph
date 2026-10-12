@@ -31,7 +31,7 @@ void make_maximal_planar(
     PlanarEmbedding embedding,
     VertexIndexMap vm,
     EdgeIndexMap em,
-    AddEdgeVisitor vis);
+    const AddEdgeVisitor& vis);
 ----
 
 [cols="1,2,5"]
@@ -65,12 +65,50 @@ void make_maximal_planar(
   *Default:* `get(edge_index,g)`
 
 | IN
-| `AddEdgeVisitor vis`
-| A model of xref:visitors/AddEdgeVisitor.adoc[AddEdgeVisitor]. +
+| `const AddEdgeVisitor& vis`
+| A model of xref:visitors/AddEdgeVisitor.adoc[AddEdgeVisitor]. The visitor is copied on entry, so the algorithm works on its own copy and a temporary is accepted. Wrap it in `std::ref(vis)` to have your own visitor object updated in place. A named, non-const visitor passed without `std::ref` selects the <<deprecated-visitor-reference,deprecated overload>> instead. +
   *Default:* `default_add_edge_visitor`, a class that defines
   `visit_vertex_pair` to dispatch its calls to `add_edge`.
 
 |===
+
+'''
+
+[#passing-the-visitor]
+=== Passing the visitor
+
+* Pass `std::ref(vis)` when you need the visitor's state after the call, for example an `edge_index_update_visitor` shared across several calls.
+* Pass a temporary, or omit the visitor, when you do not need its state.
+* Do not pass a named, non-const visitor bare. It currently selects the <<deprecated-visitor-reference,deprecated overload>> and emits a deprecation warning. From Boost 1.95 the same call compiles silently but works on a copy, so your visitor is left unchanged. Treat the warning as a bug.
+
+[source,cpp]
+----
+make_maximal_planar(g, embedding, get(vertex_index, g), get(edge_index, g), std::ref(edge_updater));
+make_maximal_planar(g, embedding, get(vertex_index, g), get(edge_index, g), my_visitor());
+----
+
+'''
+
+[#deprecated-visitor-reference]
+=== Visitor by non-const reference (deprecated)
+
+[WARNING]
+====
+Deprecated: this overload takes the visitor by non-const reference, which rejects temporaries and differs from the other BGL algorithms, which take visitors by value. It is selected when a named, non-const visitor is passed without `std::ref`. Removal planned for Boost 1.95. See <<passing-the-visitor,Passing the visitor>> to migrate.
+====
+
+[source,cpp]
+----
+template<typename Graph, typename PlanarEmbedding,
+         typename VertexIndexMap, typename EdgeIndexMap,
+         typename AddEdgeVisitor>
+void make_maximal_planar(
+    Graph& g,
+    PlanarEmbedding embedding,
+    VertexIndexMap vm,
+    EdgeIndexMap em,
+    AddEdgeVisitor& vis);
+----
 
 == Description
 

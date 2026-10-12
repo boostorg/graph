@@ -14,6 +14,9 @@
 #include <boost/property_map/vector_property_map.hpp>
 #include <boost/core/lightweight_test.hpp>
 
+#include <cstddef>
+#include <functional>
+
 using namespace boost;
 
 template < typename Graph > void reset_edge_index(Graph& g)
@@ -59,6 +62,49 @@ void make_disconnected_cycles(Graph& g, int num_cycles, int cycle_size)
         }
         add_edge(curr_vertex, first_vertex, g);
     }
+}
+
+// records the joins and still adds the edges the algorithm expects
+struct pair_tally
+{
+    template < typename Vertex, typename Graph >
+    void visit_vertex_pair(Vertex u, Vertex v, Graph& g)
+    {
+        ::boost::add_edge(u, v, g);
+        ++count;
+    }
+    std::size_t count = 0;
+};
+
+// a std::ref wrapped visitor keeps its count, a temporary just compiles
+template < typename Graph > void test_visitor_overloads()
+{
+    constexpr int num_cycles = 3;
+    constexpr int cycle_size = 4;
+
+    Graph g;
+    make_disconnected_cycles(g, num_cycles, cycle_size);
+    reset_edge_index(g);
+    auto g_index_map = ::boost::get(::boost::vertex_index, g);
+
+    pair_tally tally;
+    ::boost::make_connected(g, g_index_map, std::ref(tally));
+
+    std::vector< int > g_components(::boost::num_vertices(g));
+    auto g_component_map = ::boost::make_iterator_property_map(g_components.begin(), g_index_map);
+    BOOST_TEST_EQ(::boost::connected_components(g, g_component_map), 1);
+    BOOST_TEST_EQ(tally.count, static_cast< std::size_t >(num_cycles - 1));
+
+    Graph h;
+    make_disconnected_cycles(h, num_cycles, cycle_size);
+    reset_edge_index(h);
+    auto h_index_map = ::boost::get(::boost::vertex_index, h);
+
+    ::boost::make_connected(h, h_index_map, pair_tally());
+
+    std::vector< int > h_components(::boost::num_vertices(h));
+    auto h_component_map = ::boost::make_iterator_property_map(h_components.begin(), h_index_map);
+    BOOST_TEST_EQ(::boost::connected_components(h, h_component_map), 1);
 }
 
 int main(int, char*[])
@@ -159,6 +205,8 @@ int main(int, char*[])
     graph_traits< LLgraph_t >::edges_size_type LL_num_edges(num_edges(gLL));
     make_connected(gLL);
     BOOST_TEST(num_edges(gLL) == LL_num_edges);
+
+    test_visitor_overloads< VVgraph_t >();
 
     return boost::report_errors();
 }

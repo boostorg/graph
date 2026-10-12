@@ -1,6 +1,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/boyer_myrvold_planar_test.hpp>
 #include <boost/graph/planar_face_traversal.hpp>
+#include <functional>
 #include <iostream>
 #include <vector>
 
@@ -30,6 +31,6 @@ int main() {
         boyer_myrvold_params::embedding = &embedding[0]);
 
     face_counter visitor;
-    planar_face_traversal(g, &embedding[0], visitor, get(&Edge::idx, g));
+    planar_face_traversal(g, &embedding[0], std::ref(visitor), get(&Edge::idx, g));
     std::cout << "Number of faces: " << visitor.count << "\n";
 }

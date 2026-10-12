@@ -12,7 +12,9 @@
 #include <boost/next_prior.hpp>
 #include <boost/tuple/tuple.hpp> //for tie
 #include <boost/graph/connected_components.hpp>
+#include <boost/graph/detail/visitor_wrapper.hpp>
 #include <boost/property_map/property_map.hpp>
+#include <functional>
 #include <vector>
 
 #include <boost/graph/planar_detail/add_edge_visitors.hpp>
@@ -21,9 +23,14 @@
 namespace boost
 {
 
+// Copies the visitor. Wrap it in std::ref to have the caller's own
+// visitor updated in place.
 template < typename Graph, typename VertexIndexMap, typename AddEdgeVisitor >
-void make_connected(Graph& g, VertexIndexMap vm, AddEdgeVisitor& vis)
+void make_connected(Graph& g, VertexIndexMap vm, const AddEdgeVisitor& vis)
 {
+    AddEdgeVisitor local(vis);
+    auto& vis_ref = ::boost::graph::detail::deref_visitor(local);
+
     typedef typename graph_traits< Graph >::vertex_iterator vertex_iterator_t;
     typedef typename graph_traits< Graph >::vertex_descriptor vertex_t;
     typedef typename graph_traits< Graph >::vertices_size_type v_size_t;
@@ -58,15 +65,21 @@ void make_connected(Graph& g, VertexIndexMap vm, AddEdgeVisitor& vis)
          ci_prev = ci, ++ci)
     {
         if (component[*ci_prev] != component[*ci])
-            vis.visit_vertex_pair(*ci_prev, *ci, g);
+            vis_ref.visit_vertex_pair(*ci_prev, *ci, g);
     }
+}
+
+template < typename Graph, typename VertexIndexMap, typename AddEdgeVisitor >
+BOOST_DEPRECATED("pass the visitor by value, wrapped in std::ref when its state is needed. Removal planned for Boost 1.95.")
+::std::enable_if_t< !::boost::graph::detail::is_reference_wrapper_v< AddEdgeVisitor > > make_connected(Graph& g, VertexIndexMap vm, AddEdgeVisitor& vis)
+{
+    make_connected(g, vm, std::ref(vis));
 }
 
 template < typename Graph, typename VertexIndexMap >
 inline void make_connected(Graph& g, VertexIndexMap vm)
 {
-    default_add_edge_visitor vis;
-    make_connected(g, vm, vis);
+    make_connected(g, vm, default_add_edge_visitor());
 }
 
 template < typename Graph > inline void make_connected(Graph& g)
