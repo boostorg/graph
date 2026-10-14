@@ -18,9 +18,9 @@ namespace boost
 template < class Iter1, class Iter2 >
 void permute_serial(Iter1 permuter, Iter1 last, Iter2 result)
 {
-    using D= typename std::iterator_traits< Iter1 >::difference_type;
-
+    using D = typename std::iterator_traits< Iter1 >::difference_type;
     D n = 0;
+    
     while (permuter != last)
     {
         std::swap(result[n], result[*permuter]);
