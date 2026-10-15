@@ -65,7 +65,7 @@ else()
     # should parse it from boost/version.hpp.
     # set(Boost_DEBUG ON)
     set(Boost_NO_SYSTEM_PATHS ON)
-    find_package(Boost 1.92.0 CONFIG REQUIRED COMPONENTS regex PATHS "../../stage/lib/cmake/Boost-1.92.0")
+    find_package(Boost 1.93.0 CONFIG REQUIRED COMPONENTS regex PATHS "../../stage/lib/cmake/Boost-1.93.0")
 
     add_library(boost_graph)
     target_sources(boost_graph PUBLIC
@@ -114,7 +114,6 @@ else()
             include/boost/graph/edge_connectivity.hpp
             include/boost/graph/edge_list.hpp
             include/boost/graph/edmonds_karp_max_flow.hpp
-            include/boost/graph/edmunds_karp_max_flow.hpp
             include/boost/graph/erdos_renyi_generator.hpp
             include/boost/graph/exception.hpp
             include/boost/graph/exterior_property.hpp
@@ -210,7 +209,6 @@ else()
             include/boost/graph/two_graphs_common_spanning_trees.hpp
             include/boost/graph/undirected_dfs.hpp
             include/boost/graph/undirected_graph.hpp
-            include/boost/graph/use_mpi.hpp
             include/boost/graph/vector_as_graph.hpp
             include/boost/graph/vertex_and_edge_range.hpp
             include/boost/graph/vf2_sub_graph_iso.hpp
