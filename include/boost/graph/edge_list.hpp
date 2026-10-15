@@ -12,7 +12,6 @@
 #define BOOST_GRAPH_EDGE_LIST_HPP
 
 #include <iterator>
-#include <boost/config.hpp>
 #include <type_traits>
 #include <boost/range/irange.hpp>
 #include <boost/graph/graph_traits.hpp>
@@ -278,13 +277,9 @@ template <> struct is_random< std::random_access_iterator_tag >
 // above two classes.
 
 template < class EdgeIter,
-#if !defined BOOST_NO_STD_ITERATOR_TRAITS
     class T = typename std::iterator_traits< EdgeIter >::value_type,
     class D = typename std::iterator_traits< EdgeIter >::difference_type,
     class Cat = typename std::iterator_traits< EdgeIter >::iterator_category >
-#else
-    class T, class D, class Cat >
-#endif
 class edge_list
 : public std::conditional< is_random< Cat >::type::value,
       edge_list_impl_ra< edge_list< EdgeIter, T, D, Cat >, EdgeIter, T, D >,
@@ -316,13 +311,11 @@ std::size_t num_edges(const edge_list< EdgeIter, T, D, Cat >& el)
     return el.m_num_edges;
 }
 
-#ifndef BOOST_NO_STD_ITERATOR_TRAITS
 template < class EdgeIter >
 inline edge_list< EdgeIter > make_edge_list(EdgeIter first, EdgeIter last)
 {
     return edge_list< EdgeIter >(first, last);
 }
-#endif
 
 } /* namespace boost */
 
