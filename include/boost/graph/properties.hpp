@@ -290,7 +290,6 @@ inline degree_property_map< Graph > make_degree_map(const Graph& g)
 // Kevin Vanhorn. (see also the property map generating functions
 // in boost/property_map/property_map.hpp)
 
-#if !defined(BOOST_NO_STD_ITERATOR_TRAITS)
 // A helper function for creating a vertex property map out of a
 // random access iterator and the internal vertex index map from a
 // graph.
@@ -315,7 +314,6 @@ make_iterator_vertex_map(RandomAccessIterator iter)
 {
     return make_iterator_property_map(iter, identity_property_map());
 }
-#endif
 
 template < class PropertyGraph, class RandomAccessContainer >
 inline iterator_property_map< typename RandomAccessContainer::iterator,

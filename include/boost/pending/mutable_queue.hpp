@@ -12,7 +12,6 @@
 #define BOOST_MUTABLE_QUEUE_HPP
 
 #include <vector>
-#include <algorithm>
 #include <functional>
 #include <boost/property_map/property_map.hpp>
 #include <boost/pending/mutable_heap.hpp>
@@ -48,11 +47,8 @@ public:
 
 protected:
     typedef typename RandomAccessContainer::iterator iterator;
-#if !defined BOOST_NO_STD_ITERATOR_TRAITS
     typedef array_binary_tree_node< iterator, ID > Node;
-#else
-    typedef array_binary_tree_node< iterator, value_type, ID > Node;
-#endif
+
     typedef compare_array_node< RandomAccessContainer, Comp > Compare;
     typedef std::vector< size_type > IndexArray;
 
