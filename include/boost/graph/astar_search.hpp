@@ -21,6 +21,7 @@
 #include <boost/graph/relax.hpp>
 #include <boost/graph/exception.hpp>
 #include <boost/graph/breadth_first_search.hpp>
+#include <boost/graph/detail/visitor_wrapper.hpp>
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/graph/detail/d_ary_heap.hpp>
 #include <boost/graph/property_maps/constant_property_map.hpp>
@@ -50,7 +51,7 @@ public:
     typedef Vertex argument_type;
     typedef CostType result_type;
     astar_heuristic() {}
-    CostType operator()(Vertex u) { return static_cast< CostType >(0); }
+    CostType operator()(Vertex /*u*/) { return static_cast< CostType >(0); }
 };
 
 template < class Visitor, class Graph > struct AStarVisitorConcept
@@ -92,11 +93,11 @@ public:
     }
 
 private:
-    template < class Edge, class Graph > void tree_edge(Edge e, const Graph& g)
+    template < class Edge, class Graph > void tree_edge(Edge /*e*/, const Graph& /*g*/)
     {
     }
     template < class Edge, class Graph >
-    void non_tree_edge(Edge e, const Graph& g)
+    void non_tree_edge(Edge /*e*/, const Graph& /*g*/)
     {
     }
 };
@@ -144,29 +145,29 @@ namespace detail
         template < class Vertex, class Graph >
         void initialize_vertex(Vertex u, const Graph& g)
         {
-            m_vis.initialize_vertex(u, g);
+            user_vis().initialize_vertex(u, g);
         }
         template < class Vertex, class Graph >
         void discover_vertex(Vertex u, const Graph& g)
         {
-            m_vis.discover_vertex(u, g);
+            user_vis().discover_vertex(u, g);
         }
         template < class Vertex, class Graph >
         void examine_vertex(Vertex u, const Graph& g)
         {
-            m_vis.examine_vertex(u, g);
+            user_vis().examine_vertex(u, g);
         }
         template < class Vertex, class Graph >
         void finish_vertex(Vertex u, const Graph& g)
         {
-            m_vis.finish_vertex(u, g);
+            user_vis().finish_vertex(u, g);
         }
         template < class Edge, class Graph >
         void examine_edge(Edge e, const Graph& g)
         {
             if (m_compare(get(m_weight, e), m_zero))
                 BOOST_THROW_EXCEPTION(negative_edge());
-            m_vis.examine_edge(e, g);
+            user_vis().examine_edge(e, g);
         }
         template < class Edge, class Graph >
         void non_tree_edge(Edge, const Graph&)
@@ -182,13 +183,13 @@ namespace detail
 
             if (m_decreased)
             {
-                m_vis.edge_relaxed(e, g);
+                user_vis().edge_relaxed(e, g);
                 put(m_cost, target(e, g),
                     m_combine(
                         get(m_distance, target(e, g)), m_h(target(e, g))));
             }
             else
-                m_vis.edge_not_relaxed(e, g);
+                user_vis().edge_not_relaxed(e, g);
         }
 
         template < class Edge, class Graph >
@@ -204,10 +205,10 @@ namespace detail
                     m_combine(
                         get(m_distance, target(e, g)), m_h(target(e, g))));
                 m_Q.update(target(e, g));
-                m_vis.edge_relaxed(e, g);
+                user_vis().edge_relaxed(e, g);
             }
             else
-                m_vis.edge_not_relaxed(e, g);
+                user_vis().edge_not_relaxed(e, g);
         }
 
         template < class Edge, class Graph >
@@ -219,16 +220,21 @@ namespace detail
 
             if (m_decreased)
             {
-                m_vis.edge_relaxed(e, g);
+                user_vis().edge_relaxed(e, g);
                 put(m_cost, target(e, g),
                     m_combine(
                         get(m_distance, target(e, g)), m_h(target(e, g))));
                 m_Q.push(target(e, g));
                 put(m_color, target(e, g), Color::gray());
-                m_vis.black_target(e, g);
+                user_vis().black_target(e, g);
             }
             else
-                m_vis.edge_not_relaxed(e, g);
+                user_vis().edge_not_relaxed(e, g);
+        }
+
+        auto& user_vis()
+        {
+            return ::boost::graph::detail::deref_visitor(m_vis);
         }
 
         AStarHeuristic m_h;
@@ -310,7 +316,9 @@ inline void astar_search_no_init_tree(const VertexListGraph& g,
         null_property_map< std::pair< Distance, Vertex >, std::size_t >(),
         compare);
 
-    vis.discover_vertex(s, g);
+    auto& vis_ref = ::boost::graph::detail::deref_visitor(vis);
+
+    vis_ref.discover_vertex(s, g);
     Q.push(std::make_pair(get(cost, s), s));
     while (!Q.empty())
     {
@@ -318,11 +326,11 @@ inline void astar_search_no_init_tree(const VertexListGraph& g,
         Distance v_rank;
         boost::tie(v_rank, v) = Q.top();
         Q.pop();
-        vis.examine_vertex(v, g);
+        vis_ref.examine_vertex(v, g);
         BGL_FORALL_OUTEDGES_T(v, e, g, VertexListGraph)
         {
             Vertex w = target(e, g);
-            vis.examine_edge(e, g);
+            vis_ref.examine_edge(e, g);
             Distance e_weight = get(weight, e);
             if (compare(e_weight, zero))
                 BOOST_THROW_EXCEPTION(negative_edge());
@@ -330,18 +338,18 @@ inline void astar_search_no_init_tree(const VertexListGraph& g,
                 = relax(e, g, weight, predecessor, distance, combine, compare);
             if (decreased)
             {
-                vis.edge_relaxed(e, g);
+                vis_ref.edge_relaxed(e, g);
                 Distance w_rank = combine(get(distance, w), h(w));
                 put(cost, w, w_rank);
-                vis.discover_vertex(w, g);
+                vis_ref.discover_vertex(w, g);
                 Q.push(std::make_pair(w_rank, w));
             }
             else
             {
-                vis.edge_not_relaxed(e, g);
+                vis_ref.edge_not_relaxed(e, g);
             }
         }
-        vis.finish_vertex(v, g);
+        vis_ref.finish_vertex(v, g);
     }
 }
 
@@ -361,6 +369,8 @@ inline void astar_search(const VertexListGraph& g,
 
     typedef typename property_traits< ColorMap >::value_type ColorValue;
     typedef color_traits< ColorValue > Color;
+    auto& vis_ref = ::boost::graph::detail::deref_visitor(vis);
+
     typename graph_traits< VertexListGraph >::vertex_iterator ui, ui_end;
     for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
     {
@@ -368,7 +378,7 @@ inline void astar_search(const VertexListGraph& g,
         put(distance, *ui, inf);
         put(cost, *ui, inf);
         put(predecessor, *ui, *ui);
-        vis.initialize_vertex(*ui, g);
+        vis_ref.initialize_vertex(*ui, g);
     }
     put(distance, s, zero);
     put(cost, s, h(s));
@@ -390,13 +400,15 @@ inline void astar_search_tree(const VertexListGraph& g,
     CostZero zero)
 {
 
+    auto& vis_ref = ::boost::graph::detail::deref_visitor(vis);
+
     typename graph_traits< VertexListGraph >::vertex_iterator ui, ui_end;
     for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
     {
         put(distance, *ui, inf);
         put(cost, *ui, inf);
         put(predecessor, *ui, *ui);
-        vis.initialize_vertex(*ui, g);
+        vis_ref.initialize_vertex(*ui, g);
     }
     put(distance, s, zero);
     put(cost, s, h(s));

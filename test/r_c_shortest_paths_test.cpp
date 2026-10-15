@@ -16,6 +16,9 @@
 #include <iostream>
 #include <boost/core/lightweight_test.hpp>
 
+#include <cstddef>
+#include <functional>
+
 using namespace boost;
 
 struct SPPRC_Example_Graph_Vert_Prop
@@ -285,6 +288,17 @@ public:
             && std::includes(res_cont_1.marked.begin(), res_cont_1.marked.end(),
                 res_cont_2.marked.begin(), res_cont_2.marked.end());
     }
+};
+
+// state in a plain data member, so it survives only through std::ref
+struct popped_tally : boost::default_r_c_shortest_paths_visitor
+{
+    template < class Label, class Graph >
+    void on_label_popped(const Label&, const Graph&)
+    {
+        ++count;
+    }
+    std::size_t count = 0;
 };
 
 int main(int, char*[])
@@ -691,6 +705,35 @@ int main(int, char*[])
         default_r_c_shortest_paths_visitor());
 
     BOOST_TEST(pareto_opt_rc.cost == 3);
+
+    // the same run again, with a visitor that keeps its own label count
+    std::vector< graph_traits< SPPRC_Example_Graph >::edge_descriptor >
+        tracked_solution;
+    spp_spptw_res_cont tracked_rc;
+    popped_tally tracked;
+    r_c_shortest_paths(g2, get(&SPPRC_Example_Graph_Vert_Prop::num, g2), 0, 3,
+        tracked_solution, tracked_rc, spp_spptw_res_cont(0, 0), ref_spptw(),
+        dominance_spptw(),
+        std::allocator< r_c_shortest_paths_label< SPPRC_Example_Graph,
+            spp_spptw_res_cont > >(),
+        std::ref(tracked));
+
+    BOOST_TEST(tracked_rc.cost == 3);
+    BOOST_TEST(tracked.count > 0);
+
+    // by value the caller's visitor is left untouched
+    std::vector< graph_traits< SPPRC_Example_Graph >::edge_descriptor >
+        copied_solution;
+    spp_spptw_res_cont copied_rc;
+    popped_tally copied;
+    r_c_shortest_paths(g2, get(&SPPRC_Example_Graph_Vert_Prop::num, g2), 0, 3,
+        copied_solution, copied_rc, spp_spptw_res_cont(0, 0), ref_spptw(),
+        dominance_spptw(),
+        std::allocator< r_c_shortest_paths_label< SPPRC_Example_Graph,
+            spp_spptw_res_cont > >(),
+        copied);
+
+    BOOST_TEST_EQ(copied.count, static_cast< std::size_t >(0));
 
     SPPRC_Example_Graph g3;
     add_vertex(SPPRC_Example_Graph_Vert_Prop(0, 0, 1000), g3);

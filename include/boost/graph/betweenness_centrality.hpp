@@ -116,7 +116,8 @@ namespace detail
          * using the Dijkstra visitor for the Brandes betweenness centrality
          * algorithm.
          */
-        template < typename WeightMap > struct brandes_dijkstra_shortest_paths
+        template < typename WeightMap >
+        struct brandes_dijkstra_shortest_paths
         {
             brandes_dijkstra_shortest_paths(WeightMap weight_map)
             : weight_map(weight_map)
@@ -362,7 +363,7 @@ namespace detail
                             dependency_type;
 
                     for (incoming_iterator vw = incoming[w].begin();
-                         vw != incoming[w].end(); ++vw)
+                        vw != incoming[w].end(); ++vw)
                     {
                         vertex_descriptor v = source(*vw, g);
                         dependency_type factor
@@ -533,15 +534,16 @@ namespace detail
             }
         };
 
-        template < typename T > struct is_bgl_named_params
+        template < typename T >
+        struct is_bgl_named_params
         {
-            BOOST_STATIC_CONSTANT(bool, value = false);
+            static constexpr bool value = false;
         };
 
         template < typename Param, typename Tag, typename Rest >
         struct is_bgl_named_params< bgl_named_params< Param, Tag, Rest > >
         {
-            BOOST_STATIC_CONSTANT(bool, value = true);
+            static constexpr bool value = true;
         };
 
     }

@@ -11,12 +11,11 @@
 //           Tiago de Paula Peixoto
 
 #define BOOST_GRAPH_SOURCE
-#include <boost/optional.hpp>
 #include <boost/throw_exception.hpp>
 #include <boost/graph/graphml.hpp>
 #include <boost/graph/dll_import_export.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
+#include <boost/graph/detail/rapidxml.hpp>
+#include <iterator>
 #include <map>
 #include <string>
 #include <vector>
@@ -26,72 +25,100 @@ using namespace boost;
 namespace
 {
 
+namespace rapidxml = boost::graph::detail::rapidxml;
+using xml_node = rapidxml::xml_node< char >;
+using xml_attribute = rapidxml::xml_attribute< char >;
+using xml_document = rapidxml::xml_document< char >;
+
+// Value of an attribute, or a fallback when it is absent.
+std::string attr_value(const xml_node* node, const char* name, const std::string& fallback)
+{
+    if (const xml_attribute* a = node->first_attribute(name))
+        return std::string(a->value(), a->value_size());
+    return fallback;
+}
+
+// Value of an attribute that must be present; throws parse_error otherwise.
+std::string require_attr(const xml_node* node, const char* name)
+{
+    if (const xml_attribute* a = node->first_attribute(name))
+        return std::string(a->value(), a->value_size());
+    BOOST_THROW_EXCEPTION(parse_error(std::string("missing required attribute: ") + name));
+}
+
+// Text content of an element.
+std::string node_text(const xml_node* node)
+{
+    return std::string(node->value(), node->value_size());
+}
+
 class graphml_reader
 {
 public:
     graphml_reader(mutate_graph& g) : m_g(g) {}
 
-    static boost::property_tree::ptree::path_type path(const std::string& str)
-    {
-        return boost::property_tree::ptree::path_type(str, '/');
-    }
-
-    void get_graphs(const boost::property_tree::ptree& top,
+    void get_graphs(const xml_node* top,
         size_t desired_idx /* or -1 for all */, bool is_root,
-        std::vector< const boost::property_tree::ptree* >& result)
+        std::vector< const xml_node* >& result)
     {
-        using boost::property_tree::ptree;
         size_t current_idx = 0;
         bool is_first = is_root;
-        for (const ptree::value_type& n : top)
+        for (const xml_node* n = top->first_node("graph"); n; n = n->next_sibling("graph"))
         {
-            if (n.first == "graph")
+            if (current_idx == desired_idx || desired_idx == (size_t)(-1))
             {
-                if (current_idx == desired_idx || desired_idx == (size_t)(-1))
+                result.push_back(n);
+                if (is_first)
                 {
-                    result.push_back(&n.second);
-                    if (is_first)
+                    is_first = false;
+                    for (const xml_node* data = n->first_node("data"); data; data = data->next_sibling("data"))
                     {
-                        is_first = false;
-                        for (const ptree::value_type& attr : n.second)
-                        {
-                            if (attr.first != "data")
-                                continue;
-                            std::string key = attr.second.get< std::string >(
-                                path("<xmlattr>/key"));
-                            std::string value = attr.second.get_value("");
-                            handle_graph_property(key, value);
-                        }
+                        std::string key = require_attr(data, "key");
+                        std::string value = node_text(data);
+                        handle_graph_property(key, value);
                     }
-
-                    get_graphs(n.second, (size_t)(-1), false, result);
-                    if (desired_idx != (size_t)(-1))
-                        break;
                 }
-                ++current_idx;
+
+                get_graphs(n, (size_t)(-1), false, result);
+                if (desired_idx != (size_t)(-1))
+                    break;
             }
+            ++current_idx;
         }
     }
 
     void run(std::istream& in, size_t desired_idx)
     {
-        using boost::property_tree::ptree;
-        ptree pt;
-        read_xml(in, pt,
-            boost::property_tree::xml_parser::no_comments
-                | boost::property_tree::xml_parser::trim_whitespace);
-        ptree gml = pt.get_child(path("graphml"));
-        // Search for attributes
-        for (const ptree::value_type& child : gml)
+        // rapidxml parses in place, so load the whole stream into a buffer
+        // that outlives the document, and zero-terminate it.
+        std::vector< char > buffer(
+            (std::istreambuf_iterator< char >(in)),
+            std::istreambuf_iterator< char >());
+        buffer.push_back('\0');
+
+        xml_document doc;
+        try
         {
-            if (child.first != "key")
-                continue;
-            std::string id = child.second.get(path("<xmlattr>/id"), "");
-            std::string for_ = child.second.get(path("<xmlattr>/for"), "");
-            std::string name
-                = child.second.get(path("<xmlattr>/attr.name"), "");
-            std::string type
-                = child.second.get(path("<xmlattr>/attr.type"), "");
+            // no_comments | trim_whitespace, as the old property_tree call used.
+            constexpr int flags = rapidxml::parse_normalize_whitespace | rapidxml::parse_trim_whitespace;
+            doc.parse< flags >(&buffer[0]);
+        }
+        catch (const rapidxml::parse_error& e)
+        {
+            BOOST_THROW_EXCEPTION(parse_error(e.what()));
+        }
+
+        const xml_node* gml = doc.first_node("graphml");
+        if (!gml)
+            BOOST_THROW_EXCEPTION(parse_error("no graphml element found"));
+
+        // Search for attributes
+        for (const xml_node* child = gml->first_node("key"); child; child = child->next_sibling("key"))
+        {
+            std::string id = attr_value(child, "id", "");
+            std::string for_ = attr_value(child, "for", "");
+            std::string name = attr_value(child, "attr.name", "");
+            std::string type = attr_value(child, "attr.type", "");
             key_kind kind = all_key;
             if (for_ == "graph")
                 kind = graph_key;
@@ -117,52 +144,38 @@ public:
             m_keys[id] = kind;
             m_key_name[id] = name;
             m_key_type[id] = type;
-            boost::optional< std::string > default_
-                = child.second.get_optional< std::string >(path("default"));
-            if (default_)
-                m_key_default[id] = default_.get();
+            if (const xml_node* default_ = child->first_node("default"))
+                m_key_default[id] = node_text(default_);
         }
         // Search for graphs
-        std::vector< const ptree* > graphs;
+        std::vector< const xml_node* > graphs;
         handle_graph();
         get_graphs(gml, desired_idx, true, graphs);
-        for (const ptree* gr : graphs)
+        for (const xml_node* gr : graphs)
         {
             // Search for nodes
-            for (const ptree::value_type& node : *gr)
+            for (const xml_node* node = gr->first_node("node"); node; node = node->next_sibling("node"))
             {
-                if (node.first != "node")
-                    continue;
-                std::string id
-                    = node.second.get< std::string >(path("<xmlattr>/id"));
+                std::string id = require_attr(node, "id");
                 handle_vertex(id);
-                for (const ptree::value_type& attr : node.second)
+                for (const xml_node* data = node->first_node("data"); data; data = data->next_sibling("data"))
                 {
-                    if (attr.first != "data")
-                        continue;
-                    std::string key
-                        = attr.second.get< std::string >(path("<xmlattr>/key"));
-                    std::string value = attr.second.get_value("");
+                    std::string key = require_attr(data, "key");
+                    std::string value = node_text(data);
                     handle_node_property(key, id, value);
                 }
             }
         }
-        for (const ptree* gr : graphs)
+        for (const xml_node* gr : graphs)
         {
             bool default_directed
-                = gr->get< std::string >(path("<xmlattr>/edgedefault"))
-                == "directed";
+                = require_attr(gr, "edgedefault") == "directed";
             // Search for edges
-            for (const ptree::value_type& edge : *gr)
+            for (const xml_node* edge = gr->first_node("edge"); edge; edge = edge->next_sibling("edge"))
             {
-                if (edge.first != "edge")
-                    continue;
-                std::string source
-                    = edge.second.get< std::string >(path("<xmlattr>/source"));
-                std::string target
-                    = edge.second.get< std::string >(path("<xmlattr>/target"));
-                std::string local_directed
-                    = edge.second.get(path("<xmlattr>/directed"), "");
+                std::string source = require_attr(edge, "source");
+                std::string target = require_attr(edge, "target");
+                std::string local_directed = attr_value(edge, "directed", "");
                 bool is_directed
                     = (local_directed.empty() ? default_directed
                                               : local_directed == "true");
@@ -179,13 +192,10 @@ public:
                 }
                 size_t old_edges_size = m_edge.size();
                 handle_edge(source, target);
-                for (const ptree::value_type& attr : edge.second)
+                for (const xml_node* data = edge->first_node("data"); data; data = data->next_sibling("data"))
                 {
-                    if (attr.first != "data")
-                        continue;
-                    std::string key
-                        = attr.second.get< std::string >(path("<xmlattr>/key"));
-                    std::string value = attr.second.get_value("");
+                    std::string key = require_attr(data, "key");
+                    std::string value = node_text(data);
                     handle_edge_property(key, old_edges_size, value);
                 }
             }

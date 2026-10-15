@@ -10,7 +10,7 @@
 #ifndef BOOST_GRAPH_TOPOLOGY_HPP
 #define BOOST_GRAPH_TOPOLOGY_HPP
 
-#include <boost/algorithm/minmax.hpp>
+#include <algorithm>
 #include <boost/config.hpp> // For BOOST_STATIC_CONSTANT
 #include <boost/config/no_tr1/cmath.hpp>
 #include <cmath>

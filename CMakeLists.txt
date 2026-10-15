@@ -18,7 +18,6 @@ target_include_directories(boost_graph PUBLIC include)
 
 target_link_libraries(boost_graph
   PUBLIC
-    Boost::algorithm
     Boost::any
     Boost::array
     Boost::assert
@@ -39,16 +38,13 @@ target_link_libraries(boost_graph
     Boost::parameter
     Boost::preprocessor
     Boost::property_map
-    Boost::property_tree
     Boost::random
     Boost::range
-    Boost::serialization
     Boost::throw_exception
     Boost::tuple
     Boost::type_traits
     Boost::unordered
     Boost::utility
-    Boost::xpressive
   PRIVATE
     Boost::regex
 )

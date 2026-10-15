@@ -22,6 +22,9 @@
 #include <boost/graph/metric_tsp_approx.hpp>
 #include <boost/graph/graphviz.hpp>
 
+#include <cstddef>
+#include <functional>
+
 template < typename PointType > struct cmpPnt
 {
     bool operator()(const boost::simple_point< PointType >& l,
@@ -169,6 +172,39 @@ template < typename PositionVec > void checkAdjList(PositionVec v)
     c.clear();
 }
 
+// state in a plain data member, so it survives only through std::ref
+struct visit_tally
+{
+    template < typename Vertex, typename Graph >
+    void visit_vertex(Vertex, const Graph&)
+    {
+        ++count;
+    }
+    std::size_t count = 0;
+};
+
+void test_stateful_visitor_with_ref()
+{
+    using graph_t = boost::adjacency_list< boost::vecS, boost::vecS,
+        boost::undirectedS, boost::no_property,
+        boost::property< boost::edge_weight_t, int > >;
+
+    // a unit triangle, the tour visits every vertex then returns to the start
+    graph_t g(3);
+    boost::add_edge(0, 1, 1, g);
+    boost::add_edge(1, 2, 1, g);
+    boost::add_edge(0, 2, 1, g);
+
+    visit_tally tracked;
+    boost::metric_tsp_approx(g, std::ref(tracked));
+    BOOST_TEST_EQ(tracked.count, boost::num_vertices(g) + 1);
+
+    // by value the caller's visitor is left untouched
+    visit_tally copied;
+    boost::metric_tsp_approx(g, copied);
+    BOOST_TEST_EQ(copied.count, static_cast< std::size_t >(0));
+}
+
 int main()
 {
     using namespace boost;
@@ -284,6 +320,8 @@ int main()
         caught = true;
     }
     BOOST_TEST(caught);
+
+    test_stateful_visitor_with_ref();
 
     return boost::report_errors();
 }

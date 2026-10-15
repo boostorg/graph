@@ -33,3 +33,5 @@ comment:
 ignore:
   - example/**
   - test/**
+  # vendored third-party rapidxml parser, not our code to test
+  - include/boost/graph/detail/rapidxml.hpp

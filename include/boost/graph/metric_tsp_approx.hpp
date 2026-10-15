@@ -29,6 +29,7 @@
 #include <vector>
 
 #include <boost/concept_check.hpp>
+#include <boost/graph/detail/visitor_wrapper.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_as_tree.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -158,8 +159,11 @@ void metric_tsp_approx_from_vertex(const VertexListGraph& g,
     using namespace std;
 
     BOOST_CONCEPT_ASSERT((VertexListGraphConcept< VertexListGraph >));
+    using visitor_type = ::boost::graph::detail::unwrap_visitor_t< TSPVertexVisitor >;
     BOOST_CONCEPT_ASSERT(
-        (TSPVertexVisitorConcept< TSPVertexVisitor, VertexListGraph >));
+        (TSPVertexVisitorConcept< visitor_type, VertexListGraph >));
+
+    auto& vis_ref = ::boost::graph::detail::deref_visitor(vis);
 
     // Types related to the input graph (GVertex is a template parameter).
     typedef typename graph_traits< VertexListGraph >::vertex_descriptor GVertex;
@@ -220,11 +224,11 @@ void metric_tsp_approx_from_vertex(const VertexListGraph& g,
     {
         // TODO: This is will be O(n^2) if vertex storage of g != vecS.
         GVertex v = *next(g_verts.first, get(vertex_index, mst)[*curr]);
-        vis.visit_vertex(v, g);
+        vis_ref.visit_vertex(v, g);
     }
 
     // Connect back to the start of the tour
-    vis.visit_vertex(start, g);
+    vis_ref.visit_vertex(start, g);
 }
 
 // Default tsp tour visitor that puts the tour in an OutputIterator

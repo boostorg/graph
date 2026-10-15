@@ -38,7 +38,7 @@ jobs:
         run: cp -r $GITHUB_WORKSPACE/* libs/graph
         working-directory: ../boost-root
       - name: Install deps
-        run: python tools/boostdep/depinst/depinst.py graph
+        run: python tools/boostdep/depinst/depinst.py -I example graph
         working-directory: ../boost-root
       - name: Bootstrap
         run: ./bootstrap.sh
@@ -82,7 +82,7 @@ jobs:
         run: cp -r $GITHUB_WORKSPACE/* libs/graph
         working-directory: ../boost-root
       - name: Install deps
-        run: python tools/boostdep/depinst/depinst.py graph
+        run: python tools/boostdep/depinst/depinst.py -I example graph
         working-directory: ../boost-root
       - name: Bootstrap
         run: ./bootstrap.sh
@@ -123,7 +123,7 @@ jobs:
         run: xcopy /s /e /q %GITHUB_WORKSPACE% libs\graph
         working-directory: ../boost-root
       - name: Install deps
-        run: python tools/boostdep/depinst/depinst.py graph
+        run: python tools/boostdep/depinst/depinst.py -I example graph
         working-directory: ../boost-root
       - name: Bootstrap
         run: bootstrap
