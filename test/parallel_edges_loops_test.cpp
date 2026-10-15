@@ -30,6 +30,8 @@ This test needs to be linked against Boost.Filesystem.
 #include <boost/filesystem.hpp>
 #include <boost/core/lightweight_test.hpp>
 
+#include <functional>
+
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/properties.hpp>
@@ -212,7 +214,7 @@ int test_graph(const std::string& dimacs_filename)
     graph g_copy(g);
 
     // Add edges to make g connected, if it isn't already
-    make_connected(g, get(vertex_index, g), edge_updater);
+    make_connected(g, get(vertex_index, g), std::ref(edge_updater));
 
     std::vector< graph_traits< graph >::edge_descriptor > kuratowski_edges;
 
@@ -240,15 +242,14 @@ int test_graph(const std::string& dimacs_filename)
     }
 
     // If we get this far, we have a connected planar graph.
-    make_biconnected_planar(g, perm, get(edge_index, g), edge_updater);
+    make_biconnected_planar(g, perm, get(edge_index, g), std::ref(edge_updater));
 
     // Compute the planar embedding of the (now) biconnected planar graph
     BOOST_TEST(boyer_myrvold_planarity_test(boyer_myrvold_params::graph = g,
         boyer_myrvold_params::embedding = perm));
 
     // If we get this far, we have a biconnected planar graph
-    make_maximal_planar(
-        g, perm, get(vertex_index, g), get(edge_index, g), edge_updater);
+    make_maximal_planar(g, perm, get(vertex_index, g), get(edge_index, g), std::ref(edge_updater));
 
     // Now the graph is triangulated - we can compute the final planar embedding
     BOOST_TEST(boyer_myrvold_planarity_test(boyer_myrvold_params::graph = g,
@@ -256,9 +257,16 @@ int test_graph(const std::string& dimacs_filename)
 
     // Make sure Euler's formula holds
     face_counter vis;
-    planar_face_traversal(g, perm, vis, get(edge_index, g));
+    planar_face_traversal(g, perm, std::ref(vis), get(edge_index, g));
 
     BOOST_TEST(num_vertices(g) - num_edges(g) + vis.num_faces() == 2);
+
+    // once more through std::ref, then through a temporary
+    auto edge_index_map = ::boost::get(::boost::edge_index, g);
+    face_counter ref_vis;
+    ::boost::planar_face_traversal(g, perm, std::ref(ref_vis), edge_index_map);
+    BOOST_TEST_EQ(ref_vis.num_faces(), vis.num_faces());
+    ::boost::planar_face_traversal(g, perm, face_counter(), edge_index_map);
 
     // Compute a planar canonical ordering of the vertices
     std::vector< vertex_t > ordering;

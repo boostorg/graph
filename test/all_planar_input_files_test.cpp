@@ -45,6 +45,7 @@ This test needs to be linked against Boost.Filesystem.
 #include <boost/graph/chrobak_payne_drawing.hpp>
 #include <boost/graph/boyer_myrvold_planar_test.hpp>
 #include <boost/graph/planar_detail/add_edge_visitors.hpp>
+#include <functional>
 
 using namespace boost;
 
@@ -149,7 +150,7 @@ int test_graph(const std::string& dimacs_filename)
     graph g_copy(g);
 
     // Add edges to make g connected, if it isn't already
-    make_connected(g, get(vertex_index, g), edge_updater);
+    make_connected(g, get(vertex_index, g), std::ref(edge_updater));
 
     std::vector< graph_traits< graph >::edge_descriptor > kuratowski_edges;
 
@@ -177,15 +178,14 @@ int test_graph(const std::string& dimacs_filename)
     }
 
     // If we get this far, we have a connected planar graph.
-    make_biconnected_planar(g, perm, get(edge_index, g), edge_updater);
+    make_biconnected_planar(g, perm, get(edge_index, g), std::ref(edge_updater));
 
     // Compute the planar embedding of the (now) biconnected planar graph
     BOOST_TEST(boyer_myrvold_planarity_test(boyer_myrvold_params::graph = g,
         boyer_myrvold_params::embedding = perm));
 
     // If we get this far, we have a biconnected planar graph
-    make_maximal_planar(
-        g, perm, get(vertex_index, g), get(edge_index, g), edge_updater);
+    make_maximal_planar(g, perm, get(vertex_index, g), get(edge_index, g), std::ref(edge_updater));
 
     // Now the graph is triangulated - we can compute the final planar embedding
     BOOST_TEST(boyer_myrvold_planarity_test(boyer_myrvold_params::graph = g,

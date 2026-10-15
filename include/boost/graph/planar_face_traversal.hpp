@@ -12,7 +12,10 @@
 #include <vector>
 #include <set>
 #include <map>
+#include <functional>
+#include <boost/config.hpp>
 #include <boost/next_prior.hpp>
+#include <boost/graph/detail/visitor_wrapper.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
 
@@ -34,11 +37,16 @@ struct planar_face_traversal_visitor
     void end_traversal() {}
 };
 
+// Copies the visitor. Wrap it in std::ref to have the caller's own
+// visitor updated in place.
 template < typename Graph, typename PlanarEmbedding, typename Visitor,
     typename EdgeIndexMap >
 void planar_face_traversal(const Graph& g, PlanarEmbedding embedding,
-    Visitor& visitor, EdgeIndexMap em)
+    const Visitor& visitor, EdgeIndexMap em)
 {
+    Visitor local(visitor);
+    auto& vis_ref = ::boost::graph::detail::deref_visitor(local);
+
     typedef typename graph_traits< Graph >::vertex_descriptor vertex_t;
     typedef typename graph_traits< Graph >::edge_descriptor edge_t;
     typedef typename graph_traits< Graph >::vertex_iterator vertex_iterator_t;
@@ -71,7 +79,7 @@ void planar_face_traversal(const Graph& g, PlanarEmbedding embedding,
     edge_iterator_t fi, fi_end;
     embedding_iterator_t pi, pi_begin, pi_end;
 
-    visitor.begin_traversal();
+    vis_ref.begin_traversal();
 
     // Initialize the next_edge property map. This map is initialized from the
     // PlanarEmbedding so that get(next_edge, e)[v] is the edge that comes
@@ -132,12 +140,12 @@ void planar_face_traversal(const Graph& g, PlanarEmbedding embedding,
                 = e_visited.find(v);
 
             if (e_visited_found == e_visited.end())
-                visitor.begin_face();
+                vis_ref.begin_face();
 
             while (e_visited.find(v) == e_visited.end())
             {
-                visitor.next_vertex(v);
-                visitor.next_edge(e);
+                vis_ref.next_vertex(v);
+                vis_ref.next_edge(e);
                 e_visited.insert(v);
                 put(visited, e, e_visited);
                 v = source(e, g) == v ? target(e, g) : source(e, g);
@@ -146,7 +154,7 @@ void planar_face_traversal(const Graph& g, PlanarEmbedding embedding,
             }
 
             if (e_visited_found == e_visited.end())
-                visitor.end_face();
+                vis_ref.end_face();
         }
     }
 
@@ -157,20 +165,35 @@ void planar_face_traversal(const Graph& g, PlanarEmbedding embedding,
     ei_end = self_loops.end();
     for (ei = self_loops.begin(); ei != ei_end; ++ei)
     {
-        visitor.begin_face();
-        visitor.next_edge(*ei);
-        visitor.next_vertex(source(*ei, g));
-        visitor.end_face();
+        vis_ref.begin_face();
+        vis_ref.next_edge(*ei);
+        vis_ref.next_vertex(source(*ei, g));
+        vis_ref.end_face();
     }
 
-    visitor.end_traversal();
+    vis_ref.end_traversal();
+}
+
+template < typename Graph, typename PlanarEmbedding, typename Visitor,
+    typename EdgeIndexMap >
+BOOST_DEPRECATED("pass the visitor by value, wrapped in std::ref when its state is needed. Removal planned for Boost 1.95.")
+::std::enable_if_t< !::boost::graph::detail::is_reference_wrapper_v< Visitor > > planar_face_traversal(const Graph& g, PlanarEmbedding embedding, Visitor& visitor, EdgeIndexMap em)
+{
+    planar_face_traversal(g, embedding, std::ref(visitor), em);
 }
 
 template < typename Graph, typename PlanarEmbedding, typename Visitor >
 inline void planar_face_traversal(
-    const Graph& g, PlanarEmbedding embedding, Visitor& visitor)
+    const Graph& g, PlanarEmbedding embedding, const Visitor& visitor)
 {
     planar_face_traversal(g, embedding, visitor, get(edge_index, g));
+}
+
+template < typename Graph, typename PlanarEmbedding, typename Visitor >
+BOOST_DEPRECATED("pass the visitor by value, wrapped in std::ref when its state is needed. Removal planned for Boost 1.95.")
+::std::enable_if_t< !::boost::graph::detail::is_reference_wrapper_v< Visitor > > planar_face_traversal(const Graph& g, PlanarEmbedding embedding, Visitor& visitor)
+{
+    planar_face_traversal(g, embedding, std::ref(visitor), get(edge_index, g));
 }
 
 } // namespace boost
