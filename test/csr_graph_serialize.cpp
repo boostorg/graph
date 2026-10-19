@@ -10,6 +10,7 @@
 #include <boost/graph/csr_graph_serialize.hpp>
 #include <boost/serialization/tracking.hpp>
 
+#include <iterator>
 #include <sstream>
 #include <string>
 #include <utility>
@@ -55,6 +56,9 @@ typedef boost::compressed_sparse_row_graph< boost::directedS, vertex_properties,
     edge_properties, graph_properties >
     CSRGraph;
 typedef boost::compressed_sparse_row_graph< boost::directedS > PlainCSRGraph;
+typedef boost::compressed_sparse_row_graph< boost::bidirectionalS,
+    vertex_properties, edge_properties, graph_properties >
+    BidirCSRGraph;
 
 static_assert(boost::serialization::tracking_level< CSRGraph >::value
         == boost::serialization::track_never,
@@ -75,25 +79,37 @@ int main()
 
     CSRGraph graph(boost::edges_are_sorted, endpoints.begin(), endpoints.end(),
         edge_data.begin(), 3, endpoints.size());
+    BidirCSRGraph bidirectional_graph(boost::edges_are_sorted,
+        endpoints.begin(), endpoints.end(), edge_data.begin(), 3,
+        endpoints.size());
     PlainCSRGraph plain_graph(boost::edges_are_sorted, plain_endpoints.begin(),
         plain_endpoints.end(), 3);
     graph[0].name = "A";
     graph[1].name = "B";
     graph[2].name = "C";
     boost::get_property(graph, boost::graph_all_t()).name = "sample";
+    bidirectional_graph[0].name = "A";
+    bidirectional_graph[1].name = "B";
+    bidirectional_graph[2].name = "C";
+    boost::get_property(bidirectional_graph, boost::graph_all_t()).name
+        = "sample";
 
     std::stringstream buffer;
     {
         boost::archive::xml_oarchive archive(buffer);
         archive << boost::make_nvp("graph", graph);
+        archive << boost::make_nvp("bidirectional_graph", bidirectional_graph);
         archive << boost::make_nvp("plain_graph", plain_graph);
     }
 
     CSRGraph restored;
+    BidirCSRGraph restored_bidirectional;
     PlainCSRGraph restored_plain_graph;
     {
         boost::archive::xml_iarchive archive(buffer);
         archive >> boost::make_nvp("graph", restored);
+        archive >> boost::make_nvp(
+            "bidirectional_graph", restored_bidirectional);
         archive >> boost::make_nvp("plain_graph", restored_plain_graph);
     }
 
@@ -101,6 +117,36 @@ int main()
         || restored[0].name != "A" || restored[1].name != "B"
         || restored[2].name != "C"
         || boost::get_property(restored, boost::graph_all_t()).name != "sample")
+        return 1;
+
+    if (boost::num_vertices(restored_bidirectional) != 3
+        || boost::num_edges(restored_bidirectional) != 3
+        || restored_bidirectional[0].name != "A"
+        || restored_bidirectional[1].name != "B"
+        || restored_bidirectional[2].name != "C"
+        || boost::get_property(
+               restored_bidirectional, boost::graph_all_t()).name
+            != "sample")
+        return 1;
+
+    const auto incoming = boost::in_edges(Vertex(1), restored_bidirectional);
+    if (boost::in_degree(Vertex(1), restored_bidirectional) != 2
+        || std::distance(incoming.first, incoming.second) != 2)
+        return 1;
+
+    bool found_0_to_1 = false;
+    bool found_2_to_1 = false;
+    for (auto it = incoming.first; it != incoming.second; ++it)
+    {
+        const Vertex source = boost::source(*it, restored_bidirectional);
+        const Vertex target = boost::target(*it, restored_bidirectional);
+        const int weight = restored_bidirectional[*it].weight;
+        if (source == Vertex(0) && target == Vertex(1) && weight == 7)
+            found_0_to_1 = true;
+        else if (source == Vertex(2) && target == Vertex(1) && weight == 13)
+            found_2_to_1 = true;
+    }
+    if (!found_0_to_1 || !found_2_to_1)
         return 1;
 
     const auto e01 = boost::edge(Vertex(0), Vertex(1), restored);

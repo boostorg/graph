@@ -125,8 +125,8 @@ namespace serialization
             edge_properties.push_back(std::move(edge_property));
         }
 
-        Graph rebuilt(boost::edges_are_sorted, endpoints.begin(),
-            endpoints.end(), edge_properties.begin(), V, E);
+        Graph rebuilt(boost::edges_are_unsorted_multi_pass, endpoints.begin(),
+            endpoints.end(), edge_properties.begin(), V);
 
         auto loaded_vertices = boost::vertices(loaded);
         auto rebuilt_vertices = boost::vertices(rebuilt);
