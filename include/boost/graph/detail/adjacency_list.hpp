@@ -23,6 +23,7 @@
 #include <memory>
 #include <iterator>
 #include <algorithm>
+#include <utility>
 #include <boost/limits.hpp>
 
 #include <boost/iterator/iterator_adaptor.hpp>
@@ -36,13 +37,6 @@
 #include <boost/graph/adjacency_iterator.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/assert.hpp>
-
-#ifdef BOOST_NO_CXX11_RVALUE_REFERENCES
-#define BOOST_GRAPH_MOVE_IF_POSSIBLE(x) (x)
-#else
-#include <utility>
-#define BOOST_GRAPH_MOVE_IF_POSSIBLE(x) (std::move((x)))
-#endif
 
 /*
   Outline for this file:
@@ -232,66 +226,6 @@ namespace detail
     };
     template < class Vertex > no_property stored_edge< Vertex >::s_prop;
 
-#if defined(BOOST_NO_CXX11_RVALUE_REFERENCES) \
-    || defined(BOOST_NO_CXX11_SMART_PTR)
-    template < class Vertex, class Property >
-    class stored_edge_property : public stored_edge< Vertex >
-    {
-        typedef stored_edge_property self;
-        typedef stored_edge< Vertex > Base;
-
-    public:
-        typedef Property property_type;
-        inline stored_edge_property() {}
-        inline stored_edge_property(
-            Vertex target, const Property& p = Property())
-        : stored_edge< Vertex >(target), m_property(new Property(p))
-        {
-        }
-        stored_edge_property(const self& x)
-        : Base(static_cast< Base const& >(x))
-        , m_property(const_cast< self& >(x).m_property)
-        {
-        }
-        self& operator=(const self& x)
-        {
-            // NOTE: avoid 'Base::operator=(x);' broken on SGI MIPSpro (bug
-            // 55771 of Mozilla).
-            static_cast< Base& >(*this) = static_cast< Base const& >(x);
-            m_property = const_cast< self& >(x).m_property;
-            return *this;
-        }
-#if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
-        // NOTE Don't rely on default operators, their behavior is broken on
-        // several compilers (GCC 4.6).
-        stored_edge_property(self&& x)
-        : Base(static_cast< Base&& >(x)), m_property(std::move(x.m_property))
-        {
-        }
-        self& operator=(self&& x)
-        {
-            // NOTE: avoid 'Base::operator=(x);' broken on SGI MIPSpro (bug
-            // 55771 of Mozilla).
-            static_cast< Base& >(*this) = static_cast< Base&& >(x);
-            m_property = std::move(x.m_property);
-            return *this;
-        }
-#endif
-        inline Property& get_property() { return *m_property; }
-        inline const Property& get_property() const { return *m_property; }
-
-    protected:
-        // Holding the property by-value causes edge-descriptor
-        // invalidation for add_edge() with EdgeList=vecS. Instead we
-        // hold a pointer to the property. std::auto_ptr is not
-        // a perfect fit for the job, but it is darn close.
-#ifdef BOOST_NO_AUTO_PTR
-        std::unique_ptr< Property > m_property;
-#else
-        std::auto_ptr< Property > m_property;
-#endif
-    };
-#else
     template < class Vertex, class Property >
     class stored_edge_property : public stored_edge< Vertex >
     {
@@ -335,9 +269,11 @@ namespace detail
         inline const Property& get_property() const { return *m_property; }
 
     protected:
+        // Holding the property by-value causes edge-descriptor
+        // invalidation for add_edge() with EdgeList=vecS. Instead we
+        // hold a pointer to the property.
         std::unique_ptr< Property > m_property;
     };
-#endif
 
     template < class Vertex, class Iter, class Property >
     class stored_edge_iter : public stored_edge< Vertex >
@@ -457,7 +393,7 @@ namespace detail
             for (++i; i != last; ++i)
                 if (!pred(*i))
                 {
-                    *first.base() = BOOST_GRAPH_MOVE_IF_POSSIBLE(*i.base());
+                    *first.base() = std::move(*i.base());
                     ++first;
                 }
         el.erase(first.base(), el.end());
@@ -502,7 +438,7 @@ namespace detail
                 }
                 else if (!pred(*i))
                 {
-                    *first.base() = BOOST_GRAPH_MOVE_IF_POSSIBLE(*i.base());
+                    *first.base() = std::move(*i.base());
                     ++first;
                 }
                 else
