@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE boost_serialization>
+<boost_serialization signature="serialization::archive" version="20">
+<vec_vec_undirected class_id="0" tracking_level="0" version="0">
+	<V>3</V>
+	<E>4</E>
+	<vertex_property class_id="1" tracking_level="0" version="0">
+		<name>A</name>
+	</vertex_property>
+	<vertex_property>
+		<name>B</name>
+	</vertex_property>
+	<vertex_property>
+		<name>C</name>
+	</vertex_property>
+	<u>0</u>
+	<v>1</v>
+	<edge_property class_id="2" tracking_level="0" version="0">
+		<name>ab1</name>
+	</edge_property>
+	<u>0</u>
+	<v>1</v>
+	<edge_property>
+		<name>ab2</name>
+	</edge_property>
+	<u>1</u>
+	<v>2</v>
+	<edge_property>
+		<name>bc</name>
+	</edge_property>
+	<u>2</u>
+	<v>2</v>
+	<edge_property>
+		<name>cc</name>
+	</edge_property>
+	<graph_property class_id="3" tracking_level="0" version="0"></graph_property>
+</vec_vec_undirected>
+<list_list_bidirectional class_id="4" tracking_level="0" version="0">
+	<V>3</V>
+	<E>4</E>
+	<vertex_property>
+		<name>A</name>
+	</vertex_property>
+	<vertex_property>
+		<name>B</name>
+	</vertex_property>
+	<vertex_property>
+		<name>C</name>
+	</vertex_property>
+	<u>0</u>
+	<v>1</v>
+	<edge_property>
+		<name>ab1</name>
+	</edge_property>
+	<u>0</u>
+	<v>1</v>
+	<edge_property>
+		<name>ab2</name>
+	</edge_property>
+	<u>1</u>
+	<v>2</v>
+	<edge_property>
+		<name>bc</name>
+	</edge_property>
+	<u>2</u>
+	<v>2</v>
+	<edge_property>
+		<name>cc</name>
+	</edge_property>
+	<graph_property></graph_property>
+</list_list_bidirectional>
+<vec_list_directed_property class_id="5" tracking_level="0" version="0">
+	<V>3</V>
+	<E>4</E>
+	<vertex_property class_id="6" tracking_level="0" version="0">
+		<property_value>A</property_value>
+		<property_base></property_base>
+	</vertex_property>
+	<vertex_property>
+		<property_value>B</property_value>
+		<property_base></property_base>
+	</vertex_property>
+	<vertex_property>
+		<property_value>C</property_value>
+		<property_base></property_base>
+	</vertex_property>
+	<u>0</u>
+	<v>1</v>
+	<edge_property class_id="7" tracking_level="0" version="0">
+		<property_value>ab1</property_value>
+		<property_base class_id="8" tracking_level="0" version="0">
+			<property_value>1</property_value>
+			<property_base></property_base>
+		</property_base>
+	</edge_property>
+	<u>0</u>
+	<v>1</v>
+	<edge_property>
+		<property_value>ab2</property_value>
+		<property_base>
+			<property_value>2</property_value>
+			<property_base></property_base>
+		</property_base>
+	</edge_property>
+	<u>1</u>
+	<v>2</v>
+	<edge_property>
+		<property_value>bc</property_value>
+		<property_base>
+			<property_value>3</property_value>
+			<property_base></property_base>
+		</property_base>
+	</edge_property>
+	<u>2</u>
+	<v>2</v>
+	<edge_property>
+		<property_value>cc</property_value>
+		<property_base>
+			<property_value>4</property_value>
+			<property_base></property_base>
+		</property_base>
+	</edge_property>
+	<graph_property></graph_property>
+</vec_list_directed_property>
+<vec_vec_directed_plain class_id="9" tracking_level="0" version="0">
+	<V>3</V>
+	<E>4</E>
+	<vertex_property></vertex_property>
+	<vertex_property></vertex_property>
+	<vertex_property></vertex_property>
+	<u>0</u>
+	<v>1</v>
+	<edge_property></edge_property>
+	<u>0</u>
+	<v>1</v>
+	<edge_property></edge_property>
+	<u>1</u>
+	<v>2</v>
+	<edge_property></edge_property>
+	<u>2</u>
+	<v>2</v>
+	<edge_property></edge_property>
+	<graph_property></graph_property>
+</vec_vec_directed_plain>
+</boost_serialization>
+
