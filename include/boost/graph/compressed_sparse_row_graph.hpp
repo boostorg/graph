@@ -982,6 +982,36 @@ public:
         set_up_backward_property_links();
     }
 
+    //  From number of vertices and sorted list of edges
+    template < typename InputIterator >
+    compressed_sparse_row_graph(edges_are_sorted_t, InputIterator edge_begin,
+        InputIterator edge_end, vertices_size_type numverts,
+        edges_size_type numedges = 0,
+        const GraphProperty& prop = GraphProperty())
+    : m_property(prop)
+    {
+        m_forward.assign_from_sorted_edges(edge_begin, edge_end,
+            typed_identity_property_map< vertices_size_type >(), keep_all(),
+            numverts, numedges);
+        inherited_vertex_properties::resize(numverts);
+        set_up_backward_property_links();
+    }
+
+    //  From number of vertices and sorted list of edges, plus edge properties
+    template < typename InputIterator, typename EdgePropertyIterator >
+    compressed_sparse_row_graph(edges_are_sorted_t, InputIterator edge_begin,
+        InputIterator edge_end, EdgePropertyIterator ep_iter,
+        vertices_size_type numverts, edges_size_type numedges = 0,
+        const GraphProperty& prop = GraphProperty())
+    : m_property(prop)
+    {
+        m_forward.assign_from_sorted_edges(edge_begin, edge_end, ep_iter,
+            typed_identity_property_map< vertices_size_type >(), keep_all(),
+            numverts, numedges);
+        inherited_vertex_properties::resize(numverts);
+        set_up_backward_property_links();
+    }
+
     //   Requires IncidenceGraph and a vertex index map
     template < typename Graph, typename VertexIndexMap >
     compressed_sparse_row_graph(const Graph& g, const VertexIndexMap& vi,
