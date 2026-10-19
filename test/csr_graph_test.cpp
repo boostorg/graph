@@ -1,4 +1,5 @@
 // Copyright 2005 The Trustees of Indiana University.
+// Copyright 2026 Arnaud Becheler
 
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -27,6 +28,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/limits.hpp>
+#include <boost/tuple/tuple_comparison.hpp>
 #include <string>
 #include <boost/core/lightweight_test.hpp>
 
@@ -412,6 +414,42 @@ void test_vertex_and_edge_properties()
     }
 }
 
+void test_bidirectional_sorted_edges()
+{
+    using EdgePair = std::pair< int, int >;
+    const EdgePair sorted_edges[] = { EdgePair(0, 1), EdgePair(0, 1),
+        EdgePair(0, 2), EdgePair(1, 1), EdgePair(2, 0), EdgePair(3, 2) };
+    const EdgeData edge_data[] = { { 0 }, { 1 }, { 2 }, { 3 }, { 4 }, { 5 } };
+    constexpr std::size_t num_verts = 5;
+    constexpr std::size_t edge_count = 6;
+    const std::size_t expected_in_degree[] = { 1, 3, 2, 0, 0 };
+
+    const BidirCSRGraphT sorted(boost::edges_are_sorted,
+        std::begin(sorted_edges), std::end(sorted_edges), num_verts);
+    const BidirCSRGraphT unsorted(boost::edges_are_unsorted_multi_pass,
+        std::begin(sorted_edges), std::end(sorted_edges), num_verts);
+    check_consistency(sorted);
+    assert_graphs_equal(sorted, boost::identity_property_map(), unsorted,
+        boost::identity_property_map(), boost::identity_property_map());
+
+    const BidirCSRGraphT g(boost::edges_are_sorted, std::begin(sorted_edges),
+        std::end(sorted_edges), std::begin(edge_data), num_verts, edge_count);
+    check_consistency(g);
+    for (const auto& v : boost::make_iterator_range(vertices(g)))
+    {
+        BOOST_TEST(in_degree(v, g) == expected_in_degree[v]);
+        for (const auto& e : boost::make_iterator_range(in_edges(v, g)))
+        {
+            BOOST_TEST(target(e, g) == v);
+            const auto index = static_cast< int >(get(boost::edge_index, g, e));
+            BOOST_TEST(g[e].index_e == index);
+            const auto u = static_cast< int >(source(e, g));
+            const auto w = static_cast< int >(target(e, g));
+            BOOST_TEST(sorted_edges[g[e].index_e] == EdgePair(u, w));
+        }
+    }
+}
+
 int main()
 {
     int seed = 42;
@@ -430,6 +468,7 @@ int main()
 
     test_graph_properties();
     test_vertex_and_edge_properties();
+    test_bidirectional_sorted_edges();
 
     {
         std::cout << "Testing CSR graph built from unsorted edges" << std::endl;
