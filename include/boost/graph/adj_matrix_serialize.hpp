@@ -30,8 +30,7 @@ namespace serialization
     struct tracking_level_impl;
 
     template < class Directed, class VP, class EP, class GP, class Allocator >
-    struct tracking_level_impl<
-        const boost::adjacency_matrix< Directed, VP, EP, GP, Allocator > >
+    struct tracking_level_impl< const boost::adjacency_matrix< Directed, VP, EP, GP, Allocator > >
     : boost::integral_constant< int, 0 >
     {
     };
@@ -50,8 +49,8 @@ namespace serialization
         auto vertex_range = boost::vertices(graph);
         for (auto it = vertex_range.first; it != vertex_range.second; ++it)
         {
-            auto&& vertex_property =
-                boost::get(boost::vertex_all_t(), graph, *it);
+            const auto& vertex_property
+                = boost::get(boost::vertex_all_t(), graph, *it);
             ar << BOOST_NVP(vertex_property);
         }
 
@@ -60,8 +59,8 @@ namespace serialization
         {
             const auto u = boost::source(*it, graph);
             const auto v = boost::target(*it, graph);
-            auto&& edge_property =
-                boost::get(boost::edge_all_t(), graph, *it);
+            const auto& edge_property 
+                = boost::get(boost::edge_all_t(), graph, *it);
 
             ar << BOOST_NVP(u);
             ar << BOOST_NVP(v);
@@ -93,8 +92,8 @@ namespace serialization
         auto vertex_range = boost::vertices(loaded);
         for (auto it = vertex_range.first; it != vertex_range.second; ++it)
         {
-            auto&& vertex_property =
-                boost::get(boost::vertex_all_t(), loaded, *it);
+            auto& vertex_property
+                = boost::get(boost::vertex_all_t(), loaded, *it);
             ar >> BOOST_NVP(vertex_property);
         }
 
@@ -107,7 +106,7 @@ namespace serialization
             ar >> BOOST_NVP(v);
 
             const auto e = boost::add_edge(u, v, loaded).first;
-            auto&& edge_property = boost::get(boost::edge_all_t(), loaded, e);
+            auto& edge_property = boost::get(boost::edge_all_t(), loaded, e);
             ar >> BOOST_NVP(edge_property);
         }
 

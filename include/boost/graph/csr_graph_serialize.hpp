@@ -53,7 +53,7 @@ namespace serialization
         auto vertex_range = boost::vertices(graph);
         for (auto it = vertex_range.first; it != vertex_range.second; ++it)
         {
-            auto&& vertex_property
+            const auto& vertex_property
                 = boost::get(boost::vertex_all_t(), graph, *it);
             ar << BOOST_NVP(vertex_property);
         }
@@ -63,7 +63,7 @@ namespace serialization
         {
             const auto u = boost::source(*it, graph);
             const auto v = boost::target(*it, graph);
-            const auto edge_property
+            const auto& edge_property
                 = boost::get(boost::edge_all_t(), graph, *it);
 
             ar << BOOST_NVP(u);
@@ -87,6 +87,7 @@ namespace serialization
         using VertexSize = typename Graph::vertices_size_type;
         using EdgeSize = typename Graph::edges_size_type;
         using VertexDescriptor = typename Graph::vertex_descriptor;
+        using VertexProperty = typename Graph::vertex_bundled;
         using EdgeProperty = typename Graph::edge_bundled;
 
         VertexSize V = 0;
@@ -95,13 +96,10 @@ namespace serialization
         ar >> BOOST_NVP(V);
         ar >> BOOST_NVP(E);
 
-        Graph loaded(V);
-
-        auto vertex_range = boost::vertices(loaded);
-        for (auto it = vertex_range.first; it != vertex_range.second; ++it)
+        std::vector< VertexProperty > vertex_properties(
+            static_cast< std::size_t >(V));
+        for (auto& vertex_property : vertex_properties)
         {
-            auto&& vertex_property
-                = boost::get(boost::vertex_all_t(), loaded, *it);
             ar >> BOOST_NVP(vertex_property);
         }
 
@@ -125,19 +123,12 @@ namespace serialization
             edge_properties.push_back(std::move(edge_property));
         }
 
-        Graph rebuilt(boost::edges_are_unsorted_multi_pass, endpoints.begin(),
-            endpoints.end(), edge_properties.begin(), V);
-
-        auto loaded_vertices = boost::vertices(loaded);
-        auto rebuilt_vertices = boost::vertices(rebuilt);
-        for (auto loaded_it = loaded_vertices.first,
-                  rebuilt_it = rebuilt_vertices.first;
-            loaded_it != loaded_vertices.second
-            && rebuilt_it != rebuilt_vertices.second;
-            ++loaded_it, ++rebuilt_it)
+        Graph rebuilt(boost::edges_are_sorted, endpoints.begin(),
+            endpoints.end(), edge_properties.begin(), V, E);
+        for (VertexDescriptor vertex = 0; vertex < V; ++vertex)
         {
-            boost::get(boost::vertex_all_t(), rebuilt, *rebuilt_it) = std::move(
-                boost::get(boost::vertex_all_t(), loaded, *loaded_it));
+            boost::get(boost::vertex_all_t(), rebuilt, vertex) = std::move(
+                vertex_properties[static_cast< std::size_t >(vertex)]);
         }
 
         ar >> boost::make_nvp("graph_property",

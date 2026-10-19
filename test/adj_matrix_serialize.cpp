@@ -6,6 +6,7 @@
 
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <boost/core/nvp.hpp>
 #include <boost/graph/adj_matrix_serialize.hpp>
 #include <boost/serialization/tracking.hpp>
@@ -35,10 +36,9 @@ struct edge_properties
     }
 };
 
-typedef boost::adjacency_matrix< boost::directedS > DirectedGraph;
-typedef boost::adjacency_matrix< boost::undirectedS, vertex_properties,
-    edge_properties >
-    UndirectedGraph;
+using DirectedGraph = boost::adjacency_matrix< boost::directedS >;
+using UndirectedGraph = boost::adjacency_matrix< boost::undirectedS,
+    vertex_properties, edge_properties >;
 
 static_assert(boost::serialization::tracking_level< DirectedGraph >::value
         == boost::serialization::track_never,
@@ -78,26 +78,26 @@ int main()
         archive >> boost::make_nvp("undirected_graph", restored_undirected);
     }
 
-    if (boost::num_vertices(restored_directed) != 3 ||
-        boost::num_edges(restored_directed) != 2 ||
-        !boost::edge(0, 1, restored_directed).second ||
-        !boost::edge(1, 2, restored_directed).second ||
-        boost::edge(1, 0, restored_directed).second)
-        return 1;
+    BOOST_TEST(boost::num_vertices(restored_directed) == 3);
+    BOOST_TEST(boost::num_edges(restored_directed) == 2);
+    BOOST_TEST(boost::edge(0, 1, restored_directed).second);
+    BOOST_TEST(boost::edge(1, 2, restored_directed).second);
+    BOOST_TEST(!boost::edge(1, 0, restored_directed).second);
 
-    if (boost::num_vertices(restored_undirected) != 3 ||
-        boost::num_edges(restored_undirected) != 2 ||
-        restored_undirected[0].name != "A" ||
-        restored_undirected[1].name != "B" ||
-        restored_undirected[2].name != "C")
-        return 1;
+    BOOST_TEST(boost::num_vertices(restored_undirected) == 3);
+    BOOST_TEST(boost::num_edges(restored_undirected) == 2);
+    BOOST_TEST(restored_undirected[0].name == "A");
+    BOOST_TEST(restored_undirected[1].name == "B");
+    BOOST_TEST(restored_undirected[2].name == "C");
 
     const auto first = boost::edge(0, 1, restored_undirected);
     const auto second = boost::edge(1, 2, restored_undirected);
-    if (!first.second || !second.second ||
-        restored_undirected[first.first].weight != 7 ||
-        restored_undirected[second.first].weight != 11)
-        return 1;
+    BOOST_TEST(first.second);
+    BOOST_TEST(second.second);
+    if (first.second)
+        BOOST_TEST(restored_undirected[first.first].weight == 7);
+    if (second.second)
+        BOOST_TEST(restored_undirected[second.first].weight == 11);
 
-    return 0;
+    return boost::report_errors();
 }
