@@ -13,7 +13,6 @@
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/graph/topology.hpp>
 #include <boost/property_map/property_map.hpp>
-#include <boost/static_assert.hpp>
 
 namespace boost
 {
@@ -31,8 +30,10 @@ template < typename VertexListGraph, typename PositionMap, typename Radius >
 void circle_graph_layout(
     const VertexListGraph& g, PositionMap position, Radius radius)
 {
-    BOOST_STATIC_ASSERT(
-        property_traits< PositionMap >::value_type::dimensions >= 2);
+    static_assert(
+        property_traits< PositionMap >::value_type::dimensions >= 2,
+        "the value type of the position map must be a point with at least "
+        "2 dimensions");
     const double pi = 3.14159265358979323846;
 
 #ifndef BOOST_NO_STDC_NAMESPACE
