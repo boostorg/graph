@@ -1,5 +1,6 @@
 //=======================================================================
 // Copyright 2005 Jeremy G. Siek
+// Copyright 2026 Arnaud Becheler
 // Authors: Jeremy G. Siek
 //
 // Distributed under the Boost Software License, Version 1.0. (See
@@ -50,14 +51,15 @@ namespace serialization
         using Graph = adjacency_list< OEL, VL, D, VP, EP, GP, EL >;
         using Vertex = typename graph_traits< Graph >::vertex_descriptor;
 
-        const auto V = num_vertices(graph);
-        const auto E = num_edges(graph);
+        // Fixed 4 byte integers keep binary archives readable across releases.
+        const auto V = static_cast< unsigned int >(num_vertices(graph));
+        const auto E = static_cast< unsigned int >(num_edges(graph));
         ar << BOOST_NVP(V);
         ar << BOOST_NVP(E);
 
         // assign indices to vertices
-        std::unordered_map< Vertex, Vertex > indices(V);
-        Vertex num = 0;
+        std::unordered_map< Vertex, unsigned int > indices(V);
+        unsigned int num = 0;
         BGL_FORALL_VERTICES_T(v, graph, Graph)
         {
             indices[v] = num++;
@@ -88,16 +90,15 @@ namespace serialization
         using Graph = adjacency_list< OEL, VL, D, VP, EP, GP, EL >;
         using Vertex = typename graph_traits< Graph >::vertex_descriptor;
         using Edge = typename graph_traits< Graph >::edge_descriptor;
-        using VertexSizeType = typename graph_traits< Graph >::vertices_size_type;
 
-        VertexSizeType V;
+        unsigned int V;
         ar >> BOOST_NVP(V);
         
-        VertexSizeType E;
+        unsigned int E;
         ar >> BOOST_NVP(E);
 
         std::vector< Vertex > verts(V);
-        size_t i = 0;
+        unsigned int i = 0;
         while (V-- > 0)
         {
             const auto v = add_vertex(graph);
@@ -108,8 +109,8 @@ namespace serialization
         
         while (E-- > 0)
         {
-            Vertex u;
-            Vertex v;
+            unsigned int u;
+            unsigned int v;
             ar >> BOOST_NVP(u);
             ar >> BOOST_NVP(v);
 
