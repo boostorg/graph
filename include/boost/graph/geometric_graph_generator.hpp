@@ -49,12 +49,10 @@ struct euclidean_distance
 // Connects every pair of vertices with an edge weighted by the distance between
 // the corresponding points. A common preprocessing step for TSP algorithms.
 //
-// The distance defaults to euclidean_distance.
-//
 // Preconditions: num_vertices(g) == points.size() and g has no edges.
 // Complexity: O(V^2).
-template < typename VertexListGraph, typename PointContainer, typename WeightMap, typename VertexIndexMap, typename BinaryFunction = euclidean_distance >
-void connect_all_geometric(VertexListGraph& g, const PointContainer& points, WeightMap wmap, VertexIndexMap vmap, BinaryFunction distance = BinaryFunction {})
+template < typename VertexListGraph, typename PointContainer, typename WeightMap, typename VertexIndexMap, typename BinaryFunction >
+void connect_all_geometric(VertexListGraph& g, const PointContainer& points, WeightMap wmap, VertexIndexMap vmap, BinaryFunction distance)
 {
     using Traits = ::boost::graph_traits< VertexListGraph >;
 
@@ -135,8 +133,8 @@ std::size_t generate_unique_random_points(std::size_t num_points, XDistribution 
 // Throws std::runtime_error when the distributions cannot supply num_points
 // distinct points, because a shorter point set would leave connect_all_geometric
 // indexing past the end.
-template < typename PointType, typename VertexListGraph, typename WeightMap, typename VertexIndexMap, typename XDistribution, typename YDistribution, typename URBG, typename BinaryFunction = euclidean_distance >
-void make_random_geometric_graph(VertexListGraph& g, std::size_t num_points, XDistribution x_dist, YDistribution y_dist, WeightMap weight_map, VertexIndexMap vertex_index_map, URBG&& gen, BinaryFunction distance = BinaryFunction {})
+template < typename PointType, typename VertexListGraph, typename WeightMap, typename VertexIndexMap, typename XDistribution, typename YDistribution, typename URBG, typename BinaryFunction >
+void make_random_geometric_graph(VertexListGraph& g, std::size_t num_points, XDistribution x_dist, YDistribution y_dist, WeightMap weight_map, VertexIndexMap vertex_index_map, URBG&& gen, BinaryFunction distance)
 {
     std::vector< PointType > points;
     points.reserve(num_points);

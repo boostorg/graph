@@ -36,13 +36,18 @@ int main()
     std::mt19937 gen(42);
     std::uniform_real_distribution< double > coordinates(0.0, 500.0);
     auto weight_map = ::boost::get(::boost::edge_weight, g);
+    auto index_map = ::boost::get(::boost::vertex_index, g);
+    const ::boost::graph::euclidean_distance euclidean {};
 
-    ::boost::graph::make_random_geometric_graph< Point >(g, num_points, coordinates, coordinates, weight_map, ::boost::get(::boost::vertex_index, g), gen);
+    ::boost::graph::make_random_geometric_graph< Point >(g, num_points, coordinates, coordinates, weight_map, index_map, gen, euclidean);
 
-    std::cout << "Complete geometric graph: " << ::boost::num_vertices(g) << " vertices, " << ::boost::num_edges(g) << " edges\n";
+    const auto vertex_count = ::boost::num_vertices(g);
+    const auto edge_count = ::boost::num_edges(g);
+    std::cout << "Complete geometric graph: " << vertex_count << " vertices, " << edge_count << " edges\n";
 
     std::vector< Edge > mst;
-    ::boost::kruskal_minimum_spanning_tree(g, std::back_inserter(mst));
+    auto mst_out = std::back_inserter(mst);
+    ::boost::kruskal_minimum_spanning_tree(g, mst_out);
 
     double total = 0.0;
 
