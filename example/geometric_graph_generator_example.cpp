@@ -26,14 +26,6 @@ using Graph = ::boost::adjacency_matrix< ::boost::undirectedS, ::boost::no_prope
 using Point = ::boost::simple_point< double >;
 using Edge = ::boost::graph_traits< Graph >::edge_descriptor;
 
-struct euclidean
-{
-    template < typename P > auto operator()(P const& a, P const& b) const -> decltype(distance(a, b))
-    {
-        return distance(a, b);
-    }
-};
-
 } // end anonymous namespace
 
 int main()
@@ -45,7 +37,7 @@ int main()
     std::uniform_real_distribution< double > coordinates(0.0, 500.0);
     auto weight_map = ::boost::get(::boost::edge_weight, g);
 
-    ::boost::graph::make_random_geometric_graph< Point >(g, num_points, coordinates, coordinates, weight_map, ::boost::get(::boost::vertex_index, g), gen, euclidean {});
+    ::boost::graph::make_random_geometric_graph< Point >(g, num_points, coordinates, coordinates, weight_map, ::boost::get(::boost::vertex_index, g), gen);
 
     std::cout << "Complete geometric graph: " << ::boost::num_vertices(g) << " vertices, " << ::boost::num_edges(g) << " edges\n";
 

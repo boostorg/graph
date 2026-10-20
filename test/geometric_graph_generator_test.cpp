@@ -18,6 +18,7 @@
 #include <cstddef>
 #include <random>
 #include <stdexcept>
+#include <type_traits>
 #include <vector>
 
 namespace
@@ -25,15 +26,6 @@ namespace
 
 using Graph = ::boost::adjacency_matrix< ::boost::undirectedS, ::boost::no_property, ::boost::property< ::boost::edge_weight_t, double > >;
 using Point = ::boost::simple_point< double >;
-
-// ADL on simple_point resolves to its hidden friend. Safe outside namespace boost.
-struct euclidean
-{
-    template < typename P > auto operator()(P const& a, P const& b) const -> decltype(distance(a, b))
-    {
-        return distance(a, b);
-    }
-};
 
 // Stands in for a third party point type such as boost::geometry point_xy.
 // No hash, no equality, no default constructor.
@@ -60,7 +52,7 @@ void test_known_weights()
     const std::vector< Point > points = { { 0.0, 0.0 }, { 3.0, 0.0 }, { 0.0, 4.0 } };
     auto weight_map = ::boost::get(::boost::edge_weight, g);
 
-    ::boost::graph::connect_all_geometric(g, points, weight_map, ::boost::get(::boost::vertex_index, g), euclidean {});
+    ::boost::graph::connect_all_geometric(g, points, weight_map, ::boost::get(::boost::vertex_index, g), ::boost::graph::euclidean_distance {});
 
     BOOST_TEST_EQ(::boost::num_edges(g), 3u);
     BOOST_TEST_EQ(::boost::get(weight_map, ::boost::edge(0, 1, g).first), 3.0);
@@ -68,12 +60,35 @@ void test_known_weights()
     BOOST_TEST_EQ(::boost::get(weight_map, ::boost::edge(1, 2, g).first), 5.0);
 }
 
+// Integer coordinates must not truncate the distance.
+void test_integral_coordinates_widen_to_double()
+{
+    using IntPoint = ::boost::simple_point< int >;
+    Graph g(3);
+    const std::vector< IntPoint > points = { { 0, 0 }, { 3, 0 }, { 0, 4 } };
+    auto weight_map = ::boost::get(::boost::edge_weight, g);
+
+    ::boost::graph::connect_all_geometric(g, points, weight_map, ::boost::get(::boost::vertex_index, g));
+
+    BOOST_TEST_EQ(::boost::get(weight_map, ::boost::edge(0, 1, g).first), 3.0);
+    BOOST_TEST_EQ(::boost::get(weight_map, ::boost::edge(0, 2, g).first), 4.0);
+    BOOST_TEST_EQ(::boost::get(weight_map, ::boost::edge(1, 2, g).first), 5.0);
+
+    const ::boost::graph::euclidean_distance euclidean {};
+    const IntPoint origin = { 0, 0 };
+    const IntPoint diagonal = { 1, 1 };
+    const auto d = euclidean(origin, diagonal);
+
+    static_assert(std::is_same< decltype(euclidean(origin, diagonal)), double >::value, "integral coordinates must widen to double");
+    BOOST_TEST_LT(std::abs(d - std::sqrt(2.0)), 1e-12);
+}
+
 void test_single_vertex_has_no_edges()
 {
     Graph g(1);
     const std::vector< Point > points = { { 0.0, 0.0 } };
 
-    ::boost::graph::connect_all_geometric(g, points, ::boost::get(::boost::edge_weight, g), ::boost::get(::boost::vertex_index, g), euclidean {});
+    ::boost::graph::connect_all_geometric(g, points, ::boost::get(::boost::edge_weight, g), ::boost::get(::boost::vertex_index, g));
 
     BOOST_TEST_EQ(::boost::num_edges(g), 0u);
 }
@@ -91,7 +106,7 @@ void test_reproducible()
         std::mt19937 gen(42);
         auto weight_map = ::boost::get(::boost::edge_weight, g);
 
-        ::boost::graph::make_random_geometric_graph< Point >(g, num_points, dist, dist, weight_map, ::boost::get(::boost::vertex_index, g), gen, euclidean {});
+        ::boost::graph::make_random_geometric_graph< Point >(g, num_points, dist, dist, weight_map, ::boost::get(::boost::vertex_index, g), gen);
 
         BOOST_TEST_EQ(::boost::num_edges(g), num_points * (num_points - 1) / 2);
 
@@ -126,7 +141,7 @@ void test_shortfall_throws()
     std::uniform_int_distribution< int > narrow(0, 2);
     std::mt19937 gen(7);
 
-    BOOST_TEST_THROWS((::boost::graph::make_random_geometric_graph< IntPoint >(g, 50, narrow, narrow, ::boost::get(::boost::edge_weight, g), ::boost::get(::boost::vertex_index, g), gen, euclidean {})), std::runtime_error);
+    BOOST_TEST_THROWS((::boost::graph::make_random_geometric_graph< IntPoint >(g, 50, narrow, narrow, ::boost::get(::boost::edge_weight, g), ::boost::get(::boost::vertex_index, g), gen)), std::runtime_error);
 }
 
 void test_shortfall_is_reported_by_return_value()
@@ -161,6 +176,7 @@ void test_point_type_needs_no_hash_or_equality()
 int main()
 {
     test_known_weights();
+    test_integral_coordinates_widen_to_double();
     test_single_vertex_has_no_edges();
     test_reproducible();
     test_requested_count_is_met();

@@ -18,11 +18,11 @@
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
-#include <boost/graph/simple_point.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/unordered/unordered_flat_set.hpp>
 
 #include <algorithm>
+#include <cmath>
 #include <cstddef>
 #include <iterator>
 #include <stdexcept>
@@ -35,17 +35,26 @@ namespace boost
 namespace graph
 {
 
+// Euclidean distance for points with x and y members. Integral coordinates widen to double.
+struct euclidean_distance
+{
+    template < typename Point > auto operator()(const Point& a, const Point& b) const
+    {
+        using T = std::decay_t< decltype(a.x) >;
+        using R = std::conditional_t< std::is_floating_point< T >::value, T, double >;
+        return std::hypot(static_cast< R >(a.x) - static_cast< R >(b.x), static_cast< R >(a.y) - static_cast< R >(b.y));
+    }
+};
+
 // Connects every pair of vertices with an edge weighted by the distance between
 // the corresponding points. A common preprocessing step for TSP algorithms.
 //
-// The distance functor must be supplied by the caller. Writing an ADL wrapper
-// inside namespace boost is not possible because unqualified lookup there also
-// finds boost::distance from Boost.Range.
+// The distance defaults to euclidean_distance.
 //
 // Preconditions: num_vertices(g) == points.size() and g has no edges.
 // Complexity: O(V^2).
-template < typename VertexListGraph, typename PointContainer, typename WeightMap, typename VertexIndexMap, typename BinaryFunction >
-void connect_all_geometric(VertexListGraph& g, const PointContainer& points, WeightMap wmap, VertexIndexMap vmap, BinaryFunction distance)
+template < typename VertexListGraph, typename PointContainer, typename WeightMap, typename VertexIndexMap, typename BinaryFunction = euclidean_distance >
+void connect_all_geometric(VertexListGraph& g, const PointContainer& points, WeightMap wmap, VertexIndexMap vmap, BinaryFunction distance = BinaryFunction {})
 {
     using Traits = ::boost::graph_traits< VertexListGraph >;
 
@@ -126,8 +135,8 @@ std::size_t generate_unique_random_points(std::size_t num_points, XDistribution 
 // Throws std::runtime_error when the distributions cannot supply num_points
 // distinct points, because a shorter point set would leave connect_all_geometric
 // indexing past the end.
-template < typename PointType, typename VertexListGraph, typename WeightMap, typename VertexIndexMap, typename XDistribution, typename YDistribution, typename URBG, typename BinaryFunction >
-void make_random_geometric_graph(VertexListGraph& g, std::size_t num_points, XDistribution x_dist, YDistribution y_dist, WeightMap weight_map, VertexIndexMap vertex_index_map, URBG&& gen, BinaryFunction distance)
+template < typename PointType, typename VertexListGraph, typename WeightMap, typename VertexIndexMap, typename XDistribution, typename YDistribution, typename URBG, typename BinaryFunction = euclidean_distance >
+void make_random_geometric_graph(VertexListGraph& g, std::size_t num_points, XDistribution x_dist, YDistribution y_dist, WeightMap weight_map, VertexIndexMap vertex_index_map, URBG&& gen, BinaryFunction distance = BinaryFunction {})
 {
     std::vector< PointType > points;
     points.reserve(num_points);
