@@ -6,10 +6,9 @@
 #ifndef BOOST_GRAPH_ISOMORPHISM_HPP
 #define BOOST_GRAPH_ISOMORPHISM_HPP
 
-#include "subgraph.hpp"
+#include "graph_archetypes.hpp"
 #include <utility>
 #include <vector>
-#include <iterator>
 #include <algorithm>
 #include <boost/config.hpp>
 #include <boost/assert.hpp>
@@ -19,11 +18,6 @@
 #include <boost/unordered/unordered_flat_map.hpp>
 #include <boost/pending/indirect_cmp.hpp> // for make_indirect_pmap
 #include <boost/concept/assert.hpp>
-
-#ifndef BOOST_GRAPH_ITERATION_MACROS_HPP
-#define BOOST_ISO_INCLUDED_ITER_MACROS // local macro, see bottom of file
-#include <boost/graph/iteration_macros.hpp>
-#endif
 
 namespace boost
 {
@@ -484,8 +478,11 @@ namespace detail
         
         for(const auto u : boost::make_iterator_range(vertices(g)))
         {
-            BGL_FORALL_ADJ_T(u, v, g, Graph)
-            put(in_degree_map, v, get(in_degree_map, v) + 1);
+
+            for(const auto v : boost::make_iterator_range(adjacent_vertices(u, g)))
+            {
+                put(in_degree_map, v, get(in_degree_map, v) + 1);
+            }
         }
     }
 
@@ -763,10 +760,5 @@ inline bool verify_isomorphism(
 }
 
 } // namespace boost
-
-#ifdef BOOST_ISO_INCLUDED_ITER_MACROS
-#undef BOOST_ISO_INCLUDED_ITER_MACROS
-#include <boost/graph/iteration_macros_undef.hpp>
-#endif
 
 #endif // BOOST_GRAPH_ISOMORPHISM_HPP
