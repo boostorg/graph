@@ -6,7 +6,6 @@
 #ifndef BOOST_GRAPH_ISOMORPHISM_HPP
 #define BOOST_GRAPH_ISOMORPHISM_HPP
 
-#include "graph_archetypes.hpp"
 #include <utility>
 #include <vector>
 #include <algorithm>
@@ -538,7 +537,6 @@ template < typename Graph > size_t count_vertices(const Graph& g)
     size_t n = 0;
     for(const auto v : boost::make_iterator_range(vertices(g)))
     {
-
         (void)v;
         ++n;
     }
