@@ -6,6 +6,7 @@
 #ifndef BOOST_GRAPH_ISOMORPHISM_HPP
 #define BOOST_GRAPH_ISOMORPHISM_HPP
 
+#include "subgraph.hpp"
 #include <utility>
 #include <vector>
 #include <iterator>
@@ -182,28 +183,37 @@ namespace detail
         bool test_isomorphism()
         {
             // reset isomapping
-            BGL_FORALL_VERTICES_T(v, G1, Graph1)
-            f[v] = graph_traits< Graph2 >::null_vertex();
+            for(const auto v : boost::make_iterator_range(vertices(G1)))
+            {
+                f[v] = graph_traits< Graph2 >::null_vertex();
+            }
 
             // Calculate all invariants of G1 and G2, sort and compare
             std::vector< invariant_t > invar1_array;
             invar1_array.reserve(num_vertices(G1));
-            BGL_FORALL_VERTICES_T(v, G1, Graph1)
-            invar1_array.push_back(invariant1(v));
+            for(const auto v : boost::make_iterator_range(vertices(G1)))
+            {
+                invar1_array.push_back(invariant1(v));
+            }
             sort(invar1_array);
 
             std::vector< invariant_t > invar2_array;
             invar2_array.reserve(num_vertices(G2));
-            BGL_FORALL_VERTICES_T(v, G2, Graph2)
-            invar2_array.push_back(invariant2(v));
+            for(const auto v : boost::make_iterator_range(vertices(G2)))
+            {
+                invar2_array.push_back(invariant2(v));
+            }
             sort(invar2_array);
             if (!equal(invar1_array, invar2_array))
                 return false;
 
             // Sort vertices by the multiplicity of their invariants
             std::vector< vertex1_t > V_mult;
-            BGL_FORALL_VERTICES_T(v, G1, Graph1)
-            V_mult.push_back(v);
+            for(const auto v : boost::make_iterator_range(vertices(G1)))
+            {
+                V_mult.push_back(v);
+            }
+
             sort(V_mult, compare_multiplicity(invariant1, multiplicities(invar1_array.begin(), invar1_array.end())));
 
             std::vector< default_color_type > color_vec(num_vertices(G1));
@@ -428,9 +438,10 @@ namespace detail
         void map_disconnected_vertices()
         {
             std::vector< vertex1_t > unmatched_g1_vertices;
-            BGL_FORALL_VERTICES_T(v, G1, Graph1)
+            for(const auto v : boost::make_iterator_range(vertices(G1)))
             {
-                if(f[v] == graph_traits< Graph2 >::null_vertex()) {
+                if(f[v] == graph_traits< Graph2 >::null_vertex())
+                {
                     unmatched_g1_vertices.push_back(v);
                 }
             }
@@ -440,7 +451,8 @@ namespace detail
                 typedef unordered_multimap< invariant_t, vertex2_t > g2_invariant_vertex_multimap;
                 typedef typename g2_invariant_vertex_multimap::iterator multimap_iter;
                 g2_invariant_vertex_multimap unmatched_invariants;
-                BGL_FORALL_VERTICES_T(v, G2, Graph2)
+
+                for(const auto v : boost::make_iterator_range(vertices(G2)))
                 {
                     if(!in_S[v]) 
                     {
@@ -464,13 +476,17 @@ namespace detail
 
     template < typename Graph, typename InDegreeMap >
     void compute_in_degree(const Graph& g, InDegreeMap in_degree_map)
-    {
-        BGL_FORALL_VERTICES_T(v, g, Graph)
-        put(in_degree_map, v, 0);
-
-        BGL_FORALL_VERTICES_T(u, g, Graph)
-        BGL_FORALL_ADJ_T(u, v, g, Graph)
-        put(in_degree_map, v, get(in_degree_map, v) + 1);
+    { 
+        for(const auto v : boost::make_iterator_range(vertices(g)))
+        {
+            put(in_degree_map, v, 0);
+        }
+        
+        for(const auto u : boost::make_iterator_range(vertices(g)))
+        {
+            BGL_FORALL_ADJ_T(u, v, g, Graph)
+            put(in_degree_map, v, get(in_degree_map, v) + 1);
+        }
     }
 
 } // namespace detail
@@ -490,8 +506,10 @@ public:
     , m_max_vertex_out_degree(0)
     , m_g(g)
     {
-        BGL_FORALL_VERTICES_T(v, g, Graph)
+
+        for(const auto v : boost::make_iterator_range(vertices(g)))
         {
+
             m_max_vertex_in_degree
                 = (std::max)(m_max_vertex_in_degree, get(m_in_degree_map, v));
             m_max_vertex_out_degree
@@ -521,8 +539,9 @@ private:
 template < typename Graph > size_t count_vertices(const Graph& g)
 {
     size_t n = 0;
-    BGL_FORALL_VERTICES_T(v, g, Graph)
+    for(const auto v : boost::make_iterator_range(vertices(g)))
     {
+
         (void)v;
         ++n;
     }
@@ -723,10 +742,11 @@ inline bool verify_isomorphism(
       return false;
 #endif
 
-    BGL_FORALL_EDGES_T(e1, g1, Graph1)
+    for(const auto& e1 : boost::make_iterator_range(edges(g1))) 
+
     {
         bool found_edge = false;
-        BGL_FORALL_EDGES_T(e2, g2, Graph2)
+        for(const auto& e2 : boost::make_iterator_range(edges(g2))) 
         {
             if (source(e2, g2) == get(iso_map, source(e1, g1))
                 && target(e2, g2) == get(iso_map, target(e1, g1)))
