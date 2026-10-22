@@ -31,7 +31,7 @@ int main() {
     std::vector<std::vector<Descriptor>> st(num_vertices(g));
     reindex(g); reembed(g, st);
     auto emb = make_iterator_property_map(st.begin(), get(vertex_index, g));
-    make_biconnected_planar(g, emb, get(&Edge::idx, g));
+    boost::graph::make_biconnected_planar(g, emb, get(&Edge::idx, g));
 
     reindex(g); reembed(g, st);
     emb = make_iterator_property_map(st.begin(), get(vertex_index, g));
