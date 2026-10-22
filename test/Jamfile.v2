@@ -132,6 +132,7 @@ alias graph_test_regular :
     [ run make_connected_test.cpp ]
     [ run make_connected_test_old.cpp ]
     [ run make_bicon_planar_test.cpp ]
+    [ run make_bicon_planar_test_old.cpp ]
     [ run make_maximal_planar_test.cpp ]
     [ run planar_face_traversal_test.cpp ]
     [ run named_vertices_test.cpp ]
