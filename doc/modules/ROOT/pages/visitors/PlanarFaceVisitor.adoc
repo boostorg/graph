@@ -5,7 +5,7 @@ xref:algorithms/planar/planar_face_traversal.adoc[`planar_face_traversal`].
 Users can define a class with the Planar Face Visitor interface and pass
 an object of the class to `planar_face_traversal`, thereby
 augmenting the actions taken during the traversal. Note that objects
-passed to `planar_face_traversal` are passed by reference.
+passed to `boost::graph::planar_face_traversal` are copied. Wrap the visitor in `std::ref` to have your own object updated in place. The deprecated `boost::planar_face_traversal` took it by reference. See xref:algorithms/planar/planar_face_traversal.adoc#migrating[the migration steps].
 
 == Notation
 
