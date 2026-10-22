@@ -130,6 +130,7 @@ alias graph_test_regular :
     [ run cycle_ratio_tests.cpp /boost/graph//boost_graph : $(CYCLE_RATIO_INPUT_FILE) ]
     [ run basic_planarity_test.cpp ]
     [ run make_connected_test.cpp ]
+    [ run make_connected_test_old.cpp ]
     [ run make_bicon_planar_test.cpp ]
     [ run make_maximal_planar_test.cpp ]
     [ run planar_face_traversal_test.cpp ]
