@@ -184,7 +184,7 @@ void make_maximal_planar(Graph& g, PlanarEmbedding embedding, VertexIndexMap vm,
 {
     triangulation_visitor< Graph, VertexIndexMap, AddEdgeVisitor > visitor(
         g, vm, vis);
-    planar_face_traversal(g, embedding, visitor, em);
+    ::boost::graph_detail::planar_face_traversal_impl(g, embedding, visitor, em);
 }
 
 template < typename Graph, typename PlanarEmbedding, typename VertexIndexMap,
