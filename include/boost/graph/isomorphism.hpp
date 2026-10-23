@@ -17,6 +17,7 @@
 #include <boost/unordered/unordered_flat_map.hpp>
 #include <boost/pending/indirect_cmp.hpp> // for make_indirect_pmap
 #include <boost/concept/assert.hpp>
+#include <boost/range/iterator_range.hpp>
 
 namespace boost
 {
