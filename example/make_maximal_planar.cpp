@@ -17,6 +17,7 @@
 #include <boost/graph/make_maximal_planar.hpp>
 #include <boost/graph/planar_face_traversal.hpp>
 #include <boost/graph/boyer_myrvold_planar_test.hpp>
+#include <functional>
 
 // This example shows how to start with a connected planar graph
 // and add edges to make the graph maximal planar (triangulated.)
@@ -74,7 +75,7 @@ int main()
     else
         std::cout << "Input graph is not planar" << std::endl;
 
-    make_biconnected_planar(g, &embedding[0]);
+    boost::graph::make_biconnected_planar(g, &embedding[0]);
 
     // Re-initialize the edge index, since we just added a few edges
     edge_count = 0;
@@ -90,7 +91,7 @@ int main()
         std::cout << "After calling make_biconnected, the graph is not planar"
                   << std::endl;
 
-    make_maximal_planar(g, &embedding[0]);
+    boost::graph::make_maximal_planar(g, &embedding[0]);
 
     // Re-initialize the edge index, since we just added a few edges
     edge_count = 0;
@@ -110,7 +111,7 @@ int main()
               << std::endl;
 
     face_counter count_visitor;
-    planar_face_traversal(g, &embedding[0], count_visitor);
+    boost::graph::planar_face_traversal(g, &embedding[0], std::ref(count_visitor));
     std::cout << "The final graph has " << count_visitor.count << " faces."
               << std::endl;
 

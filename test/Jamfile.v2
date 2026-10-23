@@ -130,8 +130,12 @@ alias graph_test_regular :
     [ run cycle_ratio_tests.cpp /boost/graph//boost_graph : $(CYCLE_RATIO_INPUT_FILE) ]
     [ run basic_planarity_test.cpp ]
     [ run make_connected_test.cpp ]
+    [ run make_connected_test_old.cpp ]
     [ run make_bicon_planar_test.cpp ]
+    [ run make_bicon_planar_test_old.cpp ]
     [ run make_maximal_planar_test.cpp ]
+    [ run make_maximal_planar_test_old.cpp ]
+    [ run planar_face_traversal_test.cpp ]
     [ run named_vertices_test.cpp ]
     [ run r_c_shortest_paths_test.cpp ]
     [ run r_c_shortest_paths_test_old.cpp ]
@@ -197,7 +201,15 @@ alias graph_test_with_filesystem :
         /boost/filesystem//boost_filesystem
         /boost/system//boost_system
         : $(PLANAR_INPUT_FILES) ]
+    [ run all_planar_input_files_test_old.cpp
+        /boost/filesystem//boost_filesystem
+        /boost/system//boost_system
+        : $(PLANAR_INPUT_FILES) ]
     [ run parallel_edges_loops_test.cpp
+        /boost/filesystem//boost_filesystem
+        /boost/system//boost_system
+        : $(PLANAR_INPUT_FILES) ]
+    [ run parallel_edges_loops_test_old.cpp
         /boost/filesystem//boost_filesystem
         /boost/system//boost_system
         : $(PLANAR_INPUT_FILES) ]
