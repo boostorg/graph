@@ -368,9 +368,9 @@ namespace detail
 {
 
     // O(E/V)
-    template < class edge_descriptor, class EdgeList, class StoredProperty >
+    template < class EdgeDescriptor, class EdgeList, class StoredProperty >
     inline void remove_directed_edge_dispatch(
-        edge_descriptor, EdgeList& el, StoredProperty& p)
+        EdgeDescriptor, EdgeList& el, StoredProperty& p)
     {
         for (typename EdgeList::iterator i = el.begin(); i != el.end(); ++i)
             if (&(*i).get_property() == &p)
@@ -380,15 +380,15 @@ namespace detail
             }
     }
 
-    template < class incidence_iterator, class EdgeList, class Predicate >
-    inline void remove_directed_edge_if_dispatch(incidence_iterator first,
-        incidence_iterator last, EdgeList& el, Predicate pred,
+    template < class IncidenceIterator, class EdgeList, class Predicate >
+    inline void remove_directed_edge_if_dispatch(IncidenceIterator first,
+        IncidenceIterator last, EdgeList& el, Predicate pred,
         boost::allow_parallel_edge_tag)
     {
         // remove_if
         while (first != last && !pred(*first))
             ++first;
-        incidence_iterator i = first;
+        IncidenceIterator i = first;
         if (first != last)
             for (++i; i != last; ++i)
                 if (!pred(*i))
@@ -398,12 +398,12 @@ namespace detail
                 }
         el.erase(first.base(), el.end());
     }
-    template < class incidence_iterator, class EdgeList, class Predicate >
-    inline void remove_directed_edge_if_dispatch(incidence_iterator first,
-        incidence_iterator last, EdgeList& el, Predicate pred,
+    template < class IncidenceIterator, class EdgeList, class Predicate >
+    inline void remove_directed_edge_if_dispatch(IncidenceIterator first,
+        IncidenceIterator last, EdgeList& el, Predicate pred,
         boost::disallow_parallel_edge_tag)
     {
-        for (incidence_iterator next = first; first != last; first = next)
+        for (IncidenceIterator next = first; first != last; first = next)
         {
             ++next;
             if (pred(*first))
@@ -491,9 +491,9 @@ namespace detail
     }
 
     // O(E/V)
-    template < class edge_descriptor, class EdgeList, class StoredProperty >
+    template < class EdgeDescriptor, class EdgeList, class StoredProperty >
     inline void remove_directed_edge_dispatch(
-        edge_descriptor e, EdgeList& el, no_property&)
+        EdgeDescriptor e, EdgeList& el, no_property&)
     {
         for (typename EdgeList::iterator i = el.begin(); i != el.end(); ++i)
             if ((*i).get_target() == e.m_target)
@@ -700,8 +700,8 @@ namespace detail
     {
 
         // O(E/V)
-        template < class edge_descriptor, class Config >
-        static void apply(edge_descriptor e,
+        template < class EdgeDescriptor, class Config >
+        static void apply(EdgeDescriptor e,
             undirected_graph_helper< Config >& g_, StoredProperty& p)
         {
             typedef typename Config::global_edgelist_selector EdgeListS;
@@ -736,8 +736,8 @@ namespace detail
     template <> struct remove_undirected_edge_dispatch< no_property >
     {
         // O(E/V)
-        template < class edge_descriptor, class Config >
-        static void apply(edge_descriptor e,
+        template < class EdgeDescriptor, class Config >
+        static void apply(EdgeDescriptor e,
             undirected_graph_helper< Config >& g_, no_property&)
         {
             typedef typename Config::global_edgelist_selector EdgeListS;
