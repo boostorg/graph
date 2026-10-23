@@ -1,5 +1,6 @@
 //=======================================================================
 // Copyright 2007 Aaron Windsor
+// Copyright 2026 Arnaud Becheler
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -16,6 +17,7 @@
 #include <iterator>
 #include <algorithm>
 
+#include <boost/graph/detail/visitor_wrapper.hpp>
 #include <boost/graph/planar_face_traversal.hpp>
 #include <boost/graph/planar_detail/add_edge_visitors.hpp>
 
@@ -155,12 +157,15 @@ struct triangulation_visitor : public planar_face_traversal_visitor
     }
 
 private:
+    // resolves a std::ref wrapped visitor so the caller's object is updated
+    auto& user_vis() { return ::boost::graph::detail::deref_visitor(add_edge_visitor); }
+
     void add_edge_range(vertex_t anchor, face_iterator fi, face_iterator fi_end)
     {
         for (; fi != fi_end; ++fi)
         {
             vertex_t v(*fi);
-            add_edge_visitor.visit_vertex_pair(anchor, v, g);
+            user_vis().visit_vertex_pair(anchor, v, g);
             put(degree, anchor, get(degree, anchor) + 1);
             put(degree, v, get(degree, v) + 1);
         }
@@ -177,35 +182,77 @@ private:
     vertex_to_degree_size_map_t degree;
 };
 
-template < typename Graph, typename PlanarEmbedding, typename VertexIndexMap,
-    typename EdgeIndexMap, typename AddEdgeVisitor >
-void make_maximal_planar(Graph& g, PlanarEmbedding embedding, VertexIndexMap vm,
-    EdgeIndexMap em, AddEdgeVisitor& vis)
+namespace graph
 {
-    triangulation_visitor< Graph, VertexIndexMap, AddEdgeVisitor > visitor(
-        g, vm, vis);
+
+// Hidden from argument dependent lookup so unqualified calls keep finding the deprecated boost:: overloads.
+namespace planar_adl_barrier
+{
+}
+
+using namespace planar_adl_barrier;
+
+namespace planar_adl_barrier
+{
+
+// Copies the visitor. Wrap it in std::ref to have the caller's own
+// visitor updated in place.
+template < typename Graph, typename PlanarEmbedding, typename VertexIndexMap, typename EdgeIndexMap, typename AddEdgeVisitor >
+void make_maximal_planar(Graph& g, PlanarEmbedding embedding, VertexIndexMap vm, EdgeIndexMap em, AddEdgeVisitor vis)
+{
+    ::boost::triangulation_visitor< Graph, VertexIndexMap, AddEdgeVisitor > visitor(g, vm, vis);
     ::boost::graph_detail::planar_face_traversal_impl(g, embedding, visitor, em);
 }
 
-template < typename Graph, typename PlanarEmbedding, typename VertexIndexMap,
-    typename EdgeIndexMap >
-void make_maximal_planar(
-    Graph& g, PlanarEmbedding embedding, VertexIndexMap vm, EdgeIndexMap em)
+template < typename Graph, typename PlanarEmbedding, typename VertexIndexMap, typename EdgeIndexMap >
+void make_maximal_planar(Graph& g, PlanarEmbedding embedding, VertexIndexMap vm, EdgeIndexMap em)
 {
-    default_add_edge_visitor vis;
-    make_maximal_planar(g, embedding, vm, em, vis);
+    ::boost::graph::make_maximal_planar(g, embedding, vm, em, ::boost::default_add_edge_visitor());
 }
 
 template < typename Graph, typename PlanarEmbedding, typename VertexIndexMap >
 void make_maximal_planar(Graph& g, PlanarEmbedding embedding, VertexIndexMap vm)
 {
-    make_maximal_planar(g, embedding, vm, get(edge_index, g));
+    ::boost::graph::make_maximal_planar(g, embedding, vm, get(::boost::edge_index, g));
 }
 
 template < typename Graph, typename PlanarEmbedding >
 void make_maximal_planar(Graph& g, PlanarEmbedding embedding)
 {
-    make_maximal_planar(g, embedding, get(vertex_index, g));
+    ::boost::graph::make_maximal_planar(g, embedding, get(::boost::vertex_index, g));
+}
+
+} // namespace planar_adl_barrier
+
+} // namespace graph
+
+// Copies the visitor, unlike the other deprecated planar overloads.
+template < typename Graph, typename PlanarEmbedding, typename VertexIndexMap, typename EdgeIndexMap, typename AddEdgeVisitor >
+BOOST_DEPRECATED("moved to boost::graph::make_maximal_planar, which takes the visitor by value. Removal planned for Boost 1.95.")
+void make_maximal_planar(Graph& g, PlanarEmbedding embedding, VertexIndexMap vm, EdgeIndexMap em, AddEdgeVisitor& vis)
+{
+    ::boost::graph::make_maximal_planar(g, embedding, vm, em, vis);
+}
+
+template < typename Graph, typename PlanarEmbedding, typename VertexIndexMap, typename EdgeIndexMap >
+BOOST_DEPRECATED("moved to boost::graph::make_maximal_planar, which takes the visitor by value. Removal planned for Boost 1.95.")
+void make_maximal_planar(Graph& g, PlanarEmbedding embedding, VertexIndexMap vm, EdgeIndexMap em)
+{
+    ::boost::graph::make_maximal_planar(g, embedding, vm, em);
+}
+
+template < typename Graph, typename PlanarEmbedding, typename VertexIndexMap >
+BOOST_DEPRECATED("moved to boost::graph::make_maximal_planar, which takes the visitor by value. Removal planned for Boost 1.95.")
+void make_maximal_planar(Graph& g, PlanarEmbedding embedding, VertexIndexMap vm)
+{
+    ::boost::graph::make_maximal_planar(g, embedding, vm);
+}
+
+template < typename Graph, typename PlanarEmbedding >
+BOOST_DEPRECATED("moved to boost::graph::make_maximal_planar, which takes the visitor by value. Removal planned for Boost 1.95.")
+void make_maximal_planar(Graph& g, PlanarEmbedding embedding)
+{
+    ::boost::graph::make_maximal_planar(g, embedding);
 }
 
 } // namespace boost

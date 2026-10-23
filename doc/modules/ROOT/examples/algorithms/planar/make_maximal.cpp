@@ -36,6 +36,6 @@ int main() {
     reindex(g); reembed(g, st);
     emb = make_iterator_property_map(st.begin(), get(vertex_index, g));
     std::cout << "Edges before: " << num_edges(g) << "\n";
-    make_maximal_planar(g, emb, get(vertex_index, g), get(&Edge::idx, g));
+    boost::graph::make_maximal_planar(g, emb, get(vertex_index, g), get(&Edge::idx, g));
     std::cout << "Edges after make_maximal_planar: " << num_edges(g) << "\n";
 }

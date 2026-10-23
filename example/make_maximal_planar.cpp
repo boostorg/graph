@@ -91,7 +91,7 @@ int main()
         std::cout << "After calling make_biconnected, the graph is not planar"
                   << std::endl;
 
-    make_maximal_planar(g, &embedding[0]);
+    boost::graph::make_maximal_planar(g, &embedding[0]);
 
     // Re-initialize the edge index, since we just added a few edges
     edge_count = 0;
