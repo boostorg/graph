@@ -16,7 +16,6 @@
 
 #include <boost/property_map/property_map.hpp>
 #include <boost/property_map/vector_property_map.hpp>
-#include <boost/range/iterator_range.hpp>
 
 #include <boost/assert.hpp>
 #include <boost/static_assert.hpp>

@@ -9,7 +9,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/boyer_myrvold_planar_test.hpp>
 
-int main(int argc, char** argv)
+int main()
 {
 
     // This program illustrates a simple use of boyer_myrvold_planar_embedding

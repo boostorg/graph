@@ -10,6 +10,7 @@
 #include <vector>
 
 #include <boost/config.hpp>
+#include <boost/graph/detail/visitor_wrapper.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
@@ -260,9 +261,12 @@ namespace detail
         BOOST_CONCEPT_ASSERT((VertexListGraphConcept< Graph >));
         typedef typename graph_traits< Graph >::vertex_descriptor Vertex;
         typedef std::vector< Vertex > Path;
-        BOOST_CONCEPT_ASSERT((CycleVisitorConcept< Visitor, Path, Graph >));
+        using visitor_type = ::boost::graph::detail::unwrap_visitor_t< Visitor >;
+        BOOST_CONCEPT_ASSERT((CycleVisitorConcept< visitor_type, Path, Graph >));
         typedef std::vector< Vertex > VertexList;
         typedef std::vector< VertexList > ClosedMatrix;
+
+        auto& vis_ref = ::boost::graph::detail::deref_visitor(vis);
 
         Path p;
         ClosedMatrix closed(num_vertices(g), VertexList());
@@ -285,7 +289,7 @@ namespace detail
             // a cycle.
             if (detail::can_wrap_path(g, p) && p.size() >= minlen)
             {
-                vis.cycle(p, g);
+                vis_ref.cycle(p, g);
             }
 
             if (!detail::exhaust_paths(g, p, closed))

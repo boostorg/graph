@@ -180,8 +180,10 @@ include::example$faq/list_vertex_index.txt[]
 Because a temporary cannot bind to a non-`const` reference, and BGL
 wants to accept visitors constructed in-place at the call site. Any
 mutable state inside the visitor therefore lives on the internal copy
-and does not leak back out. Hold state by pointer or reference if you
-need it to.
+and does not leak back out. The depth-first, breadth-first and maximum
+adjacency searches let you opt out: wrap the visitor in `std::ref` and
+the algorithm operates on your own object. Elsewhere, hold state by
+pointer or reference.
 
 [source,cpp]
 ----

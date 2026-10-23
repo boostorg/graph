@@ -23,13 +23,12 @@
 #include <memory>
 #include <iterator>
 #include <algorithm>
+#include <utility>
 #include <boost/limits.hpp>
 
 #include <boost/iterator/iterator_adaptor.hpp>
 
-#include <boost/mpl/if.hpp>
-#include <boost/mpl/not.hpp>
-#include <boost/mpl/and.hpp>
+#include <type_traits>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/pending/container_traits.hpp>
 #include <boost/graph/detail/adj_list_edge_iterator.hpp>
@@ -38,13 +37,6 @@
 #include <boost/graph/adjacency_iterator.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/assert.hpp>
-
-#ifdef BOOST_NO_CXX11_RVALUE_REFERENCES
-#define BOOST_GRAPH_MOVE_IF_POSSIBLE(x) (x)
-#else
-#include <utility>
-#define BOOST_GRAPH_MOVE_IF_POSSIBLE(x) (std::move((x)))
-#endif
 
 /*
   Outline for this file:
@@ -234,66 +226,6 @@ namespace detail
     };
     template < class Vertex > no_property stored_edge< Vertex >::s_prop;
 
-#if defined(BOOST_NO_CXX11_RVALUE_REFERENCES) \
-    || defined(BOOST_NO_CXX11_SMART_PTR)
-    template < class Vertex, class Property >
-    class stored_edge_property : public stored_edge< Vertex >
-    {
-        typedef stored_edge_property self;
-        typedef stored_edge< Vertex > Base;
-
-    public:
-        typedef Property property_type;
-        inline stored_edge_property() {}
-        inline stored_edge_property(
-            Vertex target, const Property& p = Property())
-        : stored_edge< Vertex >(target), m_property(new Property(p))
-        {
-        }
-        stored_edge_property(const self& x)
-        : Base(static_cast< Base const& >(x))
-        , m_property(const_cast< self& >(x).m_property)
-        {
-        }
-        self& operator=(const self& x)
-        {
-            // NOTE: avoid 'Base::operator=(x);' broken on SGI MIPSpro (bug
-            // 55771 of Mozilla).
-            static_cast< Base& >(*this) = static_cast< Base const& >(x);
-            m_property = const_cast< self& >(x).m_property;
-            return *this;
-        }
-#if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
-        // NOTE Don't rely on default operators, their behavior is broken on
-        // several compilers (GCC 4.6).
-        stored_edge_property(self&& x)
-        : Base(static_cast< Base&& >(x)), m_property(std::move(x.m_property))
-        {
-        }
-        self& operator=(self&& x)
-        {
-            // NOTE: avoid 'Base::operator=(x);' broken on SGI MIPSpro (bug
-            // 55771 of Mozilla).
-            static_cast< Base& >(*this) = static_cast< Base&& >(x);
-            m_property = std::move(x.m_property);
-            return *this;
-        }
-#endif
-        inline Property& get_property() { return *m_property; }
-        inline const Property& get_property() const { return *m_property; }
-
-    protected:
-        // Holding the property by-value causes edge-descriptor
-        // invalidation for add_edge() with EdgeList=vecS. Instead we
-        // hold a pointer to the property. std::auto_ptr is not
-        // a perfect fit for the job, but it is darn close.
-#ifdef BOOST_NO_AUTO_PTR
-        std::unique_ptr< Property > m_property;
-#else
-        std::auto_ptr< Property > m_property;
-#endif
-    };
-#else
     template < class Vertex, class Property >
     class stored_edge_property : public stored_edge< Vertex >
     {
@@ -337,9 +269,11 @@ namespace detail
         inline const Property& get_property() const { return *m_property; }
 
     protected:
+        // Holding the property by-value causes edge-descriptor
+        // invalidation for add_edge() with EdgeList=vecS. Instead we
+        // hold a pointer to the property.
         std::unique_ptr< Property > m_property;
     };
-#endif
 
     template < class Vertex, class Iter, class Property >
     class stored_edge_iter : public stored_edge< Vertex >
@@ -459,7 +393,7 @@ namespace detail
             for (++i; i != last; ++i)
                 if (!pred(*i))
                 {
-                    *first.base() = BOOST_GRAPH_MOVE_IF_POSSIBLE(*i.base());
+                    *first.base() = std::move(*i.base());
                     ++first;
                 }
         el.erase(first.base(), el.end());
@@ -504,7 +438,7 @@ namespace detail
                 }
                 else if (!pred(*i))
                 {
-                    *first.base() = BOOST_GRAPH_MOVE_IF_POSSIBLE(*i.base());
+                    *first.base() = std::move(*i.base());
                     ++first;
                 }
                 else
@@ -2343,8 +2277,8 @@ namespace detail
             typedef typename container_gen< VertexListS, vertex_ptr >::type
                 SeqVertexList;
             typedef boost::integer_range< vertex_descriptor > RandVertexList;
-            typedef typename mpl::if_< is_rand_access, RandVertexList,
-                SeqVertexList >::type VertexList;
+            typedef typename std::conditional< is_rand_access::value,
+                RandVertexList, SeqVertexList >::type VertexList;
 
             typedef typename VertexList::iterator vertex_iterator;
 
@@ -2354,21 +2288,22 @@ namespace detail
                 list_edge< vertex_descriptor, EdgeProperty > >::type
                 EdgeContainer;
 
-            typedef typename mpl::and_< DirectedT,
-                typename mpl::not_< BidirectionalT >::type >::type
+            typedef std::integral_constant< bool,
+                DirectedT::value && !BidirectionalT::value >
                 on_edge_storage;
 
-            typedef typename mpl::if_< on_edge_storage, std::size_t,
-                typename EdgeContainer::size_type >::type edges_size_type;
+            typedef typename std::conditional< on_edge_storage::value,
+                std::size_t, typename EdgeContainer::size_type >::type
+                edges_size_type;
 
             typedef typename EdgeContainer::iterator EdgeIter;
 
             typedef
                 typename detail::is_random_access< EdgeListS >::type is_edge_ra;
 
-            typedef typename mpl::if_< on_edge_storage,
+            typedef typename std::conditional< on_edge_storage::value,
                 stored_edge_property< vertex_descriptor, EdgeProperty >,
-                typename mpl::if_< is_edge_ra,
+                typename std::conditional< is_edge_ra::value,
                     stored_ra_edge_iter< vertex_descriptor, EdgeContainer,
                         EdgeProperty >,
                     stored_edge_iter< vertex_descriptor, EdgeIter,
@@ -2421,8 +2356,8 @@ namespace detail
                 graph_type >
                 DirectedEdgeIter;
 
-            typedef typename mpl::if_< on_edge_storage, DirectedEdgeIter,
-                UndirectedEdgeIter >::type edge_iterator;
+            typedef typename std::conditional< on_edge_storage::value,
+                DirectedEdgeIter, UndirectedEdgeIter >::type edge_iterator;
 
             // stored_vertex and StoredVertexList
             typedef typename container_gen< VertexListS, vertex_ptr >::type
@@ -2464,11 +2399,12 @@ namespace detail
                 InEdgeList m_in_edges;
                 VertexProperty m_property;
             };
-            typedef typename mpl::if_< is_rand_access,
-                typename mpl::if_< BidirectionalT, bidir_rand_stored_vertex,
-                    rand_stored_vertex >::type,
-                typename mpl::if_< BidirectionalT, bidir_seq_stored_vertex,
-                    seq_stored_vertex >::type >::type StoredVertex;
+            typedef typename std::conditional< is_rand_access::value,
+                typename std::conditional< BidirectionalT::value,
+                    bidir_rand_stored_vertex, rand_stored_vertex >::type,
+                typename std::conditional< BidirectionalT::value,
+                    bidir_seq_stored_vertex, seq_stored_vertex >::type >::type
+                StoredVertex;
             struct stored_vertex : public StoredVertex
             {
                 stored_vertex() {}
@@ -2477,17 +2413,19 @@ namespace detail
 
             typedef typename container_gen< VertexListS, stored_vertex >::type
                 RandStoredVertexList;
-            typedef typename mpl::if_< is_rand_access, RandStoredVertexList,
-                SeqStoredVertexList >::type StoredVertexList;
+            typedef typename std::conditional< is_rand_access::value,
+                RandStoredVertexList, SeqStoredVertexList >::type
+                StoredVertexList;
         }; // end of config
 
-        typedef typename mpl::if_< BidirectionalT,
+        typedef typename std::conditional< BidirectionalT::value,
             bidirectional_graph_helper_with_property< config >,
-            typename mpl::if_< DirectedT, directed_graph_helper< config >,
+            typename std::conditional< DirectedT::value,
+                directed_graph_helper< config >,
                 undirected_graph_helper< config > >::type >::type
             DirectedHelper;
 
-        typedef typename mpl::if_< is_rand_access,
+        typedef typename std::conditional< is_rand_access::value,
             vec_adj_list_impl< Graph, config, DirectedHelper >,
             adj_list_impl< Graph, config, DirectedHelper > >::type type;
     };
@@ -2687,7 +2625,7 @@ namespace detail
 {
     template < class Tag, class Graph, class Property >
     struct adj_list_choose_vertex_pa
-    : boost::mpl::if_< boost::is_same< Tag, vertex_all_t >,
+    : std::conditional< boost::is_same< Tag, vertex_all_t >::value,
           adj_list_all_vertex_pa, adj_list_any_vertex_pa >::type ::
           template bind_< Tag, Graph, Property >
     {

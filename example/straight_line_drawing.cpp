@@ -26,7 +26,7 @@ struct coord_t
     std::size_t y;
 };
 
-int main(int argc, char** argv)
+int main()
 {
     using graph = adjacency_list< vecS, vecS, undirectedS,
         property< vertex_index_t, int > >;

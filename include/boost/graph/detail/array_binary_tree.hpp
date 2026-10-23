@@ -13,7 +13,6 @@
 
 #include <iterator>
 #include <functional>
-#include <boost/config.hpp>
 
 namespace boost
 {
@@ -21,26 +20,18 @@ namespace boost
 /*
  * Note: array_binary_tree is a completey balanced binary tree.
  */
-#if !defined BOOST_NO_STD_ITERATOR_TRAITS
 template < class RandomAccessIterator, class ID >
-#else
-template < class RandomAccessIterator, class ValueType, class ID >
-#endif
 class array_binary_tree_node
 {
 public:
     typedef array_binary_tree_node ArrayBinaryTreeNode;
     typedef RandomAccessIterator rep_iterator;
-#if !defined BOOST_NO_STD_ITERATOR_TRAITS
     typedef
         typename std::iterator_traits< RandomAccessIterator >::difference_type
             difference_type;
     typedef typename std::iterator_traits< RandomAccessIterator >::value_type
         value_type;
-#else
-    typedef int difference_type;
-    typedef ValueType value_type;
-#endif
+
     typedef difference_type size_type;
 
     struct children_type
