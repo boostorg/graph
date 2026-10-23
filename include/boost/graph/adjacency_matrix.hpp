@@ -471,13 +471,10 @@ public: // should be private
         typename std::conditional< has_property< edge_property_type >::type::value,
             std::pair< bool, edge_property_type >, char >::type StoredEdge;
 
-#if defined(BOOST_NO_CXX11_ALLOCATOR)
-    typedef typename Allocator::template rebind< StoredEdge >::other Alloc;
-#else
     typedef typename std::allocator_traits< Allocator >::template rebind_alloc<
         StoredEdge >
         Alloc;
-#endif
+
     typedef std::vector< StoredEdge, Alloc > Matrix;
     typedef typename Matrix::iterator MatrixIter;
     typedef typename Matrix::size_type size_type;
