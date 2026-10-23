@@ -342,7 +342,7 @@ class ring_edge_iterator
 {
 public:
     ring_edge_iterator()
-    : ring_edge_iterator::iterator_adaptor_(0), m_g(NULL) {};
+    : ring_edge_iterator::iterator_adaptor_(0), m_g(nullptr) {};
     explicit ring_edge_iterator(const ring_graph& g, iterator_start)
     : ring_edge_iterator::iterator_adaptor_(vertices(g).first), m_g(&g) {};
     explicit ring_edge_iterator(const ring_graph& g, iterator_end)
