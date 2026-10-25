@@ -12,7 +12,6 @@
 
 #include <algorithm>
 #include <boost/config.hpp> // For BOOST_STATIC_CONSTANT
-#include <boost/config/no_tr1/cmath.hpp>
 #include <cmath>
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/linear_congruential.hpp>
@@ -188,19 +187,17 @@ public:
 
     point pointwise_min(point a, point b) const
     {
-        BOOST_USING_STD_MIN();
         point result;
         for (std::size_t i = 0; i < Dims; ++i)
-            result[i] = min BOOST_PREVENT_MACRO_SUBSTITUTION(a[i], b[i]);
+            result[i] = (std::min)(a[i], b[i]);
         return result;
     }
 
     point pointwise_max(point a, point b) const
     {
-        BOOST_USING_STD_MAX();
         point result;
         for (std::size_t i = 0; i < Dims; ++i)
-            result[i] = max BOOST_PREVENT_MACRO_SUBSTITUTION(a[i], b[i]);
+            result[i] = (std::max)(a[i], b[i]);
         return result;
     }
 
@@ -253,27 +250,22 @@ public:
 
     point_type bound(point_type a) const
     {
-        BOOST_USING_STD_MIN();
-        BOOST_USING_STD_MAX();
         point_type p;
         for (std::size_t i = 0; i < Dims; ++i)
-            p[i] = min BOOST_PREVENT_MACRO_SUBSTITUTION(
-                scaling, max BOOST_PREVENT_MACRO_SUBSTITUTION(-scaling, a[i]));
+            p[i] = (std::min)(
+                scaling, (std::max)(-scaling, a[i]));
         return p;
     }
 
     double distance_from_boundary(point_type a) const
     {
-        BOOST_USING_STD_MIN();
-        BOOST_USING_STD_MAX();
 #ifndef BOOST_NO_STDC_NAMESPACE
         using std::abs;
 #endif
         BOOST_STATIC_ASSERT(Dims >= 1);
         double dist = abs(scaling - a[0]);
         for (std::size_t i = 1; i < Dims; ++i)
-            dist = min BOOST_PREVENT_MACRO_SUBSTITUTION(
-                dist, abs(scaling - a[i]));
+            dist = (std::min)(dist, abs(scaling - a[i]));
         return dist;
     }
 
@@ -330,10 +322,10 @@ public:
     rectangle_topology(double left, double top, double right, double bottom)
     : gen_ptr(new RandomNumberGenerator)
     , rand(new rand_t(*gen_ptr))
-    , left(std::min BOOST_PREVENT_MACRO_SUBSTITUTION(left, right))
-    , top(std::min BOOST_PREVENT_MACRO_SUBSTITUTION(top, bottom))
-    , right(std::max BOOST_PREVENT_MACRO_SUBSTITUTION(left, right))
-    , bottom(std::max BOOST_PREVENT_MACRO_SUBSTITUTION(top, bottom))
+    , left((std::min)(left, right))
+    , top((std::min)(top, bottom))
+    , right((std::max)(left, right))
+    , bottom((std::max)(top, bottom))
     {
     }
 
@@ -341,10 +333,10 @@ public:
         double right, double bottom)
     : gen_ptr()
     , rand(new rand_t(gen))
-    , left(std::min BOOST_PREVENT_MACRO_SUBSTITUTION(left, right))
-    , top(std::min BOOST_PREVENT_MACRO_SUBSTITUTION(top, bottom))
-    , right(std::max BOOST_PREVENT_MACRO_SUBSTITUTION(left, right))
-    , bottom(std::max BOOST_PREVENT_MACRO_SUBSTITUTION(top, bottom))
+    , left((std::min)(left, right))
+    , top((std::min)(top, bottom))
+    , right((std::max)(left, right))
+    , bottom((std::max)(top, bottom))
     {
     }
 
@@ -362,27 +354,21 @@ public:
 
     point_type bound(point_type a) const
     {
-        BOOST_USING_STD_MIN();
-        BOOST_USING_STD_MAX();
         point_type p;
-        p[0] = min BOOST_PREVENT_MACRO_SUBSTITUTION(
-            right, max BOOST_PREVENT_MACRO_SUBSTITUTION(left, a[0]));
-        p[1] = min BOOST_PREVENT_MACRO_SUBSTITUTION(
-            bottom, max BOOST_PREVENT_MACRO_SUBSTITUTION(top, a[1]));
+        p[0] = (std::min)(right, (std::max)(left, a[0]));
+        p[1] = (std::min)(bottom, (std::max)(top, a[1]));
         return p;
     }
 
     double distance_from_boundary(point_type a) const
     {
-        BOOST_USING_STD_MIN();
-        BOOST_USING_STD_MAX();
 #ifndef BOOST_NO_STDC_NAMESPACE
         using std::abs;
 #endif
         double dist = abs(left - a[0]);
-        dist = min BOOST_PREVENT_MACRO_SUBSTITUTION(dist, abs(right - a[0]));
-        dist = min BOOST_PREVENT_MACRO_SUBSTITUTION(dist, abs(top - a[1]));
-        dist = min BOOST_PREVENT_MACRO_SUBSTITUTION(dist, abs(bottom - a[1]));
+        dist = (std::min)(dist, abs(right - a[0]));
+        dist = (std::min)(dist, abs(top - a[1]));
+        dist = (std::min)(dist, abs(bottom - a[1]));
         return dist;
     }
 
@@ -471,8 +457,6 @@ public:
 
     point_type bound(point_type a) const
     {
-        BOOST_USING_STD_MIN();
-        BOOST_USING_STD_MAX();
         double r = 0.;
         for (std::size_t i = 0; i < Dims; ++i)
             r = std::hypot(r, a[i]);
