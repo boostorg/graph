@@ -520,6 +520,8 @@ int main()
     test_copy_from< boost::directedS, CSRGraphT >();
     test_copy_from< boost::bidirectionalS, CSRGraphT >();
     test_copy_from< boost::directedS, BidirCSRGraphT >();
+    test_copy_from< boost::undirectedS, CSRGraphT >();
+    test_copy_from< boost::undirectedS, BidirCSRGraphT >();
 
     {
         std::cout << "Testing CSR graph built from unsorted edges" << std::endl;
