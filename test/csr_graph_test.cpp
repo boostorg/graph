@@ -498,6 +498,17 @@ template < typename Directed, typename Csr > void test_copy_from()
     check_same_out_edges(src, from_assign_index);
 }
 
+// Checks sorted construction without an edge count reserves exactly the edges it stores.
+template < typename Csr > void test_sorted_construction_reserves_exactly()
+{
+    const std::pair< std::size_t, std::size_t > sorted_edges[] = { { 0, 1 }, { 0, 2 }, { 1, 2 }, { 2, 0 }, { 2, 3 }, { 3, 0 }, { 3, 1 } };
+    const EdgeData edge_data[] = { { 0 }, { 1 }, { 2 }, { 3 }, { 4 }, { 5 }, { 6 } };
+    const Csr g(boost::edges_are_sorted, std::begin(sorted_edges), std::end(sorted_edges), 4);
+    BOOST_TEST_EQ(g.m_forward.m_column.capacity(), num_edges(g));
+    const Csr g_with_properties(boost::edges_are_sorted, std::begin(sorted_edges), std::end(sorted_edges), std::begin(edge_data), 4);
+    BOOST_TEST_EQ(g_with_properties.m_forward.m_column.capacity(), num_edges(g_with_properties));
+}
+
 int main()
 {
     int seed = 42;
@@ -522,6 +533,8 @@ int main()
     test_copy_from< boost::directedS, BidirCSRGraphT >();
     test_copy_from< boost::undirectedS, CSRGraphT >();
     test_copy_from< boost::undirectedS, BidirCSRGraphT >();
+    test_sorted_construction_reserves_exactly< CSRGraphT >();
+    test_sorted_construction_reserves_exactly< BidirCSRGraphT >();
 
     {
         std::cout << "Testing CSR graph built from unsorted edges" << std::endl;
