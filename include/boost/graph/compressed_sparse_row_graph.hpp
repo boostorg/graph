@@ -43,6 +43,7 @@
 #include <boost/functional/hash.hpp>
 #include <boost/next_prior.hpp>
 #include <boost/property_map/transform_value_property_map.hpp>
+#include <boost/range/iterator_range.hpp>
 
 namespace boost
 {
@@ -153,6 +154,25 @@ enum edges_are_unsorted_global_t
 #define BOOST_BIDIR_CSR_GRAPH_TYPE                                             \
     compressed_sparse_row_graph< bidirectionalS, VertexProperty, EdgeProperty, \
         GraphProperty, Vertex, EdgeIndex >
+
+namespace graph
+{
+    namespace detail
+    {
+        // Counts out_edges rather than num_edges so undirected sources,
+        // whose out_edges report each edge from both endpoints, fit.
+        template < typename EdgesSize, typename Graph >
+        EdgesSize count_out_edges(const Graph& g)
+        {
+            EdgesSize count = 0;
+            for (const auto& v : ::boost::make_iterator_range(vertices(g)))
+            {
+                count += static_cast< EdgesSize >(out_degree(v, g));
+            }
+            return count;
+        }
+    }
+}
 
 namespace detail
 {
@@ -588,13 +608,8 @@ public:
     compressed_sparse_row_graph(const Graph& g, const VertexIndexMap& vi)
     : m_property()
     {
-        typename graph_traits< Graph >::edges_size_type numedges = num_edges(g);
-        if (is_same< typename graph_traits< Graph >::directed_category,
-                undirectedS >::value)
-        {
-            numedges *= 2; // Double each edge (actual doubling done by
-                           // out_edges function)
-        }
+        edges_size_type numedges
+            = ::boost::graph::detail::count_out_edges< edges_size_type >(g);
         vertices_size_type numverts = num_vertices(g);
         assign(g, vi, numverts, numedges);
         inherited_vertex_properties::resize(numverts);
@@ -604,13 +619,8 @@ public:
     template < typename Graph >
     explicit compressed_sparse_row_graph(const Graph& g) : m_property()
     {
-        typename graph_traits< Graph >::edges_size_type numedges = num_edges(g);
-        if (is_same< typename graph_traits< Graph >::directed_category,
-                undirectedS >::value)
-        {
-            numedges *= 2; // Double each edge (actual doubling done by
-                           // out_edges function)
-        }
+        edges_size_type numedges
+            = ::boost::graph::detail::count_out_edges< edges_size_type >(g);
         assign(g, get(vertex_index, g), num_vertices(g), numedges);
     }
 
@@ -630,13 +640,8 @@ public:
     template < typename Graph, typename VertexIndexMap >
     void assign(const Graph& g, const VertexIndexMap& vi)
     {
-        typename graph_traits< Graph >::edges_size_type numedges = num_edges(g);
-        if (is_same< typename graph_traits< Graph >::directed_category,
-                undirectedS >::value)
-        {
-            numedges *= 2; // Double each edge (actual doubling done by
-                           // out_edges function)
-        }
+        edges_size_type numedges
+            = ::boost::graph::detail::count_out_edges< edges_size_type >(g);
         vertices_size_type numverts = num_vertices(g);
         m_forward.assign(g, vi, numverts, numedges);
         inherited_vertex_properties::resize(numverts);
@@ -645,13 +650,8 @@ public:
     // Requires the above, plus a vertex_index map.
     template < typename Graph > void assign(const Graph& g)
     {
-        typename graph_traits< Graph >::edges_size_type numedges = num_edges(g);
-        if (is_same< typename graph_traits< Graph >::directed_category,
-                undirectedS >::value)
-        {
-            numedges *= 2; // Double each edge (actual doubling done by
-                           // out_edges function)
-        }
+        edges_size_type numedges
+            = ::boost::graph::detail::count_out_edges< edges_size_type >(g);
         vertices_size_type numverts = num_vertices(g);
         m_forward.assign(g, get(vertex_index, g), numverts, numedges);
         inherited_vertex_properties::resize(numverts);
@@ -1027,13 +1027,8 @@ public:
     compressed_sparse_row_graph(const Graph& g, const VertexIndexMap& vi)
     : m_property()
     {
-        typename graph_traits< Graph >::edges_size_type numedges = num_edges(g);
-        if (is_same< typename graph_traits< Graph >::directed_category,
-                undirectedS >::value)
-        {
-            numedges *= 2; // Double each edge (actual doubling done by
-                           // out_edges function)
-        }
+        edges_size_type numedges
+            = ::boost::graph::detail::count_out_edges< edges_size_type >(g);
         vertices_size_type numverts = num_vertices(g);
         assign(g, vi, numverts, numedges);
         inherited_vertex_properties::resize(numverts);
@@ -1043,13 +1038,8 @@ public:
     template < typename Graph >
     explicit compressed_sparse_row_graph(const Graph& g) : m_property()
     {
-        typename graph_traits< Graph >::edges_size_type numedges = num_edges(g);
-        if (is_same< typename graph_traits< Graph >::directed_category,
-                undirectedS >::value)
-        {
-            numedges *= 2; // Double each edge (actual doubling done by
-                           // out_edges function)
-        }
+        edges_size_type numedges
+            = ::boost::graph::detail::count_out_edges< edges_size_type >(g);
         assign(g, get(vertex_index, g), num_vertices(g), numedges);
     }
 
@@ -1070,13 +1060,8 @@ public:
     template < typename Graph, typename VertexIndexMap >
     void assign(const Graph& g, const VertexIndexMap& vi)
     {
-        typename graph_traits< Graph >::edges_size_type numedges = num_edges(g);
-        if (is_same< typename graph_traits< Graph >::directed_category,
-                undirectedS >::value)
-        {
-            numedges *= 2; // Double each edge (actual doubling done by
-                           // out_edges function)
-        }
+        edges_size_type numedges
+            = ::boost::graph::detail::count_out_edges< edges_size_type >(g);
         vertices_size_type numverts = num_vertices(g);
         m_forward.assign(g, vi, numverts, numedges);
         inherited_vertex_properties::resize(numverts);
@@ -1086,13 +1071,8 @@ public:
     // Requires the above, plus a vertex_index map.
     template < typename Graph > void assign(const Graph& g)
     {
-        typename graph_traits< Graph >::edges_size_type numedges = num_edges(g);
-        if (is_same< typename graph_traits< Graph >::directed_category,
-                undirectedS >::value)
-        {
-            numedges *= 2; // Double each edge (actual doubling done by
-                           // out_edges function)
-        }
+        edges_size_type numedges
+            = ::boost::graph::detail::count_out_edges< edges_size_type >(g);
         vertices_size_type numverts = num_vertices(g);
         m_forward.assign(g, get(vertex_index, g), numverts, numedges);
         inherited_vertex_properties::resize(numverts);
