@@ -61,10 +61,10 @@ namespace serialization
         auto edge_range = boost::edges(graph);
         for (auto it = edge_range.first; it != edge_range.second; ++it)
         {
-            const auto u = boost::source(*it, graph);
-            const auto v = boost::target(*it, graph);
-            const auto& edge_property
-                = boost::get(boost::edge_all_t(), graph, *it);
+            const auto e = *it;
+            const auto u = boost::source(e, graph);
+            const auto v = boost::target(e, graph);
+            const auto& edge_property = boost::get(boost::edge_all_t(), graph, e);
 
             ar << BOOST_NVP(u);
             ar << BOOST_NVP(v);
