@@ -17,8 +17,6 @@
 #include <boost/random/linear_congruential.hpp>
 #include <memory>
 
-#include <cmath>
-
 // Classes and concepts to represent points in a space, with distance and move
 // operations (used for Gurson-Atun layout), plus other things like bounding
 // boxes used for other layout algorithms.
