@@ -10,6 +10,7 @@
 #include <boost/graph/directed_graph.hpp>
 #include <boost/graph/exterior_property.hpp>
 #include <boost/graph/clustering_coefficient.hpp>
+#include <boost/core/lightweight_test.hpp>
 
 using namespace std;
 using namespace boost;
@@ -91,13 +92,48 @@ template < typename Graph > void test_undirected()
     BOOST_ASSERT((coef - (7.0f / 15.0f)) < 1e-7f);
 }
 
+// Checks a directed graph where vertex 0 sees a reciprocal pair and vertex 3 has no out edges.
+template < typename Graph > void test_directed()
+{
+    Graph g;
+    std::vector< typename ::boost::graph_traits< Graph >::vertex_descriptor > v;
+    for (std::size_t i = 0; i < 4; ++i)
+    {
+        v.push_back(::boost::add_vertex(g));
+    }
+    ::boost::add_edge(v[0], v[1], g);
+    ::boost::add_edge(v[0], v[2], g);
+    ::boost::add_edge(v[1], v[2], g);
+    ::boost::add_edge(v[2], v[1], g);
+    ::boost::add_edge(v[1], v[3], g);
+    ::boost::add_edge(v[2], v[3], g);
+
+    BOOST_TEST_EQ(::boost::num_paths_through_vertex(g, v[0]), 2u);
+    BOOST_TEST_EQ(::boost::num_paths_through_vertex(g, v[1]), 2u);
+    BOOST_TEST_EQ(::boost::num_paths_through_vertex(g, v[2]), 2u);
+    BOOST_TEST_EQ(::boost::num_paths_through_vertex(g, v[3]), 0u);
+
+    BOOST_TEST_EQ(::boost::num_triangles_on_vertex(g, v[0]), 2u);
+    BOOST_TEST_EQ(::boost::num_triangles_on_vertex(g, v[1]), 1u);
+    BOOST_TEST_EQ(::boost::num_triangles_on_vertex(g, v[2]), 1u);
+    BOOST_TEST_EQ(::boost::num_triangles_on_vertex(g, v[3]), 0u);
+
+    using clustering_property = ::boost::exterior_vertex_property< Graph, double >;
+    typename clustering_property::container_type clustering(::boost::num_vertices(g));
+    typename clustering_property::map_type clustering_map(clustering, g);
+    BOOST_TEST_EQ(::boost::all_clustering_coefficients(g, clustering_map), 0.5);
+    BOOST_TEST_EQ(clustering_map[v[0]], 1.0);
+    BOOST_TEST_EQ(clustering_map[v[1]], 0.5);
+    BOOST_TEST_EQ(clustering_map[v[2]], 0.5);
+    BOOST_TEST_EQ(clustering_map[v[3]], 0.0);
+    BOOST_TEST_EQ(::boost::mean_clustering_coefficient(g, clustering_map), 0.5);
+}
+
 int main(int, char*[])
 {
     typedef undirected_graph<> Graph;
-    // typedef directed_graph<> Digraph;
-
-    // TODO: write a test for directed clustering coefficient.
 
     test_undirected< Graph >();
-    // test<Digraph>();
+    test_directed< ::boost::directed_graph<> >();
+    return ::boost::report_errors();
 }
