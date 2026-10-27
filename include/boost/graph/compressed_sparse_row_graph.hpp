@@ -184,8 +184,11 @@ namespace detail
         typedef boost::iterator_facade< default_construct_iterator< T >, T,
             std::random_access_iterator_tag, const T& >
             base_type;
-        T saved_value;
-        const T& dereference() const { return saved_value; }
+        // The caller owns the value because reverse_iterator dereferences a temporary copy.
+        const T* value = nullptr;
+        default_construct_iterator() = default;
+        explicit default_construct_iterator(const T& v) : value(&v) { }
+        const T& dereference() const { return *value; }
         bool equal(default_construct_iterator /*i*/) const { return true; }
         void increment() { }
         void decrement() { }
@@ -683,8 +686,9 @@ public:
     void add_edges_sorted_internal(BidirectionalIteratorOrig first_sorted,
         BidirectionalIteratorOrig last_sorted)
     {
+        const edge_bundled default_value = edge_bundled();
         m_forward.add_edges_sorted_internal(first_sorted, last_sorted,
-            detail::default_construct_iterator< edge_bundled >());
+            detail::default_construct_iterator< edge_bundled >(default_value));
     }
 
     template < typename BidirectionalIteratorOrig, typename GlobalToLocal >
@@ -693,8 +697,9 @@ public:
         BidirectionalIteratorOrig last_sorted,
         const GlobalToLocal& global_to_local)
     {
+        const edge_bundled default_value = edge_bundled();
         m_forward.add_edges_sorted_internal(first_sorted, last_sorted,
-            detail::default_construct_iterator< edge_bundled >(),
+            detail::default_construct_iterator< edge_bundled >(default_value),
             global_to_local);
     }
 
