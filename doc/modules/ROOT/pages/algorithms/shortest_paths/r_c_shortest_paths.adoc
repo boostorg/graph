@@ -593,10 +593,9 @@ bool b = ref( const Graph& g,
 | `ref` must return `true` if and only if the extension is feasible, i.e., if `new_cont` fulfills all resource constraints at the target vertex of `ed`.
 |===
 
-Before invocation, new_cont is initialized as a copy of old_cont. The function should mutate new_cont to reflect the resources consumed along the edge.
+Before `ref` is invoked, `new_cont` is initialized as a copy of `old_cont`. `ref` should update `new_cont` to reflect the resources consumed along `ed`. `old_cont` is passed for reference, in case the update is more naturally expressed relative to the prior state.
 
-Return true if the extension is feasible, or false to discard the label (e.g. when a resource limit would be exceeded). The old_cont parameter is provided for reference, in case the update is more naturally expressed relative to the prior state.
-
+If `ref` returns `false`, the new label is discarded and the search does not extend along `ed` from that label.
 
 Moreover, a reference to a type modelling the ResourceExtensionFunction concept can be passed as a parameter to `r_c_shortest_paths`, see above.
 
