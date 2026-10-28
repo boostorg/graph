@@ -84,7 +84,7 @@ template <typename VertexListGraph, typename OutputIterator>
 void topological_sort(VertexListGraph& g, OutputIterator result);
 ----
 
-Equivalent to (1) with every named parameter left at its default. Uses `get(vertex_index, g)` for the index map and an internally allocated `default_color_type` color map; requires the graph to have an interior `vertex_index_t` property.
+Equivalent to (1) with every named parameter left at its default, except the color map. Uses `get(vertex_index, g)` for the index map and an internally allocated `two_bit_color_map`, which stores 2 bits per vertex instead of one `default_color_type`; requires the graph to have an interior `vertex_index_t` property.
 
 [cols="1,2,5"]
 |===

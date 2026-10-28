@@ -64,7 +64,7 @@ connected_components(
     const VertexListGraph& g, ComponentMap c);
 ----
 
-Equivalent to (1) with every named parameter left at its default. Uses `get(vertex_index, g)` for the index map and an internally allocated `default_color_type` color map.
+Equivalent to (1) with every named parameter left at its default, except the color map. Uses `get(vertex_index, g)` for the index map and an internally allocated `two_bit_color_map`, which stores 2 bits per vertex instead of one `default_color_type`.
 
 [cols="1,2,5"]
 |===

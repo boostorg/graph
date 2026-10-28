@@ -12,6 +12,7 @@
 #include <stdlib.h>
 
 #include <boost/graph/depth_first_search.hpp>
+#include <boost/graph/topological_sort.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_archetypes.hpp>
 #include <boost/graph/graph_utility.hpp>
@@ -20,6 +21,8 @@
 #include <boost/random/mersenne_twister.hpp>
 
 #include <functional>
+#include <iterator>
+#include <vector>
 
 template < typename ColorMap, typename ParentMap, typename DiscoverTimeMap,
     typename FinishTimeMap >
@@ -263,6 +266,28 @@ void test_stateful_visitor_with_ref()
     BOOST_TEST_EQ(copied_vis.count, static_cast< std::size_t >(0));
 }
 
+// Checks topological_sort on a DAG and on a graph with a cycle.
+void test_topological_sort()
+{
+    using graph_t = ::boost::adjacency_list< ::boost::vecS, ::boost::vecS, ::boost::directedS >;
+    graph_t dag(4);
+    ::boost::add_edge(0, 1, dag);
+    ::boost::add_edge(0, 2, dag);
+    ::boost::add_edge(1, 3, dag);
+    ::boost::add_edge(2, 3, dag);
+    std::vector< std::size_t > order;
+    ::boost::topological_sort(dag, std::back_inserter(order));
+    const std::vector< std::size_t > expected = { 3, 1, 2, 0 };
+    BOOST_TEST_ALL_EQ(order.begin(), order.end(), expected.begin(), expected.end());
+
+    graph_t cycle(3);
+    ::boost::add_edge(0, 1, cycle);
+    ::boost::add_edge(1, 2, cycle);
+    ::boost::add_edge(2, 0, cycle);
+    std::vector< std::size_t > ignored;
+    BOOST_TEST_THROWS(::boost::topological_sort(cycle, std::back_inserter(ignored)), ::boost::not_a_dag);
+}
+
 // usage: dfs.exe [max-vertices=15]
 
 int main(int argc, char* argv[])
@@ -283,6 +308,7 @@ int main(int argc, char* argv[])
 
     test_finish_edge_is_called();
     test_stateful_visitor_with_ref();
+    test_topological_sort();
 
     return boost::report_errors();
 }
