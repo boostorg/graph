@@ -129,11 +129,82 @@ template < typename Graph > void test_directed()
     BOOST_TEST_EQ(::boost::mean_clustering_coefficient(g, clustering_map), 0.5);
 }
 
+// Wraps an adjacency_list without providing edge(), so lookup_edge must scan out edges.
+template < typename Directed > struct no_edge_graph
+{
+    using base_type = ::boost::adjacency_list< ::boost::vecS, ::boost::vecS, Directed >;
+    using base_traits = ::boost::graph_traits< base_type >;
+    using vertex_descriptor = typename base_traits::vertex_descriptor;
+    using edge_descriptor = typename base_traits::edge_descriptor;
+    using adjacency_iterator = typename base_traits::adjacency_iterator;
+    using out_edge_iterator = typename base_traits::out_edge_iterator;
+    using degree_size_type = typename base_traits::degree_size_type;
+    using directed_category = typename base_traits::directed_category;
+    using edge_parallel_category = typename base_traits::edge_parallel_category;
+
+    // Incidence and adjacency only, no adjacency matrix.
+    struct traversal_category : ::boost::incidence_graph_tag, ::boost::adjacency_graph_tag
+    {
+    };
+
+    const base_type* base = nullptr;
+};
+
+// Forwards out_edges to the wrapped graph.
+template < typename Directed >
+std::pair< typename no_edge_graph< Directed >::out_edge_iterator, typename no_edge_graph< Directed >::out_edge_iterator > out_edges(typename no_edge_graph< Directed >::vertex_descriptor v, const no_edge_graph< Directed >& g)
+{
+    return ::boost::out_edges(v, *g.base);
+}
+
+// Forwards out_degree to the wrapped graph.
+template < typename Directed >
+typename no_edge_graph< Directed >::degree_size_type out_degree(typename no_edge_graph< Directed >::vertex_descriptor v, const no_edge_graph< Directed >& g)
+{
+    return ::boost::out_degree(v, *g.base);
+}
+
+// Forwards adjacent_vertices to the wrapped graph.
+template < typename Directed >
+std::pair< typename no_edge_graph< Directed >::adjacency_iterator, typename no_edge_graph< Directed >::adjacency_iterator > adjacent_vertices(typename no_edge_graph< Directed >::vertex_descriptor v, const no_edge_graph< Directed >& g)
+{
+    return ::boost::adjacent_vertices(v, *g.base);
+}
+
+// Forwards source to the wrapped graph.
+template < typename Directed >
+typename no_edge_graph< Directed >::vertex_descriptor source(typename no_edge_graph< Directed >::edge_descriptor e, const no_edge_graph< Directed >& g)
+{
+    return ::boost::source(e, *g.base);
+}
+
+// Forwards target to the wrapped graph.
+template < typename Directed >
+typename no_edge_graph< Directed >::vertex_descriptor target(typename no_edge_graph< Directed >::edge_descriptor e, const no_edge_graph< Directed >& g)
+{
+    return ::boost::target(e, *g.base);
+}
+
+// Checks the clustering coefficient of a triangle on a graph that has no edge().
+template < typename Directed > void test_without_edge_function(double expected)
+{
+    typename no_edge_graph< Directed >::base_type base(3);
+    ::boost::add_edge(0, 1, base);
+    ::boost::add_edge(0, 2, base);
+    ::boost::add_edge(1, 2, base);
+    no_edge_graph< Directed > g;
+    g.base = &base;
+    const std::size_t v0 = 0;
+    BOOST_TEST_EQ(::boost::clustering_coefficient(g, v0), expected);
+}
+
 int main(int, char*[])
 {
     typedef undirected_graph<> Graph;
 
     test_undirected< Graph >();
     test_directed< ::boost::directed_graph<> >();
+    test_without_edge_function< ::boost::undirectedS >(1.0);
+    test_without_edge_function< ::boost::directedS >(0.5);
     return ::boost::report_errors();
 }
