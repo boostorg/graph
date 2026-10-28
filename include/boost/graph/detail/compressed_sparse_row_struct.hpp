@@ -200,8 +200,14 @@ namespace detail
             const SourcePred& source_pred, vertices_size_type numlocalverts,
             edges_size_type numedges_or_zero)
         {
+            edges_size_type numedges = numedges_or_zero;
+            if (numedges == 0)
+            {
+                numedges = ::boost::graph::detail::reserve_count_for_single_pass(
+                    edge_begin, edge_end);
+            }
             m_column.clear();
-            m_column.reserve(numedges_or_zero);
+            m_column.reserve(numedges);
             m_rowstart.resize(numlocalverts + 1);
             EdgeIndex current_edge = 0;
             Vertex current_vertex_plus_one = 1;
@@ -246,9 +252,9 @@ namespace detail
                     edge_begin, edge_end);
             }
             m_column.clear();
-            m_column.reserve(numedges_or_zero);
+            m_column.reserve(numedges);
             inherited_edge_properties::clear();
-            inherited_edge_properties::reserve(numedges_or_zero);
+            inherited_edge_properties::reserve(numedges);
             m_rowstart.resize(numlocalverts + 1);
             EdgeIndex current_edge = 0;
             Vertex current_vertex_plus_one = 1;
