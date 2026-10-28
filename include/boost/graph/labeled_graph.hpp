@@ -20,6 +20,12 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/property_map/property_map.hpp>
+#include <boost/config/pragma_message.hpp>
+
+#if !defined(BOOST_ALLOW_DEPRECATED_HEADERS) && !defined(BOOST_ALLOW_DEPRECATED)
+BOOST_PRAGMA_MESSAGE("CAUTION: <boost/graph/labeled_graph.hpp> is deprecated. Removal planned for Boost 1.95.")
+BOOST_PRAGMA_MESSAGE("CAUTION: Define BOOST_ALLOW_DEPRECATED_HEADERS to suppress this message.")
+#endif
 
 // This file implements a utility for creating mappings from arbitrary
 // identifiers to the vertices of a graph.
