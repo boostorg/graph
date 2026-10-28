@@ -91,6 +91,14 @@ alias graph_test_regular :
           /boost/serialization//boost_serialization
       : $(SERIALIZE_ARCHIVES) : : ]
 
+    [ run adj_matrix_serialize.cpp
+          /boost/serialization//boost_serialization
+      : : : ]
+
+    [ run csr_graph_serialize.cpp
+          /boost/serialization//boost_serialization
+      : : : ]
+
     [ compile reverse_graph_cc.cpp ]
     [ run sequential_vertex_coloring.cpp ]
 
