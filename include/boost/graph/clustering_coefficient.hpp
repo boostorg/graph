@@ -41,7 +41,6 @@ namespace detail
         typename graph_traits< Graph >::vertex_descriptor v, directed_tag)
 
     {
-        BOOST_CONCEPT_ASSERT((AdjacencyMatrixConcept< Graph >));
         return (lookup_edge(u, v, g).second ? 1 : 0)
             + (lookup_edge(v, u, g).second ? 1 : 0);
     }
@@ -52,10 +51,9 @@ namespace detail
         const Graph& g, typename graph_traits< Graph >::vertex_descriptor u,
         typename graph_traits< Graph >::vertex_descriptor v, undirected_tag)
     {
-        BOOST_CONCEPT_ASSERT((AdjacencyMatrixConcept< Graph >));
         return lookup_edge(u, v, g).second ? 1 : 0;
     }
-}
+} /* namespace detail */
 
 template < typename Graph, typename Vertex >
 inline typename graph_traits< Graph >::degree_size_type
@@ -99,7 +97,7 @@ inline typename graph_traits< Graph >::degree_size_type num_triangles_on_vertex(
         }
     }
     return count;
-} /* namespace detail */
+}
 
 template < typename T, typename Graph, typename Vertex >
 inline T clustering_coefficient(const Graph& g, Vertex v)
