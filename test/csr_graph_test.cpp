@@ -23,6 +23,7 @@
 #include <boost/range/iterator_range.hpp>
 #include <boost/concept_check.hpp> // for ignore_unused_variable_warning
 #include <iostream>
+#include <set>
 #include <vector>
 #include <algorithm>
 #include <boost/lexical_cast.hpp>
@@ -450,6 +451,53 @@ void test_bidirectional_sorted_edges()
     }
 }
 
+// Checks that the CSR has the same out edges per vertex as its source.
+template < typename Source, typename Csr >
+void check_same_out_edges(const Source& src, const Csr& csr)
+{
+    check_consistency(csr);
+    BOOST_TEST_EQ(num_vertices(csr), num_vertices(src));
+    std::size_t expected_edges = 0;
+    for (const auto& v : boost::make_iterator_range(vertices(src)))
+    {
+        expected_edges += out_degree(v, src);
+        std::multiset< std::size_t > expected;
+        for (const auto& e : boost::make_iterator_range(out_edges(v, src)))
+        {
+            expected.insert(target(e, src));
+        }
+        std::multiset< std::size_t > actual;
+        for (const auto& e : boost::make_iterator_range(out_edges(v, csr)))
+        {
+            actual.insert(target(e, csr));
+        }
+        BOOST_TEST(expected == actual);
+    }
+    BOOST_TEST_EQ(num_edges(csr), expected_edges);
+}
+
+// Copies an adjacency_list into a CSR through every constructor and assign.
+template < typename Directed, typename Csr > void test_copy_from()
+{
+    using source_type = boost::adjacency_list< boost::vecS, boost::vecS, Directed >;
+    source_type src(4);
+    add_edge(0, 1, src);
+    add_edge(1, 2, src);
+    add_edge(2, 3, src);
+    add_edge(3, 0, src);
+    add_edge(2, 2, src);
+    const Csr from_ctor(src);
+    check_same_out_edges(src, from_ctor);
+    const Csr from_ctor_index(src, get(boost::vertex_index, src));
+    check_same_out_edges(src, from_ctor_index);
+    Csr from_assign;
+    from_assign.assign(src);
+    check_same_out_edges(src, from_assign);
+    Csr from_assign_index;
+    from_assign_index.assign(src, get(boost::vertex_index, src));
+    check_same_out_edges(src, from_assign_index);
+}
+
 int main()
 {
     int seed = 42;
@@ -469,6 +517,11 @@ int main()
     test_graph_properties();
     test_vertex_and_edge_properties();
     test_bidirectional_sorted_edges();
+    test_copy_from< boost::directedS, CSRGraphT >();
+    test_copy_from< boost::bidirectionalS, CSRGraphT >();
+    test_copy_from< boost::directedS, BidirCSRGraphT >();
+    test_copy_from< boost::undirectedS, CSRGraphT >();
+    test_copy_from< boost::undirectedS, BidirCSRGraphT >();
 
     {
         std::cout << "Testing CSR graph built from unsorted edges" << std::endl;
