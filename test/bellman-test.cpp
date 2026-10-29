@@ -75,6 +75,23 @@ void test_stateful_visitor_with_ref()
     BOOST_TEST_EQ(copied.count, static_cast< std::size_t >(0));
 }
 
+// closed_plus saturates instead of overflowing on integral weights
+void test_closed_plus_saturates()
+{
+    auto const max_int = (::std::numeric_limits< int >::max)();
+    auto const lowest_int = (::std::numeric_limits< int >::lowest)();
+    ::boost::closed_plus< int > combine;
+    BOOST_TEST_EQ(combine(max_int - 1, 2), max_int);
+    BOOST_TEST_EQ(combine(lowest_int + 1, -2), lowest_int);
+    BOOST_TEST_EQ(combine(3, -5), -2);
+    BOOST_TEST_EQ(combine(max_int, -5), max_int);
+    BOOST_TEST_EQ(combine(-5, max_int), max_int);
+
+    auto const max_unsigned = (::std::numeric_limits< unsigned >::max)();
+    ::boost::closed_plus< unsigned > combine_unsigned;
+    BOOST_TEST_EQ(combine_unsigned(max_unsigned - 1u, 2u), max_unsigned);
+}
+
 int main(int, char*[])
 {
     using namespace boost;
@@ -176,6 +193,7 @@ int main(int, char*[])
 #endif
 
     test_stateful_visitor_with_ref();
+    test_closed_plus_saturates();
 
     return boost::report_errors();
 }
