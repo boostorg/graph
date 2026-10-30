@@ -12,6 +12,9 @@ name: sanitize
 
 on: [push, pull_request]
 
+permissions:
+  contents: read
+
 env:
   GIT_FETCH_JOBS: 8
   NET_RETRY_COUNT: 5
