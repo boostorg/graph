@@ -1,5 +1,6 @@
 //=======================================================================
 // Copyright 2014 Alexander Lauser.
+// Copyright (c) 2026 Arnaud Becheler
 // Authors: Alexander Lauser
 //
 // Distributed under the Boost Software License, Version 1.0. (See
@@ -23,6 +24,8 @@ Vertex c is in component 0 and has root 0
 #include <boost/config.hpp>
 #include <iostream>
 #include <vector>
+// Must precede strong_components.hpp to reproduce issue #116.
+#include <boost/graph/reverse_graph.hpp>
 #include <boost/graph/strong_components.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_utility.hpp>
@@ -63,6 +66,10 @@ int main(int, char*[])
                 make_iterator_property_map(color.begin(), get(vertex_index, G)))
             .discover_time_map(make_iterator_property_map(
                 discover_time.begin(), get(vertex_index, G))));
+
+    // A raw pointer component map must compile.
+    std::vector< int > pointer_component(::boost::num_vertices(G));
+    ::boost::strong_components(G, &pointer_component[0]);
 
 #if VERBOSE
     for (std::vector< int >::size_type i = 0; i != component.size(); ++i)

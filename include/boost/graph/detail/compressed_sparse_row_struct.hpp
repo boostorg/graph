@@ -1,4 +1,5 @@
 // Copyright 2005-2009 The Trustees of Indiana University.
+// Copyright (c) 2026 Arnaud Becheler
 
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
@@ -54,20 +55,18 @@ namespace detail
     template < typename Vertex, typename EdgeIndex > class csr_edge_descriptor;
 
     // Add edge_index property map
-    template < typename Vertex, typename EdgeIndex > struct csr_edge_index_map
+    // A get declared here would hide boost::get from code in boost::detail.
+    template < typename Vertex, typename EdgeIndex >
+    struct csr_edge_index_map
+    : public ::boost::put_get_helper< EdgeIndex, csr_edge_index_map< Vertex, EdgeIndex > >
     {
         typedef EdgeIndex value_type;
         typedef EdgeIndex reference;
         typedef csr_edge_descriptor< Vertex, EdgeIndex > key_type;
         typedef readable_property_map_tag category;
-    };
 
-    template < typename Vertex, typename EdgeIndex >
-    inline EdgeIndex get(const csr_edge_index_map< Vertex, EdgeIndex >&,
-        const csr_edge_descriptor< Vertex, EdgeIndex >& key)
-    {
-        return key.idx;
-    }
+        EdgeIndex operator[](const key_type& key) const { return key.idx; }
+    };
 
     /** Compressed sparse row graph internal structure.
      *

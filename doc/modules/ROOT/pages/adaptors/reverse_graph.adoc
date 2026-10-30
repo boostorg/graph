@@ -139,6 +139,7 @@ underlying graph, and vice versa.
 Property maps from the underlying graph are accessible through the reversed
 view. Additionally, the `edge_underlying_t` property maps reversed edge
 descriptors back to the underlying edge descriptors.
+This map is read-only.
 
 [source,cpp]
 ----
