@@ -116,6 +116,7 @@ run matching_example.cpp ;
 exe max_flow : max_flow.cpp ;
 run mcgregor_subgraphs_example.cpp ;
 exe mean_geodesic : mean_geodesic.cpp ;
+run min_max_paths.cpp ;
 exe minimum_degree_ordering : minimum_degree_ordering.cpp ;
 run modify_graph.cpp ;
 run neighbor_bfs.cpp ;
@@ -193,11 +194,6 @@ run topo-sort-with-sgb.cpp ;
 explicit topo-sort-with-sgb ;
 run girth.cpp ;
 explicit girth ;
-
-#
-# This example appears incorrect:
-#
-#run min_max_paths.cpp ;
 
 #
 # These all use an interface that has been removed:
