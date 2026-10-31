@@ -145,7 +145,7 @@ jobs:
         include:
           - os: ubuntu-22.04
           - os: ubuntu-24.04
-          - os: macos-14
+          - os: macos-26
           - os: macos-15
 
     runs-on: ${{matrix.os}}
@@ -192,7 +192,7 @@ jobs:
         include:
           - os: ubuntu-22.04
           - os: ubuntu-24.04
-          - os: macos-14
+          - os: macos-26
           - os: macos-15
 
     runs-on: ${{matrix.os}}
