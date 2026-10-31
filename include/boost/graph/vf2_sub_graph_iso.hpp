@@ -19,12 +19,10 @@
 #define BOOST_VF2_SUB_GRAPH_ISO_HPP
 
 #include <iostream>
-#include <iomanip>
 #include <iterator>
 #include <vector>
 #include <utility>
 
-#include <boost/assert.hpp>
 #include <boost/concept/assert.hpp>
 #include <boost/concept_check.hpp>
 #include <boost/graph/graph_utility.hpp>
@@ -953,15 +951,15 @@ namespace detail
             (ReadablePropertyMapConcept< IndexMapSmall, vertex_small_type >));
         typedef typename property_traits< IndexMapSmall >::value_type
             IndexMapSmallValue;
-        BOOST_STATIC_ASSERT(
-            (is_convertible< IndexMapSmallValue, size_type_small >::value));
-
+        static_assert(
+            std::is_convertible< IndexMapSmallValue, size_type_small >::value, "The value type of the index map of the small graph must be convertible to the vertices size type of the same graph.");
+        
         BOOST_CONCEPT_ASSERT(
             (ReadablePropertyMapConcept< IndexMapLarge, vertex_large_type >));
         typedef typename property_traits< IndexMapLarge >::value_type
             IndexMapLargeValue;
-        BOOST_STATIC_ASSERT(
-            (is_convertible< IndexMapLargeValue, size_type_large >::value));
+        static_assert(
+            std::is_convertible< IndexMapLargeValue, size_type_large >::value, "The value type of the index map of the large graph must be convertible to the vertices size type of the same graph.");
 
         // Edge & vertex requirements
         typedef typename graph_traits< GraphSmall >::edge_descriptor
@@ -979,8 +977,8 @@ namespace detail
         // Vertex order requirements
         BOOST_CONCEPT_ASSERT((ContainerConcept< VertexOrderSmall >));
         typedef typename VertexOrderSmall::value_type order_value_type;
-        BOOST_STATIC_ASSERT(
-            (is_same< vertex_small_type, order_value_type >::value));
+        static_assert(std::is_same< vertex_small_type, order_value_type >::value, "The vertex type of the small graph must be the same as the order value type.");
+
         BOOST_ASSERT(num_vertices(graph_small) == vertex_order_small.size());
 
         if (num_vertices(graph_small) > num_vertices(graph_large))
@@ -1165,12 +1163,13 @@ bool vf2_graph_iso(const Graph1& graph1, const Graph2& graph2,
     BOOST_CONCEPT_ASSERT(
         (ReadablePropertyMapConcept< IndexMap1, vertex1_type >));
     typedef typename property_traits< IndexMap1 >::value_type IndexMap1Value;
-    BOOST_STATIC_ASSERT((is_convertible< IndexMap1Value, size_type1 >::value));
+    static_assert(std::is_convertible< IndexMap1Value, size_type1 >::value, "The index map value of the first graph must be convertible to the vertex size type of the first graph.");
 
     BOOST_CONCEPT_ASSERT(
         (ReadablePropertyMapConcept< IndexMap2, vertex2_type >));
     typedef typename property_traits< IndexMap2 >::value_type IndexMap2Value;
-    BOOST_STATIC_ASSERT((is_convertible< IndexMap2Value, size_type2 >::value));
+    static_assert(std::is_convertible< IndexMap2Value, size_type2 >::value, "The index map value of the second graph must be convertible to the vertex size type of the second graph.");
+
 
     // Edge & vertex requirements
     typedef typename graph_traits< Graph1 >::edge_descriptor edge1_type;
@@ -1185,9 +1184,10 @@ bool vf2_graph_iso(const Graph1& graph1, const Graph2& graph2,
     // Vertex order requirements
     BOOST_CONCEPT_ASSERT((ContainerConcept< VertexOrder1 >));
     typedef typename VertexOrder1::value_type order_value_type;
-    BOOST_STATIC_ASSERT((is_same< vertex1_type, order_value_type >::value));
-    BOOST_ASSERT(num_vertices(graph1) == vertex_order1.size());
 
+    static_assert(std::is_same< vertex1_type, order_value_type >::value, "The value type of the vertex order and the vertex type of the first graph must be the same type.");
+    BOOST_ASSERT(num_vertices(graph1) == vertex_order1.size());
+    
     if (num_vertices(graph1) != num_vertices(graph2))
         return false;
 
