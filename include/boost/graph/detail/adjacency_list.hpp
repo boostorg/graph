@@ -96,6 +96,65 @@ namespace detail
         Vertex m_target;
     };
 
+    // True when a target only StoredEdge is a valid lookup key for EdgeList.
+    template < class EdgeList, class = void >
+    struct is_ordered_by_target : std::true_type
+    {
+    };
+
+    // Ordered containers qualify only with a comparator that reads the target alone.
+    template < class EdgeList >
+    struct is_ordered_by_target< EdgeList, ::boost::void_t< typename EdgeList::key_compare > >
+    : std::integral_constant< bool, std::is_same< typename EdgeList::key_compare, std::less< typename EdgeList::value_type > >::value || std::is_same< typename EdgeList::key_compare, std::less<> >::value >
+    {
+    };
+
+    // Finds an edge to v using the container lookup.
+    template < class EdgeList, class Vertex >
+    auto find_target(EdgeList& el, Vertex v, std::true_type) -> decltype(el.begin())
+    {
+        using StoredEdge = typename EdgeList::value_type;
+        return ::boost::graph_detail::find(el, StoredEdge(v));
+    }
+
+    // Finds an edge to v by scanning, since the comparator may read edge properties.
+    template < class EdgeList, class Vertex >
+    auto find_target(EdgeList& el, Vertex v, std::false_type) -> decltype(el.begin())
+    {
+        return std::find_if(el.begin(), el.end(), target_is< Vertex >(v));
+    }
+
+    // Finds an edge to v in an out edge list.
+    template < class EdgeList, class Vertex >
+    auto find_target(EdgeList& el, Vertex v) -> decltype(el.begin())
+    {
+        return detail::find_target(el, v, is_ordered_by_target< EdgeList >());
+    }
+
+    // Returns the edges to v using the container lookup.
+    template < class EdgeList, class Vertex >
+    auto equal_range_target(EdgeList& el, Vertex v, std::true_type) -> std::pair< decltype(el.begin()), decltype(el.begin()) >
+    {
+        using StoredEdge = typename EdgeList::value_type;
+        return ::boost::graph_detail::equal_range(el, StoredEdge(v));
+    }
+
+    // Returns the edges to v by scanning, assuming they are contiguous.
+    template < class EdgeList, class Vertex >
+    auto equal_range_target(EdgeList& el, Vertex v, std::false_type) -> std::pair< decltype(el.begin()), decltype(el.begin()) >
+    {
+        auto first = std::find_if(el.begin(), el.end(), target_is< Vertex >(v));
+        auto last = std::find_if_not(first, el.end(), target_is< Vertex >(v));
+        return std::make_pair(first, last);
+    }
+
+    // Returns the range of edges to v in an out edge list.
+    template < class EdgeList, class Vertex >
+    auto equal_range_target(EdgeList& el, Vertex v) -> std::pair< decltype(el.begin()), decltype(el.begin()) >
+    {
+        return detail::equal_range_target(el, v, is_ordered_by_target< EdgeList >());
+    }
+
     // O(E/V)
     template < class EdgeList, class vertex_descriptor >
     void erase_from_incidence_list(
@@ -109,8 +168,11 @@ namespace detail
     void erase_from_incidence_list(
         EdgeList& el, vertex_descriptor v, disallow_parallel_edge_tag)
     {
-        typedef typename EdgeList::value_type StoredEdge;
-        el.erase(StoredEdge(v));
+        auto i = detail::find_target(el, v);
+        if (i != el.end())
+        {
+            el.erase(i);
+        }
     }
 
     //=========================================================================
@@ -804,8 +866,7 @@ namespace detail
         typedef typename Graph::global_edgelist_selector EdgeListS;
         BOOST_STATIC_ASSERT((!is_same< EdgeListS, vecS >::value));
 
-        typedef typename EdgeList::value_type StoredEdge;
-        typename EdgeList::iterator i = el.find(StoredEdge(v)), end = el.end();
+        typename EdgeList::iterator i = detail::find_target(el, v), end = el.end();
         if (i != end)
         {
             g.m_edges.erase((*i).get_iter());
@@ -1577,11 +1638,10 @@ inline std::pair< typename Config::edge_descriptor, bool > edge(
     const adj_list_helper< Config, Base >& g_)
 {
     typedef typename Config::graph_type Graph;
-    typedef typename Config::StoredEdge StoredEdge;
     const Graph& cg = static_cast< const Graph& >(g_);
     const typename Config::OutEdgeList& el = cg.out_edge_list(u);
     typename Config::OutEdgeList::const_iterator it
-        = graph_detail::find(el, StoredEdge(v));
+        = detail::find_target(el, v);
     return std::make_pair(typename Config::edge_descriptor(u, v,
                               (it == el.end() ? 0 : &(*it).get_property())),
         (it != el.end()));
@@ -1595,14 +1655,13 @@ edge_range(typename Config::vertex_descriptor u,
     const adj_list_helper< Config, Base >& g_)
 {
     typedef typename Config::graph_type Graph;
-    typedef typename Config::StoredEdge StoredEdge;
     const Graph& cg = static_cast< const Graph& >(g_);
     Graph& g = const_cast< Graph& >(cg);
     typedef typename Config::out_edge_iterator out_edge_iterator;
     typename Config::OutEdgeList& el = g.out_edge_list(u);
     typename Config::OutEdgeList::iterator first, last;
     typename Config::EdgeContainer fake_edge_container;
-    boost::tie(first, last) = graph_detail::equal_range(el, StoredEdge(v));
+    boost::tie(first, last) = detail::equal_range_target(el, v);
     return std::make_pair(
         out_edge_iterator(first, u), out_edge_iterator(last, u));
 }

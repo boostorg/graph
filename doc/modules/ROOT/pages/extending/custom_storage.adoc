@@ -101,6 +101,14 @@ struct parallel_edge_traits<custom_containerS> {
 Use `allow_parallel_edge_tag` for Sequence containers and
 `disallow_parallel_edge_tag` for AssociativeContainers.
 
+== Ordered Out-Edge Containers
+
+An ordered out-edge container (for example a `std::multiset` with a custom comparator) must sort edges by target vertex first. The comparator may then break ties with anything else, such as an edge property. This keeps all edges to the same target next to each other, which `edge_range()` relies on.
+
+To find the edges from `u` to `v`, `edge()`, `edge_range()` and `remove_edge()` need a lookup by target alone. When the comparator is `std::less` (as with `setS` and `multisetS`), the container's own `find()` and `equal_range()` do this in O(log(E/V)). Any other comparator could read data that a target alone does not have, so in that case BGL instead walks the out-edges of `u` one by one and checks each target, which takes O(E/V). Iterating with `out_edges()` is unaffected and follows the container's order.
+
+See `example/ordered_out_edges.cpp` for out-edges ordered by target and then by name.
+
 == See also
 
 * xref:graph_classes/adjacency_list.adoc[adjacency_list reference]
