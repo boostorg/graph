@@ -14,9 +14,9 @@
 #include <boost/config.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/properties.hpp>
+#include <boost/graph/two_bit_color_map.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/overloading.hpp>
-#include <boost/graph/detail/mpi_include.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/concept/assert.hpp>
 
@@ -103,12 +103,12 @@ connected_components(const Graph& g,
     // c_count initialized to "nil" (with nil represented by (max)())
     comp_type c_count((std::numeric_limits< comp_type >::max)());
     detail::components_recorder< ComponentMap > vis(c, c_count);
-    depth_first_search(g, visitor(vis));
+    auto index_map = get(vertex_index, g);
+    auto color_map = ::boost::make_two_bit_color_map(num_vertices(g), index_map);
+    depth_first_search(g, vis, color_map);
     return c_count + 1;
 }
 
 } // namespace boost
-
-#include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/connected_components.hpp>)
 
 #endif // BOOST_GRAPH_CONNECTED_COMPONENTS_HPP

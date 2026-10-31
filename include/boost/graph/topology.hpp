@@ -10,16 +10,12 @@
 #ifndef BOOST_GRAPH_TOPOLOGY_HPP
 #define BOOST_GRAPH_TOPOLOGY_HPP
 
-#include <boost/algorithm/minmax.hpp>
+#include <algorithm>
 #include <boost/config.hpp> // For BOOST_STATIC_CONSTANT
-#include <boost/config/no_tr1/cmath.hpp>
-#include <boost/math/constants/constants.hpp> // For root_two
-#include <boost/math/special_functions/hypot.hpp>
+#include <cmath>
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/linear_congruential.hpp>
-#include <boost/shared_ptr.hpp>
-
-#include <cmath>
+#include <memory>
 
 // Classes and concepts to represent points in a space, with distance and move
 // operations (used for Gurson-Atun layout), plus other things like bounding
@@ -155,7 +151,7 @@ public:
         for (std::size_t i = 0; i < Dims; ++i)
         {
             double diff = b[i] - a[i];
-            dist = boost::math::hypot(dist, diff);
+            dist = std::hypot(dist, diff);
         }
         // Exact properties of the distance are not important, as long as
         // < on what this returns matches real distances; l_2 is used because
@@ -189,19 +185,17 @@ public:
 
     point pointwise_min(point a, point b) const
     {
-        BOOST_USING_STD_MIN();
         point result;
         for (std::size_t i = 0; i < Dims; ++i)
-            result[i] = min BOOST_PREVENT_MACRO_SUBSTITUTION(a[i], b[i]);
+            result[i] = (std::min)(a[i], b[i]);
         return result;
     }
 
     point pointwise_max(point a, point b) const
     {
-        BOOST_USING_STD_MAX();
         point result;
         for (std::size_t i = 0; i < Dims; ++i)
-            result[i] = max BOOST_PREVENT_MACRO_SUBSTITUTION(a[i], b[i]);
+            result[i] = (std::max)(a[i], b[i]);
         return result;
     }
 
@@ -209,7 +203,7 @@ public:
     {
         double n = 0.;
         for (std::size_t i = 0; i < Dims; ++i)
-            n = boost::math::hypot(n, delta[i]);
+            n = std::hypot(n, delta[i]);
         return n;
     }
 
@@ -254,27 +248,22 @@ public:
 
     point_type bound(point_type a) const
     {
-        BOOST_USING_STD_MIN();
-        BOOST_USING_STD_MAX();
         point_type p;
         for (std::size_t i = 0; i < Dims; ++i)
-            p[i] = min BOOST_PREVENT_MACRO_SUBSTITUTION(
-                scaling, max BOOST_PREVENT_MACRO_SUBSTITUTION(-scaling, a[i]));
+            p[i] = (std::min)(
+                scaling, (std::max)(-scaling, a[i]));
         return p;
     }
 
     double distance_from_boundary(point_type a) const
     {
-        BOOST_USING_STD_MIN();
-        BOOST_USING_STD_MAX();
 #ifndef BOOST_NO_STDC_NAMESPACE
         using std::abs;
 #endif
         BOOST_STATIC_ASSERT(Dims >= 1);
         double dist = abs(scaling - a[0]);
         for (std::size_t i = 1; i < Dims; ++i)
-            dist = min BOOST_PREVENT_MACRO_SUBSTITUTION(
-                dist, abs(scaling - a[i]));
+            dist = (std::min)(dist, abs(scaling - a[i]));
         return dist;
     }
 
@@ -303,8 +292,8 @@ public:
     }
 
 private:
-    shared_ptr< RandomNumberGenerator > gen_ptr;
-    shared_ptr< rand_t > rand;
+    std::shared_ptr< RandomNumberGenerator > gen_ptr;
+    std::shared_ptr< rand_t > rand;
     double scaling;
 };
 
@@ -331,10 +320,10 @@ public:
     rectangle_topology(double left, double top, double right, double bottom)
     : gen_ptr(new RandomNumberGenerator)
     , rand(new rand_t(*gen_ptr))
-    , left(std::min BOOST_PREVENT_MACRO_SUBSTITUTION(left, right))
-    , top(std::min BOOST_PREVENT_MACRO_SUBSTITUTION(top, bottom))
-    , right(std::max BOOST_PREVENT_MACRO_SUBSTITUTION(left, right))
-    , bottom(std::max BOOST_PREVENT_MACRO_SUBSTITUTION(top, bottom))
+    , left((std::min)(left, right))
+    , top((std::min)(top, bottom))
+    , right((std::max)(left, right))
+    , bottom((std::max)(top, bottom))
     {
     }
 
@@ -342,10 +331,10 @@ public:
         double right, double bottom)
     : gen_ptr()
     , rand(new rand_t(gen))
-    , left(std::min BOOST_PREVENT_MACRO_SUBSTITUTION(left, right))
-    , top(std::min BOOST_PREVENT_MACRO_SUBSTITUTION(top, bottom))
-    , right(std::max BOOST_PREVENT_MACRO_SUBSTITUTION(left, right))
-    , bottom(std::max BOOST_PREVENT_MACRO_SUBSTITUTION(top, bottom))
+    , left((std::min)(left, right))
+    , top((std::min)(top, bottom))
+    , right((std::max)(left, right))
+    , bottom((std::max)(top, bottom))
     {
     }
 
@@ -363,27 +352,21 @@ public:
 
     point_type bound(point_type a) const
     {
-        BOOST_USING_STD_MIN();
-        BOOST_USING_STD_MAX();
         point_type p;
-        p[0] = min BOOST_PREVENT_MACRO_SUBSTITUTION(
-            right, max BOOST_PREVENT_MACRO_SUBSTITUTION(left, a[0]));
-        p[1] = min BOOST_PREVENT_MACRO_SUBSTITUTION(
-            bottom, max BOOST_PREVENT_MACRO_SUBSTITUTION(top, a[1]));
+        p[0] = (std::min)(right, (std::max)(left, a[0]));
+        p[1] = (std::min)(bottom, (std::max)(top, a[1]));
         return p;
     }
 
     double distance_from_boundary(point_type a) const
     {
-        BOOST_USING_STD_MIN();
-        BOOST_USING_STD_MAX();
 #ifndef BOOST_NO_STDC_NAMESPACE
         using std::abs;
 #endif
         double dist = abs(left - a[0]);
-        dist = min BOOST_PREVENT_MACRO_SUBSTITUTION(dist, abs(right - a[0]));
-        dist = min BOOST_PREVENT_MACRO_SUBSTITUTION(dist, abs(top - a[1]));
-        dist = min BOOST_PREVENT_MACRO_SUBSTITUTION(dist, abs(bottom - a[1]));
+        dist = (std::min)(dist, abs(right - a[0]));
+        dist = (std::min)(dist, abs(top - a[1]));
+        dist = (std::min)(dist, abs(bottom - a[1]));
         return dist;
     }
 
@@ -412,8 +395,8 @@ public:
     }
 
 private:
-    shared_ptr< RandomNumberGenerator > gen_ptr;
-    shared_ptr< rand_t > rand;
+    std::shared_ptr< RandomNumberGenerator > gen_ptr;
+    std::shared_ptr< rand_t > rand;
     double left, top, right, bottom;
 };
 
@@ -472,11 +455,9 @@ public:
 
     point_type bound(point_type a) const
     {
-        BOOST_USING_STD_MIN();
-        BOOST_USING_STD_MAX();
         double r = 0.;
         for (std::size_t i = 0; i < Dims; ++i)
-            r = boost::math::hypot(r, a[i]);
+            r = std::hypot(r, a[i]);
         if (r <= radius)
             return a;
         double scaling_factor = radius / r;
@@ -490,7 +471,7 @@ public:
     {
         double r = 0.;
         for (std::size_t i = 0; i < Dims; ++i)
-            r = boost::math::hypot(r, a[i]);
+            r = std::hypot(r, a[i]);
         return radius - r;
     }
 
@@ -519,8 +500,8 @@ public:
     }
 
 private:
-    shared_ptr< RandomNumberGenerator > gen_ptr;
-    shared_ptr< rand_t > rand;
+    std::shared_ptr< RandomNumberGenerator > gen_ptr;
+    std::shared_ptr< rand_t > rand;
     double radius;
 };
 
@@ -560,6 +541,8 @@ template < typename RandomNumberGenerator = minstd_rand > class heart_topology
     // Circle centered at (500, -500) radius 500*sqrt(2)
     // Bounding box (-1000, -2000) - (1000, 500*(sqrt(2) - 1))
 
+    static constexpr double root_two = 1.41421356237309504880; // sqrt(2)
+
     struct point
     {
         point()
@@ -590,11 +573,11 @@ template < typename RandomNumberGenerator = minstd_rand > class heart_topology
             return false; // Bottom
         if (p[1] <= -1000)
             return true; // Diagonal of square
-        if (boost::math::hypot(p[0] - -500, p[1] - -500)
-            <= 500. * boost::math::constants::root_two< double >())
+        if (std::hypot(p[0] - -500, p[1] - -500)
+            <= 500. * root_two)
             return true; // Left circle
-        if (boost::math::hypot(p[0] - 500, p[1] - -500)
-            <= 500. * boost::math::constants::root_two< double >())
+        if (std::hypot(p[0] - 500, p[1] - -500)
+            <= 500. * root_two)
             return true; // Right circle
         return false;
     }
@@ -635,12 +618,12 @@ public:
         {
             result[0] = (*rand)()
                     * (1000
-                        + 1000 * boost::math::constants::root_two< double >())
-                - (500 + 500 * boost::math::constants::root_two< double >());
+                        + 1000 * root_two)
+                - (500 + 500 * root_two);
             result[1] = (*rand)()
                     * (2000
                         + 500
-                            * (boost::math::constants::root_two< double >()
+                            * (root_two
                                 - 1))
                 - 2000;
         } while (!in_heart(result));
@@ -655,13 +638,13 @@ public:
         if (segment_within_heart(a, b))
         {
             // Straight line
-            return boost::math::hypot(b[0] - a[0], b[1] - a[1]);
+            return std::hypot(b[0] - a[0], b[1] - a[1]);
         }
         else
         {
             // Straight line bending around (0, 0)
-            return boost::math::hypot(a[0], a[1])
-                + boost::math::hypot(b[0], b[1]);
+            return std::hypot(a[0], a[1])
+                + std::hypot(b[0], b[1]);
         }
     }
 
@@ -675,8 +658,8 @@ public:
         }
         else
         {
-            double distance_to_point_a = boost::math::hypot(a[0], a[1]);
-            double distance_to_point_b = boost::math::hypot(b[0], b[1]);
+            double distance_to_point_a = std::hypot(a[0], a[1]);
+            double distance_to_point_b = std::hypot(b[0], b[1]);
             double location_of_point = distance_to_point_a
                 / (distance_to_point_a + distance_to_point_b);
             if (fraction < location_of_point)
@@ -693,8 +676,8 @@ public:
     }
 
 private:
-    shared_ptr< RandomNumberGenerator > gen_ptr;
-    shared_ptr< rand_t > rand;
+    std::shared_ptr< RandomNumberGenerator > gen_ptr;
+    std::shared_ptr< rand_t > rand;
 };
 
 } // namespace boost

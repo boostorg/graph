@@ -19,6 +19,7 @@
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/depth_first_search.hpp>
+#include <boost/graph/detail/visitor_wrapper.hpp>
 #include <boost/graph/graph_utility.hpp>
 #include <boost/concept/assert.hpp>
 #include <boost/assert.hpp>
@@ -58,14 +59,14 @@ namespace detail
         void initialize_vertex(const Vertex& u, Graph& g)
         {
             put(pred, u, u);
-            vis.initialize_vertex(u, g);
+            user_vis().initialize_vertex(u, g);
         }
 
         template < typename Vertex, typename Graph >
         void start_vertex(const Vertex& u, Graph& g)
         {
             children_of_root = 0;
-            vis.start_vertex(u, g);
+            user_vis().start_vertex(u, g);
         }
 
         template < typename Vertex, typename Graph >
@@ -73,13 +74,13 @@ namespace detail
         {
             put(dtm, u, ++dfs_time);
             put(lowpt, u, get(dtm, u));
-            vis.discover_vertex(u, g);
+            user_vis().discover_vertex(u, g);
         }
 
         template < typename Edge, typename Graph >
         void examine_edge(const Edge& e, Graph& g)
         {
-            vis.examine_edge(e, g);
+            user_vis().examine_edge(e, g);
         }
 
         template < typename Edge, typename Graph >
@@ -96,7 +97,7 @@ namespace detail
             {
                 ++children_of_root;
             }
-            vis.tree_edge(e, g);
+            user_vis().tree_edge(e, g);
         }
 
         template < typename Edge, typename Graph >
@@ -115,13 +116,13 @@ namespace detail
                     min BOOST_PREVENT_MACRO_SUBSTITUTION(
                         get(lowpt, src), get(dtm, tgt)));
             }
-            vis.back_edge(e, g);
+            user_vis().back_edge(e, g);
         }
 
         template < typename Edge, typename Graph >
         void forward_or_cross_edge(const Edge& e, Graph& g)
         {
-            vis.forward_or_cross_edge(e, g);
+            user_vis().forward_or_cross_edge(e, g);
         }
 
         template < typename Vertex, typename Graph >
@@ -158,8 +159,10 @@ namespace detail
             {
                 *out++ = u;
             }
-            vis.finish_vertex(u, g);
+            user_vis().finish_vertex(u, g);
         }
+
+        auto& user_vis() { return ::boost::graph::detail::deref_visitor(vis); }
 
         ComponentMap comp;
         std::size_t& c;
@@ -354,6 +357,22 @@ std::pair< std::size_t, OutputIterator > biconnected_components(const Graph& g,
     return detail::bicomp_dispatch3< dispatch_type >::apply(g, comp, out,
         get(vertex_index, g), dtm, lowpt,
         bgl_named_params< int, buffer_param_t >(0), param_not_found());
+}
+
+template < typename Graph, typename ComponentMap, typename OutputIterator,
+    typename DiscoverTimeMap, typename LowPointMap, typename DFSVisitor >
+std::pair< std::size_t, OutputIterator > biconnected_components(const Graph& g,
+    ComponentMap comp, OutputIterator out, DiscoverTimeMap dtm,
+    LowPointMap lowpt, DFSVisitor dfs_vis)
+{
+    typedef typename graph_traits< Graph >::vertex_descriptor vertex_t;
+    auto index_map = get(vertex_index, g);
+    std::vector< vertex_t > pred(num_vertices(g));
+    vertex_t vert = graph_traits< Graph >::null_vertex();
+
+    return detail::biconnected_components_impl(g, comp, out, index_map, dtm,
+        lowpt, make_iterator_property_map(pred.begin(), index_map, vert),
+        dfs_vis);
 }
 
 template < typename Graph, typename ComponentMap, typename OutputIterator,

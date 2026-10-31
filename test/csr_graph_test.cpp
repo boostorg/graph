@@ -1,4 +1,5 @@
 // Copyright 2005 The Trustees of Indiana University.
+// Copyright 2026 Arnaud Becheler
 
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -19,16 +20,17 @@
 #include <boost/graph/erdos_renyi_generator.hpp>
 #include <boost/graph/graph_utility.hpp>
 #include <boost/random/linear_congruential.hpp>
+#include <boost/range/iterator_range.hpp>
 #include <boost/concept_check.hpp> // for ignore_unused_variable_warning
 #include <iostream>
+#include <set>
 #include <vector>
 #include <algorithm>
-#include <ctime>
 #include <boost/lexical_cast.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/limits.hpp>
+#include <boost/tuple/tuple_comparison.hpp>
 #include <string>
-#include <boost/graph/iteration_macros.hpp>
 #include <boost/core/lightweight_test.hpp>
 
 // Algorithms to test against
@@ -228,7 +230,7 @@ template < typename OrigGraph > void graph_test(const OrigGraph& g)
         std::vector< std::size_t > targets(num_edges(g2));
         std::size_t idx = 0;
         // Edges actually sorted
-        BGL_FORALL_EDGES(e, g2, CSRGraphT)
+        for(const auto& e : boost::make_iterator_range(edges(g2)))
         {
             sources[idx] = source(e, g2);
             targets[idx] = target(e, g2);
@@ -245,7 +247,8 @@ template < typename OrigGraph > void graph_test(const OrigGraph& g)
         std::vector< std::size_t > targets(num_edges(g2));
         std::size_t idx = 0;
         // Edges reverse-sorted
-        BGL_FORALL_EDGES(e, g2, CSRGraphT)
+
+        for(const auto& e : boost::make_iterator_range(edges(g2)))
         {
             sources[num_edges(g2) - 1 - idx] = source(e, g2);
             targets[num_edges(g2) - 1 - idx] = target(e, g2);
@@ -263,13 +266,14 @@ template < typename OrigGraph > void graph_test(const OrigGraph& g)
         std::size_t idx = 0;
         // Edges scrambled using Fisher-Yates shuffle (Durstenfeld variant) from
         // Wikipedia
-        BGL_FORALL_EDGES(e, g2, CSRGraphT)
+
+        for(const auto& e : boost::make_iterator_range(edges(g2)))
         {
             sources[idx] = source(e, g2);
             targets[idx] = target(e, g2);
             ++idx;
         }
-        boost::minstd_rand gen(1);
+        boost::minstd_rand gen(42);
         if (num_edges(g) != 0)
         {
             for (std::size_t i = num_edges(g) - 1; i > 0; --i)
@@ -405,16 +409,133 @@ void test_vertex_and_edge_properties()
             .weight_map(get(&Edge::weight, g))
             .edge_centrality_map(get(&Edge::centrality, g)));
 
-    BGL_FORALL_VERTICES(v, g, CSRGraphWithPropsT)
-    BOOST_TEST(g[v].centrality == centrality[v]);
+
+    for(const auto& v : boost::make_iterator_range(vertices(g))) {
+        BOOST_TEST(g[v].centrality == centrality[v]);
+    }
 }
 
-int main(int argc, char* argv[])
+void test_bidirectional_sorted_edges()
 {
-    // Optionally accept a seed value
-    int seed = int(std::time(0));
-    if (argc > 1)
-        seed = boost::lexical_cast< int >(argv[1]);
+    using EdgePair = std::pair< int, int >;
+    const EdgePair sorted_edges[] = { EdgePair(0, 1), EdgePair(0, 1),
+        EdgePair(0, 2), EdgePair(1, 1), EdgePair(2, 0), EdgePair(3, 2) };
+    const EdgeData edge_data[] = { { 0 }, { 1 }, { 2 }, { 3 }, { 4 }, { 5 } };
+    constexpr std::size_t num_verts = 5;
+    constexpr std::size_t edge_count = 6;
+    const std::size_t expected_in_degree[] = { 1, 3, 2, 0, 0 };
+
+    const BidirCSRGraphT sorted(boost::edges_are_sorted,
+        std::begin(sorted_edges), std::end(sorted_edges), num_verts);
+    const BidirCSRGraphT unsorted(boost::edges_are_unsorted_multi_pass,
+        std::begin(sorted_edges), std::end(sorted_edges), num_verts);
+    check_consistency(sorted);
+    assert_graphs_equal(sorted, boost::identity_property_map(), unsorted,
+        boost::identity_property_map(), boost::identity_property_map());
+
+    const BidirCSRGraphT g(boost::edges_are_sorted, std::begin(sorted_edges),
+        std::end(sorted_edges), std::begin(edge_data), num_verts, edge_count);
+    check_consistency(g);
+    for (const auto& v : boost::make_iterator_range(vertices(g)))
+    {
+        BOOST_TEST(in_degree(v, g) == expected_in_degree[v]);
+        for (const auto& e : boost::make_iterator_range(in_edges(v, g)))
+        {
+            BOOST_TEST(target(e, g) == v);
+            const auto index = static_cast< int >(get(boost::edge_index, g, e));
+            BOOST_TEST(g[e].index_e == index);
+            const auto u = static_cast< int >(source(e, g));
+            const auto w = static_cast< int >(target(e, g));
+            BOOST_TEST(sorted_edges[g[e].index_e] == EdgePair(u, w));
+        }
+    }
+}
+
+// Checks that the CSR has the same out edges per vertex as its source.
+template < typename Source, typename Csr >
+void check_same_out_edges(const Source& src, const Csr& csr)
+{
+    check_consistency(csr);
+    BOOST_TEST_EQ(num_vertices(csr), num_vertices(src));
+    std::size_t expected_edges = 0;
+    for (const auto& v : boost::make_iterator_range(vertices(src)))
+    {
+        expected_edges += out_degree(v, src);
+        std::multiset< std::size_t > expected;
+        for (const auto& e : boost::make_iterator_range(out_edges(v, src)))
+        {
+            expected.insert(target(e, src));
+        }
+        std::multiset< std::size_t > actual;
+        for (const auto& e : boost::make_iterator_range(out_edges(v, csr)))
+        {
+            actual.insert(target(e, csr));
+        }
+        BOOST_TEST(expected == actual);
+    }
+    BOOST_TEST_EQ(num_edges(csr), expected_edges);
+}
+
+// Copies an adjacency_list into a CSR through every constructor and assign.
+template < typename Directed, typename Csr > void test_copy_from()
+{
+    using source_type = boost::adjacency_list< boost::vecS, boost::vecS, Directed >;
+    source_type src(4);
+    add_edge(0, 1, src);
+    add_edge(1, 2, src);
+    add_edge(2, 3, src);
+    add_edge(3, 0, src);
+    add_edge(2, 2, src);
+    const Csr from_ctor(src);
+    check_same_out_edges(src, from_ctor);
+    const Csr from_ctor_index(src, get(boost::vertex_index, src));
+    check_same_out_edges(src, from_ctor_index);
+    Csr from_assign;
+    from_assign.assign(src);
+    check_same_out_edges(src, from_assign);
+    Csr from_assign_index;
+    from_assign_index.assign(src, get(boost::vertex_index, src));
+    check_same_out_edges(src, from_assign_index);
+}
+
+// Checks sorted construction without an edge count reserves exactly the edges it stores.
+template < typename Csr > void test_sorted_construction_reserves_exactly()
+{
+    const std::pair< std::size_t, std::size_t > sorted_edges[] = { { 0, 1 }, { 0, 2 }, { 1, 2 }, { 2, 0 }, { 2, 3 }, { 3, 0 }, { 3, 1 } };
+    const EdgeData edge_data[] = { { 0 }, { 1 }, { 2 }, { 3 }, { 4 }, { 5 }, { 6 } };
+    const Csr g(boost::edges_are_sorted, std::begin(sorted_edges), std::end(sorted_edges), 4);
+    BOOST_TEST_EQ(g.m_forward.m_column.capacity(), num_edges(g));
+    const Csr g_with_properties(boost::edges_are_sorted, std::begin(sorted_edges), std::end(sorted_edges), std::begin(edge_data), 4);
+    BOOST_TEST_EQ(g_with_properties.m_forward.m_column.capacity(), num_edges(g_with_properties));
+}
+
+// Edge bundle whose destructor overwrites its default value.
+struct sentinel_edge
+{
+    int value = 42;
+    sentinel_edge() = default;
+    sentinel_edge(const sentinel_edge&) = default;
+    sentinel_edge& operator=(const sentinel_edge&) = default;
+    ~sentinel_edge() { value = -1; }
+};
+
+// Checks add_edges without properties gives each new edge a default bundle.
+void test_add_edges_default_constructs_properties()
+{
+    using graph_type = ::boost::compressed_sparse_row_graph< ::boost::directedS, ::boost::no_property, sentinel_edge >;
+    const std::pair< std::size_t, std::size_t > new_edges[] = { { 2, 0 }, { 0, 1 }, { 1, 2 } };
+    graph_type g(::boost::edges_are_unsorted, std::begin(new_edges), std::begin(new_edges), 3);
+    add_edges(std::begin(new_edges), std::end(new_edges), g);
+    BOOST_TEST_EQ(num_edges(g), 3u);
+    for (const auto& e : ::boost::make_iterator_range(edges(g)))
+    {
+        BOOST_TEST_EQ(g[e].value, 42);
+    }
+}
+
+int main()
+{
+    int seed = 42;
 
     std::cout << "Seed = " << seed << std::endl;
     {
@@ -430,6 +551,15 @@ int main(int argc, char* argv[])
 
     test_graph_properties();
     test_vertex_and_edge_properties();
+    test_bidirectional_sorted_edges();
+    test_copy_from< boost::directedS, CSRGraphT >();
+    test_copy_from< boost::bidirectionalS, CSRGraphT >();
+    test_copy_from< boost::directedS, BidirCSRGraphT >();
+    test_copy_from< boost::undirectedS, CSRGraphT >();
+    test_copy_from< boost::undirectedS, BidirCSRGraphT >();
+    test_sorted_construction_reserves_exactly< CSRGraphT >();
+    test_sorted_construction_reserves_exactly< BidirCSRGraphT >();
+    test_add_edges_default_constructs_properties();
 
     {
         std::cout << "Testing CSR graph built from unsorted edges" << std::endl;

@@ -33,13 +33,15 @@ include::example$algorithms/planar/planar_face_traversal.txt[]
 
 [source,cpp]
 ----
+namespace boost::graph {
 template <typename Graph, typename PlanarEmbedding,
           typename PlanarFaceVisitor, typename EdgeIndexMap>
 void planar_face_traversal(
     const Graph& g,
     PlanarEmbedding embedding,
-    PlanarFaceVisitor& visitor,
+    PlanarFaceVisitor visitor,
     EdgeIndexMap em);
+}
 ----
 
 [cols="1,2,5"]
@@ -56,8 +58,8 @@ void planar_face_traversal(
 | A model of xref:concepts/property_types/PlanarEmbedding.adoc[PlanarEmbedding].
 
 | IN
-| `PlanarFaceVisitor& visitor`
-| A model of xref:visitors/PlanarFaceVisitor.adoc[PlanarFaceVisitor].
+| `PlanarFaceVisitor visitor`
+| A model of xref:visitors/PlanarFaceVisitor.adoc[PlanarFaceVisitor]. The visitor is passed by value, so the algorithm works on a copy. Wrap it in `std::ref(visitor)` to have your own visitor updated in place.
 
 | IN
 | `EdgeIndexMap em`
@@ -65,6 +67,46 @@ void planar_face_traversal(
   `[0, num_edges(g))`. +
   *Default*: `get(edge_index, g)`
 |===
+
+'''
+
+[#migrating]
+=== Migrating from `boost::planar_face_traversal`
+
+The `boost::planar_face_traversal` overloads are deprecated. They took the visitor by non-const reference, which rejected temporaries and differed from the other BGL algorithms. Removal planned for Boost 1.95. Calls left unchanged then fail to compile instead of silently changing behavior.
+
+. Replace `boost::planar_face_traversal` with `boost::graph::planar_face_traversal`. Unqualified calls need qualifying too, since argument dependent lookup only finds the deprecated overloads.
+. If you read the visitor after the call, pass it as `std::ref(visitor)`. Otherwise the algorithm works on a copy and your visitor is left unchanged.
+
+[source,cpp]
+----
+// Before
+planar_face_traversal(g, embedding, counter);
+
+// After
+boost::graph::planar_face_traversal(g, embedding, std::ref(counter));
+----
+
+'''
+
+[#deprecated]
+=== `boost::planar_face_traversal` (deprecated)
+
+[WARNING]
+====
+Deprecated: use `boost::graph::planar_face_traversal`. Removal planned for Boost 1.95. See <<migrating,the migration steps>>.
+====
+
+[source,cpp]
+----
+namespace boost {
+template <typename Graph, typename PlanarEmbedding, typename PlanarFaceVisitor, typename EdgeIndexMap>
+void planar_face_traversal(const Graph& g, PlanarEmbedding embedding, PlanarFaceVisitor& visitor, EdgeIndexMap em);
+
+template <typename Graph, typename PlanarEmbedding, typename PlanarFaceVisitor>
+void planar_face_traversal(const Graph& g, PlanarEmbedding embedding, PlanarFaceVisitor& visitor);
+}
+----
 
 == Description
 
@@ -104,7 +146,7 @@ can be passed to the `planar_face_traversal` function:
 [source,cpp]
 ----
 output_visitor my_visitor;
-planar_face_traversal(g, embed, my_visitor); //embed is a planar embedding of g
+boost::graph::planar_face_traversal(g, embed, std::ref(my_visitor)); //embed is a planar embedding of g
 ----
 
 and might produce the output:

@@ -116,7 +116,7 @@ private:
     Vertex m_goal;
 };
 
-int main(int argc, char** argv)
+int main()
 {
 
     // specify some types

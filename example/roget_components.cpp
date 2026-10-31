@@ -25,7 +25,8 @@ int main(int argc, char* argv[])
     unsigned long p = 0;
     long s = 0;
     char* filename = NULL;
-    int c, i;
+    int c;
+    unsigned int i;
 
     while (--argc)
     {

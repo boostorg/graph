@@ -13,12 +13,12 @@
 #include <vector>
 #include <boost/core/lightweight_test.hpp>
 #include <boost/graph/filtered_graph.hpp>
-#include <boost/graph/iteration_macros.hpp>
 #include <boost/graph/isomorphism.hpp>
 #include <boost/graph/copy.hpp>
 #include <boost/graph/graph_utility.hpp> // for connects
 #include <boost/range.hpp>
 #include <boost/range/algorithm/find_if.hpp>
+#include <boost/range/iterator_range.hpp>
 
 // UNDER CONSTRUCTION
 
@@ -359,7 +359,6 @@ template < typename Graph > struct graph_test
                  bgl_first_9 != bgl_last_9 ? (v = *bgl_first_9, true) : false;
                  ++bgl_first_9)
             {
-                // BGL_FORALL_VERTICES_T(v, g, Graph) {
                 typename property_traits< const_Map >::value_type pval1
                     = get(pmap, v),
                     pval2 = get(tag, g, v);
@@ -382,24 +381,23 @@ template < typename Graph > struct graph_test
             for (typename boost::graph_traits< Graph >::vertex_descriptor v;
                  bgl_first_9 != bgl_last_9 ? (v = *bgl_first_9, true) : false;
                  ++bgl_first_9)
-                //      BGL_FORALL_VERTICES_T(v, g, Graph)
                 put(pmap, v, *i++);
 
         test_readable_vertex_property_graph(vertex_prop, tag, g);
-
-        BGL_FORALL_VERTICES_T(v, g, Graph)
-        put(pmap, v, vertex_prop[0]);
+        
+        for(const auto& v : boost::make_iterator_range(vertices(g))) {
+            put(pmap, v, vertex_prop[0]);
+        }
 
         typename std::vector< PropVal >::const_iterator j = vertex_prop.begin();
-        BGL_FORALL_VERTICES_T(v, g, Graph)
-        put(tag, g, v, *j++);
 
+        for(const auto& v : boost::make_iterator_range(vertices(g))) {
+            put(tag, g, v, *j++);
+        }
         test_readable_vertex_property_graph(vertex_prop, tag, g);
     }
 };
 
 } // namespace boost
-
-#include <boost/graph/iteration_macros_undef.hpp>
 
 #endif // BOOST_GRAPH_TEST_HPP

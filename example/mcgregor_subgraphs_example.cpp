@@ -71,7 +71,7 @@ private:
     VertexSizeFirst m_max_subgraph_size;
 };
 
-int main(int argc, char* argv[])
+int main()
 {
 
     // Using a vecS graph here so that we don't have to mess around with

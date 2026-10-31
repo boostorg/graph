@@ -38,10 +38,10 @@ struct DFSVisitorLogger : boost::default_dfs_visitor {
         log.push_back("edge (" + std::to_string(boost::source(e, g)) + "," + std::to_string(boost::target(e, g)) + ") " + event);
     }
 
-    void discover_vertex(Vertex v, const Graph &g) {
+    void discover_vertex(Vertex v, const Graph &) {
         log_vertex(v, "discovered");
     }
-    void finish_vertex(Vertex v, const Graph &g) {
+    void finish_vertex(Vertex v, const Graph &) {
         log_vertex(v, "finished");
     }
     void examine_edge(Edge e, const Graph &g) {
@@ -95,7 +95,7 @@ int main() {
     // check if all vertices and edges have been visited in the correct order
     BOOST_TEST(expected_answer.size() == actual_answer.size());
     if (expected_answer.size() == actual_answer.size()) {
-        for (int i = 0; i < expected_answer.size(); ++i) {
+        for (std::size_t i = 0; i < expected_answer.size(); ++i) {
             BOOST_TEST(expected_answer[i] == actual_answer[i]);
         }
     }

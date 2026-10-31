@@ -19,16 +19,16 @@
 namespace boost
 {
 
-template < typename Graph > class mesh_iterator
+template < typename Graph >
+class mesh_iterator
 {
     typedef typename graph_traits< Graph >::directed_category directed_category;
     typedef
         typename graph_traits< Graph >::vertices_size_type vertices_size_type;
 
-    BOOST_STATIC_CONSTANT(bool,
-        is_undirected
+    static constexpr bool is_undirected
         = (is_base_and_derived< undirected_tag, directed_category >::value
-            || is_same< undirected_tag, directed_category >::value));
+            || is_same< undirected_tag, directed_category >::value);
 
 public:
     typedef std::input_iterator_tag iterator_category;
@@ -37,7 +37,7 @@ public:
     typedef const value_type* pointer;
     typedef void difference_type;
 
-    mesh_iterator() : x(0), y(0), done(true) {}
+    mesh_iterator() : x(0), y(0), done(true) { }
 
     // Vertices are numbered in row-major order
     // Assumes directed

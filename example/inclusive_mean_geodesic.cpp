@@ -84,7 +84,7 @@ using GeodesicMap = GeodesicProperty::map_type;
 static float exclusive_geodesics(const Graph&, DistanceMatrixMap, GeodesicMap);
 static float inclusive_geodesics(const Graph&, DistanceMatrixMap, GeodesicMap);
 
-int main(int argc, char* argv[])
+int main()
 {
     // Create the graph, a name map that providse abstract access
     // to the web page names, and the weight map as an accessor to

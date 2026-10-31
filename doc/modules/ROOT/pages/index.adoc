@@ -38,6 +38,11 @@ include::example$algorithms/traversal/bfs_shortest_path.cpp[]
 include::example$algorithms/traversal/bfs_shortest_path.txt[]
 ----
 
+== Who uses it
+
+CGAL, RDKit, FreeCAD, Krita, pgRouting, SageMath, OMPL and the CMS experiment software at CERN all build on the BGL.
+See xref:users.adoc[who uses the BGL] for the full list and what the graph part does in each.
+
 == Get started
 
 **xref:graph_classes/overview.adoc[Representing your Graph.]** 
@@ -59,6 +64,8 @@ existing one at specific event points (vertex discovered, edge relaxed, etc.).
 
 
 == Requirements
+
+CAUTION: Boost.Graph in Boost 1.93 deprecates support for C++14 and will require C++17 from Boost 1.95 onwards (see https://github.com/boostorg/graph/discussions/613[discussion #613]).
 
 * C++14 or later
 * Boost headers: BGL is part of the Boost distribution and requires no separate install.

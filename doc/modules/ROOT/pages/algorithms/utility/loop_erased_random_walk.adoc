@@ -110,7 +110,7 @@ Both throw `loop_erased_random_walk_stuck` if `out_degree(src, g) == 0`.
 [source,cpp]
 ----
 struct loop_erased_random_walk_stuck : public std::exception {
-    virtual const char* what() const throw();
+    virtual const char* what() const noexcept;
 };
 ----
 

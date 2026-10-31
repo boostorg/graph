@@ -14,6 +14,7 @@
 #include <boost/config.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/depth_first_search.hpp>
+#include <boost/graph/two_bit_color_map.hpp>
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/exception.hpp>
 #include <boost/throw_exception.hpp>
@@ -72,8 +73,10 @@ void topological_sort(VertexListGraph& g, OutputIterator result,
 template < typename VertexListGraph, typename OutputIterator >
 void topological_sort(VertexListGraph& g, OutputIterator result)
 {
-    topological_sort(
-        g, result, bgl_named_params< int, buffer_param_t >(0)); // bogus
+    topo_sort_visitor< OutputIterator > vis(result);
+    auto index_map = get(vertex_index, g);
+    auto color_map = ::boost::make_two_bit_color_map(num_vertices(g), index_map);
+    depth_first_search(g, vis, color_map);
 }
 
 } // namespace boost

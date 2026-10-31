@@ -8,22 +8,16 @@
 
 #include <utility>
 #include <vector>
-#include <iterator>
 #include <algorithm>
 #include <boost/config.hpp>
 #include <boost/assert.hpp>
-#include <boost/smart_ptr.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/detail/algorithm.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/unordered/unordered_flat_map.hpp>
 #include <boost/pending/indirect_cmp.hpp> // for make_indirect_pmap
 #include <boost/concept/assert.hpp>
-
-#ifndef BOOST_GRAPH_ITERATION_MACROS_HPP
-#define BOOST_ISO_INCLUDED_ITER_MACROS // local macro, see bottom of file
-#include <boost/graph/iteration_macros.hpp>
-#endif
+#include <boost/range/iterator_range.hpp>
 
 namespace boost
 {
@@ -55,10 +49,6 @@ namespace detail
         std::vector< int > dfs_num_vec;
         typedef safe_iterator_property_map<
             typename std::vector< int >::iterator, IndexMap1
-#ifdef BOOST_NO_STD_ITERATOR_TRAITS
-            ,
-            int, int&
-#endif /* BOOST_NO_STD_ITERATOR_TRAITS */
             >
             DFSNumMap;
         DFSNumMap dfs_num;
@@ -68,10 +58,6 @@ namespace detail
         std::vector< char > in_S_vec;
         typedef safe_iterator_property_map<
             typename std::vector< char >::iterator, IndexMap2
-#ifdef BOOST_NO_STD_ITERATOR_TRAITS
-            ,
-            char, char&
-#endif /* BOOST_NO_STD_ITERATOR_TRAITS */
             >
             InSMap;
         InSMap in_S;
@@ -154,10 +140,6 @@ namespace detail
             in_S_vec.resize(num_vertices(G1));
             in_S = make_safe_iterator_property_map(
                 in_S_vec.begin(), in_S_vec.size(), index_map2
-#ifdef BOOST_NO_STD_ITERATOR_TRAITS
-                ,
-                in_S_vec.front()
-#endif /* BOOST_NO_STD_ITERATOR_TRAITS */
             );
         }
 
@@ -195,37 +177,42 @@ namespace detail
         bool test_isomorphism()
         {
             // reset isomapping
-            BGL_FORALL_VERTICES_T(v, G1, Graph1)
-            f[v] = graph_traits< Graph2 >::null_vertex();
+            for(const auto v : boost::make_iterator_range(vertices(G1)))
+            {
+                f[v] = graph_traits< Graph2 >::null_vertex();
+            }
 
             // Calculate all invariants of G1 and G2, sort and compare
             std::vector< invariant_t > invar1_array;
             invar1_array.reserve(num_vertices(G1));
-            BGL_FORALL_VERTICES_T(v, G1, Graph1)
-            invar1_array.push_back(invariant1(v));
+            for(const auto v : boost::make_iterator_range(vertices(G1)))
+            {
+                invar1_array.push_back(invariant1(v));
+            }
             sort(invar1_array);
 
             std::vector< invariant_t > invar2_array;
             invar2_array.reserve(num_vertices(G2));
-            BGL_FORALL_VERTICES_T(v, G2, Graph2)
-            invar2_array.push_back(invariant2(v));
+            for(const auto v : boost::make_iterator_range(vertices(G2)))
+            {
+                invar2_array.push_back(invariant2(v));
+            }
             sort(invar2_array);
             if (!equal(invar1_array, invar2_array))
                 return false;
 
             // Sort vertices by the multiplicity of their invariants
             std::vector< vertex1_t > V_mult;
-            BGL_FORALL_VERTICES_T(v, G1, Graph1)
-            V_mult.push_back(v);
+            for(const auto v : boost::make_iterator_range(vertices(G1)))
+            {
+                V_mult.push_back(v);
+            }
+
             sort(V_mult, compare_multiplicity(invariant1, multiplicities(invar1_array.begin(), invar1_array.end())));
 
             std::vector< default_color_type > color_vec(num_vertices(G1));
             safe_iterator_property_map<
                 std::vector< default_color_type >::iterator, IndexMap1
-#ifdef BOOST_NO_STD_ITERATOR_TRAITS
-                ,
-                default_color_type, default_color_type&
-#endif /* BOOST_NO_STD_ITERATOR_TRAITS */
                 >
                 color_map(color_vec.begin(), color_vec.size(), index_map1);
             record_dfs_order dfs_visitor(dfs_vertices, ordered_edges);
@@ -242,10 +229,6 @@ namespace detail
             dfs_num_vec.resize(num_vertices(G1));
             dfs_num = make_safe_iterator_property_map(
                 dfs_num_vec.begin(), dfs_num_vec.size(), index_map1
-#ifdef BOOST_NO_STD_ITERATOR_TRAITS
-                ,
-                dfs_num_vec.front()
-#endif /* BOOST_NO_STD_ITERATOR_TRAITS */
             );
             size_type n = 0;
             for (vertex_iter v = dfs_vertices.begin(); v != dfs_vertices.end();
@@ -449,9 +432,10 @@ namespace detail
         void map_disconnected_vertices()
         {
             std::vector< vertex1_t > unmatched_g1_vertices;
-            BGL_FORALL_VERTICES_T(v, G1, Graph1)
+            for(const auto v : boost::make_iterator_range(vertices(G1)))
             {
-                if(f[v] == graph_traits< Graph2 >::null_vertex()) {
+                if(f[v] == graph_traits< Graph2 >::null_vertex())
+                {
                     unmatched_g1_vertices.push_back(v);
                 }
             }
@@ -461,7 +445,8 @@ namespace detail
                 typedef unordered_multimap< invariant_t, vertex2_t > g2_invariant_vertex_multimap;
                 typedef typename g2_invariant_vertex_multimap::iterator multimap_iter;
                 g2_invariant_vertex_multimap unmatched_invariants;
-                BGL_FORALL_VERTICES_T(v, G2, Graph2)
+
+                for(const auto v : boost::make_iterator_range(vertices(G2)))
                 {
                     if(!in_S[v]) 
                     {
@@ -485,13 +470,20 @@ namespace detail
 
     template < typename Graph, typename InDegreeMap >
     void compute_in_degree(const Graph& g, InDegreeMap in_degree_map)
-    {
-        BGL_FORALL_VERTICES_T(v, g, Graph)
-        put(in_degree_map, v, 0);
+    { 
+        for(const auto v : boost::make_iterator_range(vertices(g)))
+        {
+            put(in_degree_map, v, 0);
+        }
+        
+        for(const auto u : boost::make_iterator_range(vertices(g)))
+        {
 
-        BGL_FORALL_VERTICES_T(u, g, Graph)
-        BGL_FORALL_ADJ_T(u, v, g, Graph)
-        put(in_degree_map, v, get(in_degree_map, v) + 1);
+            for(const auto v : boost::make_iterator_range(adjacent_vertices(u, g)))
+            {
+                put(in_degree_map, v, get(in_degree_map, v) + 1);
+            }
+        }
     }
 
 } // namespace detail
@@ -511,8 +503,10 @@ public:
     , m_max_vertex_out_degree(0)
     , m_g(g)
     {
-        BGL_FORALL_VERTICES_T(v, g, Graph)
+
+        for(const auto v : boost::make_iterator_range(vertices(g)))
         {
+
             m_max_vertex_in_degree
                 = (std::max)(m_max_vertex_in_degree, get(m_in_degree_map, v));
             m_max_vertex_out_degree
@@ -542,7 +536,7 @@ private:
 template < typename Graph > size_t count_vertices(const Graph& g)
 {
     size_t n = 0;
-    BGL_FORALL_VERTICES_T(v, g, Graph)
+    for(const auto v : boost::make_iterator_range(vertices(g)))
     {
         (void)v;
         ++n;
@@ -618,10 +612,6 @@ namespace detail
         std::vector< std::size_t > in_degree1_vec(num_vertices(G1));
         typedef safe_iterator_property_map<
             std::vector< std::size_t >::iterator, IndexMap1
-#ifdef BOOST_NO_STD_ITERATOR_TRAITS
-            ,
-            std::size_t, std::size_t&
-#endif /* BOOST_NO_STD_ITERATOR_TRAITS */
             >
             InDeg1;
         InDeg1 in_degree1(
@@ -631,10 +621,6 @@ namespace detail
         std::vector< std::size_t > in_degree2_vec(num_vertices(G2));
         typedef safe_iterator_property_map<
             std::vector< std::size_t >::iterator, IndexMap2
-#ifdef BOOST_NO_STD_ITERATOR_TRAITS
-            ,
-            std::size_t, std::size_t&
-#endif /* BOOST_NO_STD_ITERATOR_TRAITS */
             >
             InDeg2;
         InDeg2 in_degree2(
@@ -752,10 +738,11 @@ inline bool verify_isomorphism(
       return false;
 #endif
 
-    BGL_FORALL_EDGES_T(e1, g1, Graph1)
+    for(const auto& e1 : boost::make_iterator_range(edges(g1))) 
+
     {
         bool found_edge = false;
-        BGL_FORALL_EDGES_T(e2, g2, Graph2)
+        for(const auto& e2 : boost::make_iterator_range(edges(g2))) 
         {
             if (source(e2, g2) == get(iso_map, source(e1, g1))
                 && target(e2, g2) == get(iso_map, target(e1, g1)))
@@ -772,10 +759,5 @@ inline bool verify_isomorphism(
 }
 
 } // namespace boost
-
-#ifdef BOOST_ISO_INCLUDED_ITER_MACROS
-#undef BOOST_ISO_INCLUDED_ITER_MACROS
-#include <boost/graph/iteration_macros_undef.hpp>
-#endif
 
 #endif // BOOST_GRAPH_ISOMORPHISM_HPP
