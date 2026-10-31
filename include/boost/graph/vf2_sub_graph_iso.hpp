@@ -1186,6 +1186,7 @@ bool vf2_graph_iso(const Graph1& graph1, const Graph2& graph2,
     typedef typename VertexOrder1::value_type order_value_type;
 
     static_assert(std::is_same< vertex1_type, order_value_type >::value, "The value type of the vertex order and the vertex type of the first graph must be the same type.");
+    BOOST_ASSERT(num_vertices(graph1) == vertex_order1.size());
     
     if (num_vertices(graph1) != num_vertices(graph2))
         return false;
