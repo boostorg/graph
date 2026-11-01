@@ -165,6 +165,26 @@ struct inconsistent_heuristic : boost::astar_heuristic< Graph, int >
     int operator()(Vertex u) { return u == static_cast< Vertex >(2) ? 100 : 0; }
 };
 
+// counts relaxations whose target cost does not yet match its new distance
+template < class Graph > struct stale_cost_tally : boost::default_astar_visitor
+{
+    stale_cost_tally(const std::vector< int >& r, const std::vector< int >& d) : rank(r), distance(d) {}
+
+    template < class Edge > void edge_relaxed(Edge e, const Graph& g)
+    {
+        auto v = boost::target(e, g);
+        if (rank[v] != distance[v] + h(v))
+        {
+            ++stale;
+        }
+    }
+
+    const std::vector< int >& rank;
+    const std::vector< int >& distance;
+    inconsistent_heuristic< Graph > h;
+    std::size_t stale = 0;
+};
+
 void test_edge_not_relaxed_on_discovered_target()
 {
     using graph_t = boost::adjacency_list< boost::vecS, boost::vecS,
@@ -280,6 +300,41 @@ void test_edge_not_relaxed_on_tree_edge()
     BOOST_TEST_EQ(distance[2], infinity);
     BOOST_TEST_EQ(tracked.not_relaxed, static_cast< std::size_t >(1));
     BOOST_TEST_EQ(tracked.reopened, static_cast< std::size_t >(0));
+}
+
+void test_edge_relaxed_sees_updated_cost()
+{
+    using graph_t = boost::adjacency_list< boost::vecS, boost::vecS, boost::directedS, boost::no_property, boost::property< boost::edge_weight_t, int > >;
+
+    // 0 to 3 opens vertex 3, 1 to 3 improves it while open, and 2 to 3
+    // reopens it once finished
+    graph_t g(4);
+    boost::add_edge(0, 1, 1, g);
+    boost::add_edge(1, 3, 10, g);
+    boost::add_edge(0, 2, 2, g);
+    boost::add_edge(2, 3, 1, g);
+    boost::add_edge(0, 3, 20, g);
+
+    std::vector< std::size_t > parent(boost::num_vertices(g));
+    std::vector< int > rank(boost::num_vertices(g));
+    std::vector< int > distance(boost::num_vertices(g));
+    std::vector< boost::default_color_type > color(boost::num_vertices(g));
+
+    auto index_map = boost::get(boost::vertex_index, g);
+    auto weight_map = boost::get(boost::edge_weight, g);
+    auto parent_map = boost::make_iterator_property_map(parent.begin(), index_map);
+    auto rank_map = boost::make_iterator_property_map(rank.begin(), index_map);
+    auto distance_map = boost::make_iterator_property_map(distance.begin(), index_map);
+    auto color_map = boost::make_iterator_property_map(color.begin(), index_map);
+    const int infinity = (std::numeric_limits< int >::max)();
+
+    stale_cost_tally< graph_t > tracked(rank, distance);
+    boost::astar_search(g, 0, inconsistent_heuristic< graph_t >(), std::ref(tracked), parent_map, rank_map, distance_map, weight_map, index_map, color_map, std::less< int >(), boost::closed_plus< int >(), infinity, 0);
+    BOOST_TEST_EQ(tracked.stale, static_cast< std::size_t >(0));
+
+    stale_cost_tally< graph_t > tree_tracked(rank, distance);
+    boost::astar_search_tree(g, 0, inconsistent_heuristic< graph_t >(), std::ref(tree_tracked), parent_map, rank_map, distance_map, weight_map, std::less< int >(), boost::closed_plus< int >(), infinity, 0);
+    BOOST_TEST_EQ(tree_tracked.stale, static_cast< std::size_t >(0));
 }
 
 int main()
@@ -413,6 +468,7 @@ int main()
     test_edge_not_relaxed_on_discovered_target();
     test_edge_not_relaxed_on_tree_edge();
     test_black_target_reopens_finished_vertex();
+    test_edge_relaxed_sees_updated_cost();
 
     return boost::report_errors();
 }

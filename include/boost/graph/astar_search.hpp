@@ -183,10 +183,10 @@ namespace detail
 
             if (m_decreased)
             {
-                user_vis().edge_relaxed(e, g);
                 put(m_cost, target(e, g),
                     m_combine(
                         get(m_distance, target(e, g)), m_h(target(e, g))));
+                user_vis().edge_relaxed(e, g);
             }
             else
                 user_vis().edge_not_relaxed(e, g);
@@ -220,10 +220,10 @@ namespace detail
 
             if (m_decreased)
             {
-                user_vis().edge_relaxed(e, g);
                 put(m_cost, target(e, g),
                     m_combine(
                         get(m_distance, target(e, g)), m_h(target(e, g))));
+                user_vis().edge_relaxed(e, g);
                 m_Q.push(target(e, g));
                 put(m_color, target(e, g), Color::gray());
                 user_vis().black_target(e, g);
@@ -338,9 +338,9 @@ inline void astar_search_no_init_tree(const VertexListGraph& g,
                 = relax(e, g, weight, predecessor, distance, combine, compare);
             if (decreased)
             {
-                vis_ref.edge_relaxed(e, g);
                 Distance w_rank = combine(get(distance, w), h(w));
                 put(cost, w, w_rank);
+                vis_ref.edge_relaxed(e, g);
                 vis_ref.discover_vertex(w, g);
                 Q.push(std::make_pair(w_rank, w));
             }
