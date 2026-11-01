@@ -150,8 +150,9 @@ namespace detail
         const ClosedMatrix& m)
     {
         BOOST_CONCEPT_ASSERT((IncidenceGraphConcept< Graph >));
-        BOOST_CONCEPT_ASSERT((VertexIndexGraphConcept< Graph >));
         typedef typename graph_traits< Graph >::vertex_descriptor Vertex;
+        using IndexMap = typename ::boost::property_map< Graph, ::boost::vertex_index_t >::const_type;
+        BOOST_CONCEPT_ASSERT((::boost::ReadablePropertyMapConcept< IndexMap, Vertex >));
 
         // get the vertices in question
         Vertex u = source(e, g), v = target(e, g);
