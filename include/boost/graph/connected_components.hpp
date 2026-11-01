@@ -69,8 +69,12 @@ connected_components(const Graph& g, ComponentMap c,
     const bgl_named_params< P, T, R >& params BOOST_GRAPH_ENABLE_IF_MODELS_PARM(
         Graph, vertex_list_graph_tag))
 {
-    if (num_vertices(g) == 0)
+    // num_vertices also counts the vertices hidden by a filtered_graph
+    const auto vertex_range = vertices(g);
+    if (vertex_range.first == vertex_range.second)
+    {
         return 0;
+    }
 
     typedef typename graph_traits< Graph >::vertex_descriptor Vertex;
     BOOST_CONCEPT_ASSERT((WritablePropertyMapConcept< ComponentMap, Vertex >));
@@ -91,8 +95,12 @@ connected_components(const Graph& g,
     ComponentMap c BOOST_GRAPH_ENABLE_IF_MODELS_PARM(
         Graph, vertex_list_graph_tag))
 {
-    if (num_vertices(g) == 0)
+    // num_vertices also counts the vertices hidden by a filtered_graph
+    const auto vertex_range = vertices(g);
+    if (vertex_range.first == vertex_range.second)
+    {
         return 0;
+    }
 
     typedef typename graph_traits< Graph >::vertex_descriptor Vertex;
     BOOST_CONCEPT_ASSERT((WritablePropertyMapConcept< ComponentMap, Vertex >));
