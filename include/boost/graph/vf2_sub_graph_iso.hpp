@@ -82,6 +82,14 @@ namespace detail
         return std::distance(vs.first, vs.second);
     }
 
+    // num_edges also counts the edges hidden by a filtered_graph
+    template < typename Graph >
+    typename graph_traits< Graph >::edges_size_type get_num_edges(const Graph& g)
+    {
+        const auto edge_range = edges(g);
+        return static_cast< typename graph_traits< Graph >::edges_size_type >(std::distance(edge_range.first, edge_range.second));
+    }
+
     // State associated with a single graph (graph_this)
     template < typename GraphThis, typename GraphOther, typename IndexMapThis,
         typename IndexMapOther >
@@ -1001,9 +1009,9 @@ namespace detail
             return false;
 
         typename graph_traits< GraphSmall >::edges_size_type num_edges_small
-            = num_edges(graph_small);
+            = get_num_edges(graph_small);
         typename graph_traits< GraphLarge >::edges_size_type num_edges_large
-            = num_edges(graph_large);
+            = get_num_edges(graph_large);
 
         // Double the number of edges for undirected graphs: each edge counts as
         // in-edge and out-edge
@@ -1213,9 +1221,9 @@ bool vf2_graph_iso(const Graph1& graph1, const Graph2& graph2,
         return false;
 
     typename graph_traits< Graph1 >::edges_size_type num_edges1
-        = num_edges(graph1);
+        = detail::get_num_edges(graph1);
     typename graph_traits< Graph2 >::edges_size_type num_edges2
-        = num_edges(graph2);
+        = detail::get_num_edges(graph2);
 
     // Double the number of edges for undirected graphs: each edge counts as
     // in-edge and out-edge
