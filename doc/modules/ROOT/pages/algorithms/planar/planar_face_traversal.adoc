@@ -8,13 +8,9 @@ Traverses all faces of a planar graph defined by a planar embedding, invoking vi
 
 [WARNING]
 ====
-With multiple connected components, each component reports its own outer face
-instead of one shared outer face, so the count is `C - 1` higher than Euler's
-`F = E - V + C + 1`. Two disjoint triangles, for instance, report four faces
-where the correct count is three. To recover it, subtract `C - 1`, where `C`
-counts only components with at least one edge (isolated vertices add no faces,
-yet xref:algorithms/connected_components/connected_components.adoc[connected_components]
-includes them).
+With multiple connected components, each component is traversed on its own. The reported faces are the boundary walks of each component, not regions of the plane: a region bordered by several components, such as the space between a component and another one nested inside it, is reported once per component. The embedding only orders edges around each vertex, so it cannot express how components are placed relative to each other, and matching walks to shared regions needs geometric information that `planar_face_traversal` does not take.
+
+The face count is still `C - 1` higher than Euler's `F = E - V + C + 1`, whatever the placement. Two disjoint triangles, for instance, report four faces where the correct count is three. To recover it, subtract `C - 1`, where `C` counts only components with at least one edge (isolated vertices add no faces, yet xref:algorithms/connected_components/connected_components.adoc[connected_components] includes them).
 ====
 
 == Example
