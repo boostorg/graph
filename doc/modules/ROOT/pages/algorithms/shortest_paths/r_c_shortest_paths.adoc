@@ -45,7 +45,7 @@ void r_c_shortest_paths(
     Visitor vis)
 ----
 
-Old interface, to be deprecated in future releases.
+Deprecated. The `edge_index_map` argument is ignored. This overload will be removed in Boost 1.95.
 
 [source,cpp]
 ----
@@ -90,8 +90,7 @@ void r_c_shortest_paths(
 
 | IN
 | `const EdgeIndexMap& edge_index_map`
-| A link:../../property_map/doc/ReadablePropertyMap.html[ReadablePropertyMap]
-  mapping edge descriptors to integers in [0, `num_edges(g)`).
+| Ignored. Only accepted by the deprecated overloads, which will be removed in Boost 1.95.
 
 | IN
 | `vertex_descriptor s`
@@ -175,7 +174,7 @@ void r_c_shortest_paths(
     Visitor vis)
 ----
 
-Old interface, to be deprecated in future releases.
+Deprecated. The `edge_index_map` argument is ignored. This overload will be removed in Boost 1.95.
 
 [source,cpp]
 ----
@@ -220,8 +219,7 @@ void r_c_shortest_paths(
 
 | IN
 | `const EdgeIndexMap& edge_index_map`
-| A link:../../property_map/doc/ReadablePropertyMap.html[ReadablePropertyMap]
-  mapping edge descriptors to integers in [0, `num_edges(g)`).
+| Ignored. Only accepted by the deprecated overloads, which will be removed in Boost 1.95.
 
 | IN
 | `vertex_descriptor s`
@@ -300,7 +298,7 @@ void r_c_shortest_paths(
     const DominanceFunction& dominance)
 ----
 
-Old interface, to be deprecated in future releases.
+Deprecated. The `edge_index_map` argument is ignored. This overload will be removed in Boost 1.95.
 
 [source,cpp]
 ----
@@ -341,8 +339,7 @@ void r_c_shortest_paths(
 
 | IN
 | `const EdgeIndexMap& edge_index_map`
-| A link:../../property_map/doc/ReadablePropertyMap.html[ReadablePropertyMap]
-  mapping edge descriptors to integers in [0, `num_edges(g)`).
+| Ignored. Only accepted by the deprecated overloads, which will be removed in Boost 1.95.
 
 | IN
 | `vertex_descriptor s`
@@ -389,14 +386,12 @@ void r_c_shortest_paths(
 ----
 template <class Graph,
           class VertexIndexMap,
-          class EdgeIndexMap,
           class ResourceContainer,
           class ResourceExtensionFunction,
           class DominanceFunction>
 void r_c_shortest_paths(
     const Graph& g,
     const VertexIndexMap& vertex_index_map,
-    const EdgeIndexMap& edge_index_map,
     typename graph_traits<Graph>::vertex_descriptor s,
     typename graph_traits<Graph>::vertex_descriptor t,
     std::vector<typename graph_traits<Graph>::edge_descriptor>& pareto_optimal_solution,
@@ -406,18 +401,20 @@ void r_c_shortest_paths(
     const DominanceFunction& dominance)
 ----
 
-Old interface, to be deprecated in future releases.
+Deprecated. The `edge_index_map` argument is ignored. This overload will be removed in Boost 1.95.
 
 [source,cpp]
 ----
 template <class Graph,
           class VertexIndexMap,
+          class EdgeIndexMap,
           class ResourceContainer,
           class ResourceExtensionFunction,
           class DominanceFunction>
 void r_c_shortest_paths(
     const Graph& g,
     const VertexIndexMap& vertex_index_map,
+    const EdgeIndexMap& edge_index_map,
     typename graph_traits<Graph>::vertex_descriptor s,
     typename graph_traits<Graph>::vertex_descriptor t,
     std::vector<typename graph_traits<Graph>::edge_descriptor>& pareto_optimal_solution,
@@ -445,8 +442,7 @@ void r_c_shortest_paths(
 
 | IN
 | `const EdgeIndexMap& edge_index_map`
-| A link:../../property_map/doc/ReadablePropertyMap.html[ReadablePropertyMap]
-  mapping edge descriptors to integers in [0, `num_edges(g)`).
+| Ignored. Only accepted by the deprecated overloads, which will be removed in Boost 1.95.
 
 | IN
 | `vertex_descriptor s`
@@ -673,7 +669,6 @@ The functions are an implementation of a priority-queue-based label-setting algo
 ----
 r_c_shortest_paths( g,
                     vertex_index_map,
-                    edge_index_map,
                     s,
                     t,
                     pareto_optimal_solutions,
