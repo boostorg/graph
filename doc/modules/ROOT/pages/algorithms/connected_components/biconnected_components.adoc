@@ -268,6 +268,8 @@ image::figs/biconnected.png[]
 
 Vertices can be present in multiple biconnected components, but each edge can only be contained in a single biconnected component. The output of the `biconnected_components` algorithm records the biconnected component number of each edge in the property map `comp`. Articulation points will be emitted to the (optional) output iterator argument to `biconnected_components`, or can be computed without the use of a biconnected component number map via `articulation_points`. These functions return the number of biconnected components, the articulation point output iterator, or a pair of these quantities, depending on what information was recorded.
 
+Parallel edges are supported: each parallel edge is assigned the component number of its block. Self-loops are not supported: the component number recorded for a self-loop is unspecified and may not be written at all.
+
 The algorithm implemented is due to Tarjan [xref:about/bibliography.adoc#tarjan72:dfs_and_linear_algo[36]].
 
 == Returns

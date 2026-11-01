@@ -1,5 +1,6 @@
 // Copyright (c) Jeremy Siek 2001
 // Copyright (c) Douglas Gregor 2004
+// Copyright (c) 2026 Arnaud Becheler
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -109,9 +110,10 @@ namespace detail
                 = source(e, g);
             typename boost::graph_traits< Graph >::vertex_descriptor tgt
                 = target(e, g);
+            // Parallel edges to the parent also reach here and need a label.
+            S.push(e);
             if (tgt != get(pred, src))
             {
-                S.push(e);
                 put(lowpt, src,
                     min BOOST_PREVENT_MACRO_SUBSTITUTION(
                         get(lowpt, src), get(dtm, tgt)));
