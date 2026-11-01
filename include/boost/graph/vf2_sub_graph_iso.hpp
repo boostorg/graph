@@ -23,6 +23,7 @@
 #include <vector>
 #include <utility>
 
+#include <boost/assert.hpp>
 #include <boost/concept/assert.hpp>
 #include <boost/concept_check.hpp>
 #include <boost/graph/graph_utility.hpp>
