@@ -1,4 +1,5 @@
 //  (C) Copyright David Abrahams 2000.
+// Copyright (c) 2026 Arnaud Becheler
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -549,20 +550,16 @@ void put(Property p, reverse_graph< BidirectionalGraph, GRef >& g, const Key& k,
 
 namespace detail
 {
-    template < class E > struct underlying_edge_desc_map_type
+    // A get declared here would hide boost::get from code in boost::detail.
+    template < class E >
+    struct underlying_edge_desc_map_type
+    : public ::boost::put_get_helper< E, underlying_edge_desc_map_type< E > >
     {
         E operator[](const reverse_graph_edge_descriptor< E >& k) const
         {
             return k.underlying_descx;
         }
     };
-
-    template < class E >
-    E get(underlying_edge_desc_map_type< E > m,
-        const reverse_graph_edge_descriptor< E >& k)
-    {
-        return m[k];
-    }
 }
 
 template < class E >

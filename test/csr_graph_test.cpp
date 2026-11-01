@@ -509,6 +509,30 @@ template < typename Csr > void test_sorted_construction_reserves_exactly()
     BOOST_TEST_EQ(g_with_properties.m_forward.m_column.capacity(), num_edges(g_with_properties));
 }
 
+// Edge bundle whose destructor overwrites its default value.
+struct sentinel_edge
+{
+    int value = 42;
+    sentinel_edge() = default;
+    sentinel_edge(const sentinel_edge&) = default;
+    sentinel_edge& operator=(const sentinel_edge&) = default;
+    ~sentinel_edge() { value = -1; }
+};
+
+// Checks add_edges without properties gives each new edge a default bundle.
+void test_add_edges_default_constructs_properties()
+{
+    using graph_type = ::boost::compressed_sparse_row_graph< ::boost::directedS, ::boost::no_property, sentinel_edge >;
+    const std::pair< std::size_t, std::size_t > new_edges[] = { { 2, 0 }, { 0, 1 }, { 1, 2 } };
+    graph_type g(::boost::edges_are_unsorted, std::begin(new_edges), std::begin(new_edges), 3);
+    add_edges(std::begin(new_edges), std::end(new_edges), g);
+    BOOST_TEST_EQ(num_edges(g), 3u);
+    for (const auto& e : ::boost::make_iterator_range(edges(g)))
+    {
+        BOOST_TEST_EQ(g[e].value, 42);
+    }
+}
+
 int main()
 {
     int seed = 42;
@@ -535,6 +559,7 @@ int main()
     test_copy_from< boost::undirectedS, BidirCSRGraphT >();
     test_sorted_construction_reserves_exactly< CSRGraphT >();
     test_sorted_construction_reserves_exactly< BidirCSRGraphT >();
+    test_add_edges_default_constructs_properties();
 
     {
         std::cout << "Testing CSR graph built from unsorted edges" << std::endl;

@@ -40,6 +40,7 @@ alias graph_test_regular :
 
     [ run adj_list_edge_list_set.cpp ]
     [ run adj_list_loops.cpp ]
+    [ run ordered_out_edges_test.cpp ]
     [ compile adj_matrix_cc.cpp ]
     [ run bfs.cpp ]
     [ run neighbor_bfs.cpp ]
