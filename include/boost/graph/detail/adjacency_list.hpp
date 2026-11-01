@@ -2,6 +2,7 @@
 //=======================================================================
 // Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
 // Copyright 2010 Thomas Claveirole
+// Copyright (c) 2026 Arnaud Becheler
 // Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek, Thomas Claveirole
 //
 // Distributed under the Boost Software License, Version 1.0. (See
@@ -1217,28 +1218,24 @@ struct bidirectional_graph_helper_with_property
     typedef typename Config::graph_type graph_type;
     typedef typename Config::out_edge_iterator out_edge_iterator;
 
-    std::pair< out_edge_iterator, out_edge_iterator > get_parallel_edge_sublist(
-        typename Config::edge_descriptor e, const graph_type& g, void*)
+    // Templates so that instantiating the whole class never compiles edge_range for out edge lists that lack it.
+    template < class OutEdgeListS >
+    std::pair< out_edge_iterator, out_edge_iterator > get_parallel_edge_sublist(typename Config::edge_descriptor e, const graph_type& g, OutEdgeListS*)
+    {
+        using has_edge_range = std::integral_constant< bool, std::is_convertible< OutEdgeListS*, setS* >::value || std::is_convertible< OutEdgeListS*, multisetS* >::value || std::is_convertible< OutEdgeListS*, hash_setS* >::value >;
+        return parallel_edge_sublist(e, g, has_edge_range());
+    }
+
+    template < class Graph >
+    std::pair< out_edge_iterator, out_edge_iterator > parallel_edge_sublist(typename Config::edge_descriptor e, const Graph& g, std::true_type)
+    {
+        return edge_range(source(e, g), target(e, g), g);
+    }
+
+    template < class Graph >
+    std::pair< out_edge_iterator, out_edge_iterator > parallel_edge_sublist(typename Config::edge_descriptor e, const Graph& g, std::false_type)
     {
         return out_edges(source(e, g), g);
-    }
-
-    std::pair< out_edge_iterator, out_edge_iterator > get_parallel_edge_sublist(
-        typename Config::edge_descriptor e, const graph_type& g, setS*)
-    {
-        return edge_range(source(e, g), target(e, g), g);
-    }
-
-    std::pair< out_edge_iterator, out_edge_iterator > get_parallel_edge_sublist(
-        typename Config::edge_descriptor e, const graph_type& g, multisetS*)
-    {
-        return edge_range(source(e, g), target(e, g), g);
-    }
-
-    std::pair< out_edge_iterator, out_edge_iterator > get_parallel_edge_sublist(
-        typename Config::edge_descriptor e, const graph_type& g, hash_setS*)
-    {
-        return edge_range(source(e, g), target(e, g), g);
     }
 
     // Placement of these overloaded remove_edge() functions
