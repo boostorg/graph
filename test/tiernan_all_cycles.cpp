@@ -7,6 +7,7 @@
 #include <iostream>
 
 #include <boost/graph/graph_utility.hpp>
+#include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/undirected_graph.hpp>
 #include <boost/graph/directed_graph.hpp>
 #include <boost/graph/tiernan_all_cycles.hpp>
@@ -103,6 +104,24 @@ void test_stateful_visitor_with_ref()
     BOOST_TEST_EQ(copied.count, static_cast< std::size_t >(0));
 }
 
+// adjacency_list has a vertex index but no renumber_vertex_indices, see issue 182
+void test_adjacency_list()
+{
+    using graph_t = boost::adjacency_list< boost::vecS, boost::vecS, boost::directedS >;
+    graph_t g(4);
+
+    // a triangle and a two cycle, so two elementary cycles
+    boost::add_edge(0, 1, g);
+    boost::add_edge(1, 2, g);
+    boost::add_edge(2, 0, g);
+    boost::add_edge(1, 3, g);
+    boost::add_edge(3, 1, g);
+
+    cycle_tally tally;
+    boost::tiernan_all_cycles(g, std::ref(tally));
+    BOOST_TEST_EQ(tally.count, static_cast< std::size_t >(2));
+}
+
 int main(int, char*[])
 {
     typedef undirected_graph<> Graph;
@@ -115,6 +134,7 @@ int main(int, char*[])
     test< DiGraph >();
 
     test_stateful_visitor_with_ref();
+    test_adjacency_list();
 
     return boost::report_errors();
 }
