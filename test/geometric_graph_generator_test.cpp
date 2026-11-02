@@ -1,0 +1,219 @@
+//=======================================================================
+// Copyright 2026 Matyas W Egyhazy
+// Copyright (C) 2026 Arnaud Becheler
+// Author: Matyas W Egyhazy
+//
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
+//=======================================================================
+
+#include <boost/core/lightweight_test.hpp>
+#include <boost/graph/adjacency_matrix.hpp>
+#include <boost/graph/geometric_graph_generator.hpp>
+#include <boost/graph/properties.hpp>
+#include <boost/graph/simple_point.hpp>
+
+#include <cmath>
+#include <cstddef>
+#include <random>
+#include <stdexcept>
+#include <type_traits>
+#include <vector>
+
+namespace
+{
+
+using Graph = ::boost::adjacency_matrix< ::boost::undirectedS, ::boost::no_property, ::boost::property< ::boost::edge_weight_t, double > >;
+using Point = ::boost::simple_point< double >;
+
+// Stands in for a third party point type such as boost::geometry point_xy.
+// No hash, no equality, no default constructor.
+struct opaque_point
+{
+    double a;
+    double b;
+
+    opaque_point(double x, double y) : a(x), b(y) { }
+};
+
+struct opaque_distance
+{
+    double operator()(opaque_point const& p, opaque_point const& q) const
+    {
+        return std::hypot(p.a - q.a, p.b - q.b);
+    }
+};
+
+// A 3-4-5 triangle gives exact weights with no tolerance needed.
+void test_known_weights()
+{
+    Graph g(3);
+    const std::vector< Point > points = { { 0.0, 0.0 }, { 3.0, 0.0 }, { 0.0, 4.0 } };
+    auto weight_map = ::boost::get(::boost::edge_weight, g);
+    auto index_map = ::boost::get(::boost::vertex_index, g);
+    const ::boost::graph::euclidean_distance euclidean {};
+
+    ::boost::graph::connect_all_geometric(g, points, weight_map, index_map, euclidean);
+
+    const auto e01 = ::boost::edge(0, 1, g).first;
+    const auto e02 = ::boost::edge(0, 2, g).first;
+    const auto e12 = ::boost::edge(1, 2, g).first;
+    BOOST_TEST_EQ(::boost::num_edges(g), 3u);
+    BOOST_TEST_EQ(::boost::get(weight_map, e01), 3.0);
+    BOOST_TEST_EQ(::boost::get(weight_map, e02), 4.0);
+    BOOST_TEST_EQ(::boost::get(weight_map, e12), 5.0);
+}
+
+// Integer coordinates must not truncate the distance.
+void test_integral_coordinates_widen_to_double()
+{
+    using IntPoint = ::boost::simple_point< int >;
+    Graph g(3);
+    const std::vector< IntPoint > points = { { 0, 0 }, { 3, 0 }, { 0, 4 } };
+    auto weight_map = ::boost::get(::boost::edge_weight, g);
+    auto index_map = ::boost::get(::boost::vertex_index, g);
+    const ::boost::graph::euclidean_distance euclidean {};
+
+    ::boost::graph::connect_all_geometric(g, points, weight_map, index_map, euclidean);
+
+    const auto e01 = ::boost::edge(0, 1, g).first;
+    const auto e02 = ::boost::edge(0, 2, g).first;
+    const auto e12 = ::boost::edge(1, 2, g).first;
+    BOOST_TEST_EQ(::boost::get(weight_map, e01), 3.0);
+    BOOST_TEST_EQ(::boost::get(weight_map, e02), 4.0);
+    BOOST_TEST_EQ(::boost::get(weight_map, e12), 5.0);
+
+    const IntPoint origin = { 0, 0 };
+    const IntPoint diagonal = { 1, 1 };
+    const auto length = euclidean(origin, diagonal);
+    const auto expected = std::sqrt(2.0);
+    const auto error = std::abs(length - expected);
+
+    static_assert(std::is_same< decltype(euclidean(origin, diagonal)), double >::value, "integral coordinates must widen to double");
+    BOOST_TEST_LT(error, 1e-12);
+}
+
+void test_single_vertex_has_no_edges()
+{
+    Graph g(1);
+    const std::vector< Point > points = { { 0.0, 0.0 } };
+
+    auto weight_map = ::boost::get(::boost::edge_weight, g);
+    auto index_map = ::boost::get(::boost::vertex_index, g);
+    const ::boost::graph::euclidean_distance euclidean {};
+
+    ::boost::graph::connect_all_geometric(g, points, weight_map, index_map, euclidean);
+
+    BOOST_TEST_EQ(::boost::num_edges(g), 0u);
+}
+
+// The same seed must give the same weights, and points come out in generation order.
+void test_reproducible()
+{
+    constexpr std::size_t num_points = 12;
+    std::uniform_real_distribution< double > dist(0.0, 100.0);
+    std::vector< double > weights[2];
+
+    for (int run = 0; run < 2; ++run)
+    {
+        Graph g(num_points);
+        std::mt19937 gen(42);
+        auto weight_map = ::boost::get(::boost::edge_weight, g);
+        auto index_map = ::boost::get(::boost::vertex_index, g);
+        const ::boost::graph::euclidean_distance euclidean {};
+
+        ::boost::graph::make_random_geometric_graph< Point >(g, num_points, dist, dist, weight_map, index_map, gen, euclidean);
+
+        BOOST_TEST_EQ(::boost::num_edges(g), num_points * (num_points - 1) / 2);
+
+        const auto edge_range = ::boost::edges(g);
+
+        for (auto it = edge_range.first; it != edge_range.second; ++it)
+        {
+            const double weight = ::boost::get(weight_map, *it);
+            weights[run].push_back(weight);
+        }
+    }
+
+    BOOST_TEST(weights[0] == weights[1]);
+}
+
+void test_requested_count_is_met()
+{
+    constexpr std::size_t num_points = 20;
+    std::uniform_real_distribution< double > dist(0.0, 1000.0);
+    std::mt19937 gen(1);
+    std::vector< Point > points;
+
+    auto points_out = std::back_inserter(points);
+
+    const std::size_t generated = ::boost::graph::generate_unique_random_points< Point >(num_points, dist, dist, points_out, gen);
+
+    BOOST_TEST_EQ(generated, num_points);
+    BOOST_TEST_EQ(points.size(), num_points);
+}
+
+// Nine lattice points cannot fill fifty vertices, so the shortfall must be reported
+// rather than left for connect_all_geometric to index past the end.
+void test_shortfall_throws()
+{
+    using IntPoint = ::boost::simple_point< int >;
+    Graph g(50);
+    std::uniform_int_distribution< int > narrow(0, 2);
+    std::mt19937 gen(7);
+
+    auto weight_map = ::boost::get(::boost::edge_weight, g);
+    auto index_map = ::boost::get(::boost::vertex_index, g);
+    const ::boost::graph::euclidean_distance euclidean {};
+
+    BOOST_TEST_THROWS((::boost::graph::make_random_geometric_graph< IntPoint >(g, 50, narrow, narrow, weight_map, index_map, gen, euclidean)), std::runtime_error);
+}
+
+void test_shortfall_is_reported_by_return_value()
+{
+    using IntPoint = ::boost::simple_point< int >;
+    std::uniform_int_distribution< int > narrow(0, 2);
+    std::mt19937 gen(7);
+    std::vector< IntPoint > points;
+
+    auto points_out = std::back_inserter(points);
+
+    const std::size_t generated = ::boost::graph::generate_unique_random_points< IntPoint >(50, narrow, narrow, points_out, gen, 200);
+
+    BOOST_TEST_LT(generated, 50u);
+    BOOST_TEST_EQ(points.size(), generated);
+}
+
+// The generator must not require anything of PointType beyond construction from
+// two coordinates, otherwise third party point types stop working.
+void test_point_type_needs_no_hash_or_equality()
+{
+    constexpr std::size_t num_points = 10;
+    Graph g(num_points);
+    std::mt19937 gen(42);
+    std::uniform_real_distribution< double > dist(0.0, 100.0);
+
+    auto weight_map = ::boost::get(::boost::edge_weight, g);
+    auto index_map = ::boost::get(::boost::vertex_index, g);
+    const opaque_distance distance {};
+
+    ::boost::graph::make_random_geometric_graph< opaque_point >(g, num_points, dist, dist, weight_map, index_map, gen, distance);
+
+    BOOST_TEST_EQ(::boost::num_edges(g), num_points * (num_points - 1) / 2);
+}
+
+} // end anonymous namespace
+
+int main()
+{
+    test_known_weights();
+    test_integral_coordinates_widen_to_double();
+    test_single_vertex_has_no_edges();
+    test_reproducible();
+    test_requested_count_is_met();
+    test_shortfall_throws();
+    test_shortfall_is_reported_by_return_value();
+    test_point_type_needs_no_hash_or_equality();
+    return ::boost::report_errors();
+}
