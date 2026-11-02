@@ -1,4 +1,5 @@
 // Copyright 2004 The Trustees of Indiana University.
+// Copyright (c) 2026 Arnaud Becheler
 
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -17,10 +18,13 @@
 #include <boost/graph/connected_components.hpp>
 #include <boost/graph/random.hpp>
 #include <boost/random/linear_congruential.hpp>
+#include <boost/range/iterator_range.hpp>
 #include <fstream>
 
 #include <cstddef>
 #include <functional>
+#include <limits>
+#include <utility>
 
 using namespace boost;
 
@@ -168,6 +172,51 @@ void test_stateful_visitor_with_ref()
     BOOST_TEST_EQ(copied.count, static_cast< std::size_t >(0));
 }
 
+// endpoints of an undirected edge, smallest first
+std::pair< Vertex, Vertex > sorted_endpoints(boost::graph_traits< Graph >::edge_descriptor e, const Graph& g)
+{
+    const auto u = boost::source(e, g);
+    const auto v = boost::target(e, g);
+    return std::make_pair(std::min(u, v), std::max(u, v));
+}
+
+// every parallel edge gets the label of its block
+void test_parallel_edges()
+{
+    Graph g(6);
+    boost::add_edge(0, 1, g);
+    boost::add_edge(0, 1, g);
+    boost::add_edge(0, 1, g);
+    boost::add_edge(1, 2, g);
+    boost::add_edge(2, 3, g);
+    boost::add_edge(2, 3, g);
+    boost::add_edge(2, 3, g);
+    boost::add_edge(3, 4, g);
+    boost::add_edge(4, 5, g);
+
+    constexpr std::size_t unlabeled = std::numeric_limits< std::size_t >::max();
+    auto component_map = boost::get(&EdgeProperty::component, g);
+    for (const auto e : boost::make_iterator_range(boost::edges(g)))
+    {
+        boost::put(component_map, e, unlabeled);
+    }
+
+    const auto num_comps = boost::biconnected_components(g, component_map);
+    BOOST_TEST_EQ(num_comps, static_cast< std::size_t >(5));
+
+    // each block of this graph is exactly one bundle of parallel edges
+    for (const auto e : boost::make_iterator_range(boost::edges(g)))
+    {
+        BOOST_TEST_NE(component_map[e], unlabeled);
+        for (const auto f : boost::make_iterator_range(boost::edges(g)))
+        {
+            const bool parallel = sorted_endpoints(e, g) == sorted_endpoints(f, g);
+            const bool same_component = component_map[e] == component_map[f];
+            BOOST_TEST_EQ(parallel, same_component);
+        }
+    }
+}
+
 int main(int argc, char* argv[])
 {
     std::size_t n = 100;
@@ -198,6 +247,7 @@ int main(int argc, char* argv[])
     }
 
     test_stateful_visitor_with_ref();
+    test_parallel_edges();
 
     return boost::report_errors();
 }
