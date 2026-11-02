@@ -3,56 +3,21 @@
 //  accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt)
 
-// NOTE: This test illustrates a longstanding bug in the
-// adjacency_list class template. We do not test it because it will
-// cause problems until we have time to fix the bug. Annoying? Yes.
+// Compile-fail test: remove_edge() must be rejected at compile time when the
+// EdgeList of an adjacency_list is vecS. Removing an edge from a vector-backed
+// edge list would renumber every stored edge index past the removal point, so
+// adjacency_list guards each remove_edge overload with a static assertion
+// instead of supporting the operation. This test pins that guard (see
+// test/Jamfile.v2, [ compile-fail bidir_vec_remove_edge.cpp ]).
 
-#include <iostream>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/core/lightweight_test.hpp>
 
-struct edge_prop
+int main()
 {
-    int weight;
-};
-
-int main(int, char*[])
-{
-    {
-        typedef boost::adjacency_list< boost::vecS, boost::vecS,
-            boost::bidirectionalS, boost::no_property, edge_prop,
-            boost::no_property, boost::vecS >
-            graph;
-        typedef boost::graph_traits< graph >::edge_descriptor edge;
-
-        graph g(2);
-
-        edge_prop p1 = { 42 };
-        edge_prop p2 = { 17 };
-        add_edge(0, 1, p1, g);
-        add_edge(1, 0, p2, g);
-
-        edge e1 = boost::edge(0, 1, g).first;
-        edge e2 = boost::edge(1, 0, g).first;
-        BOOST_TEST(num_edges(g) == 2);
-        BOOST_TEST(g[e1].weight == 42);
-        BOOST_TEST(g[e2].weight == 17);
-        remove_edge(e1, g);
-        BOOST_TEST(num_edges(g) == 1);
-
-        // e2 has been invalidated, so grab it again
-        bool b2;
-        boost::tie(e2, b2) = boost::edge(1, 0, g);
-        BOOST_TEST(b2);
-        BOOST_TEST(g[e2].weight == 17);
-
-        /* Now remove the other edge. Here, the fact that
-         * stored_ra_edge_iterator keeps an index but does not update it
-         * when edges are removed. So, this will be incorrect but the
-         * error may not always show up (use an STL debug mode to see the
-         * error for sure.)
-         */
-        remove_edge(e2, g);
-    }
-    return boost::report_errors();
+    using graph = boost::adjacency_list< boost::vecS, boost::vecS,
+        boost::bidirectionalS, boost::no_property, boost::no_property,
+        boost::no_property, boost::vecS >;
+    graph g(2);
+    add_edge(0, 1, g);
+    remove_edge(0, 1, g); // must not compile
 }

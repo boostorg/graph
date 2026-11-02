@@ -13,8 +13,12 @@
 #include <boost/graph/graph_utility.hpp>
 #include <boost/graph/graph_archetypes.hpp>
 #include <boost/graph/breadth_first_search.hpp>
+#include <boost/pending/queue.hpp>
 
 #include <boost/random/mersenne_twister.hpp>
+
+#include <cstddef>
+#include <functional>
 
 #ifdef BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP
 using namespace boost;
@@ -134,7 +138,7 @@ template < class Graph > struct bfs_test
         typename Traits::edges_size_type j;
         typename Traits::vertex_iterator ui, ui_end;
 
-        boost::mt19937 gen;
+        boost::mt19937 gen(42);
 
         for (i = 0; i < max_V; ++i)
             for (j = 0; j < i * i; ++j)
@@ -202,6 +206,54 @@ template < class Graph > struct bfs_test
     }
 };
 
+// state in a plain data member, so it survives only through std::ref
+struct discover_tally : boost::bfs_visitor<>
+{
+    template < class Vertex, class Graph > void discover_vertex(Vertex, Graph&)
+    {
+        ++count;
+    }
+    std::size_t count = 0;
+};
+
+void test_stateful_visitor_with_ref()
+{
+    using graph_t = boost::adjacency_list< boost::vecS, boost::vecS,
+        boost::directedS,
+        boost::property< boost::vertex_color_t, boost::default_color_type > >;
+    graph_t g;
+    graph_t::vertex_descriptor a = boost::add_vertex(g);
+    graph_t::vertex_descriptor b = boost::add_vertex(g);
+    graph_t::vertex_descriptor c = boost::add_vertex(g);
+
+    // the search reaches one component only, every vertex is reachable from a
+    boost::add_edge(a, b, g);
+    boost::add_edge(b, c, g);
+    boost::add_edge(c, a, g);
+    boost::add_edge(a, c, g);
+
+    auto color_map = get(boost::vertex_color, g);
+
+    // breadth_first_visit runs first, it never initialises the colour map
+    discover_tally visit_vis;
+    boost::queue< graph_t::vertex_descriptor > visit_queue;
+    boost::breadth_first_visit(
+        g, a, visit_queue, std::ref(visit_vis), color_map);
+    BOOST_TEST_EQ(visit_vis.count, boost::num_vertices(g));
+
+    discover_tally search_vis;
+    boost::queue< graph_t::vertex_descriptor > search_queue;
+    boost::breadth_first_search(
+        g, a, search_queue, std::ref(search_vis), color_map);
+    BOOST_TEST_EQ(search_vis.count, boost::num_vertices(g));
+
+    // by value the caller's visitor is left untouched
+    discover_tally copied_vis;
+    boost::queue< graph_t::vertex_descriptor > copied_queue;
+    boost::breadth_first_search(g, a, copied_queue, copied_vis, color_map);
+    BOOST_TEST_EQ(copied_vis.count, static_cast< std::size_t >(0));
+}
+
 int main(int argc, char* argv[])
 {
     using namespace boost;
@@ -211,5 +263,8 @@ int main(int argc, char* argv[])
 
     bfs_test< adjacency_list< vecS, vecS, directedS > >::go(max_V);
     bfs_test< adjacency_list< vecS, vecS, undirectedS > >::go(max_V);
+
+    test_stateful_visitor_with_ref();
+
     return boost::report_errors();
 }

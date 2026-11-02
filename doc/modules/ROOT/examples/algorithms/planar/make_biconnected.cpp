@@ -33,6 +33,6 @@ int main() {
 
     std::cout << "Edges before: " << num_edges(g) << "\n";
     reindex(g);
-    make_biconnected_planar(g, embedding, get(&Edge::idx, g));
+    boost::graph::make_biconnected_planar(g, embedding, get(&Edge::idx, g));
     std::cout << "Edges after make_biconnected_planar: " << num_edges(g) << "\n";
 }

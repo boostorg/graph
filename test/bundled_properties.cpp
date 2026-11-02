@@ -76,10 +76,10 @@ struct Highway
     }
 
     string name;
-    double miles;
-    int speed_limit;
-    int lanes;
-    bool divided;
+    double miles = 0;
+    int speed_limit = 0;
+    int lanes = 0;
+    bool divided = false;
 };
 
 std::ostream& operator<<(std::ostream& out, const Highway& highway)

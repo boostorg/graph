@@ -1,0 +1,2 @@
+Visit order: 0 4 1 2 3
+Last visited vertex (highest connectivity): 3

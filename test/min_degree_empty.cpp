@@ -16,7 +16,7 @@
 
 typedef boost::adjacency_list< boost::vecS, boost::vecS, boost::directedS > G;
 
-int main(int argc, char** argv)
+int main()
 {
     size_t n = 10;
     G g(n);

@@ -12,6 +12,6 @@ int main() {
     add_edge(4, 5, g);
 
     std::cout << "Edges before: " << num_edges(g) << "\n";
-    make_connected(g);
+    boost::graph::make_connected(g);
     std::cout << "Edges after:  " << num_edges(g) << "\n";
 }

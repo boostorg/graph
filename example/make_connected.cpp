@@ -17,7 +17,7 @@
 
 using namespace boost;
 
-int main(int argc, char** argv)
+int main()
 {
 
     using graph = adjacency_list< vecS, vecS, undirectedS,
@@ -40,7 +40,7 @@ int main(int argc, char** argv)
               << connected_components(g, &component[0])
               << " connected components" << std::endl;
 
-    make_connected(g);
+    boost::graph::make_connected(g);
 
     std::cout << "After calling make_connected, the graph has "
               << connected_components(g, &component[0])

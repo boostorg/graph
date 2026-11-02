@@ -24,7 +24,7 @@ void print_vertex(Traits::vertex_descriptor vertex_to_print)
               << vertex_to_print[2] << ")" << std::endl;
 }
 
-int main(int argc, char* argv[])
+int main()
 {
 
     // Define a 3x5x7 grid_graph where the second dimension doesn't wrap

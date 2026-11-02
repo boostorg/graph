@@ -1,4 +1,5 @@
 // Copyright 2004 The Trustees of Indiana University.
+// Copyright (c) 2026 Arnaud Becheler
 
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -17,7 +18,13 @@
 #include <boost/graph/connected_components.hpp>
 #include <boost/graph/random.hpp>
 #include <boost/random/linear_congruential.hpp>
+#include <boost/range/iterator_range.hpp>
 #include <fstream>
+
+#include <cstddef>
+#include <functional>
+#include <limits>
+#include <utility>
 
 using namespace boost;
 
@@ -119,18 +126,107 @@ bool test_graph(Graph& g)
     return any_errors;
 }
 
+// state in a plain data member, so it survives only through std::ref
+struct discover_tally : boost::dfs_visitor<>
+{
+    template < class Vertex, class G > void discover_vertex(Vertex, G&)
+    {
+        ++count;
+    }
+    std::size_t count = 0;
+};
+
+void test_stateful_visitor_with_ref()
+{
+    // a triangle with a pendant edge, so two biconnected components
+    Graph g(4);
+    boost::add_edge(0, 1, g);
+    boost::add_edge(1, 2, g);
+    boost::add_edge(2, 0, g);
+    boost::add_edge(0, 3, g);
+
+    std::vector< Vertex > art_points;
+    std::vector< std::size_t > dtm(boost::num_vertices(g));
+    std::vector< std::size_t > lowpt(boost::num_vertices(g));
+
+    auto index_map = boost::get(boost::vertex_index, g);
+    auto dtm_map = boost::make_iterator_property_map(dtm.begin(), index_map);
+    auto lowpt_map
+        = boost::make_iterator_property_map(lowpt.begin(), index_map);
+
+    discover_tally tracked;
+    std::size_t num_comps
+        = boost::biconnected_components(g, get(&EdgeProperty::component, g),
+            std::back_inserter(art_points), dtm_map, lowpt_map,
+            std::ref(tracked))
+              .first;
+
+    BOOST_TEST_EQ(num_comps, static_cast< std::size_t >(2));
+    BOOST_TEST_EQ(tracked.count, boost::num_vertices(g));
+
+    // by value the caller's visitor is left untouched
+    art_points.clear();
+    discover_tally copied;
+    boost::biconnected_components(g, get(&EdgeProperty::component, g),
+        std::back_inserter(art_points), dtm_map, lowpt_map, copied);
+    BOOST_TEST_EQ(copied.count, static_cast< std::size_t >(0));
+}
+
+// endpoints of an undirected edge, smallest first
+std::pair< Vertex, Vertex > sorted_endpoints(boost::graph_traits< Graph >::edge_descriptor e, const Graph& g)
+{
+    const auto u = boost::source(e, g);
+    const auto v = boost::target(e, g);
+    return std::make_pair(std::min(u, v), std::max(u, v));
+}
+
+// every parallel edge gets the label of its block
+void test_parallel_edges()
+{
+    Graph g(6);
+    boost::add_edge(0, 1, g);
+    boost::add_edge(0, 1, g);
+    boost::add_edge(0, 1, g);
+    boost::add_edge(1, 2, g);
+    boost::add_edge(2, 3, g);
+    boost::add_edge(2, 3, g);
+    boost::add_edge(2, 3, g);
+    boost::add_edge(3, 4, g);
+    boost::add_edge(4, 5, g);
+
+    constexpr std::size_t unlabeled = std::numeric_limits< std::size_t >::max();
+    auto component_map = boost::get(&EdgeProperty::component, g);
+    for (const auto e : boost::make_iterator_range(boost::edges(g)))
+    {
+        boost::put(component_map, e, unlabeled);
+    }
+
+    const auto num_comps = boost::biconnected_components(g, component_map);
+    BOOST_TEST_EQ(num_comps, static_cast< std::size_t >(5));
+
+    // each block of this graph is exactly one bundle of parallel edges
+    for (const auto e : boost::make_iterator_range(boost::edges(g)))
+    {
+        BOOST_TEST_NE(component_map[e], unlabeled);
+        for (const auto f : boost::make_iterator_range(boost::edges(g)))
+        {
+            const bool parallel = sorted_endpoints(e, g) == sorted_endpoints(f, g);
+            const bool same_component = component_map[e] == component_map[f];
+            BOOST_TEST_EQ(parallel, same_component);
+        }
+    }
+}
+
 int main(int argc, char* argv[])
 {
     std::size_t n = 100;
     std::size_t m = 500;
-    std::size_t seed = 1;
+    std::size_t seed = 42;
 
     if (argc > 1)
         n = lexical_cast< std::size_t >(argv[1]);
     if (argc > 2)
         m = lexical_cast< std::size_t >(argv[2]);
-    if (argc > 3)
-        seed = lexical_cast< std::size_t >(argv[3]);
 
     {
         Graph g(n);
@@ -149,6 +245,9 @@ int main(int argc, char* argv[])
         if (test_graph(g))
             return 1;
     }
+
+    test_stateful_visitor_with_ref();
+    test_parallel_edges();
 
     return boost::report_errors();
 }

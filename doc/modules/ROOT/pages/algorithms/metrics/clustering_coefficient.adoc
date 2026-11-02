@@ -90,7 +90,7 @@ num_triangles_on_vertex(const Graph& g, Vertex v);
 
 | IN
 | `const Graph& g`
-| Must model xref:concepts/AdjacencyGraph.adoc[Adjacency Graph] and xref:concepts/IncidenceGraph.adoc[Incidence Graph]. The single-vertex overloads also require xref:concepts/AdjacencyMatrix.adoc[Adjacency Matrix] (the `edge()` function).
+| Must model xref:concepts/AdjacencyGraph.adoc[Adjacency Graph] and xref:concepts/IncidenceGraph.adoc[Incidence Graph].
 
 | IN
 | `Vertex v`

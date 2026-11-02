@@ -7,6 +7,7 @@
 #ifndef TEST_DIRECTION_HPP
 #define TEST_DIRECTION_HPP
 
+#include <type_traits>
 #include <algorithm>
 #include <boost/range.hpp>
 #include <boost/concept/assert.hpp>
@@ -17,7 +18,7 @@
 //@{
 template < typename Graph, typename VertexSet >
 void test_outdirected_graph(
-    Graph const& g, VertexSet const& verts, boost::mpl::true_)
+    Graph const& g, VertexSet const& verts, std::true_type)
 {
     using namespace boost;
     BOOST_CONCEPT_ASSERT((IncidenceGraphConcept< Graph >));
@@ -53,7 +54,7 @@ void test_outdirected_graph(
 }
 
 template < typename Graph, typename VertexSet >
-void test_outdirected_graph(Graph const&, VertexSet const&, boost::mpl::false_)
+void test_outdirected_graph(Graph const&, VertexSet const&, std::false_type)
 {
 }
 //@}
@@ -64,7 +65,7 @@ void test_outdirected_graph(Graph const&, VertexSet const&, boost::mpl::false_)
 //@{
 template < typename Graph, typename VertexSet >
 void test_indirected_graph(
-    Graph const& g, VertexSet const& verts, boost::mpl::true_)
+    Graph const& g, VertexSet const& verts, std::true_type)
 {
     using namespace boost;
     BOOST_CONCEPT_ASSERT((BidirectionalGraphConcept< Graph >));
@@ -96,7 +97,7 @@ void test_indirected_graph(
 }
 
 template < typename Graph, typename VertexSet >
-void test_indirected_graph(Graph const&, VertexSet const&, boost::mpl::false_)
+void test_indirected_graph(Graph const&, VertexSet const&, std::false_type)
 {
 }
 //@}
@@ -106,7 +107,7 @@ void test_indirected_graph(Graph const&, VertexSet const&, boost::mpl::false_)
  */
 template < typename Graph, typename VertexSet >
 void test_undirected_graph(
-    Graph const& g, VertexSet const& verts, boost::mpl::true_)
+    Graph const& g, VertexSet const& verts, std::true_type)
 {
     using namespace boost;
     BOOST_CONCEPT_ASSERT((IncidenceGraphConcept< Graph >));
@@ -134,7 +135,7 @@ void test_undirected_graph(
 }
 
 template < typename Graph, typename VertexSet >
-void test_undirected_graph(Graph const&, VertexSet const&, boost::mpl::false_)
+void test_undirected_graph(Graph const&, VertexSet const&, std::false_type)
 {
 }
 //@}

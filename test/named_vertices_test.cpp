@@ -5,6 +5,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 // Test support for named vertices in adjacency_list.
+#define BOOST_ALLOW_DEPRECATED_SYMBOLS
 #include <boost/config.hpp>
 #include <boost/throw_exception.hpp>
 #include <boost/core/lightweight_test.hpp>

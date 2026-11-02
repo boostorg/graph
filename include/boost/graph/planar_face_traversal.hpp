@@ -1,5 +1,6 @@
 //=======================================================================
 // Copyright (c) Aaron Windsor 2007
+// Copyright 2026 Arnaud Becheler
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -12,7 +13,9 @@
 #include <vector>
 #include <set>
 #include <map>
+#include <boost/config.hpp>
 #include <boost/next_prior.hpp>
+#include <boost/graph/detail/visitor_wrapper.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
 
@@ -34,10 +37,12 @@ struct planar_face_traversal_visitor
     void end_traversal() {}
 };
 
+namespace graph_detail
+{
+
 template < typename Graph, typename PlanarEmbedding, typename Visitor,
     typename EdgeIndexMap >
-void planar_face_traversal(const Graph& g, PlanarEmbedding embedding,
-    Visitor& visitor, EdgeIndexMap em)
+void planar_face_traversal_impl(const Graph& g, PlanarEmbedding embedding, Visitor& visitor, EdgeIndexMap em)
 {
     typedef typename graph_traits< Graph >::vertex_descriptor vertex_t;
     typedef typename graph_traits< Graph >::edge_descriptor edge_t;
@@ -166,11 +171,52 @@ void planar_face_traversal(const Graph& g, PlanarEmbedding embedding,
     visitor.end_traversal();
 }
 
-template < typename Graph, typename PlanarEmbedding, typename Visitor >
-inline void planar_face_traversal(
-    const Graph& g, PlanarEmbedding embedding, Visitor& visitor)
+} // namespace graph_detail
+
+namespace graph
 {
-    planar_face_traversal(g, embedding, visitor, get(edge_index, g));
+
+// Hidden from argument dependent lookup so unqualified calls keep finding the deprecated boost:: overloads.
+namespace planar_adl_barrier
+{
+}
+
+using namespace planar_adl_barrier;
+
+namespace planar_adl_barrier
+{
+
+// Copies the visitor. Wrap it in std::ref to have the caller's own
+// visitor updated in place.
+template < typename Graph, typename PlanarEmbedding, typename Visitor, typename EdgeIndexMap >
+void planar_face_traversal(const Graph& g, PlanarEmbedding embedding, Visitor visitor, EdgeIndexMap em)
+{
+    auto& vis_ref = ::boost::graph::detail::deref_visitor(visitor);
+    ::boost::graph_detail::planar_face_traversal_impl(g, embedding, vis_ref, em);
+}
+
+template < typename Graph, typename PlanarEmbedding, typename Visitor >
+void planar_face_traversal(const Graph& g, PlanarEmbedding embedding, Visitor visitor)
+{
+    ::boost::graph::planar_face_traversal(g, embedding, visitor, get(::boost::edge_index, g));
+}
+
+} // namespace planar_adl_barrier
+
+} // namespace graph
+
+template < typename Graph, typename PlanarEmbedding, typename Visitor, typename EdgeIndexMap >
+BOOST_DEPRECATED("moved to boost::graph::planar_face_traversal, which takes the visitor by value. Removal planned for Boost 1.95.")
+void planar_face_traversal(const Graph& g, PlanarEmbedding embedding, Visitor& visitor, EdgeIndexMap em)
+{
+    ::boost::graph_detail::planar_face_traversal_impl(g, embedding, visitor, em);
+}
+
+template < typename Graph, typename PlanarEmbedding, typename Visitor >
+BOOST_DEPRECATED("moved to boost::graph::planar_face_traversal, which takes the visitor by value. Removal planned for Boost 1.95.")
+inline void planar_face_traversal(const Graph& g, PlanarEmbedding embedding, Visitor& visitor)
+{
+    ::boost::graph_detail::planar_face_traversal_impl(g, embedding, visitor, get(edge_index, g));
 }
 
 } // namespace boost

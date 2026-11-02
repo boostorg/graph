@@ -35,6 +35,9 @@ extra_libs_for() {
         io/graphml.cpp|io/graphviz.cpp|algorithms/isomorphism/isomorphism.cpp)
             echo "-lboost_graph"
             ;;
+        extending/sgb_miles_span.cpp)
+            echo "-lgb"
+            ;;
         *)
             echo ""
             ;;

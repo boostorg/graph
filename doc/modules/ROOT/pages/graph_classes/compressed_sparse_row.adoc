@@ -200,7 +200,7 @@ over both the edge and property ranges.
 
 '''
 
-==== Sorted edge list constructors (directed only)
+==== Sorted edge list constructors
 
 [source,cpp]
 ----
@@ -222,8 +222,8 @@ from any vertex _j_ where _j > i_.
 If `numedges` is provided it preallocates storage, saving memory and time.
 
 WARNING: Passing unsorted edges to this constructor produces a
-silently corrupt graph. Use `edges_are_unsorted` if you cannot guarantee
-sort order.
+silently corrupt graph. Use `edges_are_unsorted` (directed only) or
+`edges_are_unsorted_multi_pass` if you cannot guarantee sort order.
 
 '''
 

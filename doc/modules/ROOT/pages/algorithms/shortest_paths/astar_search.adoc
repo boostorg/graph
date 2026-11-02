@@ -541,4 +541,4 @@ See link:../example/astar-cities.cpp[`example/astar-cities.cpp`] for an example 
 
 == Notes
 
-[#1]#[1]# Since the visitor parameter is passed by value, if your visitor contains state then any changes to the state during the algorithm will be made to a copy of the visitor object, not the visitor object passed in. Therefore you may want the visitor to hold this state by pointer or reference.
+[#1]#[1]# The visitor is taken by value, so the algorithm works on a copy. To keep state, give the visitor ordinary data members and pass it with `std::ref`. The algorithm then operates on the referenced object and its state survives the call.

@@ -19,7 +19,6 @@
 #define BOOST_VF2_SUB_GRAPH_ISO_HPP
 
 #include <iostream>
-#include <iomanip>
 #include <iterator>
 #include <vector>
 #include <utility>
@@ -32,7 +31,7 @@
 #include <boost/graph/mcgregor_common_subgraphs.hpp> // for always_equivalent
 #include <boost/graph/named_function_params.hpp>
 #include <boost/type_traits/has_less.hpp>
-#include <boost/mpl/int.hpp>
+#include <type_traits>
 #include <boost/range/algorithm/sort.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/utility/enable_if.hpp>
@@ -75,6 +74,21 @@ private:
 
 namespace detail
 {
+    template <typename Graph>
+    typename graph_traits<Graph>::vertices_size_type get_num_vertices(const Graph& g)
+    {
+        typedef typename graph_traits<Graph>::vertex_iterator iter;
+        std::pair<iter, iter> vs = vertices(g);
+        return std::distance(vs.first, vs.second);
+    }
+
+    // num_edges also counts the edges hidden by a filtered_graph
+    template < typename Graph >
+    typename graph_traits< Graph >::edges_size_type get_num_edges(const Graph& g)
+    {
+        const auto edge_range = edges(g);
+        return static_cast< typename graph_traits< Graph >::edges_size_type >(std::distance(edge_range.first, edge_range.second));
+    }
 
     // State associated with a single graph (graph_this)
     template < typename GraphThis, typename GraphOther, typename IndexMapThis,
@@ -446,25 +460,27 @@ namespace detail
         base_state< Graph1, Graph2, IndexMap1, IndexMap2 > state1_;
         base_state< Graph2, Graph1, IndexMap2, IndexMap1 > state2_;
 
+        graph1_size_type num_vertices1_;
+
         // Three helper functions used in Feasibility and Valid functions to
         // test terminal set counts when testing for:
         // - graph sub-graph monomorphism, or
         inline bool comp_term_sets(graph1_size_type a, graph2_size_type b,
-            boost::mpl::int_< subgraph_mono >) const
+            std::integral_constant< int, subgraph_mono >) const
         {
             return a <= b;
         }
 
         // - graph sub-graph isomorphism, or
         inline bool comp_term_sets(graph1_size_type a, graph2_size_type b,
-            boost::mpl::int_< subgraph_iso >) const
+            std::integral_constant< int, subgraph_iso >) const
         {
             return a <= b;
         }
 
         // - graph isomorphism
         inline bool comp_term_sets(graph1_size_type a, graph2_size_type b,
-            boost::mpl::int_< isomorphism >) const
+            std::integral_constant< int, isomorphism >) const
         {
             return a == b;
         }
@@ -484,6 +500,7 @@ namespace detail
         , vertex_comp_(vertex_comp)
         , state1_(graph1, graph2, index_map1, index_map2)
         , state2_(graph2, graph1, index_map2, index_map1)
+        , num_vertices1_(get_num_vertices(graph1))
         {
         }
 
@@ -652,22 +669,22 @@ namespace detail
             if (problem_selection != subgraph_mono)
             { // subgraph_iso and isomorphism
                 return comp_term_sets(term_in1_count, term_in2_count,
-                           boost::mpl::int_< problem_selection >())
+                           std::integral_constant< int, problem_selection >())
                     && comp_term_sets(term_out1_count, term_out2_count,
-                        boost::mpl::int_< problem_selection >())
+                        std::integral_constant< int, problem_selection >())
                     && comp_term_sets(rest1_count, rest2_count,
-                        boost::mpl::int_< problem_selection >());
+                        std::integral_constant< int, problem_selection >());
             }
             else
             { // subgraph_mono
                 return comp_term_sets(term_in1_count, term_in2_count,
-                           boost::mpl::int_< problem_selection >())
+                           std::integral_constant< int, problem_selection >())
                     && comp_term_sets(term_out1_count, term_out2_count,
-                        boost::mpl::int_< problem_selection >())
+                        std::integral_constant< int, problem_selection >())
                     && comp_term_sets(
                         term_in1_count + term_out1_count + rest1_count,
                         term_in2_count + term_out2_count + rest2_count,
-                        boost::mpl::int_< problem_selection >());
+                        std::integral_constant< int, problem_selection >());
             }
         }
 
@@ -702,7 +719,7 @@ namespace detail
         // Returns true if a mapping was found
         bool success() const
         {
-            return state1_.count() == num_vertices(graph1_);
+            return state1_.count() == num_vertices1_;
         }
 
         // Returns true if a state is valid
@@ -718,13 +735,13 @@ namespace detail
 
             return comp_term_sets(boost::get< 0 >(term1),
                        boost::get< 0 >(term2),
-                       boost::mpl::int_< problem_selection >())
+                       std::integral_constant< int, problem_selection >())
                 && comp_term_sets(boost::get< 1 >(term1),
                     boost::get< 1 >(term2),
-                    boost::mpl::int_< problem_selection >())
+                    std::integral_constant< int, problem_selection >())
                 && comp_term_sets(boost::get< 2 >(term1),
                     boost::get< 2 >(term2),
-                    boost::mpl::int_< problem_selection >());
+                    std::integral_constant< int, problem_selection >());
         }
 
         // Calls the user_callback with a graph (sub)graph mapping
@@ -754,7 +771,7 @@ namespace detail
         typename IndexMap2, typename VertexOrder1,
         typename EdgeEquivalencePredicate, typename VertexEquivalencePredicate,
         typename SubGraphIsoMapCallback, problem_selector problem_selection >
-    bool match(const Graph1& graph1, const Graph2& graph2,
+    bool match(const Graph1&, const Graph2& graph2,
         SubGraphIsoMapCallback user_callback, const VertexOrder1& vertex_order1,
         state< Graph1, Graph2, IndexMap1, IndexMap2, EdgeEquivalencePredicate,
             VertexEquivalencePredicate, SubGraphIsoMapCallback,
@@ -953,15 +970,15 @@ namespace detail
             (ReadablePropertyMapConcept< IndexMapSmall, vertex_small_type >));
         typedef typename property_traits< IndexMapSmall >::value_type
             IndexMapSmallValue;
-        BOOST_STATIC_ASSERT(
-            (is_convertible< IndexMapSmallValue, size_type_small >::value));
-
+        static_assert(
+            std::is_convertible< IndexMapSmallValue, size_type_small >::value, "The value type of the index map of the small graph must be convertible to the vertices size type of the same graph.");
+        
         BOOST_CONCEPT_ASSERT(
             (ReadablePropertyMapConcept< IndexMapLarge, vertex_large_type >));
         typedef typename property_traits< IndexMapLarge >::value_type
             IndexMapLargeValue;
-        BOOST_STATIC_ASSERT(
-            (is_convertible< IndexMapLargeValue, size_type_large >::value));
+        static_assert(
+            std::is_convertible< IndexMapLargeValue, size_type_large >::value, "The value type of the index map of the large graph must be convertible to the vertices size type of the same graph.");
 
         // Edge & vertex requirements
         typedef typename graph_traits< GraphSmall >::edge_descriptor
@@ -976,20 +993,25 @@ namespace detail
             (BinaryPredicateConcept< VertexEquivalencePredicate,
                 vertex_small_type, vertex_large_type >));
 
+        typename graph_traits< GraphSmall >::vertices_size_type num_vertices_small
+            = get_num_vertices(graph_small);
+        typename graph_traits< GraphLarge >::vertices_size_type num_vertices_large
+            = get_num_vertices(graph_large);
+
         // Vertex order requirements
         BOOST_CONCEPT_ASSERT((ContainerConcept< VertexOrderSmall >));
         typedef typename VertexOrderSmall::value_type order_value_type;
-        BOOST_STATIC_ASSERT(
-            (is_same< vertex_small_type, order_value_type >::value));
-        BOOST_ASSERT(num_vertices(graph_small) == vertex_order_small.size());
+        static_assert(std::is_same< vertex_small_type, order_value_type >::value, "The vertex type of the small graph must be the same as the order value type.");
 
-        if (num_vertices(graph_small) > num_vertices(graph_large))
+        BOOST_ASSERT(num_vertices_small == vertex_order_small.size());
+
+        if (num_vertices_small > num_vertices_large)
             return false;
 
         typename graph_traits< GraphSmall >::edges_size_type num_edges_small
-            = num_edges(graph_small);
+            = get_num_edges(graph_small);
         typename graph_traits< GraphLarge >::edges_size_type num_edges_large
-            = num_edges(graph_large);
+            = get_num_edges(graph_large);
 
         // Double the number of edges for undirected graphs: each edge counts as
         // in-edge and out-edge
@@ -1165,12 +1187,13 @@ bool vf2_graph_iso(const Graph1& graph1, const Graph2& graph2,
     BOOST_CONCEPT_ASSERT(
         (ReadablePropertyMapConcept< IndexMap1, vertex1_type >));
     typedef typename property_traits< IndexMap1 >::value_type IndexMap1Value;
-    BOOST_STATIC_ASSERT((is_convertible< IndexMap1Value, size_type1 >::value));
+    static_assert(std::is_convertible< IndexMap1Value, size_type1 >::value, "The index map value of the first graph must be convertible to the vertex size type of the first graph.");
 
     BOOST_CONCEPT_ASSERT(
         (ReadablePropertyMapConcept< IndexMap2, vertex2_type >));
     typedef typename property_traits< IndexMap2 >::value_type IndexMap2Value;
-    BOOST_STATIC_ASSERT((is_convertible< IndexMap2Value, size_type2 >::value));
+    static_assert(std::is_convertible< IndexMap2Value, size_type2 >::value, "The index map value of the second graph must be convertible to the vertex size type of the second graph.");
+
 
     // Edge & vertex requirements
     typedef typename graph_traits< Graph1 >::edge_descriptor edge1_type;
@@ -1182,19 +1205,25 @@ bool vf2_graph_iso(const Graph1& graph1, const Graph2& graph2,
     BOOST_CONCEPT_ASSERT((BinaryPredicateConcept< VertexEquivalencePredicate,
         vertex1_type, vertex2_type >));
 
+    typename graph_traits< Graph1 >::vertices_size_type num_vertices1
+        = detail::get_num_vertices(graph1);
+    typename graph_traits< Graph2 >::vertices_size_type num_vertices2
+        = detail::get_num_vertices(graph2);
+
     // Vertex order requirements
     BOOST_CONCEPT_ASSERT((ContainerConcept< VertexOrder1 >));
     typedef typename VertexOrder1::value_type order_value_type;
-    BOOST_STATIC_ASSERT((is_same< vertex1_type, order_value_type >::value));
-    BOOST_ASSERT(num_vertices(graph1) == vertex_order1.size());
 
-    if (num_vertices(graph1) != num_vertices(graph2))
+    static_assert(std::is_same< vertex1_type, order_value_type >::value, "The value type of the vertex order and the vertex type of the first graph must be the same type.");
+    BOOST_ASSERT(num_vertices1 == vertex_order1.size());
+
+    if (num_vertices1 != num_vertices2)
         return false;
 
     typename graph_traits< Graph1 >::edges_size_type num_edges1
-        = num_edges(graph1);
+        = detail::get_num_edges(graph1);
     typename graph_traits< Graph2 >::edges_size_type num_edges2
-        = num_edges(graph2);
+        = detail::get_num_edges(graph2);
 
     // Double the number of edges for undirected graphs: each edge counts as
     // in-edge and out-edge

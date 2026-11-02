@@ -80,7 +80,7 @@ int main(int, char*[])
     for (std::size_t k = 0; k < N; ++k)
         add_vertex(current_vertex_id++, g);
 
-    mt19937 gen;
+    mt19937 gen(42);
 
     for (j = 0; j < 10; ++j)
     {

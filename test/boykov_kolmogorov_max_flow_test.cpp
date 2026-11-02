@@ -103,6 +103,20 @@ fill_random_max_flow_graph(Graph& g, CapacityMap cap, ReverseEdgeMap rev,
     return std::make_pair(s, t);
 }
 
+// the capacity of the cut the color map describes: the edges from the black
+// vertices (the source side) to the others
+template < typename Graph >
+long color_map_cut_capacity(const Graph& g)
+{
+    long capacity = 0;
+    typename graph_traits< Graph >::edge_iterator ei, e_end;
+    for (boost::tie(ei, e_end) = edges(g); ei != e_end; ++ei)
+        if (get(vertex_color, g, source(*ei, g)) == black_color
+            && get(vertex_color, g, target(*ei, g)) != black_color)
+            capacity += get(edge_capacity, g, *ei);
+    return capacity;
+}
+
 long test_adjacency_list_vecS(int n_verts, int n_edges, std::size_t seed)
 {
     typedef adjacency_list_traits< vecS, vecS, directedS > tVectorTraits;
@@ -122,10 +136,13 @@ long test_adjacency_list_vecS(int n_verts, int n_edges, std::size_t seed)
     boost::tie(src, sink) = fill_random_max_flow_graph(
         g, get(edge_capacity, g), get(edge_reverse, g), n_verts, n_edges, seed);
 
-    return boykov_kolmogorov_max_flow(g, get(edge_capacity, g),
+    long flow = boykov_kolmogorov_max_flow(g, get(edge_capacity, g),
         get(edge_residual_capacity, g), get(edge_reverse, g),
         get(vertex_predecessor, g), get(vertex_color, g),
         get(vertex_distance, g), get(vertex_index, g), src, sink);
+    // the color map is a minimum cut
+    BOOST_TEST(color_map_cut_capacity(g) == flow);
+    return flow;
 }
 
 long test_adjacency_list_listS(int n_verts, int n_edges, std::size_t seed)
@@ -585,18 +602,70 @@ long test_algorithms_invariant(int n_verts, int n_edges, std::size_t seed)
     return instance.test();
 }
 
+template < typename Graph >
+void add_edge_with_reverse(Graph& g,
+    typename graph_traits< Graph >::vertex_descriptor u,
+    typename graph_traits< Graph >::vertex_descriptor v, long capacity)
+{
+    typename graph_traits< Graph >::edge_descriptor e = add_edge(u, v, g).first;
+    typename graph_traits< Graph >::edge_descriptor r = add_edge(v, u, g).first;
+    put(edge_capacity, g, e, capacity);
+    put(edge_capacity, g, r, 0);
+    put(edge_reverse, g, e, r);
+    put(edge_reverse, g, r, e);
+}
+
+// the color map is a minimum cut: the black vertices are the source side, and
+// the edges from them to the others carry exactly the flow
+void test_color_map_is_min_cut()
+{
+    typedef adjacency_list_traits< vecS, vecS, directedS > tVectorTraits;
+    typedef adjacency_list< vecS, vecS, directedS,
+        property< vertex_index_t, long,
+            property< vertex_predecessor_t, tVectorTraits::edge_descriptor,
+                property< vertex_color_t, boost::default_color_type,
+                    property< vertex_distance_t, long > > > >,
+        property< edge_capacity_t, long,
+            property< edge_residual_capacity_t, long,
+                property< edge_reverse_t, tVectorTraits::edge_descriptor > > > >
+        tVectorGraph;
+
+    // vertex 1 has two edges to the sink 2. The source still reaches it
+    // through what is left of the edge 0 -> 1, so it is on the source side
+    {
+        tVectorGraph g(3);
+        add_edge_with_reverse(g, 0, 1, 5);
+        add_edge_with_reverse(g, 1, 2, 1);
+        add_edge_with_reverse(g, 1, 2, 1);
+        const long flow = boykov_kolmogorov_max_flow(g, 0, 2);
+        BOOST_TEST(flow == 2);
+        BOOST_TEST(get(vertex_color, g, 1) == black_color);
+        BOOST_TEST(color_map_cut_capacity(g) == flow);
+    }
+    // the same when the first edge from vertex 1 to the sink is the empty
+    // reverse of an edge out of the sink
+    {
+        tVectorGraph g(3);
+        add_edge_with_reverse(g, 0, 1, 5);
+        add_edge_with_reverse(g, 2, 1, 1);
+        add_edge_with_reverse(g, 1, 2, 1);
+        const long flow = boykov_kolmogorov_max_flow(g, 0, 2);
+        BOOST_TEST(flow == 1);
+        BOOST_TEST(get(vertex_color, g, 1) == black_color);
+        BOOST_TEST(color_map_cut_capacity(g) == flow);
+    }
+}
+
 int main(int argc, char* argv[])
 {
     int n_verts = 10;
     int n_edges = 500;
-    std::size_t seed = 1;
+    std::size_t seed = 42;
 
     if (argc > 1)
         n_verts = lexical_cast< int >(argv[1]);
     if (argc > 2)
         n_edges = lexical_cast< int >(argv[2]);
-    if (argc > 3)
-        seed = lexical_cast< std::size_t >(argv[3]);
 
     // we need at least 2 vertices to create src and sink in random graphs
     // this case is also caught in boykov_kolmogorov_max_flow
@@ -627,5 +696,8 @@ int main(int argc, char* argv[])
     long flow_invariants = test_algorithms_invariant(n_verts, n_edges, seed);
     std::cout << "invariants flow: " << flow_invariants << std::endl;
     BOOST_TEST(flow_overloads == flow_invariants);
+
+    // checks that the color map is a minimum cut
+    test_color_map_is_min_cut();
     return boost::report_errors();
 }

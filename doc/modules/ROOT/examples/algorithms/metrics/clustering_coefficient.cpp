@@ -1,11 +1,9 @@
-#include <boost/graph/adjacency_matrix.hpp>
+#include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/clustering_coefficient.hpp>
 #include <iostream>
 #include <vector>
 
-// clustering_coefficient requires AdjacencyMatrix concept (lookup_edge),
-// so we use adjacency_matrix instead of adjacency_list.
-using Graph = boost::adjacency_matrix<boost::undirectedS>;
+using Graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS>;
 using Vertex = boost::graph_traits<Graph>::vertex_descriptor;
 
 int main() {

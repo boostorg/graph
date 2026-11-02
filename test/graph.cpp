@@ -178,7 +178,7 @@ int main(int, char*[])
         add_vertex(current_vertex_id++, g);
 
     // also need to test EdgeIterator graph constructor -JGS
-    mt19937 gen;
+    mt19937 gen(42);
 
     for (j = 0; j < 10; ++j)
     {

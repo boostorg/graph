@@ -77,14 +77,12 @@ int main(int argc, char* argv[])
 
     graph_traits< Graph >::vertices_size_type n_verts = 100;
     graph_traits< Graph >::edges_size_type n_edges = 1000;
-    std::size_t seed = 1;
+    std::size_t seed = 42;
 
     if (argc > 1)
         n_verts = lexical_cast< std::size_t >(argv[1]);
     if (argc > 2)
         n_edges = lexical_cast< std::size_t >(argv[2]);
-    if (argc > 3)
-        seed = lexical_cast< std::size_t >(argv[3]);
 
     Graph g;
     const int cap_low = 1;

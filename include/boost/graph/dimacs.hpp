@@ -171,7 +171,7 @@ namespace graph
     protected:
         bool read_edge_line(char* linebuf, int& from, int& to, int& weight)
         {
-            char *fs = NULL, *ts = NULL, *ws = NULL;
+            char *fs = nullptr, *ts = nullptr, *ws = nullptr;
             char* tmp = linebuf + 2;
 
             fs = tmp;
@@ -188,7 +188,7 @@ namespace graph
                     tmp++;
                 }
                 *tmp = '\0';
-                if (NULL == fs || NULL == ts)
+                if (fs == nullptr || ts == nullptr)
                     return false;
                 from = atoi(fs);
                 to = atoi(ts);
@@ -219,7 +219,7 @@ namespace graph
                 while (*tmp != '\n' && *tmp != '\0')
                     tmp++;
                 *tmp = '\0';
-                if (fs == NULL || ts == NULL || ws == NULL)
+                if (fs == nullptr || ts == nullptr || ws == nullptr)
                     return false;
                 from = atoi(fs);
                 to = atoi(ts);

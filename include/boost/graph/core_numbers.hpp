@@ -12,6 +12,7 @@
 #define BOOST_GRAPH_CORE_NUMBERS_HPP
 
 #include <boost/graph/detail/d_ary_heap.hpp>
+#include <boost/graph/detail/visitor_wrapper.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/iterator/reverse_iterator.hpp>
 #include <boost/concept/assert.hpp>
@@ -149,6 +150,8 @@ namespace detail
     typename property_traits< CoreMap >::value_type core_numbers_impl(
         Graph& g, CoreMap c, EdgeWeightMap wm, MutableQueue& Q, Visitor vis)
     {
+        auto& vis_ref = ::boost::graph::detail::deref_visitor(vis);
+
         typename property_traits< CoreMap >::value_type v_cn = 0;
         typedef typename graph_traits< Graph >::vertex_descriptor vertex;
         while (!Q.empty())
@@ -156,13 +159,13 @@ namespace detail
             // remove v from the Q, and then decrease the core numbers
             // of its successors
             vertex v = Q.top();
-            vis.examine_vertex(v, g);
+            vis_ref.examine_vertex(v, g);
             Q.pop();
             v_cn = get(c, v);
             typename graph_traits< Graph >::out_edge_iterator oi, oi_end;
             for (boost::tie(oi, oi_end) = out_edges(v, g); oi != oi_end; ++oi)
             {
-                vis.examine_edge(*oi, g);
+                vis_ref.examine_edge(*oi, g);
                 vertex u = target(*oi, g);
                 // if c[u] > c[v], then u is still in the graph,
                 if (get(c, u) > v_cn)
@@ -173,7 +176,7 @@ namespace detail
                         Q.update(u);
                 }
             }
-            vis.finish_vertex(v, g);
+            vis_ref.finish_vertex(v, g);
         }
         return (v_cn);
     }
@@ -213,6 +216,8 @@ namespace detail
     typename property_traits< CoreMap >::value_type core_numbers_impl(
         Graph& g, CoreMap c, PositionMap pos, Visitor vis)
     {
+        auto& vis_ref = ::boost::graph::detail::deref_visitor(vis);
+
         typedef typename graph_traits< Graph >::vertices_size_type size_type;
         typedef typename graph_traits< Graph >::degree_size_type degree_type;
         typedef typename graph_traits< Graph >::vertex_descriptor vertex;
@@ -268,12 +273,12 @@ namespace detail
         for (size_type i = 0; i < num_vertices(g); ++i)
         {
             vertex v = vert[i];
-            vis.examine_vertex(v, g);
+            vis_ref.examine_vertex(v, g);
             v_cn = get(c, v);
             typename graph_traits< Graph >::out_edge_iterator oi, oi_end;
             for (boost::tie(oi, oi_end) = out_edges(v, g); oi != oi_end; ++oi)
             {
-                vis.examine_edge(*oi, g);
+                vis_ref.examine_edge(*oi, g);
                 vertex u = target(*oi, g);
                 // if c[u] > c[v], then u is still in the graph,
                 if (get(c, u) > v_cn)
@@ -303,7 +308,7 @@ namespace detail
                     put(c, u, get(c, u) - 1);
                 }
             }
-            vis.finish_vertex(v, g);
+            vis_ref.finish_vertex(v, g);
         }
         return v_cn;
     }

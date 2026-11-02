@@ -15,6 +15,7 @@
 
 #include <boost/graph/planar_face_traversal.hpp>
 #include <boost/graph/boyer_myrvold_planar_test.hpp>
+#include <functional>
 
 using namespace boost;
 
@@ -40,7 +41,7 @@ struct edge_output_visitor : public output_visitor
     template < typename Edge > void next_edge(Edge e) { std::cout << e << " "; }
 };
 
-int main(int argc, char** argv)
+int main()
 {
 
     using graph = adjacency_list< vecS, vecS, undirectedS,
@@ -88,11 +89,11 @@ int main(int argc, char** argv)
 
     std::cout << std::endl << "Vertices on the faces: " << std::endl;
     vertex_output_visitor v_vis;
-    planar_face_traversal(g, &embedding[0], v_vis);
+    boost::graph::planar_face_traversal(g, &embedding[0], std::ref(v_vis));
 
     std::cout << std::endl << "Edges on the faces: " << std::endl;
     edge_output_visitor e_vis;
-    planar_face_traversal(g, &embedding[0], e_vis);
+    boost::graph::planar_face_traversal(g, &embedding[0], std::ref(e_vis));
 
     return 0;
 }

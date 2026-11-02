@@ -67,7 +67,7 @@ void randomly_permute_graph(Graph1& g1, const Graph2& g2)
     typedef typename graph_traits< Graph1 >::vertex_iterator vertex_iterator;
     typedef typename graph_traits< Graph2 >::edge_iterator edge_iterator;
 
-    random_generator_type gen;
+    random_generator_type gen(42);
 
     // Decide new order
     std::vector< vertex2 > orig_vertices;
@@ -109,7 +109,7 @@ void generate_random_digraph(Graph& g, double edge_probability,
     BOOST_TEST(0 <= max_vertex_name);
 
     typedef typename graph_traits< Graph >::vertex_iterator vertex_iterator;
-    random_generator_type random_gen;
+    random_generator_type random_gen(42);
     boost::uniform_real< double > dist_real(0.0, 1.0);
     boost::variate_generator< random_generator_type&,
         boost::uniform_real< double > >

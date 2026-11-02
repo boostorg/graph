@@ -242,7 +242,12 @@ namespace detail
             {
                 edge_descriptor to_sink = get(m_rev_edge_map, *ei);
                 vertex_descriptor current_node = source(to_sink, m_g);
-                if (get(m_res_cap_map, to_sink))
+                // a vertex the loop above put in the source tree stays there:
+                // it is active, so grow() finds its remaining edges to the
+                // sink. Moved to the sink tree, it would be left gray once
+                // they are saturated, although the source still reaches it.
+                if (get(m_res_cap_map, to_sink)
+                    && get_tree(current_node) != tColorTraits::black())
                 {
                     set_tree(current_node, tColorTraits::white());
                     set_edge_to_parent(current_node, to_sink);

@@ -20,14 +20,12 @@ namespace boost
 template < class Alloc, class ValueType >
 struct container_gen< list_with_allocatorS< Alloc >, ValueType >
 {
-#ifdef BOOST_NO_CXX11_ALLOCATOR
-    using Allocator = typename Alloc::template rebind< ValueType >::other;
-#else
+
     using Allocator = typename std::allocator_traits<
         Alloc >::template rebind_alloc< ValueType >;
-#endif
     using type = std::list< ValueType, Allocator >;
 };
+
 template < class Alloc >
 struct parallel_edge_traits< list_with_allocatorS< Alloc > >
 {

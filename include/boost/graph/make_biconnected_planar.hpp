@@ -1,5 +1,6 @@
 //=======================================================================
 // Copyright 2007 Aaron Windsor
+// Copyright 2026 Arnaud Becheler
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -16,15 +17,18 @@
 #include <iterator>
 #include <algorithm>
 
+#include <boost/graph/detail/visitor_wrapper.hpp>
 #include <boost/graph/planar_detail/add_edge_visitors.hpp>
 
 namespace boost
 {
 
+namespace graph_detail
+{
+
 template < typename Graph, typename PlanarEmbedding, typename EdgeIndexMap,
     typename AddEdgeVisitor >
-void make_biconnected_planar(
-    Graph& g, PlanarEmbedding embedding, EdgeIndexMap em, AddEdgeVisitor& vis)
+void make_biconnected_planar_impl(Graph& g, PlanarEmbedding embedding, EdgeIndexMap em, AddEdgeVisitor& vis)
 {
     typedef typename graph_traits< Graph >::vertex_descriptor vertex_t;
     typedef typename graph_traits< Graph >::edge_descriptor edge_t;
@@ -77,18 +81,65 @@ void make_biconnected_planar(
     }
 }
 
-template < typename Graph, typename PlanarEmbedding, typename EdgeIndexMap >
-inline void make_biconnected_planar(
-    Graph& g, PlanarEmbedding embedding, EdgeIndexMap em)
+} // namespace graph_detail
+
+namespace graph
 {
-    default_add_edge_visitor vis;
-    make_biconnected_planar(g, embedding, em, vis);
+
+// Hidden from argument dependent lookup so unqualified calls keep finding the deprecated boost:: overloads.
+namespace planar_adl_barrier
+{
+}
+
+using namespace planar_adl_barrier;
+
+namespace planar_adl_barrier
+{
+
+// Copies the visitor. Wrap it in std::ref to have the caller's own
+// visitor updated in place.
+template < typename Graph, typename PlanarEmbedding, typename EdgeIndexMap, typename AddEdgeVisitor >
+void make_biconnected_planar(Graph& g, PlanarEmbedding embedding, EdgeIndexMap em, AddEdgeVisitor vis)
+{
+    auto& vis_ref = ::boost::graph::detail::deref_visitor(vis);
+    ::boost::graph_detail::make_biconnected_planar_impl(g, embedding, em, vis_ref);
+}
+
+template < typename Graph, typename PlanarEmbedding, typename EdgeIndexMap >
+void make_biconnected_planar(Graph& g, PlanarEmbedding embedding, EdgeIndexMap em)
+{
+    ::boost::graph::make_biconnected_planar(g, embedding, em, ::boost::default_add_edge_visitor());
 }
 
 template < typename Graph, typename PlanarEmbedding >
+void make_biconnected_planar(Graph& g, PlanarEmbedding embedding)
+{
+    ::boost::graph::make_biconnected_planar(g, embedding, get(::boost::edge_index, g));
+}
+
+} // namespace planar_adl_barrier
+
+} // namespace graph
+
+template < typename Graph, typename PlanarEmbedding, typename EdgeIndexMap, typename AddEdgeVisitor >
+BOOST_DEPRECATED("moved to boost::graph::make_biconnected_planar, which takes the visitor by value. Removal planned for Boost 1.95.")
+void make_biconnected_planar(Graph& g, PlanarEmbedding embedding, EdgeIndexMap em, AddEdgeVisitor& vis)
+{
+    ::boost::graph_detail::make_biconnected_planar_impl(g, embedding, em, vis);
+}
+
+template < typename Graph, typename PlanarEmbedding, typename EdgeIndexMap >
+BOOST_DEPRECATED("moved to boost::graph::make_biconnected_planar, which takes the visitor by value. Removal planned for Boost 1.95.")
+inline void make_biconnected_planar(Graph& g, PlanarEmbedding embedding, EdgeIndexMap em)
+{
+    ::boost::graph::make_biconnected_planar(g, embedding, em);
+}
+
+template < typename Graph, typename PlanarEmbedding >
+BOOST_DEPRECATED("moved to boost::graph::make_biconnected_planar, which takes the visitor by value. Removal planned for Boost 1.95.")
 inline void make_biconnected_planar(Graph& g, PlanarEmbedding embedding)
 {
-    make_biconnected_planar(g, embedding, get(edge_index, g));
+    ::boost::graph::make_biconnected_planar(g, embedding);
 }
 
 } // namespace boost

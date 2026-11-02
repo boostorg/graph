@@ -8,8 +8,8 @@
 //           Andrew Lumsdaine
 
 #include <boost/graph/compressed_sparse_row_graph.hpp>
+#include <boost/range/iterator_range_core.hpp>
 #include <string>
-#include <boost/graph/iteration_macros.hpp>
 #include <iostream>
 #include <fstream>
 #include <boost/graph/graphviz.hpp>
@@ -43,15 +43,19 @@ int main()
 
     // Set the URLs of each vertex
     int index = 0;
-    BGL_FORALL_VERTICES(v, g, WebGraph)
-    g[v].url = urls[index++];
+    for(const auto v : boost::make_iterator_range(vertices(g)))
+    {
+        g[v].url = urls[index++];
+    }
 
     // Output each of the links
     std::cout << "The web graph:" << std::endl;
-    BGL_FORALL_EDGES(e, g, WebGraph)
-    std::cout << "  " << g[source(e, g)].url << " -> " << g[target(e, g)].url
-              << std::endl;
 
+    for(const auto& e : boost::make_iterator_range(edges(g)))
+    {
+        std::cout << "  " << g[source(e, g)].url << " -> " << g[target(e, g)].url
+              << std::endl;
+    }
     // Output the graph in DOT format
     dynamic_properties dp;
     dp.property("label", get(&WebPage::url, g));

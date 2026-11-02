@@ -10,9 +10,8 @@
 #include <fstream>
 #include <iostream>
 #include <set>
-#include <ctime>
 
-#include <boost/foreach.hpp>
+#include <boost/range/iterator_range.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/graph/grid_graph.hpp>
 #include <boost/random.hpp>
@@ -100,7 +99,8 @@ template < unsigned int Dims > void do_test(minstd_rand& generator)
 
     // Verify all vertices are within bounds
     vertices_size_type vertex_count = 0;
-    BOOST_FOREACH (vertex_descriptor current_vertex, vertices(graph))
+    for (vertex_descriptor current_vertex :
+        boost::make_iterator_range(vertices(graph)))
     {
 
         vertices_size_type current_index
@@ -118,8 +118,8 @@ template < unsigned int Dims > void do_test(minstd_rand& generator)
         edges_size_type out_edge_count = 0;
         std::set< vertices_size_type > target_vertices;
 
-        BOOST_FOREACH (
-            edge_descriptor out_edge, out_edges(current_vertex, graph))
+        for (edge_descriptor out_edge :
+            boost::make_iterator_range(out_edges(current_vertex, graph)))
         {
 
             target_vertices.insert(
@@ -133,7 +133,8 @@ template < unsigned int Dims > void do_test(minstd_rand& generator)
         // Verify in-edges of this vertex
         edges_size_type in_edge_count = 0;
 
-        BOOST_FOREACH (edge_descriptor in_edge, in_edges(current_vertex, graph))
+        for (edge_descriptor in_edge :
+            boost::make_iterator_range(in_edges(current_vertex, graph)))
         {
 
             BOOST_TEST(target_vertices.count(get(boost::vertex_index, graph,
@@ -153,8 +154,8 @@ template < unsigned int Dims > void do_test(minstd_rand& generator)
         // Verify adjacent vertices to this vertex
         vertices_size_type adjacent_count = 0;
 
-        BOOST_FOREACH (vertex_descriptor adjacent_vertex,
-            adjacent_vertices(current_vertex, graph))
+        for (vertex_descriptor adjacent_vertex : boost::make_iterator_range(
+                 adjacent_vertices(current_vertex, graph)))
         {
 
             BOOST_TEST(target_vertices.count(
@@ -168,7 +169,8 @@ template < unsigned int Dims > void do_test(minstd_rand& generator)
 
         // Verify that this vertex is not listed as connected to any
         // vertices outside of its adjacent vertices.
-        BOOST_FOREACH (vertex_descriptor unconnected_vertex, vertices(graph))
+        for (vertex_descriptor unconnected_vertex :
+            boost::make_iterator_range(vertices(graph)))
         {
 
             vertices_size_type unconnected_index
@@ -193,7 +195,8 @@ template < unsigned int Dims > void do_test(minstd_rand& generator)
 
     // Verify all edges are within bounds
     edges_size_type edge_count = 0;
-    BOOST_FOREACH (edge_descriptor current_edge, edges(graph))
+    for (edge_descriptor current_edge :
+        boost::make_iterator_range(edges(graph)))
     {
 
         vertices_size_type source_index
@@ -222,15 +225,9 @@ template < unsigned int Dims > void do_test(minstd_rand& generator)
     BOOST_TEST(edge_count == num_edges(graph));
 }
 
-int main(int argc, char* argv[])
+int main()
 {
-
-    std::size_t random_seed = std::time(0);
-
-    if (argc > 1)
-    {
-        random_seed = lexical_cast< std::size_t >(argv[1]);
-    }
+    std::size_t random_seed = 42;
 
     minstd_rand generator(random_seed);
 

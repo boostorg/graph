@@ -1,18 +1,23 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/undirected_dfs.hpp>
+#include <functional>
 #include <iostream>
+#include <string>
+#include <vector>
 
 struct VertexProps { int id; };
 
 using Graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, VertexProps>;
 using Edge = boost::graph_traits<Graph>::edge_descriptor;
 
+// records the events in the order the search reaches them
 struct Visitor : boost::default_dfs_visitor {
-    void discover_vertex(Graph::vertex_descriptor v, const Graph& g) const {
-        std::cout << "discover " << g[v].id << "\n";
+    std::vector<std::string> events;
+    void discover_vertex(Graph::vertex_descriptor v, const Graph& g) {
+        events.push_back("discover " + std::to_string(g[v].id));
     }
-    void finish_vertex(Graph::vertex_descriptor v, const Graph& g) const {
-        std::cout << "finish   " << g[v].id << "\n";
+    void finish_vertex(Graph::vertex_descriptor v, const Graph& g) {
+        events.push_back("finish   " + std::to_string(g[v].id));
     }
 };
 
@@ -27,7 +32,12 @@ int main() {
     using EdgeColorMap = std::map<Edge, boost::default_color_type>;
     ColorMap vcmap;
     EdgeColorMap ecmap;
-    boost::undirected_dfs(g, Visitor{},
+    Visitor visitor;
+
+    // std::ref lets the visitor keep its state across the copy the algorithm makes
+    boost::undirected_dfs(g, std::ref(visitor),
         boost::make_assoc_property_map(vcmap),
         boost::make_assoc_property_map(ecmap));
+
+    for (const std::string& event : visitor.events) std::cout << event << "\n";
 }

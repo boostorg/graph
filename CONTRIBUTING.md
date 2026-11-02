@@ -7,14 +7,12 @@
 - Documentation, examples, performance work
 - Concept refinements (handle with care as these are API-visible)
 
-## Maintainers
+## Reporting bugs
 
-| Maintainer | Role | Focus | Availability | Contact |
-|---|---|---|---|---|
-| **Jeremy W. Murphy** | Principal maintainer. Holds merge authority and final say on design decisions. | Algorithms, technical review, library architecture. 10+ years on BGL. | Part-time, best-effort. | `jeremy.william.murphy -at- gmail.com` |
-| **Arnaud Becheler** | Assistant maintainer. Triage, review, and contributor support; defers to Jeremy on merge decisions. | Documentation, modernization, contributor onboarding. | Full-time, funded by the [C++ Alliance](https://cppalliance.org) to assist Jeremy. | `arnaud.becheler -at- gmail.com` |
-
-The authoritative maintainer list lives in [meta/libraries.json](meta/libraries.json); keep this section in sync with it. Maintainers aim to provide first-pass review on new PRs within two weeks.
+1. Search [existing issues](https://github.com/boostorg/graph/issues) first
+2. Note compiler, version, OS, Boost version
+3. Minimal reproducer on [Compiler Explorer](https://godbolt.org/z/37dPWd5bs)
+4. Expected Output versus Actual Output is explained.
 
 ## Getting set up
 
@@ -46,6 +44,8 @@ git remote add upstream https://github.com/boostorg/graph
 - Different C++ standard: `./b2 cxxstd=20`
 - Different compiler: `./b2 toolset=clang`
 
+## Code style
+
 ### Naming conventions
 
 BGL follows the standard Boost / STL conventions:
@@ -62,7 +62,63 @@ BGL follows the standard Boost / STL conventions:
 
 ### Formatting
 
-Low-level formatting (braces, column width, spaces in angle brackets, etc.) is captured by the [`.clang-format`](.clang-format) file at the repo root (WebKit preset with BGL-specific overrides: Allman braces, 80-column limit, `Cpp03`). It is **not** enforced by CI, but contributors are encouraged to run `clang-format -i` on files they touch before opening a PR.
+Low-level formatting (braces, column width, spaces in angle brackets, etc.) is captured by the [`.clang-format`](.clang-format) file at the repo root (WebKit preset with BGL-specific overrides: Allman braces, 80-column limit, `Cpp03`). It is **not** enforced by CI.
+
+Most files predate that config, so `clang-format -i` on a whole file rewrites hundreds of lines. Format only the lines you actually change. `git clang-format` does exactly that for staged changes:
+
+```bash
+git add <files you changed>
+git clang-format
+```
+
+## Pull request process
+
+- **New algorithms and API additions start with an issue, not a PR.** Such a PR is not reviewed until an issue has settled the API and frozen the scope. PRs whose scope grows under review go stale. See [How To Contribute an Algorithm](https://github.com/boostorg/graph/discussions/495).
+- Fork, branch from `develop`, PR back to `develop`
+- Rebase before requesting review
+- Tests required for new features and bug fixes
+- **Open (non-draft) PRs are assumed ready for review.** Use GitHub's Draft state while iterating, then mark the PR as *Ready for review* when you want maintainers to look at it.
+- A maintainer will review within ~2 weeks (see [Maintainers](#maintainers))
+- Squash on merge by default
+
+### One kind of change per PR
+
+Every PR is exactly one of these:
+
+| Kind | What it contains | How a reviewer checks it |
+|---|---|---|
+| **Reformat** | Whitespace, braces, line breaks. No token is added or removed | Confirm no token changed |
+| **Refactor** | Code rewritten, observable behavior unchanged | Confirm behavior is unchanged |
+| **Behavior change** | A bug fix, a new feature, or an API change | Check correctness, tests and docs |
+
+Each kind has a cheap check of its own, and mixing kinds destroys it.
+
+- A reformat is checked mechanically. If there is one semantic edit in it, the reviewer has to read every line to find it, then reason about the semantic change.
+- A refactor is checked by the existing tests passing untouched. Change behavior in the same PR and the tests change too, so nothing is left to show the refactor preserved anything.
+- A behavior change on its own is small, so review goes on correctness and docs instead of layout.
+
+It costs again later: a regression bisects to a commit that did several things, and the fix cannot be reverted without the reformat.
+
+## Merge criteria
+
+Before a PR is merged, all of the following must hold:
+
+1. CI is green on the full matrix (gcc-14 + clang-19, C++14/17/20/23).
+2. New behavior has tests.
+3. Bug fixes have a regression test.
+4. Documentation under [doc/](doc/) is updated if the public API changed.
+5. No new compiler warnings on the supported toolchains.
+6. The PR is rebased on current `develop` with a clean commit history.
+7. The principal maintainer has approved.
+
+## Maintainers
+
+| Maintainer | Role | Focus | Availability | Contact |
+|---|---|---|---|---|
+| **Jeremy W. Murphy** | Principal maintainer. Holds merge authority and final say on design decisions. | Algorithms, technical review, library architecture. 10+ years on BGL. | Part-time, best-effort. | `jeremy.william.murphy -at- gmail.com` |
+| **Arnaud Becheler** | Assistant maintainer. Triage, review, and contributor support; defers to Jeremy on merge decisions. | Documentation, modernization, contributor onboarding. | Full-time, funded by the [C++ Alliance](https://cppalliance.org) to assist Jeremy. | `arnaud.becheler -at- gmail.com` |
+
+The authoritative maintainer list lives in [meta/libraries.json](meta/libraries.json); keep this section in sync with it. Maintainers aim to provide first-pass review on new PRs within two weeks.
 
 ## Using other Boost libraries
 
@@ -144,34 +200,6 @@ BGL has accumulated a wide vocabulary of `BOOST_*` macros from its pre-C++14 day
 | `BOOST_WORKAROUND` | Keep |
 
 When you mark a `BOOST_NO_*` flag as **Remove**, also delete the `#if defined(...)` block it gates — the alternate branch is always taken on the supported toolchains.
-
-## Pull request process
-
-- Fork, branch from `develop`, PR back to `develop`
-- One logical change per PR; rebase before requesting review
-- Tests required for new features and bug fixes
-- **Open (non-draft) PRs are assumed ready for review.** Use GitHub's Draft state while iterating, then mark the PR as *Ready for review* when you want maintainers to look at it.
-- A maintainer will review within ~2 weeks (see Maintainers below)
-- Squash on merge by default
-
-## Merge criteria
-
-Before a PR is merged, all of the following must hold:
-
-1. CI is green on the full matrix (gcc-14 + clang-19, C++14/17/20/23).
-2. New behavior has tests.
-3. Bug fixes have a regression test.
-4. Documentation under [doc/](doc/) is updated if the public API changed.
-5. No new compiler warnings on the supported toolchains.
-6. The PR is rebased on current `develop` with a clean commit history.
-7. The principal maintainer has approved.
-
-## Reporting bugs
-
-1. Search [existing issues](https://github.com/boostorg/graph/issues) first
-2. Note compiler, version, OS, Boost version
-3. Minimal reproducer on [Compiler Explorer](https://godbolt.org/z/37dPWd5bs)
-4. Expected Output versus Actual Output is explained.
 
 ## Security
 

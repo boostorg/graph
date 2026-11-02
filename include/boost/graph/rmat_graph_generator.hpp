@@ -15,17 +15,15 @@
 #include <vector>
 #include <queue>
 #include <map>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/assert.hpp>
 #include <boost/random/uniform_int.hpp>
 #include <boost/random/uniform_01.hpp>
 #include <boost/graph/graph_traits.hpp>
-#include <boost/graph/detail/mpi_include.hpp>
 #include <boost/type_traits/is_base_and_derived.hpp>
 #include <boost/type_traits/is_same.hpp>
 // #include <boost/test/floating_point_comparison.hpp>
 
-using boost::shared_ptr;
 using boost::uniform_01;
 
 // Returns floor(log_2(n)), and -1 when n is 0
@@ -84,7 +82,8 @@ void generate_permutation_vector(
 
 template < typename RandomGenerator, typename T >
 std::pair< T, T > generate_edge(
-    shared_ptr< uniform_01< RandomGenerator > > prob, T n, unsigned int SCALE,
+    std::shared_ptr< uniform_01< RandomGenerator > > prob, T n,
+    unsigned int SCALE,
     double a, double b, double c, double d)
 {
     T u = 0, v = 0;
@@ -233,7 +232,7 @@ public:
 
 private:
     // Parameters
-    shared_ptr< uniform_01< RandomGenerator > > gen;
+    std::shared_ptr< uniform_01< RandomGenerator > > gen;
     vertices_size_type n;
     double a, b, c, d;
     int edge;
@@ -359,7 +358,7 @@ public:
 
 private:
     // Parameters
-    shared_ptr< uniform_01< RandomGenerator > > gen;
+    std::shared_ptr< uniform_01< RandomGenerator > > gen;
     bool permute_vertices;
 
     // Internal data structures
@@ -484,7 +483,7 @@ public:
 
 private:
     // Parameters
-    shared_ptr< uniform_01< RandomGenerator > > gen;
+    std::shared_ptr< uniform_01< RandomGenerator > > gen;
 
     // Internal data structures
     std::vector< value_type > values;
@@ -645,7 +644,7 @@ public:
 
 private:
     // Parameters
-    shared_ptr< uniform_01< RandomGenerator > > gen;
+    std::shared_ptr< uniform_01< RandomGenerator > > gen;
     bool bidirectional;
 
     // Internal data structures
@@ -657,7 +656,5 @@ private:
 };
 
 } // end namespace boost
-
-#include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/rmat_graph_generator.hpp>)
 
 #endif // BOOST_GRAPH_RMAT_GENERATOR_HPP

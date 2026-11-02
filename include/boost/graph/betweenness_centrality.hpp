@@ -19,7 +19,7 @@
 #include <boost/tuple/tuple.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/type_traits/is_same.hpp>
-#include <boost/mpl/if.hpp>
+#include <type_traits>
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/named_function_params.hpp>
 #include <algorithm>
@@ -116,7 +116,8 @@ namespace detail
          * using the Dijkstra visitor for the Brandes betweenness centrality
          * algorithm.
          */
-        template < typename WeightMap > struct brandes_dijkstra_shortest_paths
+        template < typename WeightMap >
+        struct brandes_dijkstra_shortest_paths
         {
             brandes_dijkstra_shortest_paths(WeightMap weight_map)
             : weight_map(weight_map)
@@ -362,7 +363,7 @@ namespace detail
                             dependency_type;
 
                     for (incoming_iterator vw = incoming[w].begin();
-                         vw != incoming[w].end(); ++vw)
+                        vw != incoming[w].end(); ++vw)
                     {
                         vertex_descriptor v = source(*vw, g);
                         dependency_type factor
@@ -451,7 +452,7 @@ namespace detail
                 degree_size_type;
             typedef
                 typename graph_traits< Graph >::edge_descriptor edge_descriptor;
-            typedef typename mpl::if_c<
+            typedef typename std::conditional<
                 (is_same< CentralityMap, dummy_property_map >::value),
                 EdgeCentralityMap, CentralityMap >::type a_centrality_map;
             typedef typename property_traits< a_centrality_map >::value_type
@@ -483,7 +484,7 @@ namespace detail
                 degree_size_type;
             typedef
                 typename graph_traits< Graph >::edge_descriptor edge_descriptor;
-            typedef typename mpl::if_c<
+            typedef typename std::conditional<
                 (is_same< CentralityMap, dummy_property_map >::value),
                 EdgeCentralityMap, CentralityMap >::type a_centrality_map;
             typedef typename property_traits< a_centrality_map >::value_type
@@ -533,15 +534,16 @@ namespace detail
             }
         };
 
-        template < typename T > struct is_bgl_named_params
+        template < typename T >
+        struct is_bgl_named_params
         {
-            BOOST_STATIC_CONSTANT(bool, value = false);
+            static constexpr bool value = false;
         };
 
         template < typename Param, typename Tag, typename Rest >
         struct is_bgl_named_params< bgl_named_params< Param, Tag, Rest > >
         {
-            BOOST_STATIC_CONSTANT(bool, value = true);
+            static constexpr bool value = true;
         };
 
     }

@@ -36,6 +36,6 @@ users).
 | xref:about/publications.adoc[Publications]
 | Academic papers about BGL itself and its design.
 
-| xref:about/users.adoc[BGL Users]
+| xref:users.adoc[Our Users]
 | Real-world projects and research groups that use Boost.Graph.
 |===

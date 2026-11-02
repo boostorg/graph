@@ -23,9 +23,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/type_traits.hpp>
 #include <boost/limits.hpp>
-#include <boost/mpl/and.hpp>
-#include <boost/mpl/not.hpp>
-#include <boost/mpl/if.hpp>
+#include <type_traits>
 
 namespace boost
 {
@@ -150,15 +148,15 @@ namespace detail
     template < typename G, typename R, typename T >
     struct property_kind_from_graph< G, R T::* >
     {
-        typedef typename boost::mpl::if_<
-            boost::is_base_of< T, typename vertex_bundle_type< G >::type >,
+        typedef typename std::conditional<
+            boost::is_base_of< T, typename vertex_bundle_type< G >::type >::value,
             vertex_property_tag,
-            typename boost::mpl::if_<
-                boost::is_base_of< T, typename edge_bundle_type< G >::type >,
+            typename std::conditional<
+                boost::is_base_of< T, typename edge_bundle_type< G >::type >::value,
                 edge_property_tag,
-                typename boost::mpl::if_<
+                typename std::conditional<
                     boost::is_base_of< T,
-                        typename graph_bundle_type< G >::type >,
+                        typename graph_bundle_type< G >::type >::value,
                     graph_property_tag, void >::type >::type >::type type;
     };
 #endif
@@ -232,9 +230,9 @@ namespace detail
 
 template < class Graph, class Property, class Enable = void >
 struct property_map
-: mpl::if_< is_same< typename detail::property_kind_from_graph< Graph,
-                         Property >::type,
-                edge_property_tag >,
+: std::conditional< is_same< typename detail::property_kind_from_graph< Graph,
+                        Property >::type,
+                        edge_property_tag >::value,
       detail::edge_property_map< Graph, Property >,
       detail::vertex_property_map< Graph, Property > >::type
 {
@@ -292,7 +290,6 @@ inline degree_property_map< Graph > make_degree_map(const Graph& g)
 // Kevin Vanhorn. (see also the property map generating functions
 // in boost/property_map/property_map.hpp)
 
-#if !defined(BOOST_NO_STD_ITERATOR_TRAITS)
 // A helper function for creating a vertex property map out of a
 // random access iterator and the internal vertex index map from a
 // graph.
@@ -317,7 +314,6 @@ make_iterator_vertex_map(RandomAccessIterator iter)
 {
     return make_iterator_property_map(iter, identity_property_map());
 }
-#endif
 
 template < class PropertyGraph, class RandomAccessContainer >
 inline iterator_property_map< typename RandomAccessContainer::iterator,

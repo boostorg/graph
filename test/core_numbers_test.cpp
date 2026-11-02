@@ -8,6 +8,10 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/core_numbers.hpp>
 #include <boost/property_map/property_map.hpp>
+#include <boost/core/lightweight_test.hpp>
+
+#include <cstddef>
+#include <functional>
 #include <stdio.h>
 
 using namespace boost;
@@ -140,6 +144,43 @@ int test_3()
     return 0;
 }
 
+// state in a plain data member, so it survives only through std::ref
+struct examine_tally : boost::core_numbers_visitor<>
+{
+    template < typename Vertex, typename Graph >
+    void examine_vertex(Vertex, Graph&)
+    {
+        ++count;
+    }
+    std::size_t count = 0;
+};
+
+void test_stateful_visitor_with_ref()
+{
+    using graph_t
+        = boost::adjacency_list< boost::vecS, boost::vecS, boost::undirectedS >;
+
+    // a triangle with a pendant vertex, every vertex is examined once
+    graph_t g(4);
+    boost::add_edge(0, 1, g);
+    boost::add_edge(1, 2, g);
+    boost::add_edge(2, 0, g);
+    boost::add_edge(2, 3, g);
+
+    std::vector< int > core(boost::num_vertices(g));
+    auto core_map = boost::make_iterator_property_map(
+        core.begin(), boost::get(boost::vertex_index, g));
+
+    examine_tally tracked;
+    boost::core_numbers(g, core_map, std::ref(tracked));
+    BOOST_TEST_EQ(tracked.count, boost::num_vertices(g));
+
+    // by value the caller's visitor is left untouched
+    examine_tally copied;
+    boost::core_numbers(g, core_map, copied);
+    BOOST_TEST_EQ(copied.count, static_cast< std::size_t >(0));
+}
+
 int main(int, char**)
 {
     int nfail = 0, ntotal = 0;
@@ -190,5 +231,7 @@ int main(int, char**)
     printf("Total tests  : %3i\n", ntotal);
     printf("Total failed : %3i\n", nfail);
 
-    return nfail != 0;
+    test_stateful_visitor_with_ref();
+
+    return (boost::report_errors() != 0) || (nfail != 0);
 }

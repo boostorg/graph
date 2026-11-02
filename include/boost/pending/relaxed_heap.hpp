@@ -86,7 +86,7 @@ private:
          */
         group_key_kind kind;
 
-        /// The parent of this group. Will only be NULL for the dummy root group
+        /// The parent of this group. Will only be nullptr for the dummy root group
         group* parent;
 
         /// The rank of this group. Equivalent to the number of children in

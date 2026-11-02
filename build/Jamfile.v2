@@ -4,7 +4,8 @@
 # (See accompanying file LICENSE_1_0.txt or copy at
 # http://www.boost.org/LICENSE_1_0.txt)
 
-import mpi ;
+import-search /boost/config/checks ;
+import config : requires ;
 
 constant boost_dependencies_private :
     /boost/regex//boost_regex
@@ -12,7 +13,7 @@ constant boost_dependencies_private :
 
 project
     : common-requirements <include>../include <library>$(boost_dependencies)
-    : requirements <include>../src <library>$(boost_dependencies_private)
+    : requirements <include>../src <library>$(boost_dependencies_private) [ requires cxx14_variable_templates ]
     : source-location ../src
     : usage-requirements <define>BOOST_GRAPH_NO_LIB=1
     ;
@@ -23,10 +24,4 @@ lib boost_graph
     graphml.cpp
     :
     <link>shared:<define>BOOST_GRAPH_DYN_LINK=1
-    # Without these flags, MSVC 7.1 and 8.0 crash
-    # User reports that VC++ 8.0 does not fail anymore, so that is removed
-    <toolset>msvc-7.1:<cxxflags>-GR-
-    <toolset>sun:<build>no
-    :
-    :
     ;

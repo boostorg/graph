@@ -197,7 +197,7 @@ finish vertex u
 
 | OUT
 | `visitor(DijkstraVisitor v)`
-| Use this to specify actions that you would like to happen during certain event points within the algorithm. The type `DijkstraVisitor` must be a model of the xref:visitors/DijkstraVisitor.adoc[Dijkstra Visitor] concept. The visitor object is passed by value. Default: `dijkstra_visitor<null_visitor>`
+| Use this to specify actions that you would like to happen during certain event points within the algorithm. The type `DijkstraVisitor` must be a model of the xref:visitors/DijkstraVisitor.adoc[Dijkstra Visitor] concept. The visitor is taken by value, so the algorithm works on a copy. To keep state, give the visitor ordinary data members and pass it with `std::ref`. The algorithm then operates on the referenced object and its state survives the call. Default: `dijkstra_visitor<null_visitor>`
 |===
 
 == Complexity

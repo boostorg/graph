@@ -2,6 +2,7 @@
 // Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
 // Copyright 2004 The Trustees of Indiana University
 // Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek
+// Copyright (c) 2026 Arnaud Becheler
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -15,10 +16,7 @@
 #include <boost/tuple/tuple.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/limits.hpp>
-
-#ifdef BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS
 #include <iterator>
-#endif
 
 /* This algorithm is to find coloring of a graph
 
@@ -50,6 +48,10 @@ typename property_traits< ColorMap >::value_type sequential_vertex_coloring(
     size_type max_color = 0;
     const size_type V = num_vertices(G);
 
+    // The order only covers vertices(G), which filtered_graph leaves shorter than num_vertices(G).
+    const auto vertex_range = vertices(G);
+    const size_type n = static_cast< size_type >(std::distance(vertex_range.first, vertex_range.second));
+
     // We need to keep track of which colors are used by
     // adjacent vertices. We do this by marking the colors
     // that are used. The mark array contains the mark
@@ -66,7 +68,7 @@ typename property_traits< ColorMap >::value_type sequential_vertex_coloring(
         put(color, *v, V - 1);
 
     // Determine the color for every vertex one by one
-    for (size_type i = 0; i < V; i++)
+    for (size_type i = 0; i < n; i++)
     {
         Vertex current = get(order, i);
         typename GraphTraits::adjacency_iterator v, vend;

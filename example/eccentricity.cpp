@@ -48,7 +48,7 @@ using EccentricityProperty = boost::exterior_vertex_property< Graph, int >;
 using EccentricityContainer = EccentricityProperty::container_type;
 using EccentricityMap = EccentricityProperty::map_type;
 
-int main(int argc, char* argv[])
+int main()
 {
     // Create the graph and a name map that provides access to
     // then actor names.

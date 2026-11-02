@@ -66,4 +66,4 @@ with `get(edge_index, g)` as the edge index and `num_edges(g)`
 as the next available index. When `visit_vertex_pair(u, v, g)`
 is called, the `edge_index_update_visitor` will add the edge
 _(u,v)_ to the graph and update the edge index for the newly created
-edge.
+edge. When the same `edge_index_update_visitor` is shared across several calls, pass it with `std::ref` so its counter carries over from one call to the next.

@@ -15,13 +15,13 @@
 #ifndef BOOST_GRAPH_DETAIL_IS_DISTRIBUTED_SELECTOR_HPP
 #define BOOST_GRAPH_DETAIL_IS_DISTRIBUTED_SELECTOR_HPP
 
-#include <boost/mpl/bool.hpp>
+#include <type_traits>
 
 namespace boost
 {
 namespace detail
 {
-    template < typename > struct is_distributed_selector : boost::mpl::false_
+    template < typename > struct is_distributed_selector : std::false_type
     {
     };
 }

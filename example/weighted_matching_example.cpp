@@ -20,7 +20,7 @@ using EdgeProperty
 using my_graph
     = adjacency_list< vecS, vecS, undirectedS, no_property, EdgeProperty >;
 
-int main(int argc, const char* argv[])
+int main()
 {
     graph_traits< my_graph >::vertex_iterator vi, vi_end;
     const int n_vertices = 18;

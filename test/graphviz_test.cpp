@@ -30,10 +30,10 @@ typedef std::map< edge_t, Weight > expected_weights_t;
 
 struct Fixture
 {
-    std::string graphviz_text;
-    size_t correct_num_vertices;
-    expected_masses_t masses;
-    expected_weights_t weights;
+    std::string graphviz_text = {};
+    size_t correct_num_vertices = 0;
+    expected_masses_t masses = {};
+    expected_weights_t weights = {};
 };
 
 namespace Samples

@@ -20,7 +20,64 @@ include::example$algorithms/utility/neighbor_bfs.cpp[]
 include::example$algorithms/utility/neighbor_bfs.txt[]
 ----
 
-=== (1) neighbor_breadth_first_search (named parameter version)
+=== (1) neighbor_breadth_first_search (positional version)
+
+[source,cpp]
+----
+template <class VertexListGraph, class Buffer, class NeighborBFSVisitor,
+          class ColorMap>
+void neighbor_breadth_first_search(
+    const VertexListGraph& g,
+    typename graph_traits<VertexListGraph>::vertex_descriptor s,
+    Buffer& Q, NeighborBFSVisitor vis, ColorMap color);
+----
+
+Paints every vertex white, invokes `initialize_vertex` on each, then runs the search from `s`. The caller owns the queue and the color map.
+
+[cols="1,2,5"]
+|===
+| Direction | Parameter | Description
+
+| IN
+| `const VertexListGraph& g`
+| Must model xref:concepts/BidirectionalGraph.adoc[Bidirectional Graph] and xref:concepts/VertexListGraph.adoc[Vertex List Graph].
+
+| IN
+| `vertex_descriptor s`
+| Source vertex for the search.
+
+| UTIL
+| `Buffer& Q`
+| The queue holding the discovered vertices, typically a `boost::queue<vertex_descriptor>`.
+
+| IN
+| `NeighborBFSVisitor vis`
+| Invoked at the event points listed under <<visitor-event-points,Visitor Event Points>>. Must model `NeighborBFSVisitorConcept`. The visitor is taken by value, so the algorithm works on a copy. To keep state, give the visitor ordinary data members and pass it with `std::ref`. The algorithm then operates on the referenced object and its state survives the call.
+
+| UTIL/OUT
+| `ColorMap color`
+| Tracks progress through the graph. The type `ColorMap` must be a model of link:../../property_map/doc/ReadWritePropertyMap.html[Read/Write Property Map], its key type must be the graph's vertex descriptor type and its value type must model xref:concepts/property_types/ColorValue.adoc[ColorValue].
+|===
+
+'''
+
+=== (2) neighbor_breadth_first_visit (positional version)
+
+[source,cpp]
+----
+template <class BidirectionalGraph, class Buffer, class NeighborBFSVisitor,
+          class ColorMap>
+void neighbor_breadth_first_visit(
+    const BidirectionalGraph& g,
+    typename graph_traits<BidirectionalGraph>::vertex_descriptor s,
+    Buffer& Q, NeighborBFSVisitor vis, ColorMap color);
+----
+
+Same as (1) but does *not* initialize the color map, so the caller must pre-populate it.
+
+'''
+
+=== (3) neighbor_breadth_first_search (named parameter version)
 
 [source,cpp]
 ----
@@ -52,7 +109,7 @@ Initializes the color map to white, then runs the search from `s`.
 
 '''
 
-=== (2) neighbor_breadth_first_visit (named parameter version)
+=== (4) neighbor_breadth_first_visit (named parameter version)
 
 [source,cpp]
 ----
@@ -63,11 +120,11 @@ void neighbor_breadth_first_visit(
     const bgl_named_params<P, T, R>& params);
 ----
 
-Same as (1) but does *not* initialize the color map — the caller must pre-populate it. Only requires xref:concepts/IncidenceGraph.adoc[Incidence Graph] (plus whatever the visitor events require) because no vertex enumeration is needed.
+Same as (3) but does *not* initialize the color map — the caller must pre-populate it. Only requires xref:concepts/IncidenceGraph.adoc[Incidence Graph] (plus whatever the visitor events require) because no vertex enumeration is needed.
 
 '''
 
-=== (3) neighbor_bfs_visitor
+=== (5) neighbor_bfs_visitor
 
 [source,cpp]
 ----
@@ -80,6 +137,7 @@ neighbor_bfs_visitor<Visitors> make_neighbor_bfs_visitor(Visitors vis);
 
 Visitor adapter that models `NeighborBFSVisitorConcept`. In addition to the standard BFS event points (`discover_vertex`, `examine_vertex`, `examine_out_edge`, `tree_out_edge`, etc.) it also dispatches `examine_in_edge` and `tree_in_edge` events for the incoming edges of each vertex. Use `make_neighbor_bfs_visitor(...)` to construct one from a user-supplied visitor (or event-visitor list).
 
+[#visitor-event-points]
 == Visitor Event Points
 
 The following members of the visitor (modelling `NeighborBFSVisitorConcept`) are called during traversal:

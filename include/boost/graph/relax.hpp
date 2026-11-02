@@ -10,6 +10,7 @@
 #define BOOST_GRAPH_RELAX_HPP
 
 #include <functional>
+#include <type_traits>
 #include <boost/limits.hpp> // for numeric limits
 #include <boost/graph/graph_traits.hpp>
 #include <boost/property_map/property_map.hpp>
@@ -29,11 +30,30 @@ template < class T > struct closed_plus
 
     T operator()(const T& a, const T& b) const
     {
-        using namespace std;
         if (a == inf)
             return inf;
         if (b == inf)
             return inf;
+        return add(a, b, ::std::is_integral< T >());
+    }
+
+private:
+    T add(const T& a, const T& b, ::std::false_type) const
+    {
+        return a + b;
+    }
+
+    // Saturate at the type's limits, not at inf, to avoid signed overflow.
+    T add(const T& a, const T& b, ::std::true_type) const
+    {
+        if (b > static_cast< T >(0) && a > (::std::numeric_limits< T >::max)() - b)
+        {
+            return inf;
+        }
+        if (b < static_cast< T >(0) && a < (::std::numeric_limits< T >::lowest)() - b)
+        {
+            return (::std::numeric_limits< T >::lowest)();
+        }
         return a + b;
     }
 };

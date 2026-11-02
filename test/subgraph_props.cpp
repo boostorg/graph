@@ -124,7 +124,7 @@ struct TestBundles
     }
 };
 
-int main(int argc, char* argv[])
+int main()
 {
     TestProps::run();
     TestBundles::run();

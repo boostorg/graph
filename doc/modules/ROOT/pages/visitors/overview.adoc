@@ -7,7 +7,9 @@ whose methods get called at these event points. This lets you inject custom
 logic into an algorithm without modifying or rewriting it.
 
 WARNING: Visitors are passed by value. If your visitor holds state (a counter,
-a reference to a container), the algorithm operates on a copy. Hold state by
+a reference to a container), the algorithm operates on a copy. The depth-first,
+breadth-first and maximum adjacency searches take the visitor wrapped in
+`std::ref`, which leaves the state on your own object. Elsewhere, hold state by
 pointer or reference if you need to read it after the algorithm returns.
 
 == Quick start: pre-built event visitors

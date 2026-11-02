@@ -1,0 +1,2 @@
+Graph ID: miles(100,0,0,0,0,10,0)
+Minimum spanning tree length: 14467

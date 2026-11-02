@@ -8,7 +8,7 @@
 # Contact details: CONTRIBUTING.md#maintainers
 
 # Default reviewers for everything
-*                       @jeremy-murphy @becheler
+*                       @becheler
 
 # Documentation, contributor-facing files, and CI configuration
 /doc/                   @becheler

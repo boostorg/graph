@@ -19,7 +19,7 @@
 
 using namespace boost;
 
-int main(int argc, char** argv)
+int main()
 {
 
     using graph = adjacency_list< vecS, vecS, undirectedS,
@@ -68,7 +68,7 @@ int main(int argc, char** argv)
               << biconnected_components(g, component)
               << " biconnected components" << std::endl;
 
-    make_biconnected_planar(g, &embedding[0]);
+    boost::graph::make_biconnected_planar(g, &embedding[0]);
 
     // Re-initialize the edge index, since we just added a few edges
     edge_count = 0;

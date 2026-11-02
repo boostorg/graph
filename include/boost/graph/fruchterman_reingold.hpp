@@ -14,7 +14,6 @@
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/graph/topology.hpp> // For topology concepts
-#include <boost/graph/detail/mpi_include.hpp>
 #include <vector>
 #include <list>
 #include <algorithm> // for std::min and std::max
@@ -454,7 +453,5 @@ void fruchterman_reingold_force_directed_layout(
 }
 
 } // end namespace boost
-
-#include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/fruchterman_reingold.hpp>)
 
 #endif // BOOST_GRAPH_FRUCHTERMAN_REINGOLD_FORCE_DIRECTED_LAYOUT_HPP

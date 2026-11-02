@@ -29,6 +29,10 @@ local needs-graph-lib =
     algorithms/isomorphism/isomorphism.cpp
     ;
 
+local needs-sgb-lib =
+    extending/sgb_miles_span.cpp
+    ;
+
 # Capture stdout of the input executable into the output file.
 actions snapshot
 {
@@ -48,6 +52,10 @@ for local cpp in $(examples)
     if $(rel) in $(needs-graph-lib)
     {
         libs = <library>/boost/graph//boost_graph ;
+    }
+    if $(rel) in $(needs-sgb-lib)
+    {
+        libs = <linkflags>-lgb ;
     }
 
     exe $(name) : $(cpp) : $(libs) ;

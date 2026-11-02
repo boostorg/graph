@@ -19,15 +19,13 @@
 #include <boost/pending/queue.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_concepts.hpp>
+#include <boost/graph/detail/visitor_wrapper.hpp>
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/overloading.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/two_bit_color_map.hpp>
-#include <boost/graph/detail/mpi_include.hpp>
 #include <boost/concept/assert.hpp>
-
-#include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/concepts.hpp>)
 
 namespace boost
 {
@@ -62,47 +60,50 @@ void breadth_first_visit(const IncidenceGraph& g, SourceIterator sources_begin,
     BOOST_CONCEPT_ASSERT((IncidenceGraphConcept< IncidenceGraph >));
     typedef graph_traits< IncidenceGraph > GTraits;
     typedef typename GTraits::vertex_descriptor Vertex;
-    BOOST_CONCEPT_ASSERT((BFSVisitorConcept< BFSVisitor, IncidenceGraph >));
+    using visitor_type = ::boost::graph::detail::unwrap_visitor_t< BFSVisitor >;
+    BOOST_CONCEPT_ASSERT((BFSVisitorConcept< visitor_type, IncidenceGraph >));
     BOOST_CONCEPT_ASSERT((ReadWritePropertyMapConcept< ColorMap, Vertex >));
     typedef typename property_traits< ColorMap >::value_type ColorValue;
     typedef color_traits< ColorValue > Color;
     typename GTraits::out_edge_iterator ei, ei_end;
 
+    auto& vis_ref = ::boost::graph::detail::deref_visitor(vis);
+
     for (; sources_begin != sources_end; ++sources_begin)
     {
         Vertex s = *sources_begin;
         put(color, s, Color::gray());
-        vis.discover_vertex(s, g);
+        vis_ref.discover_vertex(s, g);
         Q.push(s);
     }
     while (!Q.empty())
     {
         Vertex u = Q.top();
         Q.pop();
-        vis.examine_vertex(u, g);
+        vis_ref.examine_vertex(u, g);
         for (boost::tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei)
         {
             Vertex v = target(*ei, g);
-            vis.examine_edge(*ei, g);
+            vis_ref.examine_edge(*ei, g);
             ColorValue v_color = get(color, v);
             if (v_color == Color::white())
             {
-                vis.tree_edge(*ei, g);
+                vis_ref.tree_edge(*ei, g);
                 put(color, v, Color::gray());
-                vis.discover_vertex(v, g);
+                vis_ref.discover_vertex(v, g);
                 Q.push(v);
             }
             else
             {
-                vis.non_tree_edge(*ei, g);
+                vis_ref.non_tree_edge(*ei, g);
                 if (v_color == Color::gray())
-                    vis.gray_target(*ei, g);
+                    vis_ref.gray_target(*ei, g);
                 else
-                    vis.black_target(*ei, g);
+                    vis_ref.black_target(*ei, g);
             }
         } // end for
         put(color, u, Color::black());
-        vis.finish_vertex(u, g);
+        vis_ref.finish_vertex(u, g);
     } // end while
 } // breadth_first_visit
 
@@ -128,11 +129,13 @@ void breadth_first_search(const VertexListGraph& g,
     typedef typename property_traits< ColorMap >::value_type ColorValue;
     typedef color_traits< ColorValue > Color;
     typename boost::graph_traits< VertexListGraph >::vertex_iterator i, i_end;
+    auto& vis_ref = ::boost::graph::detail::deref_visitor(vis);
     for (boost::tie(i, i_end) = vertices(g); i != i_end; ++i)
     {
-        vis.initialize_vertex(*i, g);
+        vis_ref.initialize_vertex(*i, g);
         put(color, *i, Color::white());
     }
+    // breadth_first_visit takes the visitor by value, pass vis not vis_ref
     breadth_first_visit(g, sources_begin, sources_end, Q, vis, color);
 }
 
@@ -224,16 +227,6 @@ public:
         return graph::bfs_visitor_event_not_overridden();
     }
 
-    BOOST_GRAPH_EVENT_STUB(on_initialize_vertex, bfs)
-    BOOST_GRAPH_EVENT_STUB(on_discover_vertex, bfs)
-    BOOST_GRAPH_EVENT_STUB(on_examine_vertex, bfs)
-    BOOST_GRAPH_EVENT_STUB(on_examine_edge, bfs)
-    BOOST_GRAPH_EVENT_STUB(on_tree_edge, bfs)
-    BOOST_GRAPH_EVENT_STUB(on_non_tree_edge, bfs)
-    BOOST_GRAPH_EVENT_STUB(on_gray_target, bfs)
-    BOOST_GRAPH_EVENT_STUB(on_black_target, bfs)
-    BOOST_GRAPH_EVENT_STUB(on_finish_vertex, bfs)
-
 protected:
     Visitors m_vis;
 };
@@ -264,15 +257,6 @@ namespace detail
                 .get(),
             vis, color);
     }
-
-#ifdef BOOST_GRAPH_USE_MPI
-    template < class DistributedGraph, class ColorMap, class BFSVisitor,
-        class P, class T, class R >
-    void bfs_helper(DistributedGraph& g,
-        typename graph_traits< DistributedGraph >::vertex_descriptor s,
-        ColorMap color, BFSVisitor vis,
-        const bgl_named_params< P, T, R >& params, boost::mpl::true_);
-#endif // BOOST_GRAPH_USE_MPI
 
     //-------------------------------------------------------------------------
     // Choose between default color and color parameters. Using
@@ -402,7 +386,5 @@ namespace graph
 #endif
 
 } // namespace boost
-
-#include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/breadth_first_search.hpp>)
 
 #endif // BOOST_GRAPH_BREADTH_FIRST_SEARCH_HPP

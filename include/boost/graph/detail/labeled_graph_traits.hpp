@@ -9,6 +9,8 @@
 
 #include <boost/graph/graph_mutability_traits.hpp>
 
+#include <type_traits>
+
 namespace boost
 {
 
@@ -84,7 +86,7 @@ struct labeled_add_only_property_graph_tag
 
 template < typename Graph >
 struct graph_has_add_vertex_by_label
-: mpl::bool_<
+: std::integral_constant< bool,
       is_convertible< typename graph_mutability_traits< Graph >::category,
           labeled_add_vertex_tag >::value >
 {
@@ -92,7 +94,7 @@ struct graph_has_add_vertex_by_label
 
 template < typename Graph >
 struct graph_has_add_vertex_by_label_with_property
-: mpl::bool_<
+: std::integral_constant< bool,
       is_convertible< typename graph_mutability_traits< Graph >::category,
           labeled_add_vertex_property_tag >::value >
 {
@@ -100,7 +102,7 @@ struct graph_has_add_vertex_by_label_with_property
 
 template < typename Graph >
 struct graph_has_remove_vertex_by_label
-: mpl::bool_<
+: std::integral_constant< bool,
       is_convertible< typename graph_mutability_traits< Graph >::category,
           labeled_remove_vertex_tag >::value >
 {
@@ -108,7 +110,7 @@ struct graph_has_remove_vertex_by_label
 
 template < typename Graph >
 struct graph_has_add_edge_by_label
-: mpl::bool_<
+: std::integral_constant< bool,
       is_convertible< typename graph_mutability_traits< Graph >::category,
           labeled_add_edge_tag >::value >
 {
@@ -116,7 +118,7 @@ struct graph_has_add_edge_by_label
 
 template < typename Graph >
 struct graph_has_add_edge_by_label_with_property
-: mpl::bool_<
+: std::integral_constant< bool,
       is_convertible< typename graph_mutability_traits< Graph >::category,
           labeled_add_edge_property_tag >::value >
 {
@@ -124,7 +126,7 @@ struct graph_has_add_edge_by_label_with_property
 
 template < typename Graph >
 struct graph_has_remove_edge_by_label
-: mpl::bool_<
+: std::integral_constant< bool,
       is_convertible< typename graph_mutability_traits< Graph >::category,
           labeled_remove_edge_tag >::value >
 {
@@ -132,49 +134,55 @@ struct graph_has_remove_edge_by_label
 
 template < typename Graph >
 struct is_labeled_mutable_vertex_graph
-: mpl::and_< graph_has_add_vertex_by_label< Graph >,
-      graph_has_remove_vertex_by_label< Graph > >
+: std::integral_constant< bool,
+      graph_has_add_vertex_by_label< Graph >::value
+          && graph_has_remove_vertex_by_label< Graph >::value >
 {
 };
 
 template < typename Graph >
 struct is_labeled_mutable_vertex_property_graph
-: mpl::and_< graph_has_add_vertex_by_label< Graph >,
-      graph_has_remove_vertex_by_label< Graph > >
+: std::integral_constant< bool,
+      graph_has_add_vertex_by_label< Graph >::value
+          && graph_has_remove_vertex_by_label< Graph >::value >
 {
 };
 
 template < typename Graph >
 struct is_labeled_mutable_edge_graph
-: mpl::and_< graph_has_add_edge_by_label< Graph >,
-      graph_has_remove_edge_by_label< Graph > >
+: std::integral_constant< bool,
+      graph_has_add_edge_by_label< Graph >::value
+          && graph_has_remove_edge_by_label< Graph >::value >
 {
 };
 
 template < typename Graph >
 struct is_labeled_mutable_edge_property_graph
-: mpl::and_< graph_has_add_edge_by_label< Graph >,
-      graph_has_remove_edge_by_label< Graph > >
+: std::integral_constant< bool,
+      graph_has_add_edge_by_label< Graph >::value
+          && graph_has_remove_edge_by_label< Graph >::value >
 {
 };
 
 template < typename Graph >
 struct is_labeled_mutable_graph
-: mpl::and_< is_labeled_mutable_vertex_graph< Graph >,
-      is_labeled_mutable_edge_graph< Graph > >
+: std::integral_constant< bool,
+      is_labeled_mutable_vertex_graph< Graph >::value
+          && is_labeled_mutable_edge_graph< Graph >::value >
 {
 };
 
 template < typename Graph >
 struct is_labeled_mutable_property_graph
-: mpl::and_< is_labeled_mutable_vertex_property_graph< Graph >,
-      is_labeled_mutable_edge_property_graph< Graph > >
+: std::integral_constant< bool,
+      is_labeled_mutable_vertex_property_graph< Graph >::value
+          && is_labeled_mutable_edge_property_graph< Graph >::value >
 {
 };
 
 template < typename Graph >
 struct is_labeled_add_only_property_graph
-: mpl::bool_<
+: std::integral_constant< bool,
       is_convertible< typename graph_mutability_traits< Graph >::category,
           labeled_add_only_property_graph_tag >::value >
 {
@@ -182,7 +190,7 @@ struct is_labeled_add_only_property_graph
 
 template < typename Graph >
 struct is_labeled_graph
-: mpl::bool_<
+: std::integral_constant< bool,
       is_convertible< typename graph_mutability_traits< Graph >::category,
           label_vertex_tag >::value >
 {
@@ -197,13 +205,15 @@ namespace graph_detail
     // graph_mutability_traits specialization below.
     template < typename Graph > struct determine_mutability
     {
-        typedef typename mpl::if_< is_add_only_property_graph< Graph >,
+        typedef typename std::conditional<
+            is_add_only_property_graph< Graph >::value,
             labeled_add_only_property_graph_tag,
-            typename mpl::if_< is_mutable_property_graph< Graph >,
+            typename std::conditional< is_mutable_property_graph< Graph >::value,
                 labeled_mutable_property_graph_tag,
-                typename mpl::if_< is_mutable_graph< Graph >,
+                typename std::conditional< is_mutable_graph< Graph >::value,
                     labeled_mutable_graph_tag,
-                    typename mpl::if_< is_mutable_edge_graph< Graph >,
+                    typename std::conditional<
+                        is_mutable_edge_graph< Graph >::value,
                         labeled_graph_tag,
                         typename graph_mutability_traits< Graph >::category >::
                         type >::type >::type >::type type;

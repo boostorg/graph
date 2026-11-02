@@ -20,6 +20,78 @@ B: 2147483647 B
 #include <boost/cstdlib.hpp>
 #include <boost/core/lightweight_test.hpp>
 
+#include <cstddef>
+#include <functional>
+#include <limits>
+#include <vector>
+
+// state in a plain data member, so it survives only through std::ref
+struct relaxed_tally : boost::bellman_visitor<>
+{
+    template < class Edge, class Graph > void edge_relaxed(Edge, Graph&)
+    {
+        ++count;
+    }
+    std::size_t count = 0;
+};
+
+void test_stateful_visitor_with_ref()
+{
+    using graph_t = boost::adjacency_list< boost::vecS, boost::vecS,
+        boost::directedS, boost::no_property,
+        boost::property< boost::edge_weight_t, int > >;
+    graph_t g(3);
+    boost::add_edge(0, 1, 1, g);
+    boost::add_edge(1, 2, 1, g);
+
+    // bellman_ford does not initialise, the caller seeds the distances
+    std::vector< std::size_t > parent(boost::num_vertices(g));
+    for (std::size_t i = 0; i < parent.size(); ++i)
+        parent[i] = i;
+    std::vector< int > distance(
+        boost::num_vertices(g), (std::numeric_limits< int >::max)());
+    distance[0] = 0;
+
+    auto index_map = boost::get(boost::vertex_index, g);
+    auto parent_map
+        = boost::make_iterator_property_map(parent.begin(), index_map);
+    auto distance_map
+        = boost::make_iterator_property_map(distance.begin(), index_map);
+
+    relaxed_tally tracked;
+    BOOST_TEST(boost::bellman_ford_shortest_paths(g,
+        static_cast< int >(boost::num_vertices(g)),
+        boost::get(boost::edge_weight, g), parent_map, distance_map,
+        boost::closed_plus< int >(), std::less< int >(), std::ref(tracked)));
+    BOOST_TEST(tracked.count > 0u);
+    BOOST_TEST_EQ(distance[2], 2);
+
+    // by value the caller's visitor is left untouched
+    relaxed_tally copied;
+    BOOST_TEST(boost::bellman_ford_shortest_paths(g,
+        static_cast< int >(boost::num_vertices(g)),
+        boost::get(boost::edge_weight, g), parent_map, distance_map,
+        boost::closed_plus< int >(), std::less< int >(), copied));
+    BOOST_TEST_EQ(copied.count, static_cast< std::size_t >(0));
+}
+
+// closed_plus saturates instead of overflowing on integral weights
+void test_closed_plus_saturates()
+{
+    auto const max_int = (::std::numeric_limits< int >::max)();
+    auto const lowest_int = (::std::numeric_limits< int >::lowest)();
+    ::boost::closed_plus< int > combine;
+    BOOST_TEST_EQ(combine(max_int - 1, 2), max_int);
+    BOOST_TEST_EQ(combine(lowest_int + 1, -2), lowest_int);
+    BOOST_TEST_EQ(combine(3, -5), -2);
+    BOOST_TEST_EQ(combine(max_int, -5), max_int);
+    BOOST_TEST_EQ(combine(-5, max_int), max_int);
+
+    auto const max_unsigned = (::std::numeric_limits< unsigned >::max)();
+    ::boost::closed_plus< unsigned > combine_unsigned;
+    BOOST_TEST_EQ(combine_unsigned(max_unsigned - 1u, 2u), max_unsigned);
+}
+
 int main(int, char*[])
 {
     using namespace boost;
@@ -119,6 +191,9 @@ int main(int, char*[])
         BOOST_TEST(distance == distance2);
     }
 #endif
+
+    test_stateful_visitor_with_ref();
+    test_closed_plus_saturates();
 
     return boost::report_errors();
 }

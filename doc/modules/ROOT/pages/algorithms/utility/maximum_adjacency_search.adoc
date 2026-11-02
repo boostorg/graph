@@ -6,28 +6,40 @@ Traverses vertices of an undirected graph, always visiting next the vertex with 
 *Complexity:* _O(E + V)_ +
 *Defined in:* `<boost/graph/maximum_adjacency_search.hpp>`
 
-== Example
+== Description
+
+The `maximum_adjacency_search()` function performs a traversal of the
+vertices in an undirected graph. The next vertex visited is the vertex
+that has the most visited neighbors at any time. In the case of an
+unweighted, undirected graph, the number of visited neighbors of the very
+last vertex visited in the graph is also the number of edge-disjoint
+paths between that vertex and the next-to-last vertex visited. These can
+be retrieved from a visitor, an example of which is in the test harness
+mas_test.cpp.
+
+The `maximum_adjacency_search()` function invokes user-defined actions at
+certain event-points within the algorithm. This provides a mechanism for
+adapting the generic MAS algorithm to the many situations in which it can
+be used. In the pseudo-code below, the event points for MAS are the
+labels on the right. The user-defined actions must be provided in the
+form of a visitor object, that is, an object whose type meets the
+requirements for the <<mas-visitor-concept,MAS Visitor concept>>.
+
+== Overloads
+
+=== (1) Fully Positional
 
 [source,cpp]
 ----
-include::example$algorithms/utility/maximum_adjacency_search.cpp[]
-----
-
-[,text]
-----
-include::example$algorithms/utility/maximum_adjacency_search.txt[]
-----
-
-'''
-
-=== (1) Positional version
-
-[source,cpp]
-----
-template <class Graph, class WeightMap, class MASVisitor>
+namespace boost::graph {
+template <class Graph, class WeightMap, class MASVisitor, class KeyedUpdatablePriorityQueue>
 void maximum_adjacency_search(
-    const Graph& g, WeightMap weights, MASVisitor vis,
-    const typename graph_traits<Graph>::vertex_descriptor start);
+    const Graph& g,
+    WeightMap weights,
+    MASVisitor vis,
+    typename graph_traits<Graph>::vertex_descriptor start,
+    KeyedUpdatablePriorityQueue pq);
+}
 ----
 
 [cols="1,2,5"]
@@ -36,7 +48,7 @@ void maximum_adjacency_search(
 
 | IN
 | `const Graph& g`
-| A connected, directed graph. The graph type must be a model of
+| A connected, undirected graph. The graph type must be a model of
   xref:concepts/IncidenceGraph.adoc[Incidence Graph] and
   xref:concepts/VertexListGraph.adoc[Vertex List Graph].
 
@@ -53,19 +65,118 @@ void maximum_adjacency_search(
 | IN
 | `MASVisitor vis`
 | A visitor object that is invoked inside the algorithm at the event-points
-  specified by the MAS Visitor concept. The visitor object is passed by
-  value <<1,[1]>>.
+  specified by the <<mas-visitor-concept,MAS Visitor concept>>. The visitor object is passed by
+  value.
 
 | IN
 | `vertex_descriptor start`
 | This specifies the vertex that the search should originate from. The type
   is the type of a vertex descriptor for the given graph.
 
+| IN
+| `KeyedUpdatablePriorityQueue pq`
+| A max priority queue keyed on the reach counts. It must be a model of
+  xref:concepts/property_types/KeyedUpdatableQueue.adoc[Keyed Updatable Queue] and a
+  max link:./UpdatableQueue.html#concept%3AUpdatablePriorityQueue[Updatable
+  Priority Queue]. The value type must be the graph's vertex descriptor and
+  the key type must be the weight type. It must be empty when passed in.
+
 |===
+
+==== Example
+
+[source,cpp]
+----
+include::example$algorithms/utility/maximum_adjacency_search.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/utility/maximum_adjacency_search.txt[]
+----
 
 '''
 
-=== (2) Named parameter version
+=== (2) Four arguments overload
+
+Building the priority queue is the cumbersome part, so this form defaults it to a
+max `d_ary_heap_indirect` keyed on the reach counts.
+
+[source,cpp]
+----
+namespace boost::graph {
+template <class Graph, class WeightMap, class MASVisitor>
+void maximum_adjacency_search(
+  const Graph& g, 
+  WeightMap weights, 
+  MASVisitor vis,
+  typename graph_traits<Graph>::vertex_descriptor start);
+}
+----
+
+==== Example
+
+[source,cpp]
+----
+include::example$algorithms/utility/maximum_adjacency_search_default_queue.cpp[]
+----
+
+[,text]
+----
+include::example$algorithms/utility/maximum_adjacency_search_default_queue.txt[]
+----
+
+'''
+
+=== (3) Three arguments overload
+
+The start vertex rarely matters, this form defaults it to `*vertices(g).first`.
+
+[source,cpp]
+----
+namespace boost::graph {
+template <class Graph, class WeightMap, class MASVisitor>
+void maximum_adjacency_search(const Graph& g, WeightMap weights, MASVisitor vis);
+}
+----
+
+'''
+
+=== (4) Six arguments overload (deprecated)
+
+[WARNING]
+====
+Deprecated: the `assignments` map is unused. Use the fully positional or
+convenience `boost::graph::maximum_adjacency_search` overloads instead. Removal
+planned for Boost 1.95.
+====
+
+[source,cpp]
+----
+namespace boost {
+template <class Graph, class WeightMap, class MASVisitor,
+          class VertexAssignmentMap, class KeyedUpdatablePriorityQueue>
+void maximum_adjacency_search(
+    const Graph& g, WeightMap weights, MASVisitor vis,
+    typename graph_traits<Graph>::vertex_descriptor start,
+    VertexAssignmentMap assignments, KeyedUpdatablePriorityQueue pq);
+}
+----
+
+Identical to the fully positional overload except for the extra
+`VertexAssignmentMap assignments` parameter, which is accepted for backward
+compatibility but never read.
+
+'''
+
+=== (5) Named parameter version (deprecated)
+
+[WARNING]
+====
+Deprecated: the named parameter interface is deprecated. Use the fully
+positional or convenience `boost::graph::maximum_adjacency_search` overloads
+instead. Removal planned for Boost 1.95.
+====
 
 [source,cpp]
 ----
@@ -81,7 +192,7 @@ void maximum_adjacency_search(
 
 | IN
 | `const Graph& g`
-| A connected, directed graph. The graph type must be a model of
+| A connected, undirected graph. The graph type must be a model of
   xref:concepts/IncidenceGraph.adoc[Incidence Graph] and
   xref:concepts/VertexListGraph.adoc[Vertex List Graph].
 
@@ -108,8 +219,8 @@ void maximum_adjacency_search(
 | IN
 | `visitor(MASVisitor vis)`
 | A visitor object that is invoked inside the algorithm at the event-points
-  specified by the MAS Visitor concept. The visitor object is passed by
-  value <<1,[1]>>. +
+  specified by the <<mas-visitor-concept,MAS Visitor concept>>. The visitor object is passed by
+  value. +
   *Default:* `mas_visitor<null_visitor>`
 
 | IN
@@ -143,7 +254,7 @@ void maximum_adjacency_search(
 | `max_priority_queue(MaxPriorityQueue& pq)`
 | `MaxPriorityQueue` must be a model of
   xref:concepts/property_types/KeyedUpdatableQueue.adoc[Keyed Updatable Queue] and a
-  max-link:./UpdatableQueue.html#concept%3AUpdatablePriorityQueue[Updatable
+  max link:./UpdatableQueue.html#concept%3AUpdatablePriorityQueue[Updatable
   Priority Queue]. The value type must be the graph's vertex descriptor and
   the key type must be the weight type. +
   *Default:* A `boost::d_ary_heap_indirect` using a default index-in-heap
@@ -175,24 +286,32 @@ void maximum_adjacency_search(
 
 |===
 
-== Description
+== Throws
 
-The `maximum_adjacency_search()` function performs a traversal of the
-vertices in an undirected graph. The next vertex visited is the vertex
-that has the most visited neighbors at any time. In the case of an
-unweighted, undirected graph, the number of visited neighbors of the very
-last vertex visited in the graph is also the number of edge-disjoint
-paths between that vertex and the next-to-last vertex visited. These can
-be retrieved from a visitor, an example of which is in the test harness
-mas_test.cpp.
+`bad_graph`:: If `num_vertices(g)` is less than 2.
+`std::invalid_argument`:: If a max-priority queue is given as an argument and it is not empty.
 
-The `maximum_adjacency_search()` function invokes user-defined actions at
-certain event-points within the algorithm. This provides a mechanism for
-adapting the generic MAS algorithm to the many situations in which it can
-be used. In the pseudo-code below, the event points for MAS are the
-labels on the right. The user-defined actions must be provided in the
-form of a visitor object, that is, an object whose type meets the
-requirements for a MAS Visitor.
+== Visitor
+
+The `maximum_adjacency_search()` function invokes user-defined actions at four
+event points during the traversal. You supply these actions through a visitor
+object whose type models the <<mas-visitor-concept,MAS Visitor concept>>.
+
+The visitor is taken by value, so the algorithm works on a copy. To keep state,
+give the visitor ordinary data members and pass it with `std::ref`. 
+The algorithm then operates on the referenced object and its
+state survives the call.
+
+[WARNING]
+====
+These symbols moved to `namespace boost::graph`. The `boost::` aliases are kept
+for backward compatibility but are deprecated. Removal planned for Boost 1.95.
+
+* `boost::mas_visitor` -> `boost::graph::mas_visitor`
+* `boost::make_mas_visitor` -> `boost::graph::make_mas_visitor`
+* `boost::default_mas_visitor` -> `boost::graph::default_mas_visitor`
+* `boost::MASVisitorConcept` -> `boost::graph::MASVisitorConcept`
+====
 
 === Pseudo-Code
 
@@ -208,10 +327,10 @@ MAS(G)
   reach_count[s] := 1
   for each unvisited vertex u in V
     call MAS-VISIT(G, u)
-    remove u from the list on unvisited vertices
+    remove u from unvisited
     for each out edge from u to t
        if t has not yet been visited
-         increment reach_count[t]
+         reach_count[t] += weight(u, t)
        end if
     end for each out edge
     call MAS-VISIT(G, u)
@@ -226,7 +345,7 @@ initialize vertex u
 .
 .
 .
-examine vertex u
+start vertex u
 .
 examine edge (u,t)
 .
@@ -238,34 +357,96 @@ finish vertex u
 ----
 |===
 
-== Returns
 
-`void`
+[#mas-visitor-concept]
+=== Visitor Concept
 
-== Throws
+The `MASVisitor` template parameter must be a model of the MAS Visitor
+concept, which defines the event points at which the algorithm invokes
+user-defined actions.
 
-`bad_graph`:: If `num_vertices(g)` is less than 2.
-`std::invalid_argument`:: If a max-priority queue is given as an argument and it is not empty.
+==== Refinement of
 
-== Visitor Event Points
+Copy Constructible (copying a visitor should be a lightweight operation).
 
-* *`vis.initialize_vertex(s, g)`* is invoked on every vertex of the
-  graph before the start of the graph search.
-* *`vis.start_vertex(s, g)`* is invoked on the source vertex once
-  before processing its out edges.
-* *`vis.examine_edge(e, g)`* is invoked on every out-edge of each
-  vertex after it is started.
-* *`vis.finish_vertex(u, g)`* is invoked on a vertex after all of its
-  out edges have been examined and the reach counts of the unvisited
-  targets have been updated.
+==== Notation
 
-== Notes
+[cols=",",]
+|===
+| `V`   | A type that is a model of MAS Visitor.
+| `vis` | An object of type `V`.
+| `G`   | A type that is a model of Graph.
+| `g`   | An object of type `G`.
+| `e`   | An object of type `boost::graph_traits<G>::edge_descriptor`.
+| `s,u` | An object of type `boost::graph_traits<G>::vertex_descriptor`.
+|===
 
-[#1]#[1]# Since the visitor parameter is passed by value, if your
-visitor contains state then any changes to the state during the algorithm
-will be made to a copy of the visitor object, not the visitor object
-passed in. Therefore you may want the visitor to hold this state by
-pointer or reference.
+==== Valid Expressions
+
+[cols=",,,",options="header",]
+|===
+| Name | Expression | Return Type | Description
+
+| Initialize Vertex
+| `vis.initialize_vertex(s, g)`
+| `void`
+| Invoked on every vertex of the graph before the start of the search.
+
+| Start Vertex
+| `vis.start_vertex(s, g)`
+| `void`
+| Invoked on the source vertex once before processing its out-edges.
+
+| Examine Edge
+| `vis.examine_edge(e, g)`
+| `void`
+| Invoked on every out-edge of each vertex after it is started.
+
+| Finish Vertex
+| `vis.finish_vertex(u, g)`
+| `void`
+| Invoked on a vertex after all of its out-edges have been examined and the
+  reach counts of the unvisited targets have been updated.
+|===
+
+=== Minimal Implementation
+
+Two ways to write a visitor.
+
+Inherit from `default_mas_visitor` and shadow only the relevant handlers. The
+base supplies a no-op for every other event.
+
+[source,cpp]
+----
+struct my_mas_visitor : boost::graph::default_mas_visitor
+{
+    template <class Edge, class Graph>
+    void examine_edge(Edge e, const Graph& g)
+    {
+        // logic here
+    }
+};
+----
+
+Or copy the full struct and fill in each handler. All four must be declared.
+
+[source,cpp]
+----
+struct my_mas_visitor
+{
+    template <class Vertex, class Graph>
+    void initialize_vertex(Vertex u, const Graph& g) {}
+
+    template <class Vertex, class Graph>
+    void start_vertex(Vertex u, const Graph& g) {}
+
+    template <class Edge, class Graph>
+    void examine_edge(Edge e, const Graph& g) {}
+
+    template <class Vertex, class Graph>
+    void finish_vertex(Vertex u, const Graph& g) {}
+};
+----
 
 == References
 

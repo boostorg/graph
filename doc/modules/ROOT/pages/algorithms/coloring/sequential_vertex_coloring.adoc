@@ -45,8 +45,10 @@ sequential_vertex_coloring(
 
 | IN
 | `OrderPA order`
-| A mapping from integers in the range _[0, num_vertices(g))_
-  to the vertices of the graph.
+| A mapping from integers in the range _[0, n)_ to the vertices of the graph,
+  where _n_ is the number of vertices listed by `vertices(g)`. This is
+  `num_vertices(g)` for most graph types, but can be smaller for
+  xref:adaptors/filtered_graph.adoc[`filtered_graph`].
 
 | OUT
 | `ColorMap color`

@@ -237,7 +237,7 @@ void randomly_add_edges(MutableGraph& g, double edge_probability)
     typedef typename graph_traits< MutableGraph >::directed_category
         directed_category;
 
-    minstd_rand gen;
+    minstd_rand gen(42);
     uniform_01< minstd_rand, double > rand_gen(gen);
 
     typedef typename graph_traits< MutableGraph >::vertex_descriptor vertex;

@@ -9,7 +9,6 @@
 #ifndef BOOST_GRAPH_BETWEENNESS_CENTRALITY_CLUSTERING_HPP
 #define BOOST_GRAPH_BETWEENNESS_CENTRALITY_CLUSTERING_HPP
 
-#include <boost/algorithm/minmax_element.hpp>
 #include <boost/graph/betweenness_centrality.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_utility.hpp>
@@ -132,8 +131,11 @@ void betweenness_centrality_clustering(MutableGraph& g, Done done,
             edge_centrality_map(edge_centrality)
                 .vertex_index_map(vertex_index));
         std::pair< edge_iterator, edge_iterator > edges_iters = edges(g);
-        edge_descriptor e
-            = *boost::first_max_element(edges_iters.first, edges_iters.second, cmp);
+        auto max_edge_it = edges_iters.first;
+        for (auto edge_it = edges_iters.first; edge_it != edges_iters.second; ++edge_it)
+            if (cmp(*max_edge_it, *edge_it))
+                max_edge_it = edge_it;
+        edge_descriptor e = *max_edge_it;
         is_done = done(get(edge_centrality, e), e, g);
         if (!is_done)
             remove_edge(e, g);

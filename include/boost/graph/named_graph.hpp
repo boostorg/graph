@@ -294,6 +294,7 @@ namespace graph
     typename Graph, typename Vertex, typename VertexProperty
 /// Helper macro containing the named_graph<...> instantiation
 #define BGL_NAMED_GRAPH named_graph< Graph, Vertex, VertexProperty >
+#define BOOST_GRAPH_NAMED_GRAPH_DEPRECATED BOOST_DEPRECATED("named vertices (internal_vertex_name) are deprecated. Removal planned for Boost 1.95.")
 
     template < BGL_NAMED_GRAPH_PARAMS >
     BGL_NAMED_GRAPH::named_graph(const extract_name_type& extract,
@@ -355,6 +356,7 @@ namespace graph
 
     /// Retrieve the vertex associated with the given name
     template < BGL_NAMED_GRAPH_PARAMS >
+    BOOST_GRAPH_NAMED_GRAPH_DEPRECATED
     optional< Vertex > find_vertex(
         typename BGL_NAMED_GRAPH::vertex_name_type const& name,
         const BGL_NAMED_GRAPH& g)
@@ -382,6 +384,7 @@ namespace graph
     ///       from the vertex name to avoid ambiguous overload problems with
     ///       the add_vertex() function that takes a vertex property.
     template < BGL_NAMED_GRAPH_PARAMS >
+    BOOST_GRAPH_NAMED_GRAPH_DEPRECATED
     typename disable_if<
         is_same< typename BGL_NAMED_GRAPH::vertex_name_type, VertexProperty >,
         Vertex >::type
@@ -398,6 +401,7 @@ namespace graph
 
     /// Add an edge using vertex names to refer to the vertices
     template < BGL_NAMED_GRAPH_PARAMS >
+    BOOST_GRAPH_NAMED_GRAPH_DEPRECATED
     std::pair< typename graph_traits< Graph >::edge_descriptor, bool > add_edge(
         typename BGL_NAMED_GRAPH::vertex_name_type const& u_name,
         typename BGL_NAMED_GRAPH::vertex_name_type const& v_name,
@@ -409,6 +413,7 @@ namespace graph
 
     /// Add an edge using vertex descriptors or names to refer to the vertices
     template < BGL_NAMED_GRAPH_PARAMS >
+    BOOST_GRAPH_NAMED_GRAPH_DEPRECATED
     std::pair< typename graph_traits< Graph >::edge_descriptor, bool > add_edge(
         typename BGL_NAMED_GRAPH::vertex_descriptor const& u,
         typename BGL_NAMED_GRAPH::vertex_name_type const& v_name,
@@ -419,6 +424,7 @@ namespace graph
 
     /// Add an edge using vertex descriptors or names to refer to the vertices
     template < BGL_NAMED_GRAPH_PARAMS >
+    BOOST_GRAPH_NAMED_GRAPH_DEPRECATED
     std::pair< typename graph_traits< Graph >::edge_descriptor, bool > add_edge(
         typename BGL_NAMED_GRAPH::vertex_name_type const& u_name,
         typename BGL_NAMED_GRAPH::vertex_descriptor const& v,
@@ -429,6 +435,7 @@ namespace graph
 
     // Overloads to support EdgeMutablePropertyGraph graphs
     template < BGL_NAMED_GRAPH_PARAMS >
+    BOOST_GRAPH_NAMED_GRAPH_DEPRECATED
     std::pair< typename graph_traits< Graph >::edge_descriptor, bool > add_edge(
         typename BGL_NAMED_GRAPH::vertex_descriptor const& u,
         typename BGL_NAMED_GRAPH::vertex_name_type const& v_name,
@@ -438,6 +445,7 @@ namespace graph
     }
 
     template < BGL_NAMED_GRAPH_PARAMS >
+    BOOST_GRAPH_NAMED_GRAPH_DEPRECATED
     std::pair< typename graph_traits< Graph >::edge_descriptor, bool > add_edge(
         typename BGL_NAMED_GRAPH::vertex_name_type const& u_name,
         typename BGL_NAMED_GRAPH::vertex_descriptor const& v,
@@ -447,6 +455,7 @@ namespace graph
     }
 
     template < BGL_NAMED_GRAPH_PARAMS >
+    BOOST_GRAPH_NAMED_GRAPH_DEPRECATED
     std::pair< typename graph_traits< Graph >::edge_descriptor, bool > add_edge(
         typename BGL_NAMED_GRAPH::vertex_name_type const& u_name,
         typename BGL_NAMED_GRAPH::vertex_name_type const& v_name,
@@ -456,6 +465,7 @@ namespace graph
             add_vertex(v_name, g.derived()), p, g.derived());
     }
 
+#undef BOOST_GRAPH_NAMED_GRAPH_DEPRECATED
 #undef BGL_NAMED_GRAPH
 #undef BGL_NAMED_GRAPH_PARAMS
 

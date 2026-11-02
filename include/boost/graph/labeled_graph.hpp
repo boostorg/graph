@@ -10,10 +10,9 @@
 #include <boost/config.hpp>
 #include <vector>
 #include <map>
+#include <type_traits>
 
 #include <boost/static_assert.hpp>
-#include <boost/mpl/if.hpp>
-#include <boost/mpl/bool.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/is_unsigned.hpp>
@@ -21,6 +20,12 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/property_map/property_map.hpp>
+#include <boost/config/pragma_message.hpp>
+
+#if !defined(BOOST_ALLOW_DEPRECATED_HEADERS) && !defined(BOOST_ALLOW_DEPRECATED)
+BOOST_PRAGMA_MESSAGE("CAUTION: <boost/graph/labeled_graph.hpp> is deprecated. Removal planned for Boost 1.95.")
+BOOST_PRAGMA_MESSAGE("CAUTION: Define BOOST_ALLOW_DEPRECATED_HEADERS to suppress this message.")
+#endif
 
 // This file implements a utility for creating mappings from arbitrary
 // identifiers to the vertices of a graph.
@@ -38,7 +43,8 @@ namespace graph_detail
 {
     /** Returns true if the selector is the default selector. */
     template < typename Selector >
-    struct is_default : mpl::bool_< is_same< Selector, defaultS >::value >
+    struct is_default
+    : std::integral_constant< bool, is_same< Selector, defaultS >::value >
     {
     };
 
@@ -48,7 +54,8 @@ namespace graph_detail
      */
     template < typename Label, typename Vertex > struct choose_default_map
     {
-        typedef typename mpl::if_< is_unsigned< Label >, std::vector< Vertex >,
+        typedef typename std::conditional< is_unsigned< Label >::value,
+            std::vector< Vertex >,
             std::map< Label, Vertex > // TODO: Should use unordered_map?
             >::type type;
     };
@@ -111,9 +118,9 @@ namespace graph_detail
     template < typename Selector, typename Label, typename Vertex >
     struct choose_map
     {
-        typedef typename mpl::eval_if< is_default< Selector >,
+        typedef typename std::conditional< is_default< Selector >::value,
             choose_default_map< Label, Vertex >,
-            choose_custom_map< Selector, Label, Vertex > >::type type;
+            choose_custom_map< Selector, Label, Vertex > >::type::type type;
     };
 
     /** @name Insert Labeled Vertex */
