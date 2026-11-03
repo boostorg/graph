@@ -8,13 +8,12 @@
 #ifndef BOOST_GRAPH_R_C_SHORTEST_PATHS_HPP
 #define BOOST_GRAPH_R_C_SHORTEST_PATHS_HPP
 
-#include <boost/range/iterator_range_core.hpp>
 #include <queue>
 #include <vector>
 #include <list>
-
 #include <memory>
-#include <boost/range/iterator_range.hpp>
+
+#include <boost/range/iterator_range_core.hpp>
 #include <boost/graph/detail/visitor_wrapper.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/property_map/property_map.hpp>
