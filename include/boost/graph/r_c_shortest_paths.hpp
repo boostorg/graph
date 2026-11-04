@@ -435,15 +435,6 @@ namespace detail
                     break;
             }
         }
-
-        for(const auto v: boost::make_iterator_range(vertices(g)))
-        {
-            auto& list_labels_cur_vertex = vec_vertex_labels[v];
-            for (auto& label : list_labels_cur_vertex)
-            {
-                label.reset();
-            }
-        }
     } // r_c_shortest_paths_dispatch
 
 } // detail
