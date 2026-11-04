@@ -11,11 +11,11 @@
 #include <queue>
 #include <vector>
 #include <list>
-
 #include <memory>
+
+#include <boost/range/iterator_range_core.hpp>
 #include <boost/graph/detail/visitor_wrapper.hpp>
 #include <boost/graph/graph_traits.hpp>
-#include <boost/graph/iteration_macros.hpp>
 #include <boost/property_map/property_map.hpp>
 
 namespace boost
@@ -193,7 +193,8 @@ namespace detail
             vec_last_valid_positions_for_dominance(
                 vec_last_valid_positions_for_dominance_data.begin(),
                 vertex_index_map);
-        BGL_FORALL_VERTICES_T(v, g, Graph)
+
+        for(const auto v: boost::make_iterator_range(vertices(g)))
         {
             put(vec_last_valid_positions_for_dominance, v,
                 vec_vertex_labels[v].begin());
@@ -432,15 +433,6 @@ namespace detail
                 pareto_optimal_solutions.push_back(cur_pareto_optimal_path);
                 if (!b_all_pareto_optimal_solutions)
                     break;
-            }
-        }
-
-        BGL_FORALL_VERTICES_T(i, g, Graph)
-        {
-            auto& list_labels_cur_vertex = vec_vertex_labels[i];
-            for (auto& label : list_labels_cur_vertex)
-            {
-                label.reset();
             }
         }
     } // r_c_shortest_paths_dispatch
