@@ -34,36 +34,20 @@ namespace boost
 {
 namespace graph
 {
-
     /**
      * Calculates the 2D Euclidean distance between two points using
      * std::hypot.
      *
-     * Works with any point type possessing public '.x' and '.y' members or
-     * accessors.
+     * Works with any point type possessing public '.x' and '.y' members.
+     * Use your own distance functor (e.g. boost::geometry distance() 
+     * if your point type does not have those members or don't want euclidean distances.
      */
-    template < typename Point1, typename Point2 >
-    inline auto euclidean_distance(const Point1& p1, const Point2& p2)
-        -> decltype(std::hypot(p1.x - p2.x, p1.y - p2.y))
-    {
-        using RawType = decltype(p1.x - p2.x);
-        using CalcType = std::conditional_t< std::is_integral< RawType >::value,
-            double, RawType >;
-
-        return std::hypot(
-            static_cast< CalcType >(p1.x) - static_cast< CalcType >(p2.x),
-            static_cast< CalcType >(p1.y) - static_cast< CalcType >(p2.y));
-    }
-
-    // Functor wrapper for boost::graph::euclidean_distance to serve as a clean
-    // default
     struct default_euclidean_distance
     {
         template < typename Point1, typename Point2 >
-        auto operator()(const Point1& p1, const Point2& p2) const
-            -> decltype(::boost::graph::euclidean_distance(p1, p2))
+        auto constexpr operator()(Point1 const&  p1, Point2 const&  p2) const
         {
-            return ::boost::graph::euclidean_distance(p1, p2);
+            return std::hypot(p1.x - p2.x, p1.y - p2.y);
         }
     };
 
@@ -77,8 +61,9 @@ namespace graph
 // Preconditions: num_vertices(g) == points.size() and g has no edges.
 // Complexity: O(V^2).
 template < typename VertexListGraph, typename PointContainer, typename WeightMap, typename VertexIndexMap, typename BinaryFunction >
-void connect_all_geometric(VertexListGraph& g, const PointContainer& points, WeightMap wmap, VertexIndexMap vmap, BinaryFunction distance)
-{
+    void connect_all_geometric(VertexListGraph& g, PointContainer const& points,
+        WeightMap wmap, VertexIndexMap vmap, BinaryFunction distance)
+    {
     using Traits = ::boost::graph_traits< VertexListGraph >;
 
     BOOST_CONCEPT_ASSERT((::boost::VertexListGraphConcept< VertexListGraph >));
@@ -90,25 +75,24 @@ void connect_all_geometric(VertexListGraph& g, const PointContainer& points, Wei
     BOOST_STATIC_ASSERT_MSG((!std::is_convertible< typename Traits::directed_category, ::boost::directed_tag >::value), "connect_all_geometric requires an undirected graph type.");
 
     using WeightType = typename ::boost::property_traits< WeightMap >::value_type;
-    using IndexType = typename ::boost::property_traits< VertexIndexMap >::value_type;
 
     BOOST_STATIC_ASSERT_MSG(!std::is_integral< WeightType >::value, "connect_all_geometric requires a non-integral weight type. Integer weights truncate distances.");
 
     BOOST_ASSERT_MSG(num_vertices(g) == points.size(), "connect_all_geometric requires num_vertices(g) == points.size()");
 
-    using VertexIterator = typename Traits::vertex_iterator;
-    std::pair< VertexIterator, VertexIterator > verts(vertices(g));
+    auto verts(vertices(g));
 
-    for (VertexIterator src(verts.first); src != verts.second; ++src)
+    for (auto src(verts.first); src != verts.second; ++src)
     {
-        const IndexType src_index = get(vmap, *src);
-        VertexIterator dest(src);
+        auto const src_index = get(vmap, *src);
+        auto dest(src);
         ++dest;
 
         for (; dest != verts.second; ++dest)
         {
-            const IndexType dest_index = get(vmap, *dest);
-            const WeightType weight = static_cast< WeightType >(distance(points[src_index], points[dest_index]));
+            auto const dest_index = get(vmap, *dest);
+            auto const weight = static_cast< WeightType >(
+                distance(points[src_index], points[dest_index]));
             put(wmap, add_edge(*src, *dest, g).first, weight);
         }
     }
@@ -141,8 +125,8 @@ std::size_t generate_unique_random_points(std::size_t num_points, XDistribution 
 
     while (seen.size() < num_points && attempts < max_attempts)
     {
-        const CoordType x = x_dist(gen);
-        const CoordType y = y_dist(gen);
+        auto const x = x_dist(gen);
+        auto const y = y_dist(gen);
 
         if (seen.insert(std::make_pair(x, y)).second)
             *out++ = PointType { x, y };
@@ -153,21 +137,24 @@ std::size_t generate_unique_random_points(std::size_t num_points, XDistribution 
     return seen.size();
 }
 
-// Populates g with num_points random points and complete geometric weights.
+// Populates g with num_points random points and complete geometric weights with parameterized X and Y distributions.
+// Useful for testing algorithms on random complete geometric graphs (e.g. TSP algorithms).  
+// Note:  Could be generalized to work on 3D+ spaces using variadic templates for the point type and
+// distributions
 //
 // Throws std::runtime_error when the distributions cannot supply num_points
 // distinct points, because a shorter point set would leave connect_all_geometric
 // indexing past the end.
 template < typename PointType, typename VertexListGraph, typename WeightMap, typename VertexIndexMap, typename XDistribution, typename YDistribution, typename URBG, typename BinaryFunction >
-void make_random_geometric_graph(VertexListGraph& g, std::size_t num_points, XDistribution x_dist, YDistribution y_dist, WeightMap weight_map, VertexIndexMap vertex_index_map, URBG&& gen, BinaryFunction distance)
+void generate_random_complete_geometric_graph(VertexListGraph& g, std::size_t num_points, XDistribution x_dist, YDistribution y_dist, WeightMap weight_map, VertexIndexMap vertex_index_map, URBG&& gen, BinaryFunction distance)
 {
     std::vector< PointType > points;
     points.reserve(num_points);
 
-    const std::size_t generated = generate_unique_random_points< PointType >(num_points, x_dist, y_dist, std::back_inserter(points), gen);
+    std::size_t const generated = generate_unique_random_points< PointType >(num_points, x_dist, y_dist, std::back_inserter(points), gen);
 
     if (generated != num_points)
-        throw std::runtime_error("make_random_geometric_graph: the given distributions cannot supply num_points distinct points");
+        throw std::runtime_error("generate_random_complete_geometric_graph: the given distributions cannot supply num_points distinct points");
 
     connect_all_geometric(g, points, weight_map, vertex_index_map, distance);
 }

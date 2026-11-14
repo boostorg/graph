@@ -31,14 +31,14 @@ using Edge = ::boost::graph_traits< Graph >::edge_descriptor;
 
 int main()
 {
-    constexpr std::size_t num_points = 20;
+    std::size_t constexpr num_points = 20;
 
     Graph g(num_points);
     std::mt19937 gen(42);
     std::uniform_real_distribution< double > coordinates(0.0, 500.0);
-    auto weight_map = ::boost::get(::boost::edge_weight, g);
+    auto const weight_map = ::boost::get(::boost::edge_weight, g);
 
-    ::boost::graph::make_random_geometric_graph< Point >(g, num_points,
+    ::boost::graph::generate_random_complete_geometric_graph< Point >(g, num_points,
         coordinates, coordinates, weight_map,
         ::boost::get(::boost::vertex_index, g), gen,
         ::boost::graph::default_euclidean_distance{});
@@ -50,7 +50,7 @@ int main()
 
     double total = 0.0;
 
-    for (const Edge& e : mst)
+    for (Edge const& e : mst)
         total += ::boost::get(weight_map, e);
 
     std::cout << "Minimum spanning tree: " << mst.size() << " edges, total weight " << total << "\n";
