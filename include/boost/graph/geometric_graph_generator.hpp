@@ -54,9 +54,7 @@ namespace graph
 // Connects every pair of vertices with an edge weighted by the distance between
 // the corresponding points. A common preprocessing step for TSP algorithms.
 //
-// The distance functor must be supplied by the caller. Writing an ADL wrapper
-// inside namespace boost is not possible because unqualified lookup there also
-// finds boost::distance from Boost.Range.
+// The distance functor must be supplied by the caller.
 //
 // Preconditions: num_vertices(g) == points.size() and g has no edges.
 // Complexity: O(V^2).
