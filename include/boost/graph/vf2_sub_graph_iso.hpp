@@ -20,6 +20,7 @@
 
 #include <iostream>
 #include <iterator>
+#include <type_traits>
 #include <vector>
 #include <utility>
 
@@ -31,15 +32,10 @@
 #include <boost/graph/mcgregor_common_subgraphs.hpp> // for always_equivalent
 #include <boost/graph/named_function_params.hpp>
 #include <boost/type_traits/has_less.hpp>
-#include <type_traits>
 #include <boost/range/algorithm/sort.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/utility/enable_if.hpp>
-
-#ifndef BOOST_GRAPH_ITERATION_MACROS_HPP
-#define BOOST_ISO_INCLUDED_ITER_MACROS // local macro, see bottom of file
-#include <boost/graph/iteration_macros.hpp>
-#endif
+#include <boost/range/iterator_range_core.hpp>
 
 namespace boost
 {
@@ -58,9 +54,11 @@ template < typename Graph1, typename Graph2 > struct vf2_print_callback
     {
 
         // Print (sub)graph isomorphism map
-        BGL_FORALL_VERTICES_T(v, graph1_, Graph1)
-        std::cout << '(' << get(vertex_index_t(), graph1_, v) << ", "
-                  << get(vertex_index_t(), graph2_, get(f, v)) << ") ";
+        for(const auto v: boost::make_iterator_range(vertices(graph1_)))
+        {
+            std::cout << '(' << get(vertex_index_t(), graph1_, v) << ", "
+                      << get(vertex_index_t(), graph2_, get(f, v)) << ") ";
+        }
 
         std::cout << std::endl;
 
@@ -177,7 +175,7 @@ namespace detail
                     ++term_both_count_;
             }
 
-            BGL_FORALL_INEDGES_T(v_this, e, graph_this_, GraphThis)
+            for(const auto& e: boost::make_iterator_range(in_edges(v_this, graph_this_)))
             {
                 vertex_this_type w = source(e, graph_this_);
                 if (!get(in_, w))
@@ -188,8 +186,8 @@ namespace detail
                         ++term_both_count_;
                 }
             }
-
-            BGL_FORALL_OUTEDGES_T(v_this, e, graph_this_, GraphThis)
+            
+            for(const auto& e: boost::make_iterator_range(out_edges(v_this, graph_this_)))
             {
                 vertex_this_type w = target(e, graph_this_);
                 if (!get(out_, w))
@@ -217,7 +215,7 @@ namespace detail
                     --term_both_count_;
             }
 
-            BGL_FORALL_INEDGES_T(v_this, e, graph_this_, GraphThis)
+            for(const auto& e: boost::make_iterator_range(in_edges(v_this, graph_this_)))
             {
                 vertex_this_type w = source(e, graph_this_);
                 if (get(in_, w) == core_count_)
@@ -236,8 +234,8 @@ namespace detail
                 if (get(in_, v_this))
                     --term_both_count_;
             }
-
-            BGL_FORALL_OUTEDGES_T(v_this, e, graph_this_, GraphThis)
+            
+            for(const auto& e: boost::make_iterator_range(out_edges(v_this, graph_this_)))
             {
                 vertex_this_type w = target(e, graph_this_);
                 if (get(out_, w) == core_count_)
@@ -340,7 +338,7 @@ namespace detail
             EdgePredicate is_valid_edge, const Graph& g)
         {
 
-            BGL_FORALL_OUTEDGES_T(s, e, g, Graph)
+            for(const auto& e: boost::make_iterator_range(out_edges(s, g)))
             {
                 if ((target(e, g) == t) && is_valid_edge(e)
                     && (matched_edges_.find(e) == matched_edges_.end()))
@@ -533,7 +531,7 @@ namespace detail
             {
                 equivalent_edge_exists< Graph2 > edge2_exists;
 
-                BGL_FORALL_INEDGES_T(v_new, e1, graph1_, Graph1)
+                for(const auto& e1: boost::make_iterator_range(in_edges(v_new, graph1_)))
                 {
                     vertex1_type v = source(e1, graph1_);
 
@@ -564,7 +562,7 @@ namespace detail
             {
                 equivalent_edge_exists< Graph2 > edge2_exists;
 
-                BGL_FORALL_OUTEDGES_T(v_new, e1, graph1_, Graph1)
+                for(const auto& e1: boost::make_iterator_range(out_edges(v_new, graph1_)))
                 {
                     vertex1_type v = target(e1, graph1_);
                     if (state1_.in_core(v) || (v == v_new))
@@ -599,7 +597,7 @@ namespace detail
             {
                 equivalent_edge_exists< Graph1 > edge1_exists;
 
-                BGL_FORALL_INEDGES_T(w_new, e2, graph2_, Graph2)
+                for(const auto& e2: boost::make_iterator_range(in_edges(w_new, graph2_)))
                 {
                     vertex2_type w = source(e2, graph2_);
                     if (state2_.in_core(w) || (w == w_new))
@@ -633,8 +631,7 @@ namespace detail
 
             {
                 equivalent_edge_exists< Graph1 > edge1_exists;
-
-                BGL_FORALL_OUTEDGES_T(w_new, e2, graph2_, Graph2)
+                for(const auto& e2: boost::make_iterator_range(out_edges(w_new, graph2_)))
                 {
                     vertex2_type w = target(e2, graph2_);
                     if (state2_.in_core(w) || (w == w_new))
@@ -1286,7 +1283,7 @@ inline bool verify_vf2_subgraph_iso(const Graph1& graph1, const Graph2& graph2,
 
     detail::equivalent_edge_exists< Graph2 > edge2_exists;
 
-    BGL_FORALL_EDGES_T(e1, graph1, Graph1)
+    for(const auto& e1: boost::make_iterator_range(edges(graph1)))
     {
         typename graph_traits< Graph1 >::vertex_descriptor s1, t1;
         typename graph_traits< Graph2 >::vertex_descriptor s2, t2;
@@ -1321,10 +1318,4 @@ inline bool verify_vf2_subgraph_iso(
 }
 
 } // namespace boost
-
-#ifdef BOOST_ISO_INCLUDED_ITER_MACROS
-#undef BOOST_ISO_INCLUDED_ITER_MACROS
-#include <boost/graph/iteration_macros_undef.hpp>
-#endif
-
 #endif // BOOST_VF2_SUB_GRAPH_ISO_HPP
