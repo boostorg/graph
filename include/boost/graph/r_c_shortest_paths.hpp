@@ -8,6 +8,7 @@
 #ifndef BOOST_GRAPH_R_C_SHORTEST_PATHS_HPP
 #define BOOST_GRAPH_R_C_SHORTEST_PATHS_HPP
 
+#include <boost/range/iterator_range_core.hpp>
 #include <queue>
 #include <vector>
 #include <list>
@@ -212,8 +213,6 @@ namespace detail
                 b_vec_vertex_already_checked_for_dominance_data.begin(),
                 vertex_index_map);
 
-        auto b_feasible = true;
-
         while (!unprocessed_labels.empty()
             && vis_ref.on_enter_loop(unprocessed_labels, g))
         {
@@ -351,32 +350,30 @@ namespace detail
                 cur_label->b_is_processed = true;
                 vis_ref.on_label_not_dominated(*cur_label, g);
                 auto cur_vertex = cur_label->resident_vertex;
-                typename graph_traits< Graph >::out_edge_iterator oei, oei_end;
-                for (boost::tie(oei, oei_end) = out_edges(cur_vertex, g);
-                     oei != oei_end; ++oei)
+                for(const auto& out_edge: boost::make_iterator_range(out_edges(cur_vertex, g)))
                 {
-                    b_feasible = true;
                     auto new_label = std::allocate_shared<
                         r_c_shortest_paths_label< Graph, ResourceContainer > >(
                         l_alloc, i_label_num++,
                         cur_label->cumulated_resource_consumption, cur_label,
-                        *oei, target(*oei, g));
-                    b_feasible = ref(g,
+                        out_edge, target(out_edge, g));
+
+                    const auto b_feasible = ref(g,
                         new_label->cumulated_resource_consumption,
                         new_label->p_pred_label->cumulated_resource_consumption,
                         new_label->pred_edge);
 
-                    if (!b_feasible)
-                    {
-                        vis_ref.on_label_not_feasible(*new_label, g);
-                        new_label.reset();
-                    }
-                    else
+                    if (b_feasible)
                     {
                         vis_ref.on_label_feasible(*new_label, g);
                         vec_vertex_labels[new_label->resident_vertex].push_back(
                             new_label);
                         unprocessed_labels.push(new_label);
+                    }
+                    else
+                    {
+                        vis_ref.on_label_not_feasible(*new_label, g);
+                        new_label.reset();
                     }
                 }
             }
