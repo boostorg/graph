@@ -142,7 +142,6 @@ BGL has accumulated a wide vocabulary of `BOOST_*` macros from its pre-C++14 day
 | `BOOST_CONCEPT_ASSERT` | Keep (pre C++20) |
 | `BOOST_CONCEPT_REQUIRES` | Keep (pre C++20) |
 | `BOOST_CONCEPT_USAGE` | Keep (pre C++20) |
-| `BOOST_DEDUCED_TYPENAME` | Remove |
 | `BOOST_FOREACH` | Replace with an appropriate algorithm or range-based `for` loop |
 | `BOOST_FWD_REF` | Replace with `T&&` |
 | `BOOST_JOIN` | Keep |
