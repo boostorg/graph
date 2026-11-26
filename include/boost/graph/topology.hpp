@@ -11,7 +11,6 @@
 #define BOOST_GRAPH_TOPOLOGY_HPP
 
 #include <algorithm>
-#include <boost/config.hpp> // For BOOST_STATIC_CONSTANT
 #include <cmath>
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/linear_congruential.hpp>
@@ -32,7 +31,8 @@ template < std::size_t Dims > class convex_topology
 public: // For VisualAge C++
     struct point
     {
-        BOOST_STATIC_CONSTANT(std::size_t, dimensions = Dims);
+        static constexpr auto dimensions = Dims;
+
         point() {}
         double& operator[](std::size_t i) { return values[i]; }
         const double& operator[](std::size_t i) const { return values[i]; }
@@ -44,7 +44,8 @@ public: // For VisualAge C++
 public: // For VisualAge C++
     struct point_difference
     {
-        BOOST_STATIC_CONSTANT(std::size_t, dimensions = Dims);
+        static constexpr auto dimensions = Dims;
+        
         point_difference()
         {
             for (std::size_t i = 0; i < Dims; ++i)
