@@ -40,7 +40,6 @@
 #ifndef BOOST_GRAPH_COPY_HPP
 #define BOOST_GRAPH_COPY_HPP
 
-#include <boost/config.hpp>
 #include <vector>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/reverse_graph.hpp>
@@ -414,7 +413,7 @@ void copy_graph(const VertexListGraph& g_in, MutableGraph& g_out,
     if (n == 0)
         return;
     std::vector<
-        BOOST_DEDUCED_TYPENAME graph_traits< MutableGraph >::vertex_descriptor >
+        typename graph_traits< MutableGraph >::vertex_descriptor >
         orig2copy(n);
 
     typedef
